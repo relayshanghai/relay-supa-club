@@ -1,27 +1,28 @@
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
 import { type SetStateAction, useCallback } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceTableProps {
-    sequenceInfluencers: SequenceInfluencer[];
+    sequenceInfluencers: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
-    currentTab: SequenceInfluencer['funnel_status'];
+    currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
     selection: string[];
     setSelection: (selection: string[]) => void;
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
 const sortInfluencers = (
-    currentTab: SequenceInfluencer['funnel_status'],
-    influencers?: SequenceInfluencer[],
+    currentTab: SequenceInfluencerManagerPage['funnel_status'],
+    influencers?: SequenceInfluencerManagerPage[],
     sequenceEmails?: SequenceEmail[],
 ) => {
     return influencers?.sort((a, b) => {
