@@ -13,7 +13,7 @@ import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJi
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 import prices from './api/subscription/prices/prices.json';
 
-import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1.json';
+import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1';
 import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
 
 import templates from './api/email-engine/templates.json';

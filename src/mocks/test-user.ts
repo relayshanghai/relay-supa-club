@@ -1,5 +1,7 @@
 import type { IUserContext } from '../hooks/use-user';
 
+export const testSequenceId = 'b7ddd2a8-e114-4423-8cc6-30513c885f07';
+
 export const mockProfile: IUserContext['profile'] = {
     id: '1',
     user_role: 'company_owner',
