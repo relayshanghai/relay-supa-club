@@ -12,29 +12,32 @@ import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 import type { Influencer } from 'pages/boostbot';
+import { getFulfilledData } from 'src/utils/utils';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
 };
 
+// Majority of these requests will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { profile } = useUser();
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
-        async (influencers: Influencer[]) => {
+        async (influencersToUnlock: Influencer[], freeOfCharge = false) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
-            const influencersPromises = influencers.map(({ user_id, url }) => {
+            const influencersPromises = influencersToUnlock.map(({ user_id, url }) => {
                 const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
                 const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
 
-                const reportQuery = {
+                const reportQuery: CreatorsReportGetQueries = {
                     platform: platform,
                     creator_id: user_id,
                     company_id: company.id,
                     user_id: profile.id,
                     track: SearchAnalyzeInfluencer.eventName,
+                    source: freeOfCharge ? 'boostbot' : 'default',
                 };
 
                 return limiter.schedule(() =>
@@ -45,7 +48,9 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
                 );
             });
 
-            return await Promise.all(influencersPromises);
+            const influencersResults = await Promise.allSettled(influencersPromises);
+
+            return getFulfilledData(influencersResults);
         },
         [profile, company],
     );
@@ -95,12 +100,17 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     );
 
     const getInfluencers = useCallback(
-        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) =>
-            await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+
+            return await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
                 topicClusters,
                 platform,
-            }),
-        [performFetch],
+                user_id: profile.id,
+                company_id: company.id,
+            });
+        },
+        [performFetch, company, profile],
     );
 
     return {

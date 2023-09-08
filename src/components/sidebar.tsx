@@ -100,14 +100,14 @@ const NavBarInner = ({
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
-                    <ActiveLink href="/dashboard">
-                        <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
-                    </ActiveLink>
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/boostbot'}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
                         </ActiveLink>
                     )}
+                    <ActiveLink href="/dashboard">
+                        <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
+                    </ActiveLink>
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/sequences'}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>

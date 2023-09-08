@@ -30,14 +30,14 @@ export const AddToSequenceModal = ({
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
-    const { i18n, t } = useTranslation();
+    const { t } = useTranslation();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
     const {
         socialProfile,
         report,
-        errorMessage,
+        errorMessage: reportErrorMessage,
         usageExceeded,
         loading: loadingReport,
     } = useReport({
@@ -69,75 +69,72 @@ export const AddToSequenceModal = ({
         return relevantTags.slice(0, 3).map((tag) => tag.tag);
     }, [report]);
 
-    const dataLoading = loadingReport || !sequence || !creatorProfile.user_id || !socialProfile;
     const handleAddToSequence = useCallback(async () => {
-        if (!sequence) {
-            track(AddInfluencerToSequence, {
-                influencer_id: null,
-                sequence_id: null,
-                sequence_influencer_id: null,
-                is_success: false,
-                is_sequence_autostart: null,
-                extra_info: { error: 'Missing sequence' },
-            });
-            throw new Error('Missing selectedSequence');
-        }
-        if (!socialProfile?.id) {
-            track(AddInfluencerToSequence, {
-                influencer_id: null,
-                sequence_id: sequence.id,
-                sequence_influencer_id: null,
-                is_success: false,
-                is_sequence_autostart: null,
-                extra_info: { error: 'Missing socialProfileId' },
-            });
-            throw new Error('Missing socialProfileId');
-        }
-        if (!creatorProfile.user_id) {
-            track(AddInfluencerToSequence, {
-                influencer_id: socialProfile.id,
-                sequence_id: sequence.id,
-                sequence_influencer_id: null,
-                is_success: false,
-                is_sequence_autostart: null,
-                extra_info: { error: 'Missing user_id from user_profile' },
-            });
-            throw new Error('Missing creator.user_id');
-        }
-        const tags = getRelevantTags();
-        setSubmitting(true);
-
+        let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload = {
-            influencer_id: socialProfile.id,
-            sequence_id: sequence.id,
+            influencer_id: socialProfile?.id || '', // we confirm these later down
+            sequence_id: sequence?.id || '',
             sequence_influencer_id: null,
             is_success: true,
-            is_sequence_autostart: sequence.auto_start,
+            is_sequence_autostart: sequence?.auto_start || false,
         };
-
-        let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
-
         try {
+            if (!sequence) {
+                track(AddInfluencerToSequence, {
+                    influencer_id: null,
+                    sequence_id: null,
+                    sequence_influencer_id: null,
+                    is_success: false,
+                    is_sequence_autostart: null,
+                    extra_info: { error: 'Missing sequence' },
+                });
+                throw new Error('Missing selectedSequence');
+            }
+            if (!socialProfile?.id) {
+                track(AddInfluencerToSequence, {
+                    influencer_id: null,
+                    sequence_id: sequence.id,
+                    sequence_influencer_id: null,
+                    is_success: false,
+                    is_sequence_autostart: null,
+                    extra_info: { error: 'Missing socialProfileId' },
+                });
+                throw new Error('Missing socialProfileId');
+            }
+            if (!creatorProfile.user_id) {
+                track(AddInfluencerToSequence, {
+                    influencer_id: socialProfile.id,
+                    sequence_id: sequence.id,
+                    sequence_influencer_id: null,
+                    is_success: false,
+                    is_sequence_autostart: null,
+                    extra_info: { error: 'Missing user_id from user_profile' },
+                });
+                throw new Error('Missing creator.user_id');
+            }
+            const tags = getRelevantTags();
+            setSubmitting(true);
+
             sequenceInfluencer = await createSequenceInfluencer(
-                socialProfile.id,
+                socialProfile,
                 tags,
                 creatorProfile.user_id,
-                socialProfile?.email,
             );
             trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
-            refreshSequenceInfluencers();
 
+            refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));
-        } catch (error) {
-            clientLogger(error);
+            track(AddInfluencerToSequence, trackingPayload);
+        } catch (error: any) {
+            const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
+            clientLogger(error, 'error');
             toast.error(t('creators.addToSequenceError'));
 
             trackingPayload.is_success = false;
-            trackingPayload.extra_info = { error: String(error) };
-        } finally {
+            trackingPayload.extra_info = { error: errorMessageAndStack };
             track(AddInfluencerToSequence, trackingPayload);
+            return;
         }
-
         const startSequencePayload: StartSequenceForInfluencerPayload = {
             influencer_id: null,
             sequence_id: null,
@@ -162,15 +159,23 @@ export const AddToSequenceModal = ({
                     sent_failed: failed,
                     sent_failed_count: failed.length,
                 });
+                if (succeeded.length > 0) {
+                    toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
+                }
+                if (failed.length > 0) {
+                    toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+                }
             }
-        } catch (error) {
+        } catch (error: any) {
+            clientLogger(error, 'error');
+            const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
             track(StartSequenceForInfluencer, {
                 ...startSequencePayload,
                 is_success: false,
-                extra_info: { error: String(error) },
+                extra_info: { error: errorMessageAndStack },
             });
 
-            clientLogger(error);
+            toast.error(error?.message ?? 'Unknown error auto-starting sequence');
         } finally {
             setSubmitting(false);
             setShow(false);
@@ -187,6 +192,17 @@ export const AddToSequenceModal = ({
         t,
         refreshSequenceInfluencers,
     ]);
+
+    let errorMessage = reportErrorMessage;
+
+    if (!loadingReport) {
+        if (!report?.user_profile.user_id) {
+            errorMessage = 'Missing influencer data: user_id';
+        }
+        if (!socialProfile?.id) {
+            errorMessage = 'Missing influencer data: socialProfile';
+        }
+    }
 
     return (
         <Modal
@@ -214,8 +230,9 @@ export const AddToSequenceModal = ({
 
                 <div className="flex items-start rounded-md bg-primary-50 p-4">
                     <Info className="mr-4 mt-1 h-6 w-6 flex-none text-primary-500" />
-                    <div className="text-primary-500">
-                        {t('creators.addToSequenceNotes')} {new Date().toLocaleDateString(i18n.language)}{' '}
+                    <div className="space-y-4 text-primary-500">
+                        <p>{t('creators.addToSequenceNotes')}</p>
+                        <p>{t('creators.addToSequenceNotes2')}</p>
                     </div>
                 </div>
             </div>
@@ -233,8 +250,8 @@ export const AddToSequenceModal = ({
                 )}
                 {errorMessage?.length > 0 && <div className="mb-2 text-red-600">{errorMessage}</div>}
                 {!usageExceeded && !(errorMessage?.length > 0) && (
-                    <Button onClick={handleAddToSequence} type="submit" disabled={submitting || dataLoading}>
-                        {submitting || dataLoading ? (
+                    <Button onClick={handleAddToSequence} type="submit" disabled={submitting || loadingReport}>
+                        {loadingReport ? (
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                         ) : (
                             t('creators.addToSequence')

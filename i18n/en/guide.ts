@@ -73,7 +73,7 @@ const guidePage = {
                 {
                     title: 'How to use them',
                     description:
-                        'Once you create a new sequence, you’ll need to set the variables that will be used to fill in the information about your company and product. You can do this from inside the sequence using the Update Template Variables button in the top right corner. You’ll need to complete this step to be able to send emails.',
+                        'Once you create a new sequence, you’ll need to set the variables that will be used to fill in the information about your company and product. You can do this from inside the sequence using the View sequence templates button in the top right corner. You’ll need to complete this step to be able to send emails.',
                 },
                 {
                     title: '',

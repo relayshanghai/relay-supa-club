@@ -138,7 +138,6 @@ const SignUpPage = ({
             }
             const result = await handleCompanyCreate(formData, profileId);
             if (result === 'success') {
-                setLoading(true);
                 await router.push('/free-trial');
             }
         } else if (currentStep < 4) {
@@ -228,7 +227,7 @@ const SignUpPage = ({
 
     useEffect(() => {
         if (createProfileSuccess && profile?.id && EMPLOYEE_EMAILS.includes(email)) {
-            router.push('/dashboard');
+            router.push('/boostbot');
         }
     }, [email, router, createProfileSuccess, profile?.id]);
 

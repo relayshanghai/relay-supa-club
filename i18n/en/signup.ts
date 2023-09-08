@@ -68,5 +68,6 @@ const signup = {
                 'These terms and conditions shall be governed by the laws of Singapore. Any disputes arising from these terms shall be resolved in the jurisdiction of the Republic of Singapore.',
         },
     },
+    errorStartingTrial: 'Error starting trial',
 };
 export default signup;

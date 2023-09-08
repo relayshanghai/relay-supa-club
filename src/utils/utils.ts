@@ -140,9 +140,19 @@ export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
 };
 
 /**
- * Checks if a PromiseSettledResult is a fulfilled result.
- * @param result - The PromiseSettledResult to check.
- * @returns True if the result is a fulfilled result, false otherwise.
+ * Filters an array of PromiseSettledResult objects to get only the fulfilled results and returns their values.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the values of the fulfilled results.
  */
-export const isFulfilled = (result: PromiseSettledResult<any>): result is PromiseFulfilledResult<any> =>
-    result.status === 'fulfilled';
+export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
+};
+
+/**
+ * Filters an array of PromiseSettledResult objects to get only the rejected results and returns their reasons.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the reasons for rejection of the rejected results.
+ */
+export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+};

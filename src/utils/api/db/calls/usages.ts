@@ -52,6 +52,7 @@ const recordUsage = async ({
     company_id,
     user_id,
     creator_id,
+    count = 1,
 }: {
     type: UsageType;
     startDate: Date;
@@ -60,6 +61,7 @@ const recordUsage = async ({
     company_id: string;
     user_id: string;
     creator_id?: string;
+    count?: number;
 }) => {
     if (!subscriptionLimit) {
         return { error: usageErrors.noSubscription };
@@ -108,7 +110,9 @@ const recordUsage = async ({
         type,
         item_id: creator_id,
     };
-    const { error: insertError } = await supabase.from('usages').insert([usage]);
+    // Example: Array(3).fill(usage) -> [usage, usage, usage]
+    const usageToRecord = Array(count).fill(usage);
+    const { error: insertError } = await supabase.from('usages').insert(usageToRecord);
     if (insertError) {
         return { error: usageErrors.errorRecordingUsage };
     }
@@ -152,7 +156,7 @@ export const recordReportUsage = async (company_id: string, user_id: string, cre
 };
 
 // Note: we might want to consider not recording usages for the default loading of the search page
-export const recordSearchUsage = async (company_id: string, user_id: string) => {
+export const recordSearchUsage = async (company_id: string, user_id: string, count = 1) => {
     const { data: company, error: companyError } = await supabase
         .from('companies')
         .select(
@@ -182,6 +186,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
         subscriptionLimit,
         company_id,
         user_id,
+        count,
     });
 };
 

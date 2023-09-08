@@ -1,6 +1,7 @@
 import Bottleneck from 'bottleneck';
 import { serverLogger } from 'src/utils/logger-server';
 import { clientLogger } from 'src/utils/logger-client';
+import { usageErrors } from 'src/errors/usages';
 
 /**
  * The interval between requests in milliseconds.
@@ -37,6 +38,10 @@ limiter.on('failed', async (error, jobInfo) => {
     const logger = typeof window === 'undefined' ? serverLogger : clientLogger;
 
     logger(`Job ${options.id} failed: ${error}, retries: ${retryCount}`, 'warn');
+
+    if (error.message === usageErrors.limitExceeded) {
+        return; // Don't retry if the error is due to our profile unlock/search usages being exceeded.
+    }
 
     if (retryCount < RETRY_LIMIT) {
         return REQUEST_INTERVAL;

@@ -5,15 +5,14 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Spinner } from '../icons';
+import { Brackets, Info, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
 import { Button } from '../button';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
 import { useTranslation } from 'react-i18next';
-import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
@@ -24,8 +23,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
-
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
@@ -34,36 +32,54 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
-    useEffect(() => {
-        setInfluencers(sequenceInfluencers);
-    }, [sequenceInfluencers]);
+    const influencers = useMemo<SequenceInfluencerManagerPage[]>(() => {
+        if (!sequenceInfluencers) {
+            return [];
+        }
+        if (filterSteps.length === 0) {
+            return sequenceInfluencers;
+        }
+        const filteredInfluencers = sequenceInfluencers.filter((influencer) => {
+            const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+            return step && step.name && filterSteps.includes(step.name);
+        });
+        return filteredInfluencers;
+    }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
-    const handleStep = useCallback(
+    const handleSetSelectedOptions = useCallback(
         (filters: CommonStatusType[]) => {
             setFilterSteps(filters);
-            if (!sequenceInfluencers) {
-                return;
-            }
-
-            if (filters.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            const filteredInfluencers = sequenceInfluencers.filter((x) => {
-                const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step - 1);
-                return step && step.name && filters.includes(step.name as CommonStatusType);
-            });
-
-            setInfluencers(filteredInfluencers);
         },
-        [sequenceInfluencers, sequenceSteps],
+        [setFilterSteps],
     );
 
-    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
-        return await sendSequence(sequenceInfluencers);
+    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencerManagerPage[]) => {
+        const results = await sendSequence(sequenceInfluencers);
+        try {
+            // handle optimistic update
+            const succeeded = results.filter((result) => !result.error);
+            if (succeeded.length > 0) {
+                const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
+
+                const updatedInfluencers: SequenceInfluencerManagerPage[] = sequenceInfluencers.map((influencer) => {
+                    if (succeededInfluencerIds.includes(influencer.id)) {
+                        return {
+                            ...influencer,
+                            funnel_status: 'In Sequence',
+                            sequence_step: 1,
+                        };
+                    }
+                    return influencer;
+                });
+                refreshSequenceInfluencers(updatedInfluencers, { revalidate: false });
+            }
+            // shouldn't need to update failed
+        } catch (error) {
+            return results;
+        }
+
+        return results;
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -78,11 +94,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setShowUpdateTemplateVariables(true);
     };
 
-    const needsAttentionInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'To Contact');
-    const inSequenceInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'In Sequence');
-    const ignoredInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
-
-    const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
+    const needsAttentionInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'To Contact');
+    const inSequenceInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'In Sequence');
+    const ignoredInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'Ignored');
+    const tabs: TabsProps<SequenceInfluencerManagerPage['funnel_status']>['tabs'] = [
         {
             label: 'sequences.needsAttention',
             value: 'To Contact',
@@ -110,7 +125,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     ];
     const [currentTab, setCurrentTab] = useState(tabs[0].value);
 
-    const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
+    const currentTabInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
+        : [];
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
@@ -120,10 +137,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             Object.keys(EMAIL_STEPS).forEach((option) => {
                 emailOptionsWithValue[option as CommonStatusType] = {
                     ...(options[option as CommonStatusType] || {}),
-                    value: influencers.filter((x) => {
-                        const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
-                        return step?.name === option;
-                    }).length,
+                    value: influencers
+                        ? influencers.filter((influencer) => {
+                              const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+                              return step?.name === option;
+                          }).length
+                        : 0,
                 };
             });
 
@@ -139,12 +158,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
-    const isMIssingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const autoStartTooltipTitle = isMIssingSequenceSendEmail
+    const autoStartTooltipTitle = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
         : t('sequences.autoStartTooltip');
-    const autoStartTooltipDescription = isMIssingSequenceSendEmail
+    const autoStartTooltipDescription = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables_variables', {
@@ -161,28 +180,24 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
             />
-            <div className="flex flex-col space-y-4 p-4">
-                <div className="flex w-full">
-                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
-                        <Tooltip
-                            content={autoStartTooltipTitle}
-                            detail={autoStartTooltipDescription}
-                            position="bottom-right"
-                        >
-                            <Switch
-                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
-                                checked={sequence?.auto_start ?? false}
-                                afterLabel={t('sequences.autoStart') || ''}
-                                onChange={(e) => {
-                                    handleAutostartToggle(e.target.checked);
-                                }}
-                            />
-                        </Tooltip>
-                    </div>
-                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
+            <div className="flex flex-col space-y-4 p-6">
+                <div className="flex w-fit gap-6">
+                    <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
+                    <Button
+                        onClick={handleOpenUpdateTemplateVariables}
+                        variant="secondary"
+                        className="relative ml-auto flex border-primary-600 bg-white text-primary-600"
+                    >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
+                        {missingVariables.length > 0 && (
+                            <div
+                                data-testid="missing-variables-alert"
+                                className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white"
+                            >
+                                {missingVariables.length}
+                            </div>
+                        )}
                     </Button>
                 </div>
                 <SequenceStats
@@ -203,14 +218,37 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                <section className="relative flex flex-row items-center justify-between border-b-2 pb-2">
+                    <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                    <div
+                        className="flex flex-row"
+                        onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
+                    >
+                        <Switch
+                            className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                            checked={sequence?.auto_start ?? false}
+                            afterLabel={t('sequences.autoStart') || ''}
+                            onChange={(e) => {
+                                handleAutostartToggle(e.target.checked);
+                            }}
+                        />
+                        <Tooltip
+                            content={autoStartTooltipTitle}
+                            detail={autoStartTooltipDescription}
+                            position="bottom-left"
+                            className="w-fit"
+                        >
+                            <Info className="ml-2 h-3 w-3 text-gray-300" />
+                        </Tooltip>
+                    </div>
+                </section>
 
                 <div className="flex flex-row gap-4">
                     <SelectMultipleDropdown
                         text={t('sequences.steps.filter')}
                         options={emailSteps}
                         selectedOptions={filterSteps}
-                        setSelectedOptions={handleStep}
+                        setSelectedOptions={handleSetSelectedOptions}
                         translationPath="sequences.steps"
                     />
                 </div>

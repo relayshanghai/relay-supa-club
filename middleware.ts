@@ -77,7 +77,7 @@ const checkOnboardingStatus = async (
             req.nextUrl.pathname === '/login' ||
             req.nextUrl.pathname.includes('/signup')
         ) {
-            redirectUrl.pathname = '/dashboard';
+            redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
 
@@ -120,13 +120,8 @@ const checkOnboardingStatus = async (
         ) {
             return res;
         }
-        const curStep = new URL(req.url).searchParams.get('curStep');
-        if (curStep === '5') {
-            return res;
-        }
-        redirectUrl.pathname = '/signup';
-        redirectUrl.searchParams.set('curStep', '5');
 
+        redirectUrl.pathname = '/free-trial';
         return NextResponse.redirect(redirectUrl);
     }
 
@@ -226,7 +221,8 @@ export const config = {
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
          * - /api/webhooks/* (webhook routes)
+         * - free-trial - (free-trial page)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|free-trial).*)',
     ],
 };

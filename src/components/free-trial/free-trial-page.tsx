@@ -12,6 +12,9 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { nextFetch } from 'src/utils/fetcher';
+import type { SubscriptionCreateTrialResponse } from 'pages/api/subscriptions/create-trial-without-payment-intent';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -27,8 +30,9 @@ const FreeTrialPage = () => {
     const [showModal, setShowModal] = useState(false);
     const { createSequence } = useSequence();
     const { profile } = useUser();
+    const [error, setError] = useState('');
 
-    const CreateDefaultSequence = async () => {
+    const createDefaultSequence = async () => {
         if (!profile) {
             throw new Error('No profile found');
         }
@@ -43,27 +47,35 @@ const FreeTrialPage = () => {
 
     const startFreeTrial = async () => {
         setLoading(true);
+        setError('');
         try {
-            const response = await fetch('/api/subscriptions/create-trial-without-payment-intent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await nextFetch<SubscriptionCreateTrialResponse>(
+                'subscriptions/create-trial-without-payment-intent',
+                {
+                    method: 'POST',
+                    body: {
+                        companyId: company?.id,
+                        termsChecked: termsChecked,
+                    },
                 },
-                body: JSON.stringify({
-                    companyId: company?.id,
-                    termsChecked: termsChecked,
-                }),
-            });
+            );
 
-            await response.json();
-            if (response.status === 200) {
-                trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
-                CreateDefaultSequence();
-                router.push('/dashboard');
+            if (response.status === 'trialing' || response.status === 'active') {
+                await trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
+                await createDefaultSequence();
+                await router.push('/boostbot');
+            } else {
+                throw new Error(JSON.stringify(response));
             }
-        } catch (error) {
-            clientLogger(error, 'error');
+        } catch (error: any) {
+            clientLogger(error, 'error', true); //send to Sentry
+            setError(error?.message || t('signup.errorStartingTrial'));
+            if (error?.message === createSubscriptionErrors.alreadySubscribed) {
+                await router.push('/boostbot');
+            }
+            await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
         }
+        setLoading(false);
     };
 
     return (
@@ -179,6 +191,7 @@ const FreeTrialPage = () => {
             </Button>
 
             <div className="pt-20 text-center">
+                {error && <p className="text-red-500">{error}</p>}
                 <button type="button" className="ml-2 px-1 pb-1 pt-1 text-xs" onClick={logout}>
                     {t('login.stuckHereTryAgain1')}
                     <Link
@@ -197,7 +210,11 @@ const FreeTrialPage = () => {
                     <div className="w-2/3 rounded-md bg-white p-8">
                         <div className="flex items-center justify-between">
                             <h2 className="text-xl font-bold">{t('signup.freeTrial.termsAndCondition.title')}</h2>
-                            <button className="ml-4 cursor-pointer" onClick={() => setShowModal(false)}>
+                            <button
+                                data-test="close-button"
+                                className="ml-4 cursor-pointer"
+                                onClick={() => setShowModal(false)}
+                            >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
