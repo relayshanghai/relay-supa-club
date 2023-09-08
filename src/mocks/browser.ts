@@ -117,6 +117,12 @@ const frontendHandlers = [
         }
         return res(ctx.json(defaultSocialProfile));
     }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_emails`, (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_steps`, (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
 ];
 /** for use in the browser */
 export const worker = setupWorker(...frontendHandlers);
