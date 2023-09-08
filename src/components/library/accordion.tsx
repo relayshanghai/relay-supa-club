@@ -25,7 +25,7 @@ export const Accordion = ({ content }: { content: AccordionContent[] }) => {
                                 </Disclosure.Button>
                             </dt>
                             <Disclosure.Panel as="dd" className="mt-2 pr-12">
-                                <p className="text-base leading-7 text-gray-500">{detail}</p>
+                                <p className="whitespace-pre-wrap text-base leading-7 text-gray-500">{detail}</p>
                             </Disclosure.Panel>
                         </>
                     )}
