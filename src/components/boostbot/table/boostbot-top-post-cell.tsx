@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { Influencer } from 'pages/boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSocialProfile } from 'src/utils/analytics/events';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { numberFormatter } from 'src/utils/formatter';
 
 export type BoostbotTopPostsCellProps = {
@@ -30,6 +31,7 @@ export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
                             className="group flex h-40 w-40 flex-col overflow-hidden rounded-md border"
                             onClick={() => {
                                 track(OpenSocialProfile, {
+                                    currentPage: CurrentPageEvent.boostbot,
                                     is_unlocked: true,
                                     results_index: row.index,
                                     thumbnail_index: index,
