@@ -1,8 +1,8 @@
-import type { IUserContext } from '../hooks/use-user';
+import type { ProfileDB } from 'src/utils/api/db';
 
 export const testSequenceId = 'b7ddd2a8-e114-4423-8cc6-30513c885f07';
 
-export const mockProfile: IUserContext['profile'] = {
+export const mockProfile: ProfileDB = {
     id: '1',
     user_role: 'company_owner',
     company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
