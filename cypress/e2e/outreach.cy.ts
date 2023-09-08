@@ -108,6 +108,8 @@ describe('outreach', () => {
         });
         // can delete influencer
         cy.contains('Charlie Charles');
+        cy.contains('Alice Anderson');
+        cy.getByTestId('influencer-checkbox').eq(1).check();
         cy.getByTestId('influencer-checkbox').eq(2).check();
         cy.getByTestId('delete-influencers-button').click();
         cy.contains(
@@ -116,6 +118,7 @@ describe('outreach', () => {
         cy.contains('button', 'Yes, delete them').click();
         cy.contains('Influencer successfully deleted from sequence');
         cy.contains('Charlie Charles').should('not.exist');
+        cy.contains('Alice Anderson').should('not.exist');
 
         // send sequence is disabled if missing template variables
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
