@@ -86,7 +86,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr className="border-b-2 border-gray-200">
-                        <th>
+                        <th className="bg-white px-4">
                             <input
                                 className="display-none appearance-none rounded border-gray-300 checked:text-primary-500"
                                 type="checkbox"

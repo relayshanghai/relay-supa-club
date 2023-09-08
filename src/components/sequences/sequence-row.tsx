@@ -160,7 +160,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 templateVariables={templateVariables}
             />
             <tr className="border-b-2 border-gray-200 bg-white text-sm">
-                <td className="display-none items-center whitespace-nowrap text-center">
+                <td className="display-none items-center whitespace-nowrap text-center align-middle">
                     <input
                         data-testid="influencer-checkbox"
                         className="appearance-none rounded border-gray-300 checked:text-primary-500"
