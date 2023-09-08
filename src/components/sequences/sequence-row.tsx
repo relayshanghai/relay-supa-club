@@ -6,7 +6,7 @@ import Link from 'next/link';
 import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { SequenceEmail, SequenceInfluencer, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
 import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
@@ -20,22 +20,23 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceRowProps {
-    sequenceInfluencer: SequenceInfluencer;
+    sequenceInfluencer: SequenceInfluencerManagerPage;
     lastEmail?: SequenceEmail;
     nextEmail?: SequenceEmail;
     lastStep?: SequenceStep;
     nextStep?: SequenceStep;
     sequenceSteps: SequenceStep[];
-    currentTab: SequenceInfluencer['funnel_status'];
+    currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
     onCheckboxChange?: (id: string) => void;
     checked?: boolean;
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
 const Icons = {
@@ -117,6 +118,13 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             }
             if (failed.length > 0) {
                 toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+                track(StartSequenceForInfluencer, {
+                    influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                    sequence_id: sequenceInfluencer.sequence_id,
+                    sequence_influencer_id: sequenceInfluencer.id,
+                    is_success: false,
+                    extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule' },
+                });
             }
         } catch (error: any) {
             track(StartSequenceForInfluencer, {
