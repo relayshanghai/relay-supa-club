@@ -59,7 +59,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-visible">
+        <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr className="border-b-2 border-gray-200">
