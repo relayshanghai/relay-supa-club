@@ -29,7 +29,7 @@ export const LanguageToggle = () => {
                         trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
                 >
-                    {i18next.language === 'zh-CN' ? 'English' : '中文'}
+                    {i18next.language === 'zh-CN' ? 'EN' : '中文'}
                 </button>
             </div>
         </div>
