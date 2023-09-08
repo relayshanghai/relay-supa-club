@@ -7,10 +7,8 @@ describe('Landing Page', () => {
     it('Landing page loads, has both languages, and links to signup', () => {
         cy.visit('/');
         cy.contains('relay.club可以帮助');
-        cy.contains('button', 'EN');
         cy.switchToEnglish();
         cy.reload();
-        cy.contains('button', '中文');
         cy.contains('relay.club可以帮助').should('not.exist');
         cy.contains('relay.club can help.');
         cy.contains('Already signed up?Log in');

@@ -3,6 +3,7 @@ import type { LegacyRef } from 'react';
 import i18next from 'i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANGUAGE_TOGGLE } from 'src/utils/rudderstack/event-names';
+import { LanguageToggleIcon } from '../icons';
 
 export const LanguageToggle = () => {
     const toggleLanguage = (value: string) => {
@@ -29,7 +30,7 @@ export const LanguageToggle = () => {
                         trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
                 >
-                    {i18next.language === 'zh-CN' ? 'EN' : '中文'}
+                    <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-500" />
                 </button>
             </div>
         </div>

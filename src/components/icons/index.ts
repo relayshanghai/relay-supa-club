@@ -81,3 +81,4 @@ export { default as BoostbotDefault } from './Boostbot_default';
 export { default as BoostbotSelected } from './Boostbot_selected';
 export { default as Payment } from './Payment';
 export { default as Alipay } from './Alipay';
+export { default as LanguageToggleIcon } from './LanguageToggleIcon';
