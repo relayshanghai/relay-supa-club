@@ -101,7 +101,7 @@ const frontendHandlers = [
         const company_id = req.url.searchParams.get('company_id')?.split('eq.')[1];
         if (id) {
             return res(ctx.json(defaultSequence));
-        } else if (company_id === mockProfile.company_id) {
+        } else if (company_id === mockProfile?.company_id) {
             return res(ctx.json(allSequencesByCompany));
         }
         return res(ctx.json(defaultSequence));
@@ -116,6 +116,12 @@ const frontendHandlers = [
             }
         }
         return res(ctx.json(defaultSocialProfile));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_emails`, (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_steps`, (req, res, ctx) => {
+        return res(ctx.json([]));
     }),
 ];
 /** for use in the browser */
