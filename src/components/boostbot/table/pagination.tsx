@@ -36,8 +36,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             table.setPageIndex(0)
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
-                                fromPage: table.getState().pagination.pageIndex + 1,
-                                toPage: table.getCanPreviousPage() ? 1 : null,
+                                from_page: table.getState().pagination.pageIndex + 1,
+                                to_page: table.getCanPreviousPage() ? 1 : null,
                             })
                         }}
                         disabled={!table.getCanPreviousPage()}
@@ -52,8 +52,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             table.previousPage()
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
-                                fromPage: table.getState().pagination.pageIndex + 1,
-                                toPage: table.getCanPreviousPage() ? table.getState().pagination.pageIndex - 2 : null,
+                                from_page: table.getState().pagination.pageIndex + 1,
+                                to_page: table.getCanPreviousPage() ? table.getState().pagination.pageIndex - 2 : null,
                             })
                         }}
                         disabled={!table.getCanPreviousPage()}
@@ -68,8 +68,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             table.nextPage()
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
-                                fromPage: table.getState().pagination.pageIndex + 1,
-                                toPage: table.getCanNextPage() ? table.getState().pagination.pageIndex + 2 : null,
+                                from_page: table.getState().pagination.pageIndex + 1,
+                                to_page: table.getCanNextPage() ? table.getState().pagination.pageIndex + 2 : null,
                             })
                         }}
                         disabled={!table.getCanNextPage()}
@@ -84,8 +84,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             table.setPageIndex(table.getPageCount() - 1)
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
-                                fromPage: table.getState().pagination.pageIndex + 1,
-                                toPage: table.getCanNextPage() ? table.getPageCount() : null,
+                                from_page: table.getState().pagination.pageIndex + 1,
+                                to_page: table.getCanNextPage() ? table.getPageCount() : null,
                             })
                         }}
                         disabled={!table.getCanNextPage()}

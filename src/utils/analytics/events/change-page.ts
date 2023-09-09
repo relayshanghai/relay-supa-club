@@ -5,8 +5,8 @@ export const CHANGE_PAGE = 'Change Page';
 
 export type ChangePagePayload = {
     currentPage: CurrentPageEvent;
-    fromPage: number;
-    toPage: number | null;
+    from_page: number;
+    to_page: number | null;
 };
 
 export const ChangePage = (trigger: TriggerEvent, value?: ChangePagePayload) =>
