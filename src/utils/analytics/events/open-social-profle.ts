@@ -1,7 +1,7 @@
 import type { TriggerEvent } from '../types';
 import type { CurrentPageEvent } from './current-pages';
 
-export const OPEN_SOCIAL_PROFILE = 'TEST:Open Social Profile';
+export const OPEN_SOCIAL_PROFILE = 'Open Social Profile';
 
 export type OpenSocialProfilePayload = {
     currentPage: CurrentPageEvent;
