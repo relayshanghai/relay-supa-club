@@ -7,6 +7,9 @@ import {
 import type { Table } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ChangePage } from 'src/utils/analytics/events';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
@@ -14,6 +17,7 @@ interface DataTablePaginationProps<TData> {
 
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
 
     return (
         <div className="flex items-center justify-end">
@@ -28,7 +32,14 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     <Button
                         variant="primary"
                         className="hidden h-8 w-8 items-center justify-center !px-0 !py-0 lg:flex"
-                        onClick={() => table.setPageIndex(0)}
+                        onClick={() => {
+                            table.setPageIndex(0)
+                            track(ChangePage, {
+                                currentPage: CurrentPageEvent.boostbot,
+                                fromPage: table.getState().pagination.pageIndex + 1,
+                                toPage: table.getCanPreviousPage() ? 1 : null,
+                            })
+                        }}
                         disabled={!table.getCanPreviousPage()}
                     >
                         <span className="sr-only">Go to first page</span>
@@ -37,7 +48,14 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     <Button
                         variant="primary"
                         className="flex h-8 w-8 items-center justify-center !px-0 !py-0"
-                        onClick={() => table.previousPage()}
+                        onClick={() => {
+                            table.previousPage()
+                            track(ChangePage, {
+                                currentPage: CurrentPageEvent.boostbot,
+                                fromPage: table.getState().pagination.pageIndex + 1,
+                                toPage: table.getCanPreviousPage() ? table.getState().pagination.pageIndex - 2 : null,
+                            })
+                        }}
                         disabled={!table.getCanPreviousPage()}
                     >
                         <span className="sr-only">Go to previous page</span>
@@ -46,7 +64,14 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     <Button
                         variant="primary"
                         className="flex h-8 w-8 items-center justify-center !px-0 !py-0"
-                        onClick={() => table.nextPage()}
+                        onClick={() => {
+                            table.nextPage()
+                            track(ChangePage, {
+                                currentPage: CurrentPageEvent.boostbot,
+                                fromPage: table.getState().pagination.pageIndex + 1,
+                                toPage: table.getCanNextPage() ? table.getState().pagination.pageIndex + 2 : null,
+                            })
+                        }}
                         disabled={!table.getCanNextPage()}
                     >
                         <span className="sr-only">Go to next page</span>
@@ -55,7 +80,14 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     <Button
                         variant="primary"
                         className="hidden h-8 w-8 items-center justify-center !px-0 !py-0 lg:flex"
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                        onClick={() => {
+                            table.setPageIndex(table.getPageCount() - 1)
+                            track(ChangePage, {
+                                currentPage: CurrentPageEvent.boostbot,
+                                fromPage: table.getState().pagination.pageIndex + 1,
+                                toPage: table.getCanNextPage() ? table.getPageCount() : null,
+                            })
+                        }}
                         disabled={!table.getCanNextPage()}
                     >
                         <span className="sr-only">Go to last page</span>
