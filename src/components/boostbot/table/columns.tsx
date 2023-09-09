@@ -7,11 +7,11 @@ import {
     EyeIcon,
     HandThumbUpIcon,
     Bars3BottomLeftIcon,
-    XMarkIcon,
 } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import { numberFormatter } from 'src/utils/formatter';
 import { Instagram, Youtube, Tiktok, Spinner } from 'src/components/icons';
+import { BoostbotRemoveKolCell } from './boostbot-remove-kol-cell';
 
 export const columns: ColumnDef<Influencer>[] = [
     {
@@ -146,20 +146,6 @@ export const columns: ColumnDef<Influencer>[] = [
     {
         id: 'remove',
         header: '',
-        cell: ({ row, table }) => {
-            const removeInfluencer = () => {
-                table.options.meta?.removeInfluencer(row.original.user_id);
-            };
-
-            return (
-                <button
-                    className="flex h-6 w-6"
-                    onClick={removeInfluencer}
-                    aria-label={table.options.meta?.t('boostbot.table.removeInfluencer')}
-                >
-                    <XMarkIcon className="h-full w-full flex-shrink-0 fill-red-300 transition-all hover:scale-105 hover:fill-red-400" />
-                </button>
-            );
-        },
+        cell: BoostbotRemoveKolCell,
     },
 ];
