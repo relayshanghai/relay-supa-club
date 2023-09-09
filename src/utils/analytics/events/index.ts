@@ -65,7 +65,10 @@ import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
     SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
-import { OPEN_SOCIAL_PROFILE, OpenSocialProfile, OpenSocialProfilePayload } from './open-social-profle';
+import type { OpenSocialProfilePayload } from './open-social-profle';
+import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
+import type { StopBoostbotPayload } from './stop-boostbot';
+import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 
 export {
     Search,
@@ -94,6 +97,7 @@ export {
     UnlockInfluencers,
     SendInfluencersToOutreach,
     OpenSocialProfile,
+    StopBoostbot,
 };
 
 export const events = {
@@ -123,6 +127,7 @@ export const events = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
+    [STOP_BOOSTBOT]: StopBoostbot,
 };
 
 export type payloads = {
@@ -152,6 +157,7 @@ export type payloads = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
+    [STOP_BOOSTBOT]: StopBoostbotPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -183,6 +189,7 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
+    z.literal(STOP_BOOSTBOT),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
