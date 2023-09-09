@@ -16,6 +16,7 @@ import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays } from 'src/utils/utils';
 import type { MessageType } from 'pages/boostbot';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 export type ProgressType = {
     topics: string[];
@@ -101,6 +102,7 @@ export const Chat: React.FC<ChatProps> = ({
         setIsSearchLoading(true);
 
         const payload: RecommendInfluencersPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             query: productDescription,
             topics_generated: [],
             valid_topics: [],
