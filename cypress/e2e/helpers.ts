@@ -52,8 +52,8 @@ export const reinsertAlice = async () => {
         const reinsert: SequenceInfluencerInsert = {
             added_by: testUser?.id || '',
             company_id: testCompany?.id || '',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: '2023-09-11 03:58:42.452421+00',
+            updated_at: '2023-09-11 03:58:42.452421+00',
             sequence_id: testSequence?.id || '',
             influencer_social_profile_id: charlieProfile?.id || '',
             funnel_status: 'To Contact',
@@ -102,8 +102,8 @@ export const reinsertCharlie = async () => {
         const reinsert: SequenceInfluencerInsert = {
             added_by: testUser?.id || '',
             company_id: testCompany?.id || '',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: '2030-01-01 00:00:00+00',
+            updated_at: '2023-09-11 03:58:42.452421+00',
             sequence_id: testSequence?.id || '',
             influencer_social_profile_id: charlieProfile?.id || '',
             funnel_status: 'To Contact',
