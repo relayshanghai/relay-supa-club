@@ -60,53 +60,49 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="border-b-2 border-gray-200">
-                        {columns.map((column) => (
-                            <th
-                                key={column}
-                                className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
-                            >
-                                {t(`sequences.columns.${column}`)}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedInfluencers?.map((influencer) => {
-                        const influencerEmails = sequenceEmails?.filter(
-                            (email) => email.sequence_influencer_id === influencer.id,
-                        );
-                        const lastStep = sequenceSteps.find(
-                            (step) => step.step_number === influencer.sequence_step - 1,
-                        );
-                        const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
-                        const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
-                        const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
+        <table className="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr className="border-b-2 border-gray-200">
+                    {columns.map((column) => (
+                        <th
+                            key={column}
+                            className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
+                        >
+                            {t(`sequences.columns.${column}`)}
+                        </th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {sortedInfluencers?.map((influencer) => {
+                    const influencerEmails = sequenceEmails?.filter(
+                        (email) => email.sequence_influencer_id === influencer.id,
+                    );
+                    const lastStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step - 1);
+                    const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
+                    const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
+                    const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
 
-                        return (
-                            <SequenceRow
-                                key={influencer.id}
-                                sequenceInfluencer={influencer}
-                                lastEmail={lastEmail}
-                                nextEmail={nextEmail}
-                                lastStep={lastStep}
-                                nextStep={nextStep}
-                                sequenceSteps={sequenceSteps}
-                                currentTab={currentTab}
-                                isMissingVariables={isMissingVariables}
-                                missingVariables={missingVariables}
-                                setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
-                                templateVariables={templateVariables}
-                                handleStartSequence={handleStartSequence}
-                            />
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
+                    return (
+                        <SequenceRow
+                            key={influencer.id}
+                            sequenceInfluencer={influencer}
+                            lastEmail={lastEmail}
+                            nextEmail={nextEmail}
+                            lastStep={lastStep}
+                            nextStep={nextStep}
+                            sequenceSteps={sequenceSteps}
+                            currentTab={currentTab}
+                            isMissingVariables={isMissingVariables}
+                            missingVariables={missingVariables}
+                            setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
+                            templateVariables={templateVariables}
+                            handleStartSequence={handleStartSequence}
+                        />
+                    );
+                })}
+            </tbody>
+        </table>
     );
 };
 
