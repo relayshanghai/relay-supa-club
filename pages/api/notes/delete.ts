@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq('user_id', profileId);
 
     if (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
     const result: CampaignNotesDeleteResponse = campaignNotes;
 

@@ -3,7 +3,7 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OUTREACH_EMAIL_COMPLAINT = 'outreach-email_complaint';
 
 export type EmailComplaintPayload = EventPayload<{
-    extra_info?: any
+    extra_info?: any;
 }>;
 
 export const EmailComplaint = (trigger: TriggerEvent<EmailComplaintPayload>, payload?: EmailComplaintPayload) =>

@@ -34,58 +34,70 @@ export const ProfileShippingDetailsTab = (props: Props) => {
     return (
         <>
             <p className="mb-2 text-xl font-semibold text-gray-600">{t('profile.shippingDetails')}</p>
-            <ShippingDetailsNameInput
-                label={t('profile.name') as string}
-                placeholder="D’Jan Curtis"
-                value={data.shippingDetails.name}
-                onInput={(e) => onUpdate('name', e.currentTarget.value)}
-            />
-            <ShippingDetailsPhoneNumberInput
-                label={t('profile.phoneNumber') as string}
-                placeholder="1-433-3453456"
-                value={data.shippingDetails.phoneNumber}
-                onInput={(e) => onUpdate('phoneNumber', e.currentTarget.value)}
-            />
-            <ShippingDetailsStreetAddressInput
-                label={t('profile.streetAddress') as string}
-                placeholder="755 Roosevelt Street"
-                value={data.shippingDetails.streetAddress}
-                onInput={(e) => onUpdate('streetAddress', e.currentTarget.value)}
-            />
-            <ShippingDetailsCityInput
-                label={t('profile.city') as string}
-                placeholder="New York"
-                value={data.shippingDetails.city}
-                onInput={(e) => onUpdate('city', e.currentTarget.value)}
-            />
-            <ShippingDetailsStateInput
-                label={t('profile.state') as string}
-                placeholder="New York"
-                value={data.shippingDetails.state}
-                onInput={(e) => onUpdate('state', e.currentTarget.value)}
-            />
-            <ShippingDetailsCountryInput
-                label={t('profile.country') as string}
-                placeholder="United States"
-                value={data.shippingDetails.country}
-                onInput={(e) => onUpdate('country', e.currentTarget.value)}
-            />
-            <ShippingDetailsPostalCodeInput
-                label={t('profile.postalCode') as string}
-                placeholder="14450"
-                value={data.shippingDetails.postalCode}
-                onInput={(e) => onUpdate('postalCode', e.currentTarget.value)}
-            />
-            <ShippingDetailsTrackingCodeInput
-                label={t('profile.trackingCode') as string}
-                value={data.shippingDetails.trackingCode}
-                onInput={(e) => onUpdate('trackingCode', e.currentTarget.value)}
-            />
-            <ShippingDetailsFullAddressInput
-                label={t('profile.fullAddress') as string}
-                value={data.shippingDetails.fullAddress}
-                onInput={(e) => onUpdate('fullAddress', e.currentTarget.value)}
-            />
+            <section className="grid grid-rows-2 gap-2 xl:grid-cols-2 xl:grid-rows-none xl:gap-4">
+                <ShippingDetailsNameInput
+                    label={t('profile.name') as string}
+                    placeholder="D’Jan Curtis"
+                    value={data.shippingDetails.name}
+                    onInput={(e) => onUpdate('name', e.currentTarget.value)}
+                />
+                <ShippingDetailsPhoneNumberInput
+                    label={t('profile.phoneNumber') as string}
+                    placeholder="1-433-3453456"
+                    value={data.shippingDetails.phoneNumber}
+                    onInput={(e) => onUpdate('phoneNumber', e.currentTarget.value)}
+                />
+            </section>
+            <div className="mb-6 h-px border border-neutral-200" />
+            <section className="grid grid-rows-2 gap-2 xl:grid-cols-2 xl:grid-rows-none xl:gap-4">
+                <ShippingDetailsStreetAddressInput
+                    label={t('profile.streetAddress') as string}
+                    placeholder="755 Roosevelt Street"
+                    value={data.shippingDetails.streetAddress}
+                    onInput={(e) => onUpdate('streetAddress', e.currentTarget.value)}
+                />
+                <ShippingDetailsCityInput
+                    label={t('profile.city') as string}
+                    placeholder="New York"
+                    value={data.shippingDetails.city}
+                    onInput={(e) => onUpdate('city', e.currentTarget.value)}
+                />
+            </section>
+            <section className="grid grid-rows-1 gap-2 xl:grid-cols-2 xl:grid-rows-none xl:gap-4">
+                <ShippingDetailsStateInput
+                    label={t('profile.state') as string}
+                    placeholder="New York"
+                    value={data.shippingDetails.state}
+                    onInput={(e) => onUpdate('state', e.currentTarget.value)}
+                />
+                <section className="grid grid-cols-2 gap-4">
+                    <ShippingDetailsCountryInput
+                        label={t('profile.country') as string}
+                        placeholder="United States"
+                        value={data.shippingDetails.country}
+                        onInput={(e) => onUpdate('country', e.currentTarget.value)}
+                    />
+                    <ShippingDetailsPostalCodeInput
+                        label={t('profile.postalCode') as string}
+                        placeholder="14450"
+                        value={data.shippingDetails.postalCode}
+                        onInput={(e) => onUpdate('postalCode', e.currentTarget.value)}
+                    />
+                </section>
+            </section>
+            <div className="mb-6 h-px border border-neutral-200" />
+            <section className="grid grid-rows-2 gap-2 xl:grid-cols-2 xl:grid-rows-none xl:gap-4">
+                <ShippingDetailsTrackingCodeInput
+                    label={t('profile.trackingCode') as string}
+                    value={data.shippingDetails.trackingCode}
+                    onInput={(e) => onUpdate('trackingCode', e.currentTarget.value)}
+                />
+                <ShippingDetailsFullAddressInput
+                    label={t('profile.fullAddress') as string}
+                    value={data.shippingDetails.fullAddress}
+                    onInput={(e) => onUpdate('fullAddress', e.currentTarget.value)}
+                />
+            </section>
         </>
     );
 };

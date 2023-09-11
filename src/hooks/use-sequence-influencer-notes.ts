@@ -4,7 +4,7 @@ import type {
 } from 'pages/api/notes/influencer';
 import type {
     GetSequenceInfluencerNotesRequest,
-    GetSequenceInfluencerNotesResponse
+    GetSequenceInfluencerNotesResponse,
 } from 'pages/api/notes/influencer/[id]';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { ProfileValue } from 'pages/api/sequence/influencers/[id]';
@@ -50,7 +50,9 @@ export const useSequenceInfluencerNotes = () => {
                                     note.profiles && note.profiles.avatar_url
                                         ? note.profiles.avatar_url
                                         : `https://api.dicebear.com/6.x/open-peeps/svg?seed=relay-manager-no-name@example.com&size=96`,
-                                name: note.profiles ? `${note.profiles.first_name} ${note.profiles.last_name}` : 'No Name',
+                                name: note.profiles
+                                    ? `${note.profiles.first_name} ${note.profiles.last_name}`
+                                    : 'No Name',
                             },
                             content: note.comment ?? '',
                             id: note.id,

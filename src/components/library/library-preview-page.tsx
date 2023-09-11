@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import * as library from './index';
 import { Input } from '../input';
+import { Button } from '../button';
+
+const Buttons = () => (
+    <div className="m-5">
+        <h2 className="text-lg font-bold"> Buttons</h2>
+        <div className="m-5 flex flex-wrap space-x-3 bg-slate-100 p-5">
+            <Button variant="primary">primary</Button>
+            <Button variant="secondary">secondary</Button>
+            <Button variant="ghost">ghost</Button>
+            <Button variant="neutral">neutral</Button>
+        </div>
+    </div>
+);
 
 const Badges = () => (
     <div className="m-5">
@@ -220,8 +233,46 @@ export const SelectMultipleDropdowns = () => {
     );
 };
 
+const AccordionAndFaq = () => {
+    const content = [
+        {
+            title: "Q: What's the best thing about Switzerland?",
+            detail: "A: I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.\nAnother line. Does the line break work?",
+        },
+        {
+            title: "Q: What's the best thing about mars?",
+            detail: 'A: The mountains are a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.',
+        },
+    ];
+
+    const title = 'Your Frequently Asked Questions';
+    const [modalOpen, setModalOpen] = useState(false);
+    const props = {
+        content,
+        title,
+        getMoreInfoButtonText: 'Get More Info',
+        getMoreInfoButtonAction: () => {
+            alert('get more info');
+        },
+        visible: modalOpen,
+        onClose: () => setModalOpen(false),
+    };
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Accordion and FAQ</h2>
+            <p>Accordion, FAQ</p>
+            <div className="m-5 flex flex-col space-y-3 bg-slate-100 p-5">
+                <library.Accordion {...props} />
+                <Button onClick={() => setModalOpen(true)}>Open FAQ Modal</Button>
+                <library.FaqModal {...props} />
+            </div>
+        </div>
+    );
+};
+
 const LibraryPage = () => (
     <>
+        <Buttons />
         <Badges />
         <Tooltips />
         <Switches />
@@ -229,6 +280,7 @@ const LibraryPage = () => (
         <Inputs />
         <Tabs />
         <SelectMultipleDropdowns />
+        <AccordionAndFaq />
     </>
 );
 

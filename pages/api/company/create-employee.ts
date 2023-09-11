@@ -40,7 +40,7 @@ const getOrCreateRelayCompany = async () => {
                 website: relayCompanyConfig.website,
             });
             if (createRelayCompanyError || !companyCreated?.id) {
-                serverLogger(createRelayCompanyError, 'error');
+                serverLogger(createRelayCompanyError);
                 throw new Error(createRelayCompanyError?.message ?? 'Missing company id.');
             }
             relayCompany = companyCreated;
@@ -76,7 +76,7 @@ const getOrCreateRelayCompany = async () => {
         }
         return { data: relayCompany, error: null };
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return { data: null, error };
     }
 };
@@ -91,18 +91,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: company, error: getOrcreateCompanyError } = await getOrCreateRelayCompany();
 
             if (!company?.id || getOrcreateCompanyError) {
-                serverLogger(getOrcreateCompanyError, 'error');
+                serverLogger(getOrcreateCompanyError);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const { data: profile, error: getProfileError } = await getProfileByEmail(email);
             if (getProfileError) {
-                serverLogger(getProfileError, 'error');
+                serverLogger(getProfileError);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const { error: makeAdminError } = await updateUserRole(profile.id, 'relay_employee');
             if (makeAdminError) {
-                serverLogger(makeAdminError, 'error');
+                serverLogger(makeAdminError);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const { error: updateProfileError, data: updateProfileData } = await updateProfile({
@@ -110,14 +110,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 company_id: company.id,
             });
             if (!updateProfileData || updateProfileError) {
-                serverLogger(updateProfileError, 'error');
+                serverLogger(updateProfileError);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const response: CreateEmployeePostResponse = updateProfileData;
 
             return res.status(httpCodes.OK).json(response);
         } catch (error) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

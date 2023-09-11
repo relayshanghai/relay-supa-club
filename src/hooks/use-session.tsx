@@ -45,53 +45,51 @@ const updateSession = (update: Session | null, current: Session | null, onUpdate
  */
 export const useSession = (params?: useSessionParams) => {
     const { session: supabaseSession, supabaseClient } = useSessionContext();
-    const control = useRef<AbortController>(new AbortController())
+    const control = useRef<AbortController>(new AbortController());
 
     const [session, setSession] = useState<Session | null>(supabaseSession);
     const [profile, setProfile] = useState<ProfilesTable['Row'] | null>(null);
     const [company, setCompany] = useState<CompanyTable['Row'] | null>(null);
 
-    const getProfile = useCallback(async (session: Session | null) => {
-        if (session === null) return null;
+    const getProfile = useCallback(
+        async (session: Session | null) => {
+            if (session === null) return null;
 
-        const { data, error } = await supabaseClient
-            .from<"profiles", DatabaseWithCustomTypes["public"]["Tables"]["profiles"]>('profiles')
-            .select()
-            .abortSignal(control.current.signal)
-            .eq('id', session.user.id)
-            .maybeSingle();
+            const { data, error } = await supabaseClient
+                .from<'profiles', DatabaseWithCustomTypes['public']['Tables']['profiles']>('profiles')
+                .select()
+                .abortSignal(control.current.signal)
+                .eq('id', session.user.id)
+                .maybeSingle();
 
-        if (error && error.code === '20') {
-            return null;
-        }
+            if (error) {
+                return null;
+            }
 
-        if (error) {
-            throw error;
-        }
+            return data;
+        },
+        [supabaseClient],
+    );
 
-        return data
-    }, [supabaseClient])
+    const getCompany = useCallback(
+        async (companyId: string | null) => {
+            if (companyId === null) return null;
 
-    const getCompany = useCallback(async (companyId: string | null) => {
-        if (companyId === null) return null;
+            const { data, error } = await supabaseClient
+                .from<'companies', DatabaseWithCustomTypes['public']['Tables']['companies']>('companies')
+                .select()
+                .abortSignal(control.current.signal)
+                .eq('id', companyId)
+                .maybeSingle();
 
-        const { data, error } = await supabaseClient
-            .from<"companies", DatabaseWithCustomTypes["public"]["Tables"]["companies"]>('companies')
-            .select()
-            .abortSignal(control.current.signal)
-            .eq('id', companyId)
-            .maybeSingle();
+            if (error) {
+                return null;
+            }
 
-        if (error && error.code === '20') {
-            return null;
-        }
-
-        if (error) {
-            throw error;
-        }
-
-        return data
-    }, [supabaseClient])
+            return data;
+        },
+        [supabaseClient],
+    );
 
     const refreshSession = useCallback(() => {
         setSession(supabaseSession);
@@ -99,9 +97,9 @@ export const useSession = (params?: useSessionParams) => {
 
     useEffect(() => {
         const cleanup = () => {
-            control.current.abort()
+            control.current.abort();
             control.current = new AbortController();
-        }
+        };
 
         // @ts-ignore session.user.session_id is not included in the User type
         if (supabaseSession && session && supabaseSession.user.session_id === session.user.session_id) return;
@@ -116,11 +114,11 @@ export const useSession = (params?: useSessionParams) => {
 
             if (loadedProfile && company) {
                 setCompany((s) => {
-                    return (company && s?.id !== company.id) ? company : s;
-                })
+                    return company && s?.id !== company.id ? company : s;
+                });
 
                 setProfile((s) => {
-                    return (loadedProfile && s?.id !== loadedProfile.id) ? loadedProfile : s;
+                    return loadedProfile && s?.id !== loadedProfile.id ? loadedProfile : s;
                 });
             }
 
@@ -143,12 +141,12 @@ export const useSession = (params?: useSessionParams) => {
             });
 
             if (supabaseSession === null) {
-                setProfile((s) => s !== null ? null : s)
-                setCompany((s) => s !== null ? null : s)
+                setProfile((s) => (s !== null ? null : s));
+                setCompany((s) => (s !== null ? null : s));
             }
         });
 
-        return cleanup
+        return cleanup;
     }, [supabaseSession, session, profile, getProfile, getCompany, params]);
 
     return { session, profile, company, refreshSession };

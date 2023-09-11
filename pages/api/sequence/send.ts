@@ -60,7 +60,7 @@ const sendAndInsertEmail = async ({
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
     const sendAt = new Date();
-    sendAt.setHours(sendAt.getHours() + wait_time_hours);
+    sendAt.setTime(sendAt.getTime() + wait_time_hours * 60 * 60 * 1000);
     const emailSendAt = sendAt.toISOString();
 
     const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
@@ -107,7 +107,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                     results.push(result);
                 } catch (error: any) {
-                    serverLogger(error, 'error');
+                    serverLogger(error);
                     results.push({
                         sequenceInfluencerId: sequenceInfluencer.id,
                         error: error?.message ?? 'Something went wrong sending the email',
@@ -124,7 +124,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                 });
             }
         } catch (error: any) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             results.push({
                 sequenceInfluencerId: sequenceInfluencer.id,
                 error: error?.message ?? '',

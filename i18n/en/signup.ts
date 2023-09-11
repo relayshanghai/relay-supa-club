@@ -3,7 +3,7 @@ const signup = {
     step2title: 'Add an email and password to your account',
     step3title: 'What category of product do you sell?',
     step4title: 'Tell us about your Company',
-    step5title: 'We won’t charge your card until the free trial ends!',
+    step5title: 'Starting your free trial now!',
     next: 'Next',
     back: 'Back',
     submit: 'Submit',
@@ -34,5 +34,40 @@ const signup = {
     },
     alreadySignedUp: 'Already signed up?',
     noProfileId: 'Could not find profile id',
+    freeTrial: {
+        title: 'Start your free trial now',
+        bulletPoint1: 'BoostBot AI Search: Up to 2,000 Influencer Search Results',
+        bulletPoint2: '50 Influencer Profile Reports',
+        bulletPoint3: 'Search Free for 7 days',
+        bulletPoint4: "Upgrade to 'Outreach Plan' and start emailing influencers today!",
+        submitButton: 'Start free trial',
+        termsAndConditionCheckboxLabel: 'I agree with the ',
+        termsAndConditionClickableText: 'Terms and Conditions',
+        termsAndCondition: {
+            title: 'RELAY.CLUB TERMS AND CONDITIONS',
+            point1Title: '1. Introduction',
+            point1Description:
+                'Welcome to relay.club ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',
+            point2Title: '2. Free Trial',
+            point2Description:
+                'If you register for a free trial, we will make the service available to you on a trial basis free of charge until the earlier of (a) the end of the free trial period or (b) the start date of any purchased services ordered by you.',
+            point3Title: '3. Subscription Services',
+            point3Description:
+                'Brands that subscribe to our paid services have access to search for influencers on YouTube, TikTok, and Instagram. The subscription fee is billed monthly and is non-refundable.',
+            point4Title: '4. Upgrade Services',
+            point4Description:
+                "Subscribers who upgrade their service can access influencers' email addresses provided by relay.club for communication purposes.",
+            point5Title: '5. Usage Limits',
+            point5Description:
+                'Brands and users are prohibited from scraping, copying, or redistributing the information obtained from our platform. Any misuse of the data will result in termination of services.',
+            point6Title: '6. Content Responsibility',
+            point6Description:
+                'relay.club is not responsible for any content posted, shared, or disseminated by social media influencers that users engage or employ through the relay.club platform. Users are solely responsible for vetting and ensuring the appropriateness of content associated with influencers they connect with.',
+            point7Title: '7. Governing Law',
+            point7Description:
+                'These terms and conditions shall be governed by the laws of Singapore. Any disputes arising from these terms shall be resolved in the jurisdiction of the Republic of Singapore.',
+        },
+    },
+    errorStartingTrial: 'Error starting trial',
 };
 export default signup;

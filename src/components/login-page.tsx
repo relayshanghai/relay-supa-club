@@ -26,11 +26,11 @@ const LoginPage = () => {
     });
 
     useEffect(() => {
-        if (profile?.email) {
+        if (profile) {
             toast.success(t('login.loginSuccess'));
-            router.push('/dashboard');
+            router.push('/boostbot');
         }
-    }, [profile?.email, router, t]);
+    }, [profile, router, t]);
 
     useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
@@ -43,7 +43,7 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password);
-            refreshProfile();
+            await refreshProfile();
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
             setLoggingIn(false);

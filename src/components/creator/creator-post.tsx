@@ -52,14 +52,14 @@ export const CreatorPost = ({ post }: { post: Post }) => {
         <div className="rounded-lg bg-white">
             <PostImage post={post} />
             <div className="p-4">
-                <h3 className="mb-1 font-semibold text-gray-600 line-clamp-2">{post?.title || post?.text}</h3>
+                <h3 className="mb-1 line-clamp-2 font-semibold text-gray-600">{post?.title || post?.text}</h3>
                 <p className="mb-1 text-xs text-gray-400">
                     {
                         //@ts-ignore TODO: remove this insane hacky library and use standard browser API
                         dateFormat(post?.created)
                     }
                 </p>
-                <p className="mb-2 text-sm text-gray-600 line-clamp-4">{post?.text}</p>
+                <p className="mb-2 line-clamp-4 text-sm text-gray-600">{post?.text}</p>
                 <div className="mb-2 flex flex-wrap items-center text-xs text-primary-600">
                     {post?.hashtags?.length &&
                         post?.hashtags.map((hashtag, index) => (

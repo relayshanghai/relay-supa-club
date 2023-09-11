@@ -1,6 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
@@ -10,6 +10,7 @@ import { useProfileScreenContext } from './profile-screen-context';
 import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
+import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -25,8 +26,23 @@ type Props = {
 
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
+const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
+    if (!p) return null;
+    return {
+        notes: mapProfileToNotes(p),
+        shippingDetails: mapProfileToShippingDetails(p),
+    };
+};
+
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
+
+    useEffect(() => {
+        if (!profile) return;
+        const val = mapProfileToFormData(profile);
+        if (!val) return;
+        setState(val);
+    }, [profile, setState]);
 
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
@@ -94,7 +110,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                     <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />
                 </div>
 
-                <div className="float-right mb-4 flex">
+                <div className="float-right flex pb-4">
                     <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
                         {t('creators.cancel')}
                     </Button>

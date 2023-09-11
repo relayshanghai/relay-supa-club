@@ -27,21 +27,29 @@ interface ChatProps {
     messages: MessageType[];
     setMessages: Dispatch<SetStateAction<MessageType[]>>;
     addMessage: (message: MessageType) => void;
-    isBoostbotLoading: boolean;
+    isUnlockOutreachLoading: boolean;
+    isSearchLoading: boolean;
+    setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
-    handleUnlockInfluencers: (influencers: Influencer[]) => Promise<CreatorsReportGetResponse[] | undefined>;
+    handleUnlockInfluencers: (
+        influencers: Influencer[],
+        freeOfCharge: boolean,
+    ) => Promise<CreatorsReportGetResponse[] | undefined>;
     shortenedButtons: boolean;
+    isSearchDisabled: boolean;
 }
 
 export const Chat: React.FC<ChatProps> = ({
     messages,
     setMessages,
     addMessage,
-    isBoostbotLoading,
+    isUnlockOutreachLoading,
+    isSearchLoading,
+    setIsSearchLoading,
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
@@ -49,17 +57,17 @@ export const Chat: React.FC<ChatProps> = ({
     handlePageToOutreach,
     handleUnlockInfluencers,
     shortenedButtons,
+    isSearchDisabled,
 }) => {
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-    const [isLoading, setIsLoading] = useState(false);
 
     const { trackEvent: track } = useRudderstack();
 
-    const shouldShowButtons = influencers.length > 0 && !isLoading;
+    const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
     const stopBoostbot = () => {
         abortController.abort();
@@ -90,7 +98,7 @@ export const Chat: React.FC<ChatProps> = ({
             { sender: 'User', content: productDescription },
             { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
         ]);
-        setIsLoading(true);
+        setIsSearchLoading(true);
 
         const payload: RecommendInfluencersPayload = {
             query: productDescription,
@@ -126,7 +134,7 @@ export const Chat: React.FC<ChatProps> = ({
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
 
-            await handleUnlockInfluencers(influencers.slice(0, 3));
+            await handleUnlockInfluencers(influencers.slice(0, 3), true);
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
@@ -138,7 +146,7 @@ export const Chat: React.FC<ChatProps> = ({
             track(RecommendInfluencers.eventName, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
-                toast.success(t('boostbot.chat.stopped'));
+                return;
             } else {
                 payload.is_success = false;
                 payload.extra_info = { error: String(error) };
@@ -149,7 +157,7 @@ export const Chat: React.FC<ChatProps> = ({
                 track(RecommendInfluencers.eventName, payload);
             }
         } finally {
-            setIsLoading(false);
+            setIsSearchLoading(false);
         }
     };
 
@@ -164,18 +172,22 @@ export const Chat: React.FC<ChatProps> = ({
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
-                isLoading={isLoading}
+                isSearchLoading={isSearchLoading}
+                isUnlockOutreachLoading={isUnlockOutreachLoading}
                 handlePageToUnlock={chatPageToUnlock}
                 handlePageToOutreach={chatPageToOutreach}
                 stopBoostbot={stopBoostbot}
-                isBoostbotLoading={isBoostbotLoading}
                 shortenedButtons={shortenedButtons}
             />
 
             <div className="relative">
                 {/* Below is a gradient that hides the bottom of the chat */}
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
-                <ChatInput isLoading={isLoading || isBoostbotLoading} onSendMessage={onSendMessage} />
+                <ChatInput
+                    isDisabled={isSearchDisabled}
+                    isLoading={isSearchLoading || isUnlockOutreachLoading}
+                    onSendMessage={onSendMessage}
+                />
             </div>
         </div>
     );

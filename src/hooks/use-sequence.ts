@@ -13,7 +13,7 @@ import { useSequences } from './use-sequences';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     const db = useClientDb();
     const { refreshSequences } = useSequences();
@@ -57,9 +57,9 @@ export const useSequence = (sequenceId?: string) => {
             track(CreateSequence, {
                 sequence_id: null,
                 is_success: false,
-                extra_info: { error: String(error) }
-            })
-            serverLogger(error, 'error');
+                extra_info: { error: String(error) },
+            });
+            serverLogger(error);
         }
     };
 

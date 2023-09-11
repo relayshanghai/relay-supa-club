@@ -24,62 +24,61 @@ export interface PageProperties extends apiObject {
     search?: string;
 }
 
-
-type RudderstackMessageType<TProps=any, TTraits=any> = {
-    channel: string,
+type RudderstackMessageType<TProps = any, TTraits = any> = {
+    channel: string;
     context: {
         app: {
-            name: string,
-            namespace: string,
-            version: string
-        },
-        traits: TTraits,
+            name: string;
+            namespace: string;
+            version: string;
+        };
+        traits: TTraits;
         library: {
-            name: string,
-            version: string
-        },
-        userAgent: string,
-        device: string | null,
-        network: string | null,
+            name: string;
+            version: string;
+        };
+        userAgent: string;
+        device: string | null;
+        network: string | null;
         os: {
-            name: string,
-            version: string
-        },
-        locale: string, // ISO 639-1
+            name: string;
+            version: string;
+        };
+        locale: string; // ISO 639-1
         screen: {
-            density: number,
-            width: number,
-            height: number,
-            innerWidth: number,
-            innerHeight: number
-        },
-        sessionId: number | string,
-        campaign: any,
+            density: number;
+            width: number;
+            height: number;
+            innerWidth: number;
+            innerHeight: number;
+        };
+        sessionId: number | string;
+        campaign: any;
         page: {
-            path: string,
-            referrer: string | "$direct"
-            referring_domain: string,
-            search: string,
-            title: string,
-            url: string,
-            tab_url: string,
-            initial_referrer: string | "$direct",
-            initial_referring_domain: string
-        }
-    },
-    type: string, // possibly rudderstack event types
-    messageId: string, // uuid
-    originalTimestamp: string, // ISO date
-    anonymousId: string, // uuid
-    userId: string, // uuid
-    event: string,
-    properties: TProps,
-    user_properties: any,
+            path: string;
+            referrer: string | '$direct';
+            referring_domain: string;
+            search: string;
+            title: string;
+            url: string;
+            tab_url: string;
+            initial_referrer: string | '$direct';
+            initial_referring_domain: string;
+        };
+    };
+    type: string; // possibly rudderstack event types
+    messageId: string; // uuid
+    originalTimestamp: string; // ISO date
+    anonymousId: string; // uuid
+    userId: string; // uuid
+    event: string;
+    properties: TProps;
+    user_properties: any;
     integrations: {
-        All: boolean
-    },
-    sentAt: string // ISO date
-}
+        All: boolean;
+    };
+    sentAt: string; // ISO date
+};
 
 export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
@@ -94,7 +93,7 @@ export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
     };
 
     return { id, traits };
-}
+};
 
 export const useRudderstack = () => {
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
@@ -121,7 +120,7 @@ export const useRudderstack = () => {
     const identifyFromProfile = useCallback(
         (profile: ProfileDB) => {
             if (!profile) return;
-            const { id, traits } = profileToIdentifiable(profile)
+            const { id, traits } = profileToIdentifiable(profile);
             identifyUser(id, traits);
         },
         [identifyUser],
@@ -137,52 +136,57 @@ export const useRudderstack = () => {
 };
 
 export const useRudder = () => {
-    const [rudder, setRudder] = useState(() => typeof window !== "undefined" ? window.rudder : null)
+    const [rudder, setRudder] = useState(() => (typeof window !== 'undefined' ? window.rudder : null));
 
     useEffect(() => {
         rudderInitialized().then((rudder) => {
-            setRudder(rudder)
-        })
-    }, [])
+            setRudder(rudder);
+        });
+    }, []);
 
-    return rudder
-}
+    return rudder;
+};
 
-type RudderstackTrackResolveType = RudderstackMessageType[] | null | Error
-type PromiseExecutor = (...args: Parameters<ConstructorParameters<typeof Promise<RudderstackTrackResolveType>>[0]>) => void
+type RudderstackTrackResolveType = RudderstackMessageType[] | null | Error;
+type PromiseExecutor = (
+    ...args: Parameters<ConstructorParameters<typeof Promise<RudderstackTrackResolveType>>[0]>
+) => void;
 
 export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const rudder = useRudder();
 
-    const track = useCallback(<E extends TrackedEvent>(event: E, properties?: payloads[E['eventName']], options?: apiOptions) => {
-        const abort = () => {
-            isAborted.current = true
-        }
+    const track = useCallback(
+        <E extends TrackedEvent>(event: E, properties?: payloads[E['eventName']], options?: apiOptions) => {
+            const abort = () => {
+                isAborted.current = true;
+            };
 
-        const executor: PromiseExecutor = function(resolve, reject) {
-            if (!rudder) {
-                return reject(new Error("Rudderstack not loaded"))
-            }
+            const executor: PromiseExecutor = function (resolve) {
+                if (!rudder) {
+                    return resolve(null);
+                }
 
-            if (isAborted.current === true) {
-                return resolve(null)
-            }
+                if (isAborted.current === true) {
+                    return resolve(null);
+                }
 
-            const trigger: TriggerEvent = (eventName, payload) => {
-                rudder.track(eventName, payload, options, (...args: RudderstackMessageType[]) => {
-                    resolve(args)
-                    return args
-                })
-            }
+                const trigger: TriggerEvent = (eventName, payload) => {
+                    rudder.track(eventName, payload, options, (...args: RudderstackMessageType[]) => {
+                        resolve(args);
+                        return args;
+                    });
+                };
 
-            event(trigger, properties)
-        }
+                event(trigger, properties);
+            };
 
-        const request = new Promise<RudderstackTrackResolveType>(executor)
+            const request = new Promise<RudderstackTrackResolveType>(executor);
 
-        return { request, abort }
-    }, [rudder])
+            return { request, abort };
+        },
+        [rudder],
+    );
 
-    return { track }
-}
+    return { track };
+};

@@ -36,7 +36,7 @@ const handler: NextApiHandler = async (req, res) => {
                         }
                     }
                 } catch (error) {
-                    serverLogger(error, 'error');
+                    serverLogger(error);
                 }
             }
 
@@ -60,7 +60,7 @@ const handler: NextApiHandler = async (req, res) => {
 
             return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'error updating company' });
         }
     }

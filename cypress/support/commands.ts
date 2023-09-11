@@ -71,7 +71,8 @@ function loginTestUser(
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
     cy.contains('button', 'Log in').click();
     cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
-    cy.contains('Sequences', { timeout: 10000 }); // dashboard page load
+    cy.visit('/dashboard');
+    cy.contains('Search by Topics', { timeout: 10000 }); // dashboard page load
 }
 Cypress.Commands.add('loginTestUser', loginTestUser);
 

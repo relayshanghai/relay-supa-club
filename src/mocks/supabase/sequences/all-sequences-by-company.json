@@ -1,0 +1,24 @@
+[
+  {
+    "created_at": "2023-09-06T03:07:11.870352+00:00",
+    "updated_at": "2023-09-06T03:07:11.870352+00:00",
+    "company_id": "a1bcd4c8-3536-4284-b1f9-10438a75e39d",
+    "name": "General collaboration",
+    "auto_start": false,
+    "id": "42ec225c-5d20-46b6-98eb-c029747a11f4",
+    "manager_first_name": "William Edward",
+    "manager_id": "6e49bc9e-9873-4e8f-b294-a805ae5a6821",
+    "deleted": false
+  },
+  {
+    "created_at": "2023-09-06T03:08:55.274194+00:00",
+    "updated_at": "2023-09-06T03:08:55.274194+00:00",
+    "company_id": "a1bcd4c8-3536-4284-b1f9-10438a75e39d",
+    "name": "Joe's BoostBot Sequence",
+    "auto_start": false,
+    "id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "manager_first_name": "William Edward",
+    "manager_id": "6e49bc9e-9873-4e8f-b294-a805ae5a6821",
+    "deleted": false
+  }
+]

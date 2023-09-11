@@ -1,27 +1,13 @@
 import React from 'react';
-import { UserContext } from 'src/hooks/use-user';
-import type { IUserContext } from 'src/hooks/use-user';
+import { UserContext } from '../hooks/use-user';
+import type { IUserContext } from '../hooks/use-user';
 import { Provider as JotaiProvider } from 'jotai';
 import type { WritableAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import type { CompanyContext } from 'src/hooks/use-company';
-import { companyContext } from 'src/hooks/use-company';
+import type { CompanyContext } from '../hooks/use-company';
+import { companyContext } from '../hooks/use-company';
 import type { CompanyDB } from './api/db';
-
-const mockProfile: IUserContext['profile'] = {
-    id: '1',
-    user_role: 'company_owner',
-    company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
-    avatar_url: null,
-    email: 'mock@example.com',
-    first_name: 'mock-first',
-    last_name: 'mock-last',
-    phone: null,
-    updated_at: '2021-09-01T00:00:00.000Z',
-    created_at: '2021-09-01T00:00:00.000Z',
-    email_engine_account_id: 'e7ustgsqqvy9al6f',
-    sequence_send_email: 'relayemailertest@gmail.com',
-};
+import { mockProfile } from '../mocks/test-user';
 
 const mockUserContext: IUserContext = {
     user: null,
@@ -43,8 +29,8 @@ const mockUserContext: IUserContext = {
     getProfileController: { current: null },
 };
 
-const mockCompany: CompanyDB = {
-    id: '615478e4-72bf-4162-9736-0d2f89b2191e',
+export const mockCompany: CompanyDB = {
+    id: mockProfile.company_id || '',
     created_at: '2023-06-08T09:18:58.294957+00:00',
     name: 'Blue Moonlight Stream Enterprises',
     website: 'https://blue-moonlight-stream.com',

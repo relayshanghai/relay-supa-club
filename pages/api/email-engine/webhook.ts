@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
@@ -14,7 +14,14 @@ import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototyp
 
 import { db } from 'src/utils/supabase-client';
 
-import { EmailClicked, EmailComplaint, EmailFailed, EmailOpened, EmailReply, EmailSent } from 'src/utils/analytics/events';
+import {
+    EmailClicked,
+    EmailComplaint,
+    EmailFailed,
+    EmailOpened,
+    EmailReply,
+    EmailSent,
+} from 'src/utils/analytics/events';
 import type { EmailReplyPayload } from 'src/utils/analytics/events/outreach/email-reply';
 import type { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
 import { getProfileByEmailEngineAccountQuery } from 'src/utils/api/db/calls/profiles';
@@ -34,6 +41,7 @@ import type { WebhookMessageNew } from 'types/email-engine/webhook-message-new';
 import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent.ts';
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
+import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -104,7 +112,7 @@ const deleteScheduledEmails = async (sequenceInfluencer: SequenceInfluencer, eve
             data: event as any,
             message: `failed to cancel an email to: ${event.data.from.address}`,
         });
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
@@ -158,7 +166,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         influencer_id: null,
         sequence_step: null,
         extra_info: { event_data: event.data },
-    }
+    };
 
     if (event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG) {
         // For some reason, sent mail also shows up in `messageNew`, so filter them out.
@@ -168,12 +176,12 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     try {
         const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
         if (error) {
-            trackData.extra_info.error = String(error);
+            trackData.extra_info.error = JSON.stringify(error);
 
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
                 ...trackData,
                 is_success: false,
-            })
+            });
 
             await supabaseLogger({
                 type: 'email-webhook',
@@ -188,12 +196,12 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         );
         if (!sequenceInfluencer) {
             // @note will this even happen?
-            trackData.extra_info.error = "Sequence influencer not found";
+            trackData.extra_info.error = 'Sequence influencer not found';
 
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
                 ...trackData,
                 is_success: false,
-            })
+            });
 
             await supabaseLogger({
                 type: 'email-webhook',
@@ -206,28 +214,28 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         trackData.sequence_influencer_id = sequenceInfluencer.id;
         trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
         trackData.sequence_step = sequenceInfluencer.sequence_step;
-      
+
         // if there is a sequenceInfluencer, this is a reply to a sequenced email
         await handleReply(sequenceInfluencer, event);
-      
+
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: true,
-        })
+        });
     } catch (error: any) {
-        trackData.extra_info.error = String(error);
+        trackData.extra_info.error = JSON.stringify(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: false,
-        })
-      
+        });
+
         await supabaseLogger({
             type: 'email-webhook',
             data: event as any,
             message: `newMessage uncaught error: ${error?.message}`,
         });
     }
-  
+
     return res.status(httpCodes.OK).json({});
 };
 
@@ -240,7 +248,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
         extra_info: { event_data: event.data },
-    })
+    });
 
     await supabaseLogger({
         type: 'email-webhook',
@@ -262,7 +270,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
         extra_info: { event_data: event.data },
-    })
+    });
 
     await supabaseLogger({
         type: 'email-webhook',
@@ -287,7 +295,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
             sequence_email_id: sequenceEmail.id,
             error_type: 'bounced',
             extra_info: { event_data: event.data },
-        })
+        });
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -304,7 +312,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
 const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiResponse) => {
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailComplaint, {
         extra_info: { event_data: event.data },
-    })
+    });
 
     await supabaseLogger({
         type: 'email-webhook',
@@ -329,7 +337,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
             sequence_email_id: sequenceEmail.id,
             error_type: 'failed',
             extra_info: { event_data: event.data },
-        })
+        });
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -357,7 +365,7 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
             sequence_email_id: sequenceEmail.id,
             error_type: 'quit',
             extra_info: { event_data: event.data },
-        })
+        });
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -380,34 +388,53 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         influencer_id: null,
         sequence_step: null,
         extra_info: { event_data: event.data },
-    }
+    };
 
     try {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
 
-        trackData.sequence_email_id = sequenceEmail.id
-        trackData.sequence_id = sequenceEmail.sequence_id
-        trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id
-        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
-        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id
+        if (!sequenceEmail || !sequenceEmail.sequence_id) {
+            throw new Error('no sequence email found');
+        }
+
+        const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
+            sequenceEmail.sequence_id,
+        );
+        if (!sequenceSteps || sequenceSteps.length === 0) {
+            throw new Error('No sequence steps found');
+        }
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id); // likewise will fail if there is no sequenceInfluencer
+
+        trackData.sequence_email_id = sequenceEmail.id;
+        trackData.sequence_id = sequenceEmail.sequence_id;
+        trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id;
+        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
         trackData.sequence_step = sequenceInfluencer.sequence_step;
 
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
         };
+
         await updateSequenceEmail(update);
+        const currentStep = sequenceSteps.find((step) => step.id === sequenceEmail.sequence_step_id);
+        if (!currentStep?.step_number) {
+            throw new Error('No sequence step found');
+        }
+        if (sequenceInfluencer.sequence_step <= currentStep.step_number) {
+            throw new Error('Sequence step already updated');
+        }
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
-            sequence_step: sequenceInfluencer.sequence_step + 1,
+            sequence_step: currentStep.step_number,
         };
         await updateSequenceInfluencer(sequenceInfluencerUpdate);
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,
             is_success: true,
-        })
+        });
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -415,11 +442,11 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             message: `sent to: ${event.data.envelope.to}`,
         });
     } catch (error: any) {
-        trackData.extra_info.error = String(error);
+        trackData.extra_info.error = JSON.stringify(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,
             is_success: false,
-        })
+        });
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -437,49 +464,58 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
 };
 
 const identifyWebhook = async (body: WebhookEvent) => {
-    try {
-        const profile = await db(getProfileByEmailEngineAccountQuery)(body.account)
+    const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
 
-        if (!profile) {
-            throw new RelayError(`No account associated with "${body.account}"`, 500, {
-                shouldLog: true,
-                sendToSentry: true
-            })
-        }
-
-        rudderstack.identifyWithProfile(profile.id)
-    } catch (e) {
-        throw e;
+    if (profile) {
+        rudderstack.identifyWithProfile(profile.id);
+        return;
     }
-}
+
+    if (!profile) {
+        rudderstack.identifyWithAnonymousID(body.account);
+        return;
+    }
+
+    serverLogger(`No account associated with "${body.account}"`);
+};
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
+    // wrap all unhandled errors so that we return a 200.
+    // If we return a 500, the email client will retry the webhook and we will get duplicate events
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
+    try {
+        await identifyWebhook(body);
 
-    await identifyWebhook(body)
-
-    await supabaseLogger({ type: 'email-webhook', data: body as any, message: `incoming: ${body.event}` });
-    switch (body.event) {
-        case 'messageNew':
-            return handleNewEmail(body, res);
-        case 'trackClick':
-            return handleTrackClick(body, res);
-        case 'trackOpen':
-            return handleTrackOpen(body, res);
-        case 'messageBounce':
-            return handleBounce(body, res);
-        case 'messageComplaint':
-            return handleComplaint(body, res);
-        case 'messageDeliveryError':
-            return handleDeliveryError(body, res);
-        case 'messageFailed':
-            return handleFailed(body, res);
-        case 'messageSent':
-            return handleSent(body, res);
-        default:
-            return handleOtherWebhook(body, res);
+        await supabaseLogger({ type: 'email-webhook', data: body as any, message: `incoming: ${body.event}` });
+        switch (body.event) {
+            case 'messageNew':
+                return handleNewEmail(body, res);
+            case 'trackClick':
+                return handleTrackClick(body, res);
+            case 'trackOpen':
+                return handleTrackOpen(body, res);
+            case 'messageBounce':
+                return handleBounce(body, res);
+            case 'messageComplaint':
+                return handleComplaint(body, res);
+            case 'messageDeliveryError':
+                return handleDeliveryError(body, res);
+            case 'messageFailed':
+                return handleFailed(body, res);
+            case 'messageSent':
+                return handleSent(body, res);
+            default:
+                return handleOtherWebhook(body, res);
+        }
+    } catch (error: any) {
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { body, error } as any,
+            message: `Unhandled error. error: ${error?.message}`,
+        });
+        return res.status(httpCodes.OK).json({});
     }
 };
 

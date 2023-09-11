@@ -2,12 +2,10 @@ import { z } from 'zod';
 import type { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
-import type {
-    AnalyzeOpenExternalSocialProfilePayload
-} from './analyze-open_external_social_profile';
+import type { AnalyzeOpenExternalSocialProfilePayload } from './analyze-open_external_social_profile';
 import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
-    AnalyzeOpenExternalSocialProfile
+    AnalyzeOpenExternalSocialProfile,
 } from './analyze-open_external_social_profile';
 import type { BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
 import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer } from './boostbot-analyze-influencer';
@@ -16,7 +14,10 @@ import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-b
 import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
 import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
 import type { SendInfluencersToOutreachPayload } from './boostbot/send-influencers-to-outreach';
-import { BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, SendInfluencersToOutreach } from './boostbot/send-influencers-to-outreach';
+import {
+    BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH,
+    SendInfluencersToOutreach,
+} from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
@@ -38,11 +39,17 @@ import { EmailSent, OUTREACH_EMAIL_SENT } from './outreach/email-sent';
 import type { OpenInboxPagePayload } from './outreach/open-inbox-page';
 import { OUTREACH_OPEN_INBOX_PAGE, OpenInboxPage } from './outreach/open-inbox-page';
 import type { OpenInfluencerManagerPagePayload } from './outreach/open-influencer-manager-page';
-import { OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE, OpenInfluencerManagerPage } from './outreach/open-influencer-manager-page';
+import {
+    OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE,
+    OpenInfluencerManagerPage,
+} from './outreach/open-influencer-manager-page';
 import type { OpenSequencesPagePayload } from './outreach/open-sequences-page';
 import { OUTREACH_OPEN_SEQUENCES_PAGE, OpenSequencesPage } from './outreach/open-sequences-page';
 import type { StartSequenceForInfluencerPayload } from './outreach/start-sequence-for-influencer';
-import { OUTREACH_START_SEQUENCE_FOR_INFLUENCER, StartSequenceForInfluencer } from './outreach/start-sequence-for-influencer';
+import {
+    OUTREACH_START_SEQUENCE_FOR_INFLUENCER,
+    StartSequenceForInfluencer,
+} from './outreach/start-sequence-for-influencer';
 import type { SearchPayload } from './search';
 import { SEARCH as SEARCH_KEY, Search } from './search';
 import type { SearchAddToCampaignPayload } from './search-add_to_campaign';
@@ -53,12 +60,10 @@ import type { SearchDefaultPayload } from './search-default';
 import { SEARCH_DEFAULT, SearchDefault } from './search-default';
 import type { SearchLoadMoreResultsPayload } from './search-load_more_results';
 import { SEARCH_LOAD_MORE_RESULTS, SearchLoadMoreResults } from './search-load_more_results';
-import type {
-    SearchOpenExternalSocialProfilePayload
-} from './search-open_external_social_profile';
+import type { SearchOpenExternalSocialProfilePayload } from './search-open_external_social_profile';
 import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
-    SearchOpenExternalSocialProfile
+    SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
 
 export {
@@ -86,7 +91,7 @@ export {
     OpenBoostbotPage,
     RecommendInfluencers,
     UnlockInfluencers,
-    SendInfluencersToOutreach
+    SendInfluencersToOutreach,
 };
 
 export const events = {
@@ -118,31 +123,31 @@ export const events = {
 };
 
 export type payloads = {
-    [SEARCH_KEY]: SearchPayload,
-    [SEARCH_DEFAULT]: SearchDefaultPayload,
-    [SEARCH_LOAD_MORE_RESULTS]: SearchLoadMoreResultsPayload,
-    [SEARCH_ANALYZE_INFLUENCER]: SearchAnalyzeInfluencerPayload,
-    [SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE]: SearchOpenExternalSocialProfilePayload,
-    [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaignPayload,
-    [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaignPayload,
-    [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfilePayload,
-    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequencePayload,
-    [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload,
-    [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload,
-    [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload,
-    [OUTREACH_CREATE_SEQUENCE]: CreateSequencePayload,
-    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload,
-    [OUTREACH_EMAIL_SENT]: EmailSentPayload,
-    [OUTREACH_EMAIL_FAILED]: EmailFailedPayload,
-    [OUTREACH_EMAIL_COMPLAINT]: EmailComplaintPayload,
-    [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload,
-    [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
-    [OUTREACH_EMAIL_REPLY]: EmailReplyPayload,
-    [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload,
-    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload,
-    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload,
-    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload,
-    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload,
+    [SEARCH_KEY]: SearchPayload;
+    [SEARCH_DEFAULT]: SearchDefaultPayload;
+    [SEARCH_LOAD_MORE_RESULTS]: SearchLoadMoreResultsPayload;
+    [SEARCH_ANALYZE_INFLUENCER]: SearchAnalyzeInfluencerPayload;
+    [SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE]: SearchOpenExternalSocialProfilePayload;
+    [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaignPayload;
+    [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaignPayload;
+    [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfilePayload;
+    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequencePayload;
+    [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload;
+    [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload;
+    [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload;
+    [OUTREACH_CREATE_SEQUENCE]: CreateSequencePayload;
+    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload;
+    [OUTREACH_EMAIL_SENT]: EmailSentPayload;
+    [OUTREACH_EMAIL_FAILED]: EmailFailedPayload;
+    [OUTREACH_EMAIL_COMPLAINT]: EmailComplaintPayload;
+    [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload;
+    [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload;
+    [OUTREACH_EMAIL_REPLY]: EmailReplyPayload;
+    [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload;
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
+    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
+    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -177,9 +182,9 @@ export const eventKeys = z.union([
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
     if (!('eventName' in event)) return false;
-    const result = eventKeys.safeParse(event.eventName)
+    const result = eventKeys.safeParse(event.eventName);
     return result.success;
-}
+};
 
 export type eventKeys = z.infer<typeof eventKeys>;
 

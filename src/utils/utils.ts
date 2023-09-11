@@ -64,7 +64,7 @@ export const chinaFilter = (str: string) => {
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat?: string) =>
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = 'en-US') =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
@@ -137,4 +137,22 @@ export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
     }
 
     return output;
+};
+
+/**
+ * Filters an array of PromiseSettledResult objects to get only the fulfilled results and returns their values.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the values of the fulfilled results.
+ */
+export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
+};
+
+/**
+ * Filters an array of PromiseSettledResult objects to get only the rejected results and returns their reasons.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the reasons for rejection of the rejected results.
+ */
+export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
 };

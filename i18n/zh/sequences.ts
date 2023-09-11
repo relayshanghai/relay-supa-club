@@ -1,6 +1,7 @@
 const sequences = {
     sequences: '邮件进程管理',
-    updateTemplateVariables: '更新邮模版件参数',
+    subtitle: '我们系统会将定制化的邮件模板定时发送给KOL，这个定制化的联络流程可以大大提升回复率。',
+    updateTemplateVariables: '查看邮件进程模版',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
     inSequence: '序列中',
@@ -142,6 +143,10 @@ const sequences = {
         '4th Follow-up': '第四次跟进',
     },
     delete: {
+        deleteSequence_name: '删除 {{name}}?',
+        deleteSequenceDescription:
+            '删除邮件进程管理项目后，系统将不再向此项目中的KOL发送预定邮件。也不再发送任何进一步的信息。已回复且位于“KOL管理跟进“中的KOL将被保留，但处于“急需回复“、”联络中“或”未回复“阶段的KOL将被删除。确定要删除您的邮件进程管理项目吗？',
+        okaySequence: '是的，删除此进程管理项目',
         title: '是否把KOL从此邮件进程管理项目中移除？',
         description:
             '此操作将把KOL从此邮件进程管理项目中移除，并不再向TA发送后续的信息。完成操作后如需要再次添加该KOL，须重新将TA添加至邮件进程管理项目中。',

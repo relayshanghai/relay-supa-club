@@ -78,6 +78,8 @@ const account = {
             noPaymentMethod: '没有付款方式',
             alreadySubscribed: '已订阅',
         },
+        upgrade: '升级订阅',
+        upgradeSuccess: '升级成功',
     },
     invite: {
         title: '邀请成员加入',
@@ -99,6 +101,12 @@ const account = {
         cancelling: '取消中...',
         subscriptionCancelled: '订阅已取消',
     },
+    planIsReady: '您已成功订阅！',
+    redirectingMsg: '3秒后将自动跳转页面',
+    card: '银行卡',
+    alipay: '支付宝',
+    choosePaymentMethod: '请选择付款方式',
+    contactUs: '如果需要支付宝支付，请联系我们客服。',
 };
 
 export default account;

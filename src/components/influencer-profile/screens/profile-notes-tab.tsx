@@ -104,13 +104,13 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
     return (
         <>
-            <div className="grid grid-flow-row auto-rows-max gap-2">
-                <div className="inline-flex items-center justify-between gap-2.5">
+            <div className="grid grid-flow-row auto-rows-max gap-4">
+                <div className="gap-4.5 inline-flex items-center justify-between">
                     <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
                         {t('profile.outreach') || 'Outreach'}
                     </div>
                 </div>
-                <section className="grid grid-cols-2 gap-2">
+                <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
                     <OutreachCollabStatusInput
                         label={t('profile.collabStatus') as string}
                         onUpdate={(items) => {
@@ -146,17 +146,24 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
                 <div className="h-px border border-neutral-200" />
 
-                <div className="inline-flex items-center justify-between gap-2.5">
+                <div className="gap-4.5 inline-flex items-center justify-between">
                     <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
                         {t('profile.collab') || 'Collab'}
                     </div>
                 </div>
-                <section className="grid grid-cols-2 grid-rows-2 gap-2">
+                <section className="grid grid-cols-2 gap-4">
                     <CollabFeeInput
                         label={t('profile.fee') || 'Fee (USD)'}
                         value={data.notes.fee}
                         onInput={(e) => onUpdate('fee', e.currentTarget.value)}
                     />
+                    <CollabScheduledPostDateInput
+                        label={t('profile.scheduledPostDate')}
+                        value={data.notes.scheduledPostDate}
+                        onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
+                    />
+                </section>
+                <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
                     <CollabVideoDetailsInput
                         label={t('profile.videoDetails') as string}
                         placeholder={t('profile.videoDetailsPlaceholder')}
@@ -168,11 +175,6 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         placeholder={t('profile.affiliateLinkPlaceholder')}
                         value={data.notes.affiliateLink}
                         onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
-                    />
-                    <CollabScheduledPostDateInput
-                        label={t('profile.scheduledPostDate')}
-                        value={data.notes.scheduledPostDate}
-                        onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                     />
                 </section>
 

@@ -1,25 +1,26 @@
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
 import type { SetStateAction } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceTableProps {
-    sequenceInfluencers: SequenceInfluencer[];
+    sequenceInfluencers: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
-    currentTab: SequenceInfluencer['funnel_status'];
+    currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
 const sortInfluencers = (
-    currentTab: SequenceInfluencer['funnel_status'],
-    influencers?: SequenceInfluencer[],
+    currentTab: SequenceInfluencerManagerPage['funnel_status'],
+    influencers?: SequenceInfluencerManagerPage[],
     sequenceEmails?: SequenceEmail[],
 ) => {
     return influencers?.sort((a, b) => {
@@ -59,7 +60,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-auto">
+        <div className="max-w-full overflow-visible">
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr className="border-b-2 border-gray-200">

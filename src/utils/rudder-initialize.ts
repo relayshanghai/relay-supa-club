@@ -30,7 +30,7 @@ export async function rudderInitialized() {
     }
 
     if (window.rudder) {
-        return window.rudder
+        return window.rudder;
     }
 
     //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
@@ -44,16 +44,16 @@ export async function rudderInitialized() {
 
     const rudder = await import('rudder-sdk-js').then((rudder) => {
         if (window.rudder) {
-            return window.rudder
+            return window.rudder;
         }
 
         rudder.load(WRITE_KEY, DATA_PLANE_URL, {
             integrations: { All: true }, // load call options
         });
 
-        window.rudder = rudder
-        return rudder
-    })
+        window.rudder = rudder;
+        return rudder;
+    });
 
-    return rudder
+    return rudder;
 }

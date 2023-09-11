@@ -3,7 +3,7 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OUTREACH_OPEN_INBOX_PAGE = 'outreach-open_inbox_page';
 
 export type OpenInboxPagePayload = EventPayload<{
-    extra_info?: any
+    extra_info?: any;
 }>;
 
 export const OpenInboxPage = (trigger: TriggerEvent<OpenInboxPagePayload>, payload?: OpenInboxPagePayload) =>

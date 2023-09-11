@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
-import { OnboardPaymentSection } from './onboard-payment-section';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { useFields } from 'src/hooks/use-fields';
 import { StepOne, StepTwo, StepThree, StepFour } from './steps';
@@ -17,7 +16,7 @@ import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
 
 export interface SignUpValidationErrors {
@@ -39,7 +38,6 @@ const CompanyErrors = {
 const SignUpPage = ({
     currentStep,
     setCurrentStep,
-    selectedPriceId,
 }: {
     currentStep: number;
     setCurrentStep: (step: number) => void;
@@ -47,7 +45,7 @@ const SignUpPage = ({
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const { signup, createEmployee, profile, logout } = useUser();
+    const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
     const { trackEvent } = useRudderstack();
 
@@ -110,10 +108,6 @@ const SignUpPage = ({
             title: t('signup.step4title'),
             num: 4,
         },
-        {
-            title: t('signup.step5title'),
-            num: 5,
-        },
     ];
 
     //TODO: phone validation need to be updated
@@ -128,27 +122,28 @@ const SignUpPage = ({
     };
 
     const onNext = async () => {
-        if (currentStep === steps.length) {
+        if (currentStep > steps.length) {
             return;
         }
+
         if (currentStep === 2 && EMPLOYEE_EMAILS.includes(email)) {
             await handleProfileCreate(formData);
         }
+
         if (currentStep === 4) {
             const profileId = await handleProfileCreate(formData);
             if (!profileId) {
                 toast.error(t('signup.noProfileId'));
                 throw new Error('Could not find profile id');
             }
-            await handleCompanyCreate(formData, profileId);
-        } else {
+            const result = await handleCompanyCreate(formData, profileId);
+            if (result === 'success') {
+                await router.push('/free-trial');
+            }
+        } else if (currentStep < 4) {
             setCurrentStep(currentStep + 1);
         }
-        // on step 5, which is the add payment step, we will track the events from PricingSection component and OnboardPaymentSection component.
-        if (currentStep === 5) {
-            return;
-        }
-        trackEvent(SIGNUP_WIZARD(`step-${currentStep}`), {
+        trackEvent(SIGNUP(`step-${currentStep}`), {
             firstName,
             lastName,
             phoneNumber,
@@ -215,8 +210,9 @@ const SignUpPage = ({
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
+            } else {
+                return 'success';
             }
-            setCurrentStep(currentStep + 1);
         } catch (e: any) {
             clientLogger(e, 'error');
             if (hasCustomError(e, CompanyErrors)) {
@@ -231,7 +227,7 @@ const SignUpPage = ({
 
     useEffect(() => {
         if (createProfileSuccess && profile?.id && EMPLOYEE_EMAILS.includes(email)) {
-            router.push('/dashboard');
+            router.push('/boostbot');
         }
     }, [email, router, createProfileSuccess, profile?.id]);
 
@@ -284,37 +280,19 @@ const SignUpPage = ({
                                     onNext={onNext}
                                 />
                             )}
-
-                            {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
             )}
-            {currentStep === 5 ? (
-                <div className="pt-20 text-center">
-                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
-                        {t('login.stuckHereTryAgain1')}
-                        <Link
-                            className="text-primary-500"
-                            href="/logout"
-                            onClick={() => trackEvent(SIGNUP_WIZARD('step-5, log out'))}
-                        >
-                            {t('login.signOut')}
-                        </Link>
-                        {t('login.stuckHereTryAgain2')}
-                    </button>
-                </div>
-            ) : (
-                <div className="mb-2 mt-6 text-center">
-                    <p className="inline text-sm text-gray-500">
-                        {t('login.alreadyHaveAnAccount')}{' '}
-                        <Link href="/login" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
-                            <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
-                                {t('login.logIn')}
-                            </Button>
-                        </Link>
-                    </p>
-                </div>
-            )}
+            <div className="mb-2 mt-6 text-center">
+                <p className="inline text-sm text-gray-500">
+                    {t('login.alreadyHaveAnAccount')}{' '}
+                    <Link href="/login" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                        <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
+                            {t('login.logIn')}
+                        </Button>
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 };

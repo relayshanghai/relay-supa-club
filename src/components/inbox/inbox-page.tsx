@@ -20,12 +20,24 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
-import { ProfileOverlayScreen } from '../influencer-profile/screens/profile-overlay-screen';
-import { useUiState } from '../influencer-profile/screens/profile-screen-context';
+import { mapProfileToNotes, mapProfileToShippingDetails } from '../influencer-profile/screens/profile-overlay-screen';
+import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
+import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
+import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+
+const mapProfileToFormData = (p?: SequenceInfluencerManagerPage | null) => {
+    if (!p) return null;
+    return {
+        notes: mapProfileToNotes(p),
+        shippingDetails: mapProfileToShippingDetails(p),
+    };
+};
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -35,17 +47,21 @@ export const InboxPage = () => {
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null)
-
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(() =>
+        mapProfileToFormData(sequenceInfluencer),
+    );
+    const { refreshSequenceInfluencers } = useSequenceInfluencers();
+    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
     const { t } = useTranslation();
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenInboxPage)
+        const { abort } = track(OpenInboxPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     useEffect(() => {
         if (!inboxMessages) {
@@ -63,6 +79,10 @@ export const InboxPage = () => {
     const { profile } = useUser();
 
     useEffect(() => {
+        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
+    }, [sequenceInfluencer]);
+
+    useEffect(() => {
         if (searchTerm === '') {
             setSearchResults([]);
             return;
@@ -74,61 +94,80 @@ export const InboxPage = () => {
         setSearchResults(results.map((result) => result.item));
     }, [filteredMessages, searchTerm]);
 
-    const handleGetThreadEmails = useCallback(async (message: MessagesGetMessage) => {
-        setSelectedMessages([]);
-        setLoadingSelectedMessages(true);
-        setGetSelectedMessagesError('');
-        try {
-            if (!profile?.email_engine_account_id) {
-                throw new Error('No email account');
+    const handleGetThreadEmails = useCallback(
+        async (message: MessagesGetMessage) => {
+            setSelectedMessages([]);
+            setLoadingSelectedMessages(true);
+            setGetSelectedMessagesError('');
+            try {
+                if (!profile?.email_engine_account_id) {
+                    throw new Error('No email account');
+                }
+                const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
+                const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
+                const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
+                threadMessages.sort((a, b) => {
+                    return new Date(a.date).getTime() - new Date(b.date).getTime();
+                });
+                setSelectedMessages(threadMessages);
+                setLoadingSelectedMessages(false);
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                setGetSelectedMessagesError(error.message);
+                toast(getSelectedMessagesError);
             }
-            const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
-            const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
-            const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
-            threadMessages.sort((a, b) => {
-                return new Date(a.date).getTime() - new Date(b.date).getTime();
-            });
-            setSelectedMessages(threadMessages);
             setLoadingSelectedMessages(false);
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            setGetSelectedMessagesError(error.message);
-            toast(getSelectedMessagesError);
-        }
-        setLoadingSelectedMessages(false);
-    }, [getSelectedMessagesError, profile?.email_engine_account_id]);
+        },
+        [getSelectedMessagesError, profile?.email_engine_account_id],
+    );
 
-    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall)
-    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer)
+    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
+    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
     const [uiState, setUiState] = useUiState();
 
-    const handleInfluencerClick = useCallback(() => {
+    const handleUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencer) return;
+
+            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
+                // @note updates local state without additional query
+                //       this will cause issue showing previous state though
+                setLocalProfile(mapProfileToFormData(profile));
+                saveSequenceInfluencer.refresh();
+
+                refreshSequenceInfluencers();
+            });
+        },
+        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
+    );
+
+    const handleSelectPreviewCard = useCallback(
+        async (message: MessagesGetMessage) => {
+            if (!profile) return;
+            try {
+                const influencer = await getSequenceInfluencerByEmailAndCompany(
+                    message.from.address,
+                    profile.company_id,
+                );
+                const influencerFull = await getSequenceInfluencer(influencer.id);
+                setSequenceInfluencer(influencerFull);
+                // @note avoid try..catch hell. influencer should have been a monad
+            } catch (error) {}
+        },
+        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
+    );
+
+    const handleNoteListOpen = useCallback(() => {
         if (!sequenceInfluencer) return;
+        getNotes.call(sequenceInfluencer.id);
+    }, [getNotes, sequenceInfluencer]);
+
+    const handleNoteListClose = useCallback(() => {
         setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: true };
+            return { ...s, isNotesListOverlayOpen: false };
         });
-    }, [setUiState, sequenceInfluencer])
-
-    const handleSelectPreviewCard = useCallback(async (message: MessagesGetMessage) => {
-        if (!profile) return;
-        try {
-            const influencer = await getSequenceInfluencerByEmailAndCompany(message.from.address, profile.company_id)
-            const influencerFull = await getSequenceInfluencer(influencer.id)
-            setSequenceInfluencer(influencerFull)
-        // @note avoid try..catch hell. influencer should have been a monad
-        } catch (error) {}
-    }, [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany])
-
-    const handleProfileOverlayClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: false };
-        });
-    }, [setUiState]);
-
-    const handleProfileUpdate = useCallback(() => {
-        // @todo profile updated!
-        // console.log("Update profile")
-    }, []);
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -150,13 +189,13 @@ export const InboxPage = () => {
     useEffect(() => {
         if (!selectedMessages && messages.length > 0) {
             handleGetThreadEmails(messages[0]);
-            handleSelectPreviewCard(messages[0])
+            handleSelectPreviewCard(messages[0]);
         }
     }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
 
     return (
         <Layout>
-            <div className="flex h-full">
+            <div className="grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
@@ -164,7 +203,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[320px] overflow-auto">
+                        <div className="col-span-3 h-full w-full overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -193,22 +232,40 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="h-full flex-grow overflow-auto">
+                        <div
+                            className={`${
+                                sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
+                            } h-full w-full overflow-auto`}
+                        >
                             {selectedMessages && (
                                 <CorrespondenceSection
                                     // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
-                                    onInfluencerClick={handleInfluencerClick}
                                 />
                             )}
                         </div>
-                        <ProfileOverlayScreen
-                            profile={sequenceInfluencer}
-                            isOpen={uiState.isProfileOverlayOpen}
-                            onClose={handleProfileOverlayClose}
-                            onUpdate={handleProfileUpdate}
-                        />
+                        {sequenceInfluencer && initialValue && (
+                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                                <ProfileScreenProvider initialValue={initialValue}>
+                                    <ProfileScreen
+                                        profile={sequenceInfluencer}
+                                        className="bg-white"
+                                        onCancel={() => {
+                                            //
+                                        }}
+                                        onUpdate={handleUpdate}
+                                    />
+                                </ProfileScreenProvider>
+                                <NotesListOverlayScreen
+                                    notes={getNotes.data}
+                                    isLoading={getNotes.isLoading}
+                                    isOpen={uiState.isNotesListOverlayOpen}
+                                    onClose={handleNoteListClose}
+                                    onOpen={handleNoteListOpen}
+                                />
+                            </div>
+                        )}
                     </>
                 )}
             </div>

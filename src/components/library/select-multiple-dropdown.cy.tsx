@@ -1,5 +1,5 @@
 import { testMount } from 'src/utils/cypress-app-wrapper';
-import type { CommonStatusType} from './select-multiple-dropdown';
+import type { CommonStatusType } from './select-multiple-dropdown';
 import { SelectMultipleDropdown } from './select-multiple-dropdown';
 import { useState } from 'react';
 

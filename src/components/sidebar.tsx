@@ -17,7 +17,7 @@ import {
 } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
-import { featEmail, featBoostbot } from 'src/constants/feature-flags';
+import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
@@ -92,7 +92,7 @@ const NavBarInner = ({
 }) => {
     const { t } = useTranslation();
     const sidebarState = open && desktop ? 'visible' : 'hidden';
-
+    const { profile } = useUser();
     return (
         <>
             <div className="pt-2">
@@ -100,37 +100,37 @@ const NavBarInner = ({
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
-                    <ActiveLink href="/dashboard">
-                        <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
-                    </ActiveLink>
-                    {featBoostbot() && (
+                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/boostbot'}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
                         </ActiveLink>
                     )}
-                    {featEmail() && (
+                    <ActiveLink href="/dashboard">
+                        <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
+                    </ActiveLink>
+                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/sequences'}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
-                    {featEmail() && (
+                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href="/inbox">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
-                    {featEmail() && (
+                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href="/influencer-manager">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
                         </ActiveLink>
                     )}
-                    {!featEmail() && (
+                    {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
                         <ActiveLink href="/campaigns">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
                         </ActiveLink>
                     )}
-                    {!featEmail() && (
+                    {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
                         <ActiveLink href="/performance">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.performance')}
@@ -190,7 +190,7 @@ const NavBarInner = ({
                         </div>
                         <div className={`flex flex-col whitespace-nowrap text-xs ${sidebarState}`}>
                             <p className="font-semibold text-gray-800">{profileFirstName}</p>
-                            {/*TODO {featEmail() && (
+                            {/*TODO {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                                 <p className="font-light">
                                     Discover beta!
                                     <span className="p-1 align-super text-[8px] text-primary-500">Upgrade</span>
@@ -231,7 +231,7 @@ export const Sidebar = ({
 
     return (
         // mask is the dark overlay that appears when the sidebar is open
-        <nav className="z-10 h-full">
+        <nav className="z-20 h-full">
             <div
                 className={`pointer-events-none fixed inset-0 opacity-0 transition-all`}
                 onClick={() => setOpen(false)}
