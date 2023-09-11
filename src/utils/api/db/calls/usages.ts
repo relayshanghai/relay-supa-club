@@ -1,13 +1,13 @@
+import { featNewPricing } from 'src/constants/feature-flags';
 import { usageErrors } from 'src/errors/usages';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
+import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
 import type { RelayDatabase, UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
-import { featNewPricing } from 'src/constants/feature-flags';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     const subscription = await getSubscription(companyId);
@@ -28,7 +28,7 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
             : null;
     if (!subscription_status) {
         // as per how `updateCompanySubscriptionStatus` is used, our app should only be using the above statuses, so if we get something else, we should log it as suspicious
-        serverLogger('Invalid subscription status: ' + subscription_status, 'error', true);
+        serverLogger('Invalid subscription status: ' + subscription_status);
         return { error: usageErrors.invalidStatus };
     }
     const subscription_current_period_start = unixEpochToISOString(current_period_start);
@@ -52,6 +52,7 @@ const recordUsage = async ({
     company_id,
     user_id,
     creator_id,
+    count = 1,
 }: {
     type: UsageType;
     startDate: Date;
@@ -60,6 +61,7 @@ const recordUsage = async ({
     company_id: string;
     user_id: string;
     creator_id?: string;
+    count?: number;
 }) => {
     if (!subscriptionLimit) {
         return { error: usageErrors.noSubscription };
@@ -108,7 +110,9 @@ const recordUsage = async ({
         type,
         item_id: creator_id,
     };
-    const { error: insertError } = await supabase.from('usages').insert([usage]);
+    // Example: Array(3).fill(usage) -> [usage, usage, usage]
+    const usageToRecord = Array(count).fill(usage);
+    const { error: insertError } = await supabase.from('usages').insert(usageToRecord);
     if (insertError) {
         return { error: usageErrors.errorRecordingUsage };
     }
@@ -152,7 +156,7 @@ export const recordReportUsage = async (company_id: string, user_id: string, cre
 };
 
 // Note: we might want to consider not recording usages for the default loading of the search page
-export const recordSearchUsage = async (company_id: string, user_id: string) => {
+export const recordSearchUsage = async (company_id: string, user_id: string, count = 1) => {
     const { data: company, error: companyError } = await supabase
         .from('companies')
         .select(
@@ -182,6 +186,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
         subscriptionLimit,
         company_id,
         user_id,
+        count,
     });
 };
 

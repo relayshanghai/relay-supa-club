@@ -95,7 +95,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.77.9
+                  version: 1.88.0
 
             - name: Verify supabase cli version
               run: supabase -v

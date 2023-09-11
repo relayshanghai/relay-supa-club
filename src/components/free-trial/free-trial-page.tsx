@@ -210,7 +210,11 @@ const FreeTrialPage = () => {
                     <div className="w-2/3 rounded-md bg-white p-8">
                         <div className="flex items-center justify-between">
                             <h2 className="text-xl font-bold">{t('signup.freeTrial.termsAndCondition.title')}</h2>
-                            <button className="ml-4 cursor-pointer" onClick={() => setShowModal(false)}>
+                            <button
+                                data-test="close-button"
+                                className="ml-4 cursor-pointer"
+                                onClick={() => setShowModal(false)}
+                            >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"

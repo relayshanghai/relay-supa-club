@@ -159,11 +159,7 @@ export class Rudderstack {
         if (disabled) return;
 
         if (this.context && this.context.event !== params.event) {
-            serverLogger(
-                `Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`,
-                'error',
-                true,
-            );
+            serverLogger(`Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`);
             return;
         }
 

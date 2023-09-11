@@ -124,12 +124,12 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
         } catch (error) {
             // if it's a RelayError, allow silencing the log
             if (error instanceof RelayError && error.shouldLog) {
-                serverLogger(error, 'error', error.sendToSentry);
+                serverLogger(error);
             }
 
             // if it's not a RelayError, log it by default
             if (!(error instanceof RelayError)) {
-                serverLogger(error, 'error', true);
+                serverLogger(error);
             }
 
             const e = createErrorObject(error);

@@ -1,0 +1,482 @@
+[
+  {
+    "id": "be344ade-fe86-4a5d-b871-ac65253b7602",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:32:52.92+00:00",
+    "name": "productLink",
+    "value": "",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "c7022373-9f7d-4b3f-8703-9bdda09f6db0",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:32:52.92+00:00",
+    "name": "productPrice",
+    "value": "",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "9c787dcf-9476-49da-a879-e92b9c36c732",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:32:52.92+00:00",
+    "name": "productName",
+    "value": "",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "f38b398a-0942-427e-8122-8c274d6efe91",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:31:53.287+00:00",
+    "name": "productName",
+    "value": "fre",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "6b49fab1-477a-42ad-b9f3-ef416f9a20ea",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:32:52.92+00:00",
+    "name": "productDescription",
+    "value": "",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "a2ca542d-becc-4217-988a-01b1d20a49d2",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:31:53.286+00:00",
+    "name": "brandName",
+    "value": "freg",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "4a99ee0b-9f77-46d6-b39b-838cd6516d46",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:31:53.287+00:00",
+    "name": "productLink",
+    "value": "fer",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "9c537f14-9c72-420a-83b3-f1f56cf8c955",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:32:52.919+00:00",
+    "name": "brandName",
+    "value": "",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "cb28a960-2dcf-4d28-bf68-940169773601",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:31:53.287+00:00",
+    "name": "productPrice",
+    "value": "fer",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "8e4cf7e7-0c2a-4a25-9544-20d61cf517aa",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.362+00:00",
+    "name": "brandName",
+    "value": "ferf",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "e6a52cee-935e-4321-a3c5-6fd4ed83ff87",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.362+00:00",
+    "name": "marketingManagerName",
+    "value": "ferf",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "1b88484f-eedb-44a8-87ad-8f432e6d8b43",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.362+00:00",
+    "name": "productLink",
+    "value": "fref",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "4a49599f-4474-4e9f-8d0e-c652a5cfd72b",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.362+00:00",
+    "name": "productName",
+    "value": "ferf",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "4350c18f-7815-4d50-9ff8-e61a883df460",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.363+00:00",
+    "name": "productPrice",
+    "value": "fre",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "5f40e485-ccbf-4089-aade-42a51b68c63e",
+    "created_at": "2023-09-04T12:04:09.434671+00:00",
+    "updated_at": "2023-09-05T07:32:02.362+00:00",
+    "name": "productDescription",
+    "value": "fer",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "7b4508f0-3b43-47d9-a776-031793307c20",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "productPrice",
+    "value": "fre",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "b7d8ab1d-183c-4dc9-9226-15e1120d5177",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "marketingManagerName",
+    "value": "fer",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "2037c53a-3357-4006-bac0-42eac34272f2",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "productName",
+    "value": "ferf",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "723cafe0-85a8-42c8-bd1a-2e7a531a81c5",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "productDescription",
+    "value": "fre",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "e56d676e-22d6-4a5c-863d-a153ee386d16",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "brandName",
+    "value": "fer",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "da1b1a91-eac1-414b-8f92-1e3c44fd784c",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "productPrice",
+    "value": "fre",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "a0336dae-c9b2-41b8-81db-dc2baee97cc1",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "productDescription",
+    "value": "fre",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "cd612977-9746-4369-a248-d772f849bb1b",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "productName",
+    "value": "fer",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "81c633e7-7bd7-4f16-a1f1-deecd5a0b5b7",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "brandName",
+    "value": "ferfg",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "d7dae862-bb20-4f7f-84a2-61051e45bbd5",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "productLink",
+    "value": "ert",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "5214c5d9-f3c2-41a8-ada0-7a762ea447a2",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "productName",
+    "value": "gert",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "f840325b-c672-4d7d-948c-7c4d66307e87",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "marketingManagerName",
+    "value": "ertdg",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "60743231-7944-4cde-9040-58b2196b9129",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "brandName",
+    "value": "rtgver",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "48356b0c-7c1d-4560-8213-61d29e24c445",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "productLink",
+    "value": "gertg",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "8af7dc49-8b4a-4766-9a79-a46b7a994dab",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "productDescription",
+    "value": "gre",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "a0c892fa-99f6-44ed-b9d7-2c08623d88c6",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "productPrice",
+    "value": "gfver",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "b6fec154-13d6-4307-97ef-7a511631f738",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "brandName",
+    "value": "ertger",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "087fa122-9518-4231-9889-3e39965a786a",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "marketingManagerName",
+    "value": "fref",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "f004f44d-91d7-4a21-9e46-a7bcae330cb6",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "productLink",
+    "value": "gre",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "86a6ba19-8037-4e7e-bbf5-3188cbddb9f4",
+    "created_at": "2023-09-04T12:04:10.053646+00:00",
+    "updated_at": "2023-09-05T07:32:32.065+00:00",
+    "name": "productName",
+    "value": "egrf",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "28847c41-8700-40ff-9680-4a417ce33bda",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "productName",
+    "value": "11",
+    "key": "productName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "9fc7373e-4739-43c8-b1de-2cab4201ab1a",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "productLink",
+    "value": "11",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "1587de63-2752-4d6c-bab8-f1c441326858",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "productDescription",
+    "value": "11",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "63266ee4-965f-4061-bece-13046a6a2943",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "productPrice",
+    "value": "11",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "da0843e5-080b-4de2-a245-40d7002c4816",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "marketingManagerName",
+    "value": "11",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "e958cfda-918c-4b7a-b104-e5d4ec18c22d",
+    "created_at": "2023-09-04T12:04:10.203606+00:00",
+    "updated_at": "2023-09-05T07:32:41.765+00:00",
+    "name": "brandName",
+    "value": "11",
+    "key": "brandName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "903fa557-1113-4723-a9d8-f763b9956e07",
+    "created_at": "2023-09-04T12:04:08.914246+00:00",
+    "updated_at": "2023-09-05T07:32:52.92+00:00",
+    "name": "marketingManagerName",
+    "value": "",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "936a93f4-97ee-48f0-a2ec-84d56f1f0663",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "productPrice",
+    "value": "gertg",
+    "key": "productPrice",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "f60685e9-b1c2-49dc-b9f5-4428f028d2ab",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:29:07.67+00:00",
+    "name": "productDescription",
+    "value": "dwda",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "d0f18cf2-1c99-400b-bd15-e18c1ef72b73",
+    "created_at": "2023-09-04T12:03:23.31951+00:00",
+    "updated_at": "2023-09-05T07:29:07.67+00:00",
+    "name": "marketingManagerName",
+    "value": "dwa",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "8a62163d-58dc-446a-9c1d-d3247c5f3473",
+    "created_at": "2023-09-04T12:04:09.918235+00:00",
+    "updated_at": "2023-09-05T07:32:24.119+00:00",
+    "name": "productDescription",
+    "value": "reggf",
+    "key": "productDescription",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "ddc7a129-a57e-4ff7-9e94-ede6161236a1",
+    "created_at": "2023-09-04T12:04:09.604189+00:00",
+    "updated_at": "2023-09-05T07:32:08.828+00:00",
+    "name": "productLink",
+    "value": "fre",
+    "key": "productLink",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  },
+  {
+    "id": "7468091d-bbbe-4903-8feb-0b446b95dff6",
+    "created_at": "2023-09-04T12:04:09.750184+00:00",
+    "updated_at": "2023-09-05T07:32:16.695+00:00",
+    "name": "marketingManagerName",
+    "value": "fer",
+    "key": "marketingManagerName",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+    "required": true
+  }
+]

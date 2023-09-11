@@ -10,5 +10,6 @@ const navbar = {
     sequences: '邮件进程管理',
     inbox: '收件箱',
     influencerManager: 'KOL管理跟进',
+    report: '{{influencerName}} 报告',
 };
 export default navbar;

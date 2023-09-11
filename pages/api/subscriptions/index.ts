@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

@@ -21,16 +21,16 @@ const boostbot = {
             step3: '正在根据粉丝数、互动率、地域等维度精选最佳KOL',
             step3B: '已选定 {{count}} 名KOL',
         },
-        unlockDone: `恭喜您已解锁了 {{count}} 位新的 KOL。在免费试用期间,您可以解锁最多 50 位 KOL, 并给他们发送邮件, 您也可以付费升级获取更多额度。
+        unlockDone: `太棒了, 你刚刚解锁了新的红人 {{count}}, 在试用期间, 你最多可以解锁50位红人报告, 或者你也可以<pricingLink>升级方案解锁更多</pricingLink>。
 
 小贴士：您也可以选择逐个解锁 KOL。`,
-        outreachDone: `没问题，我正在安排邮件发送。在免费试用期内，您可解锁并发送邮件给最多 50 位 KOL ，您还可以付费升级获取更多额度。
+        outreachDone: `太棒了！ 我正在安排发送邮件。
 
-小贴士：您可以在“邮件进程管理”中查看电子邮件的状态。`,
-        hasUsedUnlock: '太棒啦！您刚刚解锁了 {{count}} 位新的 KOL。您还可以给他们发送邮件, 且不会花费额外的额度。',
-        hasUsedOutreach: `没问题，我正在安排邮件发送。在您的免费试用期内，您可以解锁以及发送电子邮件给最多 50 位 KOL ，您也可以付费升级获取更多额度。
+一个小提示：你可以在"<sequencesLink>拓展方案中</sequencesLink>"查看邮件状态。`,
+        hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
+        hasUsedOutreach: `好的，我正在安排发送邮件。
 
-小贴士: 您可以选择不给某一个KOL发送邮件, 将其从列表中移除即可。`,
+一个小提示：你也可以选择不给其中一部分红人发送邮件，只需将他们从列表中删除即可。`,
     },
     table: {
         account: '账号',
@@ -48,6 +48,9 @@ const boostbot = {
         influencerSearch: '通过Boostbot搜索红人时出错',
         influencerUnlock: '解锁红人报告失败',
         influencersToOutreach: '添加红人至联络列表失败',
+        outOfSearchCredits:
+            '很抱歉，你已达到解锁红人报告的限额，请<pricingLink>升级方案</pricingLink>，以便继续搜索更多内容。',
+        outOfProfileCredits: '很抱歉，你已达到解锁红人报告的限额，请 <pricingLink>升级方案</pricingLink> 解锁更多。',
     },
 };
 

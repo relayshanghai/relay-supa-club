@@ -8,9 +8,17 @@ export interface ModalProps {
     children: JSX.Element | JSX.Element[];
     /** a tailwind max-w class e.g. max-w-lg */
     maxWidth?: string;
+    padding?: number;
 }
 
-export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title, maxWidth = 'max-w-md' }) => {
+export const Modal: React.FC<ModalProps> = ({
+    children,
+    visible,
+    onClose,
+    title,
+    maxWidth = 'max-w-md',
+    padding = 6,
+}) => {
     return (
         <Transition appear show={visible} as={Fragment}>
             <Dialog open={visible} as="div" className="relative z-10" onClose={onClose}>
@@ -38,11 +46,16 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title,
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel
-                                className={`w-full ${maxWidth} transform overflow-visible rounded-2xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all`}
+                                className={`w-full ${maxWidth} transform overflow-visible rounded-lg bg-gray-50 p-${padding} text-left align-middle shadow-xl transition-all`}
                             >
-                                <Dialog.Title as="h3" className="my-2 text-2xl font-semibold leading-6 text-gray-600">
-                                    {title}
-                                </Dialog.Title>
+                                {title && (
+                                    <Dialog.Title
+                                        as="h3"
+                                        className="my-2 text-2xl font-semibold leading-6 text-gray-600"
+                                    >
+                                        {title}
+                                    </Dialog.Title>
+                                )}
                                 <>{children}</>
                             </Dialog.Panel>
                         </Transition.Child>

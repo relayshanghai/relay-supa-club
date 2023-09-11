@@ -1,0 +1,11 @@
+{
+  "created_at": "2023-09-06T03:55:13.720877+00:00",
+  "updated_at": "2023-09-06T03:55:13.720877+00:00",
+  "company_id": "3aaacc08-8d0d-4722-b9ea-0b62ecb32865",
+  "name": "Joe's BoostBot Sequence",
+  "auto_start": false,
+  "id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
+  "manager_first_name": "Joe",
+  "manager_id": "704aee9e-fa35-48d4-8990-13111941e703",
+  "deleted": false
+}

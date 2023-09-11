@@ -17,6 +17,7 @@ import sequences from './sequences';
 import boostbot from './boostbot';
 import manager from './manager';
 import profile from './profile';
+import faq from './faq';
 
 const translations = {
     translation: {
@@ -39,6 +40,7 @@ const translations = {
         boostbot,
         manager,
         profile,
+        faq,
     },
 };
 export default translations;
