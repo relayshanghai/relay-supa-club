@@ -165,13 +165,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             <tr className="border-b-2 border-gray-200 bg-white text-sm">
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <div>
-                            <img
-                                className="inline-block h-14 w-14 bg-slate-300"
-                                src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
-                                alt={`Influencer avatar ${influencerSocialProfile?.name}`}
-                            />
-                        </div>
+                        <img
+                            className="inline-block h-14 w-14 bg-slate-300"
+                            src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
+                            alt={`Influencer avatar ${influencerSocialProfile?.name}`}
+                        />
 
                         <div className="flex flex-col">
                             <p className="font-semibold text-primary-600">{influencerSocialProfile?.name ?? ''}</p>
