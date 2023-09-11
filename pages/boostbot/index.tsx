@@ -24,6 +24,7 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -209,6 +210,10 @@ const Boostbot = () => {
                 />
             ),
         });
+        addMessage({
+            sender: 'Bot',
+            content: <VideoPreviewWithModal videoUrl='src="/assets/videos/delete-guide.mp4"' />,
+        });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -235,10 +240,8 @@ const Boostbot = () => {
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const socialProfileId = influencer.socialProfile.id;
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
-                const socialProfileEmail = influencer.socialProfile.email;
 
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
@@ -260,6 +263,10 @@ const Boostbot = () => {
                         }}
                     />
                 ),
+            });
+            addMessage({
+                sender: 'Bot',
+                content: <VideoPreviewWithModal videoUrl="/assets/videos/sequence-guide.mp4" />,
             });
 
             if (sequence?.auto_start) {
