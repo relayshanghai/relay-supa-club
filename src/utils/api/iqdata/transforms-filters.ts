@@ -69,7 +69,7 @@ export const recommendedInfluencersFilter = (influencers: string[]) => {
     const ids = influencers.map((influencer) => influencer.split('/')[1]);
 
     if (ids.length > 1000) {
-        serverLogger('Recommended influencer ids truncated', 'error', true);
+        serverLogger('Recommended influencer ids truncated');
         return ids.slice(0, 1000);
     }
 

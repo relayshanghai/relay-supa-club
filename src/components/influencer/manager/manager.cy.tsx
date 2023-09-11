@@ -14,10 +14,10 @@ describe('Manager', () => {
         cy.contains(manager.subtitle);
         cy.contains(manager.title);
 
-        //src/mocks/api/sequence/influencers/sequence-influencers-1.json
-        cy.contains('tr', 'Negotiating Green');
-        cy.contains('tr', 'Confirmed Green');
-        cy.contains('tr', 'Shipped Green');
-        cy.contains('tr', 'Rejected Green');
+        //src/mocks/api/sequence/influencers/sequence-influencers-1
+        cy.contains('tr', 'Negotiating Obie Lebeau');
+        cy.contains('tr', 'Confirmed Alicia Kim');
+        cy.contains('tr', 'Shipped Hermela Solomon');
+        cy.contains('tr', 'Rejected FilterLESS_Era');
     });
 });
