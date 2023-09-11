@@ -24,6 +24,7 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -218,6 +219,7 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: null,
