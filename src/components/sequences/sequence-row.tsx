@@ -223,9 +223,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 <Button
                                     disabled={isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
-                                    onClick={
-                                        isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
-                                    }
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (isMissingVariables) {
+                                            setShowUpdateTemplateVariables(true);
+                                        } else {
+                                            handleStart();
+                                        }
+                                    }}
                                     className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
                                 >
                                     <SendOutline className="mx-2 h-5 text-white" />
