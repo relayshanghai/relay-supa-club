@@ -53,7 +53,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
-                                to_page: table.getCanPreviousPage() ? table.getState().pagination.pageIndex - 2 : null,
+                                to_page: table.getCanPreviousPage() ? table.getState().pagination.pageIndex : null,
                             })
                         }}
                         disabled={!table.getCanPreviousPage()}
