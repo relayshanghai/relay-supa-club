@@ -65,10 +65,14 @@ import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
     SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
+import { OPEN_SOCIAL_PROFILE, OpenSocialProfile, OpenSocialProfilePayload } from './open-social-profle';
+import { CHANGE_PAGE, ChangePage, ChangePagePayload } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
 import type { RemoveBoostbotKolPayload } from './remove-boostbot-kol';
 import { REMOVE_BOOSTBOT_KOL, RemoveBoostbotKol } from './remove-boostbot-kol';
+import type { StopBoostbotPayload } from './stop-boostbot';
+import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 
@@ -100,6 +104,8 @@ export {
     SendInfluencersToOutreach,
     OpenSocialProfile,
     RemoveBoostbotKol,
+    ChangePage,
+    StopBoostbot,
     OpenSocialThumbnails,
 };
 
@@ -131,6 +137,8 @@ export const events = {
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKol,
+    [CHANGE_PAGE]: ChangePage,
+    [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
 };
 
@@ -162,6 +170,8 @@ export type payloads = {
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKolPayload;
+    [CHANGE_PAGE]: ChangePagePayload;
+    [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
 };
 
@@ -195,6 +205,8 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
     z.literal(REMOVE_BOOSTBOT_KOL),
+    z.literal(CHANGE_PAGE),
+    z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
 ]);
 
