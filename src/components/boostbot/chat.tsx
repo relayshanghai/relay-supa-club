@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
@@ -66,7 +66,7 @@ export const Chat: React.FC<ChatProps> = ({
         abortSignal: abortController.signal,
     });
 
-    const { trackEvent: track } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
@@ -77,6 +77,9 @@ export const Chat: React.FC<ChatProps> = ({
         setMessages((prevMessages) => {
             const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
+        });
+        track(StopBoostbot, {
+            currentPage: CurrentPageEvent.boostbot,
         });
     };
 
@@ -145,7 +148,7 @@ export const Chat: React.FC<ChatProps> = ({
                 content: t('boostbot.chat.influencersFound', { count: influencers.length }) || '',
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
-            track(RecommendInfluencers.eventName, payload);
+            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
@@ -156,7 +159,7 @@ export const Chat: React.FC<ChatProps> = ({
                 clientLogger(error, 'error');
                 toast.error(t('boostbot.error.influencerSearch'));
 
-                track(RecommendInfluencers.eventName, payload);
+                track(RecommendInfluencers, payload);
             }
         } finally {
             setIsSearchLoading(false);
