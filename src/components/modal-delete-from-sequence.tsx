@@ -2,17 +2,16 @@ import { useState } from 'react';
 import { ModalWithButtons } from './modal-with-buttons';
 import { Spinner } from './icons';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 
 export const DeleteFromSequenceModal = ({
     show,
     setShow,
-    deleteInfluencer,
+    deleteHandler,
     sequenceIds,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
-    deleteInfluencer: (id: string) => void;
+    deleteHandler: (ids: string[]) => void;
     sequenceIds: string[];
 }) => {
     const [loading, setLoading] = useState(false);
@@ -34,12 +33,7 @@ export const DeleteFromSequenceModal = ({
             }
             onOkay={async () => {
                 setLoading(true);
-                await Promise.all(
-                    sequenceIds.map((sequenceId) => {
-                        deleteInfluencer(sequenceId);
-                    }),
-                );
-                toast.success(t('sequences.influencerDeleted'));
+                await deleteHandler(sequenceIds);
                 setLoading(false);
                 setShow(false);
             }}

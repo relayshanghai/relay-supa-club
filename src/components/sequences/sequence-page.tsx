@@ -19,6 +19,7 @@ import { EMAIL_STEPS } from './constants';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useUser } from 'src/hooks/use-user';
 import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
+import toast from 'react-hot-toast';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -139,10 +140,11 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
-    const handleDelete = useCallback(() => {
-        selection.forEach((influencerId) => deleteSequenceInfluencer(influencerId));
+    const handleDelete = async (sequenceIds: string[]) => {
+        await Promise.all(sequenceIds.map((influencerId) => deleteSequenceInfluencer(influencerId)));
         refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
-    }, [selection, deleteSequenceInfluencer, refreshSequenceInfluencers, sequenceInfluencers]);
+        toast.success(t('sequences.influencerDeleted'));
+    };
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -266,7 +268,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     />
                     <button
                         data-testid="delete-influencers-button"
-                        className="h-fit w-fit cursor-pointer rounded-md border border-red-100 p-[10px]"
+                        className={`h-fit ${
+                            selection.length === 0 && 'hidden'
+                        } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
                         onClick={() => {
                             if (selection.length === 0) return;
                             setShowDeleteConfirmation(true);
@@ -296,7 +300,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             <DeleteFromSequenceModal
                 show={showDeleteConfirmation}
                 setShow={setShowDeleteConfirmation}
-                deleteInfluencer={handleDelete}
+                deleteHandler={handleDelete}
                 sequenceIds={selection}
             />
         </Layout>

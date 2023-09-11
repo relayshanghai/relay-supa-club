@@ -2,7 +2,7 @@ import { deleteDB } from 'idb';
 import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { randomString, reinsertCharlie, resetSequenceEmails } from './helpers';
+import { randomString, reinsertAlice, reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
@@ -10,6 +10,7 @@ describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         reinsertCharlie(); // reinsert so you can run again easily
+        reinsertAlice();
         resetSequenceEmails();
         setupIntercepts();
         // turn back on the real database
@@ -107,10 +108,16 @@ describe('outreach', () => {
             cy.get('button[type=submit]').click();
         });
         // can delete influencer
+        cy.getByTestId('delete-influencers-button').should('not.be.visible');
+        cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
+        cy.getByTestId('sequence-influencers-select-all').check();
         cy.contains('Charlie Charles');
         cy.contains('Alice Anderson');
-        cy.getByTestId('influencer-checkbox').eq(1).check();
-        cy.getByTestId('influencer-checkbox').eq(2).check();
+        cy.getByTestId('influencer-checkbox').eq(0).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(1).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(2).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(0).uncheck();
+        cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
         cy.getByTestId('delete-influencers-button').click();
         cy.contains(
             "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",

@@ -89,7 +89,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                     <tr className="border-b-2 border-gray-200">
                         <th className="bg-white px-4">
                             <input
-                                className="display-none appearance-none rounded border-gray-300 checked:text-primary-500"
+                                data-testid="sequence-influencers-select-all"
+                                className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
                                 type="checkbox"
                                 checked={sequenceInfluencers.length === selection.length && selection.length > 0}
                                 onChange={handleCheckAll}

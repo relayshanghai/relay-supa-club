@@ -171,7 +171,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 <td className="display-none items-center whitespace-nowrap text-center align-middle">
                     <input
                         data-testid="influencer-checkbox"
-                        className="appearance-none rounded border-gray-300 checked:text-primary-500"
+                        className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
                         checked={checked}
                         onChange={handleChange}
                         type="checkbox"
