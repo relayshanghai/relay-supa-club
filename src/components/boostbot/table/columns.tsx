@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
-import { LockClosedIcon, LockOpenIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import { Spinner } from 'src/components/icons';
+import { BoostbotRemoveKolCell } from './boostbot-remove-kol-cell';
 import { BoostbotAccountCell } from './boostbot-account-cell';
 import { BoostbotTopPostsCell } from './boostbot-top-post-cell';
 
@@ -54,20 +55,6 @@ export const columns: ColumnDef<Influencer>[] = [
     {
         id: 'remove',
         header: '',
-        cell: ({ row, table }) => {
-            const removeInfluencer = () => {
-                table.options.meta?.removeInfluencer(row.original.user_id);
-            };
-
-            return (
-                <button
-                    className="flex h-6 w-6"
-                    onClick={removeInfluencer}
-                    aria-label={table.options.meta?.t('boostbot.table.removeInfluencer')}
-                >
-                    <XMarkIcon className="h-full w-full flex-shrink-0 fill-red-300 transition-all hover:scale-105 hover:fill-red-400" />
-                </button>
-            );
-        },
+        cell: BoostbotRemoveKolCell,
     },
 ];
