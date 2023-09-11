@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: campaignNote, error } = await insertCampaignNote(data);
 
     if (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
 
     return res.status(httpCodes.OK).json(campaignNote);

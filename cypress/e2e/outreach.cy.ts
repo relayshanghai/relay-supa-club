@@ -148,7 +148,7 @@ describe('outreach', () => {
         );
         // can View sequence templates
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
-        cy.contains('test description entry is available for just $450');
+        cy.contains('span', 'test description entry');
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
@@ -160,11 +160,9 @@ describe('outreach', () => {
         cy.contains('button', 'In sequence').click();
         cy.contains('button', '1st Follow-up').click();
         // cy.getByTestId('email-preview-modal-spinner');
-        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {
-            timeout: 10000,
-        });
+        cy.contains(firstFollowup);
         cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
+            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.',
         ).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
 

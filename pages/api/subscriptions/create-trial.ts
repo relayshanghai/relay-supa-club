@@ -74,7 +74,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         !searches ||
         !ai_emails
     ) {
-        serverLogger('Missing product metadata: ' + JSON.stringify({ priceId, price }), 'error', true);
+        serverLogger('Missing product metadata: ' + JSON.stringify({ priceId, price }));
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 
