@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
+import type { eventKeys } from 'src/utils/analytics/events';
+import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import {
     fetchReportWithContext as fetchReport,
@@ -8,12 +11,10 @@ import {
 } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
-import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
-import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
-import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
-import type { eventKeys } from 'src/utils/analytics/events';
+import type { CreatorPlatform, CreatorReport } from 'types';
 
+import { usageErrors } from 'src/errors/usages';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import {
     IQDATA_CREATE_NEW_REPORT,
@@ -21,7 +22,6 @@ import {
     IQDATA_LIST_REPORTS,
     rudderstack,
 } from 'src/utils/rudderstack';
-import { usageErrors } from 'src/errors/usages';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
                 return { influencer, socialProfile };
             } catch (error) {
-                serverLogger(error, 'error', true);
+                serverLogger(error);
             }
 
             return { influencer: null, socialProfile: null };
@@ -119,6 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const data: CreatorReport = await fetchReport({ req, res })(report_id);
 
                 if (!data.success) throw new Error('Failed to find report');
+
                 if (source === 'default') {
                     const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                     if (recordError) {
@@ -170,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

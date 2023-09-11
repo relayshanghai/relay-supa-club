@@ -85,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return handleInvoicePaymentFailed(res, invoiceBody);
             }
         } catch (error: any) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             await supabaseLogger({
                 type: 'stripe-webhook',
                 message: error.message ?? 'error',

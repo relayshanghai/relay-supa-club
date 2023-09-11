@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import type { ProgressType } from 'src/components/boostbot/chat';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -16,7 +18,6 @@ import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/event
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
-import type { ProgressType } from 'src/components/boostbot/chat';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -78,14 +79,28 @@ const Boostbot = () => {
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.outOfSearchCredits') || '',
+                content: (
+                    <Trans
+                        i18nKey="boostbot.error.outOfSearchCredits"
+                        components={{
+                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                        }}
+                    />
+                ),
             });
             setIsSearchDisabled(true);
         }
         if (usages.profile.remaining <= 0) {
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.outOfProfileCredits') || '',
+                content: (
+                    <Trans
+                        i18nKey="boostbot.error.outOfProfileCredits"
+                        components={{
+                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                        }}
+                    />
+                ),
             });
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
@@ -184,9 +199,15 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(false);
         addMessage({
             sender: 'Bot',
-            content: `${t(`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`, {
-                count: unlockedInfluencers?.length,
-            })}`,
+            content: (
+                <Trans
+                    i18nKey={`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`}
+                    components={{
+                        pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                    }}
+                    values={{ count: unlockedInfluencers?.length }}
+                />
+            ),
         });
         setHasUsedUnlock(true);
 
@@ -222,7 +243,7 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
+                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
@@ -231,7 +252,14 @@ const Boostbot = () => {
 
             addMessage({
                 sender: 'Bot',
-                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
+                content: (
+                    <Trans
+                        i18nKey={`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`}
+                        components={{
+                            sequencesLink: <Link target="_blank" className="font-medium underline" href="/sequences" />,
+                        }}
+                    />
+                ),
             });
 
             if (sequence?.auto_start) {
