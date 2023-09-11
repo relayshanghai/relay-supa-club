@@ -20,6 +20,8 @@ import {
 } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
+import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
+import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -92,6 +94,7 @@ export {
     RecommendInfluencers,
     UnlockInfluencers,
     SendInfluencersToOutreach,
+    OpenVideoGuideModal,
 };
 
 export const events = {
@@ -120,6 +123,7 @@ export const events = {
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
 };
 
 export type payloads = {
@@ -148,6 +152,7 @@ export type payloads = {
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -178,6 +183,7 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
+    z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

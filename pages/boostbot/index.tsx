@@ -13,7 +13,12 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
+import {
+    OpenVideoGuideModal,
+    OpenBoostbotPage,
+    SendInfluencersToOutreach,
+    UnlockInfluencers,
+} from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
@@ -212,7 +217,12 @@ const Boostbot = () => {
         });
         addMessage({
             sender: 'Bot',
-            content: <VideoPreviewWithModal videoUrl='src="/assets/videos/delete-guide.mp4"' />,
+            content: (
+                <VideoPreviewWithModal
+                    eventToTrack={OpenVideoGuideModal.eventName}
+                    videoUrl='src="/assets/videos/delete-guide.mp4"'
+                />
+            ),
         });
         setHasUsedUnlock(true);
 
@@ -266,7 +276,12 @@ const Boostbot = () => {
             });
             addMessage({
                 sender: 'Bot',
-                content: <VideoPreviewWithModal videoUrl="/assets/videos/sequence-guide.mp4" />,
+                content: (
+                    <VideoPreviewWithModal
+                        eventToTrack={OpenVideoGuideModal.eventName}
+                        videoUrl="/assets/videos/sequence-guide.mp4"
+                    />
+                ),
             });
 
             if (sequence?.auto_start) {

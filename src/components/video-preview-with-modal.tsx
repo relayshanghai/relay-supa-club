@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Modal } from 'src/components/modal';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 interface VideoPreviewWithModalProps {
+    eventToTrack: string;
     videoUrl: string;
 }
 
-export const VideoPreviewWithModal: React.FC<VideoPreviewWithModalProps> = ({ videoUrl }) => {
+export const VideoPreviewWithModal: React.FC<VideoPreviewWithModalProps> = ({ videoUrl, eventToTrack }) => {
+    const { trackEvent } = useRudderstack();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => {
+        trackEvent(eventToTrack);
         setIsModalOpen(true);
     };
 
