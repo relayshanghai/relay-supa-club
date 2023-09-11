@@ -14,7 +14,11 @@ export const BoostbotRemoveKolCell = ({ row, table }: BoostbotRemoveKolCellProps
     const { track } = useRudderstackTrack();
 
     const removeInfluencer = () => {
-        table.options.meta?.removeInfluencer(row.original.user_id);
+        if (!table.options.meta) {
+            throw new Error("KOL Remove event handler is required");
+        }
+
+        table.options.meta.removeInfluencer(row.original.user_id);
     };
 
     return (
