@@ -217,6 +217,23 @@ describe('outreach', () => {
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
     });
+    it('can view templates for sequences', () => {
+        cy.contains('Sequences').click();
+        cy.wait(3000);
+        cy.contains('button', 'View sequence templates').click();
+        cy.contains('Email preview');
+        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
+        const outreachMessage =
+            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
+        cy.contains(outreachMessage); // fills in variables
+        const firstFollowup = 'Just floating this to the top of your inbox';
+        cy.contains(firstFollowup);
+        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        const thirdFollowup =
+            "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
+        cy.contains(thirdFollowup); // shows all emails not just outreach
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+    });
     it('can create new sequence. Can delete sequence', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
