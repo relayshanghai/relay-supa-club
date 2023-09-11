@@ -21,6 +21,7 @@ import { useUser } from 'src/hooks/use-user';
 import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { clientLogger } from 'src/utils/logger-client';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencerManagerPage;
@@ -69,8 +70,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     checked,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { sequenceInfluencers, updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } =
-        useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
+    const {
+        sequenceInfluencers,
+        updateSequenceInfluencer,
+        deleteSequenceInfluencers: deleteSequenceInfluencer,
+        refreshSequenceInfluencers,
+    } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const { profile } = useUser();
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
@@ -139,10 +144,17 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
         setSendingEmail(false);
     };
-    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
-        deleteSequenceInfluencer(sequenceInfluencerId);
-        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
-        toast.success(t('sequences.influencerDeleted'));
+    const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
+        try {
+            await deleteSequenceInfluencer([sequenceInfluencerId]);
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId),
+            );
+            toast.success(t('sequences.influencerDeleted'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.influencerDeleteFailed'));
+        }
     };
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
