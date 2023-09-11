@@ -105,6 +105,7 @@ export const Chat: React.FC<ChatProps> = ({
         setIsSearchLoading(true);
 
         const payload: RecommendInfluencersPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             query: productDescription,
             topics_generated: [],
             valid_topics: [],
