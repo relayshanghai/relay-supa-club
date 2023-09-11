@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
-import { LockClosedIcon, LockOpenIcon} from '@heroicons/react/24/solid';
+import { LockClosedIcon, LockOpenIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import { Spinner } from 'src/components/icons';
 import { BoostbotAccountCell } from './boostbot-account-cell';
