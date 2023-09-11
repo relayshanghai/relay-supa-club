@@ -5,10 +5,10 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Info, Spinner } from '../icons';
+import { Brackets, Info, Question, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
-import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
+import { Badge, FaqModal, SelectMultipleDropdown, Switch, Tabs } from '../library';
 import { Button } from '../button';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
@@ -18,9 +18,12 @@ import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useUser } from 'src/hooks/use-user';
+import faq from 'i18n/en/faq';
+import { useRouter } from 'next/router';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
+    const { push } = useRouter();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
@@ -171,8 +174,21 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
           })
         : t('sequences.autoStartTooltipDescription');
 
+    const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+
     return (
         <Layout>
+            <FaqModal
+                title={t('faq.sequencesTitle')}
+                visible={showNeedHelp}
+                onClose={() => setShowNeedHelp(false)}
+                content={faq.sequences.map((_, i) => ({
+                    title: t(`faq.sequences.${i}.title`),
+                    detail: t(`faq.sequences.${i}.detail`),
+                }))}
+                getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
+                getMoreInfoButtonAction={() => push('/guide')}
+            />
             <TemplateVariablesModal
                 sequenceId={sequenceId}
                 visible={showUpdateTemplateVariables}
@@ -181,12 +197,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 templateVariables={templateVariables ?? []}
             />
             <div className="flex flex-col space-y-4 p-6">
-                <div className="flex w-fit gap-6">
+                <div className="flex w-full gap-6">
                     <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Button
                         onClick={handleOpenUpdateTemplateVariables}
                         variant="secondary"
-                        className="relative ml-auto flex border-primary-600 bg-white text-primary-600"
+                        className="relative flex border-primary-600 bg-white text-primary-600"
                     >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
@@ -198,6 +214,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                 {missingVariables.length}
                             </div>
                         )}
+                    </Button>
+                    <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="ml-auto flex items-center">
+                        {t('website.needHelp')}
+                        <Question className="ml-2 h-6 w-6" />
                     </Button>
                 </div>
                 <SequenceStats
