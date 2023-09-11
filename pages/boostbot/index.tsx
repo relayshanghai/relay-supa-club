@@ -135,6 +135,7 @@ const Boostbot = () => {
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
         const trackingPayload: UnlockInfluencersPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: userIds.length > 1,
