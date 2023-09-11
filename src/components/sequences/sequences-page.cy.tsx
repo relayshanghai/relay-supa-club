@@ -16,7 +16,7 @@ describe('SequencesPage', () => {
         cy.contains(sequences.subtitle);
 
         cy.contains('tr', 'General collaboration');
-        cy.contains('tr', 'Component Test Sequence'); // set in src/mocks/supabase/sequences/all-sequences-by-company.json
+        cy.contains('tr', "Joe's BoostBot Sequence"); // set in src/mocks/supabase/sequences/all-sequences-by-company.json
     });
     it('opens up FAQ when clicking "Need help?"', () => {
         testMount(<SequencesPage />);
