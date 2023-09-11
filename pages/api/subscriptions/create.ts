@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: companyData, error: getCompanyError } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
             if (!companyData || !cusId || getCompanyError) {
-                serverLogger(getCompanyError ?? new Error('Missing company data'), 'error');
+                serverLogger(getCompanyError ?? new Error('Missing company data'));
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const { profiles, searches, ai_emails } = product.metadata;
             if (!profiles || !searches || !ai_emails) {
-                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }), 'error', true);
+                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
                 throw new Error('Missing product metadata');
             }
 
@@ -113,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

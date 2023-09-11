@@ -1,10 +1,10 @@
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger-server';
 import type { RelayDatabase } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -27,7 +27,7 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return { subscriptionStatus: false, subscriptionEndDate: null };
     }
 };

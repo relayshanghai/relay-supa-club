@@ -112,7 +112,7 @@ const deleteScheduledEmails = async (sequenceInfluencer: SequenceInfluencer, eve
             data: event as any,
             message: `failed to cancel an email to: ${event.data.from.address}`,
         });
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
@@ -476,7 +476,7 @@ const identifyWebhook = async (body: WebhookEvent) => {
         return;
     }
 
-    serverLogger(`No account associated with "${body.account}"`, 'error', true);
+    serverLogger(`No account associated with "${body.account}"`);
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
