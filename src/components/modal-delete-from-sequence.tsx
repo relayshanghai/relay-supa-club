@@ -7,12 +7,12 @@ export const DeleteFromSequenceModal = ({
     show,
     setShow,
     deleteHandler,
-    sequenceIds,
+    influencerIds,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     deleteHandler: (ids: string[]) => void;
-    sequenceIds: string[];
+    influencerIds: string[];
 }) => {
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
@@ -33,7 +33,7 @@ export const DeleteFromSequenceModal = ({
             }
             onOkay={async () => {
                 setLoading(true);
-                await deleteHandler(sequenceIds);
+                await deleteHandler(influencerIds);
                 setLoading(false);
                 setShow(false);
             }}

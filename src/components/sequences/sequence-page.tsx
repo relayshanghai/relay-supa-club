@@ -22,13 +22,14 @@ import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 import toast from 'react-hot-toast';
 import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers, deleteSequenceInfluencer, refreshSequenceInfluencers } = useSequenceInfluencers(
+    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequence && [sequenceId],
     );
 
@@ -143,10 +144,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
-    const handleDelete = async (sequenceIds: string[]) => {
-        await Promise.all(sequenceIds.map((influencerId) => deleteSequenceInfluencer(influencerId)));
-        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
-        toast.success(t('sequences.influencerDeleted'));
+    const handleDelete = async (influencerIds: string[]) => {
+        try {
+            await deleteSequenceInfluencers(influencerIds);
+            refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
+            toast.success(t('sequences.influencerDeleted'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.influencerDeleteFailed'));
+        }
     };
 
     const setEmailStepValues = useCallback(
@@ -321,7 +327,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 show={showDeleteConfirmation}
                 setShow={setShowDeleteConfirmation}
                 deleteHandler={handleDelete}
-                sequenceIds={selection}
+                influencerIds={selection}
             />
         </Layout>
     );
