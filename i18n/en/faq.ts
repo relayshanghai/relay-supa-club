@@ -23,6 +23,31 @@ export const faq = {
     ],
     sequencesTitle: 'Sequence FAQ’s',
     sequencesGetMoreInfo: 'Get more info about Sequences',
+    influencerManager: [
+        {
+            title: 'How is this different than my sequence?',
+            detail: 'The influencers shown here are only the ones who have responded to your outreach emails. This is where you can focus your efforts, communicating with these influencers and confirming your collabs!',
+        },
+        {
+            title: 'What should I do here?',
+            detail: 'This is your active collab hub. It’s where you can get a birds eye view of all your influencers. Use statuses to keep track of where everyone is at, so you can send product to ‘Confirmed’ influencers, or check in with influencers who have ‘Recieved’ their product and are making their content. Keep notes, collab details, shipping information etc organized by clicking on the influencer and accessing their ‘Influencer Profile’. Also displayed in your inbox page for easy access!',
+        },
+        {
+            title: 'Can my whole team see these influencers?',
+            detail: 'Yes! Everyone on your team has access to this page. You can show only the influencers that replied to your emails by toggling the ‘View only mine’ button.',
+        },
+        {
+            title: 'What if I want to save info about a specific influencer?',
+            detail: 'That’s what the ‘Influencer Profile’ is for! Click on any influencer to pull up their profile and easily save any information in the spaces provided. If you’ve got something that doesn’t fit anywhere, add it to a Note!',
+        },
+        {
+            title: 'Where can I see these influencers’ emails?',
+            detail: 'The actual emails are all displayed in the ‘Inbox’ page. Click on the inbox icon on the right hand side to go see your emails and send your response.',
+        },
+    ],
+    influencerManagerTitle: 'Influencer Manager FAQ’s',
+    influencerManagerDescription: 'Send customized outreach and follow-up emails, with just a click',
+    influencerManagerGetMoreInfo: 'Get more info about the Influencer Manager',
 };
 
 export default faq;
