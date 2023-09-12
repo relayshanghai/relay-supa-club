@@ -7,6 +7,7 @@ import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
 const setTemplateVariableDescription = (description: string) => {
+    cy.contains('tr', 'General collaboration').should('not.exist');
     cy.contains('button', 'View sequence templates').click();
     cy.get('textarea[id="template-variable-input-productDescription"]').clear();
     if (description) {
