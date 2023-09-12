@@ -59,8 +59,8 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     };
 
     const deleteSequenceInfluencerDBCall = useDB<typeof deleteSequenceInfluencerCall>(deleteSequenceInfluencerCall);
-    const deleteSequenceInfluencer = async (id: string) => {
-        const res = await deleteSequenceInfluencerDBCall(id);
+    const deleteSequenceInfluencers = async (ids: string[]) => {
+        const res = await deleteSequenceInfluencerDBCall(ids);
         refreshSequenceInfluencers();
         return res;
     };
@@ -70,6 +70,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         createSequenceInfluencer,
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
-        deleteSequenceInfluencer,
+        deleteSequenceInfluencers,
     };
 };
