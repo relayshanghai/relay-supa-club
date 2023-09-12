@@ -464,19 +464,24 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
 };
 
 const identifyWebhook = async (body: WebhookEvent) => {
+    if (!body.account) {
+        return false;
+    }
+
     const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
 
     if (profile) {
         rudderstack.identifyWithProfile(profile.id);
-        return;
+        return true;
     }
 
     if (!profile) {
         rudderstack.identifyWithAnonymousID(body.account);
-        return;
+        return true;
     }
 
     serverLogger(`No account associated with "${body.account}"`);
+    return false;
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
