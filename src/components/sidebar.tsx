@@ -19,6 +19,8 @@ import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenAccountModal } from 'src/utils/analytics/events';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -93,6 +95,8 @@ const NavBarInner = ({
     const { t } = useTranslation();
     const sidebarState = open && desktop ? 'visible' : 'hidden';
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
+
     return (
         <>
             <div className="pt-2">
@@ -161,7 +165,10 @@ const NavBarInner = ({
                     <div className="m-4 flex flex-row items-center gap-4">
                         <div
                             data-testid="layout-account-menu"
-                            onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                            onClick={() => {
+                                setAccountMenuOpen(!accountMenuOpen);
+                                track(OpenAccountModal);
+                            }}
                             ref={accountMenuButtonRef}
                             className="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-200 p-2 text-base text-gray-800"
                         >
