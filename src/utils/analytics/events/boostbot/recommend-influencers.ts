@@ -1,8 +1,10 @@
 import type { TriggerEvent } from '../../types';
+import { CurrentPageEvent } from '../current-pages';
 
 export const BOOSTBOT_RECOMMEND_INFLUENCERS = 'boostbot-recommend_influencers';
 
 export type RecommendInfluencersPayload = {
+    currentPage: CurrentPageEvent;
     query: string;
     topics_generated: string[];
     valid_topics: string[];
