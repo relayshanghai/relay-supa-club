@@ -258,7 +258,7 @@ describe('outreach', () => {
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
     });
-    it('can create new sequence. Can delete sequence', () => {
+    it('can create new sequences. Can delete sequences', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
