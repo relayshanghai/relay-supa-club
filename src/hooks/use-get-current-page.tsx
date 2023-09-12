@@ -5,55 +5,55 @@ import { clientLogger } from 'src/utils/logger-client';
 export const useGetCurrentPage = () => {
     const { pathname } = useRouter()
 
-    if (pathname.match(/^\/boostbot\/?/)) {
+    if (/^\/boostbot\/?/.test(pathname)) {
         return CurrentPageEvent.boostbot
     }
 
-    if (pathname.match(/^\/dashboard\/?/)) {
+    if (/^\/dashboard\/?/.test(pathname)) {
         return CurrentPageEvent.dashboard
     }
 
-    if (pathname.match(/^\/sequences\/?/)) {
+    if (/^\/sequences\/?/.test(pathname)) {
         return CurrentPageEvent.sequences
     }
 
-    if (pathname.match(/^\/inbox\/?/)) {
+    if (/^\/inbox\/?/.test(pathname)) {
         return CurrentPageEvent.inbox
     }
 
-    if (pathname.match(/^\/influencer-manager\/?/)) {
+    if (/^\/influencer-manager\/?/.test(pathname)) {
         return CurrentPageEvent['influencer-manager']
     }
 
-    if (pathname.match(/^\/guide\/?/)) {
+    if (/^\/guide\/?/.test(pathname)) {
         return CurrentPageEvent.guide
     }
 
-    if (pathname.match(/^\/account\/?/)) {
+    if (/^\/account\/?/.test(pathname)) {
         return CurrentPageEvent.account
     }
 
-    if (pathname.match(/^\/pricing\/?/)) {
+    if (/^\/pricing\/?/.test(pathname)) {
         return CurrentPageEvent.pricing
     }
 
-    if (pathname.match(/^\/login\/?/)) {
+    if (/^\/login\/?/.test(pathname)) {
         return CurrentPageEvent.login
     }
 
-    if (pathname.match(/^\/signup\/?/)) {
+    if (/^\/signup\/?/.test(pathname)) {
         return CurrentPageEvent.signup
     }
 
-    if (pathname.match(/^\/influencer\/?/)) {
+    if (/^\/influencer\/?/.test(pathname)) {
         return CurrentPageEvent.influencer
     }
 
-    if (pathname.match(/^\/admin\/?/)) {
+    if (/^\/admin\/?/.test(pathname)) {
         return CurrentPageEvent.admin
     }
 
-    if (pathname.match(/^\/$/)) {
+    if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index
     }
 
