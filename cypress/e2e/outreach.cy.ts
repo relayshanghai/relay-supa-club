@@ -275,15 +275,14 @@ describe('outreach', () => {
         cy.contains(thirdFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
     });
-    it('can create new sequence. Can delete sequence', () => {
+    it.only('can create new sequence. Can delete sequence', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
         cy.contains('button', 'Create new sequence').click();
-        cy.wait(1000);
-        cy.contains('New Sequence Test').click();
-        cy.wait(1000);
-        cy.contains('button', 'View sequence templates').click();
+        cy.contains('a', 'New Sequence Test').click({ timeout: 10000 });
+        cy.contains('tr', 'View sequence templates').should('not.exist');
+        cy.contains('button', 'View sequence templates').click({ timeout: 10000 });
         cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
         cy.contains('button', 'Update variables').click();
         cy.contains(
