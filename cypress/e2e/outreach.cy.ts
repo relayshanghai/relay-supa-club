@@ -275,7 +275,7 @@ describe('outreach', () => {
         cy.contains(thirdFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
     });
-    it.only('can create new sequence. Can delete sequence', () => {
+    it('can create new sequence. Can delete sequence', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
