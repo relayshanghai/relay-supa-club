@@ -464,7 +464,7 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
 };
 
 const identifyWebhook = async (body: WebhookEvent) => {
-    if (!body.account) {
+    if (!body?.account) {
         return false;
     }
 
