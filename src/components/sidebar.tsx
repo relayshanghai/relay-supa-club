@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, type MutableRefObject, type ReactNode } from 'react';
+import { useState, type MutableRefObject, type ReactNode, useCallback } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useUser } from 'src/hooks/use-user';
 import {
@@ -19,6 +19,8 @@ import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { NavigateToPage } from 'src/utils/analytics/events';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -51,6 +53,14 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
     const isRouteActive = pathRoot === href;
 
+    const { track } = useRudderstackTrack()
+
+    const handleLinkClick = useCallback((href: string) => {
+        track(NavigateToPage, {
+            destination_url: href
+        })
+    }, [])
+
     return (
         <Link
             onMouseOver={() => setHovering(true)}
@@ -59,6 +69,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
             className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
                 isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
             }`}
+            onClick={() => handleLinkClick(href)}
         >
             {links[href](pathRoot, hovering) ?? null}
             {children}
@@ -93,6 +104,7 @@ const NavBarInner = ({
     const { t } = useTranslation();
     const sidebarState = open && desktop ? 'visible' : 'hidden';
     const { profile } = useUser();
+
     return (
         <>
             <div className="pt-2">

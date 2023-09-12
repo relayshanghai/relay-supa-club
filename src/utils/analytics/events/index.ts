@@ -74,6 +74,7 @@ import {
 } from './search-open_external_social_profile';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import { NAVIGATE_TO_PAGE, NavigateToPage, NavigateToPagePayload } from './navigate-to-page';
 
 export {
     Search,
@@ -106,6 +107,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    NavigateToPage,
 };
 
 export const events = {
@@ -139,6 +141,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [NAVIGATE_TO_PAGE]: NavigateToPage,
 };
 
 export type payloads = {
@@ -172,6 +175,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -207,6 +211,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(NAVIGATE_TO_PAGE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
