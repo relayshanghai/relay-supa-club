@@ -49,6 +49,10 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.influencer
     }
 
+    if (pathname.match(/^\/admin\/?/)) {
+        return CurrentPageEvent.admin
+    }
+
     if (pathname.match(/^\/$/)) {
         return CurrentPageEvent.index
     }
