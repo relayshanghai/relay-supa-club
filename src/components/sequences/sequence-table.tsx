@@ -79,10 +79,10 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                         const influencerEmails = sequenceEmails?.filter(
                             (email) => email.sequence_influencer_id === influencer.id,
                         );
-                        const lastStep = sequenceSteps.find(
-                            (step) => step.step_number === influencer.sequence_step - 1,
+                        const lastStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
+                        const nextStep = sequenceSteps.find(
+                            (step) => step.step_number === influencer.sequence_step + 1,
                         );
-                        const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
                         const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
                         const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
 
