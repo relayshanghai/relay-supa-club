@@ -18,6 +18,56 @@ export const supabaseClientCypress = () => {
     });
 };
 
+export const reinsertAlice = async () => {
+    try {
+        const supabase = supabaseClientCypress();
+        const email = 'alice.anderson@example.com';
+        const { data: aliceExists } = await supabase
+            .from('sequence_influencers')
+            .select('id')
+            .match({ email })
+            .single();
+        if (aliceExists?.id) return;
+
+        const { data: testCompany } = await supabase
+            .from('companies')
+            .select('id')
+            .eq('name', 'Blue Moonlight Stream Enterprises')
+            .single();
+        const { data: testUser } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', 'christopher.david.thompson@blue-moonlight-stream.com')
+            .single();
+        const { data: testSequence } = await supabase
+            .from('sequences')
+            .select('id')
+            .eq('name', 'General collaboration')
+            .single();
+        const { data: charlieProfile } = await supabase
+            .from('influencer_social_profiles')
+            .select('id')
+            .eq('name', 'Alice Anderson')
+            .single();
+        const reinsert: SequenceInfluencerInsert = {
+            added_by: testUser?.id || '',
+            company_id: testCompany?.id || '',
+            created_at: '2023-09-11 03:58:42.452421+00',
+            updated_at: '2023-09-11 03:58:42.452421+00',
+            sequence_id: testSequence?.id || '',
+            influencer_social_profile_id: charlieProfile?.id || '',
+            funnel_status: 'To Contact',
+            sequence_step: 0,
+            email,
+            iqdata_id: '123',
+        };
+        await supabase.from('sequence_influencers').insert(reinsert);
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+    }
+};
+
 export const reinsertCharlie = async () => {
     try {
         const supabase = supabaseClientCypress();
@@ -52,8 +102,8 @@ export const reinsertCharlie = async () => {
         const reinsert: SequenceInfluencerInsert = {
             added_by: testUser?.id || '',
             company_id: testCompany?.id || '',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: '2030-01-01 00:00:00+00',
+            updated_at: '2023-09-11 03:58:42.452421+00',
             sequence_id: testSequence?.id || '',
             influencer_social_profile_id: charlieProfile?.id || '',
             funnel_status: 'To Contact',
