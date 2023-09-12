@@ -9,6 +9,7 @@ import { Cross } from '../icons';
 export interface FaqModalProps extends Omit<ModalProps, 'children'> {
     content: AccordionContent[];
     title: string;
+    description?: string | null;
     getMoreInfoButtonText?: string;
     /** will close the modal and then call this */
     getMoreInfoButtonAction?: () => void;
@@ -17,6 +18,7 @@ export interface FaqModalProps extends Omit<ModalProps, 'children'> {
 export const FaqModal = ({
     content,
     title,
+    description,
     getMoreInfoButtonText,
     getMoreInfoButtonAction,
     ...modalProps
@@ -25,7 +27,10 @@ export const FaqModal = ({
     return (
         <Modal {...modalProps} maxWidth="max-w-2xl" padding={0}>
             <div className="flex w-full rounded-lg bg-primary-100 p-6">
-                <h2 className="w-full text-2xl text-primary-500">{title} </h2>
+                <section className="flex flex-col gap-2">
+                    <h2 className="w-full text-2xl text-primary-500">{title} </h2>
+                    {description && <p>{description}</p>}
+                </section>
                 <button
                     data-testid="faq-modal-close-button"
                     className="ml-auto"
