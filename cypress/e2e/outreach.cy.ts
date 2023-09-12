@@ -181,36 +181,6 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('exist');
     });
-    it.skip('can view email previews', () => {
-        cy.contains('Sequences').click();
-        cy.contains('General collaboration', { timeout: 10000 });
-
-        // can view all emails preview
-        cy.getByTestId('show-all-email-previews-button').eq(0).click();
-        //TODO: cy.getByTestId('email-preview-modal-spinner');
-        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
-        const outreachMessage =
-            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
-        cy.contains(outreachMessage); // fills in variables
-        cy.contains('button', '1st Follow-up').click();
-        const firstFollowup = 'Just floating this to the top of your inbox';
-        cy.contains(firstFollowup);
-        cy.contains('button', '3rd Follow-up').click();
-        const thirdFollowup =
-            "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
-        cy.contains(thirdFollowup); // shows all emails not just outreach
-        cy.contains('Cancel').click(); // click out of modal
-
-        // can view next email preview.
-        cy.contains('button', 'In sequence').click();
-        cy.contains('button', '1st Follow-up').click();
-        // cy.getByTestId('email-preview-modal-spinner');
-        cy.contains(firstFollowup);
-        cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.',
-        ).should('not.exist'); //only shows the selected one
-        cy.contains('button', 'Needs attention').click({ force: true });
-    });
     it('can send sequence, webhooks update influencer funnel status', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
