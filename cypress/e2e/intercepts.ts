@@ -215,9 +215,9 @@ export const setupIntercepts = () => {
 
     cy.intercept('/api/email-engine/templates', (req) => {
         const body = req.body as { templateIds: string[] };
-        if (body.templateIds.length === 1) {
+        if (body.templateIds?.length === 1) {
             return req.reply({ body: oneTemplateMock, delay: 1000 });
-        } else if (body.templateIds.length > 1) {
+        } else if (body.templateIds?.length > 1) {
             return req.reply({ body: templatesMock, delay: 1000 });
         } else {
             return req.reply({ body: {}, delay: 1000 });

@@ -6,6 +6,15 @@ import { randomString, reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
+const setTemplateVariableDescription = (description: string) => {
+    cy.contains('button', 'View sequence templates').click();
+    cy.get('textarea[id="template-variable-input-productDescription"]').clear();
+    if (description) {
+        cy.get('textarea[id="template-variable-input-productDescription"]').type(description);
+    }
+    cy.contains('button', 'Update variables').click();
+};
+
 describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
@@ -18,8 +27,7 @@ describe('outreach', () => {
         });
         cy.loginTestUser();
     });
-
-    it('sequence page', () => {
+    it('displays sequence page stats and influencers table', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
@@ -90,8 +98,22 @@ describe('outreach', () => {
             .within(() => {
                 cy.contains('Charlie Charles');
             });
-
-        // can edit email
+    });
+    it('can delete influencer', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        cy.contains('Charlie Charles');
+        cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains(
+            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
+        );
+        cy.contains('button', 'Yes, delete them').click();
+        cy.contains('Influencer successfully deleted from sequence');
+        cy.contains('Charlie Charles').should('not.exist');
+    });
+    it('can edit email', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
         const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
         cy.contains('tr', 'Alice Anderson').within(() => {
@@ -106,16 +128,11 @@ describe('outreach', () => {
             cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
             cy.get('button[type=submit]').click();
         });
-        // can delete influencer
-        cy.contains('Charlie Charles');
-        cy.getByTestId('delete-influencer-button').eq(2).click();
-        cy.contains(
-            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
-        );
-        cy.contains('button', 'Yes, delete them').click();
-        cy.contains('Influencer successfully deleted from sequence');
-        cy.contains('Charlie Charles').should('not.exist');
-
+    });
+    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
         // send sequence is disabled if missing template variables
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
@@ -145,6 +162,15 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
+        // reset the empty template variable so you can run the test again if need be
+        setTemplateVariableDescription('');
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: **Product Description**').should('exist');
+    });
+    it('can view email previews', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
         //TODO: cy.getByTestId('email-preview-modal-spinner');
@@ -169,19 +195,19 @@ describe('outreach', () => {
             'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.',
         ).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
+    });
+    it('can send sequence, webhooks update influencer funnel status', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
 
-        // WEBHOOKS TEST
-        // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
+        setTemplateVariableDescription('test description entry for webhook test'); // send sequence is disabled if missing template variables
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
-        cy.getByTestId('missing-variables-alert').should('not.exist');
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
-        // reset the empty template variable so you can run the test again if need be
-        cy.contains('button', 'View sequence templates').click();
-        cy.get('textarea[id="template-variable-input-productDescription"]').clear();
-        cy.contains('button', 'Update variables').click();
-        cy.contains('General collaboration').click({ force: true }); // click out of modal
+        setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
 
         cy.reload(); // todo: remove when we can get status updates reflecting more quickly
         // bob has been moved to 'in sequence' tab
