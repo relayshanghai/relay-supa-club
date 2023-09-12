@@ -57,7 +57,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
             />
             <tr className="border-b-2 border-gray-200 bg-white">
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
-                    <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
+                    <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
@@ -67,7 +67,6 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 </td>
                 <td className="flex items-center gap-2 whitespace-nowrap px-6 py-3 text-gray-700">
                     <Button
-                        data-testid="show-all-email-previews-button"
                         className="flex flex-row gap-2"
                         variant="ghost"
                         disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
