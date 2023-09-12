@@ -17,6 +17,9 @@ describe('outreach', () => {
         cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
             req.continue();
         });
+        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, (req) => {
+            req.continue();
+        });
         cy.loginTestUser();
     });
 
