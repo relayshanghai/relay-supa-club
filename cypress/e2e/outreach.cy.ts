@@ -251,7 +251,9 @@ describe('outreach', () => {
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
         cy.contains('button', 'Create new sequence').click();
+        cy.wait(1000);
         cy.contains('New Sequence Test').click();
+        cy.wait(1000);
         cy.contains('button', 'View sequence templates').click();
         cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
         cy.contains('button', 'Update variables').click();
