@@ -51,7 +51,7 @@ export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session'
                 trackPayload.anonymousId = session.anonymous_id
             }
 
-            if (!trackPayload.userId || !trackPayload.anonymousId) {
+            if (!trackPayload.userId && !trackPayload.anonymousId) {
                 throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
             }
 

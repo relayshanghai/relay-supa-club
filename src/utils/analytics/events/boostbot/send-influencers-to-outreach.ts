@@ -1,8 +1,10 @@
 import type { TriggerEvent } from '../../types';
+import { CurrentPageEvent } from '../current-pages';
 
 export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'boostbot-send_influencers_to_outreach';
 
 export type SendInfluencersToOutreachPayload = {
+    currentPage: CurrentPageEvent;
     /**
      * For now, influencer_ids are reference_ids
      * the current implementation does not rely on using our own influencer_ids
