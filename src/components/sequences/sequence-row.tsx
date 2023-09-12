@@ -9,7 +9,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AlertCircleOutline, Brackets, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
+import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import { EMAIL_STATUS_STYLES } from './constants';
@@ -19,9 +19,9 @@ import toast from 'react-hot-toast';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
-import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { clientLogger } from 'src/utils/logger-client';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencerManagerPage;
@@ -35,6 +35,8 @@ interface SequenceRowProps {
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
+    onCheckboxChange?: (id: string) => void;
+    checked?: boolean;
     handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
@@ -58,24 +60,32 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     nextEmail,
     lastStep,
     nextStep,
-    sequenceSteps,
     currentTab,
     missingVariables,
     isMissingVariables,
     setShowUpdateTemplateVariables,
     templateVariables,
     handleStartSequence,
+    onCheckboxChange,
+    checked,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { sequenceInfluencers, updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } =
-        useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
+    const {
+        sequenceInfluencers,
+        updateSequenceInfluencer,
+        deleteSequenceInfluencers: deleteSequenceInfluencer,
+        refreshSequenceInfluencers,
+    } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const { profile } = useUser();
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);
     const { track } = useRudderstackTrack();
+
+    const handleChange = () => {
+        influencerSocialProfile && onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
+    };
 
     const handleEmailUpdate = async (email: string) => {
         try {
@@ -134,10 +144,17 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
         setSendingEmail(false);
     };
-    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
-        deleteSequenceInfluencer(sequenceInfluencerId);
-        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
-        toast.success(t('sequences.influencerDeleted'));
+    const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
+        try {
+            await deleteSequenceInfluencer([sequenceInfluencerId]);
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId),
+            );
+            toast.success(t('sequences.influencerDeleted'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.influencerDeleteFailed'));
+        }
     };
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
@@ -163,15 +180,22 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 templateVariables={templateVariables}
             />
             <tr className="border-b-2 border-gray-200 bg-white text-sm">
+                <td className="display-none items-center whitespace-nowrap text-center align-middle">
+                    <input
+                        data-testid="influencer-checkbox"
+                        className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                        checked={checked}
+                        onChange={handleChange}
+                        type="checkbox"
+                    />
+                </td>
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <div>
-                            <img
-                                className="inline-block h-14 w-14 bg-slate-300"
-                                src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
-                                alt={`Influencer avatar ${influencerSocialProfile?.name}`}
-                            />
-                        </div>
+                        <img
+                            className="inline-block h-14 w-14 bg-slate-300"
+                            src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
+                            alt={`Influencer avatar ${influencerSocialProfile?.name}`}
+                        />
 
                         <div className="flex flex-col">
                             <p className="font-semibold text-primary-600">{influencerSocialProfile?.name ?? ''}</p>
@@ -231,22 +255,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
-                            <Button
-                                data-testid="show-all-email-previews-button"
-                                className="ml-2"
-                                variant="ghost"
-                                disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
-                                onClick={() => setShowEmailPreview(sequenceSteps)}
-                            >
-                                <Brackets className="h-5 w-5" />
-                            </Button>
-                            <button
-                                className="min-w-max"
-                                onClick={() => setShowDeleteConfirmation(true)}
-                                data-testid="delete-influencer-button"
-                            >
-                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
-                            </button>
                         </td>
                     </>
                 )}
@@ -316,12 +324,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     </>
                 )}
             </tr>
-            <DeleteFromSequenceModal
-                show={showDeleteConfirmation}
-                setShow={setShowDeleteConfirmation}
-                deleteInfluencer={handleDeleteInfluencer}
-                sequenceId={sequenceInfluencer.id}
-            />
         </>
     );
 };

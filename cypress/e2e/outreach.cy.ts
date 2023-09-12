@@ -2,7 +2,7 @@ import { deleteDB } from 'idb';
 import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { randomString, reinsertCharlie, resetSequenceEmails } from './helpers';
+import { randomString, reinsertAlice, reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
@@ -19,10 +19,14 @@ describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         reinsertCharlie(); // reinsert so you can run again easily
+        reinsertAlice();
         resetSequenceEmails();
         setupIntercepts();
         // turn back on the real database
         cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
+            req.continue();
+        });
+        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, (req) => {
             req.continue();
         });
         cy.loginTestUser();
@@ -178,13 +182,14 @@ describe('outreach', () => {
         const outreachMessage =
             'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
         cy.contains(outreachMessage); // fills in variables
+        cy.contains('button', '1st Follow-up').click();
         const firstFollowup = 'Just floating this to the top of your inbox';
         cy.contains(firstFollowup);
-        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        cy.contains('button', '3rd Follow-up').click();
         const thirdFollowup =
             "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
         cy.contains(thirdFollowup); // shows all emails not just outreach
-        cy.contains('General collaboration').click({ force: true }); // click out of modal
+        cy.contains('Cancel').click(); // click out of modal
 
         // can view next email preview.
         cy.contains('button', 'In sequence').click();
