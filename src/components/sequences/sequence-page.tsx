@@ -284,28 +284,28 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     </div>
                 </section>
 
-                <div className="flex w-full flex-row items-center justify-between gap-4">
-                <div className="flex flex-col gap-4 overflow-x-auto">
-                    <SelectMultipleDropdown
-                        text={t('sequences.steps.filter')}
-                        options={emailSteps}
-                        selectedOptions={filterSteps}
-                        setSelectedOptions={handleSetSelectedOptions}
-                        translationPath="sequences.steps"
-                    />
-                    <button
-                        data-testid="delete-influencers-button"
-                        className={`h-fit ${
-                            selection.length === 0 && 'hidden'
-                        } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
-                        onClick={() => {
-                            if (selection.length === 0) return;
-                            setShowDeleteConfirmation(true);
-                        }}
-                    >
-                        <DeleteOutline className="h-4 w-4 stroke-red-500" />
-                    </button>
-                </div>
+                <div className="flex w-full flex-col gap-4 overflow-x-auto">
+                    <div className="sticky left-0 flex w-full flex-row items-center justify-between">
+                        <SelectMultipleDropdown
+                            text={t('sequences.steps.filter')}
+                            options={emailSteps}
+                            selectedOptions={filterSteps}
+                            setSelectedOptions={handleSetSelectedOptions}
+                            translationPath="sequences.steps"
+                        />
+                        <button
+                            data-testid="delete-influencers-button"
+                            className={`h-fit ${
+                                selection.length === 0 && 'hidden'
+                            } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
+                            onClick={() => {
+                                if (selection.length === 0) return;
+                                setShowDeleteConfirmation(true);
+                            }}
+                        >
+                            <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                        </button>
+                    </div>
                     <div>
                         {currentTabInfluencers && sequenceSteps ? (
                             <SequenceTable
