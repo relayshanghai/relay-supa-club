@@ -259,7 +259,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <section className="relative flex flex-row items-center justify-between border-b-2 pb-2">
+                <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pb-2">
                     <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
                     <div
                         className="flex flex-row"
@@ -285,6 +285,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </section>
 
                 <div className="flex w-full flex-row items-center justify-between gap-4">
+                <div className="flex flex-col gap-4 overflow-x-auto">
                     <SelectMultipleDropdown
                         text={t('sequences.steps.filter')}
                         options={emailSteps}
@@ -305,23 +306,26 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         <DeleteOutline className="h-4 w-4 stroke-red-500" />
                     </button>
                 </div>
-                {currentTabInfluencers && sequenceSteps ? (
-                    <SequenceTable
-                        sequenceInfluencers={currentTabInfluencers}
-                        sequenceEmails={sequenceEmails}
-                        sequenceSteps={sequenceSteps}
-                        currentTab={currentTab}
-                        missingVariables={missingVariables}
-                        isMissingVariables={isMissingVariables}
-                        setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
-                        templateVariables={templateVariables ?? []}
-                        handleStartSequence={handleStartSequence}
-                        selection={selection}
-                        setSelection={setSelection}
-                    />
-                ) : (
-                    <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
-                )}
+                    <div>
+                        {currentTabInfluencers && sequenceSteps ? (
+                            <SequenceTable
+                                sequenceInfluencers={currentTabInfluencers}
+                                sequenceEmails={sequenceEmails}
+                                sequenceSteps={sequenceSteps}
+                                currentTab={currentTab}
+                                missingVariables={missingVariables}
+                                isMissingVariables={isMissingVariables}
+                                setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
+                                templateVariables={templateVariables ?? []}
+                                handleStartSequence={handleStartSequence}
+                                selection={selection}
+                                setSelection={setSelection}
+                            />
+                        ) : (
+                            <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
+                        )}
+                    </div>
+                </div>
             </div>
             <DeleteFromSequenceModal
                 show={showDeleteConfirmation}

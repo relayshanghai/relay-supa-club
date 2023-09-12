@@ -83,9 +83,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-visible">
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
+        <table className="w-full border-collapse border border-gray-300">
+            <thead>
                     <tr className="border-b-2 border-gray-200">
                         <th className="bg-white px-4">
                             <input
@@ -111,15 +110,14 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                         const influencerEmails = sequenceEmails?.filter(
                             (email) => email.sequence_influencer_id === influencer.id,
                         );
-                        const lastStep = sequenceSteps.find(
-                            (step) => step.step_number === influencer.sequence_step - 1,
+                        const lastStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
+                        const nextStep = sequenceSteps.find(
+                            (step) => step.step_number === influencer.sequence_step + 1,
                         );
-                        const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
                         const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
                         const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
-
-                        return (
-                            <SequenceRow
+                    return (
+                       <SequenceRow
                                 key={influencer.id}
                                 sequenceInfluencer={influencer}
                                 lastEmail={lastEmail}
@@ -136,11 +134,10 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 checked={selection.includes(influencer.id)}
                                 onCheckboxChange={handleCheckboxChange}
                             />
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
+                    );
+                })}
+            </tbody>
+        </table>
     );
 };
 
