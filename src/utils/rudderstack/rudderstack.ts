@@ -51,7 +51,7 @@ export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session'
                 trackPayload.anonymousId = session.anonymous_id
             }
 
-            if (!trackPayload.userId || !trackPayload.anonymousId) {
+            if (!trackPayload.userId && !trackPayload.anonymousId) {
                 throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
             }
 
@@ -159,11 +159,7 @@ export class Rudderstack {
         if (disabled) return;
 
         if (this.context && this.context.event !== params.event) {
-            serverLogger(
-                `Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`,
-                'error',
-                true,
-            );
+            serverLogger(`Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`);
             return;
         }
 

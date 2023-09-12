@@ -17,7 +17,7 @@ const handler: NextApiHandler = async (req, res) => {
         const influencers = await getInfluencerIdsFromSheet();
         return res.status(httpCodes.OK).json(influencers);
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 };

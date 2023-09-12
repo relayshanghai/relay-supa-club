@@ -76,7 +76,7 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
-        if (isSearchLoading) return;
+        if (isSearchLoading || !subscription) return;
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
@@ -106,7 +106,7 @@ const Boostbot = () => {
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, subscription]);
 
     const [messages, setMessages] = useState<MessageType[]>([
         {
@@ -238,10 +238,8 @@ const Boostbot = () => {
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const socialProfileId = influencer.socialProfile.id;
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
-                const socialProfileEmail = influencer.socialProfile.email;
 
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
