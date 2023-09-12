@@ -11,7 +11,7 @@ export const DeleteSequenceModal = ({
     show: boolean;
     setShow: (show: boolean) => void;
     handleDelete: () => void;
-    name: string;
+    name?: string;
 }) => {
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
