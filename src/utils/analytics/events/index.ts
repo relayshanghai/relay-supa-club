@@ -20,6 +20,11 @@ import {
 } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
+import { CHANGE_PAGE, ChangePage, ChangePagePayload } from './change-page';
+import type { OpenSocialProfilePayload } from './open-social-profle';
+import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
+import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
+import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -50,6 +55,8 @@ import {
     OUTREACH_START_SEQUENCE_FOR_INFLUENCER,
     StartSequenceForInfluencer,
 } from './outreach/start-sequence-for-influencer';
+import type { RemoveBoostbotKolPayload } from './remove-boostbot-kol';
+import { REMOVE_BOOSTBOT_KOL, RemoveBoostbotKol } from './remove-boostbot-kol';
 import type { SearchPayload } from './search';
 import { SEARCH as SEARCH_KEY, Search } from './search';
 import type { SearchAddToCampaignPayload } from './search-add_to_campaign';
@@ -65,6 +72,8 @@ import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
     SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
+import type { StopBoostbotPayload } from './stop-boostbot';
+import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 
 export {
     Search,
@@ -92,6 +101,11 @@ export {
     RecommendInfluencers,
     UnlockInfluencers,
     SendInfluencersToOutreach,
+    OpenSocialProfile,
+    RemoveBoostbotKol,
+    ChangePage,
+    StopBoostbot,
+    OpenSocialThumbnails,
 };
 
 export const events = {
@@ -120,6 +134,11 @@ export const events = {
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
+    [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
+    [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKol,
+    [CHANGE_PAGE]: ChangePage,
+    [STOP_BOOSTBOT]: StopBoostbot,
+    [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
 };
 
 export type payloads = {
@@ -148,6 +167,11 @@ export type payloads = {
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
+    [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
+    [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKolPayload;
+    [CHANGE_PAGE]: ChangePagePayload;
+    [STOP_BOOSTBOT]: StopBoostbotPayload;
+    [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -178,6 +202,11 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
+    z.literal(OPEN_SOCIAL_PROFILE),
+    z.literal(REMOVE_BOOSTBOT_KOL),
+    z.literal(CHANGE_PAGE),
+    z.literal(STOP_BOOSTBOT),
+    z.literal(OPEN_SOCIAL_THUMBNAILS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
