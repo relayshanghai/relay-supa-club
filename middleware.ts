@@ -107,7 +107,7 @@ const checkOnboardingStatus = async (
                 redirectUrl.pathname = '/account';
                 return NextResponse.redirect(redirectUrl);
             }
-            // if they have subscriptionEndDate, user can still access the app until the SubscriptionDndDate
+            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
             const endDate = new Date(subscriptionEndDate);
             if (endDate < new Date()) {
                 redirectUrl.pathname = '/account';
