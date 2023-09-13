@@ -20,7 +20,8 @@ import {
 } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
-import { CHANGE_PAGE, ChangePage, ChangePagePayload } from './change-page';
+import type { ChangePagePayload } from './change-page';
+import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
@@ -74,6 +75,8 @@ import {
 } from './search-open_external_social_profile';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { SignupStartedPayload } from './signup-started';
+import { SIGNUP_STARTED, SignupStarted } from './signup-started';
 
 export {
     Search,
@@ -106,6 +109,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    SignupStarted,
 };
 
 export const events = {
@@ -139,6 +143,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [SIGNUP_STARTED]: SignupStarted,
 };
 
 export type payloads = {
@@ -172,6 +177,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [SIGNUP_STARTED]: SignupStartedPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -207,6 +213,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(SIGNUP_STARTED),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
