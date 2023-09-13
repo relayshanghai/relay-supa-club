@@ -13,7 +13,6 @@ import {
     updateCompanyUsageLimits,
     updateProfile,
     updateUserRole,
-    updatePostPerformance,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
