@@ -1,5 +1,5 @@
 import type { EventPayload, TriggerEvent } from '../../types';
-import { CurrentPageEvent } from '../current-pages';
+import type { CurrentPageEvent } from '../current-pages';
 
 export const BOOSTBOT_UNLOCK_INFLUENCERS = 'boostbot-unlock_influencers';
 
