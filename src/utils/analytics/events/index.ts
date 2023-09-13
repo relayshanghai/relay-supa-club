@@ -81,6 +81,8 @@ import type { IncomingWebhookPayload } from './outreach/email-incoming';
 import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { HoverTooltipPayload } from './hover-tooltip';
+import { HOVER_TOOLTIP, HoverTooltip } from './hover-tooltip';
 
 export {
     Search,
@@ -113,6 +115,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    HoverTooltip,
 };
 
 export const events = {
@@ -149,6 +152,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [HOVER_TOOLTIP]: HoverTooltip,
 };
 
 export type payloads = {
@@ -185,6 +189,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [HOVER_TOOLTIP]: HoverTooltipPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -223,6 +228,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(HOVER_TOOLTIP),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
