@@ -31,8 +31,8 @@ export const useSequence = (sequenceId?: string) => {
     };
 
     const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
-    const deleteSequence = async (id: string) => {
-        const res = await deleteSequenceDBCall(id);
+    const deleteSequence = async (ids: string[]) => {
+        const res = await deleteSequenceDBCall(ids);
         refreshSequence();
         refreshSequences();
         return res;
