@@ -200,7 +200,8 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         );
 
         // if there is a sequenceInfluencer, this is a reply to a sequenced email
-        return await handleReply(sequenceInfluencer, event);
+        await handleReply(sequenceInfluencer, event);
+        return res.status(httpCodes.OK).json({});
     } catch (error) {
         trackData.extra_info.error = 'Sequence influencer not found:' + JSON.stringify(error);
 
