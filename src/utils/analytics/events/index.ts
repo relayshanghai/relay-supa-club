@@ -82,6 +82,9 @@ import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incom
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 
+import type { PasswordResetPayload } from './password-reset';
+import { PASSWORD_RESET, PasswordReset } from './password-reset';
+
 export {
     Search,
     SearchDefault,
@@ -113,6 +116,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    PasswordReset,
 };
 
 export const events = {
@@ -149,6 +153,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [PASSWORD_RESET]: PasswordReset,
 };
 
 export type payloads = {
@@ -185,6 +190,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [PASSWORD_RESET]: PasswordResetPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -223,6 +229,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(PASSWORD_RESET),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

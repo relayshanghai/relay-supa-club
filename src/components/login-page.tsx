@@ -9,10 +9,13 @@ import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { FormWizard } from './signup/form-wizard';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { PasswordReset } from 'src/utils/analytics/events';
 
 const LoginPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { track } = useRudderstackTrack();
     const { email: emailQuery } = router.query;
     const { login, supabaseClient, profile, refreshProfile } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
@@ -64,6 +67,7 @@ const LoginPage = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
+            track(PasswordReset);
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
