@@ -57,23 +57,24 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [setFilterSteps],
     );
 
-    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencerManagerPage[]) => {
-        const results = await sendSequence(sequenceInfluencers);
+    const handleStartSequence = async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
+        const results = await sendSequence(sequenceInfluencersToSend);
         try {
             // handle optimistic update
             const succeeded = results.filter((result) => !result.error);
             if (succeeded.length > 0) {
                 const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
-
-                const updatedInfluencers: SequenceInfluencerManagerPage[] = sequenceInfluencers.map((influencer) => {
+                const updatedInfluencers = sequenceInfluencers.map((influencer) => {
                     if (succeededInfluencerIds.includes(influencer.id)) {
-                        return {
+                        const optimisticUpdate: SequenceInfluencerManagerPage = {
                             ...influencer,
                             funnel_status: 'In Sequence',
                             sequence_step: 1,
                         };
+                        return optimisticUpdate;
+                    } else {
+                        return influencer;
                     }
-                    return influencer;
                 });
                 refreshSequenceInfluencers(updatedInfluencers, { revalidate: false });
             }
