@@ -85,13 +85,17 @@ const checkOnboardingStatus = async (
         return res;
     } else if (subscriptionStatus === 'canceled') {
         // if subscription ended only allow access to account page, and subscription endpoints
+        //handle landing page - index page separately
+        if (req.nextUrl.pathname === '/') return res;
         const allowedPaths = [
-            '/',
             '/signup',
             '/free-trial',
             '/login',
             '/account',
             '/api/subscriptions',
+            '/api/subscriptions/payment-method',
+            '/api/subscriptions/portal',
+            '/api/subscriptions/create',
             '/api/company',
             '/pricing',
             '/payments',
