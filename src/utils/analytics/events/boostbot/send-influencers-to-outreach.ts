@@ -1,5 +1,5 @@
 import type { TriggerEvent } from '../../types';
-import { CurrentPageEvent } from '../current-pages';
+import type { CurrentPageEvent } from '../current-pages';
 
 export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'boostbot-send_influencers_to_outreach';
 

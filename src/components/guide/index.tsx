@@ -85,7 +85,6 @@ export const GuideComponent = () => {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
                     }}
-                    autoPlay
                     className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2"
                 >
                     <source src="/assets/videos/demo.mp4" />
