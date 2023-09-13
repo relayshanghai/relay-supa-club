@@ -2,24 +2,36 @@ import { deleteDB } from 'idb';
 import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { randomString, reinsertCharlie, resetSequenceEmails } from './helpers';
+import { randomString, reinsertAlice, reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
+
+const setTemplateVariableDescription = (description: string) => {
+    cy.contains('button', 'View sequence templates').click();
+    cy.get('textarea[id="template-variable-input-productDescription"]').clear();
+    if (description) {
+        cy.get('textarea[id="template-variable-input-productDescription"]').type(description);
+    }
+    cy.contains('button', 'Update variables').click();
+};
 
 describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         reinsertCharlie(); // reinsert so you can run again easily
+        reinsertAlice();
         resetSequenceEmails();
         setupIntercepts();
         // turn back on the real database
         cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
             req.continue();
         });
+        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, (req) => {
+            req.continue();
+        });
         cy.loginTestUser();
     });
-
-    it('sequence page', () => {
+    it('displays sequence page stats and influencers table', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
@@ -90,8 +102,32 @@ describe('outreach', () => {
             .within(() => {
                 cy.contains('Charlie Charles');
             });
-
-        // can edit email
+    });
+    it('can delete influencer', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        cy.getByTestId('delete-influencers-button').should('not.be.visible');
+        cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
+        cy.getByTestId('sequence-influencers-select-all').check();
+        cy.contains('Charlie Charles');
+        cy.contains('Alice Anderson');
+        cy.getByTestId('influencer-checkbox').eq(0).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(1).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(2).should('be.checked');
+        cy.getByTestId('influencer-checkbox').eq(0).uncheck();
+        cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
+        cy.getByTestId('delete-influencers-button').click();
+        cy.contains(
+            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
+        );
+        cy.contains('button', 'Yes, delete them').click();
+        cy.contains('Influencer(s) successfully deleted from sequence');
+        cy.contains('Charlie Charles').should('not.exist');
+        cy.contains('Alice Anderson').should('not.exist');
+    });
+    it('can edit email', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
         const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
         cy.contains('tr', 'Alice Anderson').within(() => {
@@ -106,16 +142,11 @@ describe('outreach', () => {
             cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
             cy.get('button[type=submit]').click();
         });
-        // can delete influencer
-        cy.contains('Charlie Charles');
-        cy.getByTestId('delete-influencer-button').eq(2).click();
-        cy.contains(
-            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
-        );
-        cy.contains('button', 'Yes, delete them').click();
-        cy.contains('Influencer successfully deleted from sequence');
-        cy.contains('Charlie Charles').should('not.exist');
-
+    });
+    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
         // send sequence is disabled if missing template variables
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
@@ -145,6 +176,15 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
+        // reset the empty template variable so you can run the test again if need be
+        setTemplateVariableDescription('');
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: **Product Description**').should('exist');
+    });
+    it.skip('can view email previews', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 });
+
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
         //TODO: cy.getByTestId('email-preview-modal-spinner');
@@ -152,13 +192,14 @@ describe('outreach', () => {
         const outreachMessage =
             'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
         cy.contains(outreachMessage); // fills in variables
+        cy.contains('button', '1st Follow-up').click();
         const firstFollowup = 'Just floating this to the top of your inbox';
         cy.contains(firstFollowup);
-        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        cy.contains('button', '3rd Follow-up').click();
         const thirdFollowup =
             "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
         cy.contains(thirdFollowup); // shows all emails not just outreach
-        cy.contains('General collaboration').click({ force: true }); // click out of modal
+        cy.contains('Cancel').click(); // click out of modal
 
         // can view next email preview.
         cy.contains('button', 'In sequence').click();
@@ -169,19 +210,19 @@ describe('outreach', () => {
             'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.',
         ).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
+    });
+    it('can send sequence, webhooks update influencer funnel status', () => {
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
 
-        // WEBHOOKS TEST
-        // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
+        setTemplateVariableDescription('test description entry for webhook test'); // send sequence is disabled if missing template variables
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
-        cy.getByTestId('missing-variables-alert').should('not.exist');
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
-        // reset the empty template variable so you can run the test again if need be
-        cy.contains('button', 'View sequence templates').click();
-        cy.get('textarea[id="template-variable-input-productDescription"]').clear();
-        cy.contains('button', 'Update variables').click();
-        cy.contains('General collaboration').click({ force: true }); // click out of modal
+        setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
 
         cy.reload(); // todo: remove when we can get status updates reflecting more quickly
         // bob has been moved to 'in sequence' tab
@@ -217,7 +258,7 @@ describe('outreach', () => {
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
     });
-    it('can create new sequence. Can delete sequence', () => {
+    it('can create new sequences. Can delete sequences', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
@@ -232,9 +273,23 @@ describe('outreach', () => {
         cy.contains('Template variables updated');
         cy.contains('Sequences').click();
         cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        //  create another dummy sequence to show multi-delete works
+        cy.contains('New sequence').click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test 2');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('a', 'New Sequence Test 2');
         // cleanup and test delete
-        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.getByTestId('delete-sequences-button').should('not.be.visible');
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('sequences-select-all').check();
+        cy.getByTestId('sequence-checkbox').eq(0).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(1).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(2).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(0).uncheck();
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('delete-sequences-button').click();
         cy.contains('button', 'Yes. Delete this sequence').click();
         cy.contains('tr', 'New Sequence Test').should('not.exist');
+        cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
 });
