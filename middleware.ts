@@ -101,7 +101,7 @@ const checkOnboardingStatus = async (
             '/payments',
         ];
         if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
-        // if they are trying to access other page, they should be redirected back to account page
+        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
