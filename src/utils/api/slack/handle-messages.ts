@@ -49,15 +49,15 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
         name: companyName,
         website,
         subscription_status: subscriptionStatus,
-        subscription_current_period_end: subscriptionEndDate,
+        subscription_current_period_end: subScriptionCurrentPeriodEndDate,
     } = data.record;
-    if (!subscriptionEndDate) {
+    if (!subScriptionCurrentPeriodEndDate) {
         throw new Error('Subscription end date is not found.');
     }
     if (data.table === 'companies' && data.type === 'INSERT') {
         let status;
         const currentDate = new Date();
-        if (new Date(subscriptionEndDate) < currentDate && subscriptionStatus === 'canceled') {
+        if (new Date(subScriptionCurrentPeriodEndDate) < currentDate && subscriptionStatus === 'canceled') {
             status = 'expired';
         } else {
             status = subscriptionStatus;
