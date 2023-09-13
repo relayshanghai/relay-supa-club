@@ -5,10 +5,7 @@ import { createCompanyErrors } from 'src/errors/company';
 import { RelayError, ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB } from 'src/utils/api/db';
 import { findCompaniesByNames } from 'src/utils/api/db';
-import { createCompany, 
-    
-    updateCompany, 
-            updateProfile, updateUserRole } from 'src/utils/api/db';
+import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
