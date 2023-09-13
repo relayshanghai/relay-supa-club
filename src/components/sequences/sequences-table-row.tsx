@@ -3,18 +3,14 @@ import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceStep } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
-import { Brackets, DeleteOutline } from '../icons';
-import { toast } from 'react-hot-toast';
+import { Brackets } from '../icons';
 import { useSequence } from 'src/hooks/use-sequence';
-import { clientLogger } from 'src/utils/logger-client';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
-import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { useState } from 'react';
 import { Button } from '../button';
 import { useUser } from 'src/hooks/use-user';
 import { EmailPreviewModal } from './email-preview-modal';
-import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
 export const SequencesTableRow = ({
     sequence,
@@ -30,8 +26,6 @@ export const SequencesTableRow = ({
     const { templateVariables } = useTemplateVariables(sequence.id);
     const { profile } = useUser();
     const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
-    const { deleteSequence } = useSequence();
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
@@ -43,7 +37,6 @@ export const SequencesTableRow = ({
     const handleChange = () => {
         onCheckboxChange(sequence.id);
     };
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     return (
         <>
