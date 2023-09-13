@@ -220,7 +220,7 @@ const Boostbot = () => {
             content: (
                 <VideoPreviewWithModal
                     eventToTrack={OpenVideoGuideModal.eventName}
-                    videoUrl='src="/assets/videos/delete-guide.mp4"'
+                    videoUrl="/assets/videos/delete-guide.mp4"
                 />
             ),
         });
