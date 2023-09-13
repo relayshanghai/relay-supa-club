@@ -6,7 +6,7 @@
     "name": "Outreach",
     "wait_time_hours": 0,
     "template_id": "AAABiYr-poEAAAAC",
-    "sequence_id": "c74f7438-c85d-4ede-a399-beafae031be0",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
     "step_number": 0
   },
   {
@@ -16,7 +16,7 @@
     "name": "1st Follow-up",
     "wait_time_hours": 72,
     "template_id": "AAABiYsMUIAAAAAD",
-    "sequence_id": "c74f7438-c85d-4ede-a399-beafae031be0",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
     "step_number": 1
   },
   {
@@ -26,7 +26,7 @@
     "name": "2nd Follow-up",
     "wait_time_hours": 144,
     "template_id": "AAABieM0bMMAAAAE",
-    "sequence_id": "c74f7438-c85d-4ede-a399-beafae031be0",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
     "step_number": 2
   },
   {
@@ -36,7 +36,7 @@
     "name": "3rd Follow-up",
     "wait_time_hours": 216,
     "template_id": "AAABieM1AhgAAAAF",
-    "sequence_id": "c74f7438-c85d-4ede-a399-beafae031be0",
+    "sequence_id": "b7ddd2a8-e114-4423-8cc6-30513c885f07",
     "step_number": 3
   }
 ]

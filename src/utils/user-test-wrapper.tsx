@@ -29,8 +29,8 @@ const mockUserContext: IUserContext = {
     getProfileController: { current: null },
 };
 
-const mockCompany: CompanyDB = {
-    id: '615478e4-72bf-4162-9736-0d2f89b2191e',
+export const mockCompany: CompanyDB = {
+    id: mockProfile.company_id || '',
     created_at: '2023-06-08T09:18:58.294957+00:00',
     name: 'Blue Moonlight Stream Enterprises',
     website: 'https://blue-moonlight-stream.com',

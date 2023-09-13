@@ -77,6 +77,8 @@ jobs:
                   cache: 'npm'
 
             - run: npm ci
+            - run: npm run lint
+            - run: npx prettier . --check
             - run: npm run build
             - run: npm run test-cypress-unit
 
@@ -95,7 +97,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.77.9
+                  version: 1.88.0
 
             - name: Verify supabase cli version
               run: supabase -v

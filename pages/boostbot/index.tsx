@@ -29,6 +29,7 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -81,7 +82,7 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
-        if (isSearchLoading) return;
+        if (isSearchLoading || !subscription) return;
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
@@ -111,7 +112,7 @@ const Boostbot = () => {
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, subscription]);
 
     const [messages, setMessages] = useState<MessageType[]>([
         {
@@ -140,6 +141,7 @@ const Boostbot = () => {
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
         const trackingPayload: UnlockInfluencersPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: userIds.length > 1,
@@ -233,6 +235,7 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: null,

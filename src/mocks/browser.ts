@@ -13,8 +13,15 @@ import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJi
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 import prices from './api/subscription/prices/prices.json';
 
-import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1.json';
+import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1';
 import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
+
+import templates from './api/email-engine/templates.json';
+import templateVariablesBySequenceId from './supabase/template_variables/by-sequence-id.json';
+import defaultSequence from './supabase/sequences/createDefaultSequence.json';
+
+import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
+import sophiaCampaignSocialProfiles from './supabase/influencer_social_profile/sophias-campaign.json';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
@@ -35,7 +42,7 @@ const frontendHandlers = [
         }
         return res(ctx.json(campaignCreatorsJim));
     }),
-    rest.get(`${SUPABASE_URL_CYPRESS}/companies?select=*&id=${newEmptyCampaign.company_id}`, (_, res, ctx) => {
+    rest.get(`${SUPABASE_URL_CYPRESS}/companies`, (_, res, ctx) => {
         return res(
             ctx.json({
                 id: '4f3ddadc-29dc-4cf4-977c-32597566c2d1',
@@ -67,7 +74,6 @@ const frontendHandlers = [
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/topics`, async (req, res, ctx) => {
         const { term } = await req.json();
-
         return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (_req, res, ctx) => {
@@ -82,8 +88,40 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
         return res(ctx.json(sequenceInfluencers));
     }),
-    rest.get(`${SUPABASE_URL_CYPRESS}/sequences?select=*&company_id=${mockProfile?.company_id}`, (_req, res, ctx) => {
-        return res(ctx.json(allSequencesByCompany));
+    rest.post(`${APP_URL_CYPRESS}/api/email-engine/templates`, (_req, res, ctx) => {
+        return res(ctx.json(templates));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/template_variables`, (_req, res, ctx) => {
+        // for query like ?select=*&sequence_id=eq.b7ddd2a8-e114-4423-8cc6-30513c885f07
+        return res(ctx.json(templateVariablesBySequenceId));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequences`, (req, res, ctx) => {
+        // select query example `select=*&id=eq.2fefe314-b457-4812-95a5-9d9d73e2eb0d`
+        const id = req.url.searchParams.get('id')?.split('eq.')[1];
+        const company_id = req.url.searchParams.get('company_id')?.split('eq.')[1];
+        if (id) {
+            return res(ctx.json(defaultSequence));
+        } else if (company_id === mockProfile?.company_id) {
+            return res(ctx.json(allSequencesByCompany));
+        }
+        return res(ctx.json(defaultSequence));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/influencer_social_profiles`, (req, res, ctx) => {
+        // select query example `select=*&id=eq.2fefe314-b457-4812-95a5-9d9d73e2eb0d`
+        const id = req.url.searchParams.get('id')?.split('eq.')[1];
+        if (id) {
+            const foundProfile = sophiaCampaignSocialProfiles.find((profile) => profile.id === id);
+            if (foundProfile) {
+                return res(ctx.json(foundProfile));
+            }
+        }
+        return res(ctx.json(defaultSocialProfile));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_emails`, (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequence_steps`, (req, res, ctx) => {
+        return res(ctx.json([]));
     }),
 ];
 /** for use in the browser */
