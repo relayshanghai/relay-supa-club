@@ -29,7 +29,7 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session']) => TrackEvent =
+export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
     (rudder, session) => (event, payload) => {
         if (disabled) return;
 
@@ -41,14 +41,14 @@ export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session'
             const trackPayload: Parameters<typeof rudder.track>[0] = {
                 event: eventName,
                 properties: payload,
-            }
+            };
 
             if (session.user_id) {
-                trackPayload.userId = session.user_id
+                trackPayload.userId = session.user_id;
             }
 
             if (!session.user_id && session.anonymous_id) {
-                trackPayload.anonymousId = session.anonymous_id
+                trackPayload.anonymousId = session.anonymous_id;
             }
 
             if (!trackPayload.userId && !trackPayload.anonymousId) {
@@ -96,7 +96,7 @@ export class Rudderstack {
 
     serverContext: ServerContext | null = null;
 
-    session: Awaited<ReturnType<ReturnType<typeof getUserSession>>> & { anonymous_id?: string } | null = null;
+    session: (Awaited<ReturnType<ReturnType<typeof getUserSession>>> & { anonymous_id?: string }) | null = null;
 
     context: RudderstackContext | null = null;
 
