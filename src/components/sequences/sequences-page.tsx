@@ -5,9 +5,11 @@ import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-seque
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
+import { toast } from 'react-hot-toast';
+import { clientLogger } from 'src/utils/logger-client';
 import { OpenSequencesPage } from 'src/utils/analytics/events';
 import { Button } from '../button';
-import { Plus, Question } from '../icons';
+import { DeleteOutline, Plus, Question } from '../icons';
 import { Layout } from '../layout';
 import { CreateSequenceModal } from './create-sequence-modal';
 import { SequenceStats } from './sequence-stats';
@@ -15,17 +17,36 @@ import SequencesTable from './sequences-table';
 import { FaqModal } from '../library';
 import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
+import { useSequence } from 'src/hooks/use-sequence';
+import { DeleteSequenceModal } from '../modal-delete-sequence';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences } = useSequences();
+    const { sequences, refreshSequences } = useSequences();
+    const { deleteSequence } = useSequence();
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selection, setSelection] = useState<string[]>([]);
+    const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
+
     const { push } = useRouter();
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);
+    };
+
+    const handleDeleteSequence = async () => {
+        try {
+            await deleteSequence(selection);
+            toast.success(t('sequences.deleteSuccess'));
+            setSelection([]);
+        } catch (error) {
+            toast.error(t('sequences.deleteFail'));
+            clientLogger(error, 'error');
+        }
+        refreshSequences(sequences?.filter((sequence) => !selection.includes(sequence.id)));
     };
 
     const { track } = useRudderstackTrack();
@@ -38,6 +59,11 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
+            <DeleteSequenceModal
+                show={showDeleteModal}
+                setShow={setShowDeleteModal}
+                handleDelete={handleDeleteSequence}
+            />
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
@@ -94,13 +120,26 @@ export const SequencesPage = () => {
                             0) / (allSequenceEmails?.length || 1)
                     }
                 />
-                <div className="flex w-full justify-end">
+                <div className="flex w-full justify-end gap-4">
+                    <button
+                        data-testid="delete-sequences-button"
+                        className={`h-fit ${
+                            selection.length === 0 && 'hidden'
+                        } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
+                        onClick={() => {
+                            if (selection.length === 0) return;
+                            setShowDeleteModal(true);
+                        }}
+                    >
+                        <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                    </button>
                     <Button onClick={handleOpenCreateSequenceModal} className="flex items-center">
                         <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
                         <p className="self-center">{t('sequences.newSequence')}</p>
                     </Button>
                 </div>
-                <SequencesTable sequences={sequences} />
+
+                <SequencesTable sequences={sequencesWithoutDeleted} selection={selection} setSelection={setSelection} />
             </div>
         </Layout>
     );

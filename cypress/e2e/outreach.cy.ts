@@ -246,7 +246,7 @@ describe('outreach', () => {
         cy.contains(thirdFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
     });
-    it('can create new sequence. Can delete sequence', () => {
+    it('can create new sequences. Can delete sequences', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
@@ -262,9 +262,23 @@ describe('outreach', () => {
         cy.contains('Template variables updated');
         cy.contains('Sequences').click();
         cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        //  create another dummy sequence to show multi-delete works
+        cy.contains('New sequence').click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test 2');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('a', 'New Sequence Test 2');
         // cleanup and test delete
-        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.getByTestId('delete-sequences-button').should('not.be.visible');
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('sequences-select-all').check();
+        cy.getByTestId('sequence-checkbox').eq(0).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(1).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(2).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(0).uncheck();
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('delete-sequences-button').click();
         cy.contains('button', 'Yes. Delete this sequence').click();
         cy.contains('tr', 'New Sequence Test').should('not.exist');
+        cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
 });

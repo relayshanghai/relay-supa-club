@@ -14,8 +14,17 @@ import { useState } from 'react';
 import { Button } from '../button';
 import { useUser } from 'src/hooks/use-user';
 import { EmailPreviewModal } from './email-preview-modal';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
-export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
+export const SequencesTableRow = ({
+    sequence,
+    onCheckboxChange,
+    checked,
+}: {
+    sequence: Sequence;
+    onCheckboxChange: (id: string) => void;
+    checked: boolean;
+}) => {
     const { t } = useTranslation();
     const { sequenceSteps } = useSequence(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
@@ -23,32 +32,21 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const { deleteSequence } = useSequence();
+    const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
         ).length || 0) / (sequenceEmails?.length || 1),
         0,
     );
-    const handleDeleteSequence = async () => {
-        try {
-            await deleteSequence(sequence.id);
-            toast.success(t('sequences.deleteSuccess'));
-        } catch (error) {
-            toast.error(t('sequences.deleteFail'));
-            clientLogger(error, 'error');
-        }
-        refreshSequenceInfluencers();
+
+    const handleChange = () => {
+        onCheckboxChange(sequence.id);
     };
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     return (
         <>
-            <DeleteSequenceModal
-                show={showDeleteModal}
-                setShow={setShowDeleteModal}
-                handleDelete={handleDeleteSequence}
-                name={sequence.name}
-            />
             <EmailPreviewModal
                 visible={!!showEmailPreview}
                 onClose={() => setShowEmailPreview(null)}
@@ -56,6 +54,15 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 templateVariables={templateVariables ?? []}
             />
             <tr className="border-b-2 border-gray-200 bg-white">
+                <td className="display-none items-center whitespace-nowrap text-center align-middle">
+                    <input
+                        data-testid="sequence-checkbox"
+                        className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                        checked={checked}
+                        onChange={handleChange}
+                        type="checkbox"
+                    />
+                </td>
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
                     <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
@@ -75,13 +82,6 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                         <Brackets className="h-5 w-5" />
                         {t('sequences.updateTemplateVariables')}
                     </Button>
-                    <button
-                        onClick={() => setShowDeleteModal(true)}
-                        className="align-middle"
-                        data-testid={`delete-sequence:${sequence.name}`}
-                    >
-                        <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />
-                    </button>
                 </td>
             </tr>
         </>

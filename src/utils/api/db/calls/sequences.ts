@@ -38,19 +38,18 @@ export const createSequenceCall = (supabaseClient: RelayDatabase) => async (inse
 
 const sequenceInfluencersToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
 
-export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (ids: string[]) => {
     const { error } = await supabaseClient
         .from('sequences')
         .update({
-            id,
             deleted: true,
         })
-        .eq('id', id);
+        .in('id', ids);
     if (error) throw error;
     const { error: deleteInfluencersError } = await supabaseClient
         .from('sequence_influencers')
         .delete()
         .in('funnel_status', sequenceInfluencersToDelete)
-        .eq('sequence_id', id);
+        .in('sequence_id', ids);
     if (deleteInfluencersError) throw deleteInfluencersError;
 };
