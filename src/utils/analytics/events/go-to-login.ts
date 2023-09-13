@@ -1,7 +1,7 @@
 import type { TriggerEvent } from '../types';
 import type { CurrentPageEvent } from './current-pages';
 
-export const GO_TO_LOGIN = 'Go To GO_TO_LOGIN';
+export const GO_TO_LOGIN = 'Go To Login';
 
 export type GoToLoginPayload = {
     currentPage: CurrentPageEvent;
