@@ -74,7 +74,7 @@ import {
     SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
 import type { WebhookErrorPayload } from './outreach/email-error';
-import { OUTREACH_EMAIL_ERROR, WebhookError } from './outreach/email-error';
+import { OUTREACH_WEBHOOK_ERROR, WebhookError } from './outreach/email-error';
 import type { EmailNewPayload } from './outreach/email-new';
 import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
 import type { IncomingWebhookPayload } from './outreach/email-incoming';
@@ -137,7 +137,7 @@ export const events = {
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
     [OUTREACH_EMAIL_INCOMING]: IncomingWebhook,
-    [OUTREACH_EMAIL_ERROR]: WebhookError,
+    [OUTREACH_WEBHOOK_ERROR]: WebhookError,
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
@@ -173,7 +173,7 @@ export type payloads = {
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload;
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload;
     [OUTREACH_EMAIL_INCOMING]: IncomingWebhookPayload;
-    [OUTREACH_EMAIL_ERROR]: WebhookErrorPayload;
+    [OUTREACH_WEBHOOK_ERROR]: WebhookErrorPayload;
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload;
@@ -211,7 +211,7 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
     z.literal(OUTREACH_EMAIL_INCOMING),
-    z.literal(OUTREACH_EMAIL_ERROR),
+    z.literal(OUTREACH_WEBHOOK_ERROR),
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
     z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
