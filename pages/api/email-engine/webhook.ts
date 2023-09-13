@@ -415,9 +415,17 @@ const postHandler: NextApiHandler = async (req, res) => {
     // If we return a 500, the email client will retry the webhook and we will get duplicate events
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
+    let hasIdentity = false;
     try {
-        await identifyWebhook(body);
-        track(rudderstack.getClient(), rudderstack.getIdentity())(IncomingWebhook, body);
+        hasIdentity = await identifyWebhook(body);
+    } catch (_e) {
+        // do nothing
+        // all of our webhook calls should be from an account that we have in our database so we don't need to check for identity beyond the wrapper incoming logger and the wrapper error logger. If we don't have an identity for the other calls we want it to fail so we can investigate
+    }
+    try {
+        if (hasIdentity) {
+            track(rudderstack.getClient(), rudderstack.getIdentity())(IncomingWebhook, body);
+        }
 
         switch (body.event) {
             case 'messageNew':
@@ -440,7 +448,11 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleOtherWebhook(body, res);
         }
     } catch (error: any) {
-        track(rudderstack.getClient(), rudderstack.getIdentity())(WebhookError, { body, error });
+        if (hasIdentity) {
+            track(rudderstack.getClient(), rudderstack.getIdentity())(WebhookError, { body, error });
+        } else {
+            serverLogger(error); // truly unexpected, so let's send to Sentry
+        }
         return res.status(httpCodes.OK).json({});
     }
 };
