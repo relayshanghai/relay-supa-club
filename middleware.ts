@@ -62,7 +62,7 @@ const checkOnboardingStatus = async (
         // for new user signup. We have checks in the next endpoint
         return res;
     }
-    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
+    const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
@@ -97,20 +97,9 @@ const checkOnboardingStatus = async (
             '/api/subscriptions/create',
             '/api/company',
             '/pricing',
+            '/payments',
         ];
         if (allowedPaths.some((path) => req.nextUrl.pathname === path)) return res;
-        else {
-            if (!subscriptionEndDate) {
-                redirectUrl.pathname = '/account';
-                return NextResponse.redirect(redirectUrl);
-            }
-
-            const endDate = new Date(subscriptionEndDate);
-            if (endDate < new Date()) {
-                redirectUrl.pathname = '/account';
-                return NextResponse.redirect(redirectUrl);
-            } else return res;
-        }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (
