@@ -1,3 +1,3 @@
 export enum CurrentPageEvent {
-    boostbot = 'boostbot'
+    boostbot = 'boostbot',
 }
