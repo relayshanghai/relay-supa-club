@@ -1,12 +1,10 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-dummy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
 import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
@@ -15,19 +13,14 @@ import { filterInfluencers } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { useRouter } from 'next/router';
 import faq from 'i18n/en/faq';
 import { Button } from 'src/components/button';
 import { Question } from 'src/components/icons';
+import { inManagerDummyInfluencers } from 'src/components/sequences/in-manager-dummy-sequence-influencers';
 
-const Manager = () => {
-    const { sequences } = useSequences();
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((sequence) => {
-            return sequence.id;
-        }),
-    );
+const ManagerDummy = () => {
+    const sequenceInfluencers = inManagerDummyInfluencers;
 
     const { profile } = useUser();
 
@@ -46,8 +39,8 @@ const Manager = () => {
     const { track } = useRudderstackTrack();
 
     const influencers =
-        sequenceInfluencers.length > 0 && profile && sequences
-            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+        sequenceInfluencers.length > 0 && profile
+            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers)
             : [];
 
     useEffect(() => {
@@ -66,20 +59,9 @@ const Manager = () => {
         [setUiState],
     );
 
-    const handleProfileUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!sequenceInfluencers || !data.notes || !influencer) return;
-            const updatedInfluencerIndex = sequenceInfluencers.findIndex((x) => x.id === influencer.id);
-            const newInfluencers = [
-                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
-                { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
-                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
-            ];
-            refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
-        },
-        [refreshSequenceInfluencers, sequenceInfluencers, influencer],
-    );
-
+    const handleProfileUpdate = () => {
+        return;
+    };
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
         Object.keys(COLLAB_OPTIONS).forEach((option) => {
@@ -175,4 +157,4 @@ const Manager = () => {
     );
 };
 
-export default Manager;
+export default ManagerDummy;
