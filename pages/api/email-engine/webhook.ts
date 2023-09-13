@@ -84,12 +84,12 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     const trackData: Omit<EmailReplyPayload, 'is_success'> = {
         account_id: event.account,
-        sequence_influencer: sequenceInfluencer,
-        sequenceEmailsPreDelete: [],
-        sequenceEmailsAfterDelete: [],
-        scheduledEmails: [],
-        deletedEmails: [],
-        emailUpdates: [],
+        sequence_influencer_id: sequenceInfluencer.id,
+        sequence_emails_pre_delete: [],
+        sequence_emails_after_delete: [],
+        scheduled_emails: [],
+        deleted_emails: [],
+        email_updates: [],
         extra_info: { event_data: event.data },
     };
     try {
@@ -97,7 +97,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
             try {
                 // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
                 const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-                trackData.sequenceEmailsPreDelete = sequenceEmails;
+                trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
                 const outbox = await getOutbox();
                 // If there are any scheduled emails in the outbox to this address, cancel them
 
@@ -106,7 +106,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                         message.envelope.to.includes(event.data.from.address) &&
                         sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId), // Outbox is global to all users so we need to filter down to only the messages that are for this user by checking if the message is in the sequenceEmails
                 );
-                trackData.scheduledEmails = scheduledMessages;
+                trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
                 if (scheduledMessages.length === 0) {
                     return;
                 }
@@ -117,7 +117,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                             throw new Error('failed to delete email from outbox');
                         }
                         await deleteSequenceEmailByMessageId(message.messageId);
-                        trackData.deletedEmails.push(message);
+                        trackData.deleted_emails.push(message.messageId);
                     } catch (error) {
                         trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
                         trackData.extra_info.email_delete_errors.push(JSON.stringify(error));
@@ -132,13 +132,13 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         await deleteScheduledEmails();
         // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-        trackData.sequenceEmailsAfterDelete = sequenceEmails;
+        trackData.sequence_emails_after_delete = sequenceEmails.map((email) => email.id);
 
         const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
             id: sequenceEmail.id,
             email_delivery_status: 'Replied',
         }));
-        trackData.emailUpdates = emailUpdates;
+        trackData.email_updates = emailUpdates.map((update) => update.id || '');
 
         for (const emailUpdate of emailUpdates) {
             try {

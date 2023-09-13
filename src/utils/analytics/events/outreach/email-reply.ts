@@ -1,17 +1,15 @@
-import type { SequenceEmail, SequenceEmailUpdate, SequenceInfluencer } from 'src/utils/api/db';
 import type { EventPayload, TriggerEvent } from '../../types';
-import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 
 export const OUTREACH_EMAIL_REPLY = 'outreach-email_reply';
 
 export type EmailReplyPayload = EventPayload<{
     account_id: string;
-    sequence_influencer: SequenceInfluencer;
-    sequenceEmailsPreDelete: SequenceEmail[];
-    sequenceEmailsAfterDelete: SequenceEmail[];
-    emailUpdates: SequenceEmailUpdate[];
-    scheduledEmails: OutboxGetMessage[];
-    deletedEmails: OutboxGetMessage[];
+    sequence_influencer_id: string;
+    sequence_emails_pre_delete: string[];
+    sequence_emails_after_delete: string[];
+    email_updates: string[];
+    scheduled_emails: string[];
+    deleted_emails: string[];
     is_success: boolean;
     extra_info?: any;
 }>;
