@@ -45,8 +45,23 @@ export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) 
 //Send a message to the slack channel when a new customer signs up
 export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as InsertCompanyPayload;
-    const { name: companyName, website, subscription_status: subscriptionStatus } = data.record;
+    const {
+        name: companyName,
+        website,
+        subscription_status: subscriptionStatus,
+        subscription_current_period_end: subscriptionEndDate,
+    } = data.record;
+    if (!subscriptionEndDate) {
+        throw new Error('Subscription end date is not found.');
+    }
     if (data.table === 'companies' && data.type === 'INSERT') {
+        let status;
+        const currentDate = new Date();
+        if (new Date(subscriptionEndDate) < currentDate && subscriptionStatus === 'canceled') {
+            status = 'expired';
+        } else {
+            status = subscriptionStatus;
+        }
         const reqBody: SlackMessage = {
             blocks: [
                 {
@@ -70,7 +85,7 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
                         },
                         {
                             type: 'mrkdwn',
-                            text: `*Subscription Status:*\n${subscriptionStatus}`,
+                            text: `*Subscription Status:*\n${status}`,
                         },
                     ],
                 },
