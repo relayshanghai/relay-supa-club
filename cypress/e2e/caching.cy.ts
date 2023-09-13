@@ -2,14 +2,14 @@ import { deleteDB } from 'idb';
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
 
 describe('Caches SWR requests', () => {
-    beforeEach(async () => {
-        await deleteDB('app-cache');
+    beforeEach(() => {
+        deleteDB('app-cache');
+        setupIntercepts(); // some will be overwritten
+        cy.loginTestUser();
     });
     it('caches reports from `use-report`', () => {
-        setupIntercepts(); // some will be overriden
-        cy.loginTestUser();
-
-        cy.contains('Sequences', { timeout: 10000 });
+        cy.visit('/dashboard');
+        cy.contains('Search by Topics', { timeout: 10000 });
 
         cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
             force: true,
@@ -37,14 +37,15 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
     it('caches searches on the dashboard', () => {
-        setupIntercepts(); // some will be overriden
-        cy.loginTestUser();
         cy.intercept('/api/influencer-search*', (req) => {
             req.reply({
                 body: defaultLandingPageInfluencerSearch,
                 delay: 1000,
             });
         });
+        cy.visit('/dashboard');
+        cy.contains('Search by Topics', { timeout: 10000 });
+
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist');
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
         cy.intercept('/api/influencer-search*', (req) => {

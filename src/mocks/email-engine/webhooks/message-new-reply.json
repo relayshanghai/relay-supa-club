@@ -3,8 +3,8 @@
     "id": "AAAAAQAAAF0",
     "to": [
       {
-        "name": "tech.relay.club@gmail.com",
-        "address": "tech.relay.club@gmail.com"
+        "name": "test@boostbot.ai",
+        "address": "test@boostbot.ai"
       }
     ],
     "uid": 93,
@@ -47,7 +47,7 @@
   "date": "2023-08-21T04:28:13.433Z",
   "path": "[Gmail]/All Mail",
   "event": "messageNew",
-  "account": "e7ustgsqqvy9al6f",
+  "account": "nqnwq6g9ooqhfexa",
   "serviceUrl": "https://email.relay.club",
   "specialUse": "\\All"
 }

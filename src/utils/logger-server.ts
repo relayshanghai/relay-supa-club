@@ -3,7 +3,7 @@ import { isUnknownError } from './is-api-error';
 
 export type LogLevel = Sentry.SeverityLevel;
 
-type CaptureContext = Parameters<typeof Sentry.captureException>[1]
+type CaptureContext = Parameters<typeof Sentry.captureException>[1];
 
 const isLogLevel = (value: any): value is LogLevel => {
     return ['fatal', 'error', 'warning', 'log', 'info', 'debug'].includes(value);

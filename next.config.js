@@ -10,7 +10,7 @@ const nextConfig = {
     reactStrictMode: true,
     swcMinify: true,
     typescript: {
-        tsconfigPath: './tsconfig.build.json'
+        tsconfigPath: './tsconfig.build.json',
     },
     images: {
         remotePatterns: [
