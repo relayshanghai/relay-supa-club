@@ -20,9 +20,19 @@ import {
 } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
-import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
+
+const dummyNote = {
+    author: {
+        id: '1',
+        name: 'Jim',
+        avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=relay-manager-no-name@example.com&size=96',
+    },
+    content: 'This is a sample note content.',
+    id: 'note1',
+    created_at: '2023-09-13T12:00:00Z',
+    updated_at: '2023-09-13T12:30:00Z',
+};
 
 export const InboxPageDummy = () => {
     const inboxMessages = dummyData.messages;
@@ -37,7 +47,6 @@ export const InboxPageDummy = () => {
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | undefined | null>(
         null,
     );
-    const { refreshSequenceInfluencers } = useSequenceInfluencers();
 
     const mapProfileToFormData = useCallback((p?: SequenceInfluencerManagerPage | null) => {
         if (!p) return null;
@@ -99,7 +108,6 @@ export const InboxPageDummy = () => {
         setSelectedMessages(threadMessages);
         setLoadingSelectedMessages(false);
     };
-    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
 
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
@@ -115,21 +123,9 @@ export const InboxPageDummy = () => {
         [profile],
     );
 
-    const handleUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!sequenceInfluencer) return;
-
-            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
-                // @note updates local state without additional query
-                //       this will cause issue showing previous state though
-                setLocalProfile(mapProfileToFormData(profile));
-                saveSequenceInfluencer.refresh();
-
-                refreshSequenceInfluencers();
-            });
-        },
-        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, mapProfileToFormData, setLocalProfile],
-    );
+    const handleUpdate = () => {
+        return;
+    };
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -155,17 +151,15 @@ export const InboxPageDummy = () => {
         }
     }, [messages, handleSelectPreviewCard, selectedMessages]);
 
-    const handleNoteListOpen = useCallback(() => {
-        if (!sequenceInfluencer) return;
-        getNotes.call(sequenceInfluencer.id);
-    }, [getNotes, sequenceInfluencer]);
+    const handleNoteListOpen = () => {
+        return;
+    };
 
-    const handleNoteListClose = useCallback(() => {
+    const handleNoteListClose = () => {
         setUiState((s) => {
             return { ...s, isNotesListOverlayOpen: false };
         });
-        getNotes.refresh();
-    }, [getNotes, setUiState]);
+    };
 
     return (
         <Layout>
@@ -228,8 +222,8 @@ export const InboxPageDummy = () => {
                                     />
                                 </ProfileScreenProvider>
                                 <NotesListOverlayScreen
-                                    notes={getNotes.data}
-                                    isLoading={getNotes.isLoading}
+                                    notes={[dummyNote]}
+                                    isLoading={false}
                                     isOpen={uiState.isNotesListOverlayOpen}
                                     onClose={handleNoteListClose}
                                     onOpen={handleNoteListOpen}
