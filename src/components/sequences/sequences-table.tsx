@@ -57,16 +57,14 @@ const SequencesTable = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {sequences?.map((sequence) => {
-                        return (
-                            <SequencesTableRow
-                                key={sequence.id}
-                                sequence={sequence}
-                                checked={selection.includes(sequence.id)}
-                                onCheckboxChange={handleCheckboxChange}
-                            />
-                        );
-                    })}
+                    {sequences?.map((sequence) => (
+                        <SequencesTableRow
+                            key={sequence.id}
+                            sequence={sequence}
+                            checked={selection.includes(sequence.id)}
+                            onCheckboxChange={handleCheckboxChange}
+                        />
+                    ))}
                 </tbody>
             </table>
         </div>

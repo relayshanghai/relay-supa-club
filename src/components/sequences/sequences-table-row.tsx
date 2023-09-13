@@ -25,7 +25,7 @@ export const SequencesTableRow = ({
     );
 
     const handleChange = () => {
-        onCheckboxChange && onCheckboxChange(sequence.id);
+        onCheckboxChange(sequence.id);
     };
 
     return (
@@ -41,7 +41,7 @@ export const SequencesTableRow = ({
                     />
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
-                    <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
+                    <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
