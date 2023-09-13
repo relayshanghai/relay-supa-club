@@ -4,6 +4,8 @@ import type { payloads } from 'src/utils/analytics/events';
 import type { TrackedEvent, TriggerEvent } from 'src/utils/analytics/types';
 import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
+import { useGetCurrentPage } from './use-get-current-page';
+import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -155,9 +157,14 @@ type PromiseExecutor = (
 export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const rudder = useRudder();
+    const currentPage = useGetCurrentPage();
 
     const track = useCallback(
-        <E extends TrackedEvent>(event: E, properties?: payloads[E['eventName']], options?: apiOptions) => {
+        <E extends TrackedEvent>(
+            event: E,
+            properties?: Omit<payloads[E['eventName']], 'currentPage'> & { currentPage?: CurrentPageEvent },
+            options?: apiOptions,
+        ) => {
             const abort = () => {
                 isAborted.current = true;
             };
@@ -172,10 +179,15 @@ export const useRudderstackTrack = () => {
                 }
 
                 const trigger: TriggerEvent = (eventName, payload) => {
-                    rudder.track(eventName, payload, options, (...args: RudderstackMessageType[]) => {
-                        resolve(args);
-                        return args;
-                    });
+                    rudder.track(
+                        eventName,
+                        { currentPage, ...payload },
+                        options,
+                        (...args: RudderstackMessageType[]) => {
+                            resolve(args);
+                            return args;
+                        },
+                    );
                 };
 
                 event(trigger, properties);
@@ -185,7 +197,7 @@ export const useRudderstackTrack = () => {
 
             return { request, abort };
         },
-        [rudder],
+        [rudder, currentPage],
     );
 
     return { track };

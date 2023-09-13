@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "AAAAAQAAAGQ",
-    "to": [{ "name": "tech.relay.club@gmail.com", "address": "tech.relay.club@gmail.com" }],
+    "to": [{ "name": "test@boostbot.ai", "address": "test@boostbot.ai" }],
     "uid": 100,
     "date": "2023-08-21T13:40:08.000Z",
     "from": { "name": "Jacob Cohen-Rosenthal", "address": "jacob@relay.club" },
@@ -25,7 +25,7 @@
   "date": "2023-08-21T13:40:29.607Z",
   "path": "[Gmail]/All Mail",
   "event": "messageNew",
-  "account": "e7ustgsqqvy9al6f",
+  "account": "nqnwq6g9ooqhfexa",
   "serviceUrl": "https://email.relay.club",
   "specialUse": "\\All"
 }

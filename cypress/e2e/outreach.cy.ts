@@ -208,6 +208,7 @@ describe('outreach', () => {
             method: 'POST',
             url: '/api/email-engine/webhook',
             body: JSON.parse(JSON.stringify(messageSent)),
+            timeout: 10000,
         });
         cy.reload(); // todo: remove this when we get push updates
         cy.contains('button', 'In sequence').click();
@@ -221,6 +222,7 @@ describe('outreach', () => {
             method: 'POST',
             url: '/api/email-engine/webhook',
             body: JSON.parse(JSON.stringify(messageNewReply)),
+            timeout: 10000,
         });
         cy.reload(); // todo: remove this when we get push updates
         cy.contains('button', 'In sequence').click();
