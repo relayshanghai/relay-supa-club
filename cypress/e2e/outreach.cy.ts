@@ -231,8 +231,8 @@ describe('outreach', () => {
     });
     it('can view templates for sequences', () => {
         cy.contains('Sequences').click();
-        cy.wait(3000);
-        cy.contains('button', 'View sequence templates').click();
+        cy.contains('Widget X', { timeout: 10000 }).click();
+        cy.contains('button', 'View sequence templates', { timeout: 10000 }).click();
         cy.contains('Email preview');
         cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
         const outreachMessage =
