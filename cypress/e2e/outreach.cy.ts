@@ -7,6 +7,7 @@ import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
 const setTemplateVariableDescription = (description: string) => {
+    cy.contains('tr', 'General collaboration').should('not.exist');
     cy.contains('button', 'View sequence templates').click();
     cy.get('textarea[id="template-variable-input-productDescription"]').clear();
     if (description) {
@@ -181,36 +182,6 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('exist');
     });
-    it.skip('can view email previews', () => {
-        cy.contains('Sequences').click();
-        cy.contains('General collaboration', { timeout: 10000 });
-
-        // can view all emails preview
-        cy.getByTestId('show-all-email-previews-button').eq(0).click();
-        //TODO: cy.getByTestId('email-preview-modal-spinner');
-        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
-        const outreachMessage =
-            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
-        cy.contains(outreachMessage); // fills in variables
-        cy.contains('button', '1st Follow-up').click();
-        const firstFollowup = 'Just floating this to the top of your inbox';
-        cy.contains(firstFollowup);
-        cy.contains('button', '3rd Follow-up').click();
-        const thirdFollowup =
-            "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
-        cy.contains(thirdFollowup); // shows all emails not just outreach
-        cy.contains('Cancel').click(); // click out of modal
-
-        // can view next email preview.
-        cy.contains('button', 'In sequence').click();
-        cy.contains('button', '1st Follow-up').click();
-        // cy.getByTestId('email-preview-modal-spinner');
-        cy.contains(firstFollowup);
-        cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.',
-        ).should('not.exist'); //only shows the selected one
-        cy.contains('button', 'Needs attention').click({ force: true });
-    });
     it('can send sequence, webhooks update influencer funnel status', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
@@ -260,13 +231,31 @@ describe('outreach', () => {
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
     });
+    it('can view templates for sequences', () => {
+        cy.contains('Sequences').click();
+        cy.contains('Widget X', { timeout: 10000 }).click();
+        cy.contains('button', 'View sequence templates', { timeout: 10000 }).click();
+        cy.contains('Email preview');
+        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
+        const outreachMessage =
+            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
+        cy.contains(outreachMessage); // fills in variables
+        const firstFollowup = 'Just floating this to the top of your inbox';
+        cy.contains(firstFollowup);
+        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        const thirdFollowup =
+            "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
+        cy.contains(thirdFollowup); // shows all emails not just outreach
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+    });
     it('can create new sequences. Can delete sequences', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
         cy.contains('button', 'Create new sequence').click();
-        cy.contains('New Sequence Test').click();
-        cy.contains('button', 'View sequence templates').click();
+        cy.contains('a', 'New Sequence Test').click({ timeout: 10000 });
+        cy.contains('tr', 'View sequence templates').should('not.exist');
+        cy.contains('button', 'View sequence templates').click({ timeout: 10000 });
         cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
         cy.contains('button', 'Update variables').click();
         cy.contains(
