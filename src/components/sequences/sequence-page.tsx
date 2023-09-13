@@ -23,10 +23,13 @@ import toast from 'react-hot-toast';
 import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
 import { clientLogger } from 'src/utils/logger-client';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
+    const { track } = useRudderstackTrack();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
@@ -237,7 +240,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             </div>
                         )}
                     </Button>
-                    <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="ml-auto flex items-center">
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            setShowNeedHelp(true);
+                            track(ClickNeedHelp);
+                        }}
+                        className="ml-auto flex items-center"
+                    >
                         {t('website.needHelp')}
                         <Question className="ml-2 h-6 w-6" />
                     </Button>
