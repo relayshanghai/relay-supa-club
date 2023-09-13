@@ -33,12 +33,12 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                         variant="primary"
                         className="hidden h-8 w-8 items-center justify-center !px-0 !py-0 lg:flex"
                         onClick={() => {
-                            table.setPageIndex(0)
+                            table.setPageIndex(0);
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanPreviousPage() ? 1 : null,
-                            })
+                            });
                         }}
                         disabled={!table.getCanPreviousPage()}
                     >
@@ -49,12 +49,12 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                         variant="primary"
                         className="flex h-8 w-8 items-center justify-center !px-0 !py-0"
                         onClick={() => {
-                            table.previousPage()
+                            table.previousPage();
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanPreviousPage() ? table.getState().pagination.pageIndex : null,
-                            })
+                            });
                         }}
                         disabled={!table.getCanPreviousPage()}
                     >
@@ -65,12 +65,12 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                         variant="primary"
                         className="flex h-8 w-8 items-center justify-center !px-0 !py-0"
                         onClick={() => {
-                            table.nextPage()
+                            table.nextPage();
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanNextPage() ? table.getState().pagination.pageIndex + 2 : null,
-                            })
+                            });
                         }}
                         disabled={!table.getCanNextPage()}
                     >
@@ -81,12 +81,12 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                         variant="primary"
                         className="hidden h-8 w-8 items-center justify-center !px-0 !py-0 lg:flex"
                         onClick={() => {
-                            table.setPageIndex(table.getPageCount() - 1)
+                            table.setPageIndex(table.getPageCount() - 1);
                             track(ChangePage, {
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanNextPage() ? table.getPageCount() : null,
-                            })
+                            });
                         }}
                         disabled={!table.getCanNextPage()}
                     >

@@ -1,5 +1,5 @@
 import type { TriggerEvent } from '../types';
-import { CurrentPageEvent } from './current-pages';
+import type { CurrentPageEvent } from './current-pages';
 
 export const CHANGE_PAGE = 'Change Page';
 
@@ -9,8 +9,7 @@ export type ChangePagePayload = {
     to_page: number | null;
 };
 
-export const ChangePage = (trigger: TriggerEvent, value?: ChangePagePayload) =>
-    trigger(CHANGE_PAGE, { ...value });
+export const ChangePage = (trigger: TriggerEvent, value?: ChangePagePayload) => trigger(CHANGE_PAGE, { ...value });
 
 export type ChangePage = typeof ChangePage;
 
