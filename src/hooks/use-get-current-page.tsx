@@ -53,6 +53,10 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.influencer;
     }
 
+    if (/^\/campaigns\/?/.test(pathname)) {
+        return CurrentPageEvent.campaigns;
+    }
+
     if (/^\/admin\/?/.test(pathname)) {
         return CurrentPageEvent.admin;
     }
