@@ -83,6 +83,8 @@ import type { IncomingWebhookPayload } from './outreach/email-incoming';
 import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { OpenAccountModalPayload } from './open-account-modal';
+import { OPEN_ACCOUNT_MODAL, OpenAccountModal } from './open-account-modal';
 import type { NavigateToPagePayload } from './navigate-to-page';
 import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
 import type { SignupStartedPayload } from './signup-started';
@@ -119,6 +121,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    OpenAccountModal,
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
@@ -158,6 +161,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
     [NAVIGATE_TO_PAGE]: NavigateToPage,
     [SIGNUP_STARTED]: SignupStarted,
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
@@ -197,6 +201,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
     [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
     [SIGNUP_STARTED]: SignupStartedPayload;
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
@@ -238,6 +243,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(OPEN_ACCOUNT_MODAL),
     z.literal(NAVIGATE_TO_PAGE),
     z.literal(SIGNUP_STARTED),
     z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
