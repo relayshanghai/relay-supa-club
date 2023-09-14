@@ -4,9 +4,12 @@ export const OUTREACH_EMAIL_REPLY = 'outreach-email_reply';
 
 export type EmailReplyPayload = EventPayload<{
     account_id: string;
-    influencer_id: string | null;
-    sequence_step: number | null;
-    sequence_influencer_id: string | null;
+    sequence_influencer_id: string;
+    sequence_emails_pre_delete: string[];
+    sequence_emails_after_delete: string[];
+    email_updates: string[];
+    scheduled_emails: string[];
+    deleted_emails: string[];
     is_success: boolean;
     extra_info?: any;
 }>;

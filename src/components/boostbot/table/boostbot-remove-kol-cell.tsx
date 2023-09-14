@@ -15,7 +15,7 @@ export const BoostbotRemoveKolCell = ({ row, table }: BoostbotRemoveKolCellProps
 
     const removeInfluencer = () => {
         if (!table.options.meta) {
-            throw new Error("KOL Remove event handler is required");
+            throw new Error('KOL Remove event handler is required');
         }
 
         table.options.meta.removeInfluencer(row.original.user_id);
