@@ -63,8 +63,6 @@ export const SequencesTableRow = ({
                         track(OpenSequence, {
                             sequenceId: sequence.id,
                             totalInfluencers: sequenceInfluencers?.length || 0,
-                            influencerSequenceStarted:
-                                sequenceInfluencers?.filter((influencer) => influencer.sequence_step > 0).length || 0,
                             openCount: 0, // TODO: increment count V2-872dc
                         });
                     }}

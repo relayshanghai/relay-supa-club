@@ -8,7 +8,6 @@ export type OpenSequencePayload = {
     openCount: number;
     sequenceId: string;
     totalInfluencers: number;
-    influencerSequenceStarted: number;
 };
 
 export const OpenSequence = (trigger: TriggerEvent, value?: OpenSequencePayload) =>
