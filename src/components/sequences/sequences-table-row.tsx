@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Button } from '../button';
 import { EmailPreviewModal } from './email-preview-modal';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
 
 export const SequencesTableRow = ({
     sequence,
@@ -31,6 +33,7 @@ export const SequencesTableRow = ({
         ).length || 0) / (sequenceEmails?.length || 1),
         0,
     );
+    const { track } = useRudderstackTrack();
 
     const handleChange = () => {
         onCheckboxChange(sequence.id);
@@ -54,7 +57,18 @@ export const SequencesTableRow = ({
                         type="checkbox"
                     />
                 </td>
-                <td className="whitespace-nowrap px-6 py-3 text-primary-600">
+                <td
+                    className="whitespace-nowrap px-6 py-3 text-primary-600"
+                    onClick={() => {
+                        track(OpenSequence, {
+                            sequenceId: sequence.id,
+                            totalInfluencers: sequenceInfluencers?.length || 0,
+                            influencerSequenceStarted:
+                                sequenceInfluencers?.filter((influencer) => influencer.sequence_step > 0).length || 0,
+                            openCount: 0, // TODO: increment count V2-872dc
+                        });
+                    }}
+                >
                     <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
