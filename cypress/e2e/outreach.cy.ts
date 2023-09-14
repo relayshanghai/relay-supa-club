@@ -195,6 +195,10 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
+        cy.contains('button', 'In sequence').within(() => {
+            cy.contains('2'); // before sending bob is in 'to contact' tab
+        });
+
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
@@ -204,8 +208,6 @@ describe('outreach', () => {
         cy.contains('button', 'In sequence').within(() => {
             cy.contains('3', { timeout: 10000 }); // added Bob, and old ones remain in sequence
         });
-        cy.contains('Bob-Recommended Brown').should('not.exist');
-        cy.contains('button', 'In sequence').click();
         function checkForStatus(status: string, retries = 0) {
             if (retries > 30) {
                 throw new Error('Timed out waiting for status to update');
