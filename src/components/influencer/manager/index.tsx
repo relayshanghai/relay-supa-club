@@ -8,7 +8,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenInfluencerManagerPage } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterInfluencers } from './helpers';
@@ -140,7 +140,14 @@ const Manager = () => {
                         <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
                     </div>
                     <div>
-                        <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="flex items-center"
+                        >
                             {t('website.needHelp')}
                             <Question className="ml-2 h-6 w-6" />
                         </Button>
