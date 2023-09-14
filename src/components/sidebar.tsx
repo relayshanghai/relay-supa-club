@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, type MutableRefObject, type ReactNode, useCallback } from 'react';
+import { useState, type MutableRefObject, type ReactNode } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useUser } from 'src/hooks/use-user';
 import {
@@ -53,13 +53,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
     const isRouteActive = pathRoot === href;
 
-    const { track } = useRudderstackTrack()
-
-    const handleLinkClick = useCallback((href: string) => {
-        track(NavigateToPage, {
-            destination_url: href
-        })
-    }, [])
+    const { track } = useRudderstackTrack();
 
     return (
         <Link
@@ -69,7 +63,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
             className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
                 isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
             }`}
-            onClick={() => handleLinkClick(href)}
+            onClick={() => track(NavigateToPage, { destination_url: href })}
         >
             {links[href](pathRoot, hovering) ?? null}
             {children}
