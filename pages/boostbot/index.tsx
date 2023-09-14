@@ -68,7 +68,7 @@ const Boostbot = () => {
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    const { usages, refreshUsages } = useUsages(
+    const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
         featNewPricing() && periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
@@ -82,7 +82,7 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
-        if (isSearchLoading || !subscription) return;
+        if (isSearchLoading || !isUsageLoaded) return;
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
@@ -112,7 +112,7 @@ const Boostbot = () => {
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, subscription]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
     const [messages, setMessages] = useState<MessageType[]>([
         {
