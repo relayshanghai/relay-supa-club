@@ -1,3 +1,4 @@
+import { CLEAR_FILTERS, ClearFilters, type ClearFiltersPayload } from './clear-filters';
 import { z } from 'zod';
 import type { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
@@ -116,6 +117,7 @@ export {
     StopBoostbot,
     OpenSocialThumbnails,
     OpenVideoGuideModal,
+    ClearFilters,
 };
 
 export const events = {
@@ -153,6 +155,7 @@ export const events = {
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
+    [CLEAR_FILTERS]: ClearFilters,
 };
 
 export type payloads = {
@@ -190,6 +193,7 @@ export type payloads = {
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
+    [CLEAR_FILTERS]: ClearFiltersPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -229,6 +233,7 @@ export const eventKeys = z.union([
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
     z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
+    z.literal(CLEAR_FILTERS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

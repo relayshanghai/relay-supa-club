@@ -8,6 +8,8 @@ import { useEffect, useCallback } from 'react';
 import { Switch } from '../library';
 import { Button } from '../button';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { ClearFilters } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -76,11 +78,11 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
     } = useSearch();
 
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
 
     const {
         trackSearch,
         trackCloseFilterModal,
-        trackClearFilters,
         trackAudienceLocation,
         trackAudienceAgeFrom,
         trackAudienceAgeTo,
@@ -129,7 +131,8 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
         setInfluencerLocation([]);
         setAudienceGender(undefined);
         setAudienceAge(undefined);
-        trackClearFilters();
+        // trackClearFilters();
+        track(ClearFilters);
     };
 
     const isContactInfoEmail = useCallback(() => (contactInfo == 'email' ? true : false), [contactInfo]);
