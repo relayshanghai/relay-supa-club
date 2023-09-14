@@ -83,6 +83,8 @@ import type { IncomingWebhookPayload } from './outreach/email-incoming';
 import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { ClickNeedHelpPayload } from './click-need-help';
+import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
 import type { GoToLoginPayload } from './go-to-login';
 import { GO_TO_LOGIN, GoToLogin } from './go-to-login';
 import type { OpenAccountModalPayload } from './open-account-modal';
@@ -129,6 +131,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    ClickNeedHelp,
     GoToLogin,
     PasswordReset,
     OpenAccountModal,
@@ -171,6 +174,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [CLICK_NEED_HELP]: ClickNeedHelp,
     [GO_TO_LOGIN]: GoToLogin,
     [PASSWORD_RESET]: PasswordReset,
     [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
@@ -215,6 +219,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [CLICK_NEED_HELP]: ClickNeedHelpPayload;
     [GO_TO_LOGIN]: GoToLoginPayload;
     [PASSWORD_RESET]: PasswordResetPayload;
     [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
@@ -261,6 +266,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(CLICK_NEED_HELP),
     z.literal(GO_TO_LOGIN),
     z.literal(PASSWORD_RESET),
     z.literal(OPEN_ACCOUNT_MODAL),

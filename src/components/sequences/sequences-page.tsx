@@ -7,7 +7,7 @@ import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import { OpenSequencesPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenSequencesPage } from 'src/utils/analytics/events';
 import { Button } from '../button';
 import { DeleteOutline, Plus, Question } from '../icons';
 import { Layout } from '../layout';
@@ -91,7 +91,14 @@ export const SequencesPage = () => {
                         <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>
                     </div>
                     <div>
-                        <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="flex items-center"
+                        >
                             {t('website.needHelp')}
                             <Question className="ml-2 h-6 w-6" />
                         </Button>

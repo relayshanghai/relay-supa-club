@@ -61,9 +61,9 @@ export const SequencesTableRow = ({
                     className="whitespace-nowrap px-6 py-3 text-primary-600"
                     onClick={() => {
                         track(OpenSequence, {
-                            sequenceId: sequence.id,
-                            totalInfluencers: sequenceInfluencers?.length || 0,
-                            openCount: 0, // TODO: increment count V2-872dc
+                            sequence_id: sequence.id,
+                            total_influencers: sequenceInfluencers?.length || 0,
+                            open_count: 0, // TODO: increment count V2-872dc
                         });
                     }}
                 >
