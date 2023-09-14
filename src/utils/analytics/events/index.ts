@@ -89,6 +89,8 @@ import type { NavigateToPagePayload } from './navigate-to-page';
 import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
 import type { SignupStartedPayload } from './signup-started';
 import { SIGNUP_STARTED, SignupStarted } from './signup-started';
+import type { PasswordResetPayload } from './password-reset';
+import { PASSWORD_RESET, PasswordReset } from './password-reset';
 
 export {
     Search,
@@ -121,6 +123,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    PasswordReset,
     OpenAccountModal,
     NavigateToPage,
     SignupStarted,
@@ -161,6 +164,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [PASSWORD_RESET]: PasswordReset,
     [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
     [NAVIGATE_TO_PAGE]: NavigateToPage,
     [SIGNUP_STARTED]: SignupStarted,
@@ -201,6 +205,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [PASSWORD_RESET]: PasswordResetPayload;
     [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
     [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
     [SIGNUP_STARTED]: SignupStartedPayload;
@@ -243,6 +248,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(PASSWORD_RESET),
     z.literal(OPEN_ACCOUNT_MODAL),
     z.literal(NAVIGATE_TO_PAGE),
     z.literal(SIGNUP_STARTED),
