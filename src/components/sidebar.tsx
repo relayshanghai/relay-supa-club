@@ -19,6 +19,8 @@ import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { NavigateToPage } from 'src/utils/analytics/events';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -51,6 +53,8 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
     const isRouteActive = pathRoot === href;
 
+    const { track } = useRudderstackTrack();
+
     return (
         <Link
             onMouseOver={() => setHovering(true)}
@@ -59,6 +63,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
             className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
                 isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
             }`}
+            onClick={() => track(NavigateToPage, { destination_url: href })}
         >
             {links[href](pathRoot, hovering) ?? null}
             {children}
@@ -91,8 +96,10 @@ const NavBarInner = ({
     desktop: boolean;
 }) => {
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
     const sidebarState = open && desktop ? 'visible' : 'hidden';
     const { profile } = useUser();
+
     return (
         <>
             <div className="pt-2">
@@ -175,6 +182,7 @@ const NavBarInner = ({
                                         href="/account"
                                         passHref
                                         className="whitespace-nowrap px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
+                                        onClick={() => track(NavigateToPage, { destination_url: '/account' })}
                                     >
                                         {t('navbar.account')}
                                     </Link>
