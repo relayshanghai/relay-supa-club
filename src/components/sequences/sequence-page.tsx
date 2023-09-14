@@ -206,11 +206,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     return (
         <Layout>
-            <Banner
-                buttonText={t('banner.button')}
-                title={t('banner.title')}
-                message={t('banner.descriptionSequences')}
-            />
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
