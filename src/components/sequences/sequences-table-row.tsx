@@ -9,7 +9,6 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Button } from '../button';
-import { useUser } from 'src/hooks/use-user';
 import { EmailPreviewModal } from './email-preview-modal';
 
 export const SequencesTableRow = ({
@@ -24,7 +23,6 @@ export const SequencesTableRow = ({
     const { t } = useTranslation();
     const { sequenceSteps } = useSequence(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
-    const { profile } = useUser();
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const openRate = decimalToPercent(
@@ -69,7 +67,6 @@ export const SequencesTableRow = ({
                     <Button
                         className="flex flex-row gap-2"
                         variant="ghost"
-                        disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
                         onClick={() => setShowEmailPreview(sequenceSteps ?? [])}
                     >
                         <Brackets className="h-5 w-5" />
