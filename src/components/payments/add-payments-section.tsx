@@ -46,7 +46,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
             },
         },
         locale: i18n.language.includes('en') ? 'en' : 'zh',
-        payment_method_types: ['card'],
+        payment_method_types: ['card', 'alipay'],
     };
     const paymentLink =
         priceTier === 'discovery'

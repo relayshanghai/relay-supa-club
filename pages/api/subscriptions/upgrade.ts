@@ -7,6 +7,7 @@ import { unixEpochToISOString } from 'src/utils/utils';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import { createSubscriptionErrors } from 'src/errors/subscription';
+import type { PaymentIntent } from '@stripe/stripe-js';
 
 export type SubscriptionUpgradePostBody = {
     companyId: string;
@@ -29,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 status: 'active',
             });
             let activeSubscription = subscriptions.data[0];
-
+            console.log('activeSubscription', activeSubscription);
             if (!activeSubscription) {
                 const trialSubscriptions = await stripeClient.subscriptions.list({
                     customer,
@@ -37,64 +38,106 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 activeSubscription = trialSubscriptions.data[0];
                 if (!activeSubscription) {
+                    await updateCompanySubscriptionStatus({
+                        subscription_status: 'canceled',
+                        id: companyId,
+                    });
+
                     return res
-                        .status(httpCodes.FORBIDDEN)
+                        .status(httpCodes.OK)
                         .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
                 }
             }
 
-            //create a new subscription and cancel current one
+            console.log('creating payment method');
+            const paymentMethod = await stripeClient.paymentMethods.create({
+                type: 'alipay',
+            });
 
+            console.log('attaching payment method to customer');
+            await stripeClient.paymentMethods.attach(paymentMethod.id, {
+                customer: customer,
+            });
+
+            const price = await stripeClient.prices.retrieve(priceId);
+            //create a new subscription and cancel current one
             const subscription = await stripeClient.subscriptions.create({
                 customer,
-                payment_behavior: 'default_incomplete',
+                payment_behavior: 'allow_incomplete',
+                default_payment_method: paymentMethod.id,
                 items: [{ price: priceId }],
-                payment_settings: { save_default_payment_method: 'on_subscription' },
-                proration_behavior: 'create_prorations',
-                expand: ['latest_invoice.payment_intent'],
             });
+            console.log('===============================');
 
             const payment_intent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
-            res.send({
-                type: 'payment',
-                clientSecret: (payment_intent as Stripe.PaymentIntent).client_secret,
-            });
+            if (payment_intent) {
+                console.log('I got called');
+                console.log('=========>>>> creating payment intent');
+                const paymentIntent = await stripeClient.paymentIntents.update((payment_intent as PaymentIntent).id, {
+                    setup_future_usage: 'off_session',
+                    payment_method: paymentMethod.id,
+                    mandate_data: {
+                        customer_acceptance: {
+                            type: 'online',
+                            online: {
+                                ip_address: (req.headers['x-forwarded-for'] || req.socket.remoteAddress) as string,
+                                user_agent: req.headers['user-agent'] as string,
+                            },
+                        },
+                    },
+                });
 
-            // only cancel old subscription after new one is created successfully
-            await stripeClient.subscriptions.cancel(activeSubscription.id, {
-                invoice_now: true,
-                prorate: true,
-            });
-
-            //code from create.ts to update company usage limits and subscription status in db
-            const price = await stripeClient.prices.retrieve(priceId);
-            const product = (await stripeClient.products.retrieve(price.product as string)) as RelayPlanStripeProduct;
-
-            const subscription_start_date = unixEpochToISOString(subscription.start_date);
-            if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-            const { profiles, searches, ai_emails } = product.metadata;
-            if (!profiles || !searches || !ai_emails) {
-                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
-                throw new Error('Missing product metadata');
+                // Step 4: Confirm the PaymentIntent
+                await stripeClient.paymentIntents.confirm((payment_intent as PaymentIntent).id, {
+                    return_url: 'http://localhost:3000/payments/success',
+                });
+                console.log('+++++++++++++++++++++++++++++++');
+                res.send({
+                    type: 'payment',
+                    clientSecret: (payment_intent as Stripe.PaymentIntent).client_secret,
+                });
             }
 
-            await updateCompanyUsageLimits({
-                profiles_limit: profiles,
-                searches_limit: searches,
-                ai_email_generator_limit: ai_emails,
-                id: companyId,
-            });
+            // only cancel old subscription after new one is created successfully
+            if (subscription && subscription.status === 'active') {
+                await stripeClient.subscriptions.cancel(activeSubscription.id, {
+                    invoice_now: true,
+                    prorate: true,
+                });
 
-            await updateCompanySubscriptionStatus({
-                subscription_status: 'active',
-                subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
-                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
-                id: companyId,
-            });
+                //code from create.ts to update company usage limits and subscription status in db
+                const product = (await stripeClient.products.retrieve(
+                    price.product as string,
+                )) as RelayPlanStripeProduct;
 
-            return res.status(httpCodes.OK).json(subscription);
+                const subscription_start_date = unixEpochToISOString(subscription.start_date);
+                if (!subscription_start_date) throw new Error('Missing subscription start date');
+
+                const { profiles, searches, ai_emails } = product.metadata;
+                if (!profiles || !searches || !ai_emails) {
+                    serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }), 'error', true);
+                    throw new Error('Missing product metadata');
+                }
+
+                await updateCompanyUsageLimits({
+                    profiles_limit: profiles,
+                    searches_limit: searches,
+                    ai_email_generator_limit: ai_emails,
+                    id: companyId,
+                });
+
+                await updateCompanySubscriptionStatus({
+                    subscription_status: 'active',
+                    subscription_start_date,
+                    subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+                    subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
+                    id: companyId,
+                });
+
+                return res.status(httpCodes.OK).json(subscription);
+            } else {
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(subscription);
+            }
         } catch (error) {
             serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
