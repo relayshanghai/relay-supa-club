@@ -148,6 +148,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         try {
             await deleteSequenceInfluencers(influencerIds);
             refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
+            setSelection([]);
             toast.success(t('sequences.influencerDeleted'));
         } catch (error) {
             clientLogger(error, 'error');

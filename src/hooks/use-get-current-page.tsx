@@ -3,59 +3,67 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const useGetCurrentPage = () => {
-    const { pathname } = useRouter()
+    const { pathname } = useRouter();
 
     if (/^\/boostbot\/?/.test(pathname)) {
-        return CurrentPageEvent.boostbot
+        return CurrentPageEvent.boostbot;
     }
 
     if (/^\/dashboard\/?/.test(pathname)) {
-        return CurrentPageEvent.dashboard
+        return CurrentPageEvent.dashboard;
     }
 
     if (/^\/sequences\/?/.test(pathname)) {
-        return CurrentPageEvent.sequences
+        return CurrentPageEvent.sequences;
     }
 
     if (/^\/inbox\/?/.test(pathname)) {
-        return CurrentPageEvent.inbox
+        return CurrentPageEvent.inbox;
     }
 
     if (/^\/influencer-manager\/?/.test(pathname)) {
-        return CurrentPageEvent['influencer-manager']
+        return CurrentPageEvent['influencer-manager'];
     }
 
     if (/^\/guide\/?/.test(pathname)) {
-        return CurrentPageEvent.guide
+        return CurrentPageEvent.guide;
     }
 
     if (/^\/account\/?/.test(pathname)) {
-        return CurrentPageEvent.account
+        return CurrentPageEvent.account;
     }
 
     if (/^\/pricing\/?/.test(pathname)) {
-        return CurrentPageEvent.pricing
+        return CurrentPageEvent.pricing;
     }
 
     if (/^\/login\/?/.test(pathname)) {
-        return CurrentPageEvent.login
+        return CurrentPageEvent.login;
     }
 
     if (/^\/signup\/?/.test(pathname)) {
-        return CurrentPageEvent.signup
+        return CurrentPageEvent.signup;
+    }
+
+    if (/^\/payments\/?/.test(pathname)) {
+        return CurrentPageEvent.payments;
     }
 
     if (/^\/influencer\/?/.test(pathname)) {
-        return CurrentPageEvent.influencer
+        return CurrentPageEvent.influencer;
+    }
+
+    if (/^\/campaigns\/?/.test(pathname)) {
+        return CurrentPageEvent.campaigns;
     }
 
     if (/^\/admin\/?/.test(pathname)) {
-        return CurrentPageEvent.admin
+        return CurrentPageEvent.admin;
     }
 
     if (/^\/$/.test(pathname)) {
-        return CurrentPageEvent.index
+        return CurrentPageEvent.index;
     }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);
-}
+};
