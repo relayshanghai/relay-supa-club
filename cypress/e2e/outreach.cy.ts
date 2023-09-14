@@ -308,3 +308,25 @@ describe('outreach', () => {
         cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
 });
+
+describe('non-outreach user', () => {
+    it('Shows banner and preview pages when logged in as non outreach user', () => {
+        cy.loginAdmin();
+
+        cy.contains('Sequences').click();
+        cy.contains('Outreach Plan Exclusive Feature');
+        cy.contains('Sending sequence emails is only available for Outreach Plan accounts.');
+        cy.contains('Influencer Manager').click();
+        cy.contains('Outreach Plan Exclusive Feature');
+        cy.contains('Influencer Manager is only available for Outreach Plan accounts.');
+        cy.contains('tr', 'Influencer Name');
+        cy.contains('Inbox').click();
+        cy.contains('Outreach Plan Exclusive Feature');
+        cy.contains('Inbox is only available for Outreach Plan accounts.');
+        cy.contains(
+            "I've got a Aduro LED Face Mask I'd like to send you, have a feeling it's something your audience would be really into!",
+        );
+        cy.contains('Upgrade now').click();
+        cy.contains('Just getting started, or scaling up.');
+    });
+});

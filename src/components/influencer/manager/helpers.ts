@@ -18,12 +18,12 @@ export const filterInfluencers = (
     onlyMe: boolean,
     filterStatuses: CommonStatusType[],
     profile: ProfileDB,
-    sequences: Sequence[],
     sequenceInfluencers: SequenceInfluencerManagerPage[],
+    sequences?: Sequence[],
 ) => {
     let influencers = sequenceInfluencers;
 
-    if (onlyMe) {
+    if (onlyMe && sequences) {
         influencers = filterByMe(influencers, profile, sequences);
     }
 

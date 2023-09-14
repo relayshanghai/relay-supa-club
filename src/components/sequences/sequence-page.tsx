@@ -25,6 +25,7 @@ import { useRouter } from 'next/router';
 import { clientLogger } from 'src/utils/logger-client';
 import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { Banner } from '../library/banner';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -205,6 +206,11 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     return (
         <Layout>
+            <Banner
+                buttonText={t('banner.button')}
+                title={t('banner.title')}
+                message={t('banner.descriptionSequences')}
+            />
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
