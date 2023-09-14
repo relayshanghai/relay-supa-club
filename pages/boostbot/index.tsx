@@ -13,7 +13,12 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
+import {
+    OpenVideoGuideModal,
+    OpenBoostbotPage,
+    SendInfluencersToOutreach,
+    UnlockInfluencers,
+} from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
@@ -24,6 +29,8 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -75,7 +82,7 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
-        if (isSearchLoading) return;
+        if (isSearchLoading || !subscription) return;
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
@@ -105,7 +112,7 @@ const Boostbot = () => {
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, subscription]);
 
     const [messages, setMessages] = useState<MessageType[]>([
         {
@@ -134,6 +141,7 @@ const Boostbot = () => {
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
         const trackingPayload: UnlockInfluencersPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: userIds.length > 1,
@@ -209,6 +217,15 @@ const Boostbot = () => {
                 />
             ),
         });
+        addMessage({
+            sender: 'Bot',
+            content: (
+                <VideoPreviewWithModal
+                    eventToTrack={OpenVideoGuideModal.eventName}
+                    videoUrl="/assets/videos/delete-guide.mp4"
+                />
+            ),
+        });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -218,6 +235,7 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload = {
+            currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
             topics: [],
             is_multiple: null,
@@ -235,10 +253,8 @@ const Boostbot = () => {
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const socialProfileId = influencer.socialProfile.id;
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
-                const socialProfileEmail = influencer.socialProfile.email;
 
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
@@ -258,6 +274,15 @@ const Boostbot = () => {
                         components={{
                             sequencesLink: <Link target="_blank" className="font-medium underline" href="/sequences" />,
                         }}
+                    />
+                ),
+            });
+            addMessage({
+                sender: 'Bot',
+                content: (
+                    <VideoPreviewWithModal
+                        eventToTrack={OpenVideoGuideModal.eventName}
+                        videoUrl="/assets/videos/sequence-guide.mp4"
                     />
                 ),
             });

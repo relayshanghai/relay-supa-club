@@ -9,6 +9,7 @@ Using the Journey, we can lookup the user and group all the events by journey an
 ## Search Results & Unique Search Parameters
 
 We capture the search results and unique search parameters by doing the following:
+
 1. The user does a search on our frontend
 2. The backend will proxy the search request to iqdata and retrieve the results
 3. A search snapshot and unique search parameter will be created
@@ -23,12 +24,12 @@ The keys are passed around so we will be able to duplicate the snapshot.
 
 ## Other events
 
-Other events are tracked normally without workarounds. 
+Other events are tracked normally without workarounds.
 You can find the events in `/src/utils/analytics/events/index.ts`
 
 # ULID, UUID, nanoid
 
-We cannot use ULID on postgres. There might be work arounds but I rather stick to UUID. 
+We cannot use ULID on postgres. There might be work arounds but I rather stick to UUID.
 The only benefit for ULID is the sortability which we rarely use in ids as far as I know.
 
 Nanoid is for unique strings similar but is way shorter, recognizable and faster.

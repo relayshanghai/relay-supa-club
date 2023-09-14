@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 export const DeleteFromSequenceModal = ({
     show,
     setShow,
-    deleteInfluencer,
-    sequenceId,
+    deleteHandler,
+    influencerIds,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
-    deleteInfluencer: (id: string) => void;
-    sequenceId: string;
+    deleteHandler: (ids: string[]) => void;
+    influencerIds: string[];
 }) => {
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
@@ -33,7 +33,7 @@ export const DeleteFromSequenceModal = ({
             }
             onOkay={async () => {
                 setLoading(true);
-                await deleteInfluencer(sequenceId);
+                await deleteHandler(influencerIds);
                 setLoading(false);
                 setShow(false);
             }}
