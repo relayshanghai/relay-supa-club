@@ -158,5 +158,6 @@ const sequences = {
     deleteConfirm: '确认删除？',
     deleteSuccess: '删除成功',
     deleteFail: '删除失败',
+    emailAlreadyExists: '邮箱已存在',
 };
 export default sequences;

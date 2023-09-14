@@ -172,6 +172,7 @@ const sequences = {
     deleteConfirm: 'Are you sure you want to delete?',
     deleteSuccess: 'Successfully deleted.',
     deleteFail: 'Failed to delete.',
+    emailAlreadyExists: 'Email already exists',
 };
 
 export default sequences;

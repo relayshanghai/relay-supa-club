@@ -6,7 +6,7 @@ import Link from 'next/link';
 import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
 import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
@@ -22,8 +22,10 @@ import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { clientLogger } from 'src/utils/logger-client';
+import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 
 interface SequenceRowProps {
+    sequence?: Sequence;
     sequenceInfluencer: SequenceInfluencerManagerPage;
     lastEmail?: SequenceEmail;
     nextEmail?: SequenceEmail;
@@ -55,6 +57,7 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
         : sequenceEmail?.email_delivery_status;
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
+    sequence,
     sequenceInfluencer,
     lastEmail,
     nextEmail,
@@ -89,6 +92,20 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const handleEmailUpdate = async (email: string) => {
         try {
+            const otherInfluencersEmails = sequenceInfluencers.map((influencer) => influencer.email);
+            const uniqueEmail = !otherInfluencersEmails.includes(email);
+            track(EnterInfluencerEmail, {
+                sequence_id: sequence?.id || '',
+                influencer_id: sequenceInfluencer.id,
+                existing_email: sequenceInfluencer.email || '',
+                sequence_name: sequence?.name || '',
+                email: email,
+                unique_email: uniqueEmail,
+            });
+            if (!uniqueEmail) {
+                toast.error(t('sequences.emailAlreadyExists'));
+                return;
+            }
             const updatedSequenceInfluencer = await updateSequenceInfluencer({
                 id: sequenceInfluencer.id,
                 email,
