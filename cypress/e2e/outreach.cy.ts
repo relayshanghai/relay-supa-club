@@ -187,7 +187,7 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('exist');
     });
-    it.only('can send sequence, webhooks update influencer funnel status', () => {
+    it('can send sequence, webhooks update influencer funnel status', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
