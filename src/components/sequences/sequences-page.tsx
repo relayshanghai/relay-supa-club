@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
+import { Banner } from '../library/banner';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -61,6 +62,11 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
+            <Banner
+                buttonText={t('banner.button')}
+                title={t('banner.title')}
+                message={t('banner.descriptionSequences')}
+            />
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}

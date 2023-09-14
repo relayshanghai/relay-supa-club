@@ -21,6 +21,7 @@ import {
 import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
+import { Banner } from '../library/banner';
 
 const dummyNote = {
     author: {
@@ -163,6 +164,7 @@ export const InboxPageDummy = () => {
 
     return (
         <Layout>
+            <Banner buttonText={t('banner.button')} title={t('banner.title')} message={t('banner.descriptionInbox')} />
             <div className="grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">

@@ -2,7 +2,7 @@ import type { AccountAccountMessagesGet, MessagesGetMessage } from 'types/email-
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 import templates from 'src/mocks/api/email-engine/templates.json';
 
-const company = 'DJI';
+const company = 'Aduro';
 
 const messages: MessagesGetMessage[] = inManagerDummyInfluencers.map((influencer, index) => {
     return {
@@ -69,15 +69,15 @@ export const dummyMessages = {
             unseen: false, // Set as needed
             flagged: false, // Set as needed
             size: 2356, // Replace with an appropriate value
-            subject: `Paid Collab with DJI 🤝`,
+            subject: `Paid Collab with Aduro 🤝`,
             from: {
-                name: influencer.manager_first_name,
+                name: 'Me',
                 address: influencer.email || 'jim@boostbot.ai',
             },
             replyTo: [],
             to: [
                 {
-                    address: influencer.email || 'jim@boostbot.ai',
+                    address: 'influencerName@example.com',
                 },
             ],
             cc: [],
@@ -110,15 +110,15 @@ dummyMessages.messages.push({
     unseen: false, // Set as needed
     flagged: false, // Set as needed
     size: 2356, // Replace with an appropriate value
-    subject: `Paid Collab with DJI 🤝`,
+    subject: `Paid Collab with Aduro 🤝`,
     from: {
-        name: 'Outdoors Unsupervised',
+        name: 'Influencer Name',
         address: 'OutdoorsUnsupervised@gmail.com',
     },
     replyTo: [],
     to: [
         {
-            address: 'jim@boostbot.ai',
+            address: 'Me, and manager_email@address.com (cc) ',
         },
     ],
     cc: [],
@@ -142,25 +142,25 @@ dummyMessages.messages.push({
 export const existingThread = [
     {
         threadId: `thread_OutdoorsUnsupervised@gmail.com_1`,
-        html: `<p>Hey Outdoors Unsupervised,</p>
-        <p>Jim here from DJI. I just saw your <a href="https://www.youtube.com/watch?v=YMM5hpWMK64">"First Time Flying a Drone Stealth Camp #15 Woods and Construction Site"</a> post, and I gotta say, love your content style 🤩.</p> 
+        html: `<p>Hey Influencer Name,</p>
+        <p>Mary here from Aduro. I just saw your <a href="www.example.com">"recent"</a> post, and I gotta say, love your content style 🤩.</p> 
         <br>    
-        <p>I've got a <a href="https://www.dji.com/au/mavic-3-pro?site=brandsite&from=homepage">Mavic 3 Pro</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
-        <p>The DJI Mavic 3 features next-level imaging performance. Mavic 3 Pro's triple-camera system ushers in a new era of camera drones by housing three sensors and lenses with different focal lengths. Equipped with a Hasselblad camera and dual tele cameras, Mavic 3 Pro is a triple-camera drone that unlocks new shooting perspectives, allowing you to embrace creative freedom further, capture fascinating scenery, explore photographic storytelling, and make cinematic masterpieces.</p>
+        <p>I've got a <a href="www.example.com">Aduro LED Face Mask</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
+        <p>The Aduro LED Facial Mask is the most advanced home-use Facial Mask based on Light Therapy with 11 different modes for different skin treatments. Studies have found that red LED light therapy tightens skin, reduces wrinkles and fine lines, and makes skin smoother and softer.</p>
         <br>
-        <p>We’re looking to partner with 8 or so influencers to get the word out about the Mavic 3 Pro over the next couple weeks, and would love for you to be apart of it.</p>
+        <p>We’re looking to partner with 8 or so influencers to get the word out about the Aduro LED Face Mask over the next couple weeks, and would love for you to be apart of it.</p>
         <p>Let me know if this is something you'd be interested in!</p>
         <br>
         <p>Cheers,</p>
         <br>
-        <p>Jim at DJI</p>`,
+        <p>Mary at Aduro</p>`,
         plain: `This is the plain text content for thread.`,
     },
     {
         threadId: `thread_OutdoorsUnsupervised@gmail.com_2`,
-        html: `<p>Hey Jim, that looks amazing!</p><br/>
+        html: `<p>Hey Mary, that looks amazing!</p><br/>
         <p>I'd love to collab, let me send you my media kit and we can start planning the video.</p>
-        <br/><p>Outdoors Unsupervised</p>`,
+        <br/><p>Influencer Name</p>`,
         plain: `This is the plain text content for thread.`,
     },
 ];
@@ -170,17 +170,17 @@ export const dummyThread = [
         return {
             threadId: `thread_${influencer.email}`,
             html: `<p>Hey ${influencer.name},</p>
-        <p>Jim here from DJI. I just saw your <a href="https://www.youtube.com/watch?v=YMM5hpWMK64">"First Time Flying a Drone Stealth Camp #15 Woods and Construction Site"</a> post, and I gotta say, love your content style 🤩.</p> 
-        <br>    
-        <p>I've got a <a href="https://www.dji.com/au/mavic-3-pro?site=brandsite&from=homepage">Mavic 3 Pro</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
-        <p>The DJI Mavic 3 features next-level imaging performance. Mavic 3 Pro's triple-camera system ushers in a new era of camera drones by housing three sensors and lenses with different focal lengths. Equipped with a Hasselblad camera and dual tele cameras, Mavic 3 Pro is a triple-camera drone that unlocks new shooting perspectives, allowing you to embrace creative freedom further, capture fascinating scenery, explore photographic storytelling, and make cinematic masterpieces.</p>
-        <br>
-        <p>We’re looking to partner with 8 or so influencers to get the word out about the Mavic 3 Pro over the next couple weeks, and would love for you to be apart of it.</p>
-        <p>Let me know if this is something you'd be interested in!</p>
-        <br>
-        <p>Cheers,</p>
-        <br>
-        <p>Jim at DJI</p>`,
+            <p>Mary here from Aduro. I just saw your <a href="www.example.com">"recent"</a> post, and I gotta say, love your content style 🤩.</p> 
+            <br>    
+            <p>I've got a <a href="www.example.com">Aduro LED Face Mask</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
+            <p>The Aduro LED Facial Mask is the most advanced home-use Facial Mask based on Light Therapy with 11 different modes for different skin treatments. Studies have found that red LED light therapy tightens skin, reduces wrinkles and fine lines, and makes skin smoother and softer.</p>
+            <br>
+            <p>We’re looking to partner with 8 or so influencers to get the word out about the Aduro LED Face Mask over the next couple weeks, and would love for you to be apart of it.</p>
+            <p>Let me know if this is something you'd be interested in!</p>
+            <br>
+            <p>Cheers,</p>
+            <br>
+            <p>Mary at Aduro</p>`,
             plain: `This is the plain text content for thread.`,
         };
     }),

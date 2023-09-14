@@ -3,7 +3,7 @@ import { BoostbotSelected, Thunder } from '../icons';
 
 export const Banner = ({ title, message, buttonText }: { title: string; message: string; buttonText: string }) => {
     return (
-        <div className="relative isolate flex items-center gap-x-6 overflow-hidden rounded-md bg-gradient-to-t from-violet-600 via-violet-500 to-violet-400 px-6 py-2.5 text-white shadow-lg">
+        <div className="sticky top-0 isolate z-50 flex items-center gap-x-6 overflow-hidden rounded-b-md bg-gradient-to-t from-violet-600 via-violet-500 to-violet-400 px-6 py-2.5 text-white shadow-lg">
             <div className="flex flex-1">
                 <div className="rounded-full bg-white px-2 py-1">
                     <BoostbotSelected className="h-8 w-6" />
