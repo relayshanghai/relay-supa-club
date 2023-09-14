@@ -340,6 +340,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         const sequenceEmailUpdate: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
+            email_send_at: new Date().toISOString(),
         };
 
         await updateSequenceEmail(sequenceEmailUpdate);
