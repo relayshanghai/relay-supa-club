@@ -96,6 +96,7 @@ const NavBarInner = ({
     desktop: boolean;
 }) => {
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
     const sidebarState = open && desktop ? 'visible' : 'hidden';
     const { profile } = useUser();
 
@@ -181,6 +182,7 @@ const NavBarInner = ({
                                         href="/account"
                                         passHref
                                         className="whitespace-nowrap px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
+                                        onClick={() => track(NavigateToPage, { destination_url: '/account' })}
                                     >
                                         {t('navbar.account')}
                                     </Link>
