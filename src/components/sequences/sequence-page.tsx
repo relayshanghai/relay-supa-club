@@ -72,19 +72,20 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             const succeeded = results.filter((result) => !result.error);
             if (succeeded.length > 0) {
                 const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
-                const updatedInfluencers = sequenceInfluencers.map((influencer) => {
-                    if (succeededInfluencerIds.includes(influencer.id)) {
-                        const optimisticUpdate: SequenceInfluencerManagerPage = {
-                            ...influencer,
-                            funnel_status: 'In Sequence',
-                            sequence_step: 1,
-                        };
-                        return optimisticUpdate;
-                    } else {
+
+                refreshSequenceInfluencers(
+                    sequenceInfluencers.map((influencer) => {
+                        if (succeededInfluencerIds.includes(influencer.id)) {
+                            return {
+                                ...influencer,
+                                funnel_status: 'In Sequence',
+                                sequence_step: 1,
+                            };
+                        }
                         return influencer;
-                    }
-                });
-                refreshSequenceInfluencers(updatedInfluencers, { revalidate: false });
+                    }),
+                    { revalidate: false },
+                );
             }
             // shouldn't need to update failed
         } catch (error) {
