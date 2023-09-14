@@ -1,5 +1,5 @@
 import type { TriggerEvent } from '../types';
-import { CurrentPageEvent } from './current-pages';
+import type { CurrentPageEvent } from './current-pages';
 
 export const NAVIGATE_TO_PAGE = 'Navigate To Page';
 

@@ -83,7 +83,8 @@ import type { IncomingWebhookPayload } from './outreach/email-incoming';
 import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
-import { NAVIGATE_TO_PAGE, NavigateToPage, NavigateToPagePayload } from './navigate-to-page';
+import type { NavigateToPagePayload } from './navigate-to-page';
+import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
 
 export {
     Search,
