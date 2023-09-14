@@ -13,7 +13,12 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
+import {
+    OpenVideoGuideModal,
+    OpenBoostbotPage,
+    SendInfluencersToOutreach,
+    UnlockInfluencers,
+} from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
@@ -25,6 +30,7 @@ import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -211,6 +217,15 @@ const Boostbot = () => {
                 />
             ),
         });
+        addMessage({
+            sender: 'Bot',
+            content: (
+                <VideoPreviewWithModal
+                    eventToTrack={OpenVideoGuideModal.eventName}
+                    videoUrl="/assets/videos/delete-guide.mp4"
+                />
+            ),
+        });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -259,6 +274,15 @@ const Boostbot = () => {
                         components={{
                             sequencesLink: <Link target="_blank" className="font-medium underline" href="/sequences" />,
                         }}
+                    />
+                ),
+            });
+            addMessage({
+                sender: 'Bot',
+                content: (
+                    <VideoPreviewWithModal
+                        eventToTrack={OpenVideoGuideModal.eventName}
+                        videoUrl="/assets/videos/sequence-guide.mp4"
                     />
                 ),
             });
