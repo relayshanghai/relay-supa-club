@@ -11,6 +11,7 @@ import { useUser } from 'src/hooks/use-user';
 import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PasswordReset } from 'src/utils/analytics/events';
+import { SignupStarted } from 'src/utils/analytics/events';
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -110,7 +111,11 @@ const LoginPage = () => {
             <div className="mb-2 mt-6 text-center">
                 <p className="inline text-sm text-gray-500">
                     {t('login.dontHaveAnAccount')}{' '}
-                    <Link href="/signup" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                    <Link
+                        onClick={() => track(SignupStarted)}
+                        href="/signup"
+                        className="inline cursor-pointer text-primary-500 hover:text-primary-700"
+                    >
                         <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
                             {t('login.signUp')}
                         </Button>
