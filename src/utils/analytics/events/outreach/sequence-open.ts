@@ -5,9 +5,9 @@ export const OPEN_SEQUENCE = 'Open Sequence';
 
 export type OpenSequencePayload = {
     currentPage: CurrentPageEvent;
-    openCount: number;
-    sequenceId: string;
-    totalInfluencers: number;
+    open_count: number;
+    sequence_id: string;
+    total_influencers: number;
 };
 
 export const OpenSequence = (trigger: TriggerEvent, value?: OpenSequencePayload) =>
