@@ -190,11 +190,10 @@ const SignUpPage = ({
     };
 
     const handleCompanyCreate = async (formData: FieldValues, profileId: string) => {
-        const { companyName, companyWebsite, companySize, companyCategory } = formData;
+        const { companyName, companyWebsite, companySize } = formData;
         const data = {
             name: companyName,
             website: companyWebsite,
-            category: companyCategory,
             size: companySize,
             profileId: profileId,
         };
