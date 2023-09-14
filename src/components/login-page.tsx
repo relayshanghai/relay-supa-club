@@ -10,6 +10,7 @@ import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { PasswordReset } from 'src/utils/analytics/events';
 import { SignupStarted } from 'src/utils/analytics/events';
 
 const LoginPage = () => {
@@ -67,6 +68,7 @@ const LoginPage = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
+            track(PasswordReset);
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
