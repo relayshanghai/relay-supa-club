@@ -85,6 +85,8 @@ import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 import type { GoToLoginPayload } from './go-to-login';
 import { GO_TO_LOGIN, GoToLogin } from './go-to-login';
+import type { NavigateToPagePayload } from './navigate-to-page';
+import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
 import type { SignupStartedPayload } from './signup-started';
 import { SIGNUP_STARTED, SignupStarted } from './signup-started';
 
@@ -120,6 +122,7 @@ export {
     StopBoostbot,
     OpenSocialThumbnails,
     GoToLogin,
+    NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
 };
@@ -159,6 +162,7 @@ export const events = {
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
     [GO_TO_LOGIN]: GoToLogin,
+    [NAVIGATE_TO_PAGE]: NavigateToPage,
     [SIGNUP_STARTED]: SignupStarted,
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
 };
@@ -198,6 +202,7 @@ export type payloads = {
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
     [GO_TO_LOGIN]: GoToLoginPayload;
+    [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
     [SIGNUP_STARTED]: SignupStartedPayload;
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
 };
@@ -239,6 +244,7 @@ export const eventKeys = z.union([
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
     z.literal(GO_TO_LOGIN),
+    z.literal(NAVIGATE_TO_PAGE),
     z.literal(SIGNUP_STARTED),
     z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
 ]);
