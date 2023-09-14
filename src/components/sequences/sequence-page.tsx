@@ -320,6 +320,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <div>
                         {currentTabInfluencers && sequenceSteps ? (
                             <SequenceTable
+                                sequence={sequence}
                                 sequenceInfluencers={currentTabInfluencers}
                                 sequenceEmails={sequenceEmails}
                                 sequenceSteps={sequenceSteps}
