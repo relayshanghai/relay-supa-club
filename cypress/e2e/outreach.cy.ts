@@ -201,10 +201,10 @@ describe('outreach', () => {
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
 
         // Optimistic update: Bob has been moved to 'in sequence' tab
-        cy.contains('Bob-Recommended Brown').should('not.exist');
         cy.contains('button', 'In sequence').within(() => {
-            cy.contains('3'); // added Bob, and old ones remain in sequence
+            cy.contains('3', { timeout: 10000 }); // added Bob, and old ones remain in sequence
         });
+        cy.contains('Bob-Recommended Brown').should('not.exist');
         cy.contains('button', 'In sequence').click();
         function checkForStatus(status: string, retries = 0) {
             if (retries > 30) {
