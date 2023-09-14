@@ -26,6 +26,8 @@ import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
+import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
+import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -116,6 +118,7 @@ export {
     StopBoostbot,
     OpenSocialThumbnails,
     ClickNeedHelp,
+    OpenVideoGuideModal,
 };
 
 export const events = {
@@ -153,6 +156,7 @@ export const events = {
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
     [CLICK_NEED_HELP]: ClickNeedHelp,
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
 };
 
 export type payloads = {
@@ -190,6 +194,7 @@ export type payloads = {
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
     [CLICK_NEED_HELP]: ClickNeedHelpPayload;
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -229,6 +234,7 @@ export const eventKeys = z.union([
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
     z.literal(CLICK_NEED_HELP),
+    z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
