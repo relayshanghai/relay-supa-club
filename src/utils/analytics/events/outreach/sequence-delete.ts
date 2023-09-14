@@ -5,8 +5,8 @@ export const DELETE_SEQUENCE = 'Delete Sequence';
 
 export type DeleteSequencePayload = {
     currentPage: CurrentPageEvent;
-    sequenceId: string;
-    totalInfluencers: number;
+    sequence_id: string;
+    total_influencers: number;
 };
 
 export const DeleteSequence = (trigger: TriggerEvent, value?: DeleteSequencePayload) =>
