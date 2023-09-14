@@ -15,6 +15,7 @@ import { activeTabStyles } from '../influencer-profile/screens/profile-screen';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateTemplateVariable } from 'src/utils/analytics/events/outreach/update-template-variable';
 import { randomNumber } from 'src/utils/utils';
+import { SaveTemplateVariableUpdates } from 'src/utils/analytics/events/outreach/save-template-variable-updates';
 
 export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'> {
     sequenceId?: string;
@@ -185,6 +186,13 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
+            const updatedValues =
+                templateVariables?.map((originalValue) => {
+                    const key = originalValue.key as DefaultTemplateVariableKey;
+                    if (variables[key]?.value !== originalValue.value) {
+                        return variables[key].value;
+                    }
+                }) ?? [];
             const updates: Promise<any>[] = Object.values(variables).map((variable) => {
                 const existingRecord = templateVariables?.find((v) => v.key === variable.key);
                 if (existingRecord) {
@@ -200,6 +208,12 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
             await Promise.all(updates).catch((error) => {
                 clientLogger(error, 'error');
                 throw error;
+            });
+            track(SaveTemplateVariableUpdates, {
+                sequence_id: sequenceId || '',
+                sequence_name: sequenceName || '',
+                batch_id: batchId,
+                variables_updated: updatedValues,
             });
 
             toast.success(t('sequences.templateVariablesUpdated'));

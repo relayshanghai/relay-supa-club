@@ -4,7 +4,7 @@ export const SAVE_TEMPLATE_VARIABLE_UPDATES = 'Save Template Variable Updates';
 export type SaveTemplateVariableUpdatesPayload = EventPayload<{
     sequence_id: string;
     sequence_name: string;
-    variables_updated: string[];
+    variables_updated: (string | undefined)[];
     batch_id: number;
 }>;
 
