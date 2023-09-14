@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Info, Spinner } from '../icons';
 import { Tooltip } from '../library';
 import type { SequenceStep, TemplateVariable, TemplateVariableInsert } from 'src/utils/api/db';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../button';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
@@ -14,6 +14,7 @@ import { fillInTemplateVariables, replaceNewlinesAndTabs } from './helpers';
 import { activeTabStyles } from '../influencer-profile/screens/profile-screen';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateTemplateVariable } from 'src/utils/analytics/events/outreach/update-template-variable';
+import { randomNumber } from 'src/utils/utils';
 
 export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'> {
     sequenceId?: string;
@@ -155,6 +156,9 @@ const VariableTextArea = ({
 };
 
 export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: TemplateVariablesModalProps) => {
+    // props.visible is used to force a re-calc of the batchId when the modal is opened
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [props.visible]);
     const { t } = useTranslation();
     const { templateVariables, updateTemplateVariable, insertTemplateVariable } = useTemplateVariables(sequenceId);
     useEffect(() => {
@@ -170,7 +174,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
             template_variable: key,
             variable_value: value,
             updating_existing_value: !!variables[key].value,
-            batch_id: null,
+            batch_id: batchId,
         });
         setVariables({ ...variables, [key]: { ...variables[key], value: value } });
     };

@@ -8,7 +8,7 @@ export type UpdateTemplateVariablePayload = EventPayload<{
     template_variable: string;
     variable_value: string;
     updating_existing_value: boolean;
-    batch_id: null;
+    batch_id: number;
 }>;
 
 export const UpdateTemplateVariable = (
