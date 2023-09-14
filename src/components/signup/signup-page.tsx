@@ -15,9 +15,10 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
+import { GoToLogin } from 'src/utils/analytics/events';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -45,6 +46,7 @@ const SignUpPage = ({
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { track } = useRudderstackTrack();
     const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
     const { trackEvent } = useRudderstack();
@@ -286,7 +288,11 @@ const SignUpPage = ({
             <div className="mb-2 mt-6 text-center">
                 <p className="inline text-sm text-gray-500">
                     {t('login.alreadyHaveAnAccount')}{' '}
-                    <Link href="/login" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                    <Link
+                        onClick={() => track(GoToLogin)}
+                        href="/login"
+                        className="inline cursor-pointer text-primary-500 hover:text-primary-700"
+                    >
                         <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
                             {t('login.logIn')}
                         </Button>
