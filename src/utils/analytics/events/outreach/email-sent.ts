@@ -6,8 +6,8 @@ export type EmailSentPayload = EventPayload<{
     account_id: string;
     influencer_id: string | null;
     sequence_id: string | null;
-    // @note sequence_step seems to mean the number of times outreach is retried
     sequence_step: number | null;
+    sequence_step_id: string | null;
     sequence_influencer_id: string | null;
     sequence_email_id: string | null;
     is_success: boolean;

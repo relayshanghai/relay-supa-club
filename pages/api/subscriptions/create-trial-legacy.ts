@@ -54,14 +54,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
             if (!diyTrialPriceId || !diyTrialPrice) {
-                serverLogger(new Error('Missing DIY trial price'), 'error', true);
+                serverLogger(new Error('Missing DIY trial price'));
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const { trial_days, trial_profiles, trial_searches, trial_ai_emails } = diyTrialPrice.product.metadata;
 
             if (!trial_days || !trial_profiles || !trial_searches || !trial_ai_emails) {
-                serverLogger(new Error('Missing product metadata'), 'error', true);
+                serverLogger(new Error('Missing product metadata'));
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const { searches, profiles, ai_emails } = price.product.metadata;
             if (!profiles || !searches || !ai_emails) {
-                serverLogger(new Error('Missing metadata'), 'error', true);
+                serverLogger(new Error('Missing metadata'));
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             await updateCompanyUsageLimits({
@@ -113,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

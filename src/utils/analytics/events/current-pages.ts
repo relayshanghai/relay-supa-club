@@ -10,6 +10,8 @@ export enum CurrentPageEvent {
     pricing = 'pricing',
     login = 'login',
     signup = 'signup',
+    payments = 'payments',
     influencer = 'influencer',
     campaigns = 'campaigns',
+    admin = 'admin',
 }

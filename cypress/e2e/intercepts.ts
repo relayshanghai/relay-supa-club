@@ -27,6 +27,9 @@ const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
 if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set in intercepts');
 export const SUPABASE_URL_CYPRESS = `${supabaseUrl}/rest/v1`;
 
+/**
+ * Note that this turns off sequences calls (for faster page loads) if you need sequences in your test, use `req.continue();` see outreach.cy.ts for an example
+ */
 export const setupIntercepts = () => {
     const supabase = supabaseClientCypress();
     resetUsages(supabase);
@@ -215,9 +218,9 @@ export const setupIntercepts = () => {
 
     cy.intercept('/api/email-engine/templates', (req) => {
         const body = req.body as { templateIds: string[] };
-        if (body.templateIds.length === 1) {
+        if (body.templateIds?.length === 1) {
             return req.reply({ body: oneTemplateMock, delay: 1000 });
-        } else if (body.templateIds.length > 1) {
+        } else if (body.templateIds?.length > 1) {
             return req.reply({ body: templatesMock, delay: 1000 });
         } else {
             return req.reply({ body: {}, delay: 1000 });
@@ -231,6 +234,16 @@ export const setupIntercepts = () => {
         body: postPerformance,
     });
     cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, {
+        body: [],
+    });
+    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, {
+        body: [],
+    });
+    // TODO: archive campaigns features https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
+    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaigns*`, {
+        body: [],
+    });
+    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaign_creators*`, {
         body: [],
     });
 };

@@ -1,10 +1,10 @@
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger-server';
 import type { RelayDatabase } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -27,7 +27,7 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return { subscriptionStatus: false, subscriptionEndDate: null };
     }
 };
@@ -85,26 +85,26 @@ const checkOnboardingStatus = async (
         return res;
     } else if (subscriptionStatus === 'canceled') {
         // if subscription ended only allow access to account page, and subscription endpoints
+        //handle landing page - index page separately
+        if (req.nextUrl.pathname === '/') return res;
         const allowedPaths = [
-            '/',
             '/signup',
             '/free-trial',
             '/login',
             '/account',
             '/api/subscriptions',
-            '/api/subscriptions/payment-method',
-            '/api/subscriptions/portal',
-            '/api/subscriptions/create',
             '/api/company',
             '/pricing',
+            '/payments',
         ];
-        if (allowedPaths.some((path) => req.nextUrl.pathname === path)) return res;
+        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
                 return NextResponse.redirect(redirectUrl);
             }
-
+            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
             const endDate = new Date(subscriptionEndDate);
             if (endDate < new Date()) {
                 redirectUrl.pathname = '/account';

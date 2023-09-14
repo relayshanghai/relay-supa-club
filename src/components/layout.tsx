@@ -92,11 +92,10 @@ export const Layout = ({ children }: any) => {
                             <HamburgerMenu className="h-5 w-5 stroke-gray-400" />
                         </Button>
 
-                        {/*  */}
                         <p className="flex flex-row items-center gap-2">
-                            {routerPath.includes('influencer') && influencer ? (
+                            {routerPath.includes('influencer') ? (
                                 <p className="text-sm font-semibold text-gray-600">
-                                    {t('navbar.report', { influencerName: influencer.name })}
+                                    {influencer && t('navbar.report', { influencerName: influencer.name })}
                                 </p>
                             ) : (
                                 routerPath.map((path, index) => {

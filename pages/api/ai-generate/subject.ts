@@ -1,8 +1,8 @@
-import { generateSubjectPrompt } from './../../../src/utils/api/ai-generate/subject';
-import type { AIEmailSubjectGeneratorPostBody } from './../../../src/utils/api/ai-generate/subject';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import type { AIEmailSubjectGeneratorPostBody } from './../../../src/utils/api/ai-generate/subject';
+import { generateSubjectPrompt } from './../../../src/utils/api/ai-generate/subject';
 
 import { Configuration, OpenAIApi } from 'openai';
 import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';
@@ -69,11 +69,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             };
             return res.status(httpCodes.OK).json(result);
         } else {
-            serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data), 'error', true);
+            serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data));
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } catch (error) {
-        serverLogger(error, 'error', true);
+        serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 }

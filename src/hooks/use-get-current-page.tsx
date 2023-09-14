@@ -3,55 +3,67 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const useGetCurrentPage = () => {
-    const { pathname } = useRouter()
+    const { pathname } = useRouter();
 
-    if (pathname.match(/^\/boostbot\/?/)) {
-        return CurrentPageEvent.boostbot
+    if (/^\/boostbot\/?/.test(pathname)) {
+        return CurrentPageEvent.boostbot;
     }
 
-    if (pathname.match(/^\/dashboard\/?/)) {
-        return CurrentPageEvent.dashboard
+    if (/^\/dashboard\/?/.test(pathname)) {
+        return CurrentPageEvent.dashboard;
     }
 
-    if (pathname.match(/^\/sequences\/?/)) {
-        return CurrentPageEvent.sequences
+    if (/^\/sequences\/?/.test(pathname)) {
+        return CurrentPageEvent.sequences;
     }
 
-    if (pathname.match(/^\/inbox\/?/)) {
-        return CurrentPageEvent.inbox
+    if (/^\/inbox\/?/.test(pathname)) {
+        return CurrentPageEvent.inbox;
     }
 
-    if (pathname.match(/^\/influencer-manager\/?/)) {
-        return CurrentPageEvent['influencer-manager']
+    if (/^\/influencer-manager\/?/.test(pathname)) {
+        return CurrentPageEvent['influencer-manager'];
     }
 
-    if (pathname.match(/^\/guide\/?/)) {
-        return CurrentPageEvent.guide
+    if (/^\/guide\/?/.test(pathname)) {
+        return CurrentPageEvent.guide;
     }
 
-    if (pathname.match(/^\/account\/?/)) {
-        return CurrentPageEvent.account
+    if (/^\/account\/?/.test(pathname)) {
+        return CurrentPageEvent.account;
     }
 
-    if (pathname.match(/^\/pricing\/?/)) {
-        return CurrentPageEvent.pricing
+    if (/^\/pricing\/?/.test(pathname)) {
+        return CurrentPageEvent.pricing;
     }
 
-    if (pathname.match(/^\/login\/?/)) {
-        return CurrentPageEvent.login
+    if (/^\/login\/?/.test(pathname)) {
+        return CurrentPageEvent.login;
     }
 
-    if (pathname.match(/^\/signup\/?/)) {
-        return CurrentPageEvent.signup
+    if (/^\/signup\/?/.test(pathname)) {
+        return CurrentPageEvent.signup;
     }
 
-    if (pathname.match(/^\/influencer\/?/)) {
-        return CurrentPageEvent.influencer
+    if (/^\/payments\/?/.test(pathname)) {
+        return CurrentPageEvent.payments;
     }
 
-    if (pathname.match(/^\/$/)) {
-        return CurrentPageEvent.index
+    if (/^\/influencer\/?/.test(pathname)) {
+        return CurrentPageEvent.influencer;
+    }
+
+    if (/^\/campaigns\/?/.test(pathname)) {
+        return CurrentPageEvent.campaigns;
+    }
+
+    if (/^\/admin\/?/.test(pathname)) {
+        return CurrentPageEvent.admin;
+    }
+
+    if (/^\/$/.test(pathname)) {
+        return CurrentPageEvent.index;
     }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);
-}
+};
