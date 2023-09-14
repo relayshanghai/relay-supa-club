@@ -105,6 +105,8 @@ import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-temp
 import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
 import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
 import { UPDATE_TEMPLATE_VARIABLE, UpdateTemplateVariable } from './outreach/update-template-variable';
+import type { SaveTemplateVariableUpdatesPayload } from './outreach/save-template-variable-updates';
+import { SAVE_TEMPLATE_VARIABLE_UPDATES, SaveTemplateVariableUpdates } from './outreach/save-template-variable-updates';
 
 export {
     Search,
@@ -192,6 +194,7 @@ export const events = {
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
 };
 
 export type payloads = {
@@ -240,6 +243,7 @@ export type payloads = {
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -290,6 +294,7 @@ export const eventKeys = z.union([
     z.literal(ENTER_INFLUENCER_EMAIL),
     z.literal(VIEW_SEQUENCE_TEMPLATES),
     z.literal(UPDATE_TEMPLATE_VARIABLE),
+    z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
