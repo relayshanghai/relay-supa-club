@@ -12,11 +12,14 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useEmailTemplates } from 'src/hooks/use-email-templates';
 import { fillInTemplateVariables, replaceNewlinesAndTabs } from './helpers';
 import { activeTabStyles } from '../influencer-profile/screens/profile-screen';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { UpdateTemplateVariable } from 'src/utils/analytics/events/outreach/update-template-variable';
 
 export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'> {
     sequenceId?: string;
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
+    sequenceName?: string;
 }
 const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenceId?: string) => {
     const blankVariable: (key: DefaultTemplateVariableKey) => TemplateVariableInsert = (key) => ({
@@ -151,16 +154,24 @@ const VariableTextArea = ({
     );
 };
 
-export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariablesModalProps) => {
+export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: TemplateVariablesModalProps) => {
     const { t } = useTranslation();
     const { templateVariables, updateTemplateVariable, insertTemplateVariable } = useTemplateVariables(sequenceId);
     useEffect(() => {
         setVariables(prepareTemplateVariables(templateVariables ?? [], sequenceId));
     }, [templateVariables, sequenceId]);
     const [variables, setVariables] = useState(prepareTemplateVariables(templateVariables ?? []));
-
+    const { track } = useRudderstackTrack();
     const setKey = (key: DefaultTemplateVariableKey, value: string) => {
         if (!variables[key]) return;
+        track(UpdateTemplateVariable, {
+            sequence_id: sequenceId || '',
+            sequence_name: sequenceName || '',
+            template_variable: key,
+            variable_value: value,
+            updating_existing_value: !!variables[key].value,
+            batch_id: null,
+        });
         setVariables({ ...variables, [key]: { ...variables[key], value: value } });
     };
     const [submitting, setSubmitting] = useState(false);
