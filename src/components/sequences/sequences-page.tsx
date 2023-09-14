@@ -19,6 +19,7 @@ import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
+import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -37,19 +38,20 @@ export const SequencesPage = () => {
         setShowCreateSequenceModal(true);
     };
 
+    const { track } = useRudderstackTrack();
+
     const handleDeleteSequence = async () => {
         try {
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
             setSelection([]);
+            track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
         }
         refreshSequences(sequences?.filter((sequence) => !selection.includes(sequence.id)));
     };
-
-    const { track } = useRudderstackTrack();
 
     useEffect(() => {
         const { abort } = track(OpenSequencesPage);

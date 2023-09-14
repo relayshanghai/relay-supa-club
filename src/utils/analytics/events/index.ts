@@ -97,6 +97,8 @@ import type { OpenSequencePayload } from './outreach/sequence-open';
 import { OPEN_SEQUENCE, OpenSequence } from './outreach/sequence-open';
 import type { PasswordResetPayload } from './password-reset';
 import { PASSWORD_RESET, PasswordReset } from './password-reset';
+import type { DeleteSequencePayload } from './outreach/sequence-delete';
+import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 
 export {
     Search,
@@ -180,6 +182,7 @@ export const events = {
     [SIGNUP_STARTED]: SignupStarted,
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
     [OPEN_SEQUENCE]: OpenSequence,
+    [DELETE_SEQUENCE]: DeleteSequence,
 };
 
 export type payloads = {
@@ -224,6 +227,7 @@ export type payloads = {
     [SIGNUP_STARTED]: SignupStartedPayload;
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
     [OPEN_SEQUENCE]: OpenSequencePayload;
+    [DELETE_SEQUENCE]: DeleteSequencePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -270,6 +274,7 @@ export const eventKeys = z.union([
     z.literal(SIGNUP_STARTED),
     z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
     z.literal(OPEN_SEQUENCE),
+    z.literal(DELETE_SEQUENCE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
