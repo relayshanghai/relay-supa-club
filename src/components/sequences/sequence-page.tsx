@@ -224,6 +224,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             />
             <TemplateVariablesModal
                 sequenceId={sequenceId}
+                sequenceName={sequence?.name}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
                 sequenceSteps={sequenceSteps ?? []}
