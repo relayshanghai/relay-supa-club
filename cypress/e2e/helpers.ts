@@ -118,6 +118,15 @@ export const reinsertCharlie = async () => {
     }
 };
 
+export const resetBobsStatus = async () => {
+    const supabase = supabaseClientCypress();
+    const email = 'bob.brown@example.com';
+    await supabase
+        .from('sequence_influencers')
+        .update({ funnel_status: 'To Contact', sequence_step: 0 })
+        .match({ email });
+};
+
 export const resetUsages = (supabase: RelayDatabase) => {
     supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
 };
