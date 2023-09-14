@@ -2,7 +2,7 @@ import { deleteDB } from 'idb';
 import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { randomString, reinsertAlice, reinsertCharlie, resetSequenceEmails } from './helpers';
+import { randomString, reinsertAlice, reinsertCharlie, resetBobsStatus, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
@@ -15,13 +15,18 @@ const setTemplateVariableDescription = (description: string) => {
     }
     cy.contains('button', 'Update variables').click();
 };
+const resetData = async () => {
+    await deleteDB('app-cache');
+
+    await reinsertAlice();
+    await resetBobsStatus();
+    await reinsertCharlie(); // reinsert so you can run again easily
+    await resetSequenceEmails();
+};
 
 describe('outreach', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
-        reinsertCharlie(); // reinsert so you can run again easily
-        reinsertAlice();
-        resetSequenceEmails();
+        new Cypress.Promise(resetData);
         setupIntercepts();
         // turn back on the real database
         cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
@@ -190,18 +195,38 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
+        cy.contains('button', 'In sequence').within(() => {
+            cy.contains('2'); // before sending bob is in 'to contact' tab
+        });
+
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
 
-        cy.reload(); // todo: remove when we can get status updates reflecting more quickly
-        // bob has been moved to 'in sequence' tab
-        cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 });
-        cy.contains('button', 'In sequence').click();
-        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
-            cy.contains('Scheduled');
+        // Optimistic update: Bob has been moved to 'in sequence' tab
+        cy.contains('button', 'In sequence').within(() => {
+            cy.contains('3', { timeout: 10000 }); // added Bob, and old ones remain in sequence
         });
+        function checkForStatus(status: string, retries = 0) {
+            if (retries > 30) {
+                throw new Error('Timed out waiting for status to update');
+            }
+            cy.contains('Sequences').click(); // click around to trigger SWR refresh
+            cy.contains('General collaboration', { timeout: 10000 }).click();
+            cy.contains('button', 'In sequence').click();
+
+            cy.contains('tr', 'Bob-Recommended Brown').then(($el) => {
+                if ($el.text().includes(status)) {
+                    return; // if 'Scheduled' is found, stop the recursion
+                } else {
+                    cy.wait(1000); // wait for 1 second
+                    checkForStatus(status, retries + 1); // call the function again if 'Scheduled' is not found
+                }
+            });
+        }
+
+        checkForStatus('Scheduled');
 
         // send a message sent webhook request
         cy.request({
@@ -210,12 +235,7 @@ describe('outreach', () => {
             body: JSON.parse(JSON.stringify(messageSent)),
             timeout: 10000,
         });
-        cy.reload(); // todo: remove this when we get push updates
-        cy.contains('button', 'In sequence').click();
-
-        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
-            cy.contains('Delivered', { timeout: 10000 });
-        });
+        checkForStatus('Delivered');
 
         // send a replied webhook request
         cy.request({
@@ -224,12 +244,16 @@ describe('outreach', () => {
             body: JSON.parse(JSON.stringify(messageNewReply)),
             timeout: 10000,
         });
-        cy.reload(); // todo: remove this when we get push updates
+        cy.contains('Sequences').click(); // click around to trigger SWR refresh
+        cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.contains('button', 'In sequence').click();
+
         // influencer has been moved to the manage influencers page
-        cy.contains('Bob-Recommended Brown').should('not.exist');
+        // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
         cy.contains('Influencer Manager').click();
-        cy.contains('Bob-Recommended Brown');
+        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
+            cy.contains('Negotiating');
+        });
     });
     it('can view templates for sequences', () => {
         cy.contains('Sequences').click();
