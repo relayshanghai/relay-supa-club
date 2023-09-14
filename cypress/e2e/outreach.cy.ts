@@ -39,6 +39,7 @@ describe('outreach', () => {
     });
     it('displays sequence page stats and influencers table', () => {
         cy.contains('Sequences').click();
+
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
@@ -328,5 +329,14 @@ describe('non-outreach user', () => {
         );
         cy.contains('Upgrade now').click();
         cy.contains('Just getting started, or scaling up.');
+    });
+    it('does not show on outreach users', () => {
+        cy.loginTestUser();
+        cy.contains('Sequences').click();
+        cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
+        cy.contains('Influencer Manager').click();
+        cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
+        cy.contains('Inbox').click();
+        cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
     });
 });

@@ -21,6 +21,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
 import { Banner } from '../library/banner';
+import { useUser } from 'src/hooks/use-user';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -32,6 +33,7 @@ export const SequencesPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
     const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
+    const { profile } = useUser();
 
     const { push } = useRouter();
 
@@ -62,11 +64,13 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
-            <Banner
-                buttonText={t('banner.button')}
-                title={t('banner.title')}
-                message={t('banner.descriptionSequences')}
-            />
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}
