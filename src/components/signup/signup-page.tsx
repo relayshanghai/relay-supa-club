@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { useFields } from 'src/hooks/use-fields';
-import { StepOne, StepTwo, StepThree, StepFour } from './steps';
+import { StepOne, StepTwo, StepThree } from './steps';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { clientLogger } from 'src/utils/logger-client';
 import { hasCustomError } from 'src/utils/errors';
@@ -64,7 +64,6 @@ const SignUpPage = ({
     });
 
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
         lastName: '',
@@ -88,7 +87,6 @@ const SignUpPage = ({
         companyName,
         companyWebsite,
         companySize: selectedSize,
-        companyCategory: selectedCategory,
     };
 
     const steps = [
@@ -103,10 +101,6 @@ const SignUpPage = ({
         {
             title: t('signup.step3title'),
             num: 3,
-        },
-        {
-            title: t('signup.step4title'),
-            num: 4,
         },
     ];
 
@@ -130,7 +124,7 @@ const SignUpPage = ({
             await handleProfileCreate(formData);
         }
 
-        if (currentStep === 4) {
+        if (currentStep === 3) {
             const profileId = await handleProfileCreate(formData);
             if (!profileId) {
                 toast.error(t('signup.noProfileId'));
@@ -140,7 +134,7 @@ const SignUpPage = ({
             if (result === 'success') {
                 await router.push('/free-trial');
             }
-        } else if (currentStep < 4) {
+        } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
         trackEvent(SIGNUP(`step-${currentStep}`), {
@@ -151,7 +145,6 @@ const SignUpPage = ({
             companyName,
             companyWebsite,
             companySize: selectedSize ?? '',
-            companyCategory: selectedCategory,
         });
     };
 
@@ -263,14 +256,6 @@ const SignUpPage = ({
 
                             {currentStep === 3 && (
                                 <StepThree
-                                    setSelectedCategory={setSelectedCategory}
-                                    loading={loading}
-                                    onNext={onNext}
-                                />
-                            )}
-
-                            {currentStep === 4 && (
-                                <StepFour
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
                                     setSelectedSize={setSelectedSize}
