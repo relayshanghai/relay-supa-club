@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';

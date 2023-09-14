@@ -20,11 +20,14 @@ import {
 } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
-import { CHANGE_PAGE, ChangePage, ChangePagePayload } from './change-page';
+import type { ChangePagePayload } from './change-page';
+import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
+import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
+import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -72,8 +75,30 @@ import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
     SearchOpenExternalSocialProfile,
 } from './search-open_external_social_profile';
+import type { WebhookErrorPayload } from './outreach/email-error';
+import { OUTREACH_WEBHOOK_ERROR, WebhookError } from './outreach/email-error';
+import type { EmailNewPayload } from './outreach/email-new';
+import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
+import type { IncomingWebhookPayload } from './outreach/email-incoming';
+import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { ClickNeedHelpPayload } from './click-need-help';
+import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
+import type { GoToLoginPayload } from './go-to-login';
+import { GO_TO_LOGIN, GoToLogin } from './go-to-login';
+import type { OpenAccountModalPayload } from './open-account-modal';
+import { OPEN_ACCOUNT_MODAL, OpenAccountModal } from './open-account-modal';
+import type { NavigateToPagePayload } from './navigate-to-page';
+import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
+import type { SignupStartedPayload } from './signup-started';
+import { SIGNUP_STARTED, SignupStarted } from './signup-started';
+import type { OpenSequencePayload } from './outreach/sequence-open';
+import { OPEN_SEQUENCE, OpenSequence } from './outreach/sequence-open';
+import type { PasswordResetPayload } from './password-reset';
+import { PASSWORD_RESET, PasswordReset } from './password-reset';
+import type { DeleteSequencePayload } from './outreach/sequence-delete';
+import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 
 export {
     Search,
@@ -106,6 +131,13 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    ClickNeedHelp,
+    GoToLogin,
+    PasswordReset,
+    OpenAccountModal,
+    NavigateToPage,
+    SignupStarted,
+    OpenVideoGuideModal,
 };
 
 export const events = {
@@ -129,6 +161,9 @@ export const events = {
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
+    [OUTREACH_EMAIL_INCOMING]: IncomingWebhook,
+    [OUTREACH_WEBHOOK_ERROR]: WebhookError,
+    [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
@@ -139,6 +174,15 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [CLICK_NEED_HELP]: ClickNeedHelp,
+    [GO_TO_LOGIN]: GoToLogin,
+    [PASSWORD_RESET]: PasswordReset,
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
+    [NAVIGATE_TO_PAGE]: NavigateToPage,
+    [SIGNUP_STARTED]: SignupStarted,
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
+    [OPEN_SEQUENCE]: OpenSequence,
+    [DELETE_SEQUENCE]: DeleteSequence,
 };
 
 export type payloads = {
@@ -162,6 +206,9 @@ export type payloads = {
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload;
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload;
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload;
+    [OUTREACH_EMAIL_INCOMING]: IncomingWebhookPayload;
+    [OUTREACH_WEBHOOK_ERROR]: WebhookErrorPayload;
+    [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload;
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
@@ -172,6 +219,15 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [CLICK_NEED_HELP]: ClickNeedHelpPayload;
+    [GO_TO_LOGIN]: GoToLoginPayload;
+    [PASSWORD_RESET]: PasswordResetPayload;
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
+    [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
+    [SIGNUP_STARTED]: SignupStartedPayload;
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
+    [OPEN_SEQUENCE]: OpenSequencePayload;
+    [DELETE_SEQUENCE]: DeleteSequencePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -197,6 +253,9 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_OPENED),
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
+    z.literal(OUTREACH_EMAIL_INCOMING),
+    z.literal(OUTREACH_WEBHOOK_ERROR),
+    z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
     z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
@@ -207,6 +266,15 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(CLICK_NEED_HELP),
+    z.literal(GO_TO_LOGIN),
+    z.literal(PASSWORD_RESET),
+    z.literal(OPEN_ACCOUNT_MODAL),
+    z.literal(NAVIGATE_TO_PAGE),
+    z.literal(SIGNUP_STARTED),
+    z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
+    z.literal(OPEN_SEQUENCE),
+    z.literal(DELETE_SEQUENCE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
