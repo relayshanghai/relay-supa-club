@@ -85,10 +85,16 @@ import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 import type { ClickNeedHelpPayload } from './click-need-help';
 import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
+import type { GoToLoginPayload } from './go-to-login';
+import { GO_TO_LOGIN, GoToLogin } from './go-to-login';
+import type { OpenAccountModalPayload } from './open-account-modal';
+import { OPEN_ACCOUNT_MODAL, OpenAccountModal } from './open-account-modal';
 import type { NavigateToPagePayload } from './navigate-to-page';
 import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
 import type { SignupStartedPayload } from './signup-started';
 import { SIGNUP_STARTED, SignupStarted } from './signup-started';
+import type { PasswordResetPayload } from './password-reset';
+import { PASSWORD_RESET, PasswordReset } from './password-reset';
 
 export {
     Search,
@@ -122,6 +128,9 @@ export {
     StopBoostbot,
     OpenSocialThumbnails,
     ClickNeedHelp,
+    GoToLogin,
+    PasswordReset,
+    OpenAccountModal,
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
@@ -162,6 +171,9 @@ export const events = {
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
     [CLICK_NEED_HELP]: ClickNeedHelp,
+    [GO_TO_LOGIN]: GoToLogin,
+    [PASSWORD_RESET]: PasswordReset,
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
     [NAVIGATE_TO_PAGE]: NavigateToPage,
     [SIGNUP_STARTED]: SignupStarted,
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
@@ -202,6 +214,9 @@ export type payloads = {
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
     [CLICK_NEED_HELP]: ClickNeedHelpPayload;
+    [GO_TO_LOGIN]: GoToLoginPayload;
+    [PASSWORD_RESET]: PasswordResetPayload;
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
     [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
     [SIGNUP_STARTED]: SignupStartedPayload;
     [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
@@ -244,6 +259,9 @@ export const eventKeys = z.union([
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
     z.literal(CLICK_NEED_HELP),
+    z.literal(GO_TO_LOGIN),
+    z.literal(PASSWORD_RESET),
+    z.literal(OPEN_ACCOUNT_MODAL),
     z.literal(NAVIGATE_TO_PAGE),
     z.literal(SIGNUP_STARTED),
     z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
