@@ -1,10 +1,8 @@
 import type { TriggerEvent } from '../../types';
-import type { CurrentPageEvent } from '../current-pages';
 
 export const DELETE_SEQUENCE = 'Delete Sequence';
 
 export type DeleteSequencePayload = {
-    currentPage: CurrentPageEvent;
     sequence_id: string;
     total_influencers: number;
 };

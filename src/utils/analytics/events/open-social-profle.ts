@@ -1,10 +1,8 @@
 import type { TriggerEvent } from '../types';
-import type { CurrentPageEvent } from './current-pages';
 
 export const OPEN_SOCIAL_PROFILE = 'Open Social Profile';
 
 export type OpenSocialProfilePayload = {
-    currentPage: CurrentPageEvent;
     is_unlocked: boolean;
     results_index: number;
     results_page: number;

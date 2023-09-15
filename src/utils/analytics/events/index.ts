@@ -101,6 +101,12 @@ import type { DeleteSequencePayload } from './outreach/sequence-delete';
 import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
+import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
+import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
+import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
+import { UPDATE_TEMPLATE_VARIABLE, UpdateTemplateVariable } from './outreach/update-template-variable';
+import type { SaveTemplateVariableUpdatesPayload } from './outreach/save-template-variable-updates';
+import { SAVE_TEMPLATE_VARIABLE_UPDATES, SaveTemplateVariableUpdates } from './outreach/save-template-variable-updates';
 
 export {
     Search,
@@ -186,6 +192,9 @@ export const events = {
     [OPEN_SEQUENCE]: OpenSequence,
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
 };
 
 export type payloads = {
@@ -232,6 +241,9 @@ export type payloads = {
     [OPEN_SEQUENCE]: OpenSequencePayload;
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -280,6 +292,9 @@ export const eventKeys = z.union([
     z.literal(OPEN_SEQUENCE),
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
+    z.literal(VIEW_SEQUENCE_TEMPLATES),
+    z.literal(UPDATE_TEMPLATE_VARIABLE),
+    z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
