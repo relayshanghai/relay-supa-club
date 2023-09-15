@@ -21,6 +21,8 @@ import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
 import { reportErrors, retryLimit } from 'src/errors/report';
+import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -34,7 +36,9 @@ export const AddToSequenceModal = ({
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
-    const { allSequences, company, profile } = useContext(SearchContext);
+    const { allSequences } = useContext(SearchContext);
+    const { profile } = useUser();
+    const { company } = useCompany();
     const { t } = useTranslation();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
