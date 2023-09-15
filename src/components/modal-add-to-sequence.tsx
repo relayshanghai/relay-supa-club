@@ -20,6 +20,7 @@ import { nextFetchWithQueries } from 'src/utils/fetcher';
 import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
+import { reportErrors, retryLimit } from 'src/errors/report';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -63,13 +64,13 @@ export const AddToSequenceModal = ({
         return relevantTags.slice(0, 3).map((tag) => tag.tag);
     }, []);
 
-    const getReports = useCallback(
+    const getReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
             try {
                 const res = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
                     CreatorsReportGetResponse & {
-                        error?: string;
+                        message?: string;
                     }
                 >('creators/report', {
                     platform,
@@ -77,8 +78,11 @@ export const AddToSequenceModal = ({
                     company_id: company?.id ?? '',
                     user_id: profile?.id ?? '',
                 });
-                if (res.error) {
-                    throw res.error;
+                if (res.message === reportErrors.retryError) {
+                    return {
+                        status: 'Error',
+                        body: 'retry_later',
+                    };
                 }
                 const { createdAt, influencer, socialProfile, ...report } = res;
                 return {
@@ -91,10 +95,10 @@ export const AddToSequenceModal = ({
                     },
                 };
             } catch (error: any) {
+                clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                 }
-                clientLogger(error, 'error');
                 return {
                     status: 'Error',
                     body: error,
@@ -107,13 +111,13 @@ export const AddToSequenceModal = ({
     const handleAddToSequence = useCallback(
         async (platform: CreatorPlatform, creator_id: string, retryCounter = 0) => {
             setShow(false);
-            const report = await getReports(platform, creator_id);
+            const report = await getReport(platform, creator_id);
             if (report.status === 'Error') {
-                if (report.body === 'retry_later' && retryCounter < 2) {
-                    toast.error('Oops! we need to update the influencer report, trying again in 10 seconds');
+                if (report.body === reportErrors.retryError && retryCounter < retryLimit) {
+                    toast.error('Oops! we need to update the influencer report, trying again in 1 minute');
                     setTimeout(() => {
                         handleAddToSequence(platform, creator_id, retryCounter + 1);
-                    }, 10000);
+                    }, 60000);
                 }
                 toast.error('Sorry, we could not add that influencer...');
                 return;
@@ -228,7 +232,7 @@ export const AddToSequenceModal = ({
         },
         [
             track,
-            getReports,
+            getReport,
             createSequenceInfluencer,
             creatorProfile.user_id,
             getRelevantTags,

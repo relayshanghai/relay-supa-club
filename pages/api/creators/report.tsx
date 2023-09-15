@@ -22,6 +22,7 @@ import {
     IQDATA_LIST_REPORTS,
     rudderstack,
 } from 'src/utils/rudderstack';
+import { reportErrors } from 'src/errors/report';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -171,8 +172,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
-            if ((error as Record<string, unknown>).error === 'retry_later') {
-                return res.status(httpCodes.OK).json({ error: 'retry_later' });
+            if (error instanceof Error && error.message === reportErrors.retryError) {
+                return res.status(httpCodes.IQDATA_ERROR).json({ message: error.message });
             }
             serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
