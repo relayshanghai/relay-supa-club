@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OPEN_GUIDE_SECTION_MODAL = 'Open Guide Section Modal';
+export const OPEN_GUIDE_SECTION_MODAL = 'Guide Page, modal opened';
 
 export type OpenGuideSectionModalPayload = EventPayload<{
     section: string;
