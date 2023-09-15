@@ -110,13 +110,12 @@ export const AddToSequenceModal = ({
             const report = await getReports(platform, creator_id);
             if (report.status === 'Error') {
                 if (report.body === 'retry_later' && retryCounter < 2) {
-                    toast.error('Oops! we need to update the influencer report, trying again in 10 seconds', {
-                        duration: 3000,
-                    });
+                    toast.error('Oops! we need to update the influencer report, trying again in 10 seconds');
                     setTimeout(() => {
                         handleAddToSequence(platform, creator_id, retryCounter + 1);
                     }, 10000);
                 }
+                toast.error('Sorry, we could not add that influencer...');
                 return;
             }
             const { socialProfile, report: acquiredReport } = report.body;
