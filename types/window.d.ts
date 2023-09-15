@@ -12,5 +12,6 @@ declare global {
             asPath: string;
             push: (path: string) => void;
         };
+        Appcues: any;
     }
 }
