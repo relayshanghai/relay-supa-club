@@ -45,7 +45,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
     const rudderstack = useRudder();
     const appcues = useAppcues();
-    const { session, profile } = useSession();
+    const { session, profile, company } = useSession();
 
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
@@ -58,16 +58,17 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     }, [rudderstack, profile]);
 
     useEffect(() => {
-        if (profile !== null && appcues) {
+        if (profile !== null && company !== null && appcues) {
             const { id, traits } = profileToIdentifiable(profile);
 
             appcues.identify(id, {
                 language: i18n.language,
                 createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : null,
+                companyName: company.name,
                 ...traits,
             });
         }
-    }, [appcues, profile]);
+    }, [appcues, profile, company]);
 
     // set analytics identity
     useEffect(() => {
