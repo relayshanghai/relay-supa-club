@@ -158,3 +158,13 @@ export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
 };
 
 export const randomNumber = (maxDigits = 8) => Math.round(Math.random() * Math.pow(10, maxDigits));
+
+export const languageCodeToHumanReadable = (code: string) => {
+    if (code.includes('en')) {
+        return 'English';
+    } else if (code.includes('zh')) {
+        return 'Chinese';
+    } else {
+        return code;
+    }
+};
