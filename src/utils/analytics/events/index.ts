@@ -109,6 +109,8 @@ import type { SaveTemplateVariableUpdatesPayload } from './outreach/save-templat
 import { SAVE_TEMPLATE_VARIABLE_UPDATES, SaveTemplateVariableUpdates } from './outreach/save-template-variable-updates';
 import type { InputPaymentInfoPayload } from './onboarding/input-payment-info';
 import { INPUT_PAYMENT_INFO, InputPaymentInfo } from './onboarding/input-payment-info';
+import type { OpenGuideSectionModalPayload } from './guide/open-guide-section-modal';
+import { OPEN_GUIDE_SECTION_MODAL, OpenGuideSectionModal } from './guide/open-guide-section-modal';
 
 export {
     Search,
@@ -198,6 +200,7 @@ export const events = {
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
     [INPUT_PAYMENT_INFO]: InputPaymentInfo,
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModal,
 };
 
 export type payloads = {
@@ -248,6 +251,7 @@ export type payloads = {
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
     [INPUT_PAYMENT_INFO]: InputPaymentInfoPayload;
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModalPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -300,6 +304,7 @@ export const eventKeys = z.union([
     z.literal(UPDATE_TEMPLATE_VARIABLE),
     z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
     z.literal(INPUT_PAYMENT_INFO),
+    z.literal(OPEN_GUIDE_SECTION_MODAL),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
