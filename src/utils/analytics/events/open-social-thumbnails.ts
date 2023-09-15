@@ -1,10 +1,8 @@
 import type { TriggerEvent } from '../types';
-import type { CurrentPageEvent } from './current-pages';
 
 export const OPEN_SOCIAL_THUMBNAILS = 'Open Social Thumbnails';
 
 export type OpenSocialThumbnailsPayload = {
-    currentPage: CurrentPageEvent;
     is_unlocked: boolean;
     results_index: number;
     thumbnail_index: number;
