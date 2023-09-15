@@ -82,13 +82,13 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
         >
             <PaymentElement
                 id="payment-element"
-                onChange={(e) => {
+                onChange={({ complete, empty, value }) => {
                     track(InputPaymentInfo, {
-                        complete: e.complete,
-                        empty: e.empty,
-                        type: e.value.type,
+                        complete,
+                        empty,
+                        type: value.type,
                     });
-                    setFormReady(e.complete);
+                    setFormReady(complete);
                 }}
             />
 
