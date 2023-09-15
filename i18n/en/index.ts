@@ -18,6 +18,7 @@ import boostbot from './boostbot';
 import manager from './manager';
 import profile from './profile';
 import faq from './faq';
+import banner from './banner';
 
 const translations = {
     translation: {
@@ -41,6 +42,7 @@ const translations = {
         manager,
         profile,
         faq,
+        banner,
     },
 };
 export default translations;

@@ -26,6 +26,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
+import { Banner } from '../library/banner';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -211,6 +212,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     return (
         <Layout>
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
