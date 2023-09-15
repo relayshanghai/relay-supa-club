@@ -21,6 +21,8 @@ import { useCompany } from './use-company';
 
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
+import { useSequences } from './use-sequences';
+import type { CompanyDB, ProfileDB, Sequence } from 'src/utils/api/db/types';
 
 export interface ISearchContext {
     loading: boolean;
@@ -71,6 +73,9 @@ export interface ISearchContext {
     searchParams: FetchCreatorsFilteredParams | undefined;
     setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
     getSearchParams: () => FetchCreatorsFilteredParams | undefined;
+    allSequences?: Sequence[];
+    profile?: ProfileDB;
+    company?: CompanyDB;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -123,6 +128,9 @@ export const SearchContext = createContext<ISearchContext>({
     searchParams: undefined,
     setSearchParams: () => null,
     getSearchParams: () => undefined,
+    allSequences: [],
+    profile: undefined,
+    company: undefined,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -267,6 +275,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         nextFetch<RecommendedInfluencersGetResponse>(path),
     );
 
+    const { sequences: allSequences } = useSequences();
+    const { profile } = useUser();
+    const { company } = useCompany();
+
     const getSearchParams = useCallback((): typeof searchParams & {
         hashtags: string[];
         onlyRecommended: boolean;
@@ -366,6 +378,9 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 searchParams,
                 setSearchParams,
                 getSearchParams,
+                allSequences,
+                profile,
+                company,
             }}
         >
             {children}

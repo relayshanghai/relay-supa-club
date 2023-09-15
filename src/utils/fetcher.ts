@@ -31,6 +31,11 @@ export const handleResError = async (
                 forensicTrack(context, 'daily_tokens_limit_exceeded');
             }
         }
+        if (res.status === 400 && json.error === 'retry_later') {
+            throw {
+                error: 'retry_later',
+            };
+        }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)
             throw new Error(typeof json.message === 'string' ? json.message : JSON.stringify(json.message));

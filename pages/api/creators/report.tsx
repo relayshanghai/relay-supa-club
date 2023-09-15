@@ -171,6 +171,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
+            if ((error as Record<string, unknown>).error === 'retry_later') {
+                return res.status(httpCodes.OK).json({ error: 'retry_later' });
+            }
             serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
