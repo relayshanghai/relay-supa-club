@@ -103,6 +103,8 @@ import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-em
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
 import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
 import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
+import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
+import { UPDATE_TEMPLATE_VARIABLE, UpdateTemplateVariable } from './outreach/update-template-variable';
 
 export {
     Search,
@@ -189,6 +191,7 @@ export const events = {
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
 };
 
 export type payloads = {
@@ -236,6 +239,7 @@ export type payloads = {
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -285,6 +289,7 @@ export const eventKeys = z.union([
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
     z.literal(VIEW_SEQUENCE_TEMPLATES),
+    z.literal(UPDATE_TEMPLATE_VARIABLE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
