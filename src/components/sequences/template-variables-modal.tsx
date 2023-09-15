@@ -189,7 +189,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
             const updatedValues =
                 templateVariables?.map((originalValue) => {
                     const key = originalValue.key as DefaultTemplateVariableKey;
-                    if (variables[key]?.value !== originalValue.value) {
+                    if (variables[key] && variables[key]?.value !== originalValue.value) {
                         return variables[key].value;
                     }
                 }) ?? [];
