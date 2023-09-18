@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StopIcon } from '@heroicons/react/24/solid';
 import { Button } from 'src/components/button';
-import type { MessageType } from 'src/components/boostbot/page';
+import type { MessageType } from 'pages/boostbot';
 import Message from './message';
 import ChatProgress from './chat-progress';
 

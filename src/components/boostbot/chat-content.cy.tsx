@@ -1,6 +1,6 @@
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { ChatContent, type ChatContentProps } from './chat-content';
-import type { MessageType } from 'src/components/boostbot/page';
+import type { MessageType } from 'pages/boostbot';
 
 describe('<ChatContent />', () => {
     let handlePageToUnlock: () => void;
