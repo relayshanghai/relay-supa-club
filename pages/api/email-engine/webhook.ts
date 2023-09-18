@@ -376,11 +376,14 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             is_success: true,
         });
     } catch (error: any) {
-        trackData.extra_info.error = JSON.stringify(error);
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
-            ...trackData,
-            is_success: false,
-        });
+        if (trackData.sequence_email_id) {
+            // If we don't have a sequence_email_id, this is a regular email, not a sequenced email and we don't want to track it
+            trackData.extra_info.error = JSON.stringify(error);
+            track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
+                ...trackData,
+                is_success: false,
+            });
+        }
     }
 
     return res.status(httpCodes.OK).json({});
