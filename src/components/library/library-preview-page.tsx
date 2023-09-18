@@ -256,6 +256,8 @@ const AccordionAndFaq = () => {
         },
         visible: modalOpen,
         onClose: () => setModalOpen(false),
+        modalName: 'Example FAQ',
+        type: 'FAQ',
     };
     return (
         <div className="m-5">
