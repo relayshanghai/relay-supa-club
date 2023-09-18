@@ -118,14 +118,16 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                         }
                         await deleteSequenceEmailByMessageId(message.messageId);
                         trackData.deleted_emails.push(message.messageId);
-                    } catch (error) {
+                    } catch (error: any) {
                         trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
-                        trackData.extra_info.email_delete_errors.push(JSON.stringify(error));
+                        trackData.extra_info.email_delete_errors.push(
+                            `error: ${error?.message}\n stack ${error?.stack}`,
+                        );
                     }
                 }
-            } catch (error) {
+            } catch (error: any) {
                 trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
-                trackData.extra_info.email_delete_errors.push(JSON.stringify(error));
+                trackData.extra_info.email_delete_errors.push(`error: ${error?.message}\n stack ${error?.stack}`);
             }
         };
 
@@ -143,10 +145,10 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         for (const emailUpdate of emailUpdates) {
             try {
                 await updateSequenceEmail(emailUpdate);
-            } catch (error) {
+            } catch (error: any) {
                 trackData.extra_info.email_update_errors = trackData.extra_info.email_update_errors || [];
                 trackData.extra_info.email_update_errors.push(
-                    `${JSON.stringify(emailUpdate)} ${JSON.stringify(error)}`,
+                    `${JSON.stringify(emailUpdate)} error: ${error?.message}\n stack ${error?.stack}`,
                 );
             }
         }
@@ -158,8 +160,8 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
             ...trackData,
             is_success: true,
         });
-    } catch (error) {
-        trackData.extra_info.error = JSON.stringify(error);
+    } catch (error: any) {
+        trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: false,
@@ -182,7 +184,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
 
     const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
     if (error) {
-        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + JSON.stringify(error);
+        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
             ...trackData,
@@ -202,8 +204,9 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         // if there is a sequenceInfluencer, this is a reply to a sequenced email
         await handleReply(sequenceInfluencer, event);
         return res.status(httpCodes.OK).json({});
-    } catch (error) {
-        trackData.extra_info.error = 'Sequence influencer not found:' + JSON.stringify(error);
+    } catch (error: any) {
+        trackData.extra_info.error =
+            'Sequence influencer not found:' + `error: ${error?.message}\n stack ${error?.stack}`;
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
             ...trackData,
@@ -318,11 +321,19 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         influencer_id: null,
         sequence_step: null,
         sequence_step_id: null,
-        extra_info: { event_data: event.data, sequenceEmailUpdate: null, sequenceInfluencerUpdate: null },
+        extra_info: {
+            event_data: event.data,
+            sequenceEmail: null,
+            sequenceEmailUpdate: null,
+            sequenceInfluencerUpdate: null,
+            sequenceSteps: null,
+            currentStep: null,
+        },
     };
 
     try {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        trackData.extra_info.sequenceEmail = sequenceEmail;
 
         if (!sequenceEmail || !sequenceEmail.sequence_id) {
             throw new Error('no sequence email found');
@@ -349,11 +360,13 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
             sequenceEmail.sequence_id,
         );
+        trackData.extra_info.sequenceSteps = sequenceSteps;
         if (!sequenceSteps || sequenceSteps.length === 0) {
             throw new Error('No sequence steps found');
         }
 
         const currentStep = sequenceSteps.find((step) => step.id === sequenceEmail.sequence_step_id);
+        trackData.extra_info.currentStep = currentStep;
         if (!currentStep?.step_number) {
             throw new Error('No sequence step found');
         }
@@ -378,7 +391,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     } catch (error: any) {
         if (trackData.sequence_email_id) {
             // If we don't have a sequence_email_id, this is a regular email, not a sequenced email and we don't want to track it
-            trackData.extra_info.error = JSON.stringify(error);
+            trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
                 ...trackData,
                 is_success: false,
