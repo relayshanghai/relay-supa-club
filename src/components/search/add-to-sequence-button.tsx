@@ -67,19 +67,17 @@ export const AddToSequenceButton = ({
                     alreadyAddedSequence={alreadyAddedSequence?.sequenceName || ''}
                 />
             )}
-            {showAddToSequenceModal && (
-                <AddToSequenceModal
-                    show={showAddToSequenceModal}
-                    setShow={(show) => {
-                        if (setShowMenu) {
-                            setShowMenu(show);
-                        }
-                        setShowAddToSequenceModal(show);
-                    }}
-                    creatorProfile={creatorProfile}
-                    platform={platform}
-                />
-            )}
+            <AddToSequenceModal
+                show={showAddToSequenceModal}
+                setShow={(show) => {
+                    if (setShowMenu) {
+                        setShowMenu(show);
+                    }
+                    setShowAddToSequenceModal(show);
+                }}
+                creatorProfile={creatorProfile}
+                platform={platform}
+            />
         </>
     );
 };

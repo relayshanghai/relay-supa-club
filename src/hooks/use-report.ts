@@ -40,25 +40,18 @@ export type UseReport = ({
     platform: CreatorPlatform;
     creator_id: string;
     track?: eventKeys;
+    suppressFetch?: boolean;
 }) => {
     loading: boolean;
-    report: CreatorReport | undefined;
-    reportCreatedAt: string | undefined;
-    influencer: InfluencerRow | undefined;
-    socialProfile: InfluencerSocialProfileRow | undefined;
+    report?: CreatorReport;
+    reportCreatedAt?: string;
+    influencer?: InfluencerRow;
+    socialProfile?: InfluencerSocialProfileRow;
     errorMessage: string;
     usageExceeded: boolean;
 };
 
-export const useReport: UseReport = ({
-    platform,
-    creator_id,
-    track,
-}: {
-    platform: CreatorPlatform;
-    creator_id: string;
-    track?: eventKeys;
-}) => {
+export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [usageExceeded, setUsageExceeded] = useState(false);
     const { t } = useTranslation();
@@ -66,7 +59,7 @@ export const useReport: UseReport = ({
     const { company } = useCompany();
 
     const { data, isLoading, mutate } = useSWR(
-        platform && creator_id && company?.id && profile?.id
+        !suppressFetch && platform && creator_id && company?.id && profile?.id
             ? ['creators/report', platform, creator_id, company?.id, profile?.id]
             : null,
         async ([path, platform, creator_id, company_id, user_id]) => {

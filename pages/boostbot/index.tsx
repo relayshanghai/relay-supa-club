@@ -259,7 +259,11 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
+                return createSequenceInfluencer({
+                    iqDataUserProfileId: creatorProfileId,
+                    influencerSocialProfile: influencer.socialProfile.id,
+                    tags,
+                });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);

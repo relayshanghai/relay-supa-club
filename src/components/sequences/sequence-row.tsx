@@ -72,13 +72,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     onCheckboxChange,
     checked,
 }) => {
-    const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const {
         sequenceInfluencers,
         updateSequenceInfluencer,
         deleteSequenceInfluencers: deleteSequenceInfluencer,
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
+    // add use report. suppress the report if the influencer already has a social_profile_id ? or check something else?
+    // call updateSequenceInfluencerIfSocialProfileAvailable with a useEffect on the report. //when to call?
+    // check social profile last updated at if there is no social_profile_id
+
     const { profile } = useUser();
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
@@ -87,7 +90,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const { track } = useRudderstackTrack();
 
     const handleChange = () => {
-        influencerSocialProfile && onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
+        onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
     };
 
     const handleEmailUpdate = async (email: string) => {
@@ -210,19 +213,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     <div className="flex flex-row items-center gap-2">
                         <img
                             className="inline-block h-14 w-14 bg-slate-300"
-                            src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
-                            alt={`Influencer avatar ${influencerSocialProfile?.name}`}
+                            src={imgProxy(sequenceInfluencer.avatar_url ?? '')}
+                            alt={`Influencer avatar ${sequenceInfluencer.name}`}
                         />
 
                         <div className="flex flex-col">
-                            <p className="font-semibold text-primary-600">{influencerSocialProfile?.name ?? ''}</p>
+                            <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
-                                href={influencerSocialProfile?.url ?? ''}
+                                href={sequenceInfluencer.url ?? ''}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
-                                @{influencerSocialProfile?.username ?? ''}
+                                @{sequenceInfluencer.username ?? ''}
                             </Link>
                         </div>
                     </div>

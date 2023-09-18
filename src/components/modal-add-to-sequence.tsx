@@ -11,12 +11,44 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
 import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
-import type { Sequence } from 'src/utils/api/db';
+import type {
+    InfluencerSocialProfileRow,
+    Sequence,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+} from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorUserProfile } from 'types';
+import type { CreatorPlatform, CreatorReport, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info, Spinner } from './icons';
 import { Modal } from './modal';
+import { useDB } from 'src/utils/client-db/use-client-db';
+import { insertInfluencerSocialProfile } from 'src/utils/api/db/calls/influencers-insert';
+
+// can use in sequence influencers row as well:
+export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
+    sequenceInfluencer,
+    socialProfile,
+    report,
+}: {
+    sequenceInfluencer: SequenceInfluencer;
+    socialProfile?: InfluencerSocialProfileRow;
+    report?: CreatorReport;
+    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
+}) => {
+    if (!socialProfile) {
+        return;
+    }
+    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
+    const getRelevantTags = () => {
+        if (!report || !report.user_profile.relevant_tags) {
+            return [];
+        }
+        const relevantTags = report.user_profile.relevant_tags;
+        return relevantTags.slice(0, 3).map((tag) => tag.tag);
+    };
+    // for now, what we need from the social profile is the id, email, tags
+};
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -34,15 +66,16 @@ export const AddToSequenceModal = ({
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
+    const [suppressReportFetch, setSuppressReportFetch] = useState(true);
     const {
         socialProfile,
         report,
-        errorMessage: reportErrorMessage,
         usageExceeded,
         loading: loadingReport,
     } = useReport({
         platform,
         creator_id: creatorProfile.user_id || '',
+        suppressFetch: suppressReportFetch,
     });
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
@@ -50,7 +83,9 @@ export const AddToSequenceModal = ({
     const { sendSequence } = useSequence(sequence?.id);
     const { refresh: refreshSequenceInfluencers } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(
+        sequence ? [sequence.id] : [],
+    );
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -59,15 +94,7 @@ export const AddToSequenceModal = ({
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSequence(selectedSequenceObject);
     };
-
-    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
-    const getRelevantTags = useCallback(() => {
-        if (!report || !report.user_profile.relevant_tags) {
-            return [];
-        }
-        const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags.slice(0, 3).map((tag) => tag.tag);
-    }, [report]);
+    const insertSocialProfile = useDB(insertInfluencerSocialProfile);
 
     const handleAddToSequence = useCallback(async () => {
         let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
@@ -90,37 +117,39 @@ export const AddToSequenceModal = ({
                 });
                 throw new Error('Missing selectedSequence');
             }
-            if (!socialProfile?.id) {
-                track(AddInfluencerToSequence, {
-                    influencer_id: null,
-                    sequence_id: sequence.id,
-                    sequence_influencer_id: null,
-                    is_success: false,
-                    is_sequence_autostart: null,
-                    extra_info: { error: 'Missing socialProfileId' },
-                });
-                throw new Error('Missing socialProfileId');
-            }
             if (!creatorProfile.user_id) {
                 track(AddInfluencerToSequence, {
-                    influencer_id: socialProfile.id,
-                    sequence_id: sequence.id,
+                    influencer_id: null,
+                    sequence_id: null,
                     sequence_influencer_id: null,
                     is_success: false,
                     is_sequence_autostart: null,
-                    extra_info: { error: 'Missing user_id from user_profile' },
+                    extra_info: { error: 'Missing creatorProfile.user_id' },
                 });
-                throw new Error('Missing creator.user_id');
+                throw new Error('Missing creatorProfile.user_id');
             }
-            const tags = getRelevantTags();
+
+            // TODO: move set tags to sequence influencer row report fetch
+            // const tags = getRelevantTags();
+
             setSubmitting(true);
 
-            sequenceInfluencer = await createSequenceInfluencer(socialProfile, tags, creatorProfile.user_id);
+            sequenceInfluencer = await createSequenceInfluencer({
+                name: creatorProfile.fullname || creatorProfile.username,
+                username: creatorProfile.username,
+                avatar_url: creatorProfile.picture || '',
+                url: creatorProfile.url || '',
+                iqdata_id: creatorProfile.user_id,
+                sequence_id: sequence.id,
+                platform,
+            });
             trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
-
             refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
+            setSuppressReportFetch(false); // will start getting the report.
+            // when the report is fetched, we will update the sequence influencer row with the report data.
+            // It will keep running when the modal is not visible
         } catch (error: any) {
             const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
             clientLogger(error, 'error');
@@ -180,7 +209,6 @@ export const AddToSequenceModal = ({
         track,
         createSequenceInfluencer,
         creatorProfile.user_id,
-        getRelevantTags,
         sequence,
         sendSequence,
         setShow,
@@ -188,17 +216,6 @@ export const AddToSequenceModal = ({
         t,
         refreshSequenceInfluencers,
     ]);
-
-    let errorMessage = reportErrorMessage;
-
-    if (!loadingReport) {
-        if (!report?.user_profile.user_id) {
-            errorMessage = 'Missing influencer data: user_id';
-        }
-        if (!socialProfile?.id) {
-            errorMessage = 'Missing influencer data: socialProfile';
-        }
-    }
 
     return (
         <Modal
@@ -244,8 +261,8 @@ export const AddToSequenceModal = ({
                         </Link>
                     </div>
                 )}
-                {errorMessage?.length > 0 && <div className="mb-2 text-red-600">{errorMessage}</div>}
-                {!usageExceeded && !(errorMessage?.length > 0) && (
+
+                {!usageExceeded && (
                     <Button onClick={handleAddToSequence} type="submit" disabled={submitting || loadingReport}>
                         {loadingReport ? (
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
