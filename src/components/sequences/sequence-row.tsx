@@ -23,6 +23,7 @@ import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
+import { useReport } from 'src/hooks/use-report';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -81,6 +82,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     // add use report. suppress the report if the influencer already has a social_profile_id ? or check something else?
     // call updateSequenceInfluencerIfSocialProfileAvailable with a useEffect on the report. //when to call?
     // check social profile last updated at if there is no social_profile_id
+    const now = new Date();
+    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched);
+    const wasFetchedWithin10Minutes = now - socialProfileLastFetched < 10 * 60 * 1000;
+
+    useReport({
+        platform: sequenceInfluencer.platform,
+        creator_id: sequenceInfluencer.iqdata_id,
+        suppressFetch: wasFetchedWithin10Minutes,
+    });
 
     const { profile } = useUser();
     const { i18n, t } = useTranslation();

@@ -1117,6 +1117,7 @@ export interface Database {
           scheduled_post_date: string | null
           sequence_id: string
           sequence_step: number
+          social_profile_last_fetched: string | null
           tags: string[]
           updated_at: string
           url: string | null
@@ -1143,6 +1144,7 @@ export interface Database {
           scheduled_post_date?: string | null
           sequence_id: string
           sequence_step?: number
+          social_profile_last_fetched?: string | null
           tags?: string[]
           updated_at?: string
           url?: string | null
@@ -1169,6 +1171,7 @@ export interface Database {
           scheduled_post_date?: string | null
           sequence_id?: string
           sequence_step?: number
+          social_profile_last_fetched?: string | null
           tags?: string[]
           updated_at?: string
           url?: string | null
