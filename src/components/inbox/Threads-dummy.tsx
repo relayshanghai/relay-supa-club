@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
-import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
-import { clientLogger } from 'src/utils/logger-client';
 import type { ReplyTo } from 'types/email-engine/account-account-message-get';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
 import { ChevronDown } from '../icons';
+import { dummyThread } from './dummy_data';
 
 export interface ThreadMessage {
     subject: string;
@@ -20,7 +19,12 @@ export interface ThreadMessage {
     isMe?: boolean;
 }
 
-export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
+export const Threads = ({
+    messages,
+}: {
+    messages: SearchResponseMessage[];
+    onInfluencerClick?: (message: ThreadMessage['from']) => void;
+}) => {
     const { profile } = useUser();
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -37,15 +41,12 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
             const newThreadMessages: ThreadMessage[] = [];
             setThreadMessages([]);
             setLoading(true);
-            try {
-                for (const message of messages) {
-                    if (!message.text.id) {
-                        throw new Error('No text id');
-                    }
-                    if (!profile?.email_engine_account_id) {
-                        throw new Error('No email account');
-                    }
-                    const { html } = await getMessageText(message.text.id, profile?.email_engine_account_id);
+            for (const message of messages) {
+                const threads = dummyThread.filter((thread) => thread.threadId.includes(message.threadId)) || {
+                    html: '<p>This is the HTML content for thread 3.</p>',
+                    plain: 'This is the plain text content for thread 3.',
+                };
+                threads[newThreadMessages.length] &&
                     newThreadMessages.push({
                         subject: message.subject,
                         id: message.id,
@@ -53,19 +54,14 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                         to: message.to,
                         cc: message.cc,
                         date: message.date,
-                        text: html,
+                        text: threads[newThreadMessages.length].html,
                         isMe: message.from.address === profile?.sequence_send_email,
                     });
-                }
-                setThreadMessages(newThreadMessages);
-            } catch (error: any) {
-                clientLogger(error, 'error');
-                throw new Error('Error fetching thread: ' + error.message);
-            } finally {
-                setLoading(false);
             }
+            setThreadMessages(newThreadMessages);
+            setLoading(false);
         },
-        [profile?.email_engine_account_id, profile?.sequence_send_email],
+        [profile?.sequence_send_email],
     );
 
     const lastThreadMessageId = useMemo(() => threadMessages[threadMessages.length - 1]?.id, [threadMessages]);
@@ -87,16 +83,15 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
             ) : (
                 <div className="flex w-full flex-col space-y-6">
                     {threadMessages.map((message) => (
-                        <div
-                            key={message.id}
-                            className="rounded-lg border border-transparent bg-white shadow-sm hover:border-primary-500"
-                        >
+                        <div key={message.id} className="rounded-lg border bg-white shadow-sm hover:border-primary-500">
                             <div className="border-b-2 border-gray-200 p-6">
                                 <div className="mb-3 text-lg font-semibold text-gray-400">
                                     {t('inbox.from')}:{' '}
-                                    <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
+                                    <span className="text-gray-600 hover:underline-offset-4">
+                                        {message.isMe ? 'Me' : message.from}
+                                    </span>{' '}
                                 </div>
-                                <div className="mb-3 text-sm font-medium text-gray-400">
+                                <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
                                     {t('inbox.to')}: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
                                 {message.cc?.length > 0 && (
