@@ -4,19 +4,24 @@ import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements,
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
+import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
 
 const featVideo = true;
 export type GuideCardKey = keyof typeof guidePage.cards;
 
 export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
     const [guideShow, setGuideShow] = useState<boolean>(false);
+    const { track } = useRudderstackTrack();
 
     const handleGuideModal = () => {
-        trackEvent(GUIDE_PAGE('modal opened'), { guideSection: cardKey });
+        track(OpenGuideSectionModal, {
+            section: cardKey,
+            // TODO: V2-872dc add increments
+            user_open_count: null,
+        });
         setGuideShow((prev) => !prev);
     };
     return (

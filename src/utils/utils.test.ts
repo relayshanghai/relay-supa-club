@@ -1,5 +1,13 @@
 import { describe, expect, it, test } from 'vitest';
-import { chinaFilter, isAdmin, isValidUrl, numFormatter, toCurrency, truncateWithDots } from './utils';
+import {
+    chinaFilter,
+    isAdmin,
+    isValidUrl,
+    languageCodeToHumanReadable,
+    numFormatter,
+    toCurrency,
+    truncateWithDots,
+} from './utils';
 
 describe('numformatter', () => {
     it("should return '-' if zero or NaN", () => {
@@ -154,4 +162,21 @@ describe('unixEpochToISOString', () => {
 
 describe('isMissing', () => {
     it.todo('tests for isMissing');
+});
+
+describe('languageCodeToHumanReadable', () => {
+    it('should return human readable language', () => {
+        const english = languageCodeToHumanReadable('en-US');
+        expect(english).toBe('English');
+        const englishUK = languageCodeToHumanReadable('en-GB');
+        expect(englishUK).toBe('English');
+
+        const chinese = languageCodeToHumanReadable('zh-CN');
+        expect(chinese).toBe('Chinese');
+        const chineseHK = languageCodeToHumanReadable('zh-HK');
+        expect(chineseHK).toBe('Chinese');
+
+        const unhandled = languageCodeToHumanReadable('foo');
+        expect(unhandled).toBe('foo');
+    });
 });

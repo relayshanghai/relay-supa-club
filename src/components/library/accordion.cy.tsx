@@ -12,7 +12,7 @@ const faqs = [
 ];
 describe('<Accordion />', () => {
     it('it will hide details by default, and show details when each title or expand button is clicked', () => {
-        testMount(<Accordion content={faqs} />);
+        testMount(<Accordion content={faqs} type="FAQ" modalName="Example FAQ" />);
         cy.contains(faqs[0].detail).should('not.exist');
         cy.contains(faqs[1].detail).should('not.exist');
         cy.contains(faqs[0].title).click();
