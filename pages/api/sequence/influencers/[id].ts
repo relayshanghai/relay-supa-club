@@ -127,10 +127,10 @@ const postHandler: NextApiHandler = async (
             address,
             manager,
         });
-    } catch (error) {
+    } catch (error: any) {
         // @todo rework getSequenceInfluencerByIdCall/getProfileByIdCall
         // throw new RelayError("Not found", 404)
-        throw new RelayError(JSON.stringify(error), 404);
+        throw new RelayError(error?.message, 404);
     }
 };
 

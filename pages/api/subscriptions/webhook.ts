@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await supabaseLogger({
                 type: 'stripe-webhook',
                 message: error.message ?? 'error',
-                data: JSON.parse(JSON.stringify(error)),
+                data: { error: error?.message, stack: error?.stack },
             });
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'caught error. check supabase logs' });
         }
