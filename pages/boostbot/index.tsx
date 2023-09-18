@@ -14,7 +14,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import {
-    OpenVideoGuideModal,
+    // OpenVideoGuideModal,
     OpenBoostbotPage,
     SendInfluencersToOutreach,
     UnlockInfluencers,
@@ -30,7 +30,7 @@ import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
+// import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -217,15 +217,15 @@ const Boostbot = () => {
                 />
             ),
         });
-        addMessage({
-            sender: 'Bot',
-            content: (
-                <VideoPreviewWithModal
-                    eventToTrack={OpenVideoGuideModal.eventName}
-                    videoUrl="/assets/videos/delete-guide.mp4"
-                />
-            ),
-        });
+        // addMessage({
+        //     sender: 'Bot',
+        //     content: (
+        //         <VideoPreviewWithModal
+        //             eventToTrack={OpenVideoGuideModal.eventName}
+        //             videoUrl="/assets/videos/delete-guide.mp4"
+        //         />
+        //     ),
+        // });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -277,15 +277,15 @@ const Boostbot = () => {
                     />
                 ),
             });
-            addMessage({
-                sender: 'Bot',
-                content: (
-                    <VideoPreviewWithModal
-                        eventToTrack={OpenVideoGuideModal.eventName}
-                        videoUrl="/assets/videos/sequence-guide.mp4"
-                    />
-                ),
-            });
+            // addMessage({
+            //     sender: 'Bot',
+            //     content: (
+            //         <VideoPreviewWithModal
+            //             eventToTrack={OpenVideoGuideModal.eventName}
+            //             videoUrl="/assets/videos/sequence-guide.mp4"
+            //         />
+            //     ),
+            // });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
