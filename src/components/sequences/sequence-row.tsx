@@ -4,9 +4,17 @@ import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-prof
 
 import Link from 'next/link';
 import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type {
+    InfluencerSocialProfileRow,
+    Sequence,
+    SequenceEmail,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+    SequenceStep,
+    TemplateVariable,
+} from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
 import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
@@ -24,6 +32,56 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
+import { CreatorReport } from 'types';
+import { useCompany } from 'src/hooks/use-company';
+
+const getTIMESTAMPTZ = () => {
+    const date = new Date();
+    let offset: number | string = -date.getTimezoneOffset() / 60;
+    const sign = offset >= 0 ? '+' : '-';
+    offset = Math.abs(offset);
+    offset = offset < 10 ? '0' + offset : offset;
+    let TIMESTAMPTZ = date.toISOString();
+    TIMESTAMPTZ = TIMESTAMPTZ.replace('T', ' ');
+    TIMESTAMPTZ = TIMESTAMPTZ.replace('Z', `000${sign}${offset}`);
+    return TIMESTAMPTZ;
+};
+
+export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
+    sequenceInfluencer,
+    socialProfile,
+    report,
+    updateSequenceInfluencer,
+    company_id,
+}: {
+    sequenceInfluencer: SequenceInfluencer;
+    socialProfile?: InfluencerSocialProfileRow;
+    report?: CreatorReport;
+    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
+    company_id: string;
+}) => {
+    if (!socialProfile) {
+        return;
+    }
+    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
+    const getRelevantTags = () => {
+        if (!report || !report.user_profile.relevant_tags) {
+            return [];
+        }
+        const relevantTags = report.user_profile.relevant_tags;
+        return relevantTags.slice(0, 3).map((tag) => tag.tag);
+    };
+    // for now, what we need from the social profile is the id, email, tags
+    const updatedValues = {
+        id: sequenceInfluencer.id,
+        influencer_social_profile_id: socialProfile.id,
+        email: socialProfile.email,
+        tags: getRelevantTags(),
+        social_profile_last_fetched: '2023-09-18 10:18:33.8978+00',
+        company_id,
+    };
+    await updateSequenceInfluencer(updatedValues);
+};
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -83,14 +141,29 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     // call updateSequenceInfluencerIfSocialProfileAvailable with a useEffect on the report. //when to call?
     // check social profile last updated at if there is no social_profile_id
     const now = new Date();
-    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched);
-    const wasFetchedWithin10Minutes = now - socialProfileLastFetched < 10 * 60 * 1000;
+    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '');
+    const wasFetchedWithin10Minutes = now.getTime() - socialProfileLastFetched.getTime() < 10 * 1 * 1000;
 
-    useReport({
+    const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
-        suppressFetch: wasFetchedWithin10Minutes,
+        suppressFetch: !!sequenceInfluencer.social_profile_last_fetched || wasFetchedWithin10Minutes,
     });
+    const { company } = useCompany();
+
+    useEffect(() => {
+        if (sequenceInfluencer.influencer_social_profile_id || !company || !socialProfile || !report) {
+            return;
+        }
+        console.log(socialProfile.id);
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company.id,
+        });
+    }, [report, socialProfile, sequenceInfluencer, company]);
 
     const { profile } = useUser();
     const { i18n, t } = useTranslation();

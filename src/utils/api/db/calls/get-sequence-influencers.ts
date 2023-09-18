@@ -57,7 +57,7 @@ export const getSequenceInfluencer =
             username: socialProfile?.username ?? '',
             avatar_url: socialProfile?.avatar_url ?? '',
             url: socialProfile?.url ?? '',
-            platform: socialProfile?.platform ?? '',
+            platform: socialProfile?.platform ?? 'youtube',
             address,
             manager: {
                 id: manager.id,

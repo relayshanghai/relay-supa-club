@@ -79,6 +79,7 @@ export const updateSequenceInfluencerCall =
             .eq('id', update.id)
             .select()
             .single();
+        console.log('done', error);
         if (error) throw error;
         return data;
     };

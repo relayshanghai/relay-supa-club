@@ -4,6 +4,7 @@ import { ApiHandler } from 'src/utils/api-handler';
 import type { Addresses, SequenceInfluencer } from 'src/utils/api/db';
 import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { db } from 'src/utils/supabase-client';
+import { CreatorPlatform } from 'types';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     influencer_id?: string;
@@ -12,7 +13,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     username?: string;
     avatar_url?: string | null;
     url?: string;
-    platform?: string;
+    platform?: CreatorPlatform;
     address?: Addresses['Update'] | null;
     manager: {
         id: string | null;

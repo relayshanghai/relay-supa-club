@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
@@ -24,17 +24,34 @@ import { Info, Spinner } from './icons';
 import { Modal } from './modal';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { insertInfluencerSocialProfile } from 'src/utils/api/db/calls/influencers-insert';
+import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
+
+const getTIMESTAMPTZ = () => {
+    const date = new Date();
+    let offset: number | string = -date.getTimezoneOffset() / 60;
+    const sign = offset >= 0 ? '+' : '-';
+    offset = Math.abs(offset);
+    offset = offset < 10 ? '0' + offset : offset;
+    let TIMESTAMPTZ = date.toISOString();
+    TIMESTAMPTZ = TIMESTAMPTZ.replace('T', ' ');
+    TIMESTAMPTZ = TIMESTAMPTZ.replace('Z', `000${sign}${offset}`);
+    return TIMESTAMPTZ;
+};
 
 // can use in sequence influencers row as well:
 export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     sequenceInfluencer,
     socialProfile,
     report,
+    updateSequenceInfluencer,
+    company_id,
 }: {
     sequenceInfluencer: SequenceInfluencer;
     socialProfile?: InfluencerSocialProfileRow;
     report?: CreatorReport;
     updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
+    company_id: string;
 }) => {
     if (!socialProfile) {
         return;
@@ -48,6 +65,15 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         return relevantTags.slice(0, 3).map((tag) => tag.tag);
     };
     // for now, what we need from the social profile is the id, email, tags
+    const updatedValues = {
+        id: sequenceInfluencer.id,
+        influencer_social_profile_id: socialProfile.id,
+        email: socialProfile.email,
+        tags: getRelevantTags(),
+        social_profile_last_fetched: '2023-09-18 10:18:33.8978+00',
+        company_id,
+    };
+    await updateSequenceInfluencer(updatedValues);
 };
 
 // eslint-disable-next-line complexity
@@ -63,7 +89,11 @@ export const AddToSequenceModal = ({
     platform: CreatorPlatform;
 }) => {
     const { t } = useTranslation();
+    const { company } = useCompany();
     const { sequences: allSequences } = useSequences();
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<Awaited<
+        ReturnType<typeof createSequenceInfluencer>
+    > | null>(null);
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
     const [suppressReportFetch, setSuppressReportFetch] = useState(true);
@@ -77,6 +107,20 @@ export const AddToSequenceModal = ({
         creator_id: creatorProfile.user_id || '',
         suppressFetch: suppressReportFetch,
     });
+
+    useEffect(() => {
+        if (!socialProfile || !sequenceInfluencer || !company) {
+            return;
+        }
+        insertSocialProfile(socialProfile);
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company.id,
+        });
+    }, [report, socialProfile, sequenceInfluencer, company]);
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [submitting, setSubmitting] = useState<boolean>(false);
@@ -97,7 +141,7 @@ export const AddToSequenceModal = ({
     const insertSocialProfile = useDB(insertInfluencerSocialProfile);
 
     const handleAddToSequence = useCallback(async () => {
-        let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
+        let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload = {
             influencer_id: socialProfile?.id || '', // we confirm these later down
             sequence_id: sequence?.id || '',
@@ -134,7 +178,7 @@ export const AddToSequenceModal = ({
 
             setSubmitting(true);
 
-            sequenceInfluencer = await createSequenceInfluencer({
+            newSequenceInfluencer = await createSequenceInfluencer({
                 name: creatorProfile.fullname || creatorProfile.username,
                 username: creatorProfile.username,
                 avatar_url: creatorProfile.picture || '',
@@ -143,7 +187,8 @@ export const AddToSequenceModal = ({
                 sequence_id: sequence.id,
                 platform,
             });
-            trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
+            setSequenceInfluencer(newSequenceInfluencer);
+            trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
