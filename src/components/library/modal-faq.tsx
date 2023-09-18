@@ -40,7 +40,7 @@ export const FaqModal = ({
                 </button>
             </div>
             <div className="mb-6 divide-y divide-gray-900/10 px-6">
-                <Accordion content={content} />
+                <Accordion content={content} modalName={title} type="FAQ" />
             </div>
             <div className="flex flex-row justify-end gap-6 p-6">
                 <div className="mt-4">
