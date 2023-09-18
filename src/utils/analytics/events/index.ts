@@ -113,6 +113,8 @@ import type { OpenGuideSectionModalPayload } from './guide/open-guide-section-mo
 import { OPEN_GUIDE_SECTION_MODAL, OpenGuideSectionModal } from './guide/open-guide-section-modal';
 import type { ExpandHelpSectionPayload } from './guide/expand-help-section';
 import { EXPAND_HELP_SECTION, ExpandHelpSection } from './guide/expand-help-section';
+import type { ChangeLanguagePayload } from './change-language';
+import { CHANGE_LANGUAGE, ChangeLanguage } from './change-language';
 
 export {
     Search,
@@ -204,6 +206,7 @@ export const events = {
     [INPUT_PAYMENT_INFO]: InputPaymentInfo,
     [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModal,
     [EXPAND_HELP_SECTION]: ExpandHelpSection,
+    [CHANGE_LANGUAGE]: ChangeLanguage,
 };
 
 export type payloads = {
@@ -256,6 +259,7 @@ export type payloads = {
     [INPUT_PAYMENT_INFO]: InputPaymentInfoPayload;
     [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModalPayload;
     [EXPAND_HELP_SECTION]: ExpandHelpSectionPayload;
+    [CHANGE_LANGUAGE]: ChangeLanguagePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -310,6 +314,7 @@ export const eventKeys = z.union([
     z.literal(INPUT_PAYMENT_INFO),
     z.literal(OPEN_GUIDE_SECTION_MODAL),
     z.literal(EXPAND_HELP_SECTION),
+    z.literal(CHANGE_LANGUAGE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
