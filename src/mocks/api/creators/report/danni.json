@@ -1,0 +1,3015 @@
+{
+  "success": true,
+  "version": "2",
+  "report_info": {
+    "report_id": "6502cc017400346cd892d452",
+    "created": "2023-09-14T09:01:53.082+00:00",
+    "profile_updated": "2023-09-12T11:54:52.203+00:00"
+  },
+  "user_profile": {
+    "type": "youtube",
+    "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+    "custom_name": "DANNIVIVIANI",
+    "handle": "DANNIVIVIANI",
+    "url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+    "fullname": "DANNI VIVIANI",
+    "description": "IG: @therealdanni_v\n\nContact me @    typicalmarie123@gmail.com\n ***Business Only****",
+    "is_hidden": false,
+    "gender": "FEMALE",
+    "age_group": "25-34",
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "followers": 13200,
+    "posts_count": 16,
+    "engagements": 5224,
+    "engagement_rate": 0.395758,
+    "avg_likes": 5224,
+    "avg_dislikes": 0,
+    "avg_comments": 80,
+    "avg_views": 120500,
+    "total_views": 1583454,
+    "stat_history": [
+      {
+        "month": "2023-03",
+        "followers": 13200,
+        "avg_likes": 5081,
+        "avg_dislikes": 0,
+        "avg_comments": 77,
+        "avg_views": 111585,
+        "total_views": 1540213
+      },
+      {
+        "month": "2023-04",
+        "followers": 13200,
+        "avg_likes": 5244,
+        "avg_dislikes": 0,
+        "avg_comments": 81,
+        "avg_views": 120972,
+        "total_views": 1556670
+      },
+      {
+        "month": "2023-05",
+        "followers": 13200,
+        "avg_likes": 5247,
+        "avg_dislikes": 0,
+        "avg_comments": 82,
+        "avg_views": 121060,
+        "total_views": 1563698
+      },
+      {
+        "month": "2023-06",
+        "followers": 13200,
+        "avg_likes": 5222,
+        "avg_dislikes": 0,
+        "avg_comments": 80,
+        "avg_views": 120362,
+        "total_views": 1569229
+      },
+      {
+        "month": "2023-07",
+        "followers": 13200,
+        "avg_likes": 5222,
+        "avg_dislikes": 0,
+        "avg_comments": 80,
+        "avg_views": 120373,
+        "total_views": 1576013
+      },
+      {
+        "month": "2023-08",
+        "followers": 13200,
+        "avg_likes": 5223,
+        "avg_dislikes": 0,
+        "avg_comments": 80,
+        "avg_views": 120446,
+        "total_views": 1580871
+      },
+      {
+        "month": "2023-09",
+        "followers": 13200,
+        "avg_likes": 5224,
+        "avg_dislikes": 0,
+        "avg_comments": 80,
+        "avg_views": 120500,
+        "total_views": 1583454
+      }
+    ],
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "contacts": [
+      {
+        "type": "email",
+        "value": "typicalmarie123@gmail.com",
+        "formatted_value": "typicalmarie123@gmail.com"
+      }
+    ],
+    "relevant_tags": [
+      {
+        "tag": "hair removal",
+        "distance": 0.234332,
+        "freq": 8.679312
+      },
+      {
+        "tag": "bikini line",
+        "distance": 0.278494,
+        "freq": 5.4161
+      },
+      {
+        "tag": "ingrown hairs",
+        "distance": 0.315931,
+        "freq": 5.916202
+      },
+      {
+        "tag": "waxing",
+        "distance": 0.327535,
+        "freq": 8.78966
+      },
+      {
+        "tag": "razor bumps",
+        "distance": 0.334789,
+        "freq": 5.66296
+      },
+      {
+        "tag": "laser hair removal",
+        "distance": 0.340862,
+        "freq": 7.904335
+      },
+      {
+        "tag": "ingrown hair",
+        "distance": 0.342489,
+        "freq": 6.493754
+      },
+      {
+        "tag": "brazilian wax",
+        "distance": 0.362807,
+        "freq": 7.239933
+      },
+      {
+        "tag": "vajacial",
+        "distance": 0.364245,
+        "freq": 4.736198
+      },
+      {
+        "tag": "bikini wax",
+        "distance": 0.380765,
+        "freq": 6.505784
+      },
+      {
+        "tag": "yoni steam",
+        "distance": 0.384837,
+        "freq": 5.480639
+      },
+      {
+        "tag": "smooth legs",
+        "distance": 0.396481,
+        "freq": 4.941642
+      },
+      {
+        "tag": "underarms",
+        "distance": 0.40096,
+        "freq": 6.663133
+      },
+      {
+        "tag": "brazillian wax",
+        "distance": 0.406018,
+        "freq": 4.663439
+      },
+      {
+        "tag": "body hair",
+        "distance": 0.406328,
+        "freq": 6.687109
+      },
+      {
+        "tag": "shaving",
+        "distance": 0.410551,
+        "freq": 8.858511
+      },
+      {
+        "tag": "how to shave",
+        "distance": 0.41373,
+        "freq": 7.144407
+      },
+      {
+        "tag": "hairremoval",
+        "distance": 0.416645,
+        "freq": 6.297109
+      },
+      {
+        "tag": "epilator",
+        "distance": 0.420908,
+        "freq": 6.214608
+      },
+      {
+        "tag": "esthetician",
+        "distance": 0.424662,
+        "freq": 7.118016
+      },
+      {
+        "tag": "brazilian waxing",
+        "distance": 0.426008,
+        "freq": 5.963579
+      },
+      {
+        "tag": "wax at home",
+        "distance": 0.427393,
+        "freq": 6.033086
+      },
+      {
+        "tag": "ipl hair removal",
+        "distance": 0.427454,
+        "freq": 5.976351
+      },
+      {
+        "tag": "armpit hair",
+        "distance": 0.42758,
+        "freq": 5.950643
+      },
+      {
+        "tag": "diy waxing",
+        "distance": 0.428533,
+        "freq": 5.204007
+      },
+      {
+        "tag": "estheticians",
+        "distance": 0.433253,
+        "freq": 4.718499
+      },
+      {
+        "tag": "skin care",
+        "distance": 0.437146,
+        "freq": 10.871422
+      },
+      {
+        "tag": "keratosis pilaris",
+        "distance": 0.437722,
+        "freq": 5.961005
+      },
+      {
+        "tag": "body acne",
+        "distance": 0.437816,
+        "freq": 6.09131
+      },
+      {
+        "tag": "dermaplaning",
+        "distance": 0.4399,
+        "freq": 6.892642
+      }
+    ],
+    "similar_users": [
+      {
+        "user_id": "UCs7q8JJQaeOLap1WvCBrqRg",
+        "picture": "https://yt3.ggpht.com/ytc/AAUvwng1dG5rcs0r-Rcy5fruzej0eWmhKP8IVTqwKR_t=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 35300,
+        "fullname": "Wax Snob",
+        "url": "https://www.youtube.com/channel/UCs7q8JJQaeOLap1WvCBrqRg",
+        "is_verified": false,
+        "engagements": 528,
+        "avg_likes": 528,
+        "avg_views": 104460,
+        "score": 0.956533
+      },
+      {
+        "user_id": "UCTc1WZZIEnSoZroJ7A4leOg",
+        "picture": "https://yt3.ggpht.com/EOWrbOj83sL_HHxB9pqdL6lExhKKYaDvQGRpNu3FGEkuSbRUdYIGRiUaEl5Vhef3LMrj4PpcXpk=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 3430,
+        "fullname": "esoteric beauty",
+        "url": "https://www.youtube.com/channel/UCTc1WZZIEnSoZroJ7A4leOg",
+        "geo": {
+          "country": {
+            "id": 87565,
+            "name": "South Africa",
+            "code": "ZA",
+            "coords": {
+              "lat": -25.74486,
+              "lon": 28.18783
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 20,
+        "avg_likes": 20,
+        "avg_views": 2830,
+        "score": 0.979112
+      },
+      {
+        "user_id": "UC6abmoe5eOCDF7x1oYDyKeA",
+        "handle": "vickyxv5215",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTL3BTUVkWSIZ0LzCk8cWbxk0jJmoWeLcOBuYXvpQ=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 17600,
+        "fullname": "Vicky XV",
+        "url": "https://www.youtube.com/channel/UC6abmoe5eOCDF7x1oYDyKeA",
+        "is_verified": false,
+        "engagements": 30,
+        "avg_likes": 30,
+        "avg_views": 1543,
+        "score": 1.066352
+      },
+      {
+        "user_id": "UC1neuu1PxQIgswAaABn1XPQ",
+        "handle": "brainsbeautyskincaresugari3167",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWSN_na8XlsgLNOuRPdieKRhNwgfyTj4Wct5eH=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 209000,
+        "fullname": "Brains & Beauty Skincare & Sugaring",
+        "url": "https://www.youtube.com/channel/UC1neuu1PxQIgswAaABn1XPQ",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": true,
+        "engagements": 27,
+        "avg_likes": 27,
+        "avg_views": 39253,
+        "score": 1.071579
+      },
+      {
+        "user_id": "UC9n3LEM7i5xJKeou231pvIg",
+        "custom_name": "SouthernSugaringSavannah",
+        "handle": "SouthernSugaring",
+        "picture": "https://yt3.googleusercontent.com/zQAHEKgYuCdkoZD3PsxggKIV1yyCum_wzgz9HV20LRPjT2dmxGCO9f8faGKawrvYUB33jOFC=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 32400,
+        "fullname": "Southern Sugaring & Spa",
+        "url": "https://www.youtube.com/channel/UC9n3LEM7i5xJKeou231pvIg",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 50,
+        "avg_likes": 50,
+        "avg_views": 19704,
+        "score": 1.081199
+      },
+      {
+        "user_id": "UChS0KAsG5DiDEwPlcU5z6lw",
+        "custom_name": "VictoriaVictoria",
+        "handle": "VictoriaVictoria",
+        "picture": "https://yt3.googleusercontent.com/GtVfxK548-DlboZ8vo_7l3-iq2IwcBoJgR4n3ePD1QkPgvCtir4y-XgR51YexM1kF8hqpb3zkoA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 508000,
+        "fullname": "Victoria Victoria",
+        "url": "https://www.youtube.com/channel/UChS0KAsG5DiDEwPlcU5z6lw",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": true,
+        "engagements": 1879,
+        "avg_likes": 1879,
+        "avg_views": 49137,
+        "score": 1.0946
+      },
+      {
+        "user_id": "UCOjCx-8RJf1EQ9DXuhc2i1Q",
+        "custom_name": "gigispaofficial",
+        "handle": "gigispaofficial",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQQ4q_ACqOtNJw9ouYNps7jJreKGwQSq10VMc1f=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 30800,
+        "fullname": "GiGi Spa",
+        "url": "https://www.youtube.com/channel/UCOjCx-8RJf1EQ9DXuhc2i1Q",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 93,
+        "avg_likes": 93,
+        "avg_views": 9908,
+        "score": 1.095031
+      },
+      {
+        "user_id": "UCPeA9KVdHqRkJ-fZ0Tlj4OA",
+        "handle": "tajmahaly7129",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaT_SbBNuXCAKZpkCqeJja3YzVBIc54H42uWBySZ=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 110000,
+        "fullname": "Taj Mahaly",
+        "url": "https://www.youtube.com/channel/UCPeA9KVdHqRkJ-fZ0Tlj4OA",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 332,
+        "avg_likes": 332,
+        "avg_views": 4836,
+        "score": 1.115579
+      },
+      {
+        "user_id": "UCRQIOSLOC-QfAai8NywLsbg",
+        "picture": "https://yt3.ggpht.com/ytc/AMLnZu8qiXhzUwYLKGOX4dt-eVAR-LVB5MgF79TnVdlO=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 18500,
+        "fullname": "Caitlyn Sway Beauty",
+        "url": "https://www.youtube.com/channel/UCRQIOSLOC-QfAai8NywLsbg",
+        "is_verified": false,
+        "engagements": 3697,
+        "avg_likes": 3697,
+        "avg_views": 725818,
+        "score": 1.123668
+      },
+      {
+        "user_id": "UCJCAT4akKwwqZ_bc5FJIdDA",
+        "custom_name": "JessicaWaxdDaySpa",
+        "handle": "JessicaWaxdDaySpa",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaT9_pUJ9hZpeWB6K2ZLnwto8uxi9peVo5uybfh-BQ=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 53100,
+        "fullname": "Jessica WaxdDaySpa",
+        "url": "https://www.youtube.com/channel/UCJCAT4akKwwqZ_bc5FJIdDA",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 576,
+        "avg_likes": 576,
+        "avg_views": 85883,
+        "score": 1.126212
+      },
+      {
+        "user_id": "UCSOzHi-FRem3YhkVcM2dWpw",
+        "picture": "https://yt3.ggpht.com/a/AGF-l78L_RlbpstT3yZ7Zv0k2bqIMeBRe4X5fMBGNQ=s480-mo-c-c0xffffffff-rj-k-no",
+        "followers": 658554,
+        "url": "https://www.youtube.com/channel/UCSOzHi-FRem3YhkVcM2dWpw",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 0,
+        "avg_likes": 0,
+        "avg_views": 2312223,
+        "score": 1.14814
+      },
+      {
+        "user_id": "UCOQwZg796UN7oKv_lrpyCUA",
+        "username": "DyannaSpaNYC",
+        "handle": "DyannaSpaNYC",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSTPoZlI3kjmr_DwyYaHRJE4KSUvGQZ_EMirHbI=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 505000,
+        "fullname": "DyannaSpaNYC",
+        "url": "https://www.youtube.com/channel/UCOQwZg796UN7oKv_lrpyCUA",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 92,
+        "avg_likes": 92,
+        "avg_views": 193783,
+        "score": 1.17787
+      },
+      {
+        "user_id": "UCvyy822PifSi8_kugwRXx-Q",
+        "custom_name": "AlexaImani39",
+        "picture": "https://yt3.ggpht.com/yedzMYJO7NrhYcgXF1uvUmssk34ZO9MDKmQ4aGJx5aHM8Jwd71BnU41gffFWEaVg1j1zjT2-2g=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 10700,
+        "fullname": "Alexa Imani",
+        "url": "https://www.youtube.com/channel/UCvyy822PifSi8_kugwRXx-Q",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 39,
+        "avg_likes": 39,
+        "avg_views": 2410,
+        "score": 1.179002
+      },
+      {
+        "user_id": "UCFspkNjULjW3pmAAZVhVWQA",
+        "custom_name": "CaraEdwards",
+        "handle": "CaraEdwards",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTU30QWvSrJlzBhNL-sr6UCCL5m-RQ7ngVHaAIqMA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 80600,
+        "fullname": "Cara Edwards",
+        "url": "https://www.youtube.com/channel/UCFspkNjULjW3pmAAZVhVWQA",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 30,
+        "avg_likes": 30,
+        "avg_views": 2494,
+        "score": 1.179476
+      },
+      {
+        "user_id": "UCaQ9jpBEjWe_O9urWe-M5HA",
+        "handle": "hair_removal4695",
+        "picture": "https://yt3.googleusercontent.com/MmBDV5VX3YfBfJ6XojIpPPgSasruvohOoARt5cUi5tEen9uJ6BCuCg5lEfQJI0UsWOcGAF-P160=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 3160,
+        "fullname": "Hair_Removal",
+        "url": "https://www.youtube.com/channel/UCaQ9jpBEjWe_O9urWe-M5HA",
+        "geo": {
+          "country": {
+            "id": 16239,
+            "name": "Austria",
+            "code": "AT",
+            "coords": {
+              "lat": 48.20849,
+              "lon": 16.37208
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 8,
+        "avg_likes": 8,
+        "avg_views": 560,
+        "score": 1.18006
+      },
+      {
+        "user_id": "UCV_SIlr5ir895L7k0Dsfhgg",
+        "custom_name": "Sugabombbeauty",
+        "handle": "Sugabombbeauty",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQYx6F9IxKX1UUbjvZ5fIcjmk5PJClDH4THioAWFA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 9110,
+        "fullname": "Sugabombbeauty",
+        "url": "https://www.youtube.com/channel/UCV_SIlr5ir895L7k0Dsfhgg",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 33,
+        "avg_likes": 33,
+        "avg_views": 4091,
+        "score": 1.183869
+      },
+      {
+        "user_id": "UCkcBh4IHs0SF3vvCjhhkkhA",
+        "handle": "pummybeautyworld",
+        "picture": "https://yt3.googleusercontent.com/FRawU8QhhZT3m_UIf3IvDGNkUXjvIyfpB8Kc7yZOO8hjti6vjP6-x--fxmG2upkrVweByiLFLbs=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 53400,
+        "fullname": "Pummy Beauty World",
+        "url": "https://www.youtube.com/channel/UCkcBh4IHs0SF3vvCjhhkkhA",
+        "geo": {
+          "country": {
+            "id": 304716,
+            "name": "India",
+            "code": "IN",
+            "coords": {
+              "lat": 28.63576,
+              "lon": 77.22445
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 74,
+        "avg_likes": 74,
+        "avg_views": 3577,
+        "score": 1.190594
+      },
+      {
+        "user_id": "UC2NB8ZspWa63PZtM5bgyh8Q",
+        "custom_name": "MINÉVIASPA",
+        "handle": "MINEVIASPA",
+        "picture": "https://yt3.googleusercontent.com/GtcNTWxVJdZHqeU0k_EyskhtvedWASSgjDddte5P7F3ZCQVVyynNXtZwHbtIewZx_QnVhZ06sw=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 136000,
+        "fullname": "MINÉVIA SPA",
+        "url": "https://www.youtube.com/channel/UC2NB8ZspWa63PZtM5bgyh8Q",
+        "geo": {
+          "country": {
+            "id": 1428125,
+            "name": "Canada",
+            "code": "CA",
+            "coords": {
+              "lat": 45.41117,
+              "lon": -75.69812
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 463,
+        "avg_likes": 463,
+        "avg_views": 65454,
+        "score": 1.1933
+      },
+      {
+        "user_id": "UCa9iOE-ab8i9cXkUa7wJqOQ",
+        "custom_name": "TheGoldenRx",
+        "handle": "TheGoldenRx",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRJXdTNcbjHnaCU53yRo2H4cFFJe2EVoZDqxq7m5Q=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 464000,
+        "fullname": "LaBeautyologist – The Golden Rx",
+        "url": "https://www.youtube.com/channel/UCa9iOE-ab8i9cXkUa7wJqOQ",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 2678,
+        "avg_likes": 2678,
+        "avg_views": 53470,
+        "score": 1.195864
+      },
+      {
+        "user_id": "UCPSI-DjRsvM_P2VDVBkR06Q",
+        "custom_name": "JackDunn",
+        "handle": "JackDunn",
+        "picture": "https://yt3.googleusercontent.com/zB5DFUAQDSfmmajw2t1R4wedq3op0nVTcUKcfR2-_lJP7J8PeubxMErR2X5E2BAXs9baWMlH=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 85900,
+        "fullname": "JD Waxing - Male Waxing Experts in London",
+        "url": "https://www.youtube.com/channel/UCPSI-DjRsvM_P2VDVBkR06Q",
+        "is_verified": false,
+        "engagements": 0,
+        "avg_likes": 0,
+        "avg_views": 361759,
+        "score": 1.198853
+      },
+      {
+        "user_id": "UCRJgpkqZbSZD-vXtuFTvIBw",
+        "handle": "kittenpluck2229",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRrqwhq5Q0fOarupT_1xUthN6axBeXqzHpL8qgQ3RvOpUPy5v7PaZuWF2v4lfyN=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 6770,
+        "fullname": "Kitten Pluck222",
+        "url": "https://www.youtube.com/channel/UCRJgpkqZbSZD-vXtuFTvIBw",
+        "is_verified": false,
+        "engagements": 386,
+        "avg_likes": 386,
+        "avg_views": 47551,
+        "score": 1.207876
+      },
+      {
+        "user_id": "UCG-ZAN_tCPI81g-DkIrE-xw",
+        "username": "nads",
+        "custom_name": "nads",
+        "handle": "nads",
+        "picture": "https://yt3.googleusercontent.com/vgT2Q07vxgooDYmct--y6dC15-lf_aAs_6YfSeu-dB1x9Tq3Ss--G0l0VIB6dwhVVhTQZIWB4w=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 5980,
+        "fullname": "Nad's Hair Removal Products",
+        "url": "https://www.youtube.com/channel/UCG-ZAN_tCPI81g-DkIrE-xw",
+        "geo": {
+          "country": {
+            "id": 80500,
+            "name": "Australia",
+            "code": "AU",
+            "coords": {
+              "lat": -35.28346,
+              "lon": 149.12807
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 1,
+        "avg_likes": 1,
+        "avg_views": 210,
+        "score": 1.213464
+      },
+      {
+        "user_id": "UCYuCgnFVjZbq1eme3DqJ-PA",
+        "username": "gillettevenus",
+        "custom_name": "GilletteVenusOfficial",
+        "handle": "GilletteVenusOfficial",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRjTYXUMbV0IqslmaJZQZA64qv93W0Ha6SHLlZ7aA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 72700,
+        "fullname": "Gillette Venus",
+        "url": "https://www.youtube.com/channel/UCYuCgnFVjZbq1eme3DqJ-PA",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": true,
+        "engagements": 13,
+        "avg_likes": 13,
+        "avg_views": 128069,
+        "score": 1.224218
+      },
+      {
+        "user_id": "UCsgg3h6lBLdYwlfmR2JWOjQ",
+        "custom_name": "RiddhiSkinCareSpaEsthetics",
+        "handle": "RiddhiSkinCareSpa",
+        "picture": "https://yt3.googleusercontent.com/fZq3MgaA7nCpZj7L28p7UVTRVteBPTD7BpAhfBJGpzpBdX9_VcHFj8F6DHjyJA4Bx8wLlLD_mA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 748000,
+        "fullname": "Riddhi Skin Care Spa",
+        "url": "https://www.youtube.com/channel/UCsgg3h6lBLdYwlfmR2JWOjQ",
+        "geo": {
+          "country": {
+            "id": 1428125,
+            "name": "Canada",
+            "code": "CA",
+            "coords": {
+              "lat": 45.41117,
+              "lon": -75.69812
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 53,
+        "avg_likes": 53,
+        "avg_views": 5474,
+        "score": 1.23822
+      },
+      {
+        "user_id": "UCMWoFFRiKak23Rqc3QZJSIg",
+        "custom_name": "BerodinWax",
+        "handle": "BerodinWax",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRicU0ZExtOxhi9P6qCLHnvFyxLyTydarJ6uVbo=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 145000,
+        "fullname": "Berodin Wax",
+        "url": "https://www.youtube.com/channel/UCMWoFFRiKak23Rqc3QZJSIg",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 409,
+        "avg_likes": 409,
+        "avg_views": 74184,
+        "score": 1.240209
+      },
+      {
+        "user_id": "UCcGhusvdQTdOnHgHMruaLTg",
+        "custom_name": "Wizker",
+        "handle": "Wizker",
+        "picture": "https://yt3.googleusercontent.com/nLhfzYMJGYHzH8w1Kxh0gRFtn86JD5gU7S8-5YwPcHsu-7Q5_H_TB0jOGEv2TZpr6wwL6yQ8FA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 2890,
+        "fullname": "the WIZKER Brush Cures Razor Bumps & Ingrown Hairs",
+        "url": "https://www.youtube.com/channel/UCcGhusvdQTdOnHgHMruaLTg",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 32,
+        "avg_likes": 32,
+        "avg_views": 2966,
+        "score": 1.242994
+      },
+      {
+        "user_id": "UCpv_mmP5BciHsEi2Obq9EwQ",
+        "username": "Cocolatte21207",
+        "custom_name": "CourtneyAlexis",
+        "handle": "PrettyCourtt",
+        "picture": "https://yt3.googleusercontent.com/ZTrVDMPy42ew226AQuIZescOhS2aVKsN0mogvcbKMtUUjMhQhtR4Obm01j7RSCwoTWcVEwH1hg=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 40400,
+        "fullname": "Pretty Courtt",
+        "url": "https://www.youtube.com/channel/UCpv_mmP5BciHsEi2Obq9EwQ",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 1,
+        "avg_likes": 1,
+        "avg_views": 86,
+        "score": 1.257238
+      },
+      {
+        "user_id": "UCHoDXNyKmZRIP_1joYupd2w",
+        "handle": "olivia-dior6863",
+        "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTqKOmO4CCX8WXAbtpi6lZ4Evxh-jSlyCb1qYrO=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 5380,
+        "fullname": "Olivia - Dior",
+        "url": "https://www.youtube.com/channel/UCHoDXNyKmZRIP_1joYupd2w",
+        "geo": {
+          "country": {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "coords": {
+              "lat": 38.89511,
+              "lon": -77.03637
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 199,
+        "avg_likes": 199,
+        "avg_views": 18182,
+        "score": 1.258861
+      },
+      {
+        "user_id": "UC8OnhCEfejsjg4bW8SqK41A",
+        "handle": "sonimakeover",
+        "picture": "https://yt3.googleusercontent.com/9RZ0ZLt1kuzUdZgUWyGzQ1Uk_kQFJVPssA-_uZhUHYBCUaiUnrEphjOxADVEJ1TSB-EbCZDXCA=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 136000,
+        "fullname": "Soni Makeover",
+        "url": "https://www.youtube.com/channel/UC8OnhCEfejsjg4bW8SqK41A",
+        "geo": {
+          "country": {
+            "id": 304716,
+            "name": "India",
+            "code": "IN",
+            "coords": {
+              "lat": 28.63576,
+              "lon": 77.22445
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 323,
+        "avg_likes": 323,
+        "avg_views": 64489,
+        "score": 1.259632
+      },
+      {
+        "user_id": "UC3RFJTDVqjtYHsHZqi-7CbA",
+        "custom_name": "GilletteVenusIndia",
+        "handle": "venusgillette_in",
+        "picture": "https://yt3.googleusercontent.com/ezERa86pK8NrWzKTlJ1GuBoMSh_6pyYsiVVsYsjsmDgd2Khj46SFKoJVebLpUe4ZHDJkjcxGtg=s480-c-k-c0x00ffffff-no-rj",
+        "followers": 106000,
+        "fullname": "Venus Gillette India",
+        "url": "https://www.youtube.com/channel/UC3RFJTDVqjtYHsHZqi-7CbA",
+        "geo": {
+          "country": {
+            "id": 304716,
+            "name": "India",
+            "code": "IN",
+            "coords": {
+              "lat": 28.63576,
+              "lon": 77.22445
+            }
+          }
+        },
+        "is_verified": false,
+        "engagements": 5,
+        "avg_likes": 5,
+        "avg_views": 633987,
+        "score": 1.260162
+      }
+    ],
+    "top_posts": [
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "ToymcL6Z3b8",
+        "created": "2021-08-02T22:00:00.000+00:00",
+        "title": "HOW I PERFECTED AND CLEARED MY BIKINI LINE 👙✨",
+        "text": "Hey Beauties! I am SO excited to be sharing all of my new regimens that I have been doing the past few years to lessen a few of my insecurities. Being a woman is hard, especially when it comes to maintenance. I'm here to help, and want to build a sense of confidence that we tend to lack when a certain area of our body isn't up to our personal standards. \n\n**PLEASE FOLLOW THE INSTRUCTIONS IN THE VIDEO SO THAT YOU WILL GET FAST RESULTS.***\n\nProducts mentioned:\n\nKP Duty Scrub\nhttps://www.dermadoctor.com/skincare/collection/kp-duty/kp-duty-dermatologist-body-scrub.html-\n\nPFB Vanish\nhttps://www.amazon.com/PFB-Vanish-Chromabright-93-grams/dp/B005GXQ02I\n\nAND STOP SHAVING, from this point on find a great Waxer (or Laser professional) in your area and STAY CONSISTENT!!! \n\n\nHey Ladies, I just wanted to add I have a new bikini concealer coming out and it covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nYou ladies are going to LOVE IT! Releases May 1st, 2022 @12 noon. \n\nInstagram: @skinz&co_\nWebsite: www.skinzandco.com\n\n\nThank you so much for watching!! I have a lot more regimens coming your way!!\nLIKE.COMMENT. & SUBSCRIBE FOR MORE!!!!!!!!!!!!!!!!!!!!",
+        "video": "https://www.youtube.com/watch?v=ToymcL6Z3b8",
+        "thumbnail": "https://i.ytimg.com/vi/ToymcL6Z3b8/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=ToymcL6Z3b8",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 51708,
+          "dislikes": -1,
+          "comments": 732,
+          "views": 1190316
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "KRp-kkM7HhQ",
+        "created": "2016-06-08T22:00:00.000+00:00",
+        "title": "How I Lightened My Bikini Line From Razor Scars",
+        "text": "All of the items listed in the video were purchased from Walmart...\n\n              Everything together was about $25. Not including the wax warmer or wax.\n\n\n\n\n\nLike.Commen.Subscribe. Thumbs up for more videos.\n\n\n\n\n\nINSTAGRAM- According2Marie_\nSNAPCHAT- Weezyfdanni",
+        "video": "https://www.youtube.com/watch?v=KRp-kkM7HhQ",
+        "thumbnail": "https://i.ytimg.com/vi/KRp-kkM7HhQ/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=KRp-kkM7HhQ",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 4743,
+          "dislikes": -1,
+          "comments": 179,
+          "views": 278496
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "Rnq8CUgQkc0",
+        "created": "2018-04-30T22:00:00.000+00:00",
+        "title": "HOW TO GET THAT NATURAL GLOW | Done with Strawberry Legs",
+        "text": "Link to Sugar Scrub~\nhttps://www.walmart.com/ip/Tree-Hut-Moroccan-Rose-Shea-Sugar-Scrub-18-oz/51233556\n\nLink to Moisturizer~\nhttps://www.walmart.com/ip/Curel-Ultra-Healing-Intensive-Lotion-20-0-FL-OZ/10295406?wmlspartner=wlpa&selectedSellerId=0&adid=22222222227000010644&wl0=&wl1=g&wl2=c&wl3=40842547352&wl4=pla-57786640066&wl5=9007488&wl6=&wl7=&wl8=&wl9=pla&wl10=8175035&wl11=online&wl12=10295406&wl13=&veh=sem",
+        "video": "https://www.youtube.com/watch?v=Rnq8CUgQkc0",
+        "thumbnail": "https://i.ytimg.com/vi/Rnq8CUgQkc0/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=Rnq8CUgQkc0",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 757,
+          "dislikes": -1,
+          "comments": 26,
+          "views": 39732
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "Zck-atZq5nM",
+        "created": "2020-10-25T23:00:00.000+00:00",
+        "title": "NO MORE BALD CAP METHOD?? SAVE YOUR EDGES",
+        "text": "Hey Beauties! So I know that BALDING edges from lace frontals are becoming a norm and that needs to STOP!! Lace frontals/ Wigs are supposed to be a protective style that helps your hair ALL AROUND GROW, not just the middle of your head. You might notice your hair growing in the middle but I guarantee you see your edges either THINNING or BALDING! The new method and started to do on my clients have shown significant growth within the edges. If they are LEFT ALONE, they'll be more likely to grow. \n\nEmail or Message me for any questions or concerns!\n\nTHANK YOU GUYS FOR WATCHING!!\n\n\nInstagram- @therealdanni_v\nFacebook- Danyelle Marie Tucker\nTwitter- Danyellemarie_\n\nHair Collection- @mynovabeautys\nCheck out my NEW UNITS. \nAll units come customized..\n-bleached knots\n-parting (middle or side part)\n-styled\ncolored(optional)\n& READY TO WEAR~\n\nCHECK OUT MY HAIR COLLECTION \nMynovabeautys.com\n\nWant to become an ambassador and get discounts? Free gifts and fly all over the U.S. with me? \nSign up on the website and I will contact you with more details.\n\n*I DO NOT OWN RIGHTS TO THIS MUSIC*",
+        "video": "https://www.youtube.com/watch?v=Zck-atZq5nM",
+        "thumbnail": "https://i.ytimg.com/vi/Zck-atZq5nM/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=Zck-atZq5nM",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 293,
+          "dislikes": -1,
+          "comments": 22,
+          "views": 7888
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "GNeLDa2dSqA",
+        "created": "2020-03-13T23:00:00.000+00:00",
+        "title": "How To Clear That Bikini Line BEFORE SUMMER COMES!! (Update)",
+        "video": "https://www.youtube.com/watch?v=GNeLDa2dSqA",
+        "thumbnail": "https://i.ytimg.com/vi/GNeLDa2dSqA/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=GNeLDa2dSqA",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 158,
+          "dislikes": -1,
+          "comments": 15,
+          "views": 6252
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "rYk6p-JypOc",
+        "created": "2022-05-12T22:00:00.000+00:00",
+        "title": "MAKEUP FOR YOUR BIKINI?? How to get the perfect bikini in SECONDS✨- SKINZ&CO.",
+        "text": "OKAY IT'S OFFICIAL!!! My New BIKINI CONCEALER is Now OUT!! \nThe Bikini Concealer covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nYou can find the bikini concealer on:\nWebsite: www.skinzandco.com\nInstagram: @skinzandco\n\nThe Concealer also has a remover that is releasing soon so stay tuned!\n\nFollow my personal Instagram Page\n@therealdanni_v",
+        "video": "https://www.youtube.com/watch?v=rYk6p-JypOc",
+        "thumbnail": "https://i.ytimg.com/vi/rYk6p-JypOc/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=rYk6p-JypOc",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 151,
+          "dislikes": -1,
+          "comments": 22,
+          "views": 5992
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "JAW7gPp2l74",
+        "created": "2022-08-03T22:00:00.000+00:00",
+        "title": "LASER HAIR REMOVAL AT HOME?? *RoseSkinCo Lumi*",
+        "text": "Code \"DANNI15\" for 15% off Lumi IPL HAIR REMOVAL RoseSkinCo Handset: https://shop.roseskinco.com/at-roseskinco60\n Free shipping in addition to 15% OFF\n\nHI Beatuies, I just wanted to share with you my NEW go to hair removal method. I tried out this handset for about a month and my hair is almost completely gone,  PERMANENTLY. I am so excited to share this with you guys because hair can get annoying, and this handset has really changed the game! You know I always come and share with you guys when I find something that actually works. \n\nMake sure to use my link to get a discount when you purchase yours! DANNI15\n\n#RoseSkinCo #Lumi #Beauty #LaserHair Removal #HairRemoval #IPLHairRemoval\n\nAbout me~\nAge:25\nInstagram: @therealdanni_v\nTikTok: @Therealdanni_v\n\nHey Ladies, I just wanted have an AMAZING Bikini Concealer that came out and it covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nWebsite: https://www.skinzandco.com\n\n\nThank you so much for watching!! I have a lot more regimens coming your way!!\nLIKE.COMMENT. & SUBSCRIBE FOR MORE!!!!!!!!!!!!!!!!!!!!",
+        "video": "https://www.youtube.com/watch?v=JAW7gPp2l74",
+        "thumbnail": "https://i.ytimg.com/vi/JAW7gPp2l74/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=JAW7gPp2l74",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 121,
+          "dislikes": -1,
+          "comments": 21,
+          "views": 3920
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "nmaFUU1zZJY",
+        "created": "2022-04-23T22:00:00.000+00:00",
+        "title": "BIKINI CONCEALER",
+        "text": "Our “BIKINI CONCEALER” 🤎 is truly AMAZING. \nCovers Up:\n-Hyperpigmentation \n-Razor Bumps\n-Dark marks\n-Stretch marks\n-C-Section scars\n\nThe concealer is SWEATproof, WATERproof, and INTIMATE-proof. Good for the Beach, Pool, Vacations, Lingerie, Sexy time😏, etc. \n\nReleasing May 1st, 2022 @12 noon. \nWEBSITE coming soon✨",
+        "video": "https://www.youtube.com/watch?v=nmaFUU1zZJY",
+        "thumbnail": "https://i.ytimg.com/vi/nmaFUU1zZJY/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=nmaFUU1zZJY",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 119,
+          "dislikes": -1,
+          "comments": 8,
+          "views": 2471
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "rEIc6vsaPe8",
+        "created": "2018-10-15T22:00:00.000+00:00",
+        "title": "NATURAL HAIR VS WEAVE/WIGS| COLLEGE EDITION",
+        "text": "~Hey guys, this video was just for fun, I honestly didn't agree with 99.9% of what the guys were saying, this was just a random video I wanted to shoot for entertainment. Everyone has their own opinion and preference when it comes to another person. Hope you guys enjoy this video. ~\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInstagram- DANNI V.\nSnapChat-Weezyfdanni \nTwitter-DANNI",
+        "video": "https://www.youtube.com/watch?v=rEIc6vsaPe8",
+        "thumbnail": "https://i.ytimg.com/vi/rEIc6vsaPe8/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=rEIc6vsaPe8",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 107,
+          "dislikes": -1,
+          "comments": 28,
+          "views": 5557
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "0C0qBqkNTPg",
+        "created": "2018-04-30T22:00:00.000+00:00",
+        "title": "THESE PRODUCTS CLEARED MY SKIN IN 2 WEEKS",
+        "text": "This process only took one month for my skin to clear up. It faded in the first 2 weeks, but it might not work for all, you have to be consistent and repeat this regimen at least two times a day.\n\n\nFace Wash\n\n\nFace Scrub\n\n\nLotion/Moisturizer",
+        "video": "https://www.youtube.com/watch?v=0C0qBqkNTPg",
+        "thumbnail": "https://i.ytimg.com/vi/0C0qBqkNTPg/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=0C0qBqkNTPg",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 103,
+          "dislikes": -1,
+          "comments": 2,
+          "views": 4385
+        }
+      }
+    ],
+    "recent_posts": [
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "lXrTbeyVo94",
+        "created": "2023-08-22T22:00:00.000+00:00",
+        "title": "BEST HD LACE WIG FOR THE FALL 🍁| ZLIKE HairWig",
+        "text": "I am IN LOVE with this wig y’all. I’ve had ALOT of wigs in the past and this by far is the best I’ve had!!\n\nHair Specs: 13x4/26 inch/straight\n\nThickness ✅ \nPreplucked ✅\nLayered ✅\nTHIN HD LACE ✅✅✅\n\n●▬▬▬▬▬▬▬▬▬#ZlikeHair▬▬▬▬▬▬▬▬●\nSame Hair I’m Wearing In The Video➤https://bit.ly/3QPPyfG\n➤➤➤Hair Info:Long Straight Human Hair Wig Undetectable Transparent 13x4 Lace Wig\nUse My Code \"Z25\" Get Extra 25% Off\n#ZlikeHair Official Store➤https://zlikehair.com/\n \nClick Here, More HAIR WIGS Are Waiting For You:\n• Wear-Go Glueless Wigs ➤ https://zlikehair.com/collections/wear-go-wigs\n• Hot Sale Lace Front Wig ➤ https://zlikehair.com/collections/best-seller\n\n#Zlike Social Media:\nYoutube @Zlikehair: https://www.youtube.com/@zlikehair\nTiktok @Zlikehair: https://www.tiktok.com/@zlikehair\nInstagram @Zlikehair: https://www.instagram.com/zlikehair\n • Zlikehair Whatsapp: +86 18567313160 / service@zlikehair.com",
+        "video": "https://www.youtube.com/watch?v=lXrTbeyVo94",
+        "thumbnail": "https://i.ytimg.com/vi/lXrTbeyVo94/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=lXrTbeyVo94",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 5,
+          "dislikes": -1,
+          "comments": 2,
+          "views": 104
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "FPmAtb-YD7g",
+        "created": "2023-05-21T22:00:00.000+00:00",
+        "title": "Made my own Custom Name Sign for myDaughter's Nursery . #diy #pregnancy #nursery #diyprojects",
+        "video": "https://www.youtube.com/watch?v=FPmAtb-YD7g",
+        "thumbnail": "https://i.ytimg.com/vi/FPmAtb-YD7g/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=FPmAtb-YD7g",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 7,
+          "dislikes": -1,
+          "comments": 0,
+          "views": 85
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "0YOQwPBGQq8",
+        "created": "2023-04-03T22:00:00.000+00:00",
+        "title": "My New BikiniConcealer is WATERPROOF SWEATPROOFINTIMATE PROOF& Completely Safe for your Bikini Area✨",
+        "video": "https://www.youtube.com/watch?v=0YOQwPBGQq8",
+        "thumbnail": "https://i.ytimg.com/vi/0YOQwPBGQq8/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=0YOQwPBGQq8",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 3,
+          "dislikes": -1,
+          "comments": 1,
+          "views": 98
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "kBlOQ6OHBWw",
+        "created": "2023-01-27T23:00:00.000+00:00",
+        "title": "Gender Reveal Party",
+        "video": "https://www.youtube.com/watch?v=kBlOQ6OHBWw",
+        "thumbnail": "https://i.ytimg.com/vi/kBlOQ6OHBWw/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=kBlOQ6OHBWw",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": false,
+          "views_count_enabled": true,
+          "dislikes": -1,
+          "views": 42
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "6VsSfBO2tyY",
+        "created": "2023-01-10T23:00:00.000+00:00",
+        "title": "CANNABIS FACE WASH??| Pamper Routine| Feat. Hey Bud|",
+        "text": "I HAD to share this Cannabis Skincare Line that I have been using for the past few months. I found this company on Instagram and read the reviews and had to try it out myself. I love it SO much, and the clay mask is Bomb! I definitely recommend using the overnight moisturizer and serum at night due to the relaxation state it puts you in. Hope you guys love it, as much as I do!\n\nEverything I used in the video came in a bundle package for $80 total but you can buy it separately on the website. \n\nLink to Bundle Package: \nhttps://heybudskincare.com/en-us/products/clear-essentials-bundle\n\n\n\n~Socials~: \nInstagram:\n@therealdanni_v\nhttps://www.instagram.com/therealdanni_v/?next=%2F\n\nTikTok:\n@therealdanni_v\n\nOKAY IT'S OFFICIAL!!! My New BIKINI CONCEALER is Now OUT!! ~\nThe Bikini Concealer covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nYou can find the bikini concealer on:\nWebsite: www.skinzandco.com\n\nInstagram: @skinzandco\nhttps://www.instagram.com/skinzandco/?next=%2F\n\nBusiness Email: \ntypicalmarie123@gmail.com",
+        "video": "https://www.youtube.com/watch?v=6VsSfBO2tyY",
+        "thumbnail": "https://i.ytimg.com/vi/6VsSfBO2tyY/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=6VsSfBO2tyY",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 12,
+          "dislikes": -1,
+          "comments": 6,
+          "views": 214
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "gAGdgtSWr5I",
+        "created": "2022-09-10T22:00:00.000+00:00",
+        "title": "Get the PERFECT BIKINI in SECONDS!!! ✨This Bikini Concealer is WATERPROOF & SWEATPROOF!",
+        "video": "https://www.youtube.com/watch?v=gAGdgtSWr5I",
+        "thumbnail": "https://i.ytimg.com/vi/gAGdgtSWr5I/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=gAGdgtSWr5I",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 17,
+          "dislikes": -1,
+          "comments": 3,
+          "views": 539
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "JAW7gPp2l74",
+        "created": "2022-08-03T22:00:00.000+00:00",
+        "title": "LASER HAIR REMOVAL AT HOME?? *RoseSkinCo Lumi*",
+        "text": "Code \"DANNI15\" for 15% off Lumi IPL HAIR REMOVAL RoseSkinCo Handset: https://shop.roseskinco.com/at-roseskinco60\n Free shipping in addition to 15% OFF\n\nHI Beatuies, I just wanted to share with you my NEW go to hair removal method. I tried out this handset for about a month and my hair is almost completely gone,  PERMANENTLY. I am so excited to share this with you guys because hair can get annoying, and this handset has really changed the game! You know I always come and share with you guys when I find something that actually works. \n\nMake sure to use my link to get a discount when you purchase yours! DANNI15\n\n#RoseSkinCo #Lumi #Beauty #LaserHair Removal #HairRemoval #IPLHairRemoval\n\nAbout me~\nAge:25\nInstagram: @therealdanni_v\nTikTok: @Therealdanni_v\n\nHey Ladies, I just wanted have an AMAZING Bikini Concealer that came out and it covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nWebsite: https://www.skinzandco.com\n\n\nThank you so much for watching!! I have a lot more regimens coming your way!!\nLIKE.COMMENT. & SUBSCRIBE FOR MORE!!!!!!!!!!!!!!!!!!!!",
+        "video": "https://www.youtube.com/watch?v=JAW7gPp2l74",
+        "thumbnail": "https://i.ytimg.com/vi/JAW7gPp2l74/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=JAW7gPp2l74",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 121,
+          "dislikes": -1,
+          "comments": 21,
+          "views": 3920
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "rYk6p-JypOc",
+        "created": "2022-05-12T22:00:00.000+00:00",
+        "title": "MAKEUP FOR YOUR BIKINI?? How to get the perfect bikini in SECONDS✨- SKINZ&CO.",
+        "text": "OKAY IT'S OFFICIAL!!! My New BIKINI CONCEALER is Now OUT!! \nThe Bikini Concealer covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nYou can find the bikini concealer on:\nWebsite: www.skinzandco.com\nInstagram: @skinzandco\n\nThe Concealer also has a remover that is releasing soon so stay tuned!\n\nFollow my personal Instagram Page\n@therealdanni_v",
+        "video": "https://www.youtube.com/watch?v=rYk6p-JypOc",
+        "thumbnail": "https://i.ytimg.com/vi/rYk6p-JypOc/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=rYk6p-JypOc",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 151,
+          "dislikes": -1,
+          "comments": 22,
+          "views": 5992
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "NdonO7_fNJQ",
+        "created": "2022-05-10T22:00:00.000+00:00",
+        "title": "Affordable First Time Wax Kit | Amazon Finds",
+        "text": "Instagram: @therealdanni_v\n\nHey Beauties, I just wanted to share a kit I found that works wonders. The wax itself that it comes with is almost painless and that is very rare to find. This video is not sponsored, everything I stated in this video was completely honest. Summer is coming, and this is the BEST way to save your coins when it comes to beauty maintenance!!\n\n\nThe link to wax kit: https://www.amazon.com/Home-Waxing-Warmer-Hair-Removal/dp/B07CRZQ9MY/?maas=maas_adg_DDE1AED2EC4128A3DCE9224C3D9B676A_afap_abs&ref_=aa_maas&tag=maas\n\n\n\nHey Ladies, I just wanted to add I have a new bikini concealer that came out and it covers ALL hyperpigmentation, discoloration, razor bumps, stretch marks, dark marks, C-section scars, etc. \n\nIt is WATER PROOF, SWEAT PROOF, and intimate proof (penetration/sexy time). It’s great for your bikini area when wanting to wear a bikini, lingerie, or whenever those areas are exposed. \n\nYou ladies are going to LOVE IT! Releases May 1st, 2022 @12 noon. \n\nInstagram: @skinz&co_\nWebsite: www.skinzandco.com\n\n\nThank you so much for watching!! I have a lot more regimens coming your way!!\nLIKE.COMMENT. & SUBSCRIBE FOR MORE!!!!!!!!!!!!!!!!!!!!",
+        "video": "https://www.youtube.com/watch?v=NdonO7_fNJQ",
+        "thumbnail": "https://i.ytimg.com/vi/NdonO7_fNJQ/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=NdonO7_fNJQ",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 97,
+          "dislikes": -1,
+          "comments": 9,
+          "views": 1269
+        }
+      },
+      {
+        "user_id": "UCSTgtLylu5QDTuWBHShXpLQ",
+        "user_picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+        "user_url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+        "type": "video",
+        "post_id": "nmaFUU1zZJY",
+        "created": "2022-04-23T22:00:00.000+00:00",
+        "title": "BIKINI CONCEALER",
+        "text": "Our “BIKINI CONCEALER” 🤎 is truly AMAZING. \nCovers Up:\n-Hyperpigmentation \n-Razor Bumps\n-Dark marks\n-Stretch marks\n-C-Section scars\n\nThe concealer is SWEATproof, WATERproof, and INTIMATE-proof. Good for the Beach, Pool, Vacations, Lingerie, Sexy time😏, etc. \n\nReleasing May 1st, 2022 @12 noon. \nWEBSITE coming soon✨",
+        "video": "https://www.youtube.com/watch?v=nmaFUU1zZJY",
+        "thumbnail": "https://i.ytimg.com/vi/nmaFUU1zZJY/hqdefault.jpg",
+        "link": "https://www.youtube.com/watch?v=nmaFUU1zZJY",
+        "stat": {
+          "likes_count_enabled": true,
+          "comments_count_enabled": true,
+          "views_count_enabled": true,
+          "likes": 119,
+          "dislikes": -1,
+          "comments": 8,
+          "views": 2471
+        }
+      }
+    ]
+  },
+  "audience_likers": {
+    "success": false,
+    "error": "empty_audience"
+  },
+  "audience_followers": {
+    "success": true,
+    "data": {
+      "notable_users_ratio": 0.011236,
+      "audience_genders": [
+        {
+          "code": "MALE",
+          "weight": 0.037817
+        },
+        {
+          "code": "FEMALE",
+          "weight": 0.962183
+        }
+      ],
+      "audience_ages": [
+        {
+          "code": "13-17",
+          "weight": 0.097485
+        },
+        {
+          "code": "18-24",
+          "weight": 0.662265
+        },
+        {
+          "code": "25-34",
+          "weight": 0.219153
+        },
+        {
+          "code": "35-44",
+          "weight": 0.018782
+        },
+        {
+          "code": "45-64",
+          "weight": 0.002315
+        },
+        {
+          "code": "65-",
+          "weight": 0
+        }
+      ],
+      "audience_genders_per_age": [
+        {
+          "code": "13-17",
+          "male": 0.002578,
+          "female": 0.094907
+        },
+        {
+          "code": "18-24",
+          "male": 0.024925,
+          "female": 0.63734
+        },
+        {
+          "code": "25-34",
+          "male": 0.007735,
+          "female": 0.211418
+        },
+        {
+          "code": "35-44",
+          "male": 0.002578,
+          "female": 0.016204
+        },
+        {
+          "code": "45-64",
+          "male": 0,
+          "female": 0.002315
+        },
+        {
+          "code": "65-",
+          "male": 0,
+          "female": 0
+        }
+      ],
+      "audience_languages": [
+        {
+          "code": "en",
+          "name": "English",
+          "weight": 0.854816
+        },
+        {
+          "code": "es",
+          "name": "Spanish",
+          "weight": 0.038812
+        },
+        {
+          "code": "ar",
+          "name": "Arabic",
+          "weight": 0.018208
+        },
+        {
+          "code": "pt",
+          "name": "Portuguese",
+          "weight": 0.01725
+        },
+        {
+          "code": "fr",
+          "name": "French",
+          "weight": 0.012937
+        },
+        {
+          "code": "de",
+          "name": "German",
+          "weight": 0.011021
+        },
+        {
+          "code": "it",
+          "name": "Italian",
+          "weight": 0.007667
+        },
+        {
+          "code": "ru",
+          "name": "Russian",
+          "weight": 0.006229
+        },
+        {
+          "code": "th",
+          "name": "Thai",
+          "weight": 0.004312
+        },
+        {
+          "code": "pl",
+          "name": "Polish",
+          "weight": 0.004312
+        },
+        {
+          "code": "nl",
+          "name": "Dutch",
+          "weight": 0.003833
+        },
+        {
+          "code": "bg",
+          "name": "Bulgarian",
+          "weight": 0.001917
+        },
+        {
+          "code": "ro",
+          "name": "Romanian",
+          "weight": 0.001917
+        },
+        {
+          "code": "no",
+          "name": "Norwegian",
+          "weight": 0.001437
+        },
+        {
+          "code": "hu",
+          "name": "Hungarian",
+          "weight": 0.001437
+        },
+        {
+          "code": "sv",
+          "name": "Swedish",
+          "weight": 0.001437
+        },
+        {
+          "code": "el",
+          "name": "Greek",
+          "weight": 0.001437
+        },
+        {
+          "code": "tr",
+          "name": "Turkish",
+          "weight": 0.001437
+        },
+        {
+          "code": "sr",
+          "name": "Serbian",
+          "weight": 0.000958
+        },
+        {
+          "code": "zh",
+          "name": "Chinese",
+          "weight": 0.000958
+        },
+        {
+          "code": "other",
+          "weight": 0.007667
+        }
+      ],
+      "audience_geo": {
+        "countries": [
+          {
+            "id": 148838,
+            "name": "United States",
+            "code": "US",
+            "weight": 0.646707
+          },
+          {
+            "id": 62149,
+            "name": "United Kingdom",
+            "code": "GB",
+            "weight": 0.041916
+          },
+          {
+            "id": 1428125,
+            "name": "Canada",
+            "code": "CA",
+            "weight": 0.02994
+          },
+          {
+            "id": 304716,
+            "name": "India",
+            "code": "IN",
+            "weight": 0.023952
+          },
+          {
+            "id": 51477,
+            "name": "Germany",
+            "code": "DE",
+            "weight": 0.017964
+          },
+          {
+            "id": 59470,
+            "name": "Brazil",
+            "code": "BR",
+            "weight": 0.017964
+          },
+          {
+            "id": 3630439,
+            "name": "Morocco",
+            "code": "MA",
+            "weight": 0.017964
+          },
+          {
+            "id": 192756,
+            "name": "Algeria",
+            "code": "DZ",
+            "weight": 0.017964
+          },
+          {
+            "id": 80500,
+            "name": "Australia",
+            "code": "AU",
+            "weight": 0.017964
+          },
+          {
+            "id": 2323309,
+            "name": "The Netherlands",
+            "code": "NL",
+            "weight": 0.017964
+          },
+          {
+            "id": 295480,
+            "name": "Portugal",
+            "code": "PT",
+            "weight": 0.011976
+          },
+          {
+            "id": 52822,
+            "name": "Sweden",
+            "code": "SE",
+            "weight": 0.011976
+          },
+          {
+            "id": 307573,
+            "name": "Pakistan",
+            "code": "PK",
+            "weight": 0.011976
+          }
+        ]
+      },
+      "audience_lookalikes": [
+        {
+          "user_id": "UCQ3dsADkeqdnCiiuDM6PjXQ",
+          "username": "amynicolaox",
+          "handle": "amynicolaox",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRqKtc76wUR6QOGZAGDH8d91F45-HrPUsVN_CIczQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 204000,
+          "fullname": "amynicolaox",
+          "url": "https://www.youtube.com/channel/UCQ3dsADkeqdnCiiuDM6PjXQ",
+          "geo": {
+            "country": {
+              "id": 1428125,
+              "name": "Canada",
+              "code": "CA",
+              "coords": {
+                "lat": 45.41117,
+                "lon": -75.69812
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 420,
+          "avg_likes": 420,
+          "avg_views": 9378,
+          "score": 0.51455
+        },
+        {
+          "user_id": "UCbvmDM738XsC_QV0YlNzl1w",
+          "custom_name": "KCelyce",
+          "handle": "KCelyce",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRIq3Bo6sETjN1AxQkeMQ-wOk_MsGyJhmNmV5r9RA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 20900,
+          "fullname": "K Celyce",
+          "url": "https://www.youtube.com/channel/UCbvmDM738XsC_QV0YlNzl1w",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 99,
+          "avg_likes": 99,
+          "avg_views": 1148,
+          "score": 0.52379
+        },
+        {
+          "user_id": "UCTqPHb-HwOkjgkuCtadCK3g",
+          "username": "iAmJesseniaVice",
+          "handle": "iamjessenia",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQ9tytd4W0LZAeq6WfOMuhPFcSqcIdCkdF3SKlZiA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 41900,
+          "fullname": "Jessenia",
+          "url": "https://www.youtube.com/channel/UCTqPHb-HwOkjgkuCtadCK3g",
+          "is_verified": false,
+          "engagements": 29,
+          "avg_likes": 29,
+          "avg_views": 1125,
+          "score": 0.523858
+        },
+        {
+          "user_id": "UCaBNHOS6b9HeQ3Eru9Lyz1w",
+          "custom_name": "jewelsharee",
+          "handle": "jewelsharee",
+          "picture": "https://yt3.googleusercontent.com/LuLStyG_WFYoLW7N7QscOF2gVL2RX585wr4YQ88F3l7ucZtwZmJLQyM5sop_6rDORryJ4Lkd2OI=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 6690,
+          "fullname": "jewelsharee",
+          "url": "https://www.youtube.com/channel/UCaBNHOS6b9HeQ3Eru9Lyz1w",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 111,
+          "avg_likes": 111,
+          "avg_views": 3411,
+          "score": 0.541088
+        },
+        {
+          "user_id": "UCZYtc1pYRRahF0WKKh77wUw",
+          "custom_name": "MomAndDadOfficial",
+          "handle": "MomAndDadOfficial",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRx1B_ROue84OHUkl6l5H16CxZKuhzfTT7yf70VDg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1730,
+          "fullname": "MomAndDad",
+          "url": "https://www.youtube.com/channel/UCZYtc1pYRRahF0WKKh77wUw",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 20,
+          "avg_likes": 20,
+          "avg_views": 480,
+          "score": 0.541167
+        },
+        {
+          "user_id": "UCF594SlcJJtlj_Tl8mQ0nZw",
+          "handle": "Crankbaitchris",
+          "picture": "https://yt3.googleusercontent.com/NFF87mgfwTigpw5j_a3W_uwWFpirjmTg6f7eTs0qE-hTl-gGU-wOyFX-jd4Bi5aDmkLomnjB=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1440,
+          "fullname": "Angie P",
+          "url": "https://www.youtube.com/channel/UCF594SlcJJtlj_Tl8mQ0nZw",
+          "is_verified": false,
+          "engagements": 132,
+          "avg_likes": 132,
+          "avg_views": 5739,
+          "score": 0.541289
+        },
+        {
+          "user_id": "UCLCCzVXRpVJcVnVnHO3J24g",
+          "handle": "miriamr.delrio6428",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQdS8pRbylM0WKW4l_QM6ahlJxz28b7tUJlQgjmpg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2340,
+          "fullname": "Miriam R. DelRio",
+          "url": "https://www.youtube.com/channel/UCLCCzVXRpVJcVnVnHO3J24g",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 35,
+          "avg_likes": 35,
+          "avg_views": 365,
+          "score": 0.542493
+        },
+        {
+          "user_id": "UCNmBk3uRVrxivG0kQPTFsCA",
+          "custom_name": "TheAdventuresOfQuan",
+          "handle": "FoodCuresAndStories",
+          "picture": "https://yt3.googleusercontent.com/YweJ5tJSbifrJaQ-08xdNi_0TRYwU9dxerr6kHyEBarYUYDWbeRBLvmXIObk3RNOqHrJNVBfHA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2700,
+          "fullname": "Food Cures And Stories",
+          "url": "https://www.youtube.com/channel/UCNmBk3uRVrxivG0kQPTFsCA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 4,
+          "avg_likes": 4,
+          "avg_views": 71,
+          "score": 0.542942
+        },
+        {
+          "user_id": "UCai8ssnvd4VnfCidmIoRAQA",
+          "handle": "theashlife8119",
+          "picture": "https://yt3.googleusercontent.com/6C0GGgQooNL9-CG6rJdnb39kWVIc_aMjhG8cb5imh1aihsMXBnChR20KTCdmSLvGYbjYQW7wNg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 5650,
+          "fullname": "The Ash Life",
+          "url": "https://www.youtube.com/channel/UCai8ssnvd4VnfCidmIoRAQA",
+          "is_verified": false,
+          "engagements": 246,
+          "avg_likes": 246,
+          "avg_views": 3299,
+          "score": 0.545847
+        },
+        {
+          "user_id": "UCYpU2iFsXpmgOMu4XYIbZtg",
+          "custom_name": "AlyssaDauphin",
+          "handle": "AlyssaDauphin",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSK4svYCHema2kiaSjvJDjlTszU-GqbYVyZAlBwmw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 827,
+          "fullname": "Alyssa Dauphin",
+          "url": "https://www.youtube.com/channel/UCYpU2iFsXpmgOMu4XYIbZtg",
+          "geo": {
+            "country": {
+              "id": 1428125,
+              "name": "Canada",
+              "code": "CA",
+              "coords": {
+                "lat": 45.41117,
+                "lon": -75.69812
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 50,
+          "avg_likes": 50,
+          "avg_views": 9348,
+          "score": 0.546523
+        },
+        {
+          "user_id": "UCTkVYAExdMk5mJX7Tvc4cuA",
+          "custom_name": "NadiaAhmadi",
+          "handle": "NadiaAhmadi",
+          "picture": "https://yt3.googleusercontent.com/SAGWB4Riv3hBorGbqCgV_6VWajj5vkQ9CcmSF6fSPNQyivYVzTlctVb3NYeVdqJlFBdnHwZv2s8=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 25300,
+          "fullname": "Nadia Ahmadi",
+          "url": "https://www.youtube.com/channel/UCTkVYAExdMk5mJX7Tvc4cuA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 89,
+          "avg_likes": 89,
+          "avg_views": 1522,
+          "score": 0.548103
+        },
+        {
+          "user_id": "UCQr3OoCiXZ7vimgoIoN-nqA",
+          "custom_name": "FROMUSTOYOU",
+          "handle": "FROMUSTOYOU",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTus2rfp54UoNjsPG8L2eYqDEDRGIUjDhDOUxC8oQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1670,
+          "fullname": "FROM US TO YOU",
+          "url": "https://www.youtube.com/channel/UCQr3OoCiXZ7vimgoIoN-nqA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 71,
+          "avg_likes": 71,
+          "avg_views": 372,
+          "score": 0.548317
+        },
+        {
+          "user_id": "UCH034iQ_Z4hvrDEzkJMh96w",
+          "handle": "cloudxiiisalonsuite",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSRk5yjMZ6YH7lqxhTkA1Ftw6H6giPJJwTiy3bhyg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1650,
+          "fullname": "Cloud XIII",
+          "url": "https://www.youtube.com/channel/UCH034iQ_Z4hvrDEzkJMh96w",
+          "is_verified": false,
+          "engagements": 93,
+          "avg_likes": 93,
+          "avg_views": 1434,
+          "score": 0.548401
+        },
+        {
+          "user_id": "UCZ4DkCN5-n_f91uRNQ4bQMA",
+          "custom_name": "GabiBailey",
+          "handle": "GabiBailey",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTRu7u_9Ck9mMPJo4UJZXV2evaTIdB1m3g3GUfgYA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 8300,
+          "fullname": "Gabi Bailey",
+          "url": "https://www.youtube.com/channel/UCZ4DkCN5-n_f91uRNQ4bQMA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 178,
+          "avg_likes": 178,
+          "avg_views": 8487,
+          "score": 0.5522
+        },
+        {
+          "user_id": "UCJZVeax9D9m7TxokzwU8tVQ",
+          "username": "LaceFaceMUA",
+          "handle": "LaceFaceMUA",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaScVuEzNFEQSATPdeVxR2tx-IGs2OdtQIuA-aBe=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1670,
+          "fullname": "izzydoesmakeup!",
+          "url": "https://www.youtube.com/channel/UCJZVeax9D9m7TxokzwU8tVQ",
+          "is_verified": false,
+          "engagements": 39,
+          "avg_likes": 39,
+          "avg_views": 1588,
+          "score": 0.552361
+        },
+        {
+          "user_id": "UCM8UMJ-PO6Ta5T08Fg46bhw",
+          "username": "frogcrazy4",
+          "handle": "MethodicalMeLife",
+          "picture": "https://yt3.googleusercontent.com/Cva1TWngnKDapeUOxwNAe35023FihICcHiIjqi222d9rBuYfT5c696-4zFh6EZAmNSFyupGd=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1560,
+          "fullname": "Teresa Boucher",
+          "url": "https://www.youtube.com/channel/UCM8UMJ-PO6Ta5T08Fg46bhw",
+          "is_verified": false,
+          "engagements": 34,
+          "avg_likes": 34,
+          "avg_views": 600,
+          "score": 0.553254
+        },
+        {
+          "user_id": "UC4h3DLJ7g5dtyQ1XVv_ANxw",
+          "custom_name": "YarishnaFitnessTV",
+          "handle": "YarishnaFitnessTV",
+          "picture": "https://yt3.googleusercontent.com/j3KRYzmR8xbz8fr387c2fqBFXHMwwJ6oCf-c7uX-S9JF84zn_IOJwU7GrkaCPRORPNqlIsdWaCI=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 11600,
+          "fullname": "Yarishna Fitness",
+          "url": "https://www.youtube.com/channel/UC4h3DLJ7g5dtyQ1XVv_ANxw",
+          "is_verified": false,
+          "engagements": 471,
+          "avg_likes": 471,
+          "avg_views": 16944,
+          "score": 0.555513
+        },
+        {
+          "user_id": "UCjfAl9-Z35AIYEr8Yx4rNQA",
+          "custom_name": "ADreamGroup",
+          "handle": "ADreamGroup",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRl9fWHhGY5PxT_WnkJIzl-Mb3xczPl6E7Q7bHf=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 3200,
+          "fullname": "Dream Model & Talent Agency",
+          "url": "https://www.youtube.com/channel/UCjfAl9-Z35AIYEr8Yx4rNQA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 8,
+          "avg_likes": 8,
+          "avg_views": 2443,
+          "score": 0.55556
+        },
+        {
+          "user_id": "UClojMmzE8NmRoruuIL1gnbA",
+          "custom_name": "maryalicejenni",
+          "handle": "maryalicejenni",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTmbNQ3wLl1ijk_z2mekCdzayZ7zJc7D3BQnWSKfg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 20100,
+          "fullname": "MaryAlice Jenni",
+          "url": "https://www.youtube.com/channel/UClojMmzE8NmRoruuIL1gnbA",
+          "is_verified": false,
+          "engagements": 38,
+          "avg_likes": 38,
+          "avg_views": 689,
+          "score": 0.556347
+        },
+        {
+          "user_id": "UC3g4r7QK9q8YxIPWbthu4uQ",
+          "custom_name": "MrsClemente",
+          "handle": "MrsClemente",
+          "picture": "https://yt3.googleusercontent.com/V3lLA6wzFIkX07fSBx5QKmbb273Egj2N8HPeObEHC_jpN_if1G3YaASqJLKs0l4RKdouvieW=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1040,
+          "fullname": "MAKEUPBYROSYCLEMENTE",
+          "url": "https://www.youtube.com/channel/UC3g4r7QK9q8YxIPWbthu4uQ",
+          "is_verified": false,
+          "engagements": 43,
+          "avg_likes": 43,
+          "avg_views": 1031,
+          "score": 0.556542
+        },
+        {
+          "user_id": "UCays8LS-UFUSqWovAdVf_TQ",
+          "username": "prettyaihtorria1",
+          "custom_name": "CyntorriaElyse",
+          "handle": "CyntorriaElyse",
+          "picture": "https://yt3.googleusercontent.com/I_kgIID4ePZ_Iwch2ZhbwogVfuItn7y0yPHRx6c6S-YSfUsDt3QOmQzUzpYIsW8gh7FQfb7QPQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1060,
+          "fullname": "Cyntorria Elyse",
+          "url": "https://www.youtube.com/channel/UCays8LS-UFUSqWovAdVf_TQ",
+          "is_verified": false,
+          "engagements": 7,
+          "avg_likes": 7,
+          "avg_views": 102,
+          "score": 0.557634
+        },
+        {
+          "user_id": "UCzQ0zFpu8F16YmruwgFfQBA",
+          "handle": "cidnicnicole6808",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaT5BZPqlhVzaicrgGCsgqZdJDjSmQz8--KnPOf5=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 5390,
+          "fullname": "cidnic nicole",
+          "url": "https://www.youtube.com/channel/UCzQ0zFpu8F16YmruwgFfQBA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 479,
+          "avg_likes": 479,
+          "avg_views": 20036,
+          "score": 0.557767
+        },
+        {
+          "user_id": "UCGLhNUFhP19AJBchh0e4Usw",
+          "custom_name": "ShanySbeauty",
+          "handle": "ShanySbeauty",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQNxdEWT5jZ7K-sZgdLw23tdoI6lNKXxql2Q7kg=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1600,
+          "fullname": "ShanySbeauty",
+          "url": "https://www.youtube.com/channel/UCGLhNUFhP19AJBchh0e4Usw",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 27,
+          "avg_likes": 27,
+          "avg_views": 1333,
+          "score": 0.559065
+        },
+        {
+          "user_id": "UCmz5mfycmpj5z_cP1To6oZw",
+          "handle": "jammincuisine",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRhuAInRIt1ZiSTxmXv0X4WLBzETWaigyPij1t1=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 7630,
+          "fullname": "Jammin Cuisine",
+          "url": "https://www.youtube.com/channel/UCmz5mfycmpj5z_cP1To6oZw",
+          "is_verified": false,
+          "engagements": 23,
+          "avg_likes": 23,
+          "avg_views": 569,
+          "score": 0.560055
+        },
+        {
+          "user_id": "UCWmzr6Pal5qt9Q7odjPgcNg",
+          "username": "Biancaaxxo",
+          "custom_name": "BiancaBello",
+          "handle": "biancaellob",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRgUpttDWJp5gkDWXCgqeVaUNfgvttS7TZMlMTLjw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 24500,
+          "fullname": "Bianca Bello",
+          "url": "https://www.youtube.com/channel/UCWmzr6Pal5qt9Q7odjPgcNg",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 45,
+          "avg_likes": 45,
+          "avg_views": 1439,
+          "score": 0.560059
+        },
+        {
+          "user_id": "UCHkW6MPCeTbfcBWqWsLhVuA",
+          "handle": "missbombaclaudietv9011",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSOj2G_x9udf7XbPiwLoVPqhL-i_V1iTUoMDFSq7A=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 868,
+          "fullname": "Miss Bomba Claudie TV",
+          "url": "https://www.youtube.com/channel/UCHkW6MPCeTbfcBWqWsLhVuA",
+          "geo": {
+            "country": {
+              "id": 555017,
+              "name": "Jamaica",
+              "code": "JM",
+              "coords": {
+                "lat": 17.99702,
+                "lon": -76.79358
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 9,
+          "avg_likes": 9,
+          "avg_views": 392,
+          "score": 0.560117
+        },
+        {
+          "user_id": "UChPdF99fCi_AK9MjLb_Rf9Q",
+          "handle": "docteurchocolat3532",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQYNx6ywXATJQst7zChbc_-lbAXoqZHVDJJn2hh=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1250,
+          "fullname": "docteur chocolat",
+          "url": "https://www.youtube.com/channel/UChPdF99fCi_AK9MjLb_Rf9Q",
+          "is_verified": false,
+          "engagements": 205,
+          "avg_likes": 205,
+          "avg_views": 22196,
+          "score": 0.561303
+        },
+        {
+          "user_id": "UCBRm11eRDHvPMzEQGped-rQ",
+          "username": "BeautyByGabbie",
+          "custom_name": "BeautyByGabbie",
+          "handle": "GabbieMorgan",
+          "picture": "https://yt3.googleusercontent.com/Gwpo3J1iyQ-P3aqqlott2_xY69V0myeQP2PUC0MFV8qkuP6ki6VQ-u8xEjMjlrGKdZn4XgzDCw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 278000,
+          "fullname": "Gabbie Morgan",
+          "url": "https://www.youtube.com/channel/UCBRm11eRDHvPMzEQGped-rQ",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": true,
+          "engagements": 300,
+          "avg_likes": 300,
+          "avg_views": 4800,
+          "score": 0.562786
+        },
+        {
+          "user_id": "UCbvCnJt_geDiz8aHqusrp1Q",
+          "username": "genamourr",
+          "handle": "genamourr",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSkAbEaZFasniBNlbQjRBGI9wDFKZDIH4Yf0RGjWQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 238000,
+          "fullname": "genamourr",
+          "url": "https://www.youtube.com/channel/UCbvCnJt_geDiz8aHqusrp1Q",
+          "is_verified": false,
+          "engagements": 747,
+          "avg_likes": 747,
+          "avg_views": 64539,
+          "score": 0.563766
+        },
+        {
+          "user_id": "UCBvPG3hE6evtQBRZ4-wtegw",
+          "custom_name": "heydoctorbri",
+          "handle": "heydoctorbri",
+          "picture": "https://yt3.googleusercontent.com/NyFFdZ7iKopYlkPvFj4oMEHZEyIzXe9QV7EJQeQvfFIagdnAOEnuB8jC7Lk3mER00RxyCo1lnQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1510,
+          "fullname": "heydoctorbri",
+          "url": "https://www.youtube.com/channel/UCBvPG3hE6evtQBRZ4-wtegw",
+          "is_verified": false,
+          "engagements": 25,
+          "avg_likes": 25,
+          "avg_views": 687,
+          "score": 0.564491
+        }
+      ],
+      "notable_users": [
+        {
+          "user_id": "UCw1f_Zc5QUQrGnOcN2sU9eQ",
+          "custom_name": "GadriannDsouza",
+          "handle": "GadriannDsouza",
+          "picture": "https://yt3.googleusercontent.com/XXuLZ4EZ9inZOhzLFZaHACKJMgYK5JjXHcjzSaLWvX3AUiCevTJXueygbYXGBMxI1Tl-agfisQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 63500,
+          "fullname": "Gadriann Dsouza",
+          "url": "https://www.youtube.com/channel/UCw1f_Zc5QUQrGnOcN2sU9eQ",
+          "geo": {
+            "country": {
+              "id": 304716,
+              "name": "India",
+              "code": "IN",
+              "coords": {
+                "lat": 28.63576,
+                "lon": 77.22445
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 517,
+          "avg_likes": 517,
+          "avg_views": 23254
+        },
+        {
+          "user_id": "UCrQaJ16hzfFMIMS-Ol1yB9Q",
+          "custom_name": "WestCoastFinestHairDanceChannel49",
+          "handle": "westcoastfinesthairdancech5093",
+          "picture": "https://yt3.googleusercontent.com/L9unG8-uss0mw4hWZ4lzSRZXn-l8WqXW3BBC5N4FkgmM3kKXWWatVi9yfokHAHMOJwcz1B0L=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 26800,
+          "fullname": "West Coast Finest Hair & Dance Channel",
+          "url": "https://www.youtube.com/channel/UCrQaJ16hzfFMIMS-Ol1yB9Q",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 29,
+          "avg_likes": 29,
+          "avg_views": 759
+        },
+        {
+          "user_id": "UCKpdY7HcHCZEeKxL9a9A67A",
+          "custom_name": "Daezhanexo10",
+          "handle": "SailingSoulx_",
+          "picture": "https://yt3.googleusercontent.com/KSxrB69w3Cz70GeUpnhndlXUT6O4V_9k7YpOeZ-KqhlKIEgqGuIBBs55nVoOl5Q2jl4v69FJ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 15800,
+          "fullname": "SailingSoulx_",
+          "url": "https://www.youtube.com/channel/UCKpdY7HcHCZEeKxL9a9A67A",
+          "is_verified": false,
+          "engagements": 166,
+          "avg_likes": 166,
+          "avg_views": 5187
+        },
+        {
+          "user_id": "UC95URmpu5S2-O63qGPcmeyA",
+          "username": "krissynoelia",
+          "custom_name": "KrisNoeli",
+          "handle": "krisnoelifairy",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSw9hygX5fjSa47gW2LR-Cl0GG3Of9X3sRaXIJcgw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 14700,
+          "fullname": "Kris Noeli",
+          "url": "https://www.youtube.com/channel/UC95URmpu5S2-O63qGPcmeyA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 23,
+          "avg_likes": 23,
+          "avg_views": 700
+        },
+        {
+          "user_id": "UCYWr8SQ6Glj8zqigpXsa9Vw",
+          "handle": "kanikatayari6349",
+          "picture": "https://yt3.googleusercontent.com/rAGbyn1b4aUAVNJxa7cOIo52uUBjsQU1wqlVGX4JE8KaGipvYONsekJRcR7mJARJiEw_neXplkM=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 8610,
+          "fullname": "Kanika Tayari",
+          "url": "https://www.youtube.com/channel/UCYWr8SQ6Glj8zqigpXsa9Vw",
+          "is_verified": false,
+          "engagements": 21,
+          "avg_likes": 21,
+          "avg_views": 333
+        },
+        {
+          "user_id": "UCjgTZZNJWbVBueNbza_SzJQ",
+          "handle": "pasangsherpa686",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRaQVbdrWM9xQ_-RkZCgmzkZzV2jlIPo7Ax4hMy=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 3880,
+          "fullname": "Pasang Sherpa",
+          "url": "https://www.youtube.com/channel/UCjgTZZNJWbVBueNbza_SzJQ",
+          "geo": {
+            "country": {
+              "id": 184633,
+              "name": "Nepal",
+              "code": "NP",
+              "coords": {
+                "lat": 27.70169,
+                "lon": 85.3206
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 1129,
+          "avg_likes": 1129,
+          "avg_views": 28987
+        },
+        {
+          "user_id": "UCXCx_G3jizIuucI_hwJYiyA",
+          "handle": "nctzenforever93",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSKQRp1ydJQ-dQblkGwxXafc9FLIM7KoRlTBiS9Pw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 3110,
+          "fullname": "nctzen forever",
+          "url": "https://www.youtube.com/channel/UCXCx_G3jizIuucI_hwJYiyA",
+          "geo": {
+            "country": {
+              "id": 192756,
+              "name": "Algeria",
+              "code": "DZ",
+              "coords": {
+                "lat": 36.73225,
+                "lon": 3.08746
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 254,
+          "avg_likes": 254,
+          "avg_views": 3641
+        },
+        {
+          "user_id": "UCGJWMy-RDZOlyvBGKj0QORA",
+          "username": "Makaveli3103006",
+          "handle": "Makaveli3103006",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaTuPO-k6USeA4SC3GPHUgYc2-4_yGYj61ZL5vR0UQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2740,
+          "fullname": "DJ Dana G",
+          "url": "https://www.youtube.com/channel/UCGJWMy-RDZOlyvBGKj0QORA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 2,
+          "avg_likes": 2,
+          "avg_views": 92
+        },
+        {
+          "user_id": "UCusEsjugDL_3mLJmFy32oNg",
+          "custom_name": "AmaralinaPenloski",
+          "handle": "AlinaPenloski88",
+          "picture": "https://yt3.googleusercontent.com/lKkmqAhG1_crJhD0srjhE0WK5oga3oPWNaquilKn7IBsB3pBjHKXVeFGarodxtieIAuaZySR=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2340,
+          "fullname": "Alina Penloski ",
+          "url": "https://www.youtube.com/channel/UCusEsjugDL_3mLJmFy32oNg",
+          "geo": {
+            "country": {
+              "id": 62273,
+              "name": "Ireland",
+              "code": "IE",
+              "coords": {
+                "lat": 53.33306,
+                "lon": -6.24889
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 65,
+          "avg_likes": 65,
+          "avg_views": 1113
+        },
+        {
+          "user_id": "UC2dpf2xQCTcIm02BgGIaNxg",
+          "handle": "grindwithkay",
+          "picture": "https://yt3.googleusercontent.com/Q_e-w-GllbnPwVUyuDMe_IXtXZhCRhrosqDRCJVfTsVjRHTcSwU1i780eNXIOe3D8qxYZF42_A=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2320,
+          "fullname": "GRIND WITH KAY",
+          "url": "https://www.youtube.com/channel/UC2dpf2xQCTcIm02BgGIaNxg",
+          "is_verified": false,
+          "engagements": 89,
+          "avg_likes": 89,
+          "avg_views": 1088
+        },
+        {
+          "user_id": "UCddjOLZSum0op7un_ELPkNg",
+          "custom_name": "JasmineNaquay",
+          "handle": "JasmineNaquay",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSkK3YnePdRDUKxClVrr0DpaptX8XmIiH2ZI98wyDU=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2300,
+          "fullname": "Jasmine Naquay",
+          "url": "https://www.youtube.com/channel/UCddjOLZSum0op7un_ELPkNg",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 22,
+          "avg_likes": 22,
+          "avg_views": 271
+        },
+        {
+          "user_id": "UCEqAVrxOuJe0XwP7uPOM6bA",
+          "custom_name": "CallMeNanaPlease15",
+          "handle": "CallMeNanaPlease15",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaR54PdpA3ifwuk_1Gq0d4HkModzBv-iHcizmzrF0w=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 2100,
+          "fullname": "CallmeDejaPlease",
+          "url": "https://www.youtube.com/channel/UCEqAVrxOuJe0XwP7uPOM6bA",
+          "is_verified": false,
+          "engagements": 8,
+          "avg_likes": 8,
+          "avg_views": 107
+        },
+        {
+          "user_id": "UC8i8EENSf3C69sks7-fkdPw",
+          "username": "LeandraMays",
+          "handle": "LeandraMays",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQmbtfXpbPJKsvsnsU_T7jhZwkxQo3HlhnjQDonyw=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1910,
+          "fullname": "Leandra D.",
+          "url": "https://www.youtube.com/channel/UC8i8EENSf3C69sks7-fkdPw",
+          "is_verified": false,
+          "engagements": 56,
+          "avg_likes": 56,
+          "avg_views": 2871
+        },
+        {
+          "user_id": "UC3-sFCCMRTCxRAD5Yrkej4Q",
+          "handle": "meenahlub1956",
+          "picture": "https://yt3.googleusercontent.com/n5dAqgKfmKH_YYljT1XjPDc6FxgszazfRpFGy4Rv2ol9zLDNYr6Eo_Xa40bsYqNpiN3M9ALi0VU=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1890,
+          "fullname": "meenahlub",
+          "url": "https://www.youtube.com/channel/UC3-sFCCMRTCxRAD5Yrkej4Q",
+          "is_verified": false,
+          "engagements": 35,
+          "avg_likes": 35,
+          "avg_views": 1131
+        },
+        {
+          "user_id": "UCH3_BPWCzMTxVKxl3u9V5-w",
+          "custom_name": "GeraLa’sha",
+          "handle": "GeraLasha",
+          "picture": "https://yt3.googleusercontent.com/Yw1RlSsKgxWngThTgMRtaitCEvFnPLBrVC2UTQJPsYtezU8oivRWvpnOOJWMPyNjcNvnzw2skJI=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1870,
+          "fullname": "TheGeraLa’sha",
+          "url": "https://www.youtube.com/channel/UCH3_BPWCzMTxVKxl3u9V5-w",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 3,
+          "avg_likes": 3,
+          "avg_views": 66
+        },
+        {
+          "user_id": "UC__Pvf7p2pHhuRmdaMAjT8w",
+          "handle": "tesharozell",
+          "picture": "https://yt3.googleusercontent.com/Jtvd6xfkLT-1aHL0R6efwa_Bn2M8XrGR7hm-RtuRCbaF5Jd36d81nlQ8Uw6_IukvcvdDF-3hWA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1750,
+          "fullname": "Tesha Rozell",
+          "url": "https://www.youtube.com/channel/UC__Pvf7p2pHhuRmdaMAjT8w",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 29,
+          "avg_likes": 29,
+          "avg_views": 686
+        },
+        {
+          "user_id": "UC6XnLEKE3gfSuxaDlOWIO-A",
+          "custom_name": "MrN3wbLive",
+          "handle": "MrN3wbLive",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQTElUFRp0Hfz1rtPqsceHFdAAkLOpt9aqFGpm6oQ=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1520,
+          "fullname": "Stephen Smitley",
+          "url": "https://www.youtube.com/channel/UC6XnLEKE3gfSuxaDlOWIO-A",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 11,
+          "avg_likes": 11,
+          "avg_views": 300
+        },
+        {
+          "user_id": "UCuvED3cG8Pt0Ob9M6QNIC4Q",
+          "custom_name": "SamanthaHenry",
+          "handle": "SamanthaHenry",
+          "picture": "https://yt3.googleusercontent.com/JF590OeTigoQQ13dFttUj4fug6ySl-QF3Wxado6O9XuZtttgoVq9WkyK1X84nbN77TlTb9gs=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1300,
+          "fullname": "Samantha Henry",
+          "url": "https://www.youtube.com/channel/UCuvED3cG8Pt0Ob9M6QNIC4Q",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 21,
+          "avg_likes": 21,
+          "avg_views": 682
+        },
+        {
+          "user_id": "UCuS9XNLbCmmYHnyThqLtVOA",
+          "handle": "santaramartin",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSbRDdkxxgYjsJEjwFFIKqCotjR-XYPRiH9lIUNvA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1210,
+          "fullname": "Santara Martin",
+          "url": "https://www.youtube.com/channel/UCuS9XNLbCmmYHnyThqLtVOA",
+          "is_verified": false,
+          "engagements": 6,
+          "avg_likes": 6,
+          "avg_views": 396
+        },
+        {
+          "user_id": "UCZTfq5RUvlBAycuZGAGXL1A",
+          "handle": "heartz303",
+          "picture": "https://yt3.googleusercontent.com/_M6Bwyg_ph4fw0R9_9PI-eZkC5rn5rPca55ERlooptjU3njTD_QmjpZMd7Vh-_UKpaxArWjArA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1130,
+          "fullname": "¡heart★‘z",
+          "url": "https://www.youtube.com/channel/UCZTfq5RUvlBAycuZGAGXL1A",
+          "is_verified": false,
+          "engagements": 114,
+          "avg_likes": 114,
+          "avg_views": 2396
+        },
+        {
+          "user_id": "UCN7y-zuSnJKkY1nwUPXTLaA",
+          "username": "sarai637",
+          "handle": "sarai637",
+          "picture": "https://yt3.googleusercontent.com/e-LiDfeE3UrUjVCrdHYGnd1R2yLFDqEOafL_n-RBfYzOse4sFXEtsjdQ_zb6Hp_HG3JRQHXUsOA=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1030,
+          "fullname": "Saraí ♡",
+          "url": "https://www.youtube.com/channel/UCN7y-zuSnJKkY1nwUPXTLaA",
+          "is_verified": false,
+          "engagements": 11,
+          "avg_likes": 11,
+          "avg_views": 855
+        },
+        {
+          "user_id": "UCmVuNGjD3gQIk209lti432w",
+          "custom_name": "binsidetv",
+          "handle": "binsidetv",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSJPoBR1U464on6pS2wnPxxLZpOL9xj8SeatbLP2w=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1030,
+          "fullname": "Shani Harris",
+          "url": "https://www.youtube.com/channel/UCmVuNGjD3gQIk209lti432w",
+          "is_verified": false,
+          "engagements": 4,
+          "avg_likes": 4,
+          "avg_views": 567
+        },
+        {
+          "user_id": "UC0isPZQC1SZnY7UHTKPuBng",
+          "handle": "bmar_music",
+          "picture": "https://yt3.googleusercontent.com/iGj5s6FmWrpjBKMKP0-HNqoVijp7xuIdj3F82b6xDt7aR8w9aKtE4xb1Ix9pTNwiVTP8GCFx-rU=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1000,
+          "fullname": "BMAR",
+          "url": "https://www.youtube.com/channel/UC0isPZQC1SZnY7UHTKPuBng",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 33,
+          "avg_likes": 33,
+          "avg_views": 600
+        }
+      ]
+    }
+  },
+  "audience_commenters": {
+    "success": true,
+    "data": {
+      "notable_users_ratio": 0.045872,
+      "audience_genders": [
+        {
+          "code": "MALE",
+          "weight": 0.077922
+        },
+        {
+          "code": "FEMALE",
+          "weight": 0.922078
+        }
+      ],
+      "audience_ages": [
+        {
+          "code": "13-17",
+          "weight": 0.084188
+        },
+        {
+          "code": "18-24",
+          "weight": 0.67316
+        },
+        {
+          "code": "25-34",
+          "weight": 0.242652
+        },
+        {
+          "code": "35-44",
+          "weight": 0
+        },
+        {
+          "code": "45-64",
+          "weight": 0
+        },
+        {
+          "code": "65-",
+          "weight": 0
+        }
+      ],
+      "audience_genders_per_age": [
+        {
+          "code": "13-17",
+          "male": 0.019481,
+          "female": 0.064707
+        },
+        {
+          "code": "18-24",
+          "male": 0.058442,
+          "female": 0.614719
+        },
+        {
+          "code": "25-34",
+          "male": 0,
+          "female": 0.242652
+        },
+        {
+          "code": "35-44",
+          "male": 0,
+          "female": 0
+        },
+        {
+          "code": "45-64",
+          "male": 0,
+          "female": 0
+        },
+        {
+          "code": "65-",
+          "male": 0,
+          "female": 0
+        }
+      ],
+      "audience_languages": [
+        {
+          "code": "en",
+          "name": "English",
+          "weight": 0.981651
+        },
+        {
+          "code": "pt",
+          "name": "Portuguese",
+          "weight": 0.009174
+        },
+        {
+          "code": "es",
+          "name": "Spanish",
+          "weight": 0.009174
+        }
+      ],
+      "audience_geo": {},
+      "notable_users": [
+        {
+          "user_id": "UCXWxFPmLKRcF7kxTP2OYLwA",
+          "custom_name": "AarynWilliams",
+          "handle": "AarynWilliams",
+          "picture": "https://yt3.googleusercontent.com/AZTmwoUHOMruYDuX0aBNIHDL-RBXOleB6rayly9HYFcE5KY_nC0NnsjdbrhGwLeSemgbuoesew=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 345000,
+          "fullname": "Aaryn Williams",
+          "url": "https://www.youtube.com/channel/UCXWxFPmLKRcF7kxTP2OYLwA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 389,
+          "avg_likes": 389,
+          "avg_views": 14191
+        },
+        {
+          "user_id": "UCRunlUcmcF9dueIf33w3NCg",
+          "custom_name": "BlogueirinhadoInterior",
+          "handle": "Blogueirinhagame",
+          "picture": "https://yt3.googleusercontent.com/F6eCIXoez4IWXwL_X_kmp0UDeSpEC0joY5bbIoHSAXaoFKeZydL5SLDt1VDutMwYdEYcYkl6Sm8=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 56300,
+          "fullname": "Blogueirinha Game",
+          "url": "https://www.youtube.com/channel/UCRunlUcmcF9dueIf33w3NCg",
+          "geo": {
+            "country": {
+              "id": 59470,
+              "name": "Brazil",
+              "code": "BR",
+              "coords": {
+                "lat": -15.77972,
+                "lon": -47.92972
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 13,
+          "avg_likes": 13,
+          "avg_views": 228
+        },
+        {
+          "user_id": "UCYpwQ7Jx7Mv7B9pHMOKaHwA",
+          "handle": "danamarie9546",
+          "picture": "https://yt3.googleusercontent.com/ytc/AOPolaSIfUin0cRLrJ4RmZbs7C_Wr2S5Vu05cKaalKtp0w=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 6380,
+          "fullname": "Dana Marie",
+          "url": "https://www.youtube.com/channel/UCYpwQ7Jx7Mv7B9pHMOKaHwA",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 2197,
+          "avg_likes": 2197,
+          "avg_views": 178008
+        },
+        {
+          "user_id": "UChTaXK_x5wyH68uqyZMh_bw",
+          "handle": "mercedesmckenzie",
+          "picture": "https://yt3.googleusercontent.com/Sz1PKBlP4Vmo6-y9BXGPQ6w5QaN1ici3TXH2633NFoK3cwMmiLndwfsK9lwWLGj8sGtpM1dX=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1580,
+          "fullname": "MercedesMcKenzie",
+          "url": "https://www.youtube.com/channel/UChTaXK_x5wyH68uqyZMh_bw",
+          "geo": {
+            "country": {
+              "id": 148838,
+              "name": "United States",
+              "code": "US",
+              "coords": {
+                "lat": 38.89511,
+                "lon": -77.03637
+              }
+            }
+          },
+          "is_verified": false,
+          "engagements": 6,
+          "avg_likes": 6,
+          "avg_views": 481
+        },
+        {
+          "user_id": "UCGZ7CTOezYyaoMNbto6N6Xw",
+          "handle": "TheNaturalist_",
+          "picture": "https://yt3.googleusercontent.com/XvKqS_sVgxvmtmC9d80eyQWAtx2ByOlv5GEvM9uJEPFfMoSojCCHATlS01ReRBAXqjjeUWhELH8=s480-c-k-c0x00ffffff-no-rj",
+          "followers": 1200,
+          "fullname": "TheNaturalist",
+          "url": "https://www.youtube.com/channel/UCGZ7CTOezYyaoMNbto6N6Xw",
+          "is_verified": false,
+          "engagements": 6,
+          "avg_likes": 6,
+          "avg_views": 98
+        }
+      ]
+    }
+  },
+  "extra": {
+    "followers_range": {
+      "left_number": 10000,
+      "right_number": 50000
+    },
+    "engagement_rate_histogram": [
+      {
+        "max": 0.000307,
+        "total": 230152
+      },
+      {
+        "min": 0.000307,
+        "max": 0.000786,
+        "total": 184121
+      },
+      {
+        "min": 0.000786,
+        "max": 0.001407,
+        "total": 153425
+      },
+      {
+        "min": 0.001407,
+        "max": 0.002212,
+        "total": 131503
+      },
+      {
+        "min": 0.002212,
+        "max": 0.003233,
+        "total": 115076
+      },
+      {
+        "min": 0.003233,
+        "max": 0.004545,
+        "total": 102302,
+        "median": true
+      },
+      {
+        "min": 0.004545,
+        "max": 0.006235,
+        "total": 92060
+      },
+      {
+        "min": 0.006235,
+        "max": 0.0084,
+        "total": 83689
+      },
+      {
+        "min": 0.0084,
+        "max": 0.011239,
+        "total": 76727
+      },
+      {
+        "min": 0.011239,
+        "max": 0.014967,
+        "total": 70829
+      },
+      {
+        "min": 0.014967,
+        "max": 0.02,
+        "total": 65766
+      },
+      {
+        "min": 0.02,
+        "max": 0.027,
+        "total": 61364
+      },
+      {
+        "min": 0.027,
+        "max": 0.037043,
+        "total": 57538
+      },
+      {
+        "min": 0.037043,
+        "max": 0.052212,
+        "total": 54143
+      },
+      {
+        "min": 0.052212,
+        "max": 0.075804,
+        "total": 51151
+      },
+      {
+        "min": 0.075804,
+        "max": 0.113576,
+        "total": 48447
+      },
+      {
+        "min": 0.113576,
+        "max": 0.179007,
+        "total": 46030
+      },
+      {
+        "min": 0.179007,
+        "max": 0.311556,
+        "total": 43844
+      },
+      {
+        "min": 0.311556,
+        "max": 0.703897,
+        "total": 41858
+      },
+      {
+        "min": 0.703897,
+        "total": 40025
+      }
+    ]
+  },
+  "createdAt": "2023-09-14T09:01:54.000000Z",
+  "influencer": {
+    "id": "b035859d-ae92-4f21-93f5-1c50d944e042",
+    "created_at": "2023-09-18T10:38:43.695547+00:00",
+    "name": "DANNI VIVIANI",
+    "email": "typicalmarie123@gmail.com",
+    "address": null,
+    "avatar_url": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+    "is_recommended": false
+  },
+  "socialProfile": {
+    "id": "7df3451b-a1b7-4810-83e3-f9a0420e7fc2",
+    "created_at": "2023-09-18T10:38:43.711111+00:00",
+    "url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
+    "platform": "youtube",
+    "influencer_id": "b035859d-ae92-4f21-93f5-1c50d944e042",
+    "reference_id": "iqdata:UCSTgtLylu5QDTuWBHShXpLQ",
+    "username": "DANNIVIVIANI",
+    "email": "typicalmarie123@gmail.com",
+    "name": "DANNI VIVIANI",
+    "avatar_url": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+    "recent_post_title": "BEST HD LACE WIG FOR THE FALL 🍁| ZLIKE HairWig...",
+    "recent_post_url": "https://www.youtube.com/watch?v=lXrTbeyVo94"
+  }
+}

@@ -1,4 +1,5 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
+import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
@@ -10,6 +11,10 @@ import postPerformance from '../../src/mocks/api/post-performance/by-campaign.js
 import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
 import createTrialWithoutPaymentIntent from '../../src/mocks/api/subscription/create-trial-without-payment-intent.json';
 import createSequenceSteps from '../../src/mocks/supabase/sequences/createSequenceSteps.json';
+import boostbotGetTopics from '../../src/mocks/api/boostbot/get-topics.json';
+import boostbotGetRelevantTopics from '../../src/mocks/api/boostbot/get-relevant-topics.json';
+import boostbotGetTopicClusters from '../../src/mocks/api/boostbot/get-topic-clusters.json';
+import boostbotGetInfluencers from '../../src/mocks/api/boostbot/get-influencers.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -317,4 +322,12 @@ export const insertPostIntercept = () => {
 
         req.reply({ body: { successful: [mockPostData], failed: [] } });
     });
+};
+
+export const boostbotIntercepts = () => {
+    cy.intercept('POST', '/api/boostbot/get-topics', { body: boostbotGetTopics });
+    cy.intercept('POST', '/api/boostbot/get-relevant-topics', { body: boostbotGetRelevantTopics });
+    cy.intercept('POST', '/api/boostbot/get-topic-clusters', { body: boostbotGetTopicClusters });
+    cy.intercept('POST', '/api/boostbot/get-influencers', { body: boostbotGetInfluencers });
+    cy.intercept('GET', '/api/creators/report*', { body: danniCreatorReport });
 };
