@@ -7,8 +7,8 @@ describe('<ChatContent />', () => {
     let handlePageToOutreach: () => void;
     let stopBoostbot: () => void;
     const messages: MessageType[] = [
-        { sender: 'Bot', content: 'test message 1' },
-        { sender: 'User', content: 'test message 2' },
+        { sender: 'Bot', content: <>test message 1</> },
+        { sender: 'User', content: <>test message 2</> },
     ];
     let props: ChatContentProps;
 

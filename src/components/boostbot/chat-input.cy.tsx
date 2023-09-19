@@ -8,7 +8,13 @@ describe('<ChatInput />', () => {
         onSendMessage = cy.stub();
     });
 
-    it('Disables textarea and send action when isLoading is true', () => {
+    it('Enables button when isLoading and isDisabled are false', () => {
+        testMount(<ChatInput onSendMessage={onSendMessage} isLoading={false} isDisabled={false} />);
+
+        cy.get('button').should('not.be.disabled');
+    });
+
+    it('Disables textarea, button and send action when isLoading is true', () => {
         testMount(<ChatInput onSendMessage={onSendMessage} isLoading={true} isDisabled={false} />);
 
         cy.get('textarea').type('Hello, World!{enter}');
