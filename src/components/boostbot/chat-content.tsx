@@ -6,7 +6,7 @@ import type { MessageType } from 'pages/boostbot';
 import Message from './message';
 import ChatProgress from './chat-progress';
 
-interface ChatContentProps {
+export interface ChatContentProps {
     messages: MessageType[];
     isSearchLoading: boolean;
     isUnlockOutreachLoading: boolean;
@@ -46,10 +46,18 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">
-                    <Button onClick={handlePageToUnlock} disabled={isUnlockOutreachLoading}>
+                    <Button
+                        data-testid="boostbot-button-unlock"
+                        onClick={handlePageToUnlock}
+                        disabled={isUnlockOutreachLoading}
+                    >
                         {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
                     </Button>
-                    <Button onClick={handlePageToOutreach} disabled={isUnlockOutreachLoading}>
+                    <Button
+                        data-testid="boostbot-button-outreach"
+                        onClick={handlePageToOutreach}
+                        disabled={isUnlockOutreachLoading}
+                    >
                         {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
                     </Button>
                 </div>
@@ -57,7 +65,11 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 
             {isSearchLoading && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
-                    <Button onClick={stopBoostbot} className="z-10 flex items-center gap-1 border-none">
+                    <Button
+                        data-testid="boostbot-button-stop"
+                        onClick={stopBoostbot}
+                        className="z-10 flex items-center gap-1 border-none"
+                    >
                         <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}
                     </Button>
                 </div>
