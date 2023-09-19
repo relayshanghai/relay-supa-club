@@ -63,7 +63,7 @@ const postHandler: NextApiHandler = async (
     const id = String(req.query.id);
     const body = ProfileValue.parse(req.body);
 
-    const sequenceInfluencer = await db(getSequenceInfluencerByIdCall)(id);
+    let sequenceInfluencer = await db(getSequenceInfluencerByIdCall)(id);
     if (!sequenceInfluencer.influencer_social_profile_id) {
         throw new RelayError('socialId not present');
     } else if (!sequenceInfluencer.username) {
@@ -87,7 +87,7 @@ const postHandler: NextApiHandler = async (
             scheduledPostDate: scheduled_post_date,
         } = body.notes;
 
-        await db(updateSequenceInfluencerCall)({
+        sequenceInfluencer = await db(updateSequenceInfluencerCall)({
             funnel_status,
             next_step,
             rate_amount,
@@ -108,7 +108,9 @@ const postHandler: NextApiHandler = async (
             postalCode: postal_code,
             trackingCode: tracking_code,
         } = body.shippingDetails;
-
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw new RelayError('socialId not present'); // this won't happen, but we need to make TS happy
+        }
         address = await db(saveAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id, {
             ...address,
             name,
