@@ -33,4 +33,5 @@ export const EMPLOYEE_EMAILS = [
     'allaine@relay.club',
     'kristian@relay.club',
     'brendan@relay.club',
+    'max@relay.club',
 ];
