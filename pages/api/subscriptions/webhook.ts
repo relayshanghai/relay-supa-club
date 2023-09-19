@@ -93,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             message: error.message ?? 'error',
             data: { error: error?.message, stack: error?.stack },
         });
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'caught error. check supabase logs' });
+        return res.status(httpCodes.NO_CONTENT).json({ message: 'caught error. check supabase logs' });
     }
 }
 
