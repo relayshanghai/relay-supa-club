@@ -115,6 +115,12 @@ import type { ExpandHelpSectionPayload } from './guide/expand-help-section';
 import { EXPAND_HELP_SECTION, ExpandHelpSection } from './guide/expand-help-section';
 import type { ChangeLanguagePayload } from './change-language';
 import { CHANGE_LANGUAGE, ChangeLanguage } from './change-language';
+import type { StripeWebhookIncomingPayload } from './stripe/stripe-webhook-incoming';
+import { STRIPE_WEBHOOK_INCOMING, StripeWebhookIncoming } from './stripe/stripe-webhook-incoming';
+import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
+import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
+import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
+import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
 
 export {
     Search,
@@ -207,6 +213,9 @@ export const events = {
     [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModal,
     [EXPAND_HELP_SECTION]: ExpandHelpSection,
     [CHANGE_LANGUAGE]: ChangeLanguage,
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
 };
 
 export type payloads = {
@@ -260,6 +269,9 @@ export type payloads = {
     [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModalPayload;
     [EXPAND_HELP_SECTION]: ExpandHelpSectionPayload;
     [CHANGE_LANGUAGE]: ChangeLanguagePayload;
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -315,6 +327,9 @@ export const eventKeys = z.union([
     z.literal(OPEN_GUIDE_SECTION_MODAL),
     z.literal(EXPAND_HELP_SECTION),
     z.literal(CHANGE_LANGUAGE),
+    z.literal(STRIPE_WEBHOOK_INCOMING),
+    z.literal(STRIPE_WEBHOOK_ERROR),
+    z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

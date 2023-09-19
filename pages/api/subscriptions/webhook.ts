@@ -8,28 +8,78 @@ import type { CustomerSubscriptionCreated } from 'types';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 import { handleVIPSubscription } from 'src/utils/api/stripe/handle-vip-webhook';
 import { handleInvoicePaymentFailed } from 'src/utils/api/stripe/handle-payment-failed-webhook';
-import { supabaseLogger } from 'src/utils/api/db';
+import { getCompanyByCusId } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import type Stripe from 'stripe';
+import type { StripeWebhookIncomingPayload } from 'src/utils/analytics/events/stripe/stripe-webhook-incoming';
+import { StripeWebhookIncoming } from 'src/utils/analytics/events/stripe/stripe-webhook-incoming';
+import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
+import { db } from 'src/utils/supabase-client';
+import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
+import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
 };
 
+export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed;
+
+const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
+    const customerId = event.data?.object?.customer;
+    if (!customerId) {
+        throw new Error('Missing customer ID in invoice body');
+    }
+    const { data: company, error: companyError } = await getCompanyByCusId(customerId);
+    if (companyError || !company?.id) {
+        throw new Error(companyError?.message || 'Unable to find company by customer ID');
+    }
+    const profile = await db(getFirstUserByCompanyIdCall)(company.id);
+
+    if (!profile) {
+        throw new Error('Unable to find profile by company ID');
+    }
+    rudderstack.identifyWithProfile(profile.id);
+};
+
+const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
+    switch (event.type) {
+        case handledWebhooks.customerSubscriptionCreated:
+            const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
+            const productID = price.product;
+            if (productID === STRIPE_PRODUCT_ID_VIP) {
+                return await handleVIPSubscription(res, event as CustomerSubscriptionCreated);
+            } else {
+                serverLogger('stripe productID does not match handled projectIDs', { level: 'error' });
+                return res
+                    .status(httpCodes.NO_CONTENT)
+                    .json({ message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP' });
+            }
+        case handledWebhooks.invoicePaymentFailed:
+            return await handleInvoicePaymentFailed(res, event as InvoicePaymentFailed);
+        default:
+            throw new Error('Unhandled event type');
+    }
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
+
+    let trackData: StripeWebhookIncomingPayload = {
+        type: 'unknown',
+        extra_info: { event: null, error: null },
+    };
     try {
         const theirSig = req.headers['stripe-signature'];
         if (!theirSig) {
-            await supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
+            serverLogger('stripe no signature', { level: 'error' });
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'no signature' });
         }
         const ourSig = process.env.STRIPE_SIGNING_SECRET;
         if (!ourSig) {
-            await supabaseLogger({ type: 'stripe-webhook', message: 'no signing secret' });
+            serverLogger('stripe no signing secret', { level: 'error' });
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'no signing secret' });
         }
         let event: Stripe.Event;
@@ -38,62 +88,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const body = await buffer(req);
             event = stripeClient.webhooks.constructEvent(body, theirSig, ourSig);
         } catch (error: any) {
-            await supabaseLogger({
-                type: 'stripe-webhook',
-                message: 'signatures do not match',
-                data: { theirSig, ourSig, error },
-            });
+            serverLogger('stripe signatures do not match', { level: 'error' });
             return res.status(httpCodes.FORBIDDEN).json({ message: 'signatures do not match' });
         }
 
         // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
 
         if (!event || !event.type) {
-            await supabaseLogger({
-                type: 'stripe-webhook',
-                message: 'no body or body.type',
-                data: event as any,
-            });
-
+            serverLogger('stripe no event or event type', { level: 'error' });
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'no body or body.type' });
         }
-        await supabaseLogger({ type: 'stripe-webhook', message: event.type, data: event as any });
 
         if (!Object.values(handledWebhooks).includes(event.type)) {
+            serverLogger('stripe unhandled event type', { level: 'error' });
             return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
                 message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
             });
         }
 
-        if (event.type === handledWebhooks.customerSubscriptionCreated) {
-            const invoiceBody = event as CustomerSubscriptionCreated;
-            const price = invoiceBody.data.object.items.data[0].price;
-            const productID = price.product;
-            if (productID === STRIPE_PRODUCT_ID_VIP) {
-                return await handleVIPSubscription(res, invoiceBody);
-            } else {
-                await supabaseLogger({
-                    type: 'stripe-webhook',
-                    message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP',
-                    data: { productID, STRIPE_PRODUCT_ID_VIP },
-                });
-                return res
-                    .status(httpCodes.NO_CONTENT)
-                    .json({ message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP' });
-            }
-        }
-        if (event.type === handledWebhooks.invoicePaymentFailed) {
-            const invoiceBody = event as InvoicePaymentFailed;
-            return await handleInvoicePaymentFailed(res, invoiceBody);
-        }
+        await identifyWebhook(event as HandledEvent);
+
+        trackData = {
+            type: event.type,
+            extra_info: { event },
+        };
+
+        track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
+
+        return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
-        serverLogger(error);
-        await supabaseLogger({
-            type: 'stripe-webhook',
-            message: error.message ?? 'error',
-            data: { error: error?.message, stack: error?.stack },
-        });
-        return res.status(httpCodes.NO_CONTENT).json({ message: 'caught error. check supabase logs' });
+        serverLogger('stripe caught error', { level: 'error' });
+        try {
+            trackData.extra_info.error = error;
+            track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookError, trackData);
+        } catch (error) {
+            serverLogger('stripe endpoint rudderstack log error. Likely a problem with identify', { level: 'error' });
+        }
+        return res.status(httpCodes.NO_CONTENT).json({ message: 'caught error. check rudderstack or Sentry logs' });
     }
 }
 
