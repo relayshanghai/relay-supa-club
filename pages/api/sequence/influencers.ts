@@ -7,7 +7,6 @@ import { db } from 'src/utils/supabase-client';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     influencer_id?: string;
-    name?: string | null;
     manager_first_name: string;
     address?: Addresses['Update'] | null;
     manager: {
