@@ -22,7 +22,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
+import type { CreatorPlatform, UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -260,9 +260,15 @@ const Boostbot = () => {
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
                 return createSequenceInfluencer({
-                    iqDataUserProfileId: creatorProfileId,
-                    influencerSocialProfile: influencer.socialProfile.id,
+                    iqdata_id: creatorProfileId,
+                    influencer_social_profile_id: influencer.socialProfile.id,
                     tags,
+                    avatar_url: influencer.socialProfile.avatar_url ?? '',
+                    name: influencer.socialProfile.name || '',
+                    platform: influencer.socialProfile.platform as CreatorPlatform,
+                    username: influencer.socialProfile.username,
+                    url: influencer.socialProfile.url,
+                    sequence_id: '',
                 });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);

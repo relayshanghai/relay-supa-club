@@ -1,6 +1,5 @@
 /* eslint-disable complexity */
 import { useTranslation } from 'react-i18next';
-import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 
 import Link from 'next/link';
 import type { SetStateAction } from 'react';
@@ -35,18 +34,6 @@ import { useReport } from 'src/hooks/use-report';
 import { CreatorReport } from 'types';
 import { useCompany } from 'src/hooks/use-company';
 
-const getTIMESTAMPTZ = () => {
-    const date = new Date();
-    let offset: number | string = -date.getTimezoneOffset() / 60;
-    const sign = offset >= 0 ? '+' : '-';
-    offset = Math.abs(offset);
-    offset = offset < 10 ? '0' + offset : offset;
-    let TIMESTAMPTZ = date.toISOString();
-    TIMESTAMPTZ = TIMESTAMPTZ.replace('T', ' ');
-    TIMESTAMPTZ = TIMESTAMPTZ.replace('Z', `000${sign}${offset}`);
-    return TIMESTAMPTZ;
-};
-
 export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     sequenceInfluencer,
     socialProfile,
@@ -77,7 +64,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         influencer_social_profile_id: socialProfile.id,
         email: socialProfile.email,
         tags: getRelevantTags(),
-        social_profile_last_fetched: '2023-09-18 10:18:33.8978+00',
+        social_profile_last_fetched: new Date().toISOString(),
         company_id,
     };
     await updateSequenceInfluencer(updatedValues);
@@ -137,17 +124,17 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         deleteSequenceInfluencers: deleteSequenceInfluencer,
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
-    // add use report. suppress the report if the influencer already has a social_profile_id ? or check something else?
-    // call updateSequenceInfluencerIfSocialProfileAvailable with a useEffect on the report. //when to call?
-    // check social profile last updated at if there is no social_profile_id
-    const now = new Date();
-    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '');
-    const wasFetchedWithin10Minutes = now.getTime() - socialProfileLastFetched.getTime() < 10 * 1 * 1000;
+    const now = new Date().getTime();
+    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
+    console.log('now', now - socialProfileLastFetched);
+    const wasFetchedWithin10Minutes = now - socialProfileLastFetched < 600000; // 10 minutes
+
+    console.log('fetching: ', !!sequenceInfluencer.influencer_social_profile_id || wasFetchedWithin10Minutes);
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
-        suppressFetch: !!sequenceInfluencer.social_profile_last_fetched || wasFetchedWithin10Minutes,
+        suppressFetch: !!sequenceInfluencer.influencer_social_profile_id || wasFetchedWithin10Minutes,
     });
     const { company } = useCompany();
 
@@ -316,22 +303,30 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            <TableInlineInput
-                                value={email}
-                                onSubmit={handleEmailUpdate}
-                                textPromptForMissingValue={t('sequences.addEmail')}
-                            />
+                            {sequenceInfluencer.influencer_social_profile_id ? (
+                                <TableInlineInput
+                                    value={email}
+                                    onSubmit={handleEmailUpdate}
+                                    textPromptForMissingValue={t('sequences.addEmail')}
+                                />
+                            ) : (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                            )}
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.tags?.map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
+                            {sequenceInfluencer.influencer_social_profile_id ? (
+                                sequenceInfluencer.tags?.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))
+                            ) : (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                            )}
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
@@ -343,12 +338,25 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
-                                content={sequenceSendTooltipTitle}
-                                detail={sequenceSendTooltipDescription}
+                                content={
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltip')
+                                        : sequenceSendTooltipTitle
+                                }
+                                detail={
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltipDescription')
+                                        : sequenceSendTooltipDescription
+                                }
                                 position="left"
                             >
                                 <Button
-                                    disabled={isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail}
+                                    disabled={
+                                        isMissingSequenceSendEmail ||
+                                        !sequenceInfluencer?.email ||
+                                        sendingEmail ||
+                                        !sequenceInfluencer.influencer_social_profile_id
+                                    }
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart

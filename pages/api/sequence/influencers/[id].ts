@@ -66,6 +66,11 @@ const postHandler: NextApiHandler = async (
     try {
         // @todo should return row or null
         let sequenceInfluencer = await db(getSequenceInfluencerByIdCall)(id);
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw new Error('socialId not present');
+        } else if (!sequenceInfluencer.username) {
+            throw new Error('username not present');
+        }
         let address = await db(getAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id);
 
         const { data: manager, error: getManagerError } = await db(getProfileByIdCall)(sequenceInfluencer.added_by);
@@ -106,7 +111,7 @@ const postHandler: NextApiHandler = async (
                 trackingCode: tracking_code,
             } = body.shippingDetails;
 
-            address = await db(saveAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id, {
+            address = await db(saveAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id!, {
                 ...address,
                 name,
                 phone_number,

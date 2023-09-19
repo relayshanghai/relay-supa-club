@@ -159,5 +159,9 @@ const sequences = {
     deleteSuccess: '删除成功',
     deleteFail: '删除失败',
     emailAlreadyExists: '邮箱已存在',
+    invalidSocialProfileTooltip: '正在更新红人报告',
+    invalidSocialProfileTooltipDescription: `正在获取该KOL的最新数据，请耐心等待，预计将在15分钟内完成。
+
+    请稍后再试一次。`,
 };
 export default sequences;

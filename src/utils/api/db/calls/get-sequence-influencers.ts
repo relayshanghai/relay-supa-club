@@ -8,6 +8,7 @@ import type { Addresses, InfluencerSocialProfileRow, RelayDatabase, SequenceInfl
 import { getAddressByInfluencer } from './addresses';
 import { getProfileByIdCall as getProfileById } from './profiles';
 import { serverLogger } from 'src/utils/logger-server';
+import type { CreatorPlatform } from 'types';
 
 // @note gets sequence influencers by sequence
 export const getSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: string) => {
@@ -57,7 +58,7 @@ export const getSequenceInfluencer =
             username: socialProfile?.username ?? '',
             avatar_url: socialProfile?.avatar_url ?? '',
             url: socialProfile?.url ?? '',
-            platform: socialProfile?.platform ?? 'youtube',
+            platform: (socialProfile?.platform as CreatorPlatform) ?? 'youtube',
             address,
             manager: {
                 id: manager.id,

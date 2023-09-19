@@ -24,20 +24,7 @@ import { Info, Spinner } from './icons';
 import { Modal } from './modal';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { insertInfluencerSocialProfile } from 'src/utils/api/db/calls/influencers-insert';
-import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
-
-const getTIMESTAMPTZ = () => {
-    const date = new Date();
-    let offset: number | string = -date.getTimezoneOffset() / 60;
-    const sign = offset >= 0 ? '+' : '-';
-    offset = Math.abs(offset);
-    offset = offset < 10 ? '0' + offset : offset;
-    let TIMESTAMPTZ = date.toISOString();
-    TIMESTAMPTZ = TIMESTAMPTZ.replace('T', ' ');
-    TIMESTAMPTZ = TIMESTAMPTZ.replace('Z', `000${sign}${offset}`);
-    return TIMESTAMPTZ;
-};
 
 // can use in sequence influencers row as well:
 export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
@@ -70,7 +57,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         influencer_social_profile_id: socialProfile.id,
         email: socialProfile.email,
         tags: getRelevantTags(),
-        social_profile_last_fetched: '2023-09-18 10:18:33.8978+00',
+        social_profile_last_fetched: new Date().toISOString(),
         company_id,
     };
     await updateSequenceInfluencer(updatedValues);
