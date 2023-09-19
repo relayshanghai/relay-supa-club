@@ -31,7 +31,7 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
-import { CreatorReport } from 'types';
+import type { CreatorReport } from 'types';
 import { useCompany } from 'src/hooks/use-company';
 
 export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
@@ -126,10 +126,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const now = new Date().getTime();
     const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
-    console.log('now', now - socialProfileLastFetched);
     const wasFetchedWithin10Minutes = now - socialProfileLastFetched < 600000; // 10 minutes
-
-    console.log('fetching: ', !!sequenceInfluencer.influencer_social_profile_id || wasFetchedWithin10Minutes);
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
@@ -142,7 +139,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         if (sequenceInfluencer.influencer_social_profile_id || !company || !socialProfile || !report) {
             return;
         }
-        console.log(socialProfile.id);
         updateSequenceInfluencerIfSocialProfileAvailable({
             sequenceInfluencer,
             socialProfile,
@@ -150,7 +146,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             updateSequenceInfluencer,
             company_id: company.id,
         });
-    }, [report, socialProfile, sequenceInfluencer, company]);
+    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
     const { profile } = useUser();
     const { i18n, t } = useTranslation();

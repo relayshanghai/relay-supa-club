@@ -139,6 +139,7 @@ type SequenceInfluencerDetailedTypes = {
     /** 0 means not sent. 1 means first step sent, awaiting 2. */
     sequence_step?: number;
     funnel_status?: FunnelStatus;
+    platform?: CreatorPlatform;
 };
 
 export type SequenceInfluencersTable = Database['public']['Tables']['sequence_influencers'] & {

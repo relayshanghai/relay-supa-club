@@ -240,9 +240,7 @@ export const SearchPageInner = () => {
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
                 platform={platform}
-                selectedCreator={{
-                    ...selectedCreator?.account.user_profile,
-                }}
+                selectedCreator={selectedCreator?.account.user_profile}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {
