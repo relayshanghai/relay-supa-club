@@ -30,14 +30,17 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
         // no need to cancel the subscription for our internal employees company
         return res.status(httpCodes.NO_CONTENT);
     }
-
-    await updateCompanySubscriptionStatus({
-        subscription_status: 'canceled',
-        id: company.id,
-    });
+    try {
+        await updateCompanySubscriptionStatus({
+            subscription_status: 'canceled',
+            id: company.id,
+        });
+    } catch (error) {
+        throw new Error('Error updating company subscription status');
+    }
     await supabaseLogger({
         type: 'stripe-webhook',
         message: `Updated company subscription status to canceled, company ID: ${company.id}`,
     });
-    return res.status(httpCodes.NO_CONTENT);
+    return res.status(httpCodes.OK);
 };
