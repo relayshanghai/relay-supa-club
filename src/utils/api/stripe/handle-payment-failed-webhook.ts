@@ -9,10 +9,7 @@ import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import type { StripeWebhookPaymentFailedPayload } from 'src/utils/analytics/events/stripe/stripe-webhook-payment-failed';
 import { StripeWebhookPaymentFailed } from 'src/utils/analytics/events/stripe/stripe-webhook-payment-failed';
 
-export const handleInvoicePaymentFailed = async (
-    res: NextApiResponse,
-    invoiceBody: InvoicePaymentFailed,
-): Promise<NextApiResponse> => {
+export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBody: InvoicePaymentFailed) => {
     const trackingData: StripeWebhookPaymentFailedPayload = {
         type: 'invoice.payment_failed',
         is_success: false,
@@ -32,7 +29,7 @@ export const handleInvoicePaymentFailed = async (
         trackingData.extra_info.error = companyError;
         serverLogger(companyError);
         tracker(StripeWebhookPaymentFailed, trackingData);
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: companyError.message });
     }
 
     // no need to cancel the subscription for our internal employees company
@@ -52,9 +49,9 @@ export const handleInvoicePaymentFailed = async (
     } catch (error: any) {
         trackingData.extra_info.error = `updateCompanySubscriptionStatus error: ${error.message} \n stack${error?.stack}`;
         tracker(StripeWebhookPaymentFailed, trackingData);
-        return res.status(httpCodes.NO_CONTENT);
+        return res.status(httpCodes.NO_CONTENT).json({ message: error.message });
     }
 
     tracker(StripeWebhookPaymentFailed, trackingData);
-    return res.status(httpCodes.OK);
+    return res.status(httpCodes.OK).json({ message: 'success' });
 };
