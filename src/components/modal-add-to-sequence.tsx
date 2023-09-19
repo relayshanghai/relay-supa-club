@@ -11,57 +11,16 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
 import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
-import type {
-    InfluencerSocialProfileRow,
-    Sequence,
-    SequenceInfluencer,
-    SequenceInfluencerUpdate,
-} from 'src/utils/api/db';
+import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorReport, CreatorUserProfile } from 'types';
+import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info, Spinner } from './icons';
 import { Modal } from './modal';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { insertInfluencerSocialProfile } from 'src/utils/api/db/calls/influencers-insert';
 import { useCompany } from 'src/hooks/use-company';
-
-// can use in sequence influencers row as well:
-export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
-    sequenceInfluencer,
-    socialProfile,
-    report,
-    updateSequenceInfluencer,
-    company_id,
-}: {
-    sequenceInfluencer: SequenceInfluencer;
-    socialProfile?: InfluencerSocialProfileRow;
-    report?: CreatorReport;
-    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
-    company_id: string;
-}) => {
-    if (!socialProfile) {
-        return;
-    }
-    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
-    const getRelevantTags = () => {
-        if (!report || !report.user_profile.relevant_tags) {
-            return [];
-        }
-        const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags.slice(0, 3).map((tag) => tag.tag);
-    };
-    // for now, what we need from the social profile is the id, email, tags
-    const updatedValues = {
-        id: sequenceInfluencer.id,
-        influencer_social_profile_id: socialProfile.id,
-        email: socialProfile.email,
-        tags: getRelevantTags(),
-        social_profile_last_fetched: new Date().toISOString(),
-        company_id,
-    };
-    await updateSequenceInfluencer(updatedValues);
-};
+import { updateSequenceInfluencerIfSocialProfileAvailable } from './sequences/helpers';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -94,20 +53,6 @@ export const AddToSequenceModal = ({
         creator_id: creatorProfile.user_id || '',
         suppressFetch: suppressReportFetch,
     });
-
-    useEffect(() => {
-        if (!socialProfile || !sequenceInfluencer || !company) {
-            return;
-        }
-        insertSocialProfile(socialProfile);
-        updateSequenceInfluencerIfSocialProfileAvailable({
-            sequenceInfluencer,
-            socialProfile,
-            report,
-            updateSequenceInfluencer,
-            company_id: company.id,
-        });
-    }, [report, socialProfile, sequenceInfluencer, company]);
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [submitting, setSubmitting] = useState<boolean>(false);
@@ -240,14 +185,30 @@ export const AddToSequenceModal = ({
     }, [
         track,
         createSequenceInfluencer,
-        creatorProfile.user_id,
+        creatorProfile,
         sequence,
         sendSequence,
         setShow,
         socialProfile,
         t,
         refreshSequenceInfluencers,
+        platform,
+        sequenceInfluencer,
     ]);
+
+    useEffect(() => {
+        if (!socialProfile || !sequenceInfluencer || !company) {
+            return;
+        }
+        insertSocialProfile(socialProfile);
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company.id,
+        });
+    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer, insertSocialProfile]);
 
     return (
         <Modal

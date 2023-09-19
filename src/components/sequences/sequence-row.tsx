@@ -5,15 +5,7 @@ import Link from 'next/link';
 import type { SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type {
-    InfluencerSocialProfileRow,
-    Sequence,
-    SequenceEmail,
-    SequenceInfluencer,
-    SequenceInfluencerUpdate,
-    SequenceStep,
-    TemplateVariable,
-} from 'src/utils/api/db';
+import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
 import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
@@ -31,44 +23,8 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
-import type { CreatorReport } from 'types';
 import { useCompany } from 'src/hooks/use-company';
-
-export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
-    sequenceInfluencer,
-    socialProfile,
-    report,
-    updateSequenceInfluencer,
-    company_id,
-}: {
-    sequenceInfluencer: SequenceInfluencer;
-    socialProfile?: InfluencerSocialProfileRow;
-    report?: CreatorReport;
-    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
-    company_id: string;
-}) => {
-    if (!socialProfile) {
-        return;
-    }
-    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
-    const getRelevantTags = () => {
-        if (!report || !report.user_profile.relevant_tags) {
-            return [];
-        }
-        const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags.slice(0, 3).map((tag) => tag.tag);
-    };
-    // for now, what we need from the social profile is the id, email, tags
-    const updatedValues = {
-        id: sequenceInfluencer.id,
-        influencer_social_profile_id: socialProfile.id,
-        email: socialProfile.email,
-        tags: getRelevantTags(),
-        social_profile_last_fetched: new Date().toISOString(),
-        company_id,
-    };
-    await updateSequenceInfluencer(updatedValues);
-};
+import { updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
 
 interface SequenceRowProps {
     sequence?: Sequence;
