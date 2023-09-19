@@ -15,7 +15,7 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
     const { data: company, error: companyError } = await getCompanyByCusId(customerId);
     if (companyError) {
         serverLogger(companyError);
-        supabaseLogger({
+        await supabaseLogger({
             type: 'stripe-webhook',
             message: 'Error getting company by customer ID',
         });
@@ -23,7 +23,7 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
     }
 
     if (company.name === RELAY_DOMAIN) {
-        supabaseLogger({
+        await supabaseLogger({
             type: 'stripe-webhook',
             message: 'Payment failed for Relay domain, no need to cancel subscription',
         });
@@ -35,7 +35,7 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
         subscription_status: 'canceled',
         id: company.id,
     });
-    supabaseLogger({
+    await supabaseLogger({
         type: 'stripe-webhook',
         message: `Updated company subscription status to canceled, company ID: ${company.id}`,
     });
