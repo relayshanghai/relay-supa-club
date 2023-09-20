@@ -1,14 +1,14 @@
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { ChatContent, type ChatContentProps } from './chat-content';
-import type { MessageType } from 'pages/boostbot';
+import type { MessageType } from 'src/components/boostbot/message';
 
 describe('<ChatContent />', () => {
     let handlePageToUnlock: () => void;
     let handlePageToOutreach: () => void;
     let stopBoostbot: () => void;
     const messages: MessageType[] = [
-        { sender: 'Bot', content: <>test message 1</> },
-        { sender: 'User', content: <>test message 2</> },
+        { sender: 'Bot', type: 'text', contentString: 'test message 1' },
+        { sender: 'User', type: 'text', contentString: 'test message 2' },
     ];
     let props: ChatContentProps;
 
