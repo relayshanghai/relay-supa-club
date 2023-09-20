@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import type { TemplateVariable } from '../../utils/api/db';
+import type { SequenceInfluencer, TemplateVariable } from '../../utils/api/db';
 
 import { fillInTemplateVariables, getRelevantTags, updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
 const emailText =
@@ -235,5 +235,56 @@ describe('updateSequenceInfluencerIfSocialProfileAvailable', () => {
         };
         await updateSequenceInfluencerIfSocialProfileAvailable(argsIdChange);
         expect(updateSequenceInfluencer).toHaveBeenCalledTimes(3);
+    });
+});
+
+import { wasFetchedWithinMinutes } from './helpers';
+import { mockProfile, testSequenceId } from 'src/mocks/test-user';
+
+describe('wasFetchedWithinMinutes', () => {
+    const sequenceInfluencer: SequenceInfluencer = {
+        id: '4038a5c0-ca5c-439c-9ff5-eb525a845065',
+        created_at: '2023-09-06T06:35:00.710652+00:00',
+        updated_at: '2023-09-06T06:35:00.710652+00:00',
+        added_by: mockProfile?.id,
+        email: 'allegraalynn-noreport@gmail.com',
+        sequence_step: 0,
+        funnel_status: 'To Contact',
+        tags: ['influencers', 'influencerstyle', 'influencer'],
+        next_step: null,
+        scheduled_post_date: null,
+        video_details: null,
+        rate_amount: null,
+        rate_currency: null,
+        real_full_name: null,
+        company_id: mockProfile?.company_id || '',
+        sequence_id: testSequenceId,
+        address_id: null,
+        influencer_social_profile_id: '',
+        iqdata_id: '28093900',
+        name: 'Allegra - No Report',
+        username: 'allegraalynn',
+        avatar_url:
+            'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZqwMezQuCGaZDpqOPjbUqjQSBiBedfEqN6FqZZBTJnUmNM8i4nK%2Bu8Nra4jiqotzlovehaWXAS2sI8xAUZGaParOPQt%2BBH8xfdE2dL1avFgg%3D%3D',
+        url: 'https://www.instagram.com/allegraalynn',
+        platform: 'instagram',
+        social_profile_last_fetched: '2022-01-01T00:00:00.000Z',
+    };
+    test('should return true if social profile was fetched within the given time difference', () => {
+        const now = new Date('2022-01-01T00:00:00.000Z').getTime();
+        const timeDifference = 10 * 60 * 1000; // 10 minutes
+
+        const result = wasFetchedWithinMinutes(now, sequenceInfluencer, timeDifference);
+
+        expect(result).toBe(true);
+    });
+
+    test('should return false if social profile was fetched outside the given time difference', () => {
+        const now = new Date('2022-01-01T00:20:00.000Z').getTime();
+        const timeDifference = 10 * 60 * 1000; // 10 minutes
+
+        const result = wasFetchedWithinMinutes(now, sequenceInfluencer, timeDifference);
+
+        expect(result).toBe(false);
     });
 });

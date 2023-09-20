@@ -82,3 +82,12 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
 
     await updateSequenceInfluencer(updatedValues);
 };
+
+export const wasFetchedWithinMinutes = (
+    now = new Date().getTime(),
+    sequenceInfluencer: SequenceInfluencer,
+    timeDifference: number,
+) => {
+    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
+    return now - socialProfileLastFetched < timeDifference; // 10 minutes
+};

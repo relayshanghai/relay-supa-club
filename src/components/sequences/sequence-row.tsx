@@ -24,7 +24,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
 import { useCompany } from 'src/hooks/use-company';
-import { updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
+import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -80,9 +80,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         deleteSequenceInfluencers: deleteSequenceInfluencer,
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
-    const now = new Date().getTime();
-    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
-    const wasFetchedWithin10Minutes = now - socialProfileLastFetched < 600000; // 10 minutes
+    const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
