@@ -4,13 +4,14 @@ import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
-import { nextFetch } from 'src/utils/fetcher';
-import type { SubscriptionUpgradePostResponse } from 'pages/api/subscriptions/upgrade';
 import { clientLogger } from 'src/utils/logger-client';
 import type { NewRelayPlan } from 'types';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { UpgradeSubscriptionWithPaymentIntent } from 'src/utils/api/stripe/upgrade-subscription-with-payment-intent';
+import { UpdateSubscriptionStatusAndUsages } from 'src/utils/api/stripe/update-subscription-status-and-usages';
 
 export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const stripe = useStripe();
@@ -41,18 +42,26 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
 
         // Create the subscription
         try {
-            const body = {
-                companyId: company.id,
+            const oldSubscription = await stripeClient.subscriptions.list({
                 customer: company.cus_id,
-                priceId: selectedPrice.priceIds.monthly,
-            };
-
-            const { clientSecret } = await nextFetch<SubscriptionUpgradePostResponse>('/subscriptions/upgrade', {
-                method: 'POST',
-                body,
             });
+            // console.log('subscriptions ===============>', oldSubscription);
+            if (oldSubscription.data.length > 1) {
+                clientLogger('More than one subscription found for customer: ' + company.cus_id);
+            }
+            const oldSubscriptionId = oldSubscription.data[0].id;
+            const priceId = selectedPrice.priceIds.monthly;
 
-            // Confirm the Intent using the details collected by the Payment Element
+            // console.log('subscriptions ===============>', oldSubscriptionId);
+
+            const { clientSecret, subscriptionId: newSubscriptionId } = await UpgradeSubscriptionWithPaymentIntent(
+                company.id,
+                company.cus_id,
+                priceId,
+            );
+
+            //confirm the payment intent form the created subscription
+            //if has error, handle error
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
@@ -63,7 +72,13 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
 
             if (error) {
                 handleError(error);
+            } else {
+                //if created successfully, cancel the currentSubscription
+                await stripeClient.subscriptions.cancel(oldSubscriptionId);
+                //and update subscription status with new subscription id and usages
+                await UpdateSubscriptionStatusAndUsages(company.id, newSubscriptionId, priceId);
             }
+
             trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         } catch (error) {
             clientLogger(error, 'error');
