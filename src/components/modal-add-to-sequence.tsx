@@ -17,8 +17,6 @@ import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info, Spinner } from './icons';
 import { Modal } from './modal';
-import { useDB } from 'src/utils/client-db/use-client-db';
-import { insertInfluencerSocialProfile } from 'src/utils/api/db/calls/influencers-insert';
 import { useCompany } from 'src/hooks/use-company';
 import { updateSequenceInfluencerIfSocialProfileAvailable } from './sequences/helpers';
 
@@ -70,7 +68,6 @@ export const AddToSequenceModal = ({
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSequence(selectedSequenceObject);
     };
-    const insertSocialProfile = useDB(insertInfluencerSocialProfile);
 
     const handleAddToSequence = useCallback(async () => {
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
@@ -195,18 +192,14 @@ export const AddToSequenceModal = ({
 
     useEffect(() => {
         // after the report is fetched, we update the sequence influencer row with the report data.
-        if (!socialProfile || !sequenceInfluencer || !company) {
-            return;
-        }
-        insertSocialProfile(socialProfile);
         updateSequenceInfluencerIfSocialProfileAvailable({
             sequenceInfluencer,
             socialProfile,
             report,
             updateSequenceInfluencer,
-            company_id: company.id,
+            company_id: company?.id ?? '',
         });
-    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer, insertSocialProfile]);
+    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
     return (
         <Modal

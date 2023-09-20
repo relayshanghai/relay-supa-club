@@ -92,17 +92,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const { company } = useCompany();
 
     useEffect(() => {
-        if (sequenceInfluencer.influencer_social_profile_id || !company || !socialProfile || !report) {
-            return;
-        }
+        // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
         updateSequenceInfluencerIfSocialProfileAvailable({
             sequenceInfluencer,
             socialProfile,
             report,
             updateSequenceInfluencer,
-            company_id: company.id,
+            company_id: company?.id ?? '',
         });
-    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
+    }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     const { profile } = useUser();
     const { i18n, t } = useTranslation();

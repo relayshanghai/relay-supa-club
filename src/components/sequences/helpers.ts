@@ -33,6 +33,18 @@ export const replaceNewlinesAndTabs = (text: string) => {
     return text.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 };
 
+// get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
+const getRelevantTags = (report?: CreatorReport) => {
+    if (!report || !report.user_profile.relevant_tags) {
+        return [];
+    }
+    const relevantTags = report.user_profile.relevant_tags;
+    return relevantTags.slice(0, 3).map((tag) => tag.tag);
+};
+
+/**
+ * Updates the sequence_influencer with the social profile data and the report data if available
+ */
 export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     sequenceInfluencer,
     socialProfile,
@@ -40,23 +52,16 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     updateSequenceInfluencer,
     company_id,
 }: {
-    sequenceInfluencer: SequenceInfluencer;
+    sequenceInfluencer: SequenceInfluencer | null;
     socialProfile?: InfluencerSocialProfileRow;
     report?: CreatorReport;
     updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
     company_id: string;
 }) => {
-    if (!socialProfile) {
+    if (!sequenceInfluencer || !company_id || !socialProfile || !report) {
         return;
     }
-    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
-    const getRelevantTags = () => {
-        if (!report || !report.user_profile.relevant_tags) {
-            return [];
-        }
-        const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags.slice(0, 3).map((tag) => tag.tag);
-    };
+
     // for now, what we need from the social profile is the id, email, tags
     const updatedValues = {
         id: sequenceInfluencer.id,
@@ -66,5 +71,14 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         social_profile_last_fetched: new Date().toISOString(),
         company_id,
     };
+    // only update if there are changed values
+    if (
+        updatedValues.influencer_social_profile_id === sequenceInfluencer.influencer_social_profile_id &&
+        updatedValues.email === sequenceInfluencer.email &&
+        updatedValues.tags.toString() === sequenceInfluencer.tags.toString()
+    ) {
+        return;
+    }
+
     await updateSequenceInfluencer(updatedValues);
 };
