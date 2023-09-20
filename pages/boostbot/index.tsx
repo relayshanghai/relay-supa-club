@@ -253,7 +253,12 @@ const Boostbot = () => {
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
-            if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
+            if (!unlockedInfluencers) {
+                throw new Error('Error unlocking influencers');
+            }
+            if (!sequence?.id) {
+                throw new Error('Error creating sequence: no sequence id selected');
+            }
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
@@ -271,7 +276,7 @@ const Boostbot = () => {
                     platform: influencer.socialProfile.platform as CreatorPlatform,
                     username: influencer.socialProfile.username,
                     url: influencer.socialProfile.url,
-                    sequence_id: '',
+                    sequence_id: sequence?.id,
                 });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
