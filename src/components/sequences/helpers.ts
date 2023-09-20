@@ -34,7 +34,7 @@ export const replaceNewlinesAndTabs = (text: string) => {
 };
 
 // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
-const getRelevantTags = (report?: CreatorReport) => {
+export const getRelevantTags = (report?: CreatorReport) => {
     if (!report || !report.user_profile.relevant_tags) {
         return [];
     }
@@ -67,15 +67,15 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         id: sequenceInfluencer.id,
         influencer_social_profile_id: socialProfile.id,
         email: socialProfile.email,
-        tags: getRelevantTags(),
+        tags: getRelevantTags(report),
         social_profile_last_fetched: new Date().toISOString(),
         company_id,
     };
-    // only update if there are changed values
+
     if (
+        JSON.stringify(updatedValues.tags) === JSON.stringify(sequenceInfluencer.tags) &&
         updatedValues.influencer_social_profile_id === sequenceInfluencer.influencer_social_profile_id &&
-        updatedValues.email === sequenceInfluencer.email &&
-        updatedValues.tags.toString() === sequenceInfluencer.tags.toString()
+        updatedValues.email === sequenceInfluencer.email
     ) {
         return;
     }
