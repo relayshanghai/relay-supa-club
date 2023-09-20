@@ -105,9 +105,6 @@ export const AddToSequenceModal = ({
                 throw new Error('Missing creatorProfile.user_id');
             }
 
-            // TODO: move set tags to sequence influencer row report fetch
-            // const tags = getRelevantTags();
-
             setSubmitting(true);
 
             newSequenceInfluencer = await createSequenceInfluencer({
@@ -197,6 +194,7 @@ export const AddToSequenceModal = ({
     ]);
 
     useEffect(() => {
+        // after the report is fetched, we update the sequence influencer row with the report data.
         if (!socialProfile || !sequenceInfluencer || !company) {
             return;
         }
