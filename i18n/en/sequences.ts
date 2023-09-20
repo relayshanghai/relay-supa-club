@@ -174,9 +174,9 @@ const sequences = {
     deleteFail: 'Failed to delete.',
     emailAlreadyExists: 'Email already exists',
     invalidSocialProfileTooltip: 'Updating influencer report',
-    invalidSocialProfileTooltipDescription: `Getting latest data for this influencer, we should be finished in 15 minutes.
-
-    Please wait and try again later.`,
+    invalidSocialProfileTooltipDescription:
+        'Getting latest data for this influencer, we should be finished in 15 minutes.',
+    invalidSocialProfileTooltipHighlight: 'Please wait and try again later.',
 };
 
 export default sequences;
