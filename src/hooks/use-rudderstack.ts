@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { apiObject, apiOptions } from 'rudder-sdk-js';
-import type { payloads } from 'src/utils/analytics/events';
+import type { eventKeys, payloads } from 'src/utils/analytics/events';
 import type { TrackedEvent, TriggerEvent } from 'src/utils/analytics/types';
 import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { useGetCurrentPage } from './use-get-current-page';
 import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -94,6 +95,8 @@ export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
         },
     };
 
+    // const peopleProps = Object.fromEntries(Object.keys(MixpanelPeopleProps).map(key => [key, null]));
+
     return { id, traits };
 };
 
@@ -154,6 +157,11 @@ type PromiseExecutor = (
     ...args: Parameters<ConstructorParameters<typeof Promise<RudderstackTrackResolveType>>[0]>
 ) => void;
 
+type RudderstackTrackPayload<T extends eventKeys> = Omit<payloads[T], 'currentPage'> & {
+    currentPage?: CurrentPageEvent;
+    $add?: { [key in MixpanelPeoplePropsInc]?: number };
+};
+
 export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const rudder = useRudder();
@@ -162,7 +170,7 @@ export const useRudderstackTrack = () => {
     const track = useCallback(
         <E extends TrackedEvent>(
             event: E,
-            properties?: Omit<payloads[E['eventName']], 'currentPage'> & { currentPage?: CurrentPageEvent },
+            properties?: RudderstackTrackPayload<E['eventName']>,
             options?: apiOptions,
         ) => {
             const abort = () => {
@@ -178,10 +186,12 @@ export const useRudderstackTrack = () => {
                     return resolve(null);
                 }
 
+                const { $add, ...eventPayload } = properties ?? {};
+
                 const trigger: TriggerEvent = (eventName, payload) => {
                     rudder.track(
                         eventName,
-                        { currentPage, ...payload },
+                        { currentPage, ...payload, ...$add },
                         options,
                         (...args: RudderstackMessageType[]) => {
                             resolve(args);
@@ -190,7 +200,7 @@ export const useRudderstackTrack = () => {
                     );
                 };
 
-                event(trigger, properties);
+                event(trigger, eventPayload);
             };
 
             const request = new Promise<RudderstackTrackResolveType>(executor);
