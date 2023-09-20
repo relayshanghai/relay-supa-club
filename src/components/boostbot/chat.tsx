@@ -3,7 +3,7 @@ import type { Influencer } from 'pages/boostbot';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Translation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
@@ -73,7 +73,7 @@ export const Chat: React.FC<ChatProps> = ({
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.stopped')}` });
+        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.stopped')}</Translation> });
         setMessages((prevMessages) => {
             const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
@@ -87,19 +87,19 @@ export const Chat: React.FC<ChatProps> = ({
         setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', progress }]);
 
     const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.unlockPage')}` });
+        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.unlockPage')}</Translation> });
         handlePageToUnlock();
     };
 
     const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.outreachPage')}` });
+        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.outreachPage')}</Translation> });
         handlePageToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'User', content: productDescription },
+            { sender: 'User', content: <>{productDescription}</> },
             { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsSearchLoading(true);
@@ -145,7 +145,11 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.chat.influencersFound', { count: influencers.length }) || '',
+                content: (
+                    <Translation>
+                        {(t) => t('boostbot.chat.influencersFound', { count: influencers.length })}
+                    </Translation>
+                ),
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);

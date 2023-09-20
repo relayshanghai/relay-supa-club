@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans, Translation, useTranslation } from 'react-i18next';
 import type { ProgressType } from 'src/components/boostbot/chat';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
@@ -41,7 +41,7 @@ const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Progress';
-    content?: string | JSX.Element;
+    content?: JSX.Element;
     progress?: ProgressType;
 };
 
@@ -117,7 +117,7 @@ const Boostbot = () => {
     const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
-            content: t('boostbot.chat.introMessage') || '',
+            content: <Translation>{(t) => t('boostbot.chat.introMessage')}</Translation>,
         },
     ]);
 
@@ -176,7 +176,7 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.influencerUnlock') || '',
+                content: <Translation>{(t) => t('boostbot.error.influencerUnlock')}</Translation>,
             });
 
             trackingPayload.is_success = false;
@@ -196,7 +196,10 @@ const Boostbot = () => {
     const handlePageToUnlock = async () => {
         const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
-            addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
+            addMessage({
+                sender: 'Bot',
+                content: <Translation>{(t) => t('boostbot.chat.noInfluencersToUnlock')}</Translation>,
+            });
             return;
         }
 
@@ -305,7 +308,7 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.influencersToOutreach') || '',
+                content: <Translation>{(t) => t('boostbot.error.influencersToOutreach')}</Translation>,
             });
 
             trackingPayload.is_success = false;

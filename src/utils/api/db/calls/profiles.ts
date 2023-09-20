@@ -20,3 +20,18 @@ export const getProfileByEmailEngineAccountQuery = (supabaseClient: RelayDatabas
 
     return data;
 };
+
+export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .select()
+        .limit(1)
+        .eq('company_id', companyId)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return data;
+};

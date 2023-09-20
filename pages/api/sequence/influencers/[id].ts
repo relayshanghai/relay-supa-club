@@ -124,6 +124,10 @@ const postHandler: NextApiHandler = async (
             influencer_social_profile_id: sequenceInfluencer.influencer_social_profile_id,
             id: address?.id,
         });
+    } catch (error: any) {
+        // @todo rework getSequenceInfluencerByIdCall/getProfileByIdCall
+        // throw new RelayError("Not found", 404)
+        throw new RelayError(error?.message, 404);
     }
 
     return res.status(httpCodes.OK).json({
