@@ -107,5 +107,5 @@ export const handleVIPSubscription = async (res: NextApiResponse, invoiceBody: C
         message: `Created VIP subscription for company ${company.name} and sent relay expert credentials to ${relayExpertEmail}`,
     });
 
-    return res.status(httpCodes.NO_CONTENT);
+    return res.status(httpCodes.OK);
 };
