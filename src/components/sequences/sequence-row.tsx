@@ -296,6 +296,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         ? t('sequences.invalidSocialProfileTooltipDescription')
                                         : sequenceSendTooltipDescription
                                 }
+                                highlight={
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltipHighlight')
+                                        : undefined
+                                }
                                 position="left"
                             >
                                 <Button
