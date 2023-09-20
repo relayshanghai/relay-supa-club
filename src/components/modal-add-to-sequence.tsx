@@ -1,24 +1,18 @@
-import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
-import { useReport } from 'src/hooks/use-report';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequences } from 'src/hooks/use-sequences';
 import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
 import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
-import type { Sequence } from 'src/utils/api/db';
+import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
-import { Info, Spinner } from './icons';
+import { Info } from './icons';
 import { Modal } from './modal';
-import { useCompany } from 'src/hooks/use-company';
-import { updateSequenceInfluencerIfSocialProfileAvailable } from './sequences/helpers';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -26,40 +20,30 @@ export const AddToSequenceModal = ({
     setShow,
     creatorProfile,
     platform,
+    setSuppressReportFetch,
+    sequence,
+    setSequence,
+    setSequenceInfluencer,
+    sequences,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
+    setSuppressReportFetch: (suppress: boolean) => void;
+    sequence: Sequence | null;
+    setSequence: (sequence: Sequence | null) => void;
+    setSequenceInfluencer: (sequenceInfluencer: SequenceInfluencer | null) => void;
+    sequences: Sequence[];
 }) => {
     const { t } = useTranslation();
-    const { company } = useCompany();
-    const { sequences: allSequences } = useSequences();
-    const [sequenceInfluencer, setSequenceInfluencer] = useState<Awaited<
-        ReturnType<typeof createSequenceInfluencer>
-    > | null>(null);
-    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
-    const { track } = useRudderstackTrack();
-    const [suppressReportFetch, setSuppressReportFetch] = useState(true);
-    const {
-        socialProfile,
-        report,
-        usageExceeded,
-        loading: loadingReport,
-    } = useReport({
-        platform,
-        creator_id: creatorProfile.user_id || '',
-        suppressFetch: suppressReportFetch,
-    });
 
-    const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const { track } = useRudderstackTrack();
+
     const [submitting, setSubmitting] = useState<boolean>(false);
     const { sendSequence } = useSequence(sequence?.id);
-    const { refresh: refreshSequenceInfluencers } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
-    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(
-        sequence ? [sequence.id] : [],
-    );
+    const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -72,7 +56,6 @@ export const AddToSequenceModal = ({
     const handleAddToSequence = useCallback(async () => {
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload = {
-            influencer_id: socialProfile?.id || '', // we confirm these later down
             sequence_id: sequence?.id || '',
             sequence_influencer_id: null,
             is_success: true,
@@ -81,22 +64,14 @@ export const AddToSequenceModal = ({
         try {
             if (!sequence) {
                 track(AddInfluencerToSequence, {
-                    influencer_id: null,
-                    sequence_id: null,
-                    sequence_influencer_id: null,
-                    is_success: false,
-                    is_sequence_autostart: null,
+                    ...trackingPayload,
                     extra_info: { error: 'Missing sequence' },
                 });
                 throw new Error('Missing selectedSequence');
             }
             if (!creatorProfile.user_id) {
                 track(AddInfluencerToSequence, {
-                    influencer_id: null,
-                    sequence_id: null,
-                    sequence_influencer_id: null,
-                    is_success: false,
-                    is_sequence_autostart: null,
+                    ...trackingPayload,
                     extra_info: { error: 'Missing creatorProfile.user_id' },
                 });
                 throw new Error('Missing creatorProfile.user_id');
@@ -115,10 +90,10 @@ export const AddToSequenceModal = ({
             });
             setSequenceInfluencer(newSequenceInfluencer);
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
-            refreshSequenceInfluencers();
+            setSuppressReportFetch(false); // will start getting the report.
+
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
-            setSuppressReportFetch(false); // will start getting the report.
             // when the report is fetched, we will update the sequence influencer row with the report data.
             // It will keep running when the modal is not visible
         } catch (error: any) {
@@ -139,12 +114,12 @@ export const AddToSequenceModal = ({
         };
 
         try {
-            if (sequenceInfluencer && sequenceInfluencer.email && sequence.auto_start) {
-                startSequencePayload.influencer_id = sequenceInfluencer.influencer_social_profile_id;
-                startSequencePayload.sequence_id = sequenceInfluencer.sequence_id;
-                startSequencePayload.sequence_influencer_id = sequenceInfluencer.id;
+            if (newSequenceInfluencer && newSequenceInfluencer.email && sequence.auto_start) {
+                startSequencePayload.influencer_id = newSequenceInfluencer.influencer_social_profile_id;
+                startSequencePayload.sequence_id = newSequenceInfluencer.sequence_id;
+                startSequencePayload.sequence_influencer_id = newSequenceInfluencer.id;
 
-                const results = await sendSequence([sequenceInfluencer]);
+                const results = await sendSequence([newSequenceInfluencer]);
                 const failed = results.filter((result) => result.error);
                 const succeeded = results.filter((result) => !result.error);
 
@@ -177,29 +152,21 @@ export const AddToSequenceModal = ({
             setShow(false);
         }
     }, [
-        track,
         createSequenceInfluencer,
-        creatorProfile,
-        sequence,
-        sendSequence,
-        setShow,
-        socialProfile,
-        t,
-        refreshSequenceInfluencers,
+        creatorProfile.fullname,
+        creatorProfile.picture,
+        creatorProfile.url,
+        creatorProfile.user_id,
+        creatorProfile.username,
         platform,
-        sequenceInfluencer,
+        sendSequence,
+        sequence,
+        setSequenceInfluencer,
+        setShow,
+        setSuppressReportFetch,
+        t,
+        track,
     ]);
-
-    useEffect(() => {
-        // after the report is fetched, we update the sequence influencer row with the report data.
-        updateSequenceInfluencerIfSocialProfileAvailable({
-            sequenceInfluencer,
-            socialProfile,
-            report,
-            updateSequenceInfluencer,
-            company_id: company?.id ?? '',
-        });
-    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
     return (
         <Modal
@@ -238,23 +205,9 @@ export const AddToSequenceModal = ({
                     {t('creators.cancel')}
                 </Button>
 
-                {usageExceeded && (
-                    <div>
-                        <Link href="/pricing">
-                            <Button>{t('account.subscription.upgradeSubscription')}</Button>
-                        </Link>
-                    </div>
-                )}
-
-                {!usageExceeded && (
-                    <Button onClick={handleAddToSequence} type="submit" disabled={submitting || loadingReport}>
-                        {loadingReport ? (
-                            <Spinner className="h-5 w-5 fill-primary-500 text-white" />
-                        ) : (
-                            t('creators.addToSequence')
-                        )}
-                    </Button>
-                )}
+                <Button onClick={handleAddToSequence} type="submit" disabled={submitting}>
+                    {t('creators.addToSequence')}
+                </Button>
             </div>
         </Modal>
     );

@@ -57,7 +57,6 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
     const { t } = useTranslation();
     const { profile } = useUser();
     const { company } = useCompany();
-
     const { data, isLoading, mutate } = useSWR(
         !suppressFetch && platform && creator_id && company?.id && profile?.id
             ? ['creators/report', platform, creator_id, company?.id, profile?.id]
@@ -107,5 +106,6 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
         usageExceeded,
         influencer,
         socialProfile,
+        refreshReport: mutate,
     };
 };

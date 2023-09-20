@@ -1,11 +1,18 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import type { CreatorAccount, CreatorPlatform } from 'types';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
+import { useReport } from 'src/hooks/use-report';
+import Link from 'next/link';
+import { updateSequenceInfluencerIfSocialProfileAvailable } from '../sequences/helpers';
+import { useCompany } from 'src/hooks/use-company';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
+import { useSequences } from 'src/hooks/use-sequences';
 
 export interface AddToSequenceButtonProps {
     inMenu?: boolean;
@@ -38,9 +45,43 @@ export const AddToSequenceButton = ({
             setShowAddToSequenceModal(true);
         }
     };
+    const { company } = useCompany();
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+
+    const [suppressReportFetch, setSuppressReportFetch] = useState(true);
+    const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+
+    const { socialProfile, report, usageExceeded } = useReport({
+        platform,
+        creator_id: creatorProfile.user_id || '',
+        suppressFetch: suppressReportFetch,
+    });
+    const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencer | null>(null);
+
+    useEffect(() => {
+        if (report && socialProfile && !suppressReportFetch) {
+            setSuppressReportFetch(true);
+        }
+        // after the report is fetched, we update the sequence influencer row with the report data.
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company?.id ?? '',
+        });
+    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer, suppressReportFetch]);
     return (
         <>
-            {inMenu ? (
+            {usageExceeded ? (
+                <div>
+                    <Link href="/pricing">
+                        <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                    </Link>
+                </div>
+            ) : inMenu ? (
                 <button
                     className={`${
                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
@@ -77,6 +118,11 @@ export const AddToSequenceButton = ({
                 }}
                 creatorProfile={creatorProfile}
                 platform={platform}
+                setSuppressReportFetch={setSuppressReportFetch}
+                setSequence={setSequence}
+                sequence={sequence}
+                sequences={sequences ?? []}
+                setSequenceInfluencer={setSequenceInfluencer}
             />
         </>
     );
