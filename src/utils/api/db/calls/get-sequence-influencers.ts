@@ -4,9 +4,11 @@ import {
     getSequenceInfluencerByIdCall,
     getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId,
 } from 'src/utils/api/db/calls/sequence-influencers';
-import type { RelayDatabase, SequenceInfluencersTable } from '../types';
+import type { Addresses, InfluencerSocialProfileRow, RelayDatabase, SequenceInfluencersTable } from '../types';
 import { getAddressByInfluencer } from './addresses';
 import { getProfileByIdCall as getProfileById } from './profiles';
+import { serverLogger } from 'src/utils/logger-server';
+import type { CreatorPlatform } from 'types';
 
 // @note gets sequence influencers by sequence
 export const getSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: string) => {
@@ -22,25 +24,41 @@ export const getSequenceInfluencer =
         const sequenceInfluencer = typeof id === 'string' ? await getSequenceInfluencerByIdCall(db)(id) : id;
 
         const { data: manager } = await getProfileById(db)(sequenceInfluencer.added_by);
+        let socialProfile: Partial<InfluencerSocialProfileRow> = {
+            name: sequenceInfluencer.name,
+            username: sequenceInfluencer.username ?? '',
+            avatar_url: sequenceInfluencer.avatar_url,
+            url: sequenceInfluencer.url ?? '',
+            platform: sequenceInfluencer.platform ?? '',
+        };
+        let address: Addresses['Row'] | null = null;
+        if (sequenceInfluencer.influencer_social_profile_id) {
+            try {
+                if (!sequenceInfluencer.name || !sequenceInfluencer.username) {
+                    // name, username, avatar_url, url, platform are now all filled in at sequence influencer creation
+                    // So this should only be called for old sequence influencers
+                    socialProfile = await getInfluencerSocialProfileById(db)(
+                        sequenceInfluencer.influencer_social_profile_id,
+                    );
+                }
+                address = await getAddressByInfluencer(db)(sequenceInfluencer.influencer_social_profile_id);
+            } catch (error) {
+                serverLogger(error);
+            }
+        }
 
-        const influencer = await getInfluencerSocialProfileById(db)(sequenceInfluencer.influencer_social_profile_id);
-
-        const address = await getAddressByInfluencer(db)(sequenceInfluencer.influencer_social_profile_id);
-
-        if (!manager || !influencer) {
+        if (!manager) {
             throw new Error('Sequence influencer not found');
         }
 
         return {
             ...sequenceInfluencer,
-            iqdata_id: influencer.reference_id.replace('iqdata:', ''),
-            influencer_id: influencer.id,
             manager_first_name: manager?.first_name ?? '',
-            name: influencer.name,
-            username: influencer.username,
-            avatar_url: influencer.avatar_url,
-            url: influencer.url,
-            platform: influencer.platform,
+            name: socialProfile?.name ?? '',
+            username: socialProfile?.username ?? '',
+            avatar_url: socialProfile?.avatar_url ?? '',
+            url: socialProfile?.url ?? '',
+            platform: (socialProfile?.platform as CreatorPlatform) ?? 'youtube',
             address,
             manager: {
                 id: manager.id,

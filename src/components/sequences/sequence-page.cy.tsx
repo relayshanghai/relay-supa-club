@@ -15,12 +15,18 @@ describe('<SequencePage />', () => {
         testMount(<SequencePage {...props} />);
 
         cy.contains('h1', "Joe's BoostBot Sequence");
-        cy.contains('tr', 'Dirty Tesla'); // Shows a sequence influencer
+        cy.contains('tr', 'Mario | Marketing & Motivation'); // Shows a sequence influencer
     });
     it('opens up FAQ when clicking "Need help?"', () => {
         testMount(<SequencePage {...props} />);
         cy.contains('Need help?').click();
         cy.contains(faq.sequences[0].title);
         cy.contains(faq.sequencesGetMoreInfo);
+    });
+    it('shows invalid modal', () => {
+        testMount(<SequencePage {...props} />);
+        cy.contains('Allegra - No Report');
+        cy.getByTestId('send-email-button-allegraalynn-noreport@gmail.com').trigger('mouseover', { force: true });
+        cy.contains('Updating influencer report');
     });
 });
