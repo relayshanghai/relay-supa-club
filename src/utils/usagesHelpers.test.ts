@@ -1,6 +1,7 @@
 import { describe, expect, test, it } from 'vitest';
 import { getCurrentMonthPeriod, hasCustomSearchParams } from './usagesHelpers';
 import type { FetchCreatorsFilteredParams } from './api/iqdata/transforms';
+import type { LocationWeighted } from 'types';
 
 describe('getCurrentMonthPeriod', () => {
     const now = new Date('2023-05-17');
@@ -114,14 +115,22 @@ describe('hasCustomSearchParams', () => {
         expect(hasCustomSearchParams(params)).toEqual(true);
         params.username = '';
 
-        params.influencerLocation = [{ location: 'test' }];
+        const location: LocationWeighted = {
+            id: 'test id',
+            name: 'test name',
+            title: 'test title',
+            country: { id: 'test country id', code: 'test code' },
+            weight: 1,
+            type: ['test type'],
+        };
+        params.influencerLocation = [location];
         expect(hasCustomSearchParams(params)).toEqual(true);
         params.influencerLocation = [];
 
         // make sure reset works
         expect(hasCustomSearchParams(params)).toEqual(false);
 
-        params.audienceLocation = [{ location: 'test' }];
+        params.audienceLocation = [location];
         expect(hasCustomSearchParams(params)).toEqual(true);
         params.audienceLocation = [];
 
