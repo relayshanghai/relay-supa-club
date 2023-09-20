@@ -20,6 +20,6 @@
     },
     "types": ["node"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js", "**/*.test.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
   "exclude": ["node_modules"]
 }
