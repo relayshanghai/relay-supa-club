@@ -1,7 +1,7 @@
-import { test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import type { TemplateVariable } from '../../utils/api/db';
 
-import { fillInTemplateVariables } from './helpers';
+import { fillInTemplateVariables, getRelevantTags, updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
 const emailText =
     'Hey {{ params.influencerAccountName }},\r\n\r\n{{ params.marketingManagerName }} here from {{ params.brandName }}. I watched your "{{ params.recentPostTitle }}" video, and love your content style!! 🤩\r\n\r\nEver thought about introducing your fans to {{ params.productName }}? I\'ve got a feeling it\'s right up their alley. \r\n\r\n{{  params.productDescription }} is available for just ${{ params.productPrice }}! You can check it out here {{ params.productLink }}\r\n\r\nWe’re looking to partner with 8 or so influencers in the {{ params.influencerNiche }} space to get the word out about the {{ params.productName }} over the next couple weeks, and would love for you to be apart of it!\r\n\r\nWe’d send you a free sample to make some content about and share with your audience, fully compensated of course.\r\n\r\nLet me know what you think! \r\n\r\nBest,  \r\n\r\n{{ params.marketingManagerName }}';
 
@@ -88,9 +88,152 @@ const replaceNewlinesAndTabs = (text: string) => {
     return text.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 };
 
-test('replaceNewlinesAndTabs', () => {
-    const example = 'Hey\n\nNice to meet you\n\tFrom relay.club with love';
-    const expected = 'Hey<br><br>Nice to meet you<br>&nbsp;&nbsp;&nbsp;&nbsp;From relay.club with love';
+describe('replaceNewlinesAndTabs', () => {
+    test('it replaces newlines and tabs with html', () => {
+        const example = 'Hey\n\nNice to meet you\n\tFrom relay.club with love';
+        const expected = 'Hey<br><br>Nice to meet you<br>&nbsp;&nbsp;&nbsp;&nbsp;From relay.club with love';
 
-    expect(replaceNewlinesAndTabs(example)).to.equal(expected);
+        expect(replaceNewlinesAndTabs(example)).to.equal(expected);
+    });
+});
+
+describe('updateSequenceInfluencerIfSocialProfileAvailable', () => {
+    const args: any = {
+        sequenceInfluencer: {
+            id: 'sequenceInfluencer_id',
+            influencer_social_profile_id: '',
+            email: '',
+        },
+        socialProfile: {
+            id: 'social_profile_id',
+            email: 'social_profile_email',
+        },
+        company_id: 'company_id',
+        report: {
+            user_profile: {
+                relevant_tags: [
+                    {
+                        tag: 'tag1',
+                    },
+                    {
+                        tag: 'tag2',
+                    },
+                    {
+                        tag: 'tag3',
+                    },
+                    {
+                        tag: 'tag4',
+                    },
+                ],
+            },
+        },
+    };
+    test('getRelevantTags helper helper', () => {
+        expect(getRelevantTags(args.report)).to.deep.equal(['tag1', 'tag2', 'tag3']);
+        expect(getRelevantTags(undefined)).to.deep.equal([]);
+    });
+    test('Updates the sequence_influencer with the email and id from the socialProfile. Pulls the top 3 tags from the report', async () => {
+        const updateSequenceInfluencer = vi.fn();
+
+        await updateSequenceInfluencerIfSocialProfileAvailable({ ...args, updateSequenceInfluencer });
+        const expectedUpdate = {
+            id: 'sequenceInfluencer_id',
+            influencer_social_profile_id: 'social_profile_id',
+            email: 'social_profile_email',
+            company_id: 'company_id',
+            social_profile_last_fetched: new Date().toISOString(),
+            tags: ['tag1', 'tag2', 'tag3'],
+        };
+        const call = updateSequenceInfluencer.mock.calls[0][0];
+        expect(call.id).to.equal(expectedUpdate.id);
+        expect(call.influencer_social_profile_id).to.equal(expectedUpdate.influencer_social_profile_id);
+        expect(call.email).to.equal(expectedUpdate.email);
+        expect(call.company_id).to.equal(expectedUpdate.company_id);
+        // expect(call.social_profile_last_fetched).to.equal(expectedUpdate.social_profile_last_fetched); // timestamp won't match exactly
+        expect(call.tags.toString()).to.deep.equal(expectedUpdate.tags.toString());
+    });
+    test('returns void if missing any required data', async () => {
+        const updateSequenceInfluencer = vi.fn();
+        const argsNoInfluencer: any = {
+            ...args,
+            sequenceInfluencer: null,
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsNoInfluencer);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(0);
+
+        const argsNoReport: any = {
+            ...args,
+            report: null,
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsNoReport);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(0);
+
+        const argsNoCompany: any = {
+            ...args,
+            company_id: null,
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsNoCompany);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(0);
+
+        const argsNoSocialProfile: any = {
+            ...args,
+            socialProfile: null,
+            updateSequenceInfluencer,
+        };
+
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsNoSocialProfile);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(0);
+    });
+    test('it will not call update if there are no changed values. will call even if there is just one update', async () => {
+        const updateSequenceInfluencer = vi.fn();
+        const argsAllMatch: any = {
+            ...args,
+            sequenceInfluencer: {
+                ...args.sequenceInfluencer,
+                influencer_social_profile_id: 'social_profile_id',
+                email: 'social_profile_email',
+                tags: ['tag1', 'tag2', 'tag3'],
+            },
+            updateSequenceInfluencer,
+        };
+
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsAllMatch);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(0);
+
+        const argsTagsChanged: any = {
+            ...args,
+            sequenceInfluencer: {
+                ...args.sequenceInfluencer,
+                tags: ['asdf', 'asdf', 'asdf'],
+            },
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsTagsChanged);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(1);
+
+        const argsEmailChange: any = {
+            ...args,
+            sequenceInfluencer: {
+                ...args.sequenceInfluencer,
+                email: 'new_email',
+            },
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsEmailChange);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(2);
+
+        const argsIdChange: any = {
+            ...args,
+            sequenceInfluencer: {
+                ...args.sequenceInfluencer,
+                influencer_social_profile_id: 'new id',
+            },
+            updateSequenceInfluencer,
+        };
+        await updateSequenceInfluencerIfSocialProfileAvailable(argsIdChange);
+        expect(updateSequenceInfluencer).toHaveBeenCalledTimes(3);
+    });
 });
