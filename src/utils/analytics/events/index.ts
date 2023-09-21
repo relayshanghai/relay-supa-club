@@ -131,6 +131,8 @@ import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
 import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
 import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
+import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
+import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
 
 export {
     Search,
@@ -231,6 +233,7 @@ export const events = {
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
+    [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
 };
 
 export type payloads = {
@@ -292,6 +295,7 @@ export type payloads = {
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
+    [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -355,6 +359,7 @@ export const eventKeys = z.union([
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
     z.literal(SEARCH_INFLUENCER_BY_NAME),
+    z.literal(CHANGE_SEQUENCE_TAB),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

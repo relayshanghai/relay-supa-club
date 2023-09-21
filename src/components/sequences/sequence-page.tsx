@@ -27,6 +27,7 @@ import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
 import { Banner } from '../library/banner';
+import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -146,8 +147,16 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 ) : null,
         },
     ];
-    const [currentTab, setCurrentTab] = useState(tabs[0].value);
-
+    const [currentTab, setCurrentTabState] = useState(tabs[0].value);
+    const setCurrentTab = (tab: SequenceInfluencerManagerPage['funnel_status']) => {
+        track(ChangeSequenceTab, {
+            current_tab: currentTab,
+            selected_tab: tab,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+        });
+        setCurrentTabState(tab);
+    };
     const [selection, setSelection] = useState<string[]>([]);
 
     const currentTabInfluencers = influencers
