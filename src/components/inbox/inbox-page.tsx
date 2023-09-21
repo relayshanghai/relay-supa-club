@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInboxPage } from 'src/utils/analytics/events';
+import { OpenEmailThread, OpenInboxPage } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -97,6 +97,7 @@ export const InboxPage = () => {
     const handleGetThreadEmails = useCallback(
         async (message: MessagesGetMessage) => {
             setSelectedMessages([]);
+
             setLoadingSelectedMessages(true);
             setGetSelectedMessagesError('');
             try {
@@ -110,6 +111,14 @@ export const InboxPage = () => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
                 });
                 setSelectedMessages(threadMessages);
+                track(OpenEmailThread, {
+                    sequenceEmailAddress: profile?.sequence_send_email ?? '',
+                    emailThreadId: threadMessages[0].threadId,
+                    selectedEmailId: threadMessages[0].emailId,
+                    sender: threadMessages[0].from,
+                    recipient: threadMessages[0].to,
+                    openWhenClicked: true,
+                });
                 setLoadingSelectedMessages(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -118,7 +127,7 @@ export const InboxPage = () => {
             }
             setLoadingSelectedMessages(false);
         },
-        [getSelectedMessagesError, profile?.email_engine_account_id],
+        [getSelectedMessagesError, profile?.email_engine_account_id, profile?.sequence_send_email, track],
     );
 
     const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);

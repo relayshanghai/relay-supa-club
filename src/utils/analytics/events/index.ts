@@ -101,6 +101,7 @@ import type { DeleteSequencePayload } from './outreach/sequence-delete';
 import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
+import { OpenEmailThread, OPEN_EMAIL_THREAD, type OpenEmailThreadPayload } from './open-email-thread';
 
 export {
     Search,
@@ -140,6 +141,7 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    OpenEmailThread,
 };
 
 export const events = {
@@ -186,6 +188,7 @@ export const events = {
     [OPEN_SEQUENCE]: OpenSequence,
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
+    [OPEN_EMAIL_THREAD]: OpenEmailThread,
 };
 
 export type payloads = {
@@ -232,6 +235,7 @@ export type payloads = {
     [OPEN_SEQUENCE]: OpenSequencePayload;
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
+    [OPEN_EMAIL_THREAD]: OpenEmailThreadPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -280,6 +284,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_SEQUENCE),
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
+    z.literal(OPEN_EMAIL_THREAD),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
