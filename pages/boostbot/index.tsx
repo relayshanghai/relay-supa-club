@@ -202,7 +202,7 @@ const Boostbot = () => {
             translationLink: '/pricing',
             translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
-        // Temporarily disabled, will be readded, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
+        // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
         // addMessage({
         //     sender: 'Bot',
         //     type: 'video',
@@ -255,7 +255,7 @@ const Boostbot = () => {
                 translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
                 translationLink: '/sequences',
             });
-            // Temporarily disabled, will be readded, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
+            // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
             // addMessage({
             //     sender: 'Bot',
             //     type: 'video',
