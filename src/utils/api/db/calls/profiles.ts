@@ -35,3 +35,9 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
 
     return data;
 };
+
+export const getProfileByEmail = (db: RelayDatabase) => async (email: string) => {
+    const { data, error } = await db.from('profiles').select().eq('email', email).maybeSingle();
+    if (error) throw error;
+    return data;
+};
