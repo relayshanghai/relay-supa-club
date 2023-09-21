@@ -9,6 +9,8 @@ import { Email } from './Email';
 import { Threads } from './Threads';
 import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SendEmailReply } from 'src/utils/analytics/events';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -19,6 +21,7 @@ export const CorrespondenceSection = ({
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
 
     const handleSubmit = async (replyMessage: string) => {
         if (!profile?.email_engine_account_id) {
@@ -36,6 +39,14 @@ export const CorrespondenceSection = ({
         };
         try {
             await sendReply(replyBody, profile?.email_engine_account_id);
+            track(SendEmailReply, {
+                sequenceEmailAddress: profile?.sequence_send_email ?? '',
+                emailThreadId: selectedMessages[0].threadId,
+                attachment: false,
+                attachmentTypes: [],
+                cc: false,
+                ccEmails: [],
+            });
             setReplyMessage('');
         } catch (error) {
             clientLogger(error, 'error');
