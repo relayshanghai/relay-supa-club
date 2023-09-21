@@ -61,8 +61,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: `http://localhost:3000/payments/success?${returnUrlParams.toString()}`,
-                    // return_url: `https://app.relay.club/payments/success?${returnUrlParams.toString()}`,
+                    return_url: `https://app.relay.club/payments/success?${returnUrlParams.toString()}`,
                 },
             });
             //if has error, handle error
