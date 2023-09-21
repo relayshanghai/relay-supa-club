@@ -3,8 +3,9 @@ import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
 import type Stripe from 'stripe';
 import { ApiHandler } from 'src/utils/api-handler';
+import { serverLogger } from 'src/utils/logger-server';
 
-export type SubscriptionUpgradePostBody = {
+export type SubscriptionUpgradePostRequestBody = {
     companyId: string;
     cusId: string;
     priceId: string;
@@ -15,33 +16,21 @@ export interface SubscriptionUpgradePostResponse extends Stripe.Response<Stripe.
     type: Stripe.Subscription.Status;
     clientSecret: string;
     subscriptionId: string;
+    oldSubscriptionId: string;
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { cusId, priceId } = req.body as SubscriptionUpgradePostBody;
+    const { cusId, priceId } = req.body as SubscriptionUpgradePostRequestBody;
 
-    // const subscriptions = await stripeClient.subscriptions.list({
-    //     customer,
-    //     status: 'active',
-    // });
-
-    // let activeSubscription = subscriptions.data[0];
-
-    // if (!activeSubscription) {
-    //     const trialSubscriptions = await stripeClient.subscriptions.list({
-    //         customer,
-    //         status: 'trialing',
-    //     });
-
-    //     activeSubscription = trialSubscriptions.data[0];
-    //     if (!activeSubscription) {
-    //         return res
-    //             .status(httpCodes.FORBIDDEN)
-    //             .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
-    //     }
-    // }
-
-    //create a new subscription and cancel current one
+    const oldSubscription = await stripeClient.subscriptions.list({
+        customer: cusId,
+    });
+    console.log('subscriptions ===============>', oldSubscription);
+    if (oldSubscription.data.length > 1) {
+        serverLogger('More than one subscription found for customer: ' + cusId);
+    }
+    const oldSubscriptionId = oldSubscription.data[0].id;
+    console.log('subscriptions ===============>', oldSubscriptionId);
 
     const subscription = await stripeClient.subscriptions.create({
         customer: cusId,
@@ -57,6 +46,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         type: 'payment',
         clientSecret: (payment_intent as Stripe.PaymentIntent).client_secret,
         subscriptionId: subscription.id,
+        oldSubscriptionId,
     });
 
     // only cancel old subscription after new one is created successfully

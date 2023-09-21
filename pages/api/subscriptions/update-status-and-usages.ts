@@ -4,9 +4,14 @@ import { ApiHandler } from 'src/utils/api-handler';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { subscription, price, product, companyId } = req.body;
+    const { companyId, subscriptionId, priceId } = req.body;
+
+    const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
+    const price = await stripeClient.prices.retrieve(priceId);
+    const product = await stripeClient.products.retrieve(price.product as string);
 
     const subscription_start_date = unixEpochToISOString(subscription.start_date);
     if (!subscription_start_date) throw new Error('Missing subscription start date');
