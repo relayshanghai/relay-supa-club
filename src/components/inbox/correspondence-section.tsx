@@ -40,12 +40,12 @@ export const CorrespondenceSection = ({
         try {
             await sendReply(replyBody, profile?.email_engine_account_id);
             track(SendEmailReply, {
-                sequenceEmailAddress: profile?.sequence_send_email ?? '',
-                emailThreadId: selectedMessages[0].threadId,
+                sequence_email_address: profile?.sequence_send_email ?? '',
+                email_thread_id: selectedMessages[0].threadId,
                 attachment: false,
-                attachmentTypes: [],
+                attachment_types: [],
                 cc: false,
-                ccEmails: [],
+                cc_emails: [],
             });
             setReplyMessage('');
         } catch (error) {

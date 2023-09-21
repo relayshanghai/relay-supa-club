@@ -3,12 +3,12 @@ import type { TriggerEvent } from '../types';
 export const SEND_EMAIL_REPLY = 'Send Email Reply';
 
 export type SendEmailReplyPayload = {
-    sequenceEmailAddress: string;
-    emailThreadId: string;
+    sequence_email_address: string;
+    email_thread_id: string;
     attachment: boolean;
-    attachmentTypes: string[];
+    attachment_types: string[];
     cc: boolean;
-    ccEmails: string[];
+    cc_emails: string[];
 };
 
 export const SendEmailReply = (trigger: TriggerEvent, value?: SendEmailReplyPayload) =>
