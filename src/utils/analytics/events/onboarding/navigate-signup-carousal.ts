@@ -3,8 +3,8 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const NAVIGATE_SIGNUP_CAROUSAL = 'Navigate Signup Carousal';
 
 export type NavigateSignupCarousalPayload = EventPayload<{
-    currentSlide: number;
-    destinationSlide: number;
+    current_slide: number;
+    destination_slide: number;
 }>;
 
 export const NavigateSignupCarousal = (trigger: TriggerEvent, value?: NavigateSignupCarousalPayload) =>

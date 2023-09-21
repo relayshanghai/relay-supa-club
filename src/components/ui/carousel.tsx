@@ -21,8 +21,8 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
         const destinationSlide = currIndex === 0 ? slides?.length - 1 : currIndex - 1;
         setCurrIndex(destinationSlide);
         track(NavigateSignupCarousal, {
-            currentSlide: currIndex,
-            destinationSlide,
+            current_slide: currIndex,
+            destination_slide: destinationSlide,
         });
     }, [currIndex, slides?.length, track]);
 
@@ -32,8 +32,8 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
             setCurrIndex(destinationSlide);
             if (shouldTrack) {
                 track(NavigateSignupCarousal, {
-                    currentSlide: currIndex,
-                    destinationSlide,
+                    current_slide: currIndex,
+                    destination_slide: destinationSlide,
                 });
             }
         },
@@ -86,8 +86,8 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                             onClick={() => {
                                 setCurrIndex(i);
                                 track(NavigateSignupCarousal, {
-                                    currentSlide: currIndex,
-                                    destinationSlide: i,
+                                    current_slide: currIndex,
+                                    destination_slide: i,
                                 });
                             }}
                             className={`h-2 w-2 rounded-full bg-white transition-all duration-500 ease-in-out hover:cursor-pointer ${
