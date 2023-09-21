@@ -17,15 +17,17 @@ import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
 import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
+import type { PaymentIntentSucceeded } from 'types/stripe/payment-intent-succeeded-webhook';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
+    paymentIntentSucceeded: 'payment_intent.succeeded',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed;
+export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | PaymentIntentSucceeded;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
+const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | PaymentIntentSucceeded) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -41,9 +43,14 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
     }
     rudderstack.identifyWithProfile(profile.id);
 };
-
-const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
+//event: HandledEvent
+const handleStripeWebhook = async (event: any, res: NextApiResponse) => {
     switch (event.type) {
+        case handledWebhooks.paymentIntentSucceeded:
+            console.log('paymentIntentSucceeded ===============>', event);
+            const paymentIntent = (event as Stripe.Event).data.object as Stripe.PaymentIntent;
+            console.log('paymentIntent ===============>', paymentIntent);
+        // await handlePaymentIntentSucceeded(paymentIntent);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
@@ -93,6 +100,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
+        //test here!
+        if (event.type === 'payment_intent.succeeded') {
+            console.log('payment_intent.succeeded ===============>', event);
+        }
 
         if (!event || !event.type) {
             serverLogger('stripe no event or event type', { level: 'error' });
