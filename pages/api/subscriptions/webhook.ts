@@ -17,18 +17,15 @@ import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
 import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
-import type { PaymentIntentSucceeded } from 'types/stripe/payment-intent-succeeded-webhook';
-import { handlePaymentIntentSucceeded } from 'src/utils/api/stripe/handle-payment-intent-succeeded';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
-    paymentIntentSucceeded: 'payment_intent.succeeded',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | PaymentIntentSucceeded;
+export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | PaymentIntentSucceeded) => {
+const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -47,8 +44,6 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
 //event: HandledEvent
 const handleStripeWebhook = async (event: any, res: NextApiResponse) => {
     switch (event.type) {
-        case handledWebhooks.paymentIntentSucceeded:
-            return await handlePaymentIntentSucceeded(res, event as PaymentIntentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
