@@ -13,6 +13,8 @@ import { OutreachNextStepsInput } from '../components/outreach-next-steps-input'
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 import { useTranslation } from 'react-i18next';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { AddNoteToInfluencerProfile } from 'src/utils/analytics/events';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -74,9 +76,11 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
     const { getNotes, saveNote } = useSequenceInfluencerNotes();
+    const { track } = useRudderstackTrack();
 
     const handleSaveNotes = useCallback(
         (value: string) => {
+            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id missing');
             saveNote
                 .call({
                     comment: value,
@@ -86,8 +90,12 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 .then(() => {
                     saveNote.refresh();
                 });
+            track(AddNoteToInfluencerProfile, {
+                influencer_id: profile.influencer_social_profile_id,
+                note: value,
+            });
         },
-        [profile, saveNote],
+        [profile, saveNote, track],
     );
 
     useEffect(() => {
