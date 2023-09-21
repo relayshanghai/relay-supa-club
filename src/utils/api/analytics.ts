@@ -26,6 +26,9 @@ export const getUserSession = (db: SupabaseClient) => async () => {
     if (session !== null) {
         const profile = await getProfileByUser(db)(session.user);
 
+        // eslint-disable-next-line no-console
+        console.log('>>>>>', session.user);
+
         // @ts-ignore session.user.session_id is not included in the User type
         data.session_id = session.user.session_id;
         data.user_id = session.user.id;
