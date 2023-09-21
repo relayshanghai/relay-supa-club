@@ -5,7 +5,7 @@ export const ADD_INFLUENCER_POST = 'Add Influencer Post';
 
 export type AddInfluencerPostPayload = EventPayload<{
     influencer_id: string; // REFERENCE TO THE INFLUENCER_SOCIAL_PROFILE TABLE'S ID
-    post_link: string;
+    post_links: string[];
     platform: CreatorPlatform;
     total_profile_posts: number;
 }>;

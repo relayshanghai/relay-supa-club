@@ -52,8 +52,8 @@ export const CollabAddPostModal = ({ profile, ...props }: Props) => {
             track(AddInfluencerPost, {
                 influencer_id: profile.influencer_social_profile_id,
                 platform: profile.platform,
-                post_link: urls[urls.length - 1].value,
-                total_profile_posts: getPosts.data?.length ?? 0,
+                post_links: urls.slice(urls.length - (getPosts.data?.length ?? 0)).map((url) => url.value),
+                total_profile_posts: urls.length,
             });
         },
         [savePosts, getPosts, profile, track],
