@@ -13,8 +13,9 @@ import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
-import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
+import { incrementTotalLogin } from 'src/utils/api/db/calls/profiles';
 
 export type SignupData = {
     email: string;
@@ -83,6 +84,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent, identifyFromProfile } = useRudderstack();
+
+    const incrementProfileTotalLogin = useDB(incrementTotalLogin);
+
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -139,6 +143,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             if (e instanceof Error) message = e.message ?? 'Unknown error';
             throw new Error(message);
         } finally {
+            incrementProfileTotalLogin(email);
             setLoading(false);
         }
     };
