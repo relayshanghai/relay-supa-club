@@ -101,6 +101,7 @@ import type { DeleteSequencePayload } from './outreach/sequence-delete';
 import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
+import { OpenEmailThread, OPEN_EMAIL_THREAD, type OpenEmailThreadPayload } from './open-email-thread';
 import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
 import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
 import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
@@ -163,6 +164,7 @@ export {
     SignupStarted,
     OpenVideoGuideModal,
     SendEmailReply,
+    OpenEmailThread,
 };
 
 export const events = {
@@ -209,6 +211,7 @@ export const events = {
     [OPEN_SEQUENCE]: OpenSequence,
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
+    [OPEN_EMAIL_THREAD]: OpenEmailThread,
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
@@ -266,6 +269,7 @@ export type payloads = {
     [OPEN_SEQUENCE]: OpenSequencePayload;
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
+    [OPEN_EMAIL_THREAD]: OpenEmailThreadPayload;
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
@@ -325,6 +329,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_SEQUENCE),
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
+    z.literal(OPEN_EMAIL_THREAD),
     z.literal(VIEW_SEQUENCE_TEMPLATES),
     z.literal(UPDATE_TEMPLATE_VARIABLE),
     z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
