@@ -112,12 +112,12 @@ export const InboxPage = () => {
                 });
                 setSelectedMessages(threadMessages);
                 track(OpenEmailThread, {
-                    sequenceEmailAddress: profile?.sequence_send_email ?? '',
-                    emailThreadId: threadMessages[0].threadId,
-                    selectedEmailId: threadMessages[0].emailId,
+                    sequence_email_address: profile?.sequence_send_email ?? '',
+                    email_thread_id: threadMessages[0].threadId,
+                    selected_email_id: threadMessages[0].emailId,
                     sender: threadMessages[0].from,
                     recipient: threadMessages[0].to,
-                    openWhenClicked: true,
+                    open_when_clicked: true,
                 });
                 setLoadingSelectedMessages(false);
             } catch (error: any) {

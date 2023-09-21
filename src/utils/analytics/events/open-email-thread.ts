@@ -3,12 +3,12 @@ import type { TriggerEvent } from '../types';
 export const OPEN_EMAIL_THREAD = 'Open Email Thread';
 
 export type OpenEmailThreadPayload = {
-    sequenceEmailAddress: string;
-    emailThreadId: string;
-    selectedEmailId: string;
+    sequence_email_address: string;
+    email_thread_id: string;
+    selected_email_id: string;
     sender: unknown;
     recipient: unknown;
-    openWhenClicked: boolean;
+    open_when_clicked: boolean;
 };
 
 export const OpenEmailThread = (trigger: TriggerEvent, value?: OpenEmailThreadPayload) =>
