@@ -5,7 +5,6 @@ import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 
 type useSessionParams = {
-    key?: string;
     onClear?: () => void;
     onReady?: (session: Session | null) => void;
     onUpdate?: (update: Session | null, current: Session | null) => void;
