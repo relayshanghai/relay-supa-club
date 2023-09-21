@@ -42,9 +42,9 @@ export const CorrespondenceSection = ({
             track(SendEmailReply, {
                 sequence_email_address: profile?.sequence_send_email ?? '',
                 email_thread_id: selectedMessages[0].threadId,
-                attachment: false,
+                attachment: false, // ATTACHMENTS NOT IMPLEMENTED IN CODE
                 attachment_types: [],
-                cc: false,
+                cc: false, // CC NOT IMPLEMENTED IN CODE
                 cc_emails: [],
             });
             setReplyMessage('');
