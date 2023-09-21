@@ -22,6 +22,7 @@ import { Button } from 'src/components/button';
 import { Question } from 'src/components/icons';
 import { FilterInfluencerManager } from 'src/utils/analytics/events/outreach/filter-influencer-manager';
 import { SearchInfluencerManager } from 'src/utils/analytics/events/outreach/search-influencer-manager';
+import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-mine';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -105,8 +106,13 @@ const Manager = () => {
     }, [sequenceInfluencers]);
 
     const handleOnlyMe = useCallback(() => {
+        track(ToggleViewMine, {
+            action: !onlyMe ? 'Enable' : 'Disable',
+            total_managed_influencers: influencers.length,
+            total_users_influencers: influencers.filter(({ added_by }) => added_by === profile?.id).length,
+        });
         setOnlyMe(!onlyMe);
-    }, [onlyMe]);
+    }, [influencers, onlyMe, profile?.id, track]);
 
     const handleFilterStatus = useCallback(
         (filters: CommonStatusType[]) => {
