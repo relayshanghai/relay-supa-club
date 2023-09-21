@@ -28,6 +28,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
 import { Banner } from '../library/banner';
 import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
+import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -102,6 +103,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
+        track(ToggleAutoStart, {
+            action: checked ? 'Enable' : 'Disable',
+            total_sequence_influencers: sequenceInfluencers?.length,
+            unstarted_sequence_influencers: sequenceInfluencers?.filter(
+                (influencer) => influencer.funnel_status === 'To Contact',
+            ).length,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+        });
         if (!sequence) {
             return;
         }

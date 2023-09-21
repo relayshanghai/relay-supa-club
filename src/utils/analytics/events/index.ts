@@ -133,6 +133,8 @@ import type { SearchInfluencerByNamePayload } from './discover/search-influencer
 import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
 import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
 import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
+import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
+import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
 
 export {
     Search,
@@ -234,6 +236,7 @@ export const events = {
     [CLEAR_FILTERS]: ClearFilters,
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
+    [TOGGLE_AUTO_START]: ToggleAutoStart,
 };
 
 export type payloads = {
@@ -296,6 +299,7 @@ export type payloads = {
     [CLEAR_FILTERS]: ClearFiltersPayload;
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
+    [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -360,6 +364,7 @@ export const eventKeys = z.union([
     z.literal(CLEAR_FILTERS),
     z.literal(SEARCH_INFLUENCER_BY_NAME),
     z.literal(CHANGE_SEQUENCE_TAB),
+    z.literal(TOGGLE_AUTO_START),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
