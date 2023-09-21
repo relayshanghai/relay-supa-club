@@ -135,6 +135,8 @@ import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
 import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
 import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
 import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
+import type { FilterSequenceInfluencersPayload } from './outreach/filter-sequence-influencers';
+import { FILTER_SEQUENCE_INFLUENCERS, FilterSequenceInfluencers } from './outreach/filter-sequence-influencers';
 
 export {
     Search,
@@ -237,6 +239,7 @@ export const events = {
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
     [TOGGLE_AUTO_START]: ToggleAutoStart,
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencers,
 };
 
 export type payloads = {
@@ -300,6 +303,7 @@ export type payloads = {
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
     [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencersPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -365,6 +369,7 @@ export const eventKeys = z.union([
     z.literal(SEARCH_INFLUENCER_BY_NAME),
     z.literal(CHANGE_SEQUENCE_TAB),
     z.literal(TOGGLE_AUTO_START),
+    z.literal(FILTER_SEQUENCE_INFLUENCERS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
