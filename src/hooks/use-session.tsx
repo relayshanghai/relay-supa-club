@@ -105,6 +105,9 @@ export const useSession = (params?: useSessionParams) => {
             control.current = new AbortController();
         };
 
+        // eslint-disable-next-line no-console
+        console.log('<<<<<<<<<<<<', supabaseSession, session);
+
         // @ts-ignore session.user.session_id is not included in the User type
         if (supabaseSession && session && supabaseSession.user.session_id === session.user.session_id) {
             // rehydrate react with persisted session from window global if supabase session is still the same
