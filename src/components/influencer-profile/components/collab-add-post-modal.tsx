@@ -10,6 +10,8 @@ import type { SocialMediaPlatform } from 'types';
 import { CollabAddPostModalForm } from './collab-add-post-modal-form';
 import { InfluencerPosts } from './influencer-posts';
 import type { PostUrl } from 'pages/api/influencer/[id]/posts-by-influencer';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { AddInfluencerPost } from 'src/utils/analytics/events';
 
 type Props = Omit<
     {
@@ -23,6 +25,7 @@ type Props = Omit<
 export const CollabAddPostModal = ({ profile, ...props }: Props) => {
     const { onClose } = { onClose: () => null, ...props };
     const { getPosts, savePosts } = useInfluencers();
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
         // load posts when the modal is opened
@@ -34,8 +37,11 @@ export const CollabAddPostModal = ({ profile, ...props }: Props) => {
     }, [props.isOpen, getPosts, profile]);
 
     const handleSaveUrls = useCallback(
-        (urls: PostUrl[], setUrls: (urls: PostUrl[]) => void) => {
-            savePosts.call(profile.id, urls).then((res) => {
+        async (urls: PostUrl[], setUrls: (urls: PostUrl[]) => void) => {
+            if (!profile.influencer_social_profile_id) {
+                throw new Error('Influencer social profile id not found');
+            }
+            await savePosts.call(profile.id, urls).then((res) => {
                 savePosts.refresh();
                 getPosts.refresh().call(profile.id);
 
@@ -43,8 +49,14 @@ export const CollabAddPostModal = ({ profile, ...props }: Props) => {
                     setUrls(res.failed);
                 }
             });
+            track(AddInfluencerPost, {
+                influencer_id: profile.influencer_social_profile_id,
+                platform: profile.platform,
+                post_link: urls[urls.length - 1].value,
+                total_profile_posts: getPosts.data?.length ?? 0,
+            });
         },
-        [savePosts, getPosts, profile],
+        [savePosts, getPosts, profile, track],
     );
 
     const handleModalClose = useCallback(() => {

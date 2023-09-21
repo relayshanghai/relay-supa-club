@@ -123,6 +123,8 @@ import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
+import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
 
 export {
     Search,
@@ -163,6 +165,7 @@ export {
     SignupStarted,
     OpenVideoGuideModal,
     OpenInfluencerProfile,
+    AddInfluencerPost,
 };
 
 export const events = {
@@ -220,6 +223,7 @@ export const events = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [ADD_INFLUENCER_POST]: AddInfluencerPost,
 };
 
 export type payloads = {
@@ -277,6 +281,7 @@ export type payloads = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -336,6 +341,7 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
     z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(ADD_INFLUENCER_POST),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
