@@ -81,8 +81,8 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.error.outOfSearchCredits',
-                contentString: '/pricing',
+                translationKey: 'boostbot.error.outOfSearchCredits',
+                translationLink: '/pricing',
             });
             setIsSearchDisabled(true);
         }
@@ -90,20 +90,19 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.error.outOfProfileCredits',
-                contentString: '/pricing',
+                translationKey: 'boostbot.error.outOfProfileCredits',
+                translationLink: '/pricing',
             });
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
-    // const [messages, setMessages] = useState<MessageType[]>([
     const [messages, setMessages] = usePersistentState<MessageType[]>('boostbot-messages', [
         {
             sender: 'Bot',
             type: 'translation',
-            contentKey: 'boostbot.chat.introMessage',
+            translationKey: 'boostbot.chat.introMessage',
         },
     ]);
 
@@ -163,7 +162,7 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.error.influencerUnlock',
+                translationKey: 'boostbot.error.influencerUnlock',
             });
 
             trackingPayload.is_success = false;
@@ -186,7 +185,7 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.chat.noInfluencersToUnlock',
+                translationKey: 'boostbot.chat.noInfluencersToUnlock',
             });
             return;
         }
@@ -199,15 +198,16 @@ const Boostbot = () => {
         addMessage({
             sender: 'Bot',
             type: 'translation',
-            contentKey: `boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`,
-            contentString: '/pricing',
-            contentData: { count: unlockedInfluencers?.length },
+            translationKey: `boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`,
+            translationLink: '/pricing',
+            translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
+        // Temporarily disabled, will be readded, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
         // addMessage({
         //     sender: 'Bot',
         //     type: 'video',
-        //     contentKey: '/assets/videos/delete-guide.mp4',
-        //     contentString: OpenVideoGuideModal.eventName,
+        //     videoUrl: '/assets/videos/delete-guide.mp4',
+        //     eventToTrack: OpenVideoGuideModal.eventName,
         // });
         setHasUsedUnlock(true);
 
@@ -252,14 +252,15 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
-                contentString: '/sequences',
+                translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
+                translationLink: '/sequences',
             });
+            // Temporarily disabled, will be readded, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
             // addMessage({
             //     sender: 'Bot',
             //     type: 'video',
-            //     contentKey: '/assets/videos/sequence-guide.mp4',
-            //     contentString: OpenVideoGuideModal.eventName,
+            //     videoUrl: '/assets/videos/sequence-guide.mp4',
+            //     eventToTrack: OpenVideoGuideModal.eventName,
             // });
 
             if (sequence?.auto_start) {
@@ -271,7 +272,7 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.error.influencersToOutreach',
+                translationKey: 'boostbot.error.influencersToOutreach',
             });
 
             trackingPayload.is_success = false;

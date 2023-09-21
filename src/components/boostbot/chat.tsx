@@ -71,10 +71,10 @@ export const Chat: React.FC<ChatProps> = ({
         addMessage({
             sender: 'User',
             type: 'translation',
-            contentKey: 'boostbot.chat.stopped',
+            translationKey: 'boostbot.chat.stopped',
         });
         setMessages((prevMessages) => {
-            const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
+            const lastProgressIndex = prevMessages.findLastIndex((message) => message.type === 'progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
         });
         track(StopBoostbot, {
@@ -85,24 +85,24 @@ export const Chat: React.FC<ChatProps> = ({
     const updateProgress = (progress: ProgressType) =>
         setMessages((messages) => [
             ...messages.slice(0, -1),
-            { sender: 'Progress', type: 'progress', contentData: progress },
+            { sender: 'Neutral', type: 'progress', progressData: progress },
         ]);
 
     const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', type: 'translation', contentKey: 'boostbot.chat.unlockPage' });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockPage' });
         handlePageToUnlock();
     };
 
     const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', type: 'translation', contentKey: 'boostbot.chat.outreachPage' });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachPage' });
         handlePageToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'User', type: 'text', contentString: productDescription },
-            { sender: 'Progress', type: 'progress', contentData: { topics: [], isMidway: false, totalFound: null } },
+            { sender: 'User', type: 'text', text: productDescription },
+            { sender: 'Neutral', type: 'progress', progressData: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsSearchLoading(true);
 
@@ -148,8 +148,8 @@ export const Chat: React.FC<ChatProps> = ({
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                contentKey: 'boostbot.chat.influencersFound',
-                contentData: { count: influencers.length },
+                translationKey: 'boostbot.chat.influencersFound',
+                translationValues: { count: influencers.length },
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);
