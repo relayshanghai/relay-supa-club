@@ -4,7 +4,7 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OPEN_INFLUENCER_PROFILE = 'Open Influencer Profile';
 
 export type OpenInfluencerProfilePayload = EventPayload<{
-    influencer_id: string;
+    influencer_social_profile_id: string;
     search_id: string;
     current_status: FunnelStatus;
     currently_filtered: boolean;

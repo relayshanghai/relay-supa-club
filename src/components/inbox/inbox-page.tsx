@@ -80,9 +80,12 @@ export const InboxPage = () => {
 
     useEffect(() => {
         if (!sequenceInfluencer) return;
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw Error('No social profile id');
+        }
         setLocalProfile(mapProfileToFormData(sequenceInfluencer));
         track(OpenInfluencerProfile, {
-            influencer_id: sequenceInfluencer?.iqdata_id,
+            influencer_social_profile_id: sequenceInfluencer?.influencer_social_profile_id,
             search_id: searchTerm,
             current_status: sequenceInfluencer?.funnel_status,
             currently_filtered: false,

@@ -57,6 +57,9 @@ const Manager = () => {
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
+            if (!influencer.influencer_social_profile_id) {
+                throw Error('No social profile id');
+            }
             setInfluencer(influencer);
 
             setUiState((s) => {
@@ -64,7 +67,7 @@ const Manager = () => {
             });
 
             track(OpenInfluencerProfile, {
-                influencer_id: influencer?.iqdata_id,
+                influencer_social_profile_id: influencer?.influencer_social_profile_id,
                 search_id: searchTerm,
                 current_status: influencer?.funnel_status,
                 currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
