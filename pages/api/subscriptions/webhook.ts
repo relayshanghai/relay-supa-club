@@ -18,6 +18,7 @@ import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
 import type { PaymentIntentSucceeded } from 'types/stripe/payment-intent-succeeded-webhook';
+import { handlePaymentIntentSucceeded } from 'src/utils/api/stripe/handle-payment-intent-succeeded';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -47,10 +48,7 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
 const handleStripeWebhook = async (event: any, res: NextApiResponse) => {
     switch (event.type) {
         case handledWebhooks.paymentIntentSucceeded:
-            console.log('paymentIntentSucceeded ===============>', event);
-            const paymentIntent = (event as Stripe.Event).data.object as Stripe.PaymentIntent;
-            console.log('paymentIntent ===============>', paymentIntent);
-        // await handlePaymentIntentSucceeded(paymentIntent);
+            return await handlePaymentIntentSucceeded(res, event as PaymentIntentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
@@ -100,10 +98,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
-        //test here!
-        if (event.type === 'payment_intent.succeeded') {
-            console.log('payment_intent.succeeded ===============>', event);
-        }
 
         if (!event || !event.type) {
             serverLogger('stripe no event or event type', { level: 'error' });

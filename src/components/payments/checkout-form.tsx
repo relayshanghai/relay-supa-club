@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useStripe, useElements, PaymentElement, CardElement } from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
