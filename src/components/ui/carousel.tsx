@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from '../icons';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { CAROUSEL } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { NavigateSignupCarousal } from 'src/utils/analytics/events/onboarding/navigate-signup-carousal';
 
 interface CarouselProps {
     slides: Array<{
@@ -16,18 +16,33 @@ interface CarouselProps {
 
 export default function Carousel({ slides, autoSlide = false, autoSlideInterval = 5000 }: CarouselProps) {
     const [currIndex, setCurrIndex] = useState(0);
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
+    const prevSlide = useCallback(() => {
+        const destinationSlide = currIndex === 0 ? slides?.length - 1 : currIndex - 1;
+        setCurrIndex(destinationSlide);
+        track(NavigateSignupCarousal, {
+            currentSlide: currIndex,
+            destinationSlide,
+        });
+    }, [currIndex, slides?.length, track]);
 
-    const prevSlide = () => {
-        setCurrIndex((currIndex) => (currIndex === 0 ? slides?.length - 1 : currIndex - 1));
-    };
-    const nextSlide = useCallback(() => {
-        setCurrIndex((currIndex) => (currIndex === slides?.length - 1 ? 0 : currIndex + 1));
-    }, [slides?.length]);
+    const nextSlide = useCallback(
+        (shouldTrack = true) => {
+            const destinationSlide = currIndex === slides?.length - 1 ? 0 : currIndex + 1;
+            setCurrIndex(destinationSlide);
+            if (shouldTrack) {
+                track(NavigateSignupCarousal, {
+                    currentSlide: currIndex,
+                    destinationSlide,
+                });
+            }
+        },
+        [currIndex, slides?.length, track],
+    );
 
     useEffect(() => {
         if (!autoSlide) return;
-        const slideInterval = setInterval(nextSlide, autoSlideInterval);
+        const slideInterval = setInterval(() => nextSlide(false), autoSlideInterval);
         return () => clearInterval(slideInterval);
     }, [autoSlide, autoSlideInterval, nextSlide]);
 
@@ -48,19 +63,13 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
 
                 <div className="absolute inset-0 flex items-center justify-between p-3">
                     <button
-                        onClick={() => {
-                            prevSlide();
-                            trackEvent(CAROUSEL('click to go to previous slide'));
-                        }}
+                        onClick={prevSlide}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
                     >
                         <ChevronLeft className="h-6 w-6 stroke-gray-400" />
                     </button>
                     <button
-                        onClick={() => {
-                            nextSlide();
-                            trackEvent(CAROUSEL('click to go to next slide'));
-                        }}
+                        onClick={() => nextSlide()}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
                     >
                         <ChevronRight className="h-6 w-6 stroke-gray-400" />
@@ -76,7 +85,10 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                             key={i}
                             onClick={() => {
                                 setCurrIndex(i);
-                                trackEvent(CAROUSEL(`go to slide ${currIndex + 1}`));
+                                track(NavigateSignupCarousal, {
+                                    currentSlide: currIndex,
+                                    destinationSlide: i,
+                                });
                             }}
                             className={`h-2 w-2 rounded-full bg-white transition-all duration-500 ease-in-out hover:cursor-pointer ${
                                 currIndex === i ? 'bg-primary-900 p-1' : 'bg-opacity-80'

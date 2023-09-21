@@ -29,11 +29,6 @@ export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 // Signup Wizard, Pricing Section, click to select DIY Max
 // Signup Wizard, Pricing Section, click to select DIY
 
-export const CAROUSEL = generateEventName('Carousel');
-// Carousel, click to go to previous slide
-// Carousel, click to go to next slide
-// Carousel, go to slide <number>
-
 export const SIGNUP = generateEventName('Signup');
 // Signup, step-<number>
 // Signup, Start free trial success

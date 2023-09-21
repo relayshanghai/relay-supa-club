@@ -121,6 +121,8 @@ import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
 import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
 import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
+import type { NavigateSignupCarousalPayload } from './onboarding/navigate-signup-carousal';
+import { NAVIGATE_SIGNUP_CAROUSAL, NavigateSignupCarousal } from './onboarding/navigate-signup-carousal';
 
 export {
     Search,
@@ -216,6 +218,7 @@ export const events = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
+    [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
 };
 
 export type payloads = {
@@ -272,6 +275,7 @@ export type payloads = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
+    [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -330,6 +334,7 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_INCOMING),
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
+    z.literal(NAVIGATE_SIGNUP_CAROUSAL),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
