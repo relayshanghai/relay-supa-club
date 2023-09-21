@@ -11,6 +11,8 @@ import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { UpdateInfluencerProfile } from 'src/utils/analytics/events';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -50,6 +52,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const { t } = useTranslation();
 
+    const { track } = useRudderstackTrack();
+
     const handleNotesDetailsUpdate = useCallback(
         (k: string, v: any) => {
             setState((state) => {
@@ -70,9 +74,16 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
+            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id not found');
             onUpdate && onUpdate(data);
+            track(UpdateInfluencerProfile, {
+                influencer_id: profile.influencer_social_profile_id,
+                updated_field: 'Next Step',
+                previously_empty: false,
+                batch_id: '',
+            });
         },
-        [onUpdate],
+        [onUpdate, profile, track],
     );
 
     return (
