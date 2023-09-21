@@ -17,6 +17,9 @@ import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info, Spinner } from './icons';
 import { Modal } from './modal';
+import { useSession } from 'src/hooks/use-session';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { ProfileUpdateRequest, ProfileUpdateResponse } from 'pages/api/profiles/[id]';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -31,6 +34,7 @@ export const AddToSequenceModal = ({
     platform: CreatorPlatform;
 }) => {
     const { t } = useTranslation();
+    const { profile } = useSession();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
@@ -68,6 +72,14 @@ export const AddToSequenceModal = ({
         const relevantTags = report.user_profile.relevant_tags;
         return relevantTags.slice(0, 3).map((tag) => tag.tag);
     }, [report]);
+
+    const incrementProfileTotalInfluencers = useCallback(async () => {
+        if (!profile) return;
+        await apiFetch<ProfileUpdateResponse, ProfileUpdateRequest>(`/api/profiles/{id}`, {
+            path: { id: profile.id },
+            body: { data: { total_sequence_influencers: 1 } },
+        });
+    }, [profile]);
 
     const handleAddToSequence = useCallback(async () => {
         let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
@@ -121,6 +133,7 @@ export const AddToSequenceModal = ({
             refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
+            await incrementProfileTotalInfluencers();
         } catch (error: any) {
             const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
             clientLogger(error, 'error');
@@ -187,6 +200,7 @@ export const AddToSequenceModal = ({
         socialProfile,
         t,
         refreshSequenceInfluencers,
+        incrementProfileTotalInfluencers,
     ]);
 
     let errorMessage = reportErrorMessage;
