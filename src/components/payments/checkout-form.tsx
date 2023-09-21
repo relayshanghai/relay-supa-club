@@ -53,7 +53,6 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
             } = await upgradeSubscriptionWithPaymentIntent(company.id, company.cus_id, priceId);
 
             //confirm the payment intent form the created subscription
-            //if has error, handle error
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
@@ -61,7 +60,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                     return_url: 'https://app.relay.club/payments/success',
                 },
             });
-
+            //if has error, handle error, else cancel the old subscription and update the subscription status
             if (error) {
                 handleError(error);
             } else {

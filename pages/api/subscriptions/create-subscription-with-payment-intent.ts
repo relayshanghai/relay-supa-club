@@ -49,41 +49,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         oldSubscriptionId,
     });
 
-    // only cancel old subscription after new one is created successfully
-    // await stripeClient.subscriptions.cancel(activeSubscription.id, {
-    //     invoice_now: true,
-    //     prorate: true,
-    // });
-
-    //code from create.ts to update company usage limits and subscription status in db
-    // const price = await stripeClient.prices.retrieve(priceId);
-    // const product = (await stripeClient.products.retrieve(
-    //     price.product as string,
-    // )) as RelayPlanStripeProduct;
-
-    // const subscription_start_date = unixEpochToISOString(subscription.start_date);
-    // if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-    // const { profiles, searches, ai_emails } = product.metadata;
-    // if (!profiles || !searches || !ai_emails) {
-    //     serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
-    //     throw new Error('Missing product metadata');
-    // }
-
-    // await updateCompanyUsageLimits({
-    //     profiles_limit: profiles,
-    //     searches_limit: searches,
-    //     ai_email_generator_limit: ai_emails,
-    //     id: companyId,
-    // });
-
-    // await updateCompanySubscriptionStatus({
-    //     subscription_status: 'active',
-    //     subscription_start_date,
-    //     subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
-    //     subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
-    //     id: companyId,
-    // });
     return res.status(httpCodes.OK).json(subscription);
 };
 

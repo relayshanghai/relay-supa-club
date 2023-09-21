@@ -6,8 +6,14 @@ import httpCodes from 'src/constants/httpCodes';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
+export type UpdateStatusAndUsagesRequestBody = {
+    companyId: string;
+    subscriptionId: string;
+    priceId: string;
+};
+
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { companyId, subscriptionId, priceId } = req.body;
+    const { companyId, subscriptionId, priceId } = req.body as UpdateStatusAndUsagesRequestBody;
 
     const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
     const price = await stripeClient.prices.retrieve(priceId);
