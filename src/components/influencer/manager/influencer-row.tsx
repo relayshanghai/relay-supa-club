@@ -100,11 +100,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
             </td>
             <td className="whitespace-nowrap py-4 pl-6">
                 {email && (
-                    <Link
-                        href={encodeURIComponent(`/inbox?q=${new URLSearchParams({ q: email })}`)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <Link href="/inbox" target="_blank" rel="noopener noreferrer">
                         <div
                             onClick={handleInboxClick}
                             className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"

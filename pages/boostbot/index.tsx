@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans, Translation, useTranslation } from 'react-i18next';
 import type { ProgressType } from 'src/components/boostbot/chat';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
@@ -14,7 +14,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import {
-    OpenVideoGuideModal,
+    // OpenVideoGuideModal,
     OpenBoostbotPage,
     SendInfluencersToOutreach,
     UnlockInfluencers,
@@ -22,7 +22,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
+import type { CreatorPlatform, UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -30,7 +30,7 @@ import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
+// import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -41,7 +41,7 @@ const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Progress';
-    content?: string | JSX.Element;
+    content?: JSX.Element;
     progress?: ProgressType;
 };
 
@@ -68,7 +68,7 @@ const Boostbot = () => {
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    const { usages, refreshUsages } = useUsages(
+    const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
         featNewPricing() && periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
@@ -82,7 +82,7 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
-        if (isSearchLoading || !subscription) return;
+        if (isSearchLoading || !isUsageLoaded) return;
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
@@ -112,12 +112,12 @@ const Boostbot = () => {
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, subscription]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
     const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
-            content: t('boostbot.chat.introMessage') || '',
+            content: <Translation>{(t) => t('boostbot.chat.introMessage')}</Translation>,
         },
     ]);
 
@@ -176,7 +176,7 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.influencerUnlock') || '',
+                content: <Translation>{(t) => t('boostbot.error.influencerUnlock')}</Translation>,
             });
 
             trackingPayload.is_success = false;
@@ -196,7 +196,10 @@ const Boostbot = () => {
     const handlePageToUnlock = async () => {
         const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
-            addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
+            addMessage({
+                sender: 'Bot',
+                content: <Translation>{(t) => t('boostbot.chat.noInfluencersToUnlock')}</Translation>,
+            });
             return;
         }
 
@@ -217,15 +220,15 @@ const Boostbot = () => {
                 />
             ),
         });
-        addMessage({
-            sender: 'Bot',
-            content: (
-                <VideoPreviewWithModal
-                    eventToTrack={OpenVideoGuideModal.eventName}
-                    videoUrl="/assets/videos/delete-guide.mp4"
-                />
-            ),
-        });
+        // addMessage({
+        //     sender: 'Bot',
+        //     content: (
+        //         <VideoPreviewWithModal
+        //             eventToTrack={OpenVideoGuideModal.eventName}
+        //             videoUrl="/assets/videos/delete-guide.mp4"
+        //         />
+        //     ),
+        // });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -250,7 +253,12 @@ const Boostbot = () => {
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
-            if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
+            if (!unlockedInfluencers) {
+                throw new Error('Error unlocking influencers');
+            }
+            if (!sequence?.id) {
+                throw new Error('Error creating sequence: no sequence id selected');
+            }
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
@@ -259,7 +267,17 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
+                return createSequenceInfluencer({
+                    iqdata_id: creatorProfileId,
+                    influencer_social_profile_id: influencer.socialProfile.id,
+                    tags,
+                    avatar_url: influencer.socialProfile.avatar_url ?? '',
+                    name: influencer.socialProfile.name || '',
+                    platform: influencer.socialProfile.platform as CreatorPlatform,
+                    username: influencer.socialProfile.username,
+                    url: influencer.socialProfile.url,
+                    sequence_id: sequence?.id,
+                });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
@@ -277,15 +295,15 @@ const Boostbot = () => {
                     />
                 ),
             });
-            addMessage({
-                sender: 'Bot',
-                content: (
-                    <VideoPreviewWithModal
-                        eventToTrack={OpenVideoGuideModal.eventName}
-                        videoUrl="/assets/videos/sequence-guide.mp4"
-                    />
-                ),
-            });
+            // addMessage({
+            //     sender: 'Bot',
+            //     content: (
+            //         <VideoPreviewWithModal
+            //             eventToTrack={OpenVideoGuideModal.eventName}
+            //             videoUrl="/assets/videos/sequence-guide.mp4"
+            //         />
+            //     ),
+            // });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
@@ -295,7 +313,7 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.influencersToOutreach') || '',
+                content: <Translation>{(t) => t('boostbot.error.influencersToOutreach')}</Translation>,
             });
 
             trackingPayload.is_success = false;

@@ -69,9 +69,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
                 platform={platform}
-                selectedCreator={{
-                    ...report?.user_profile,
-                }}
+                selectedCreator={report?.user_profile}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {

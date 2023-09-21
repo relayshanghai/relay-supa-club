@@ -69,6 +69,7 @@ export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => 
 
     return {
         usages,
+        isUsageLoaded: usages.profile.limit !== 0 && usages.search.limit !== 0,
         refreshUsages,
     };
 };

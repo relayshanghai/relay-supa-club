@@ -102,6 +102,26 @@ import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
 import { OpenEmailThread, OPEN_EMAIL_THREAD, type OpenEmailThreadPayload } from './open-email-thread';
+import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
+import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
+import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
+import { UPDATE_TEMPLATE_VARIABLE, UpdateTemplateVariable } from './outreach/update-template-variable';
+import type { SaveTemplateVariableUpdatesPayload } from './outreach/save-template-variable-updates';
+import { SAVE_TEMPLATE_VARIABLE_UPDATES, SaveTemplateVariableUpdates } from './outreach/save-template-variable-updates';
+import type { InputPaymentInfoPayload } from './onboarding/input-payment-info';
+import { INPUT_PAYMENT_INFO, InputPaymentInfo } from './onboarding/input-payment-info';
+import type { OpenGuideSectionModalPayload } from './guide/open-guide-section-modal';
+import { OPEN_GUIDE_SECTION_MODAL, OpenGuideSectionModal } from './guide/open-guide-section-modal';
+import type { ExpandHelpSectionPayload } from './guide/expand-help-section';
+import { EXPAND_HELP_SECTION, ExpandHelpSection } from './guide/expand-help-section';
+import type { ChangeLanguagePayload } from './change-language';
+import { CHANGE_LANGUAGE, ChangeLanguage } from './change-language';
+import type { StripeWebhookIncomingPayload } from './stripe/stripe-webhook-incoming';
+import { STRIPE_WEBHOOK_INCOMING, StripeWebhookIncoming } from './stripe/stripe-webhook-incoming';
+import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
+import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
+import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
+import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
 
 export {
     Search,
@@ -189,6 +209,16 @@ export const events = {
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
     [OPEN_EMAIL_THREAD]: OpenEmailThread,
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
+    [INPUT_PAYMENT_INFO]: InputPaymentInfo,
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModal,
+    [EXPAND_HELP_SECTION]: ExpandHelpSection,
+    [CHANGE_LANGUAGE]: ChangeLanguage,
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
 };
 
 export type payloads = {
@@ -236,6 +266,16 @@ export type payloads = {
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
     [OPEN_EMAIL_THREAD]: OpenEmailThreadPayload;
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
+    [INPUT_PAYMENT_INFO]: InputPaymentInfoPayload;
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModalPayload;
+    [EXPAND_HELP_SECTION]: ExpandHelpSectionPayload;
+    [CHANGE_LANGUAGE]: ChangeLanguagePayload;
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -285,6 +325,16 @@ export const eventKeys = z.union([
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
     z.literal(OPEN_EMAIL_THREAD),
+    z.literal(VIEW_SEQUENCE_TEMPLATES),
+    z.literal(UPDATE_TEMPLATE_VARIABLE),
+    z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
+    z.literal(INPUT_PAYMENT_INFO),
+    z.literal(OPEN_GUIDE_SECTION_MODAL),
+    z.literal(EXPAND_HELP_SECTION),
+    z.literal(CHANGE_LANGUAGE),
+    z.literal(STRIPE_WEBHOOK_INCOMING),
+    z.literal(STRIPE_WEBHOOK_ERROR),
+    z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

@@ -63,75 +63,75 @@ const postHandler: NextApiHandler = async (
     const id = String(req.query.id);
     const body = ProfileValue.parse(req.body);
 
-    try {
-        // @todo should return row or null
-        let sequenceInfluencer = await db(getSequenceInfluencerByIdCall)(id);
-        let address = await db(getAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id);
-
-        const { data: manager, error: getManagerError } = await db(getProfileByIdCall)(sequenceInfluencer.added_by);
-
-        // @todo this should be wrapped inside getProfileByIdCall
-        if (getManagerError) {
-            throw getManagerError;
-        }
-
-        if (body.notes) {
-            const {
-                collabStatus: funnel_status,
-                nextStep: next_step,
-                fee: rate_amount,
-                videoDetails: video_details,
-                scheduledPostDate: scheduled_post_date,
-            } = body.notes;
-
-            sequenceInfluencer = await db(updateSequenceInfluencerCall)({
-                funnel_status,
-                next_step,
-                rate_amount,
-                video_details,
-                scheduled_post_date: scheduled_post_date ? toISO(scheduled_post_date) : undefined,
-                id: sequenceInfluencer.id,
-            });
-        }
-
-        if (body.shippingDetails) {
-            const {
-                name,
-                phoneNumber: phone_number,
-                streetAddress: address_line_1,
-                city,
-                state,
-                country,
-                postalCode: postal_code,
-                trackingCode: tracking_code,
-            } = body.shippingDetails;
-
-            address = await db(saveAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id, {
-                ...address,
-                name,
-                phone_number,
-                address_line_1,
-                city,
-                state,
-                country,
-                postal_code,
-                tracking_code,
-                influencer_social_profile_id: sequenceInfluencer.influencer_social_profile_id,
-                id: address?.id,
-            });
-        }
-
-        return res.status(httpCodes.OK).json({
-            ...sequenceInfluencer,
-            manager_first_name: manager.first_name,
-            address,
-            manager,
-        });
-    } catch (error) {
-        // @todo rework getSequenceInfluencerByIdCall/getProfileByIdCall
-        // throw new RelayError("Not found", 404)
-        throw new RelayError(JSON.stringify(error), 404);
+    let sequenceInfluencer = await db(getSequenceInfluencerByIdCall)(id);
+    if (!sequenceInfluencer.influencer_social_profile_id) {
+        throw new RelayError('socialId not present');
+    } else if (!sequenceInfluencer.username) {
+        throw new RelayError('username not present');
     }
+    let address = await db(getAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id);
+
+    const { data: manager, error: getManagerError } = await db(getProfileByIdCall)(sequenceInfluencer.added_by);
+
+    // @todo this should be wrapped inside getProfileByIdCall
+    if (getManagerError) {
+        throw getManagerError;
+    }
+
+    if (body.notes) {
+        const {
+            collabStatus: funnel_status,
+            nextStep: next_step,
+            fee: rate_amount,
+            videoDetails: video_details,
+            scheduledPostDate: scheduled_post_date,
+        } = body.notes;
+
+        sequenceInfluencer = await db(updateSequenceInfluencerCall)({
+            funnel_status,
+            next_step,
+            rate_amount,
+            video_details,
+            scheduled_post_date: scheduled_post_date ? toISO(scheduled_post_date) : undefined,
+            id: sequenceInfluencer.id,
+        });
+    }
+
+    if (body.shippingDetails) {
+        const {
+            name,
+            phoneNumber: phone_number,
+            streetAddress: address_line_1,
+            city,
+            state,
+            country,
+            postalCode: postal_code,
+            trackingCode: tracking_code,
+        } = body.shippingDetails;
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw new RelayError('socialId not present'); // this won't happen, but we need to make TS happy
+        }
+        address = await db(saveAddressByInfluencer)(sequenceInfluencer.influencer_social_profile_id, {
+            ...address,
+            name,
+            phone_number,
+            address_line_1,
+            city,
+            state,
+            country,
+            postal_code,
+            tracking_code,
+            influencer_social_profile_id: sequenceInfluencer.influencer_social_profile_id,
+            id: address?.id,
+        });
+    }
+
+    return res.status(httpCodes.OK).json({
+        ...sequenceInfluencer,
+        manager_first_name: manager.first_name,
+        address,
+        manager,
+    });
 };
 
 export default ApiHandler({ postHandler });

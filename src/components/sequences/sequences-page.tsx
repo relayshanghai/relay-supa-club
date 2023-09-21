@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
+import { Banner } from '../library/banner';
+import { useUser } from 'src/hooks/use-user';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -31,6 +33,7 @@ export const SequencesPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
     const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
+    const { profile } = useUser();
 
     const { push } = useRouter();
 
@@ -44,8 +47,8 @@ export const SequencesPage = () => {
         try {
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
-            setSelection([]);
             track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
+            setSelection([]);
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
@@ -61,6 +64,13 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}

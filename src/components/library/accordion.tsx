@@ -1,12 +1,27 @@
 import { Disclosure } from '@headlessui/react';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ExpandHelpSection } from 'src/utils/analytics/events/guide/expand-help-section';
 import { SplitParagraphs } from 'src/utils/split-paragraphs';
 
 export type AccordionContent = {
     title: string;
     detail: string;
 };
-export const Accordion = ({ content, isFAQ = true }: { content: AccordionContent[]; isFAQ?: boolean }) => {
+export const Accordion = ({
+    content,
+    isFAQ = true,
+    modalName,
+    type,
+}: {
+    content: AccordionContent[];
+    isFAQ?: boolean;
+    /* e.g. Sequences FAQ or Boostbot FAQ */
+    modalName: string;
+    /* e.g. FAQ or Guide */
+    type: string;
+}) => {
+    const { track } = useRudderstackTrack();
     return (
         <dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
             {content.map(({ title, detail }) => (
@@ -14,7 +29,16 @@ export const Accordion = ({ content, isFAQ = true }: { content: AccordionContent
                     {({ open }) => (
                         <>
                             <dt>
-                                <Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-600">
+                                <Disclosure.Button
+                                    className="flex w-full items-start justify-between text-left text-gray-600"
+                                    onClick={() => {
+                                        track(ExpandHelpSection, {
+                                            type,
+                                            modal_name: modalName,
+                                            section_name: title,
+                                        });
+                                    }}
+                                >
                                     <div className="flex justify-start">
                                         {isFAQ && (
                                             <h3 className="w-[24px] min-w-[24px] text-lg font-medium leading-7">Q: </h3>

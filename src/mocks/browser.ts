@@ -88,6 +88,10 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
         return res(ctx.json(sequenceInfluencers));
     }),
+    rest.post(`${APP_URL_CYPRESS}/sequence_influencers`, (req, res, ctx) => {
+        const id = req.url.searchParams.get('id')?.split('eq.')[1];
+        return res(ctx.json(sequenceInfluencers.find((x) => x.id === id)));
+    }),
     rest.post(`${APP_URL_CYPRESS}/api/email-engine/templates`, (_req, res, ctx) => {
         return res(ctx.json(templates));
     }),

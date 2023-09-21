@@ -5,7 +5,6 @@ import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
-import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { getCurrentMonthPeriod, checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
@@ -55,18 +54,6 @@ export const SubscriptionDetails = () => {
             <CancelSubscriptionModal visible={showCancelModal} onClose={() => setShowCancelModal(false)} />
             <div className="flex w-full flex-row items-center justify-between">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
-                <div className="flex flex-row justify-end">
-                    {company?.id && (
-                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <Button
-                                variant="secondary"
-                                onClick={() => trackEvent(ACCOUNT_SUBSCRIPTION('View billing portal'))}
-                            >
-                                {t('account.subscription.viewBillingPortal')}
-                            </Button>
-                        </Link>
-                    )}
-                </div>
             </div>
             {company ? (
                 <>

@@ -47,7 +47,7 @@ const Manager = () => {
 
     const influencers =
         sequenceInfluencers.length > 0 && profile && sequences
-            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers)
+            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
             : [];
 
     useEffect(() => {

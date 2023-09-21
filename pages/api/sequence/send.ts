@@ -34,6 +34,8 @@ const sendAndInsertEmail = async ({
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
+    } else if (!sequenceInfluencer.influencer_social_profile_id) {
+        throw new Error('No influencer social profile id');
     }
     const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
         getInfluencerSocialProfileByIdCall,

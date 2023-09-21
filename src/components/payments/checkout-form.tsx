@@ -8,8 +8,9 @@ import { nextFetch } from 'src/utils/fetcher';
 import type { SubscriptionUpgradePostResponse } from 'pages/api/subscriptions/upgrade';
 import { clientLogger } from 'src/utils/logger-client';
 import type { NewRelayPlan } from 'types';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 
 export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const stripe = useStripe();
@@ -17,7 +18,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
     const { t } = useTranslation();
     const { company } = useCompany();
     const { trackEvent } = useRudderstack();
-
+    const { track } = useRudderstackTrack();
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
@@ -81,8 +82,13 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
         >
             <PaymentElement
                 id="payment-element"
-                onChange={(e) => {
-                    setFormReady(e.complete);
+                onChange={({ complete, empty, value }) => {
+                    track(InputPaymentInfo, {
+                        complete,
+                        empty,
+                        type: value.type,
+                    });
+                    setFormReady(complete);
                 }}
             />
 

@@ -1,10 +1,8 @@
 import type { TriggerEvent } from '../../types';
-import type { CurrentPageEvent } from '../current-pages';
 
 export const ENTER_INFLUENCER_EMAIL = 'Enter Influencer Email';
 
 export type EnterInfluencerEmailPayload = {
-    currentPage: CurrentPageEvent;
     sequence_id: string;
     influencer_id: string;
     existing_email: string;
