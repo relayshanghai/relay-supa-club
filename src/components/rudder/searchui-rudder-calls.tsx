@@ -10,9 +10,7 @@ export const useSearchTrackers = () => {
     const trackClearFilters = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Clear search filters'));
     };
-    const trackOpenFilterModal = async () => {
-        trackEvent(SEARCH_FILTER_MODAL('Open search filter modal'));
-    };
+
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
     };
@@ -111,7 +109,6 @@ export const useSearchTrackers = () => {
         trackTopics,
         trackSearch,
         trackClearFilters,
-        trackOpenFilterModal,
         trackCloseFilterModal,
     };
 };
