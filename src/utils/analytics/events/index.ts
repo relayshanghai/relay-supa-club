@@ -141,6 +141,8 @@ import type { SearchInfluencerManagerPayload } from './outreach/search-influence
 import { SEARCH_INFLUENCER_MANAGER, SearchInfluencerManager } from './outreach/search-influencer-manager';
 import type { FilterInfluencerManagerPayload } from './outreach/filter-influencer-manager';
 import { FILTER_INFLUENCER_MANAGER, FilterInfluencerManager } from './outreach/filter-influencer-manager';
+import type { GoToInboxPayload } from './outreach/go-to-inbox';
+import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
 
 export {
     Search,
@@ -246,6 +248,7 @@ export const events = {
     [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencers,
     [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManager,
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
+    [GO_TO_INBOX]: GoToInbox,
 };
 
 export type payloads = {
@@ -312,6 +315,7 @@ export type payloads = {
     [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencersPayload;
     [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManagerPayload;
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
+    [GO_TO_INBOX]: GoToInboxPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -380,6 +384,7 @@ export const eventKeys = z.union([
     z.literal(FILTER_SEQUENCE_INFLUENCERS),
     z.literal(SEARCH_INFLUENCER_MANAGER),
     z.literal(FILTER_INFLUENCER_MANAGER),
+    z.literal(GO_TO_INBOX),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
