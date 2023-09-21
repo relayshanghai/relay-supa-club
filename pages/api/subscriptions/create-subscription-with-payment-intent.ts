@@ -21,30 +21,36 @@ export interface SubscriptionUpgradePostResponse extends Stripe.Response<Stripe.
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { cusId, priceId } = req.body as SubscriptionUpgradePostRequestBody;
-
+    if (!cusId || !priceId) {
+        serverLogger('Missing cusId, priceId');
+        return res.status(httpCodes.BAD_REQUEST).json('Missing cusId, priceId');
+    }
+    // retrieve current subscription id
     const oldSubscription = await stripeClient.subscriptions.list({
         customer: cusId,
     });
-    console.log('subscriptions ===============>', oldSubscription);
     if (oldSubscription.data.length > 1) {
         serverLogger('More than one subscription found for customer: ' + cusId);
+        return res.status(httpCodes.BAD_REQUEST).json('More than one subscription found for customer');
     }
     const oldSubscriptionId = oldSubscription.data[0].id;
-    console.log('subscriptions ===============>', oldSubscriptionId);
+    console.log('OLD subscriptions ===============>', oldSubscriptionId);
 
+    //create a new subscription with the attached paymentMethod
     const subscription = await stripeClient.subscriptions.create({
         customer: cusId,
         payment_behavior: 'default_incomplete',
         items: [{ price: priceId }],
         payment_settings: { save_default_payment_method: 'on_subscription' },
-        proration_behavior: 'create_prorations',
         expand: ['latest_invoice.payment_intent'],
     });
 
-    const payment_intent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
+    const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
+    console.log('paymentIntent ===============>', paymentIntent);
+
     res.send({
         type: 'payment',
-        clientSecret: (payment_intent as Stripe.PaymentIntent).client_secret,
+        clientSecret: (paymentIntent as Stripe.PaymentIntent).client_secret,
         subscriptionId: subscription.id,
         oldSubscriptionId,
     });

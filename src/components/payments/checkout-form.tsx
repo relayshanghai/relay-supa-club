@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement, CardElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
@@ -37,12 +37,11 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
 
         // Trigger form validation and wallet collection
         const { error: submitError } = await elements.submit();
+
         if (submitError) {
             handleError(submitError);
             return;
         }
-
-        // Create the subscription
         try {
             const priceId = selectedPrice.priceIds.monthly;
 
@@ -51,13 +50,19 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 subscriptionId: newSubscriptionId,
                 oldSubscriptionId,
             } = await upgradeSubscriptionWithPaymentIntent(company.id, company.cus_id, priceId);
+            console.log(
+                'Upgrade and create new subscription ===============>',
+                { newSubscriptionId },
+                { oldSubscriptionId },
+            );
 
             //confirm the payment intent form the created subscription
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: 'https://app.relay.club/payments/success',
+                    return_url: 'http://localhost:3000/payments/success',
+                    // return_url: 'https://app.relay.club/payments/success',
                 },
             });
             //if has error, handle error, else cancel the old subscription and update the subscription status
@@ -65,7 +70,9 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 handleError(error);
             } else {
                 //if created successfully, cancel the currentSubscription
+                console.log('Cancel previous Subscription ===============>');
                 await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
+                console.log('Update usages and status ===============>');
                 //and update subscription status with new subscription id and usages
                 await updateSubscriptionStatusAndUsages(company.id, newSubscriptionId, priceId);
             }
