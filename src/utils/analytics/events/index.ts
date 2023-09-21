@@ -129,6 +129,8 @@ import type { EnterFilterPayload } from './discover/enter-filter';
 import { ENTER_FILTER, EnterFilter } from './discover/enter-filter';
 import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
+import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
+import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
 
 export {
     Search,
@@ -228,6 +230,7 @@ export const events = {
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
 };
 
 export type payloads = {
@@ -288,6 +291,7 @@ export type payloads = {
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -350,6 +354,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_FILTERS_MODAL),
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
+    z.literal(SEARCH_INFLUENCER_BY_NAME),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

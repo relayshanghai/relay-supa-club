@@ -25,15 +25,11 @@ export const useSearchTrackers = () => {
     const trackTopics = async (search: { tags: CreatorSearchTag[] }) => {
         trackEvent(SEARCH_OPTIONS('Set topics'), { search });
     };
-    const trackSearchInfluencer = async (influencer: { term: string }, platform: CreatorPlatform) => {
-        trackEvent(SEARCH_OPTIONS('search for an influencer'), { influencer, platform });
-    };
     const trackPlatformChange = async (platform: CreatorPlatform) => {
         trackEvent(SEARCH_OPTIONS('change platform'), { platform });
     };
     return {
         trackPlatformChange,
-        trackSearchInfluencer,
         trackWordCloudAddTag,
         trackWordCloudRemoveTag,
         trackKeyword,

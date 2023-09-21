@@ -71,7 +71,6 @@ export const SEARCH_OPTIONS = generateEventName('Search Options');
 // Search Options, Set keyword
 // Search Options, Set hashtag
 // Search Options, Set topics
-// Search Options, search for an influencer
 // Search Options, change platform
 // Search Options, search topics
 

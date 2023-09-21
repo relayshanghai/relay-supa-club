@@ -187,7 +187,7 @@ export const SearchPageInner = () => {
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators platform={platform} onSearch={handleSearch} />
+                    <SearchCreators onSearch={handleSearch} />
                 </div>
             </div>
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
