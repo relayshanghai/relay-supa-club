@@ -7,10 +7,6 @@ export const useSearchTrackers = () => {
     const trackSearch = async (modal: string) => {
         trackEvent(`${modal}, Search`);
     };
-    const trackClearFilters = async () => {
-        trackEvent(SEARCH_FILTER_MODAL('Clear search filters'));
-    };
-
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
     };
@@ -44,7 +40,6 @@ export const useSearchTrackers = () => {
         trackHashtags,
         trackTopics,
         trackSearch,
-        trackClearFilters,
         trackCloseFilterModal,
     };
 };

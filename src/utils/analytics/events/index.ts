@@ -127,6 +127,8 @@ import type { OpenFiltersModalPayload } from './discover/open-filters-modal';
 import { OPEN_FILTERS_MODAL, OpenFiltersModal } from './discover/open-filters-modal';
 import type { EnterFilterPayload } from './discover/enter-filter';
 import { ENTER_FILTER, EnterFilter } from './discover/enter-filter';
+import type { ClearFiltersPayload } from './discover/clear-filters';
+import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
 
 export {
     Search,
@@ -225,6 +227,7 @@ export const events = {
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
     [ENTER_FILTER]: EnterFilter,
+    [CLEAR_FILTERS]: ClearFilters,
 };
 
 export type payloads = {
@@ -284,6 +287,7 @@ export type payloads = {
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
     [ENTER_FILTER]: EnterFilterPayload;
+    [CLEAR_FILTERS]: ClearFiltersPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -345,6 +349,7 @@ export const eventKeys = z.union([
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
     z.literal(OPEN_FILTERS_MODAL),
     z.literal(ENTER_FILTER),
+    z.literal(CLEAR_FILTERS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

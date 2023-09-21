@@ -13,6 +13,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenFiltersModal } from 'src/utils/analytics/events/discover/open-filters-modal';
 import type { EnterFilterPayload } from 'src/utils/analytics/events/discover/enter-filter';
 import { EnterFilter } from 'src/utils/analytics/events/discover/enter-filter';
+import { ClearFilters } from 'src/utils/analytics/events/discover/clear-filters';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -103,7 +104,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
 
     const { t } = useTranslation();
 
-    const { trackSearch, trackCloseFilterModal, trackClearFilters } = useSearchTrackers();
+    const { trackSearch, trackCloseFilterModal } = useSearchTrackers();
 
     const handleSearch = useCallback(
         (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -136,7 +137,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
         setInfluencerLocation([]);
         setAudienceGender(undefined);
         setAudienceAge(undefined);
-        trackClearFilters();
+        track(ClearFilters, { batch_id: batchId });
     };
 
     const isContactInfoEmail = useCallback(() => (contactInfo == 'email' ? true : false), [contactInfo]);
