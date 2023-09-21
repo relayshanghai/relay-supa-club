@@ -85,7 +85,7 @@ export const InboxPage = () => {
         }
         setLocalProfile(mapProfileToFormData(sequenceInfluencer));
         track(OpenInfluencerProfile, {
-            influencer_social_profile_id: sequenceInfluencer?.influencer_social_profile_id,
+            influencer_id: sequenceInfluencer?.influencer_social_profile_id,
             search_id: searchTerm,
             current_status: sequenceInfluencer?.funnel_status,
             currently_filtered: false,
