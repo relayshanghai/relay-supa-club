@@ -6,13 +6,26 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import {
+    cancelSubscriptionWithSubscriptionId,
+    updateSubscriptionStatusAndUsages,
+} from 'src/utils/api/stripe/handle-subscriptions';
 
 const UpgradeSubscriptionSuccess = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { oldSubscriptionId, subscriptionId, priceId, companyId } = router.query;
 
+    const handleUpgradeSubscription = async () => {
+        if (!oldSubscriptionId || !subscriptionId || !priceId || !companyId) return;
+        // cancel previous subscription when new one is created successfully
+        await cancelSubscriptionWithSubscriptionId(oldSubscriptionId as string);
+        //and update subscription status with new subscription id and usages
+        await updateSubscriptionStatusAndUsages(companyId as string, subscriptionId as string, priceId as string);
+    };
     useEffect(() => {
+        handleUpgradeSubscription();
         trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
         const timer = setTimeout(() => {
             router.push('/account');

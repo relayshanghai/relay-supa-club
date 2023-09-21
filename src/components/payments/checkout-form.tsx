@@ -11,7 +11,6 @@ import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import {
     upgradeSubscriptionWithPaymentIntent,
     cancelSubscriptionWithSubscriptionId,
-    updateSubscriptionStatusAndUsages,
 } from 'src/utils/api/stripe/handle-subscriptions';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 
@@ -42,39 +41,36 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
             handleError(submitError);
             return;
         }
+
         try {
             const priceId = selectedPrice.priceIds.monthly;
-
             const {
                 clientSecret,
                 subscriptionId: newSubscriptionId,
                 oldSubscriptionId,
             } = await upgradeSubscriptionWithPaymentIntent(company.id, company.cus_id, priceId);
-            console.log(
-                'Upgrade and create new subscription ===============>',
-                { newSubscriptionId },
-                { oldSubscriptionId },
-            );
+
+            const returnUrlParams = new URLSearchParams();
+            returnUrlParams.append('subscriptionId', newSubscriptionId);
+            returnUrlParams.append('oldSubscriptionId', oldSubscriptionId);
+            returnUrlParams.append('priceId', priceId);
+            returnUrlParams.append('companyId', company.id);
 
             //confirm the payment intent form the created subscription
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: 'http://localhost:3000/payments/success',
-                    // return_url: 'https://app.relay.club/payments/success',
+                    return_url: `http://localhost:3000/payments/success?${returnUrlParams.toString()}`,
+                    // return_url: `https://app.relay.club/payments/success?${returnUrlParams.toString()}`,
                 },
             });
-            //if has error, handle error, else cancel the old subscription and update the subscription status
+            //if has error, handle error
             if (error) {
                 handleError(error);
-            } else {
-                //if created successfully, cancel the currentSubscription
-                console.log('Cancel previous Subscription ===============>');
-                await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
-                console.log('Update usages and status ===============>');
-                //and update subscription status with new subscription id and usages
-                await updateSubscriptionStatusAndUsages(company.id, newSubscriptionId, priceId);
+                // if has error confirm the payment, should cancel the new subscription
+                await cancelSubscriptionWithSubscriptionId(newSubscriptionId);
+                return;
             }
 
             trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });

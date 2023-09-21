@@ -34,7 +34,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json('More than one subscription found for customer');
     }
     const oldSubscriptionId = oldSubscription.data[0].id;
-    console.log('OLD subscriptions ===============>', oldSubscriptionId);
 
     //create a new subscription with the attached paymentMethod
     const subscription = await stripeClient.subscriptions.create({
@@ -46,7 +45,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
-    console.log('paymentIntent ===============>', paymentIntent);
 
     res.send({
         type: 'payment',
