@@ -24,8 +24,10 @@ import { MoreResultsRows } from './search-result-row';
 import { SearchResultsTable } from './search-results-table';
 import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
-
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useSession } from 'src/hooks/use-session';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { ProfileUpdateRequest, ProfileUpdateResponse } from 'pages/api/profiles/[id]';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -68,8 +70,16 @@ export const SearchPageInner = () => {
 
     const { track: trackAnalytics } = useAnalytics();
     const { track } = useTrackEvent();
-
+    const { profile } = useSession();
     const [rendered, setRendered] = useState(false);
+
+    const incrementProfileTotalSearches = useCallback(async () => {
+        if (!profile) return;
+        await apiFetch<ProfileUpdateResponse, ProfileUpdateRequest>(`/api/profiles/{id}`, {
+            path: { id: profile.id },
+            body: { data: { total_searches: 1 } },
+        });
+    }, [profile]);
 
     /**
      * Handle the SearchOptions.onSearch event
@@ -79,6 +89,7 @@ export const SearchPageInner = () => {
             if (searchParams === undefined) return;
 
             const tracker = (results: any) => {
+                incrementProfileTotalSearches();
                 return track({
                     event: Search,
                     payload: {
@@ -96,7 +107,7 @@ export const SearchPageInner = () => {
             // @note this triggers the search api call
             setSearchParams(searchParams);
         },
-        [track, setSearchParams, setOnLoad],
+        [track, setSearchParams, setOnLoad, incrementProfileTotalSearches],
     );
 
     /**

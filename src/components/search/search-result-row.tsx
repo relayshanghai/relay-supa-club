@@ -27,6 +27,9 @@ import type { track } from './use-track-event';
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import { useUser } from 'src/hooks/use-user';
+import { useSession } from 'src/hooks/use-session';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { ProfileUpdateRequest, ProfileUpdateResponse } from 'pages/api/profiles/[id]';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -53,6 +56,15 @@ export const MoreResultsRows = ({
     const { t } = useTranslation();
     const { resultsPerPageLimit, searchParams } = useSearch();
     const { results, loading, error, setOnLoad } = useSearchResults(page);
+    const { profile } = useSession();
+
+    const incrementProfileTotalSearches = useCallback(async () => {
+        if (!profile) return;
+        await apiFetch<ProfileUpdateResponse, ProfileUpdateRequest>(`/api/profiles/{id}`, {
+            path: { id: profile.id },
+            body: { data: { total_searches: 1 } },
+        });
+    }, [profile]);
 
     useEffect(() => {
         if (!trackSearch || page === 0 || searchParams === undefined) return;
@@ -60,6 +72,7 @@ export const MoreResultsRows = ({
         const controller = new AbortController();
 
         const tracker = (result: any) => {
+            incrementProfileTotalSearches();
             trackSearch<typeof SearchLoadMoreResults>({
                 event: SearchLoadMoreResults,
                 controller,
@@ -76,7 +89,7 @@ export const MoreResultsRows = ({
         setOnLoad(() => tracker);
 
         return () => controller.abort();
-    }, [trackSearch, searchParams, page, setOnLoad]);
+    }, [trackSearch, searchParams, page, setOnLoad, incrementProfileTotalSearches]);
 
     if (error)
         return (

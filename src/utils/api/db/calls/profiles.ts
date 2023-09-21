@@ -74,3 +74,30 @@ export const getProfileByIdentifer = (db: RelayDatabase) => async (identifier: s
 
     return data;
 };
+
+export const incrementTotalSearches =
+    (db: RelayDatabase) =>
+    async (identifier: string | ProfileDB, value = 1) => {
+        let profile: ProfileDB | null = null;
+
+        if (typeof identifier === 'string') {
+            profile = await getProfileByIdentifer(db)(identifier);
+        }
+
+        if (isProfileRow(identifier)) {
+            profile = identifier;
+        }
+
+        if (!profile) return null;
+
+        const { data, error } = await db
+            .from('profiles')
+            .update({ total_searches: profile.total_searches + value })
+            .eq('id', profile.id)
+            .select()
+            .maybeSingle();
+
+        if (error) throw error;
+
+        return data;
+    };
