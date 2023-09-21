@@ -13,9 +13,10 @@ import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
-import { incrementTotalLogin } from 'src/utils/api/db/calls/profiles';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { ProfileUpdateRequest, ProfileUpdateResponse } from 'pages/api/profiles/[id]';
 
 export type SignupData = {
     email: string;
@@ -85,8 +86,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent, identifyFromProfile } = useRudderstack();
 
-    const incrementProfileTotalLogin = useDB(incrementTotalLogin);
-
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -126,6 +125,13 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
     }, [identifyFromProfile, profile]);
 
+    const incrementProfileTotalLogin = useCallback(async (id: string) => {
+        await apiFetch<ProfileUpdateResponse, ProfileUpdateRequest>(`/api/profiles/{id}`, {
+            path: { id },
+            body: { data: { total_sessions: 1 } },
+        });
+    }, []);
+
     const login = async (email: string, password: string) => {
         setLoading(true);
         try {
@@ -136,6 +142,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             if (error) throw new Error(error.message || 'Unknown error');
             trackEvent(LOG_IN(), { email });
+
+            if (data.user) {
+                incrementProfileTotalLogin(data.user.id);
+            }
+
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -143,7 +154,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             if (e instanceof Error) message = e.message ?? 'Unknown error';
             throw new Error(message);
         } finally {
-            incrementProfileTotalLogin(email);
             setLoading(false);
         }
     };

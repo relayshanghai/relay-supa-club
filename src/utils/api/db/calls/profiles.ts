@@ -37,29 +37,6 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
     return data;
 };
 
-export const getProfileByEmail = (db: RelayDatabase) => async (email: string) => {
-    const { data, error } = await db.from('profiles').select().eq('email', email).maybeSingle();
-    if (error) throw error;
-    return data;
-};
-
-export const incrementTotalLogin = (db: RelayDatabase) => async (email: string) => {
-    const profile = await getProfileByEmail(db)(email);
-
-    if (!profile) return null;
-
-    const { data, error } = await db
-        .from('profiles')
-        .update({ total_sessions: profile.total_sessions + 1 })
-        .eq('email', email)
-        .select()
-        .maybeSingle();
- 
-    if (error) throw error;
-
-    return data;
-};
-
 export const isProfileRow = (value: any): value is ProfileDB => {
     const profileRowKeys: Array<keyof ProfileDB> = [
         'avatar_url',
@@ -97,3 +74,30 @@ export const getProfileByIdentifer = (db: RelayDatabase) => async (identifier: s
 
     return data;
 };
+
+export const incrementTotalLogin =
+    (db: RelayDatabase) =>
+    async (identifier: string | ProfileDB, value = 1) => {
+        let profile: ProfileDB | null = null;
+
+        if (typeof identifier === 'string') {
+            profile = await getProfileByIdentifer(db)(identifier);
+        }
+
+        if (isProfileRow(identifier)) {
+            profile = identifier;
+        }
+
+        if (!profile) return null;
+
+        const { data, error } = await db
+            .from('profiles')
+            .update({ total_sessions: profile.total_sessions + value })
+            .eq('id', profile.id)
+            .select()
+            .maybeSingle();
+
+        if (error) throw error;
+
+        return data;
+    };
