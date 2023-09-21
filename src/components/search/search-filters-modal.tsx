@@ -85,7 +85,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
 
     useEffect(() => {
         if (show) {
-            track(OpenFiltersModal, { batchId });
+            track(OpenFiltersModal, { batch_id: batchId });
         }
     }, [batchId, show, track]);
 

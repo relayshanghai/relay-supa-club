@@ -3,7 +3,7 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OPEN_FILTERS_MODAL = 'Open Filters Modal';
 
 export type OpenFiltersModalPayload = EventPayload<{
-    batchId: number;
+    batch_id: number;
 }>;
 
 export const OpenFiltersModal = (trigger: TriggerEvent, value?: OpenFiltersModalPayload) =>
