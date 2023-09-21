@@ -833,6 +833,11 @@ export interface Database {
           last_name: string
           phone: string | null
           sequence_send_email: string | null
+          total_outreach_sent: number
+          total_reports: number
+          total_searches: number
+          total_sequence_influencers: number
+          total_sessions: number
           updated_at: string | null
           user_role: string | null
         }
@@ -847,6 +852,11 @@ export interface Database {
           last_name: string
           phone?: string | null
           sequence_send_email?: string | null
+          total_outreach_sent?: number
+          total_reports?: number
+          total_searches?: number
+          total_sequence_influencers?: number
+          total_sessions?: number
           updated_at?: string | null
           user_role?: string | null
         }
@@ -861,6 +871,11 @@ export interface Database {
           last_name?: string
           phone?: string | null
           sequence_send_email?: string | null
+          total_outreach_sent?: number
+          total_reports?: number
+          total_searches?: number
+          total_sequence_influencers?: number
+          total_sessions?: number
           updated_at?: string | null
           user_role?: string | null
         }
