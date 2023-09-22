@@ -4,10 +4,13 @@ import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { Switch } from '../library';
 import { Button } from '../button';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { randomNumber } from 'src/utils/utils';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenFiltersModal } from 'src/utils/analytics/events/discover/open-filters-modal';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -74,6 +77,17 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
         setInfluencerLocation,
         getSearchParams,
     } = useSearch();
+
+    // show is used to force a re-calc of the batchId when the modal is opened
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [show]);
+    const { track } = useRudderstackTrack();
+
+    useEffect(() => {
+        if (show) {
+            track(OpenFiltersModal, { batch_id: batchId });
+        }
+    }, [batchId, show, track]);
 
     const { t } = useTranslation();
 

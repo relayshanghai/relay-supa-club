@@ -123,6 +123,8 @@ import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
 import type { NavigateSignupCarousalPayload } from './onboarding/navigate-signup-carousal';
 import { NAVIGATE_SIGNUP_CAROUSAL, NavigateSignupCarousal } from './onboarding/navigate-signup-carousal';
+import type { OpenFiltersModalPayload } from './discover/open-filters-modal';
+import { OPEN_FILTERS_MODAL, OpenFiltersModal } from './discover/open-filters-modal';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
 import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
@@ -231,6 +233,7 @@ export const events = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
+    [OPEN_FILTERS_MODAL]: OpenFiltersModal,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
     [ADD_INFLUENCER_POST]: AddInfluencerPost,
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
@@ -292,6 +295,7 @@ export type payloads = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
+    [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
     [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
@@ -355,6 +359,7 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
+    z.literal(OPEN_FILTERS_MODAL),
     z.literal(OPEN_INFLUENCER_PROFILE),
     z.literal(ADD_INFLUENCER_POST),
     z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
