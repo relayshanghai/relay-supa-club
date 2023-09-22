@@ -101,6 +101,7 @@ import type { DeleteSequencePayload } from './outreach/sequence-delete';
 import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
 import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
 import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
+import { OpenEmailThread, OPEN_EMAIL_THREAD, type OpenEmailThreadPayload } from './open-email-thread';
 import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
 import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
 import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
@@ -121,6 +122,8 @@ import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
 import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
 import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
+import type { SendEmailReplyPayload } from './send-email-reply';
+import { SEND_EMAIL_REPLY, SendEmailReply } from './send-email-reply';
 import type { NavigateSignupCarousalPayload } from './onboarding/navigate-signup-carousal';
 import { NAVIGATE_SIGNUP_CAROUSAL, NavigateSignupCarousal } from './onboarding/navigate-signup-carousal';
 import type { OpenFiltersModalPayload } from './discover/open-filters-modal';
@@ -192,6 +195,8 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    SendEmailReply,
+    OpenEmailThread,
     OpenInfluencerProfile,
     AddInfluencerPost,
     AddNoteToInfluencerProfile,
@@ -242,6 +247,7 @@ export const events = {
     [OPEN_SEQUENCE]: OpenSequence,
     [DELETE_SEQUENCE]: DeleteSequence,
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
+    [OPEN_EMAIL_THREAD]: OpenEmailThread,
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
@@ -252,6 +258,7 @@ export const events = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
+    [SEND_EMAIL_REPLY]: SendEmailReply,
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
     [ENTER_FILTER]: EnterFilter,
@@ -314,6 +321,7 @@ export type payloads = {
     [OPEN_SEQUENCE]: OpenSequencePayload;
     [DELETE_SEQUENCE]: DeleteSequencePayload;
     [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
+    [OPEN_EMAIL_THREAD]: OpenEmailThreadPayload;
     [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
     [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
     [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
@@ -324,6 +332,7 @@ export type payloads = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
+    [SEND_EMAIL_REPLY]: SendEmailReplyPayload;
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
     [ENTER_FILTER]: EnterFilterPayload;
@@ -388,6 +397,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_SEQUENCE),
     z.literal(DELETE_SEQUENCE),
     z.literal(ENTER_INFLUENCER_EMAIL),
+    z.literal(OPEN_EMAIL_THREAD),
     z.literal(VIEW_SEQUENCE_TEMPLATES),
     z.literal(UPDATE_TEMPLATE_VARIABLE),
     z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
@@ -398,6 +408,7 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_INCOMING),
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
+    z.literal(SEND_EMAIL_REPLY),
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
     z.literal(OPEN_FILTERS_MODAL),
     z.literal(ENTER_FILTER),
