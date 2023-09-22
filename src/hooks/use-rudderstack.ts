@@ -112,7 +112,7 @@ export const profileToIdentifiable = (
         number: user?.phone ?? '',
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
-        subscriptionStatus: subscription.name ?? '',
+        subscriptionStatus: subscription?.name ?? '',
     };
 
     return { id, traits };
