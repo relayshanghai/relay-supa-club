@@ -4,7 +4,8 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const UPDATE_INFLUENCER_STATUS = 'Update Influencer Status';
 
 export type UpdateInfluencerStatusPayload = EventPayload<{
-    influencer_id: string; // REFERENCE TO THE INFLUENCER_SOCIAL_PROFILE TABLE'S ID
+    /** references the `influencer_social_profile.id` */
+    influencer_id: string;
     current_status: FunnelStatus;
     selected_status: FunnelStatus;
 }>;

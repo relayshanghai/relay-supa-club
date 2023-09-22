@@ -100,7 +100,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
         onUpdate('collabStatus', selected);
         track(UpdateInfluencerStatus, {
-            influencer_id: profile?.influencer_social_profile_id,
+            influencer_id: profile.influencer_social_profile_id,
             current_status: profile.funnel_status,
             selected_status: selected,
         });
