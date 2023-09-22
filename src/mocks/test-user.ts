@@ -15,9 +15,4 @@ export const mockProfile: ProfileDB = {
     created_at: '2026-09-01T00:00:00.000Z',
     email_engine_account_id: 'nqnwq6g9ooqhfexa',
     sequence_send_email: 'test@boostbot.ai',
-    total_sessions: 0,
-    total_reports: 0,
-    total_searches: 0,
-    total_outreach_sent: 0,
-    total_sequence_influencers: 0,
 };

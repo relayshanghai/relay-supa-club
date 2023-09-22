@@ -1,5 +1,4 @@
 import type { RelayDatabase } from '../types';
-import type { ProfileDB } from '../types';
 
 export const getProfileByIdCall = (supabaseClient: RelayDatabase) => async (id: string, abortSignal?: AbortSignal) => {
     if (abortSignal) {
@@ -33,44 +32,6 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
     if (error) {
         throw error;
     }
-
-    return data;
-};
-
-export const isProfileRow = (value: any): value is ProfileDB => {
-    const profileRowKeys: Array<keyof ProfileDB> = [
-        'avatar_url',
-        'company_id',
-        'created_at',
-        'email',
-        'email_engine_account_id',
-        'first_name',
-        'id',
-        'last_name',
-        'phone',
-        'sequence_send_email',
-        'total_outreach_sent',
-        'total_reports',
-        'total_searches',
-        'total_sequence_influencers',
-        'total_sessions',
-        'updated_at',
-        'user_role',
-    ];
-
-    const valueKeys = Object.keys(value);
-    const hasMissingKey = profileRowKeys.some((k) => !valueKeys.includes(k));
-
-    return hasMissingKey ? false : true;
-};
-
-export const getProfileByIdentifer = (db: RelayDatabase) => async (identifier: string) => {
-    const { data, error } = await db
-        .from('profiles')
-        .select()
-        .or(`email.eq.${identifier},id.eq.${identifier}`)
-        .maybeSingle();
-    if (error) throw error;
 
     return data;
 };

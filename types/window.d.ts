@@ -6,6 +6,7 @@ declare global {
     interface Window {
         rudder: Omit<typeof rudderSDK, 'RESIDENCY_SERVER'>;
         session?: {
+            user: any;
             profile: ProfileDB;
             company: CompanyDB;
         };

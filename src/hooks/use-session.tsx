@@ -48,6 +48,9 @@ export const useSession = (params?: useSessionParams) => {
     const control = useRef<AbortController>(new AbortController());
 
     const [session, setSession] = useState<Session | null>(supabaseSession);
+    const [user, setUser] = useState<any | null>(() =>
+        typeof window !== 'undefined' && window.session ? window.session.user : null,
+    );
     const [profile, setProfile] = useState<ProfilesTable['Row'] | null>(() =>
         typeof window !== 'undefined' && window.session ? window.session.profile : null,
     );
@@ -109,6 +112,11 @@ export const useSession = (params?: useSessionParams) => {
         if (supabaseSession && session && supabaseSession.user.session_id === session.user.session_id) {
             // rehydrate react with persisted session from window global if supabase session is still the same
             if (window.session) {
+                setUser((s: any) => {
+                    return window.session && window.session.user && s?.id !== window.session.user.id
+                        ? window.session.user
+                        : s;
+                });
                 setProfile((s) => {
                     return window.session && window.session.profile && s?.id !== window.session.profile.id
                         ? window.session.profile
@@ -132,9 +140,9 @@ export const useSession = (params?: useSessionParams) => {
         getProfile(supabaseSession).then(async (loadedProfile) => {
             const company = loadedProfile ? await getCompany(loadedProfile.company_id) : null;
 
-            if (loadedProfile && company) {
+            if (supabaseSession && loadedProfile && company) {
                 // persist profile & company to window global
-                window.session = { profile: loadedProfile, company };
+                window.session = { user: supabaseSession.user, profile: loadedProfile, company };
 
                 setCompany((s) => {
                     return company && s?.id !== company.id ? company : s;
@@ -172,5 +180,5 @@ export const useSession = (params?: useSessionParams) => {
         return cleanup;
     }, [supabaseSession, session, profile, getProfile, getCompany, params]);
 
-    return { session, profile, company, refreshSession };
+    return { session, user, profile, company, refreshSession };
 };

@@ -15,6 +15,8 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
+import { useSession } from './use-session';
+import { useTranslation } from 'react-i18next';
 
 export type SignupData = {
     email: string;
@@ -83,6 +85,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent, identifyFromProfile } = useRudderstack();
+    const { user, company } = useSession();
+    const { i18n } = useTranslation();
+
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -117,10 +122,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     });
 
     useEffect(() => {
-        if (profile && identifyFromProfile) {
-            identifyFromProfile(profile);
+        if (profile && identifyFromProfile && user && company && i18n) {
+            identifyFromProfile(profile, user, company, i18n.language);
         }
-    }, [identifyFromProfile, profile]);
+    }, [identifyFromProfile, profile, user, company, i18n]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -131,7 +136,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
-            trackEvent(LOG_IN(), { email });
+            // @note `total_sessions` is an incrementable property
+            trackEvent(LOG_IN(), { email, total_sessions: 1 });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');

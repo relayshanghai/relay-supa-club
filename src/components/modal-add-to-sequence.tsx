@@ -117,6 +117,7 @@ export const AddToSequenceModal = ({
 
             sequenceInfluencer = await createSequenceInfluencer(socialProfile, tags, creatorProfile.user_id);
             trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
+            trackingPayload['$add'] = { total_sequence_influencers: 1 };
 
             refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));

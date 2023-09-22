@@ -2,14 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { apiObject, apiOptions } from 'rudder-sdk-js';
 import type { eventKeys, payloads } from 'src/utils/analytics/events';
 import type { TrackedEvent, TriggerEvent } from 'src/utils/analytics/types';
-import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
+import type { CompanyDB, ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { useGetCurrentPage } from './use-get-current-page';
 import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
-export interface IdentityTraits extends apiObject {
+export interface IdentityTraits {
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -17,6 +17,13 @@ export interface IdentityTraits extends apiObject {
         id?: string;
         name?: string;
     };
+    companyId: string | null;
+    companyName?: string | null;
+    number?: string | null;
+    lang?: string;
+    paidUserSince?: string | null;
+    productCategory: string | null;
+    products: string | null;
 }
 
 export interface PageProperties extends apiObject {
@@ -83,7 +90,12 @@ type RudderstackMessageType<TProps = any, TTraits = any> = {
     sentAt: string; // ISO date
 };
 
-export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
+export const profileToIdentifiable = (
+    profile: ProfilesTable['Row'],
+    company?: CompanyDB,
+    user?: any,
+    lang?: string,
+) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const traits = {
         email: email || '',
@@ -93,6 +105,13 @@ export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
         company: {
             id: company_id || '',
         },
+        companyId: company_id,
+        companyName: company?.name,
+        number: user?.phone,
+        lang,
+        paidUserSince: company?.subscription_start_date,
+        productCategory: null,
+        products: null,
     };
 
     // const peopleProps = Object.fromEntries(Object.keys(MixpanelPeopleProps).map(key => [key, null]));
@@ -123,9 +142,9 @@ export const useRudderstack = () => {
     }, []);
 
     const identifyFromProfile = useCallback(
-        (profile: ProfileDB) => {
+        (profile: ProfileDB, company?: CompanyDB, user?: any, lang?: string) => {
             if (!profile) return;
-            const { id, traits } = profileToIdentifiable(profile);
+            const { id, traits } = profileToIdentifiable(profile, company, user, lang);
             identifyUser(id, traits);
         },
         [identifyUser],
