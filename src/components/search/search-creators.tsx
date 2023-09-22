@@ -1,62 +1,43 @@
 import { useCallback, useState } from 'react';
 import { useSearch } from 'src/hooks/use-search';
 import { useTranslation } from 'react-i18next';
-import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
-import { debounce } from 'src/utils/debounce';
-import { Search, Spinner } from '../icons';
+import { Search } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SearchInfluencerByName } from 'src/utils/analytics/events/discover/search-influencer-by-name';
 
-export const SearchCreators = ({
-    platform,
-    onSearch,
-}: {
-    platform: CreatorPlatform;
-    onSearch: (params: any) => void;
-}) => {
+export const SearchCreators = ({ onSearch }: { onSearch: (params: any) => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
-    const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
+    const { trackSearch } = useSearchTrackers();
 
-    const { setPlatform, setUsername, setText, setActiveSearch, setPage, getSearchParams } = useSearch();
-
-    // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const searchInfluencer = useCallback(
-        debounce((term: any) => {
-            setPlatform(platform);
-            setUsername(term);
-            setText(term);
-            trackSearchInfluencer({ term }, platform);
-            setSpinnerLoading(false);
-        }),
-        [platform],
-    );
+    const { setPlatform, setUsername, setText, setActiveSearch, setPage, getSearchParams, username, platform } =
+        useSearch();
+    const { track } = useRudderstackTrack();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-        setSpinnerLoading(true);
-
         if (e.target.value.trim() === '') {
             setText('');
             setUsername('');
+        } else {
+            setUsername(e.target.value);
+            setText(e.target.value);
         }
-
-        searchInfluencer(e.target.value);
+        setPlatform(platform);
+        setSearchTerm(e.target.value);
     };
 
-    const handleSearch = useCallback(() => {
+    const handleSubmit = useCallback(() => {
         setActiveSearch(true);
         setPage(0);
         trackSearch('Search Options');
-    }, [setActiveSearch, setPage, trackSearch]);
-
-    const handleSubmit = useCallback(() => {
-        searchInfluencer(searchTerm);
-        handleSearch();
+        track(SearchInfluencerByName, {
+            search_query: username,
+            platform,
+        });
         onSearch({ searchParams: getSearchParams() });
-    }, [searchTerm, searchInfluencer, handleSearch, onSearch, getSearchParams]);
+    }, [setActiveSearch, setPage, trackSearch, track, username, platform, onSearch, getSearchParams]);
 
     return (
         <div className="group relative flex w-full flex-col font-medium">
@@ -70,7 +51,6 @@ export const SearchCreators = ({
                 onChange={handleChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
-            {spinnerLoading && <Spinner className="absolute right-2 top-3 h-5 w-5 fill-primary-600 text-white" />}
         </div>
     );
 };

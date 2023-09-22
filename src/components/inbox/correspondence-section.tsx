@@ -9,6 +9,8 @@ import { Email } from './Email';
 import { Threads } from './Threads';
 import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SendEmailReply } from 'src/utils/analytics/events';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -19,6 +21,7 @@ export const CorrespondenceSection = ({
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
 
     const handleSubmit = async (replyMessage: string) => {
         if (!profile?.email_engine_account_id) {
@@ -36,6 +39,14 @@ export const CorrespondenceSection = ({
         };
         try {
             await sendReply(replyBody, profile?.email_engine_account_id);
+            track(SendEmailReply, {
+                sequence_email_address: profile?.sequence_send_email ?? '',
+                email_thread_id: selectedMessages[0].threadId,
+                attachment: false, //TODO V2-703 & V2-971: Attachment not implemented in code yet
+                attachment_types: [],
+                cc: false, //TODO V2-972: CCs not implemented in code yet
+                cc_emails: [],
+            });
             setReplyMessage('');
         } catch (error) {
             clientLogger(error, 'error');

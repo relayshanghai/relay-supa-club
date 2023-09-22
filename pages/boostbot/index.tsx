@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Trans, Translation, useTranslation } from 'react-i18next';
-import type { ProgressType } from 'src/components/boostbot/chat';
+import { useTranslation } from 'react-i18next';
+import type { MessageType } from 'src/components/boostbot/message';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -29,6 +28,7 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
@@ -39,17 +39,11 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 // UserProfile is the unlocked influencer/generated report type. Used for checking which influencers are already unlocked and which are not.
 const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
-export type MessageType = {
-    sender: 'User' | 'Bot' | 'Progress';
-    content?: JSX.Element;
-    progress?: ProgressType;
-};
-
 const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
-    const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
-    const [influencers, setInfluencers] = useState<Influencer[]>([]);
+    const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
+    const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
     const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
@@ -60,8 +54,8 @@ const Boostbot = () => {
     const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
-    const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
-    const [hasUsedOutreach, setHasUsedOutreach] = useState(false);
+    const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
+    const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
@@ -86,38 +80,29 @@ const Boostbot = () => {
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
-                content: (
-                    <Trans
-                        i18nKey="boostbot.error.outOfSearchCredits"
-                        components={{
-                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
-                        }}
-                    />
-                ),
+                type: 'translation',
+                translationKey: 'boostbot.error.outOfSearchCredits',
+                translationLink: '/pricing',
             });
             setIsSearchDisabled(true);
         }
         if (usages.profile.remaining <= 0) {
             addMessage({
                 sender: 'Bot',
-                content: (
-                    <Trans
-                        i18nKey="boostbot.error.outOfProfileCredits"
-                        components={{
-                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
-                        }}
-                    />
-                ),
+                type: 'translation',
+                translationKey: 'boostbot.error.outOfProfileCredits',
+                translationLink: '/pricing',
             });
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
-    const [messages, setMessages] = useState<MessageType[]>([
+    const [messages, setMessages] = usePersistentState<MessageType[]>('boostbot-messages', [
         {
             sender: 'Bot',
-            content: <Translation>{(t) => t('boostbot.chat.introMessage')}</Translation>,
+            type: 'translation',
+            translationKey: 'boostbot.chat.introMessage',
         },
     ]);
 
@@ -176,7 +161,8 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: <Translation>{(t) => t('boostbot.error.influencerUnlock')}</Translation>,
+                type: 'translation',
+                translationKey: 'boostbot.error.influencerUnlock',
             });
 
             trackingPayload.is_success = false;
@@ -198,7 +184,8 @@ const Boostbot = () => {
         if (influencersToUnlock.length === 0) {
             addMessage({
                 sender: 'Bot',
-                content: <Translation>{(t) => t('boostbot.chat.noInfluencersToUnlock')}</Translation>,
+                type: 'translation',
+                translationKey: 'boostbot.chat.noInfluencersToUnlock',
             });
             return;
         }
@@ -210,24 +197,17 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(false);
         addMessage({
             sender: 'Bot',
-            content: (
-                <Trans
-                    i18nKey={`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`}
-                    components={{
-                        pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
-                    }}
-                    values={{ count: unlockedInfluencers?.length }}
-                />
-            ),
+            type: 'translation',
+            translationKey: `boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`,
+            translationLink: '/pricing',
+            translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
+        // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
         // addMessage({
         //     sender: 'Bot',
-        //     content: (
-        //         <VideoPreviewWithModal
-        //             eventToTrack={OpenVideoGuideModal.eventName}
-        //             videoUrl="/assets/videos/delete-guide.mp4"
-        //         />
-        //     ),
+        //     type: 'video',
+        //     videoUrl: '/assets/videos/delete-guide.mp4',
+        //     eventToTrack: OpenVideoGuideModal.eventName,
         // });
         setHasUsedUnlock(true);
 
@@ -288,23 +268,16 @@ const Boostbot = () => {
 
             addMessage({
                 sender: 'Bot',
-                content: (
-                    <Trans
-                        i18nKey={`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`}
-                        components={{
-                            sequencesLink: <Link target="_blank" className="font-medium underline" href="/sequences" />,
-                        }}
-                    />
-                ),
+                type: 'translation',
+                translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
+                translationLink: '/sequences',
             });
+            // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
             // addMessage({
             //     sender: 'Bot',
-            //     content: (
-            //         <VideoPreviewWithModal
-            //             eventToTrack={OpenVideoGuideModal.eventName}
-            //             videoUrl="/assets/videos/sequence-guide.mp4"
-            //         />
-            //     ),
+            //     type: 'video',
+            //     videoUrl: '/assets/videos/sequence-guide.mp4',
+            //     eventToTrack: OpenVideoGuideModal.eventName,
             // });
 
             if (sequence?.auto_start) {
@@ -315,7 +288,8 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             addMessage({
                 sender: 'Bot',
-                content: <Translation>{(t) => t('boostbot.error.influencersToOutreach')}</Translation>,
+                type: 'translation',
+                translationKey: 'boostbot.error.influencersToOutreach',
             });
 
             trackingPayload.is_success = false;
