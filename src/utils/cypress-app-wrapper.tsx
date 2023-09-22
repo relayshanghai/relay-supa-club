@@ -28,14 +28,14 @@ export const TestContextsWrapper = ({
     return (
         <RouterContext.Provider value={router as any}>
             <I18nextProvider i18n={i18n}>
-                <AnalyticsProvider>
-                    <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
+                <SessionContextProvider supabaseClient={supabaseClient}>
+                    <AnalyticsProvider>
                         {/* gets rid of the localStorage cache in tests */}
                         <SWRConfig value={{ provider: () => new Map() }}>
                             <UserAndCompanyTestWrapper options={options}>{children}</UserAndCompanyTestWrapper>
                         </SWRConfig>
-                    </SessionContextProvider>
-                </AnalyticsProvider>
+                    </AnalyticsProvider>
+                </SessionContextProvider>
             </I18nextProvider>
             <Toaster />
         </RouterContext.Provider>

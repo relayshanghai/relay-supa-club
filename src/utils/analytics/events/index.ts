@@ -131,6 +131,14 @@ import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
 import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
 import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
+import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
+import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
+import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
+import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
+import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
+import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
+import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
 
 export {
     Search,
@@ -170,6 +178,10 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    OpenInfluencerProfile,
+    AddInfluencerPost,
+    AddNoteToInfluencerProfile,
+    UpdateInfluencerStatus,
 };
 
 export const events = {
@@ -231,6 +243,10 @@ export const events = {
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [ADD_INFLUENCER_POST]: AddInfluencerPost,
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
 };
 
 export type payloads = {
@@ -292,6 +308,10 @@ export type payloads = {
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -355,6 +375,10 @@ export const eventKeys = z.union([
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
     z.literal(SEARCH_INFLUENCER_BY_NAME),
+    z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(ADD_INFLUENCER_POST),
+    z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_STATUS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
