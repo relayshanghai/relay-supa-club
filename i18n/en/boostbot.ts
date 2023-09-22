@@ -22,12 +22,12 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
             step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
             step3B: '{{count}} influencers selected',
         },
-        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <pricingLink>upgrade for more</pricingLink>.
+        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
 
 Tip: You can also unlock influencers one by one.`,
         outreachDone: `Great. I'm scheduling the emails now.
 
-Tip: You can check the email status on “<sequencesLink>Outreach</sequencesLink>”`,
+Tip: You can check the email status on “<customLink>Outreach</customLink>”`,
         hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
         hasUsedOutreach: `Great. I'm scheduling the emails now.
 
@@ -49,8 +49,8 @@ Tip: You can opt not to email some influencers by taking them out of the list.`,
         influencerSearch: 'Error fetching BoostBot influencers',
         influencerUnlock: 'Unlocking influencer failed',
         influencersToOutreach: 'Adding influencers to outreach failed',
-        outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <pricingLink>upgrade to a subscription</pricingLink> so we can continue searching more.`,
-        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <pricingLink>upgrade to a subscription</pricingLink> to unlock more.`,
+        outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
+        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
     },
 };
 

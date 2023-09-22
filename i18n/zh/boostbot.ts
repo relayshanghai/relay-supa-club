@@ -21,12 +21,12 @@ const boostbot = {
             step3: '正在根据粉丝数、互动率、地域等维度精选最佳KOL',
             step3B: '已选定 {{count}} 名KOL',
         },
-        unlockDone: `太棒了, 你刚刚解锁了新的红人 {{count}}, 在试用期间, 你最多可以解锁50位红人报告, 或者你也可以<pricingLink>升级方案解锁更多</pricingLink>。
+        unlockDone: `太棒了, 你刚刚解锁了新的红人 {{count}}, 在试用期间, 你最多可以解锁50位红人报告, 或者你也可以<customLink>升级方案解锁更多</customLink>。
 
 小贴士：您也可以选择逐个解锁 KOL。`,
         outreachDone: `太棒了！ 我正在安排发送邮件。
 
-一个小提示：你可以在"<sequencesLink>拓展方案中</sequencesLink>"查看邮件状态。`,
+一个小提示：你可以在"<customLink>拓展方案中</customLink>"查看邮件状态。`,
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
         hasUsedOutreach: `好的，我正在安排发送邮件。
 
@@ -49,8 +49,8 @@ const boostbot = {
         influencerUnlock: '解锁红人报告失败',
         influencersToOutreach: '添加红人至联络列表失败',
         outOfSearchCredits:
-            '很抱歉，你已达到解锁红人报告的限额，请<pricingLink>升级方案</pricingLink>，以便继续搜索更多内容。',
-        outOfProfileCredits: '很抱歉，你已达到解锁红人报告的限额，请 <pricingLink>升级方案</pricingLink> 解锁更多。',
+            '很抱歉，你已达到解锁红人报告的限额，请<customLink>升级方案</customLink>，以便继续搜索更多内容。',
+        outOfProfileCredits: '很抱歉，你已达到解锁红人报告的限额，请 <customLink>升级方案</customLink> 解锁更多。',
     },
 };
 
