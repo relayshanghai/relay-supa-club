@@ -76,27 +76,8 @@ function loginTestUser(
 }
 Cypress.Commands.add('loginTestUser', loginTestUser);
 
-function loginAdmin(
-    role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'relay_employee',
-    switchLangToEnglish = true,
-) {
-    if (switchLangToEnglish) {
-        switchToEnglish();
-    }
-    let email = Cypress.env('TEST_USER_EMAIL_RELAY_EMPLOYEE');
-    if (role === 'company_teammate') {
-        email = Cypress.env('TEST_USER_EMAIL_COMPANY_TEAMMATE');
-    } else if (role === 'relay_employee') {
-        email = Cypress.env('TEST_USER_EMAIL_RELAY_EMPLOYEE');
-    }
-    cy.log(email);
-    cy.visit('/login');
-    cy.contains('Welcome back!'); // wait for login page load
-    cy.get('input[type="email"]').type(email);
-    cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
-    cy.get('form').get('button').contains('Log in').click();
-    cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
-    cy.contains('Sequences', { timeout: 10000 }); // dashboard page load
+function loginAdmin(switchLangToEnglish = true) {
+    loginTestUser('relay_employee', switchLangToEnglish);
 }
 Cypress.Commands.add('loginAdmin', loginAdmin);
 
