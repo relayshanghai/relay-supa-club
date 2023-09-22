@@ -149,6 +149,7 @@ export const ApiHandler =
         if (req.method === 'POST' && params.postHandler !== undefined) {
             return await exceptionHandler<T>(params.postHandler)(req, res);
         }
+
         if (req.method === 'PUT' && params.putHandler !== undefined) {
             return await exceptionHandler<T>(params.putHandler)(req, res);
         }
