@@ -6,7 +6,7 @@ export type UpdateInfluencerProfilePayload = EventPayload<{
     influencer_id: string; // REFERENCE TO THE INFLUENCER_SOCIAL_PROFILE TABLE'S ID
     updated_field: string;
     previously_empty: boolean;
-    batch_id: string;
+    batch_id: number;
 }>;
 
 export const UpdateInfluencerProfile = (trigger: TriggerEvent, payload?: UpdateInfluencerProfilePayload) =>

@@ -158,6 +158,11 @@ import type { GoToInboxPayload } from './outreach/go-to-inbox';
 import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
 import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
 import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
+import { type SaveInfluencerProfileUpdatesPayload } from './outreach/save-influencer-profile-updates';
+import {
+    SAVE_INFLUENCER_PROFILE_UPDATES,
+    SaveInfluencerProfileUpdates,
+} from './outreach/save-influencer-profile-updates';
 
 export {
     Search,
@@ -204,6 +209,7 @@ export {
     AddInfluencerPost,
     AddNoteToInfluencerProfile,
     UpdateInfluencerStatus,
+    SaveInfluencerProfileUpdates,
 };
 
 export const events = {
@@ -279,6 +285,7 @@ export const events = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
     [GO_TO_INBOX]: GoToInbox,
     [TOGGLE_VIEW_MINE]: ToggleViewMine,
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdates,
 };
 
 export type payloads = {
@@ -354,6 +361,7 @@ export type payloads = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
     [GO_TO_INBOX]: GoToInboxPayload;
     [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdatesPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -431,6 +439,7 @@ export const eventKeys = z.union([
     z.literal(FILTER_INFLUENCER_MANAGER),
     z.literal(GO_TO_INBOX),
     z.literal(TOGGLE_VIEW_MINE),
+    z.literal(SAVE_INFLUENCER_PROFILE_UPDATES),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
