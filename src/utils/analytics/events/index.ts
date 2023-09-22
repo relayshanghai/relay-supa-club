@@ -135,6 +135,14 @@ import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
 import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
 import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
 import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
+import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
+import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
+import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
+import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
+import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
+import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
+import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
 import type { FilterSequenceInfluencersPayload } from './outreach/filter-sequence-influencers';
 import { FILTER_SEQUENCE_INFLUENCERS, FilterSequenceInfluencers } from './outreach/filter-sequence-influencers';
 import type { SearchInfluencerManagerPayload } from './outreach/search-influencer-manager';
@@ -184,6 +192,10 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    OpenInfluencerProfile,
+    AddInfluencerPost,
+    AddNoteToInfluencerProfile,
+    UpdateInfluencerStatus,
 };
 
 export const events = {
@@ -247,6 +259,10 @@ export const events = {
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
     [TOGGLE_AUTO_START]: ToggleAutoStart,
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [ADD_INFLUENCER_POST]: AddInfluencerPost,
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
     [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencers,
     [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManager,
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
@@ -315,6 +331,10 @@ export type payloads = {
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
     [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
     [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencersPayload;
     [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManagerPayload;
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
@@ -385,6 +405,10 @@ export const eventKeys = z.union([
     z.literal(SEARCH_INFLUENCER_BY_NAME),
     z.literal(CHANGE_SEQUENCE_TAB),
     z.literal(TOGGLE_AUTO_START),
+    z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(ADD_INFLUENCER_POST),
+    z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_STATUS),
     z.literal(FILTER_SEQUENCE_INFLUENCERS),
     z.literal(SEARCH_INFLUENCER_MANAGER),
     z.literal(FILTER_INFLUENCER_MANAGER),

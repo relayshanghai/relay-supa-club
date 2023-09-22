@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
+import type { FunnelStatus } from 'src/utils/api/db';
 
 export type CheckboxDropdownItemData = {
-    id: string;
-    label: string;
+    id: FunnelStatus;
+    label: FunnelStatus;
     value?: number;
     style?: string;
 };
