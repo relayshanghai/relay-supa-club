@@ -1,5 +1,5 @@
 import { mount } from 'cypress/react18';
-import React, { useState } from 'react';
+import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18n';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
