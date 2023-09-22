@@ -238,6 +238,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         : t('sequences.autoStartTooltipDescription');
 
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+    const hideAutoStart = true; // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
 
     return (
         <Layout>
@@ -318,27 +319,29 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 />
                 <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pb-2">
                     <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
-                    <div
-                        className="flex flex-row"
-                        onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
-                    >
-                        <Switch
-                            className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
-                            checked={sequence?.auto_start ?? false}
-                            afterLabel={t('sequences.autoStart') || ''}
-                            onChange={(e) => {
-                                handleAutostartToggle(e.target.checked);
-                            }}
-                        />
-                        <Tooltip
-                            content={autoStartTooltipTitle}
-                            detail={autoStartTooltipDescription}
-                            position="bottom-left"
-                            className="w-fit"
+                    {hideAutoStart ? null : (
+                        <div
+                            className="flex flex-row"
+                            onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
                         >
-                            <Info className="ml-2 h-3 w-3 text-gray-300" />
-                        </Tooltip>
-                    </div>
+                            <Switch
+                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                                checked={sequence?.auto_start ?? false}
+                                afterLabel={t('sequences.autoStart') || ''}
+                                onChange={(e) => {
+                                    handleAutostartToggle(e.target.checked);
+                                }}
+                            />
+                            <Tooltip
+                                content={autoStartTooltipTitle}
+                                detail={autoStartTooltipDescription}
+                                position="bottom-left"
+                                className="w-fit"
+                            >
+                                <Info className="ml-2 h-3 w-3 text-gray-300" />
+                            </Tooltip>
+                        </div>
+                    )}
                 </section>
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto">
