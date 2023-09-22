@@ -1,5 +1,5 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import faq from 'i18n/en/faq';
 import { Button } from 'src/components/button';
 import { Question } from 'src/components/icons';
+import { FilterInfluencerManager } from 'src/utils/analytics/events/outreach/filter-influencer-manager';
+import { SearchInfluencerManager } from 'src/utils/analytics/events/outreach/search-influencer-manager';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -45,10 +47,13 @@ const Manager = () => {
 
     const { track } = useRudderstackTrack();
 
-    const influencers =
-        sequenceInfluencers.length > 0 && profile && sequences
-            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
-            : [];
+    const influencers = useMemo(
+        () =>
+            sequenceInfluencers.length > 0 && profile && sequences
+                ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : [],
+        [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
+    );
 
     useEffect(() => {
         const { abort } = track(OpenInfluencerManagerPage);
@@ -116,13 +121,36 @@ const Manager = () => {
         setOnlyMe(!onlyMe);
     }, [onlyMe]);
 
-    const handleStatus = (filters: CommonStatusType[]) => {
-        setFilterStatuses(filters);
-    };
+    const handleFilterStatus = useCallback(
+        (filters: CommonStatusType[]) => {
+            setFilterStatuses(filters);
+            track(FilterInfluencerManager, {
+                filter_type: 'Status',
+                selected_statuses: filters,
+                view_mine_enabled: onlyMe,
+                total_managed_influencers: influencers.length,
+                total_filter_results: profile
+                    ? filterInfluencers(searchTerm, onlyMe, filters, profile, sequenceInfluencers, sequences)?.length ||
+                      0
+                    : 0,
+            });
+        },
+        [onlyMe, influencers, profile, searchTerm, sequenceInfluencers, sequences, track],
+    );
 
-    const handleSearch = (term: string) => {
-        setSearchTerm(term);
-    };
+    const handleSearch = useCallback(
+        (term: string) => {
+            setSearchTerm(term);
+            const results = profile
+                ? filterInfluencers(term, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : null;
+            track(SearchInfluencerManager, {
+                query: term,
+                total_results: results?.length || 0,
+            });
+        },
+        [onlyMe, filterStatuses, profile, sequenceInfluencers, sequences, track],
+    );
 
     const handleProfileOverlayClose = useCallback(() => {
         setUiState((s) => {
@@ -177,7 +205,7 @@ const Manager = () => {
                         <CollabStatus
                             collabOptions={collabOptions}
                             filters={filterStatuses}
-                            onSetFilters={handleStatus}
+                            onSetFilters={handleFilterStatus}
                         />
                     </section>
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
