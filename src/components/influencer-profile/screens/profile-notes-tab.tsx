@@ -80,7 +80,9 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
     const handleSaveNotes = useCallback(
         (value: string) => {
-            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id missing');
+            if (!profile.influencer_social_profile_id) {
+                throw new Error('Influencer social profile id missing');
+            }
             saveNote
                 .call({
                     comment: value,

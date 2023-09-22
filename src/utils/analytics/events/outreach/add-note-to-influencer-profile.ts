@@ -3,7 +3,8 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const ADD_NOTE_TO_INFLUENCER_PROFILE = 'Add Note To Influencer Profile';
 
 export type AddNoteToInfluencerProfilePayload = EventPayload<{
-    influencer_id: string; // REFERENCE TO THE INFLUENCER_SOCIAL_PROFILE TABLE'S ID
+    /** references the `influencer_social_profile.id` */
+    influencer_id: string;
     note: string;
 }>;
 
