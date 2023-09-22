@@ -13,8 +13,12 @@ import { OutreachNextStepsInput } from '../components/outreach-next-steps-input'
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 import { useTranslation } from 'react-i18next';
+import { AddNoteToInfluencerProfile } from 'src/utils/analytics/events';
+import type { CheckboxDropdownItemData } from '../components/checkbox-dropdown-item';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { UpdateInfluencerStatus } from 'src/utils/analytics/events';
 
-export const COLLAB_STATUS_OPTIONS = [
+export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
         id: 'Negotiating',
         label: 'Negotiating',
@@ -74,9 +78,13 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
     const { getNotes, saveNote } = useSequenceInfluencerNotes();
+    const { track } = useRudderstackTrack();
 
     const handleSaveNotes = useCallback(
         (value: string) => {
+            if (!profile.influencer_social_profile_id) {
+                throw new Error('Influencer social profile id missing');
+            }
             saveNote
                 .call({
                     comment: value,
@@ -86,9 +94,25 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 .then(() => {
                     saveNote.refresh();
                 });
+            track(AddNoteToInfluencerProfile, {
+                influencer_id: profile.influencer_social_profile_id,
+                note: value,
+            });
         },
-        [profile, saveNote],
+        [profile, saveNote, track],
     );
+
+    const handleCollabStatusUpate = (items: CheckboxDropdownItemData[]) => {
+        if (!profile) return;
+        if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id missing');
+        const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
+        onUpdate('collabStatus', selected);
+        track(UpdateInfluencerStatus, {
+            influencer_id: profile.influencer_social_profile_id,
+            current_status: profile.funnel_status,
+            selected_status: selected,
+        });
+    };
 
     useEffect(() => {
         // load posts when the modal is opened
@@ -113,10 +137,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
                     <OutreachCollabStatusInput
                         label={t('profile.collabStatus') as string}
-                        onUpdate={(items) => {
-                            const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
-                            onUpdate('collabStatus', selected);
-                        }}
+                        onUpdate={handleCollabStatusUpate}
                         options={COLLAB_STATUS_OPTIONS}
                         selected={[data.notes.collabStatus]}
                     />

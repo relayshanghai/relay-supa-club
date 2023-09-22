@@ -2,9 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StopIcon } from '@heroicons/react/24/solid';
 import { Button } from 'src/components/button';
-import type { MessageType } from 'pages/boostbot';
+import type { MessageType } from 'src/components/boostbot/message';
 import Message from './message';
-import ChatProgress from './chat-progress';
 
 export interface ChatContentProps {
     messages: MessageType[];
@@ -31,18 +30,16 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
-        chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+            chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50);
     }, [messages]);
 
     return (
         <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3">
-            {messages.map((message, index) =>
-                message.progress ? (
-                    <ChatProgress key={index} progress={message.progress} />
-                ) : (
-                    <Message key={index} message={message} />
-                ),
-            )}
+            {messages.map((message, index) => (
+                <Message key={index} message={message} />
+            ))}
 
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">

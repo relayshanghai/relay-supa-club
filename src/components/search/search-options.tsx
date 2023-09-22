@@ -38,7 +38,7 @@ export const SearchOptions = ({
     const [hashTagInput, setHashTagInput] = useState<string>('');
 
     const { t } = useTranslation();
-    const { trackSearch, trackKeyword, trackOpenFilterModal, trackHashtags, trackTopics } = useSearchTrackers();
+    const { trackSearch, trackKeyword, trackHashtags, trackTopics } = useSearchTrackers();
 
     const handleSearch = useCallback(
         (e: any) => {
@@ -192,7 +192,6 @@ export const SearchOptions = ({
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
-                                    trackOpenFilterModal();
                                 }}
                                 className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
