@@ -3,7 +3,7 @@ import type { Influencer } from 'pages/boostbot';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useTranslation, Translation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
@@ -15,14 +15,9 @@ import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays } from 'src/utils/utils';
-import type { MessageType } from 'pages/boostbot';
+import type { MessageType } from 'src/components/boostbot/message';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-
-export type ProgressType = {
-    topics: string[];
-    isMidway: boolean;
-    totalFound: number | null;
-};
+import type { ProgressType } from 'src/components/boostbot/chat-progress';
 
 interface ChatProps {
     messages: MessageType[];
@@ -73,9 +68,13 @@ export const Chat: React.FC<ChatProps> = ({
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
-        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.stopped')}</Translation> });
+        addMessage({
+            sender: 'User',
+            type: 'translation',
+            translationKey: 'boostbot.chat.stopped',
+        });
         setMessages((prevMessages) => {
-            const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
+            const lastProgressIndex = prevMessages.findLastIndex((message) => message.type === 'progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
         });
         track(StopBoostbot, {
@@ -84,23 +83,26 @@ export const Chat: React.FC<ChatProps> = ({
     };
 
     const updateProgress = (progress: ProgressType) =>
-        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', progress }]);
+        setMessages((messages) => [
+            ...messages.slice(0, -1),
+            { sender: 'Neutral', type: 'progress', progressData: progress },
+        ]);
 
     const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.unlockPage')}</Translation> });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockPage' });
         handlePageToUnlock();
     };
 
     const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', content: <Translation>{(t) => t('boostbot.chat.outreachPage')}</Translation> });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachPage' });
         handlePageToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'User', content: <>{productDescription}</> },
-            { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
+            { sender: 'User', type: 'text', text: productDescription },
+            { sender: 'Neutral', type: 'progress', progressData: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsSearchLoading(true);
 
@@ -145,11 +147,9 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: (
-                    <Translation>
-                        {(t) => t('boostbot.chat.influencersFound', { count: influencers.length })}
-                    </Translation>
-                ),
+                type: 'translation',
+                translationKey: 'boostbot.chat.influencersFound',
+                translationValues: { count: influencers.length },
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);
