@@ -124,7 +124,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     });
 
     useEffect(() => {
-        if ((profile && identifyFromProfile && user && company && i18n, subscription)) {
+        if (profile && identifyFromProfile && user && company && i18n && subscription) {
             identifyFromProfile(profile, user, company, i18n.language, subscription);
         }
     }, [identifyFromProfile, profile, user, company, i18n, subscription]);
