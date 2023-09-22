@@ -41,14 +41,14 @@ export const CollabAddPostModal = ({ profile, ...props }: Props) => {
             if (!profile.influencer_social_profile_id) {
                 throw new Error('Influencer social profile id not found');
             }
-            await savePosts.call(profile.id, urls).then((res) => {
-                savePosts.refresh();
-                getPosts.refresh().call(profile.id);
+            const res = await savePosts.call(profile.id, urls);
+            savePosts.refresh();
+            getPosts.refresh().call(profile.id);
 
-                if (res.failed.length > 0) {
-                    setUrls(res.failed);
-                }
-            });
+            if (res.failed.length > 0) {
+                setUrls(res.failed);
+            }
+
             track(AddInfluencerPost, {
                 influencer_id: profile.influencer_social_profile_id,
                 platform: profile.platform,
