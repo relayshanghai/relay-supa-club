@@ -41,7 +41,6 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
     }
     rudderstack.identifyWithProfile(profile.id);
 };
-
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
         case handledWebhooks.customerSubscriptionCreated:
