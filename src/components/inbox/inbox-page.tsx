@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInboxPage } from 'src/utils/analytics/events';
+import { OpenInboxPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -79,8 +79,21 @@ export const InboxPage = () => {
     const { profile } = useUser();
 
     useEffect(() => {
+        if (!sequenceInfluencer) return;
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw Error('No social profile id');
+        }
         setLocalProfile(mapProfileToFormData(sequenceInfluencer));
-    }, [sequenceInfluencer]);
+        track(OpenInfluencerProfile, {
+            influencer_id: sequenceInfluencer.influencer_social_profile_id,
+            search_id: searchTerm,
+            current_status: sequenceInfluencer?.funnel_status,
+            currently_filtered: false,
+            currently_searched: searchTerm !== '',
+            view_mine_enabled: false,
+            is_users_influencer: false,
+        });
+    }, [sequenceInfluencer, searchTerm, track]);
 
     useEffect(() => {
         if (searchTerm === '') {

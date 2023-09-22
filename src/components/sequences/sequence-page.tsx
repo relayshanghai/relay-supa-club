@@ -104,7 +104,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 (influencer) => influencer.funnel_status === 'To Contact',
             ).length,
             sequence_id: sequenceId,
-            sequence_name: sequence?.name || '',
+            sequence_name: sequence?.name || null,
         });
         if (!sequence) {
             return;
