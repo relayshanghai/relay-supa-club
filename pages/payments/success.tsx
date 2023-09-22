@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { CheckCircleOutline } from 'src/components/icons';
 import { Title } from 'src/components/title';
@@ -6,21 +6,42 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import {
+    cancelSubscriptionWithSubscriptionId,
+    updateSubscriptionStatusAndUsages,
+} from 'src/utils/api/stripe/handle-subscriptions';
+import toast from 'react-hot-toast';
 
 const UpgradeSubscriptionSuccess = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { oldSubscriptionId, subscriptionId, priceId, companyId } = router.query;
+
+    const handleUpgradeSubscription = useCallback(async () => {
+        if (
+            typeof subscriptionId !== 'string' ||
+            typeof oldSubscriptionId !== 'string' ||
+            typeof priceId !== 'string' ||
+            typeof companyId !== 'string'
+        ) {
+            return;
+        }
+        try {
+            // cancel previous subscription when new one is created successfully
+            await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
+            // and update subscription status with new subscription id and usages
+            await updateSubscriptionStatusAndUsages(companyId, oldSubscriptionId, priceId);
+            trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
+            router.push('/account');
+        } catch (error) {
+            toast.error(t('account.subscription.upgradeSubscriptionError'));
+        }
+    }, [companyId, oldSubscriptionId, priceId, router, subscriptionId, t, trackEvent]);
 
     useEffect(() => {
-        trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
-        const timer = setTimeout(() => {
-            router.push('/account');
-        }, 3000);
-
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        handleUpgradeSubscription();
+    }, [handleUpgradeSubscription]);
 
     return (
         <div className="h-screen">

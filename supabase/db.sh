@@ -300,7 +300,7 @@ function start_database {
 }
 
 function reset_hard_database {
-    npx supabase --no-backup
+    npx supabase stop --no-backup
     npx supabase start
     export_supabase_keys
 }
