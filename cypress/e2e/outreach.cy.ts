@@ -43,7 +43,7 @@ describe('outreach', () => {
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        cy.contains('Auto-start', { timeout: 10000 });
+        // cy.contains('Auto-start', { timeout: 10000 });  // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
         cy.contains('button', 'View sequence templates');
 
         // stats
@@ -160,15 +160,15 @@ describe('outreach', () => {
         cy.contains('Missing required template variables: **Product Description**');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
-        cy.contains('div', 'Auto-start').within(() => {
-            cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
-        });
-        cy.contains('Missing required template variables: **Product Description**');
-        cy.getByTestId('missing-variables-alert').contains(1);
-        cy.contains('div', 'Auto-start').within(() => {
-            cy.get('input[type=checkbox]').click({ force: true });
-            // clicking opens the modal
-        });
+        // cy.contains('div', 'Auto-start').within(() => {
+        //     cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
+        // });  // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // cy.contains('Missing required template variables: **Product Description**');
+        // cy.getByTestId('missing-variables-alert').contains(1);
+        // cy.contains('div', 'Auto-start').within(() => {
+        // cy.get('input[type=checkbox]').click({ force: true });
+        // clicking opens the modal
+        // });
         cy.contains('Template Variables');
         cy.contains(
             'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
