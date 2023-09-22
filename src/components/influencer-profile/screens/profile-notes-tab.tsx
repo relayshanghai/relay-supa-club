@@ -13,6 +13,7 @@ import { OutreachNextStepsInput } from '../components/outreach-next-steps-input'
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 import { useTranslation } from 'react-i18next';
+import { AddNoteToInfluencerProfile } from 'src/utils/analytics/events';
 import type { CheckboxDropdownItemData } from '../components/checkbox-dropdown-item';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateInfluencerStatus } from 'src/utils/analytics/events';
@@ -81,6 +82,9 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
     const handleSaveNotes = useCallback(
         (value: string) => {
+            if (!profile.influencer_social_profile_id) {
+                throw new Error('Influencer social profile id missing');
+            }
             saveNote
                 .call({
                     comment: value,
@@ -90,8 +94,12 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 .then(() => {
                     saveNote.refresh();
                 });
+            track(AddNoteToInfluencerProfile, {
+                influencer_id: profile.influencer_social_profile_id,
+                note: value,
+            });
         },
-        [profile, saveNote],
+        [profile, saveNote, track],
     );
 
     const handleCollabStatusUpate = (items: CheckboxDropdownItemData[]) => {
