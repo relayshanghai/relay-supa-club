@@ -55,7 +55,7 @@ export const AddToSequenceModal = ({
 
     const handleAddToSequence = useCallback(async () => {
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
-        const trackingPayload: AddInfluencerToSequencePayload = {
+        const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
             sequence_id: sequence?.id || '',
             sequence_influencer_id: null,
             is_success: true,
