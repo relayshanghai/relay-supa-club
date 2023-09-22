@@ -11,8 +11,22 @@ export const useSearchTrackers = () => {
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
     };
-    const trackWordCloudAddTag = async (item: CreatorSearchTag) => {
-        trackEvent(WORD_CLOUD_COMPONENT('Added tag from wordcloud'), item);
+    const trackWordCloudAddTag = async ({
+        item,
+        search_topic,
+        all_selected_topics,
+    }: {
+        item: CreatorSearchTag;
+        search_topic: string;
+        all_selected_topics: CreatorSearchTag[];
+    }) => {
+        // @note previous implementation of this event sends two props called `tag` and `value`
+        trackEvent(WORD_CLOUD_COMPONENT('Added tag from wordcloud'), {
+            tag: item.tag,
+            value: item.value,
+            search_topic,
+            all_selected_topics: all_selected_topics.map((v) => v.value),
+        });
     };
     const trackWordCloudRemoveTag = async (item: CreatorSearchTag) => {
         trackEvent(WORD_CLOUD_COMPONENT('Removed tag from wordcloud'), item);
