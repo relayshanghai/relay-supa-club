@@ -112,8 +112,6 @@ export const profileToIdentifiable = (
         paidUserSince: company?.subscription_start_date ?? '',
     };
 
-    // const peopleProps = Object.fromEntries(Object.keys(MixpanelPeopleProps).map(key => [key, null]));
-
     return { id, traits };
 };
 
