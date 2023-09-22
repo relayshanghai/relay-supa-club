@@ -97,7 +97,7 @@ export const profileToIdentifiable = (
     lang?: string,
 ) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
-    const traits = {
+    const traits: apiObject = {
         email: email || '',
         firstName: first_name,
         lastName: last_name,
@@ -105,13 +105,11 @@ export const profileToIdentifiable = (
         company: {
             id: company_id || '',
         },
-        companyId: company_id,
-        companyName: company?.name,
-        number: user?.phone,
+        companyId: company_id ?? '',
+        companyName: company?.name ?? '',
+        number: user?.phone ?? '',
         lang,
-        paidUserSince: company?.subscription_start_date,
-        productCategory: null,
-        products: null,
+        paidUserSince: company?.subscription_start_date ?? '',
     };
 
     // const peopleProps = Object.fromEntries(Object.keys(MixpanelPeopleProps).map(key => [key, null]));
