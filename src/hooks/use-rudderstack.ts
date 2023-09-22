@@ -17,14 +17,14 @@ export interface IdentityTraits extends apiObject {
         id?: string;
         name?: string;
     };
-    companyId: string | null;
-    companyName?: string | null;
-    number?: string | null;
+    companyId?: string;
+    companyName?: string;
+    number?: string;
     lang?: string;
-    paidUserSince?: string | null;
-    productCategory: string | null;
-    products: string | null;
-    subscriptionStatus: string;
+    paidUserSince?: string;
+    productCategory?: string;
+    products?: string;
+    subscriptionStatus?: string;
 }
 
 export interface PageProperties extends apiObject {
