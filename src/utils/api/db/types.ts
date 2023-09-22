@@ -139,6 +139,7 @@ type SequenceInfluencerDetailedTypes = {
     /** 0 means not sent. 1 means first step sent, awaiting 2. */
     sequence_step?: number;
     funnel_status?: FunnelStatus;
+    platform?: CreatorPlatform;
 };
 
 export type SequenceInfluencersTable = Database['public']['Tables']['sequence_influencers'] & {
@@ -148,7 +149,14 @@ export type SequenceInfluencersTable = Database['public']['Tables']['sequence_in
 };
 
 export type SequenceInfluencer = SequenceInfluencersTable['Row'];
-export type SequenceInfluencerInsert = SequenceInfluencersTable['Insert'];
+type SequenceInfluencerInsertRequiredFields = {
+    name: string;
+    username: string;
+    avatar_url: string;
+    url: string;
+    platform: CreatorPlatform;
+};
+export type SequenceInfluencerInsert = SequenceInfluencersTable['Insert'] & SequenceInfluencerInsertRequiredFields;
 export type SequenceInfluencerUpdate = SequenceInfluencersTable['Update'];
 
 export type UsagesTable = Database['public']['Tables']['usages'] & {

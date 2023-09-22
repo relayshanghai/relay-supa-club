@@ -22,7 +22,7 @@ export default function CampaignModalCard({
     track,
 }: {
     campaign: CampaignDB;
-    creator: CreatorUserProfile | null;
+    creator?: CreatorUserProfile | null;
     platform: CreatorPlatform;
     campaignCreators: CampaignCreatorBasicInfo[];
     track: (campaign: string) => void;

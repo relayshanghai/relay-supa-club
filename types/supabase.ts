@@ -1115,64 +1115,82 @@ export interface Database {
         Row: {
           added_by: string
           address_id: string | null
+          avatar_url: string | null
           company_id: string
           created_at: string
           email: string | null
           funnel_status: string
           id: string
-          influencer_social_profile_id: string
+          influencer_social_profile_id: string | null
           iqdata_id: string
+          name: string | null
           next_step: string | null
+          platform: string | null
           rate_amount: number | null
           rate_currency: string | null
           real_full_name: string | null
           scheduled_post_date: string | null
           sequence_id: string
           sequence_step: number
+          social_profile_last_fetched: string | null
           tags: string[]
           updated_at: string
+          url: string | null
+          username: string | null
           video_details: string | null
         }
         Insert: {
           added_by: string
           address_id?: string | null
+          avatar_url?: string | null
           company_id: string
           created_at?: string
           email?: string | null
           funnel_status: string
           id?: string
-          influencer_social_profile_id: string
+          influencer_social_profile_id?: string | null
           iqdata_id: string
+          name?: string | null
           next_step?: string | null
+          platform?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
           real_full_name?: string | null
           scheduled_post_date?: string | null
           sequence_id: string
           sequence_step?: number
+          social_profile_last_fetched?: string | null
           tags?: string[]
           updated_at?: string
+          url?: string | null
+          username?: string | null
           video_details?: string | null
         }
         Update: {
           added_by?: string
           address_id?: string | null
+          avatar_url?: string | null
           company_id?: string
           created_at?: string
           email?: string | null
           funnel_status?: string
           id?: string
-          influencer_social_profile_id?: string
+          influencer_social_profile_id?: string | null
           iqdata_id?: string
+          name?: string | null
           next_step?: string | null
+          platform?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
           real_full_name?: string | null
           scheduled_post_date?: string | null
           sequence_id?: string
           sequence_step?: number
+          social_profile_last_fetched?: string | null
           tags?: string[]
           updated_at?: string
+          url?: string | null
+          username?: string | null
           video_details?: string | null
         }
         Relationships: [

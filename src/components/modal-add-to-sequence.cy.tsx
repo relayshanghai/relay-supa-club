@@ -4,6 +4,7 @@ import creators from 'i18n/en/creators';
 import { useState } from 'react';
 import { worker } from 'src/mocks/browser';
 import type { CreatorUserProfile } from 'types';
+import mockSequences from 'src/mocks/supabase/sequences/all-sequences-by-company.json';
 
 describe('<AddToSequenceModal />', () => {
     before(() => {
@@ -18,6 +19,11 @@ describe('<AddToSequenceModal />', () => {
                     setShow={setShow}
                     creatorProfile={{ user_id: '123' } as CreatorUserProfile}
                     platform="youtube"
+                    setSuppressReportFetch={() => undefined}
+                    sequence={null}
+                    setSequence={() => undefined}
+                    setSequenceInfluencer={() => undefined}
+                    sequences={mockSequences}
                 />
             );
         };
@@ -37,6 +43,11 @@ describe('<AddToSequenceModal />', () => {
                     setShow={setShow}
                     creatorProfile={{ user_id: '123' } as CreatorUserProfile}
                     platform="youtube"
+                    setSuppressReportFetch={() => undefined}
+                    sequence={null}
+                    setSequence={() => undefined}
+                    setSequenceInfluencer={() => undefined}
+                    sequences={mockSequences}
                 />
             );
         };

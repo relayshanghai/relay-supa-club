@@ -60,6 +60,11 @@ export const reinsertAlice = async () => {
             sequence_step: 0,
             email,
             iqdata_id: '123',
+            name: '',
+            username: '',
+            url: '',
+            avatar_url: '',
+            platform: 'instagram',
         };
         await supabase.from('sequence_influencers').insert(reinsert);
     } catch (error) {
@@ -110,6 +115,11 @@ export const reinsertCharlie = async () => {
             sequence_step: 0,
             email,
             iqdata_id: '123',
+            name: '',
+            username: '',
+            url: '',
+            avatar_url: '',
+            platform: 'instagram',
         };
         await supabase.from('sequence_influencers').insert(reinsert);
     } catch (error) {

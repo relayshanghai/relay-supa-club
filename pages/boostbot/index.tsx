@@ -22,7 +22,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
+import type { CreatorPlatform, UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -253,7 +253,12 @@ const Boostbot = () => {
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
-            if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
+            if (!unlockedInfluencers) {
+                throw new Error('Error unlocking influencers');
+            }
+            if (!sequence?.id) {
+                throw new Error('Error creating sequence: no sequence id selected');
+            }
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
@@ -262,7 +267,17 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
+                return createSequenceInfluencer({
+                    iqdata_id: creatorProfileId,
+                    influencer_social_profile_id: influencer.socialProfile.id,
+                    tags,
+                    avatar_url: influencer.socialProfile.avatar_url ?? '',
+                    name: influencer.socialProfile.name || '',
+                    platform: influencer.socialProfile.platform as CreatorPlatform,
+                    username: influencer.socialProfile.username,
+                    url: influencer.socialProfile.url,
+                    sequence_id: sequence?.id,
+                });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
