@@ -35,7 +35,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     const oldSubscriptionId = oldSubscription.data[0].id;
 
-    //create a new subscription with the attached paymentMethod
+    // create a new subscription with the attached paymentMethod
     const subscription = await stripeClient.subscriptions.create({
         customer: cusId,
         payment_behavior: 'default_incomplete',

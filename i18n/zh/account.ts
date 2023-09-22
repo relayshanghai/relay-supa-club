@@ -80,6 +80,7 @@ const account = {
         },
         upgrade: '升级订阅',
         upgradeSuccess: '升级成功',
+        upgradeSubscriptionError: '升级订阅失败',
     },
     invite: {
         title: '邀请成员加入',

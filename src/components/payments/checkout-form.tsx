@@ -56,15 +56,15 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
             returnUrlParams.append('priceId', priceId);
             returnUrlParams.append('companyId', company.id);
 
-            //confirm the payment intent form the created subscription
+            // confirm the payment intent form the created subscription
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: `https://app.relay.club/payments/success?${returnUrlParams.toString()}`,
+                    return_url: `https://app.relay.club/payments/success?${returnUrlParams}`,
                 },
             });
-            //if has error, handle error
+            // if has error, handle error
             if (error) {
                 handleError(error);
                 // if has error confirm the payment, should cancel the new subscription

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { CheckCircleOutline } from 'src/components/icons';
 import { Title } from 'src/components/title';
@@ -10,6 +10,7 @@ import {
     cancelSubscriptionWithSubscriptionId,
     updateSubscriptionStatusAndUsages,
 } from 'src/utils/api/stripe/handle-subscriptions';
+import toast from 'react-hot-toast';
 
 const UpgradeSubscriptionSuccess = () => {
     const router = useRouter();
@@ -17,23 +18,30 @@ const UpgradeSubscriptionSuccess = () => {
     const { trackEvent } = useRudderstack();
     const { oldSubscriptionId, subscriptionId, priceId, companyId } = router.query;
 
-    const handleUpgradeSubscription = async () => {
-        if (!oldSubscriptionId || !subscriptionId || !priceId || !companyId) return;
-        // cancel previous subscription when new one is created successfully
-        await cancelSubscriptionWithSubscriptionId(oldSubscriptionId as string);
-        //and update subscription status with new subscription id and usages
-        await updateSubscriptionStatusAndUsages(companyId as string, subscriptionId as string, priceId as string);
-    };
+    const handleUpgradeSubscription = useCallback(async () => {
+        if (
+            typeof subscriptionId !== 'string' ||
+            typeof oldSubscriptionId !== 'string' ||
+            typeof priceId !== 'string' ||
+            typeof companyId !== 'string'
+        ) {
+            return;
+        }
+        try {
+            // cancel previous subscription when new one is created successfully
+            await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
+            // and update subscription status with new subscription id and usages
+            await updateSubscriptionStatusAndUsages(companyId, oldSubscriptionId, priceId);
+            trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
+            router.push('/account');
+        } catch (error) {
+            toast.error(t('account.subscription.upgradeSubscriptionError'));
+        }
+    }, [companyId, oldSubscriptionId, priceId, router, subscriptionId, t, trackEvent]);
+
     useEffect(() => {
         handleUpgradeSubscription();
-        trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
-        const timer = setTimeout(() => {
-            router.push('/account');
-        }, 3000);
-
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [handleUpgradeSubscription]);
 
     return (
         <div className="h-screen">

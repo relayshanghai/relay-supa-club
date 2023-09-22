@@ -80,6 +80,7 @@ const account = {
         },
         upgrade: 'Upgrade',
         upgradeSuccess: 'Upgrade success',
+        upgradeSubscriptionError: 'Unable to upgrade subscription',
     },
     invite: {
         title: 'Invite Members',
