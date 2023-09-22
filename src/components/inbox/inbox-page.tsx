@@ -107,6 +107,12 @@ export const InboxPage = () => {
                 const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
                 const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
                 const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
+
+                if (threadMessages.length === 0) {
+                    setLoadingSelectedMessages(false);
+                    throw new Error('No thread messages found');
+                }
+
                 threadMessages.sort((a, b) => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
                 });
