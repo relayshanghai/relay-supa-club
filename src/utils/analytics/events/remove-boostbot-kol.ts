@@ -5,6 +5,12 @@ export const REMOVE_BOOSTBOT_KOL = 'Remove KOL';
 
 export type RemoveBoostbotKolPayload = {
     currentPage: CurrentPageEvent;
+    kol_id: string;
+    platform: string;
+    search_id: string | number | null;
+    // batch_id: string | number | null
+    // search_results_page: number // 9999 for report
+    // search_results_index: number // 9999 for report
 };
 
 export const RemoveBoostbotKol = (trigger: TriggerEvent, value?: RemoveBoostbotKolPayload) =>

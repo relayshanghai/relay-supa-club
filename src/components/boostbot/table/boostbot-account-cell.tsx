@@ -19,6 +19,9 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
     const handle = username || custom_name || fullname || '';
     const Icon = url.includes('youtube') ? Youtube : url.includes('tiktok') ? Tiktok : Instagram;
     const { track } = useRudderstackTrack();
+    // @note get platform from url for now
+    //       `influencer` was supposed to be `UserAccount` type which contains `type` for platform but it's not there on runtime
+    const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
     return (
         <>
@@ -34,7 +37,9 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                         results_index: row.index,
                         results_page: table.getState().pagination.pageIndex + 1,
                         kol_id: influencer.user_id,
-                        search_id: null,
+                        platform,
+                        social_url: influencer.url,
+                        search_id: table.options.meta?.searchId ?? null,
                     });
                 }}
             >

@@ -14,7 +14,7 @@ import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
-import { mixArrays } from 'src/utils/utils';
+import { mixArrays, randomNumber } from 'src/utils/utils';
 import type { MessageType } from 'pages/boostbot';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
@@ -42,6 +42,7 @@ interface ChatProps {
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
     shortenedButtons: boolean;
     isSearchDisabled: boolean;
+    setSearchId: Dispatch<SetStateAction<string | number | null>>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -59,13 +60,14 @@ export const Chat: React.FC<ChatProps> = ({
     handleUnlockInfluencers,
     shortenedButtons,
     isSearchDisabled,
+    setSearchId,
 }) => {
+    let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-
     const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
@@ -80,6 +82,7 @@ export const Chat: React.FC<ChatProps> = ({
         });
         track(StopBoostbot, {
             currentPage: CurrentPageEvent.boostbot,
+            search_id: searchId,
         });
     };
 
@@ -97,6 +100,8 @@ export const Chat: React.FC<ChatProps> = ({
     };
 
     const onSendMessage = async (productDescription: string) => {
+        searchId = randomNumber();
+        setSearchId(searchId);
         setMessages((prevMessages) => [
             ...prevMessages,
             { sender: 'User', content: <>{productDescription}</> },
@@ -111,6 +116,7 @@ export const Chat: React.FC<ChatProps> = ({
             valid_topics: [],
             recommended_influencers: [],
             is_success: true,
+            search_id: searchId,
         };
 
         try {

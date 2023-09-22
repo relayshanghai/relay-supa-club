@@ -63,10 +63,10 @@ const Boostbot = () => {
     const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
     const [hasUsedOutreach, setHasUsedOutreach] = useState(false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
-
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    const [searchId, setSearchId] = useState<string | number | null>(null);
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
@@ -349,6 +349,7 @@ const Boostbot = () => {
                         addMessage={addMessage}
                         shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
+                        setSearchId={setSearchId}
                     />
                 </div>
 
@@ -359,7 +360,7 @@ const Boostbot = () => {
                         columns={columns}
                         data={influencers}
                         setCurrentPageInfluencers={setCurrentPageInfluencers}
-                        meta={{ handleUnlockInfluencer, removeInfluencer, t }}
+                        meta={{ handleUnlockInfluencer, removeInfluencer, t, searchId }}
                     />
                 )}
             </div>
