@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -13,6 +13,7 @@ import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info } from './icons';
 import { Modal } from './modal';
+import { randomNumber } from 'src/utils/utils';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -37,13 +38,12 @@ export const AddToSequenceModal = ({
     sequences: Sequence[];
 }) => {
     const { t } = useTranslation();
-
     const { track } = useRudderstackTrack();
-
     const [submitting, setSubmitting] = useState<boolean>(false);
     const { sendSequence } = useSequence(sequence?.id);
-
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [show]);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -110,8 +110,10 @@ export const AddToSequenceModal = ({
         const startSequencePayload: StartSequenceForInfluencerPayload = {
             influencer_id: null,
             sequence_id: null,
+            sequence_name: sequence.name,
             sequence_influencer_id: null,
             is_success: true,
+            batch_id: batchId,
         };
 
         try {
@@ -167,6 +169,7 @@ export const AddToSequenceModal = ({
         setSuppressReportFetch,
         t,
         track,
+        batchId,
     ]);
 
     return (
