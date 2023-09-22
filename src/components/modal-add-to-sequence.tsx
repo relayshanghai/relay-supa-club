@@ -55,7 +55,7 @@ export const AddToSequenceModal = ({
 
     const handleAddToSequence = useCallback(async () => {
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
-        const trackingPayload: AddInfluencerToSequencePayload = {
+        const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
             sequence_id: sequence?.id || '',
             sequence_influencer_id: null,
             is_success: true,
@@ -90,6 +90,7 @@ export const AddToSequenceModal = ({
             });
             setSequenceInfluencer(newSequenceInfluencer);
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
+            trackingPayload['$add'] = { total_sequence_influencers: 1 };
             setSuppressReportFetch(false); // will start getting the report.
 
             toast.success(t('creators.addToSequenceSuccess'));

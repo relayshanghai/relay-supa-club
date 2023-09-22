@@ -40,6 +40,8 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                         trackEvent(ANALYZE_PAGE('Similar Influencer Section, open report'), {
                             platform,
                             user_id: creator.user_id,
+                            // @note total_reports is an incrementable property
+                            total_reports: 1,
                         });
                     }}
                 >
