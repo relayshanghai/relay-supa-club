@@ -129,6 +129,8 @@ import type { EnterFilterPayload } from './discover/enter-filter';
 import { ENTER_FILTER, EnterFilter } from './discover/enter-filter';
 import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
+import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
+import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
 import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
@@ -240,6 +242,7 @@ export const events = {
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
     [ADD_INFLUENCER_POST]: AddInfluencerPost,
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
@@ -304,6 +307,7 @@ export type payloads = {
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
     [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
@@ -370,6 +374,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_FILTERS_MODAL),
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
+    z.literal(SEARCH_INFLUENCER_BY_NAME),
     z.literal(OPEN_INFLUENCER_PROFILE),
     z.literal(ADD_INFLUENCER_POST),
     z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
