@@ -125,6 +125,14 @@ import type { NavigateSignupCarousalPayload } from './onboarding/navigate-signup
 import { NAVIGATE_SIGNUP_CAROUSAL, NavigateSignupCarousal } from './onboarding/navigate-signup-carousal';
 import type { OpenFiltersModalPayload } from './discover/open-filters-modal';
 import { OPEN_FILTERS_MODAL, OpenFiltersModal } from './discover/open-filters-modal';
+import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
+import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
+import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
+import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
+import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
+import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
+import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
 
 export {
     Search,
@@ -164,6 +172,10 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    OpenInfluencerProfile,
+    AddInfluencerPost,
+    AddNoteToInfluencerProfile,
+    UpdateInfluencerStatus,
 };
 
 export const events = {
@@ -222,6 +234,10 @@ export const events = {
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [ADD_INFLUENCER_POST]: AddInfluencerPost,
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
 };
 
 export type payloads = {
@@ -280,6 +296,10 @@ export type payloads = {
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -340,6 +360,10 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
     z.literal(OPEN_FILTERS_MODAL),
+    z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(ADD_INFLUENCER_POST),
+    z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_STATUS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
