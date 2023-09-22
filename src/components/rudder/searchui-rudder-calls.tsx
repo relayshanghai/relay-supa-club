@@ -8,10 +8,6 @@ export const useSearchTrackers = () => {
         // @note total_searches is an incrementable property
         trackEvent(`${modal}, Search`, { total_searches: 1 });
     };
-    const trackClearFilters = async () => {
-        trackEvent(SEARCH_FILTER_MODAL('Clear search filters'));
-    };
-
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
     };
@@ -45,7 +41,6 @@ export const useSearchTrackers = () => {
         trackHashtags,
         trackTopics,
         trackSearch,
-        trackClearFilters,
         trackCloseFilterModal,
     };
 };
