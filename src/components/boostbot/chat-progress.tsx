@@ -1,6 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { Spinner, CheckIcon } from 'src/components/icons';
-import type { ProgressType } from 'src/components/boostbot/chat';
+
+export type ProgressType = {
+    topics: string[];
+    isMidway: boolean;
+    totalFound: number | null;
+};
 
 type ChatProgressProps = {
     progress: ProgressType;

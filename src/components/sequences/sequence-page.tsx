@@ -29,6 +29,7 @@ import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-
 import { Banner } from '../library/banner';
 import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
+import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -64,13 +65,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         });
         return filteredInfluencers;
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
-
-    const handleSetSelectedOptions = useCallback(
-        (filters: CommonStatusType[]) => {
-            setFilterSteps(filters);
-        },
-        [setFilterSteps],
-    );
 
     const handleStartSequence = async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
         const results = await sendSequence(sequenceInfluencersToSend);
@@ -186,6 +180,22 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             toast.error(t('sequences.influencerDeleteFailed'));
         }
     };
+
+    const handleSetSelectedOptions = useCallback(
+        (filters: CommonStatusType[]) => {
+            track(FilterSequenceInfluencers, {
+                filter_type: filters.toString(),
+                current_tab: currentTab,
+                total_sequence_influencers: influencers?.length,
+                total_filter_results: influencers?.filter((influencer) => filters.includes(influencer.funnel_status))
+                    .length,
+                sequence_id: sequenceId,
+                sequence_name: sequence?.name || '',
+            });
+            setFilterSteps(filters);
+        },
+        [currentTab, influencers, sequence?.name, sequenceId, track],
+    );
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {

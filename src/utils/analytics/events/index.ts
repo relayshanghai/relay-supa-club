@@ -143,6 +143,8 @@ import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-i
 import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
 import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
 import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
+import type { FilterSequenceInfluencersPayload } from './outreach/filter-sequence-influencers';
+import { FILTER_SEQUENCE_INFLUENCERS, FilterSequenceInfluencers } from './outreach/filter-sequence-influencers';
 
 export {
     Search,
@@ -253,6 +255,7 @@ export const events = {
     [ADD_INFLUENCER_POST]: AddInfluencerPost,
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencers,
 };
 
 export type payloads = {
@@ -320,6 +323,7 @@ export type payloads = {
     [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencersPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -389,6 +393,7 @@ export const eventKeys = z.union([
     z.literal(ADD_INFLUENCER_POST),
     z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
     z.literal(UPDATE_INFLUENCER_STATUS),
+    z.literal(FILTER_SEQUENCE_INFLUENCERS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
