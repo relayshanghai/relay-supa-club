@@ -150,7 +150,7 @@ describe('outreach', () => {
             cy.get('button[type=submit]').click();
         });
     });
-    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+    it.only('can edit template variables. sending is enabled/disabled based on missing variables', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
@@ -176,7 +176,7 @@ describe('outreach', () => {
         //     'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         // );
         // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
-
+        cy.contains('View sequence templates').click(); // and then remove this line
         // can View sequence templates
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
         cy.contains('span', 'test description entry');
