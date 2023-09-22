@@ -92,12 +92,14 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
             if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id not found');
+
+            onUpdate && onUpdate(data);
+
             track(SaveInfluencerProfileUpdates, {
                 influencer_id: profile.influencer_social_profile_id,
                 batch_id: batchId,
                 action_type: 'Button',
             });
-            onUpdate && onUpdate(data);
         },
         [onUpdate, profile, batchId, track],
     );
