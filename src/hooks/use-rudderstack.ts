@@ -9,7 +9,7 @@ import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages'
 import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
-export interface IdentityTraits {
+export interface IdentityTraits extends apiObject {
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -24,6 +24,7 @@ export interface IdentityTraits {
     paidUserSince?: string | null;
     productCategory: string | null;
     products: string | null;
+    subscriptionStatus: string;
 }
 
 export interface PageProperties extends apiObject {
@@ -95,6 +96,7 @@ export const profileToIdentifiable = (
     company?: CompanyDB,
     user?: any,
     lang?: string,
+    subscription?: any,
 ) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const traits: apiObject = {
@@ -110,6 +112,7 @@ export const profileToIdentifiable = (
         number: user?.phone ?? '',
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
+        subscriptionStatus: subscription.name ?? '',
     };
 
     return { id, traits };
@@ -138,9 +141,9 @@ export const useRudderstack = () => {
     }, []);
 
     const identifyFromProfile = useCallback(
-        (profile: ProfileDB, company?: CompanyDB, user?: any, lang?: string) => {
+        (profile: ProfileDB, company?: CompanyDB, user?: any, lang?: string, subscription?: any) => {
             if (!profile) return;
-            const { id, traits } = profileToIdentifiable(profile, company, user, lang);
+            const { id, traits } = profileToIdentifiable(profile, company, user, lang, subscription);
             identifyUser(id, traits);
         },
         [identifyUser],

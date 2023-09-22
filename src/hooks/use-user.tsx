@@ -17,6 +17,7 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
 import { useSession } from './use-session';
 import { useTranslation } from 'react-i18next';
+import { useSubscription } from './use-subscription';
 
 export type SignupData = {
     email: string;
@@ -87,6 +88,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { trackEvent, identifyFromProfile } = useRudderstack();
     const { user, company } = useSession();
     const { i18n } = useTranslation();
+    const { subscription } = useSubscription();
 
     useEffect(() => {
         setLoading(isLoading);
@@ -122,10 +124,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     });
 
     useEffect(() => {
-        if (profile && identifyFromProfile && user && company && i18n) {
-            identifyFromProfile(profile, user, company, i18n.language);
+        if ((profile && identifyFromProfile && user && company && i18n, subscription)) {
+            identifyFromProfile(profile, user, company, i18n.language, subscription);
         }
-    }, [identifyFromProfile, profile, user, company, i18n]);
+    }, [identifyFromProfile, profile, user, company, i18n, subscription]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
