@@ -8,7 +8,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
-import { ClickNeedHelp, OpenInfluencerManagerPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenInfluencerManagerPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterInfluencers } from './helpers';
@@ -62,13 +62,26 @@ const Manager = () => {
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
+            if (!influencer.influencer_social_profile_id) {
+                throw Error('No social profile id');
+            }
             setInfluencer(influencer);
 
             setUiState((s) => {
                 return { ...s, isProfileOverlayOpen: true };
             });
+
+            track(OpenInfluencerProfile, {
+                influencer_id: influencer.influencer_social_profile_id,
+                search_id: searchTerm,
+                current_status: influencer?.funnel_status,
+                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
+                currently_searched: searchTerm !== '',
+                view_mine_enabled: onlyMe,
+                is_users_influencer: influencer.manager_first_name === profile?.first_name,
+            });
         },
-        [setUiState],
+        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
     );
 
     const handleProfileUpdate = useCallback(

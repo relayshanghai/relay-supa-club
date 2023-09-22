@@ -7,7 +7,7 @@ export type ToggleAutoStartPayload = EventPayload<{
     total_sequence_influencers: number;
     unstarted_sequence_influencers: number;
     sequence_id: string;
-    sequence_name: string;
+    sequence_name: string | null;
 }>;
 
 export const ToggleAutoStart = (trigger: TriggerEvent<ToggleAutoStartPayload>, payload?: ToggleAutoStartPayload) =>
