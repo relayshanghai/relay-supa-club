@@ -13,9 +13,8 @@ export type SubscriptionUpgradePostRequestBody = {
 };
 
 export interface SubscriptionUpgradePostResponse extends Stripe.Response<Stripe.Subscription> {
-    type: Stripe.Subscription.Status;
-    clientSecret: string;
-    subscriptionId: string;
+    clientSecret: string | null;
+    newSubscriptionId: string;
     oldSubscriptionId: string;
 }
 
@@ -23,7 +22,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { cusId, priceId } = req.body as SubscriptionUpgradePostRequestBody;
     if (!cusId || !priceId) {
         serverLogger('Missing cusId, priceId');
-        return res.status(httpCodes.BAD_REQUEST).json('Missing cusId, priceId');
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing cusId, priceId' });
     }
     // retrieve current subscription id
     const oldSubscription = await stripeClient.subscriptions.list({
@@ -31,7 +30,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     if (oldSubscription.data.length > 1) {
         serverLogger('More than one subscription found for customer: ' + cusId);
-        return res.status(httpCodes.BAD_REQUEST).json('More than one subscription found for customer');
+        return res
+            .status(httpCodes.BAD_REQUEST)
+            .json({ error: 'More than one subscription found for customer: ' + cusId });
     }
     const oldSubscriptionId = oldSubscription.data[0].id;
 
@@ -45,15 +46,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
-
-    res.send({
-        type: 'payment',
+    const response: SubscriptionUpgradePostResponse = {
         clientSecret: (paymentIntent as Stripe.PaymentIntent).client_secret,
-        subscriptionId: subscription.id,
+        newSubscriptionId: subscription.id,
         oldSubscriptionId,
-    });
-
-    return res.status(httpCodes.OK).json(subscription);
+        ...subscription,
+    };
+    return res.status(httpCodes.OK).json(response);
 };
 
 export default ApiHandler({

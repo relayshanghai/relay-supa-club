@@ -13,6 +13,7 @@ import {
     cancelSubscriptionWithSubscriptionId,
 } from 'src/utils/api/stripe/handle-subscriptions';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
+import { APP_URL } from 'src/constants';
 
 export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const stripe = useStripe();
@@ -31,6 +32,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
     };
 
     const handleSubmit = async () => {
+        trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setIsLoading(true);
 
@@ -44,12 +46,14 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
 
         try {
             const priceId = selectedPrice.priceIds.monthly;
-            const {
-                clientSecret,
-                subscriptionId: newSubscriptionId,
-                oldSubscriptionId,
-            } = await upgradeSubscriptionWithPaymentIntent(company.id, company.cus_id, priceId);
-
+            const { clientSecret, newSubscriptionId, oldSubscriptionId } = await upgradeSubscriptionWithPaymentIntent(
+                company.id,
+                company.cus_id,
+                priceId,
+            );
+            if (!clientSecret) {
+                throw new Error('No client secret found');
+            }
             const returnUrlParams = new URLSearchParams();
             returnUrlParams.append('subscriptionId', newSubscriptionId);
             returnUrlParams.append('oldSubscriptionId', oldSubscriptionId);
@@ -61,7 +65,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: `https://app.relay.club/payments/success?${returnUrlParams}`,
+                    return_url: `${APP_URL}/payments/success?${returnUrlParams}`,
                 },
             });
             // if has error, handle error
@@ -71,9 +75,8 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 await cancelSubscriptionWithSubscriptionId(newSubscriptionId);
                 return;
             }
-
-            trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         } catch (error) {
+            handleError(error);
             clientLogger(error, 'error');
         } finally {
             setIsLoading(false);
