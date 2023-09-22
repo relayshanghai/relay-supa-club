@@ -122,6 +122,8 @@ import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
 import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
 import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
+import type { SendEmailReplyPayload } from './send-email-reply';
+import { SEND_EMAIL_REPLY, SendEmailReply } from './send-email-reply';
 
 export {
     Search,
@@ -161,6 +163,7 @@ export {
     NavigateToPage,
     SignupStarted,
     OpenVideoGuideModal,
+    SendEmailReply,
     OpenEmailThread,
 };
 
@@ -219,6 +222,7 @@ export const events = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
+    [SEND_EMAIL_REPLY]: SendEmailReply,
 };
 
 export type payloads = {
@@ -276,6 +280,7 @@ export type payloads = {
     [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
+    [SEND_EMAIL_REPLY]: SendEmailReplyPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -335,6 +340,7 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_INCOMING),
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
+    z.literal(SEND_EMAIL_REPLY),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
