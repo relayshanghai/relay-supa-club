@@ -123,6 +123,10 @@ import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-
 import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
+import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
+import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
+import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
 
 export {
     Search,
@@ -163,6 +167,8 @@ export {
     SignupStarted,
     OpenVideoGuideModal,
     OpenInfluencerProfile,
+    AddNoteToInfluencerProfile,
+    UpdateInfluencerStatus,
 };
 
 export const events = {
@@ -220,6 +226,8 @@ export const events = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
 };
 
 export type payloads = {
@@ -277,6 +285,8 @@ export type payloads = {
     [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
     [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -336,6 +346,8 @@ export const eventKeys = z.union([
     z.literal(STRIPE_WEBHOOK_ERROR),
     z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
     z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_STATUS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
