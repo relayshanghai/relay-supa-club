@@ -177,7 +177,12 @@ export const SearchResultRow = ({
     const analyzeInfluencer = useCallback(
         (args: { platform: CreatorPlatform; user_id: string }) => {
             const { platform, user_id } = args;
-            trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id });
+            trackEvent(SEARCH_RESULT_ROW('open report'), {
+                platform,
+                user_id,
+                // @note total_reports is an incrementable property
+                total_reports: 1,
+            });
         },
         [trackEvent],
     );
