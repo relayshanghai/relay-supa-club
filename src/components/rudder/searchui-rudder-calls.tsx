@@ -26,8 +26,14 @@ export const useSearchTrackers = () => {
     const trackTopics = async (search: { tags: CreatorSearchTag[] }) => {
         trackEvent(SEARCH_OPTIONS('Set topics'), { search });
     };
-    const trackPlatformChange = async (platform: CreatorPlatform) => {
-        trackEvent(SEARCH_OPTIONS('change platform'), { platform });
+    const trackPlatformChange = async ({
+        platform,
+        current_platform,
+    }: {
+        platform: CreatorPlatform;
+        current_platform: CreatorPlatform;
+    }) => {
+        trackEvent(SEARCH_OPTIONS('change platform'), { platform, current_platform });
     };
     return {
         trackPlatformChange,
