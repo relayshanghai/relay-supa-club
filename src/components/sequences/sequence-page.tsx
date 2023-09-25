@@ -259,7 +259,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 }))}
                 getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
-                source={'Sequence'}
+                source="Sequence"
             />
             <TemplateVariablesModal
                 sequenceId={sequenceId}

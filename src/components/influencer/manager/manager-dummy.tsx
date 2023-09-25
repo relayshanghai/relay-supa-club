@@ -114,7 +114,7 @@ const ManagerDummy = () => {
                 }))}
                 getMoreInfoButtonText={t('faq.influencerManagerGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
-                source={'Influencer Manager'}
+                source="Influencer Manager"
             />
             <div className="m-8 flex flex-col">
                 <section className="flex w-full flex-row justify-between">
