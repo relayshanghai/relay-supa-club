@@ -220,6 +220,7 @@ const Boostbot = () => {
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
             currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
+            sequence_influencer_ids: [],
             topics: [],
             is_multiple: null,
             is_success: true,
@@ -264,6 +265,7 @@ const Boostbot = () => {
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
+            trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
             addMessage({
