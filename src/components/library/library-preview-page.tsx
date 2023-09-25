@@ -258,6 +258,7 @@ const AccordionAndFaq = () => {
         onClose: () => setModalOpen(false),
         modalName: 'Example FAQ',
         type: 'FAQ',
+        source: 'Library',
     };
     return (
         <div className="m-5">

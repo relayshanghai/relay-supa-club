@@ -156,6 +156,8 @@ import type { GoToInboxPayload } from './outreach/go-to-inbox';
 import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
 import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
 import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
+import type { CloseHelpModalPayload } from './outreach/close-help-modal';
+import { CloseHelpModal, CLOSE_HELP_MODAL } from './outreach/close-help-modal';
 import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influencer-profile-notes';
 import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
 import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
@@ -205,6 +207,7 @@ export {
     AddInfluencerPost,
     AddNoteToInfluencerProfile,
     UpdateInfluencerStatus,
+    CloseHelpModal,
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
 };
@@ -281,6 +284,7 @@ export const events = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
     [GO_TO_INBOX]: GoToInbox,
     [TOGGLE_VIEW_MINE]: ToggleViewMine,
+    [CLOSE_HELP_MODAL]: CloseHelpModal,
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
 };
@@ -357,6 +361,7 @@ export type payloads = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
     [GO_TO_INBOX]: GoToInboxPayload;
     [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
+    [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
 };
@@ -435,6 +440,7 @@ export const eventKeys = z.union([
     z.literal(FILTER_INFLUENCER_MANAGER),
     z.literal(GO_TO_INBOX),
     z.literal(TOGGLE_VIEW_MINE),
+    z.literal(CLOSE_HELP_MODAL),
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
 ]);
