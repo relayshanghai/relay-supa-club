@@ -162,6 +162,8 @@ import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influenc
 import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
 import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
 import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
+import type { SearchInboxPayload } from './outreach/search-inbox';
+import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
 
 export {
     Search,
@@ -211,6 +213,7 @@ export {
     CloseHelpModal,
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
+    SearchInbox,
 };
 
 export const events = {
@@ -288,6 +291,7 @@ export const events = {
     [CLOSE_HELP_MODAL]: CloseHelpModal,
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
+    [SEARCH_INBOX]: SearchInbox,
 };
 
 export type payloads = {
@@ -365,6 +369,7 @@ export type payloads = {
     [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
+    [SEARCH_INBOX]: SearchInboxPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -444,6 +449,7 @@ export const eventKeys = z.union([
     z.literal(CLOSE_HELP_MODAL),
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
+    z.literal(SEARCH_INBOX),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

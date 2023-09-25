@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenEmailThread, OpenInboxPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
+import { OpenEmailThread, OpenInboxPage, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -96,6 +96,9 @@ export const InboxPage = () => {
     }, [sequenceInfluencer, searchTerm, track]);
 
     useEffect(() => {
+        if (!profile || !profile.sequence_send_email) {
+            return;
+        }
         if (searchTerm === '') {
             setSearchResults([]);
             return;
@@ -105,7 +108,12 @@ export const InboxPage = () => {
         });
         const results = fuse.search(searchTerm);
         setSearchResults(results.map((result) => result.item));
-    }, [filteredMessages, searchTerm]);
+        track(SearchInbox, {
+            sequence_email_address: profile.sequence_send_email,
+            search_query: searchTerm,
+            total_results: results.length,
+        });
+    }, [filteredMessages, searchTerm, profile, track]);
 
     const handleGetThreadEmails = useCallback(
         async (message: MessagesGetMessage) => {
