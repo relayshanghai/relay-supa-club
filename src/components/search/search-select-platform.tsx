@@ -28,7 +28,7 @@ export const SelectPlatform = () => {
                     key={label}
                     onClick={() => {
                         setPlatform(id);
-                        trackPlatformChange(id);
+                        trackPlatformChange({ platform: id, current_platform: platform });
                     }}
                 >
                     {loading && platform === id ? (
