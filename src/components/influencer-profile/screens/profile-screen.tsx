@@ -11,6 +11,8 @@ import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -37,6 +39,8 @@ const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
 
+    const { track } = useRudderstackTrack();
+
     useEffect(() => {
         if (!profile) return;
         const val = mapProfileToFormData(profile);
@@ -46,8 +50,18 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
-    const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
-
+    const handleTabClick = (tab: Props['selectedTab']) => {
+        if (!profile.influencer_social_profile_id) {
+            throw new Error('Influencer social profile id not found');
+        }
+        track(SelectInfluencerProfileTab, {
+            influencer_id: profile.influencer_social_profile_id,
+            influencer_current_status: profile.funnel_status,
+            current_tab: selectedTab,
+            selected: tab,
+        });
+        tab && setSelected(tab);
+    };
     const { t } = useTranslation();
 
     const handleNotesDetailsUpdate = useCallback(
