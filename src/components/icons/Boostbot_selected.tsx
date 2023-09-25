@@ -36,10 +36,10 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="20.4064"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#FF6969" />
-                    <stop offset="0.37" stop-color="#6C00FA" />
-                    <stop offset="0.82" stop-color="#0049FF" />
-                    <stop offset="1" stop-color="#47DEEA" />
+                    <stop stopColor="#FF6969" />
+                    <stop offset="0.37" stopColor="#6C00FA" />
+                    <stop offset="0.82" stopColor="#0049FF" />
+                    <stop offset="1" stopColor="#47DEEA" />
                 </linearGradient>
                 <linearGradient
                     id="paint1_linear_1762_146948"
@@ -49,10 +49,10 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="9.25132"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#FF6969" />
-                    <stop offset="0.37" stop-color="#6C00FA" />
-                    <stop offset="0.82" stop-color="#0049FF" />
-                    <stop offset="1" stop-color="#47DEEA" />
+                    <stop stopColor="#FF6969" />
+                    <stop offset="0.37" stopColor="#6C00FA" />
+                    <stop offset="0.82" stopColor="#0049FF" />
+                    <stop offset="1" stopColor="#47DEEA" />
                 </linearGradient>
                 <linearGradient
                     id="paint2_linear_1762_146948"
@@ -62,10 +62,10 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="16.2672"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#FF6969" />
-                    <stop offset="0.37" stop-color="#6C00FA" />
-                    <stop offset="0.82" stop-color="#0049FF" />
-                    <stop offset="1" stop-color="#47DEEA" />
+                    <stop stopColor="#FF6969" />
+                    <stop offset="0.37" stopColor="#6C00FA" />
+                    <stop offset="0.82" stopColor="#0049FF" />
+                    <stop offset="1" stopColor="#47DEEA" />
                 </linearGradient>
                 <linearGradient
                     id="paint3_linear_1762_146948"
@@ -75,10 +75,10 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="16.299"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#FF6969" />
-                    <stop offset="0.37" stop-color="#6C00FA" />
-                    <stop offset="0.82" stop-color="#0049FF" />
-                    <stop offset="1" stop-color="#47DEEA" />
+                    <stop stopColor="#FF6969" />
+                    <stop offset="0.37" stopColor="#6C00FA" />
+                    <stop offset="0.82" stopColor="#0049FF" />
+                    <stop offset="1" stopColor="#47DEEA" />
                 </linearGradient>
                 <linearGradient
                     id="paint4_linear_1762_146948"
@@ -88,9 +88,9 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="4.86998"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#FF6969" />
-                    <stop offset="0.37" stop-color="#6C00FA" />
-                    <stop offset="1" stop-color="#29A6DD" />
+                    <stop stopColor="#FF6969" />
+                    <stop offset="0.37" stopColor="#6C00FA" />
+                    <stop offset="1" stopColor="#29A6DD" />
                 </linearGradient>
                 <linearGradient
                     id="paint5_linear_1762_146948"
@@ -100,9 +100,9 @@ export default function BoostbotSelected(props: SVGProps<SVGSVGElement>) {
                     y2="17.56"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#6C00FA" />
-                    <stop offset="0.46" stop-color="#0049FF" />
-                    <stop offset="1" stop-color="#47DEEA" />
+                    <stop stopColor="#6C00FA" />
+                    <stop offset="0.46" stopColor="#0049FF" />
+                    <stop offset="1" stopColor="#47DEEA" />
                 </linearGradient>
             </defs>
         </svg>

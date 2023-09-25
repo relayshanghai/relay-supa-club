@@ -136,7 +136,7 @@ export type FunnelStatus =
     | 'Posted';
 
 type SequenceInfluencerDetailedTypes = {
-    /** 0 means not sent. 1 means first step sent, awaiting 2. */
+    /** 0 means either not sent or first step (outreach) sent. 1 means Follow-up 1 was sent. */
     sequence_step?: number;
     funnel_status?: FunnelStatus;
     platform?: CreatorPlatform;

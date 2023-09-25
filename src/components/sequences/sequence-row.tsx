@@ -81,11 +81,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
+    const missingSocialProfileInfo =
+        !sequenceInfluencer.social_profile_last_fetched || !sequenceInfluencer.influencer_social_profile_id;
+    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
-        suppressFetch: !!sequenceInfluencer.influencer_social_profile_id || wasFetchedWithin10Minutes,
+        suppressFetch: !shouldFetch,
     });
     const { company } = useCompany();
 

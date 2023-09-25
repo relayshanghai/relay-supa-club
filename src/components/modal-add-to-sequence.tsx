@@ -54,6 +54,7 @@ export const AddToSequenceModal = ({
     };
 
     const handleAddToSequence = useCallback(async () => {
+        setSubmitting(true);
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
             sequence_id: sequence?.id || '',
@@ -76,8 +77,6 @@ export const AddToSequenceModal = ({
                 });
                 throw new Error('Missing creatorProfile.user_id');
             }
-
-            setSubmitting(true);
 
             newSequenceInfluencer = await createSequenceInfluencer({
                 name: creatorProfile.fullname || creatorProfile.username,
@@ -105,6 +104,7 @@ export const AddToSequenceModal = ({
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: errorMessageAndStack };
             track(AddInfluencerToSequence, trackingPayload);
+            setSubmitting(false);
             return;
         }
         const startSequencePayload: StartSequenceForInfluencerPayload = {
