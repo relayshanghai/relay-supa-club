@@ -158,6 +158,12 @@ import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
 import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
 import type { PlayTutorialVideoPayload } from './guide/play-tutorial-video';
 import { PLAY_TUTORIAL_VIDEO, PlayTutorialVideo } from './guide/play-tutorial-video';
+import type { CloseHelpModalPayload } from './outreach/close-help-modal';
+import { CloseHelpModal, CLOSE_HELP_MODAL } from './outreach/close-help-modal';
+import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influencer-profile-notes';
+import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
+import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
+import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
 
 export {
     Search,
@@ -204,6 +210,9 @@ export {
     AddNoteToInfluencerProfile,
     UpdateInfluencerStatus,
     PlayTutorialVideo,
+    CloseHelpModal,
+    ViewInfluencerProfileNotes,
+    SelectInfluencerProfileTab,
 };
 
 export const events = {
@@ -279,6 +288,9 @@ export const events = {
     [GO_TO_INBOX]: GoToInbox,
     [TOGGLE_VIEW_MINE]: ToggleViewMine,
     [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideo,
+    [CLOSE_HELP_MODAL]: CloseHelpModal,
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
 };
 
 export type payloads = {
@@ -354,6 +366,9 @@ export type payloads = {
     [GO_TO_INBOX]: GoToInboxPayload;
     [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
     [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideoPayload;
+    [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -431,6 +446,9 @@ export const eventKeys = z.union([
     z.literal(GO_TO_INBOX),
     z.literal(TOGGLE_VIEW_MINE),
     z.literal(PLAY_TUTORIAL_VIDEO),
+    z.literal(CLOSE_HELP_MODAL),
+    z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
+    z.literal(SELECT_INFLUENCER_PROFILE_TAB),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

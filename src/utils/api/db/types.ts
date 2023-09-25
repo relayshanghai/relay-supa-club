@@ -105,8 +105,8 @@ export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
     Row: Database['public']['Tables']['sequence_emails']['Row'] & {
-        email_delivery_status: EmailDeliveryStatus;
-        email_tracking_status: EmailTrackingStatus;
+        email_delivery_status: EmailDeliveryStatus | null;
+        email_tracking_status: EmailTrackingStatus | null;
     };
     Insert: Database['public']['Tables']['sequence_emails']['Insert'] & {
         email_delivery_status?: EmailDeliveryStatus;
