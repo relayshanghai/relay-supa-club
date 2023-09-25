@@ -101,7 +101,7 @@ export const searchMailbox = async (
     search: MailboxSearchOptions,
     mailboxPath: string,
     page = 0,
-    pageSize = 100, // entries per page
+    pageSize = 1000, // entries per page
 ) => {
     const body: AccountAccountSearchPostRequestBody = { search };
     return await emailEngineApiFetch<AccountAccountSearchPost>(
@@ -113,8 +113,20 @@ export const searchMailbox = async (
     );
 };
 
-/** outbox is global for all accounts */
-export const getOutbox = async () => await emailEngineApiFetch<OutboxGet>(outboxPath());
+/** outbox is global for all accounts
+ * This function gets the entire outbox
+ */
+export const getOutbox = async () => {
+    const firstRes = await emailEngineApiFetch<OutboxGet>(outboxPath());
+    if (firstRes.pages === 1) return firstRes.messages;
+    const pagesLeft = firstRes.pages - 1;
+    const rest = [...firstRes.messages];
+    for (let i = 1; i <= pagesLeft; i++) {
+        const res = await emailEngineApiFetch<OutboxGet>(outboxPath(i));
+        rest.push(...res.messages);
+    }
+    return rest;
+};
 
 export const deleteEmailFromOutbox = async (queueId: string) =>
     await emailEngineApiFetch<OutboxQueueidDelete>(outboxDeletePath(queueId), { method: 'DELETE' });

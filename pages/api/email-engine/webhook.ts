@@ -1,7 +1,12 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
+import type {
+    SequenceEmail,
+    SequenceEmailUpdate,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+} from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
@@ -46,6 +51,7 @@ import { IncomingWebhook } from 'src/utils/analytics/events/outreach/email-incom
 import type { EmailNewPayload } from 'src/utils/analytics/events/outreach/email-new';
 import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
+import type { OutboxGet } from 'types/email-engine/outbox-get';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -81,6 +87,12 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
+export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmails: SequenceEmail[]) => {
+    return outbox.filter((message) =>
+        sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId),
+    );
+};
+
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     const trackData: Omit<EmailReplyPayload, 'is_success'> = {
         account_id: event.account,
@@ -100,12 +112,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                 trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
                 const outbox = await getOutbox();
                 // If there are any scheduled emails in the outbox to this address, cancel them
-
-                const scheduledMessages = outbox.messages.filter(
-                    (message) =>
-                        message.envelope.to.includes(event.data.from.address) &&
-                        sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId), // Outbox is global to all users so we need to filter down to only the messages that are for this user by checking if the message is in the sequenceEmails
-                );
+                const scheduledMessages = getScheduledMessages(outbox, sequenceEmails);
                 trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
                 if (scheduledMessages.length === 0) {
                     return;
