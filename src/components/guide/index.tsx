@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
+import { PlayTutorialVideo } from 'src/utils/analytics/events';
 
 const featVideo = true;
 export type GuideCardKey = keyof typeof guidePage.cards;
@@ -59,6 +60,7 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
 export const GuideComponent = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -73,6 +75,11 @@ export const GuideComponent = () => {
                     muted={false}
                     controls={true}
                     onPlay={(e) => {
+                        track(PlayTutorialVideo, {
+                            video: 'Main Demo',
+                            // TODO: V2-872dc add increments
+                            user_play_count: null,
+                        });
                         trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
