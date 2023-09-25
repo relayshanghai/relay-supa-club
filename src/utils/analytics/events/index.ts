@@ -164,6 +164,8 @@ import type { SelectInfluencerProfileTabPayload } from './outreach/select-influe
 import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
 import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
+import type { ChangePasswordPayload } from './change-password';
+import { CHANGE_PASSWORD, ChangePassword } from './change-password';
 
 export {
     Search,
@@ -214,6 +216,7 @@ export {
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
     UpdateProfileInfo,
+    ChangePassword,
 };
 
 export const events = {
@@ -292,6 +295,7 @@ export const events = {
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
+    [CHANGE_PASSWORD]: ChangePassword,
 };
 
 export type payloads = {
@@ -370,6 +374,7 @@ export type payloads = {
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
+    [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -450,6 +455,7 @@ export const eventKeys = z.union([
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
     z.literal(UPDATE_PROFILE_INFO),
+    z.literal(CHANGE_PASSWORD),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

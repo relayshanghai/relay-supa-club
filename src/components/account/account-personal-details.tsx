@@ -11,7 +11,7 @@ import { Edit } from '../icons';
 import { Input } from '../input';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
-import { UpdateProfileInfo } from 'src/utils/analytics/events';
+import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
 
 export const PersonalDetails = () => {
     const {
@@ -45,6 +45,7 @@ export const PersonalDetails = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
+            track(ChangePassword);
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
