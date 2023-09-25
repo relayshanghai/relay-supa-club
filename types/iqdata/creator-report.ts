@@ -168,7 +168,7 @@ export interface UserProfile {
     type: CreatorPlatform;
     user_id: string;
     username: string;
-    handle?: string; // youtube only
+    handle: string; // youtube only
     custom_name?: string; // youtube only
     url: string;
     picture: string;

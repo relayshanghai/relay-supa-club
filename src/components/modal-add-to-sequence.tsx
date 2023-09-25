@@ -80,7 +80,7 @@ export const AddToSequenceModal = ({
 
             newSequenceInfluencer = await createSequenceInfluencer({
                 name: creatorProfile.fullname || creatorProfile.username,
-                username: creatorProfile.username,
+                username: creatorProfile.username || creatorProfile.handle,
                 avatar_url: creatorProfile.picture || '',
                 url: creatorProfile.url || '',
                 iqdata_id: creatorProfile.user_id,
@@ -159,6 +159,7 @@ export const AddToSequenceModal = ({
         creatorProfile.url,
         creatorProfile.user_id,
         creatorProfile.username,
+        creatorProfile.handle,
         platform,
         sendSequence,
         sequence,

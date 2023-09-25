@@ -19,6 +19,7 @@ export interface CreatorSearchAccount {
 export interface CreatorAccount {
     user_id: string;
     username: string;
+    handle: string;
     url: string;
     picture: string;
     fullname: string;
