@@ -30,7 +30,7 @@ type Props = {
     trackProfileFieldUpdate: (payload: Omit<UpdateInfluencerProfilePayload, 'batch_id'>) => void;
 };
 
-export const ProfileShippingDetailsTab = (props: Props) => {
+export const ProfileShippingDetailsTab = ({ trackProfileFieldUpdate, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
     const { state: data } = useProfileScreenContext();
     const { t } = useTranslation();
@@ -44,7 +44,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     placeholder="D’Jan Curtis"
                     value={data.shippingDetails.name}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'Name',
                             previously_empty: data.shippingDetails.name === '',
@@ -57,7 +57,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     placeholder="1-433-3453456"
                     value={data.shippingDetails.phoneNumber}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'Phone Number',
                             previously_empty: data.shippingDetails.phoneNumber === '',
@@ -73,7 +73,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     placeholder="755 Roosevelt Street"
                     value={data.shippingDetails.streetAddress}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'Street Address',
                             previously_empty: data.shippingDetails.streetAddress === '',
@@ -86,7 +86,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     placeholder="New York"
                     value={data.shippingDetails.city}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'City',
                             previously_empty: data.shippingDetails.city === '',
@@ -101,7 +101,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     placeholder="New York"
                     value={data.shippingDetails.state}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'State',
                             previously_empty: data.shippingDetails.state === '',
@@ -115,7 +115,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                         placeholder="United States"
                         value={data.shippingDetails.country}
                         onInput={(e) => {
-                            props.trackProfileFieldUpdate({
+                            trackProfileFieldUpdate({
                                 influencer_id: props.profile.influencer_social_profile_id ?? '',
                                 updated_field: 'Country',
                                 previously_empty: data.shippingDetails.country === '',
@@ -128,7 +128,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                         placeholder="14450"
                         value={data.shippingDetails.postalCode}
                         onInput={(e) => {
-                            props.trackProfileFieldUpdate({
+                            trackProfileFieldUpdate({
                                 influencer_id: props.profile.influencer_social_profile_id ?? '',
                                 updated_field: 'Postal Code',
                                 previously_empty: data.shippingDetails.postalCode === '',
@@ -144,7 +144,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     label={t('profile.trackingCode') as string}
                     value={data.shippingDetails.trackingCode}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'Tracking Code',
                             previously_empty: data.shippingDetails.trackingCode === '',
@@ -156,7 +156,7 @@ export const ProfileShippingDetailsTab = (props: Props) => {
                     label={t('profile.fullAddress') as string}
                     value={data.shippingDetails.fullAddress}
                     onInput={(e) => {
-                        props.trackProfileFieldUpdate({
+                        trackProfileFieldUpdate({
                             influencer_id: props.profile.influencer_social_profile_id ?? '',
                             updated_field: 'Full Address',
                             previously_empty: data.shippingDetails.fullAddress === '',
