@@ -223,6 +223,8 @@ export const filter = z
         lang: lang.optional(),
     });
 
+export type filter = z.infer<typeof filter>;
+
 export const platform_enum = z.enum(['instagram', 'youtube', 'tiktok']).default('youtube');
 
 export const query = z.object({
@@ -248,5 +250,12 @@ export const SearchInfluencersPayload = z.object({
 });
 
 export type SearchInfluencersPayload = z.infer<typeof SearchInfluencersPayload>;
+
+export const SearchInfluencersPayloadRequired = z.object({
+    query: query,
+    body: body,
+});
+
+export type SearchInfluencersPayloadRequired = z.infer<typeof SearchInfluencersPayloadRequired>;
 
 export type SearchInfluencersTextTagsFilter = z.infer<typeof text_tags>;
