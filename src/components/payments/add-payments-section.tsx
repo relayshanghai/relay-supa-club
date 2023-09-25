@@ -55,7 +55,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('card');
-                        trackEvent(PAYMENT_PAGE('click on card option'));
+                        trackEvent(PAYMENT_PAGE('click on card option'), { payment_type: 'card' });
                     }}
                 >
                     <Payment
@@ -71,7 +71,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('alipay');
-                        trackEvent(PAYMENT_PAGE('click on alipay option'));
+                        trackEvent(PAYMENT_PAGE('click on alipay option'), { payment_type: 'alipay' });
                     }}
                 >
                     <Alipay
