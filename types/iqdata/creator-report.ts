@@ -167,9 +167,11 @@ interface ReportInfo {
 export interface UserProfile {
     type: CreatorPlatform;
     user_id: string;
-    username: string;
-    handle: string; // youtube only
-    custom_name?: string; // youtube only
+    username?: string;
+    /** handle fields be used interchangeably with username */
+    handle?: string;
+    /** YouTube only */
+    custom_name?: string;
     url: string;
     picture: string;
     fullname: string;

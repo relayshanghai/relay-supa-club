@@ -2,8 +2,8 @@
 export interface CreatorUserProfile {
     user_id?: string;
     fullname?: string;
-    username: string;
-    handle: string;
+    username?: string;
+    handle?: string;
     picture?: string;
     url?: string;
 }
