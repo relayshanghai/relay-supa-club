@@ -78,9 +78,13 @@ export const AddToSequenceModal = ({
                 throw new Error('Missing creatorProfile.user_id');
             }
 
+            if (!creatorProfile.username && !creatorProfile.handle) {
+                throw new Error('Missing creatorProfile username and handle');
+            }
+
             newSequenceInfluencer = await createSequenceInfluencer({
-                name: creatorProfile.fullname || creatorProfile.username,
-                username: creatorProfile.username,
+                name: creatorProfile.fullname ?? creatorProfile.username ?? creatorProfile.handle ?? '',
+                username: creatorProfile.handle ?? creatorProfile.username ?? '',
                 avatar_url: creatorProfile.picture || '',
                 url: creatorProfile.url || '',
                 iqdata_id: creatorProfile.user_id,
@@ -159,6 +163,7 @@ export const AddToSequenceModal = ({
         creatorProfile.url,
         creatorProfile.user_id,
         creatorProfile.username,
+        creatorProfile.handle,
         platform,
         sendSequence,
         sequence,
