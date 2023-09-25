@@ -39,6 +39,7 @@ export const CreateSequenceModal = ({
             if (!data) {
                 track(CreateSequence, {
                     sequence_id: null,
+                    sequence_name: sequenceName,
                     is_success: false,
                     extra_info: { error: 'Failed to get sequence' },
                 });
@@ -47,6 +48,7 @@ export const CreateSequenceModal = ({
 
             track(CreateSequence, {
                 sequence_id: data.id,
+                sequence_name: sequenceName,
                 is_success: true,
             });
 
@@ -59,6 +61,7 @@ export const CreateSequenceModal = ({
 
             track(CreateSequence, {
                 sequence_id: null,
+                sequence_name: sequenceName,
                 is_success: false,
                 extra_info: { error: String(error) },
             });
