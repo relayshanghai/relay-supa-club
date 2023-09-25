@@ -291,6 +291,7 @@ export const InboxPage = () => {
                                     isOpen={uiState.isNotesListOverlayOpen}
                                     onClose={handleNoteListClose}
                                     onOpen={handleNoteListOpen}
+                                    influencerSocialProfileId={sequenceInfluencer?.id}
                                 />
                             </div>
                         )}
