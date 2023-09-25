@@ -20,8 +20,9 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const handleGuideModal = () => {
         track(OpenGuideSectionModal, {
             section: cardKey,
-            // TODO: V2-872dc add increments
-            user_open_count: null,
+            $add: {
+                user_open_count: 1,
+            },
         });
         setGuideShow((prev) => !prev);
     };
@@ -77,8 +78,7 @@ export const GuideComponent = () => {
                     onPlay={(e) => {
                         track(PlayTutorialVideo, {
                             video: 'Main Demo',
-                            // TODO: V2-872dc add increments
-                            user_play_count: null,
+                            $add: { user_play_count: 1 },
                         });
                         trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
