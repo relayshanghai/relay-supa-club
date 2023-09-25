@@ -3,8 +3,9 @@ import { Modal } from '../modal';
 import guidePage from 'i18n/en/guide';
 import Link from 'next/link';
 import { Button } from '../button';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
+import { CloseHelpModal } from 'src/utils/analytics/events';
 
 export const GuideModal = ({
     section,
@@ -17,6 +18,7 @@ export const GuideModal = ({
 }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     const selectedGuide = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
 
@@ -24,7 +26,14 @@ export const GuideModal = ({
         <Modal
             visible={show}
             maxWidth={`max-w-3xl`}
-            onClose={() => setShow(false)}
+            onClose={() => {
+                track(CloseHelpModal, {
+                    type: 'Guide Section',
+                    modal_name: 'GuideModal',
+                    method: 'Off Modal Click',
+                });
+                setShow(false);
+            }}
             title={t(`guidePage.modalInfo.${section}.title`) || ''}
         >
             <div className="flex flex-col rounded-full">
@@ -48,7 +57,11 @@ export const GuideModal = ({
                     <p
                         className="flex cursor-pointer flex-row items-center gap-2 text-sm font-medium text-primary-700"
                         onClick={() => {
-                            trackEvent(GUIDE_PAGE('closed modal'), { guideSection: section });
+                            track(CloseHelpModal, {
+                                type: 'Guide Section',
+                                modal_name: 'Guide',
+                                method: 'Button',
+                            });
                             setShow(false);
                         }}
                     >

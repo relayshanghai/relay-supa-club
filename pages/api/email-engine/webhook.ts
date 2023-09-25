@@ -1,8 +1,13 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
-import { getProfileBySequenceSendEmail } from 'src/utils/api/db';
+import type {
+    SequenceEmail,
+    SequenceEmailUpdate,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+} from 'src/utils/api/db';
+import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
     getSequenceEmailByMessageIdCall,
@@ -42,10 +47,10 @@ import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { WebhookError } from 'src/utils/analytics/events/outreach/email-error';
-import { IncomingWebhook } from 'src/utils/analytics/events/outreach/email-incoming';
 import type { EmailNewPayload } from 'src/utils/analytics/events/outreach/email-new';
 import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
+import type { OutboxGet } from 'types/email-engine/outbox-get';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -81,6 +86,12 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
+export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmails: SequenceEmail[]) => {
+    return outbox.filter((message) =>
+        sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId),
+    );
+};
+
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     const trackData: Omit<EmailReplyPayload, 'is_success'> = {
         account_id: event.account,
@@ -100,12 +111,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                 trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
                 const outbox = await getOutbox();
                 // If there are any scheduled emails in the outbox to this address, cancel them
-
-                const scheduledMessages = outbox.messages.filter(
-                    (message) =>
-                        message.envelope.to.includes(event.data.from.address) &&
-                        sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId), // Outbox is global to all users so we need to filter down to only the messages that are for this user by checking if the message is in the sequenceEmails
-                );
+                const scheduledMessages = getScheduledMessages(outbox, sequenceEmails);
                 trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
                 if (scheduledMessages.length === 0) {
                     return;
@@ -208,10 +214,9 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         trackData.extra_info.error =
             'Sequence influencer not found:' + `error: ${error?.message}\n stack ${error?.stack}`;
 
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
-            ...trackData,
-            is_success: true, // just means that an email to one of our users was received, but it was not associated with a sequence. So this isn't an error
-        });
+        // Don't want to lose a record of this entirely, but it generally isn't important, cause it just means it is a reply to a regular email, not a sequenced email
+        await supabaseLogger({ type: 'email-webhook', message: trackData.extra_info.error, data: trackData });
+
         return res.status(httpCodes.OK).json({});
     }
 };
@@ -441,10 +446,6 @@ const postHandler: NextApiHandler = async (req, res) => {
         // all of our webhook calls should be from an account that we have in our database so we don't need to check for identity beyond the wrapper incoming logger and the wrapper error logger. If we don't have an identity for the other calls we want it to fail so we can investigate
     }
     try {
-        if (hasIdentity) {
-            track(rudderstack.getClient(), rudderstack.getIdentity())(IncomingWebhook, body);
-        }
-
         switch (body.event) {
             case 'messageNew':
                 return handleNewEmail(body, res);
