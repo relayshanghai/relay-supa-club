@@ -108,6 +108,7 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
                 isOpen={uiState.isNotesListOverlayOpen}
                 onClose={handleNoteListClose}
                 onOpen={handleNoteListOpen}
+                influencerSocialProfileId={profile?.id}
             />
         </>
     );
