@@ -18,6 +18,7 @@ import {
     type UpdateInfluencerProfilePayload,
 } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 import { SaveInfluencerProfileUpdates } from 'src/utils/analytics/events';
+import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -67,8 +68,18 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
-    const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
-
+    const handleTabClick = (tab: Props['selectedTab']) => {
+        if (!profile.influencer_social_profile_id) {
+            throw new Error('Influencer social profile id not found');
+        }
+        track(SelectInfluencerProfileTab, {
+            influencer_id: profile.influencer_social_profile_id,
+            influencer_current_status: profile.funnel_status,
+            current_tab: selectedTab,
+            selected: tab,
+        });
+        tab && setSelected(tab);
+    };
     const { t } = useTranslation();
 
     const handleNotesDetailsUpdate = useCallback(

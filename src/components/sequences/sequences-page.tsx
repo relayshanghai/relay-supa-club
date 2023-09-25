@@ -86,6 +86,7 @@ export const SequencesPage = () => {
                 }))}
                 getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
+                source="Sequences"
             />
             <CreateSequenceModal
                 title={t('sequences.sequenceModal') as string}

@@ -56,6 +56,7 @@ export const useSequence = (sequenceId?: string) => {
         } catch (error) {
             track(CreateSequence, {
                 sequence_id: null,
+                sequence_name: sequenceName,
                 is_success: false,
                 extra_info: { error: String(error) },
             });
