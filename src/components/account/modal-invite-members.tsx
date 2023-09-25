@@ -35,7 +35,10 @@ export const InviteMembersModal = ({
             setShowAddMoreMembers(false);
             toast.success('Invite sent');
             refreshCompany();
-            trackEvent(ACCOUNT_COMPANY_DETAILS('send invite'));
+            trackEvent(ACCOUNT_COMPANY_DETAILS('send invite'), {
+                invite_email: inviteEmail,
+                new_admin: companyOwner,
+            });
         } catch (error: any) {
             if (hasCustomError(error, createInviteErrors)) {
                 toast.error(t(`login.${error.message}`));
