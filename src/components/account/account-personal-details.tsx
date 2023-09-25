@@ -9,8 +9,9 @@ import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
+import { UpdateProfileInfo } from 'src/utils/analytics/events';
 
 export const PersonalDetails = () => {
     const {
@@ -25,6 +26,7 @@ export const PersonalDetails = () => {
     const { refreshCompany } = useCompany();
     const { loading: userDataLoading, profile, user, supabaseClient, updateProfile, refreshProfile } = useUser();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
@@ -43,7 +45,6 @@ export const PersonalDetails = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
-            trackEvent(ACCOUNT_PERSONAL_DETAILS('click on change password'));
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
@@ -72,7 +73,18 @@ export const PersonalDetails = () => {
             refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
             setEditMode(false);
-            trackEvent(ACCOUNT_PERSONAL_DETAILS('update profile name'));
+            if (firstName !== profile?.first_name) {
+                track(UpdateProfileInfo, {
+                    info_type: 'Profile',
+                    info_name: 'First Name',
+                });
+            }
+            if (lastName !== profile?.last_name) {
+                track(UpdateProfileInfo, {
+                    info_type: 'Profile',
+                    info_name: 'Last Name',
+                });
+            }
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('account.personal.oopsWentWrong'));
@@ -97,7 +109,10 @@ export const PersonalDetails = () => {
             );
             if (error) throw error;
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
-            trackEvent(ACCOUNT_PERSONAL_DETAILS('update email'));
+            track(UpdateProfileInfo, {
+                info_type: 'Profile',
+                info_name: 'Email',
+            });
         } catch (error: any) {
             clientLogger(error, 'error');
             toast.error(error?.message || t('account.personal.oopsWentWrong'));
