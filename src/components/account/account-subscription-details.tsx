@@ -5,7 +5,6 @@ import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
-import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { getCurrentMonthPeriod, checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
@@ -14,6 +13,7 @@ import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
+import { featNewPricing } from 'src/constants/feature-flags';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
@@ -35,15 +35,14 @@ export const SubscriptionDetails = () => {
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    const { usages: currentMonthUsages, refreshUsages } = useUsages(
+    const { usages, refreshUsages } = useUsages(
         true,
-        periodStart ? getCurrentMonthPeriod(new Date(periodStart)) : undefined,
+        featNewPricing() && periodStart && periodEnd
+            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
+            : periodStart
+            ? getCurrentMonthPeriod(new Date(periodStart))
+            : undefined,
     );
-
-    const profileViewUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'profile');
-
-    const searchUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'search');
-    const aiEmailUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'ai_email');
 
     useEffect(() => {
         refreshCompany();
@@ -55,20 +54,8 @@ export const SubscriptionDetails = () => {
             <CancelSubscriptionModal visible={showCancelModal} onClose={() => setShowCancelModal(false)} />
             <div className="flex w-full flex-row items-center justify-between">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
-                <div className="flex flex-row justify-end">
-                    {company?.id && (
-                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <Button
-                                variant="secondary"
-                                onClick={() => trackEvent(ACCOUNT_SUBSCRIPTION('View billing portal'))}
-                            >
-                                {t('account.subscription.viewBillingPortal')}
-                            </Button>
-                        </Link>
-                    )}
-                </div>
             </div>
-            {company && profileViewUsagesThisMonth ? (
+            {company ? (
                 <>
                     <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
                         <div className="flex flex-col space-y-2 ">
@@ -123,37 +110,23 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2">
                                             {t('account.subscription.profilesUnlocked')}
                                         </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {profileViewUsagesThisMonth?.length}
-                                        </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {company.subscription_status === 'trial'
-                                                ? company.trial_profiles_limit
-                                                : company.profiles_limit}
-                                        </td>
+                                        <td className="border px-4 py-2 text-right">{usages.profile.current}</td>
+                                        <td className="border px-4 py-2 text-right">{usages.profile.limit}</td>
                                     </tr>
                                     <tr>
                                         <td className="border px-4 py-2">{t('account.subscription.searches')}</td>
-                                        <td className="border px-4 py-2 text-right">{searchUsagesThisMonth?.length}</td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {company.subscription_status === 'trial'
-                                                ? company.trial_searches_limit
-                                                : company.searches_limit}
-                                        </td>
+                                        <td className="border px-4 py-2 text-right">{usages.search.current}</td>
+                                        <td className="border px-4 py-2 text-right">{usages.search.limit}</td>
                                     </tr>
-                                    <tr>
-                                        <td className="border px-4 py-2">
-                                            {t('account.subscription.aiEmailGeneration')}
-                                        </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {aiEmailUsagesThisMonth?.length}
-                                        </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {company.subscription_status === 'trial'
-                                                ? company.trial_ai_email_generator_limit
-                                                : company.ai_email_generator_limit}
-                                        </td>
-                                    </tr>
+                                    {!featNewPricing() && (
+                                        <tr>
+                                            <td className="border px-4 py-2">
+                                                {t('account.subscription.aiEmailGeneration')}
+                                            </td>
+                                            <td className="border px-4 py-2 text-right">{usages.aiEmail.current}</td>
+                                            <td className="border px-4 py-2 text-right">{usages.aiEmail.limit}</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

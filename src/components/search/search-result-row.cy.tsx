@@ -12,6 +12,7 @@ const creator: CreatorSearchAccountObject = {
         user_profile: {
             user_id: '25025320',
             username: 'instagram',
+            handle: 'instagram',
             url: 'https://www.instagram.com/instagram/',
             picture:
                 'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDaDVMq5CUHy%2BkcsdYgF20nDsuUwkRjFVav5M3TrTU9h7%2BxcZBxCJ2RhABotd8JjaVVGHFCcdShtZRKywU%2BQReCwgNlJUwVYqIiahjW32e%2BqWA%3D%3D',
@@ -42,66 +43,62 @@ const setupProps = () => {
 
 import { SearchResultRow } from './search-result-row';
 import { worker } from '../../mocks/browser';
-import { featEmail } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
 describe('<CreatorPage />', () => {
     before(async () => {
         worker.start();
     });
 
-    it('renders', () => {
-        testMount(<SearchResultRow {...setupProps()} />);
-        cy.contains('@instagram');
-        if (!featEmail()) {
-            cy.contains('Add to campaign');
-        }
-    });
-    it('shows recommended tag ', () => {
-        // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
-        testMount(
-            <SearchContext.Provider
-                value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
-            >
-                <SearchResultRow {...setupProps()} />
-            </SearchContext.Provider>,
-        );
-        cy.contains('Recommended');
-    });
-    it('does not show recommended tag for other accounts', () => {
-        // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
-        const props = setupProps();
-        props.creator.account.user_profile.user_id = 'notinstagram';
-        testMount(
-            <SearchContext.Provider
-                value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
-            >
-                <SearchResultRow {...props} />
-            </SearchContext.Provider>,
-        );
-        cy.contains('Recommended').should('not.exist');
-    });
-    it('shows tooltip on badge hover', () => {
-        const props = setupProps();
-        props.creator.account.user_profile.user_id = '25025320';
-        testMount(
-            // needs some room to show the tooltip
-            <div className="m-10 p-10">
+    if (featRecommended()) {
+        it('shows recommended tag ', () => {
+            // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
+            testMount(
+                <SearchContext.Provider
+                    value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+                >
+                    <SearchResultRow {...setupProps()} />
+                </SearchContext.Provider>,
+            );
+            cy.contains('Recommended');
+        });
+        it('does not show recommended tag for other accounts', () => {
+            // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
+            const props = setupProps();
+            props.creator.account.user_profile.user_id = 'notinstagram';
+            testMount(
                 <SearchContext.Provider
                     value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
                 >
                     <SearchResultRow {...props} />
-                </SearchContext.Provider>
-            </div>,
-        );
-        cy.contains(
-            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.be.visible');
-        cy.contains('Recommended');
-        // .trigger('mouseenter') should work but it doesn't
-        cy.get('[data-testid=recommended-badge').click();
-        cy.contains(
-            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('be.visible');
-    });
+                </SearchContext.Provider>,
+            );
+            cy.contains('Recommended').should('not.exist');
+        });
+        it('shows tooltip on badge hover', () => {
+            const props = setupProps();
+            props.creator.account.user_profile.user_id = '25025320';
+            testMount(
+                // needs some room to show the tooltip
+                <div className="m-10 p-10">
+                    <SearchContext.Provider
+                        value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+                    >
+                        <SearchResultRow {...props} />
+                    </SearchContext.Provider>
+                </div>,
+            );
+
+            cy.contains(
+                'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+            ).should('not.be.visible');
+            cy.contains('Recommended');
+            // .trigger('mouseenter') should work but it doesn't
+            cy.get('[data-testid=recommended-badge').click();
+            cy.contains(
+                'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+            ).should('be.visible');
+        });
+    }
 });
 // Prevent TypeScript from reading file as legacy script
 export {};

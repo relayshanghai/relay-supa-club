@@ -86,7 +86,7 @@ body,
     }
 
     .checkbox {
-        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 duration-300 checked:border-transparent checked:bg-primary-500 focus:outline-none;
+        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 text-primary-500 duration-300 checked:border-transparent checked:bg-primary-500 hover:bg-primary-200 hover:checked:bg-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-0;
     }
 
     .file-uploader {
@@ -96,4 +96,14 @@ body,
     .radio-button {
         @apply h-4 w-4 cursor-pointer appearance-none rounded-md border border-primary-400 duration-300 checked:border-transparent checked:bg-primary-500 focus:outline-none;
     }
+}
+
+.boostbot-gradient {
+    background: linear-gradient(
+        120deg,
+        rgba(255, 105, 105, 0.85),
+        rgba(152, 0, 250, 0.85),
+        rgba(0, 0, 255, 0.85),
+        rgba(27, 20, 100, 0.85)
+    );
 }

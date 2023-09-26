@@ -2,7 +2,7 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["next", "plugin:@typescript-eslint/recommended", "plugin:storybook/recommended", "prettier"],
   "rules": {
-    "complexity": ["warn", { "max": 10 }],
+    "complexity": ["off", { "max": 10 }],
     "@typescript-eslint/consistent-type-imports": "warn", // Require consistent use of type imports
     "camelcase": "off", // Don't warn about camelcase e.g. for API responses. var_name is fine
     "no-console": "warn", // Warn about using console.log to avoid leaving them in the code accidentally

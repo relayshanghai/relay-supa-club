@@ -1,19 +1,28 @@
-import Fuse from 'fuse.js';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
-import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
+import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
+import { ClickNeedHelp, OpenInfluencerManagerPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
-import { filterByMe } from './helpers';
+import { filterInfluencers } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
+import { useRouter } from 'next/router';
+import faq from 'i18n/en/faq';
+import { Button } from 'src/components/button';
+import { Question } from 'src/components/icons';
+import { FilterInfluencerManager } from 'src/utils/analytics/events/outreach/filter-influencer-manager';
+import { SearchInfluencerManager } from 'src/utils/analytics/events/outreach/search-influencer-manager';
+import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-mine';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -27,27 +36,68 @@ const Manager = () => {
 
     const { t } = useTranslation();
 
+    const { push } = useRouter();
+
     const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
     const [uiState, setUiState] = useUiState();
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+    const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
+    const { track } = useRudderstackTrack();
+
+    const influencers = useMemo(
+        () =>
+            sequenceInfluencers.length > 0 && profile && sequences
+                ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : [],
+        [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
+    );
+
+    useEffect(() => {
+        const { abort } = track(OpenInfluencerManagerPage);
+        return abort;
+    }, [track]);
+
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
+            if (!influencer.influencer_social_profile_id) {
+                throw Error('No social profile id');
+            }
             setInfluencer(influencer);
 
             setUiState((s) => {
                 return { ...s, isProfileOverlayOpen: true };
             });
+
+            track(OpenInfluencerProfile, {
+                influencer_id: influencer.influencer_social_profile_id,
+                search_id: searchTerm,
+                current_status: influencer?.funnel_status,
+                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
+                currently_searched: searchTerm !== '',
+                view_mine_enabled: onlyMe,
+                is_users_influencer: influencer.manager_first_name === profile?.first_name,
+            });
         },
-        [setUiState],
+        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
     );
 
-    const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers()
-    }, [refreshSequenceInfluencers]);
+    const handleProfileUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencers || !data.notes || !influencer) return;
+            const updatedInfluencerIndex = sequenceInfluencers.findIndex((x) => x.id === influencer.id);
+            const newInfluencers = [
+                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
+                { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
+                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
+            ];
+            refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
+        },
+        [refreshSequenceInfluencers, sequenceInfluencers, influencer],
+    );
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
@@ -64,65 +114,48 @@ const Manager = () => {
     const [collabOptions, setCollabOptions] = useState(COLLAB_OPTIONS);
 
     useEffect(() => {
-        if (!sequenceInfluencers || sequenceInfluencers.length <= 0) {
-            return;
-        }
+        if (!sequenceInfluencers) return;
         setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 
-    const handleSetSearch = useCallback(
-        (term: string) => {
-            setSearchTerm(term);
-            if (!sequenceInfluencers) {
-                return;
-            }
-            const fuse = new Fuse(sequenceInfluencers, {
-                minMatchCharLength: 1,
-                keys: ['fullname', 'username'],
-            });
+    const handleOnlyMe = useCallback(() => {
+        track(ToggleViewMine, {
+            action: !onlyMe ? 'Enable' : 'Disable',
+            total_managed_influencers: influencers.length,
+            total_users_influencers: influencers.filter(({ added_by }) => added_by === profile?.id).length,
+        });
+        setOnlyMe(!onlyMe);
+    }, [influencers, onlyMe, profile?.id, track]);
 
-            if (term.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(fuse.search(term).map((result) => result.item));
-        },
-        [sequenceInfluencers],
-    );
-
-    const handleOnlyMe = useCallback(
-        (state: boolean) => {
-            setOnlyMe(!onlyMe);
-            if (!sequenceInfluencers || !profile || !sequences) {
-                return;
-            }
-
-            if (!state) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(filterByMe(sequenceInfluencers, profile, sequences));
-        },
-        [onlyMe, sequenceInfluencers, profile, sequences],
-    );
-
-    const handleStatus = useCallback(
+    const handleFilterStatus = useCallback(
         (filters: CommonStatusType[]) => {
             setFilterStatuses(filters);
-            if (!sequenceInfluencers) {
-                return;
-            }
-
-            if (filters.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(sequenceInfluencers.filter((x) => filters.includes(x.funnel_status)));
+            track(FilterInfluencerManager, {
+                filter_type: 'Status',
+                selected_statuses: filters,
+                view_mine_enabled: onlyMe,
+                total_managed_influencers: influencers.length,
+                total_filter_results: profile
+                    ? filterInfluencers(searchTerm, onlyMe, filters, profile, sequenceInfluencers, sequences)?.length ||
+                      0
+                    : 0,
+            });
         },
-        [sequenceInfluencers, setFilterStatuses],
+        [onlyMe, influencers, profile, searchTerm, sequenceInfluencers, sequences, track],
+    );
+
+    const handleSearch = useCallback(
+        (term: string) => {
+            setSearchTerm(term);
+            const results = profile
+                ? filterInfluencers(term, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : null;
+            track(SearchInfluencerManager, {
+                query: term,
+                total_results: results?.length || 0,
+            });
+        },
+        [onlyMe, filterStatuses, profile, sequenceInfluencers, sequences, track],
     );
 
     const handleProfileOverlayClose = useCallback(() => {
@@ -135,22 +168,51 @@ const Manager = () => {
 
     return (
         <>
+            <FaqModal
+                title={t('faq.influencerManagerTitle')}
+                description={t('faq.influencerManagerDescription')}
+                visible={showNeedHelp}
+                onClose={() => setShowNeedHelp(false)}
+                content={faq.influencerManager.map((_, i) => ({
+                    title: t(`faq.influencerManager.${i}.title`),
+                    detail: t(`faq.influencerManager.${i}.detail`),
+                }))}
+                getMoreInfoButtonText={t('faq.influencerManagerGetMoreInfo') || ''}
+                getMoreInfoButtonAction={() => push('/guide')}
+                source="Influencer Manager"
+            />
             <div className="m-8 flex flex-col">
-                <div className="my-4 text-3xl font-semibold">
-                    <h1>{t('manager.title')}</h1>
-                </div>
+                <section className="flex w-full flex-row justify-between">
+                    <div className="my-4 md:w-1/2">
+                        <h1 className="text-2xl font-semibold">{t('manager.title')}</h1>
+                        <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
+                    </div>
+                    <div>
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="flex items-center"
+                        >
+                            {t('website.needHelp')}
+                            <Question className="ml-2 h-6 w-6" />
+                        </Button>
+                    </div>
+                </section>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
                     <section className="flex flex-row gap-5">
                         <SearchComponent
                             searchTerm={searchTerm}
                             placeholder={t('manager.search')}
-                            onSetSearch={handleSetSearch}
+                            onSetSearch={handleSearch}
                         />
                         <CollabStatus
                             collabOptions={collabOptions}
                             filters={filterStatuses}
-                            onSetFilters={handleStatus}
+                            onSetFilters={handleFilterStatus}
                         />
                     </section>
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />

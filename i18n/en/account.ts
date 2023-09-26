@@ -78,6 +78,9 @@ const account = {
             noPaymentMethod: 'No payment method',
             alreadySubscribed: 'Already subscribed',
         },
+        upgrade: 'Upgrade',
+        upgradeSuccess: 'Upgrade success',
+        upgradeSubscriptionError: 'Unable to upgrade subscription',
     },
     invite: {
         title: 'Invite Members',
@@ -100,6 +103,12 @@ const account = {
         cancelling: 'Cancelling...',
         subscriptionCancelled: 'Subscription cancelled',
     },
+    planIsReady: 'Your plan is ready!',
+    redirectingMsg: 'Redirecting...',
+    card: 'Card',
+    alipay: 'Alipay',
+    choosePaymentMethod: 'Please choose a payment method.',
+    contactUs: 'Please Contact our support team if you prefer to pay with Alipay.',
 };
 
 export default account;

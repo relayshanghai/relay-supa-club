@@ -1,7 +1,8 @@
-import { z } from 'zod';
 import type { AnalyticsPlugin } from 'analytics';
-import { timestamp } from '../datetime';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
+import { timestamp } from '../datetime';
+import type { eventKeys, payloads } from './events';
 
 export type AnalyticsEventParam<T = any> = {
     abort: () => void;
@@ -99,17 +100,22 @@ export type ServerContext = { req: NextApiRequest; res: NextApiResponse };
 /**
  * Callback function that is called inside a tracked event
  */
-export type TriggerEvent<P = any, R = any> = (eventName: string, payload?: P) => R;
+export type TriggerEvent<P = any, R = any> = (eventName: eventKeys, payload?: P) => R;
 
 /**
  * Event function that contains eventName property
  */
 export type TrackedEvent = {
-    <T extends TriggerEvent = (n: string, p: any) => void>(trigger: T, payload?: Parameters<T>[1]): ReturnType<T>;
-    eventName: string;
+    <T extends TriggerEvent>(trigger: T, payload: Parameters<T>[1]): ReturnType<T>;
+    eventName: eventKeys;
 };
 
 /**
  * Event payload that optionally expects an event_at property
  */
 export type EventPayload<T = { [key: string]: any }> = { event_at?: string } & T;
+
+/**
+ * Signature for functions that would want to track an event
+ */
+export type TrackEvent = <E extends TrackedEvent>(event: E, payload: payloads[E['eventName']]) => any;

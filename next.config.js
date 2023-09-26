@@ -9,6 +9,9 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const nextConfig = {
     reactStrictMode: true,
     swcMinify: true,
+    typescript: {
+        tsconfigPath: './tsconfig.build.json',
+    },
     images: {
         remotePatterns: [
             {

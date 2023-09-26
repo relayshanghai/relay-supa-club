@@ -6,22 +6,22 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { Spinner } from '../icons';
 import { replaceNewlinesAndTabs } from '../sequences/helpers';
 import { Email } from './Email';
-import type { ThreadMessage } from './Threads';
 import { Threads } from './Threads';
 import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SendEmailReply } from 'src/utils/analytics/events';
 
 export const CorrespondenceSection = ({
     selectedMessages,
     loadingSelectedMessages,
-    onInfluencerClick,
 }: {
     selectedMessages: SearchResponseMessage[];
     loadingSelectedMessages: boolean;
-    onInfluencerClick?: (message: ThreadMessage['from']) => void;
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
 
     const handleSubmit = async (replyMessage: string) => {
         if (!profile?.email_engine_account_id) {
@@ -39,6 +39,14 @@ export const CorrespondenceSection = ({
         };
         try {
             await sendReply(replyBody, profile?.email_engine_account_id);
+            track(SendEmailReply, {
+                sequence_email_address: profile?.sequence_send_email ?? '',
+                email_thread_id: selectedMessages[0].threadId,
+                attachment: false, //TODO V2-703 & V2-971: Attachment not implemented in code yet
+                attachment_types: [],
+                cc: false, //TODO V2-972: CCs not implemented in code yet
+                cc_emails: [],
+            });
             setReplyMessage('');
         } catch (error) {
             clientLogger(error, 'error');
@@ -53,10 +61,10 @@ export const CorrespondenceSection = ({
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
+                    <EmailHeader messages={selectedMessages} />
                     <div className="flex-1 overflow-auto">
-                        <EmailHeader messages={selectedMessages} />
                         {selectedMessages.length > 1 ? (
-                            <Threads messages={selectedMessages} onInfluencerClick={onInfluencerClick} />
+                            <Threads messages={selectedMessages} />
                         ) : (
                             <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                         )}

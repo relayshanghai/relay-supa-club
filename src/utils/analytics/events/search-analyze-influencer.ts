@@ -9,4 +9,4 @@ export const SearchAnalyzeInfluencer = (trigger: TriggerEvent, value?: SearchAna
 
 export type SearchAnalyzeInfluencer = typeof SearchAnalyzeInfluencer;
 
-SearchAnalyzeInfluencer.eventName = SEARCH_ANALYZE_INFLUENCER;
+SearchAnalyzeInfluencer.eventName = <typeof SEARCH_ANALYZE_INFLUENCER>SEARCH_ANALYZE_INFLUENCER;

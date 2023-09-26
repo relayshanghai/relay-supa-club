@@ -1,29 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from 'src/components/button';
-import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
-import { numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
 import { useTranslation } from 'react-i18next';
+import { Button } from 'src/components/button';
 import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
-import { SelectPlatform } from './search-select-platform';
-import { SearchResultsTable } from './search-results-table';
+import { IQDATA_MAINTENANCE } from 'src/constants';
+import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
+import { Search, SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
+import { startJourney } from 'src/utils/analytics/journey';
+import { numberFormatter } from 'src/utils/formatter';
+import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
+import type { CreatorSearchAccountObject } from 'types';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
+import { Layout } from '../layout';
+import { MaintenanceMessage } from '../maintenance-message';
+import ClientRoleWarning from './client-role-warning';
+import { SearchCreators } from './search-creators';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
-import { Layout } from '../layout';
-import { IQDATA_MAINTENANCE } from 'src/constants';
-import { MaintenanceMessage } from '../maintenance-message';
-import { useCampaigns } from 'src/hooks/use-campaigns';
-import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
-import ClientRoleWarning from './client-role-warning';
-import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SearchCreators } from './search-creators';
-import { startJourney } from 'src/utils/analytics/journey';
-import { useAnalytics } from '../analytics/analytics-provider';
-import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
-import { Search } from 'src/utils/analytics/events';
-import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
+import { SearchResultsTable } from './search-results-table';
+import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
@@ -80,7 +79,7 @@ export const SearchPageInner = () => {
             if (searchParams === undefined) return;
 
             const tracker = (results: any) => {
-                return track<typeof Search>({
+                return track({
                     event: Search,
                     payload: {
                         event_id: results.__metadata?.event_id,
@@ -188,7 +187,7 @@ export const SearchPageInner = () => {
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators platform={platform} onSearch={handleSearch} />
+                    <SearchCreators onSearch={handleSearch} />
                 </div>
             </div>
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
@@ -241,9 +240,7 @@ export const SearchPageInner = () => {
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
                 platform={platform}
-                selectedCreator={{
-                    ...selectedCreator?.account.user_profile,
-                }}
+                selectedCreator={selectedCreator?.account.user_profile}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {

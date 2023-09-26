@@ -1,16 +1,19 @@
-import useSWR from 'swr';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import type { SequenceUpdate, SequenceInsert, SequenceInfluencer } from 'src/utils/api/db';
-import { useSequenceSteps } from './use-sequence-steps';
-import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
-import { useUser } from 'src/hooks/use-user';
-import { serverLogger } from 'src/utils/logger-server';
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
+import { useUser } from 'src/hooks/use-user';
+import { CreateSequence } from 'src/utils/analytics/events';
+import type { SequenceInfluencer, SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
+import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
+import { serverLogger } from 'src/utils/logger-server';
+import useSWR from 'swr';
+import { useRudderstackTrack } from './use-rudderstack';
+import { useSequenceSteps } from './use-sequence-steps';
 import { useSequences } from './use-sequences';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
 
     const db = useClientDb();
     const { refreshSequences } = useSequences();
@@ -28,8 +31,8 @@ export const useSequence = (sequenceId?: string) => {
     };
 
     const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
-    const deleteSequence = async (id: string) => {
-        const res = await deleteSequenceDBCall(id);
+    const deleteSequence = async (ids: string[]) => {
+        const res = await deleteSequenceDBCall(ids);
         refreshSequence();
         refreshSequences();
         return res;
@@ -51,7 +54,13 @@ export const useSequence = (sequenceId?: string) => {
             refreshSequenceSteps();
             return res;
         } catch (error) {
-            serverLogger(error, 'error');
+            track(CreateSequence, {
+                sequence_id: null,
+                sequence_name: sequenceName,
+                is_success: false,
+                extra_info: { error: String(error) },
+            });
+            serverLogger(error);
         }
     };
 

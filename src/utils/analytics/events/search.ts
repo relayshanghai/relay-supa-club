@@ -14,4 +14,4 @@ export const Search = (trigger: TriggerEvent<SearchPayload>, payload?: SearchPay
 
 export type Search = typeof Search;
 
-Search.eventName = SEARCH;
+Search.eventName = <typeof SEARCH>SEARCH;

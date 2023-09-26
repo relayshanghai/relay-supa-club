@@ -1,27 +1,22 @@
 import type rudderSDK from 'rudder-sdk-js';
+import type { TestMountOptions } from '../src/utils/user-test-wrapper.tsx';
+import type { CompanyDB, ProfileDB } from 'src/utils/api/db/types.js';
 
 declare global {
     interface Window {
-        // use the rudderanalytics object to call the RudderStack client-side SDK methods
-        // from 'rudder-sdk-js'
-        rudder: {
-            load: typeof rudderSDK.load;
-            ready: typeof rudderSDK.ready;
-            reset: typeof rudderSDK.reset;
-            page: typeof rudderSDK.page;
-            track: typeof rudderSDK.track;
-            identify: typeof rudderSDK.identify;
-            alias: typeof rudderSDK.alias;
-            group: typeof rudderSDK.group;
-            setAnonymousId: typeof rudderSDK.setAnonymousId;
-            getAnonymousId: typeof rudderSDK.getAnonymousId;
-            getUserId: typeof rudderSDK.getUserId;
-            getUserTraits: typeof rudderSDK.getUserTraits;
-            getGroupId: typeof rudderSDK.getGroupId;
-            getGroupTraits: typeof rudderSDK.getGroupTraits;
-            startSession: typeof rudderSDK.startSession;
-            endSession: typeof rudderSDK.endSession;
-            getSessionId: typeof rudderSDK.getSessionId;
+        rudder: Omit<typeof rudderSDK, 'RESIDENCY_SERVER'>;
+        session?: {
+            user: any;
+            profile: ProfileDB;
+            company: CompanyDB;
+        };
+        setMockRouter: (options: TestMountOptions) => void;
+        useRouter: () => {
+            route: string;
+            pathname: string;
+            query: Record<string, string>;
+            asPath: string;
+            push: (path: string) => void;
         };
     }
 }

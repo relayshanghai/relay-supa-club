@@ -4,49 +4,44 @@ import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import {
     createSequenceInfluencerCall,
-    deleteSequenceInfluencerCall,
+    deleteSequenceInfluencersCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import useSWR from 'swr';
 
-export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
+export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
 
-    const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
+    const { data, mutate: refreshSequenceInfluencers } = useSWR<SequenceInfluencerManagerPage[]>(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            if (sequenceIds) {
-                const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
-                    body: sequenceIds,
-                });
-                return filters
-                    ? allInfluencers.content.filter((influencer) => filters.includes(influencer.funnel_status))
-                    : allInfluencers.content;
-            }
+            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+                body: sequenceIds,
+            });
+            return allInfluencers.content;
         },
     );
+    const sequenceInfluencers = data && Array.isArray(data) ? data : [];
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
     const createSequenceInfluencer = async (
-        influencerSocialProfileId: string,
-        tags: string[],
-        iqDataUserProfileId: string,
-        email?: string | null,
+        influencerSocialProfile: Omit<
+            SequenceInfluencerInsert,
+            'added_by' | 'company_id' | 'sequence_step' | 'funnel_status' | 'rate_amount' | 'rate_currency'
+        >,
     ) => {
         if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
 
         const insert: SequenceInfluencerInsert = {
+            ...influencerSocialProfile,
             added_by: profile.id,
             company_id: profile.company_id,
-            sequence_id: sequenceIds[0],
-            influencer_social_profile_id: influencerSocialProfileId,
             sequence_step: 0,
-            tags,
             funnel_status: 'To Contact',
-            iqdata_id: iqDataUserProfileId,
-            email,
+            rate_amount: 0,
+            rate_currency: 'USD',
         };
         const res = await createSequenceInfluencerDBCall(insert);
         return res;
@@ -59,9 +54,9 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         return res;
     };
 
-    const deleteSequenceInfluencerDBCall = useDB<typeof deleteSequenceInfluencerCall>(deleteSequenceInfluencerCall);
-    const deleteSequenceInfluencer = async (id: string) => {
-        const res = await deleteSequenceInfluencerDBCall(id);
+    const deleteSequenceInfluencerDBCall = useDB<typeof deleteSequenceInfluencersCall>(deleteSequenceInfluencersCall);
+    const deleteSequenceInfluencers = async (ids: string[]) => {
+        const res = await deleteSequenceInfluencerDBCall(ids);
         refreshSequenceInfluencers();
         return res;
     };
@@ -71,6 +66,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         createSequenceInfluencer,
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
-        deleteSequenceInfluencer,
+        deleteSequenceInfluencers,
     };
 };

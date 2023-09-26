@@ -6,7 +6,6 @@ describe('checks restricted to guide page', () => {
     it('check if guide page opens', async () => {
         await deleteDB('app-cache');
         setupIntercepts();
-        cy.visit('/');
         cy.loginTestUser();
         cy.contains('Guide').click();
         cy.url().should('include', '/guide');
@@ -14,8 +13,8 @@ describe('checks restricted to guide page', () => {
 });
 
 describe('checks restricted to guide page', () => {
-    beforeEach(async () => {
-        await deleteDB('app-cache');
+    beforeEach(() => {
+        deleteDB('app-cache');
     });
     it('check modal functioning for every separate guide', () => {
         setupIntercepts();
@@ -28,7 +27,7 @@ describe('checks restricted to guide page', () => {
             cy.contains('Go to ' + sectionData.title).click();
             cy.url().should('not.include', '/guide');
             cy.url().should('include', sectionData.url);
-        })
+        });
     });
     it('check modal for every separate guide but go back', () => {
         setupIntercepts();
@@ -40,8 +39,8 @@ describe('checks restricted to guide page', () => {
             cy.contains(sectionData.title);
             cy.contains(guidePage.goBack).click();
             cy.url().should('include', '/guide');
-        })
+        });
     });
 });
 
-export { };
+export {};

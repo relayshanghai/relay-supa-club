@@ -1,54 +1,58 @@
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
-import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight } from '../icons';
+import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements, BarGraph, User } from '../icons';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
+import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
+import { PlayTutorialVideo } from 'src/utils/analytics/events';
 
 const featVideo = true;
+export type GuideCardKey = keyof typeof guidePage.cards;
 
-export const GuideCards = ({ cardName }: { cardName: string }) => {
+export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
     const [guideShow, setGuideShow] = useState<boolean>(false);
+    const { track } = useRudderstackTrack();
 
     const handleGuideModal = () => {
-        trackEvent(GUIDE_PAGE('modal opened'), { guideSection: cardName });
+        track(OpenGuideSectionModal, {
+            section: cardKey,
+            // TODO: V2-872dc add increments
+            user_open_count: null,
+        });
         setGuideShow((prev) => !prev);
     };
     return (
         <div className="m-1 my-6 flex w-screen flex-col items-center gap-5 text-center md:w-auto md:basis-1/2 lg:basis-1/3 2xl:basis-1/4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                    {cardName === 'discover' && (
+                    {cardKey === 'discover' && (
                         <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
                     )}
-
-                    {cardName === 'campaigns' && <FourSquare height={24} width={24} className="stroke-primary-500" />}
-
-                    {cardName === 'aiEmailGenerator' && (
-                        <EmailOutline height={24} width={24} className="stroke-primary-500" />
+                    {cardKey === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'sequences' && <Send height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'templates' && <Brackets height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'inbox' && <Engagements height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'influencerManager' && (
+                        <ProfilePlus height={24} width={24} className="stroke-primary-500" />
                     )}
-
-                    {cardName === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
-
-                    {cardName === 'performance' && <PieChart height={24} width={24} className="stroke-primary-500" />}
-
-                    {cardName === 'guide' && <Guide height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'influencerProfile' && <User height={24} width={24} className="stroke-primary-500" />}{' '}
+                    {cardKey === 'performance' && <BarGraph height={24} width={24} className="stroke-primary-500" />}
                 </div>
             </div>
-            <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardName}.title`)}</p>
-            <p className="break-words text-gray-600">{t(`guidePage.cards.${cardName}.description`)}</p>
+            <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>
+            <p className="break-words text-gray-600">{t(`guidePage.cards.${cardKey}.description`)}</p>
             <p
-                data-testid={`guide-modal-${cardName}`}
+                data-testid={`guide-modal-${cardKey}`}
                 className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
                 onClick={handleGuideModal}
             >
                 {t('guidePage.learnMore')} <ArrowRight className="stroke-primary-700" height={18} width={18} />
             </p>
-            <GuideModal section={cardName} show={guideShow} setShow={setGuideShow} />
+            <GuideModal section={cardKey} show={guideShow} setShow={setGuideShow} />
         </div>
     );
 };
@@ -56,6 +60,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
 export const GuideComponent = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -70,6 +75,11 @@ export const GuideComponent = () => {
                     muted={false}
                     controls={true}
                     onPlay={(e) => {
+                        track(PlayTutorialVideo, {
+                            video: 'Main Demo',
+                            // TODO: V2-872dc add increments
+                            user_play_count: null,
+                        });
                         trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
@@ -87,7 +97,6 @@ export const GuideComponent = () => {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
                     }}
-                    autoPlay
                     className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2"
                 >
                     <source src="/assets/videos/demo.mp4" />
@@ -97,15 +106,14 @@ export const GuideComponent = () => {
                     <Image
                         src="/assets/imgs/placeholders/dashboard-current.png"
                         alt="Description of the image"
-                        layout="responsive"
                         width={1200}
                         height={800}
                     />
                 </div>
             )}
             <div className="flex w-full flex-row flex-wrap justify-center md:justify-evenly md:gap-4 md:gap-y-8">
-                {Object.keys(guidePage.cards).map((name: string, index: number) => {
-                    return <GuideCards key={index} cardName={name} />;
+                {Object.keys(guidePage.cards).map((card, index: number) => {
+                    return <GuideCards key={index} cardKey={card as GuideCardKey} />;
                 })}
             </div>
         </div>

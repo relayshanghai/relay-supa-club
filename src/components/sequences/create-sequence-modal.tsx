@@ -1,13 +1,15 @@
-import { useTranslation } from 'react-i18next';
-import { Modal } from '../modal';
-import { Button } from '../button';
-import { Spinner } from '../icons';
 import { useState } from 'react';
-import { useSequence } from 'src/hooks/use-sequence';
 import { toast } from 'react-hot-toast';
-import { clientLogger } from 'src/utils/logger-client';
+import { useTranslation } from 'react-i18next';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { CreateSequence } from 'src/utils/analytics/events';
+import { clientLogger } from 'src/utils/logger-client';
+import { Button } from '../button';
+import { Spinner } from '../icons';
+import { Modal } from '../modal';
 
 export const CreateSequenceModal = ({
     title,
@@ -22,6 +24,7 @@ export const CreateSequenceModal = ({
     const { createSequence } = useSequence();
     const { createDefaultSequenceSteps } = useSequenceSteps();
     const { createDefaultTemplateVariables } = useTemplateVariables();
+    const { track } = useRudderstackTrack();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
@@ -30,16 +33,38 @@ export const CreateSequenceModal = ({
         setLoading(true);
         try {
             if (sequenceName === '') return;
+
             const data = await createSequence(sequenceName);
+
             if (!data) {
+                track(CreateSequence, {
+                    sequence_id: null,
+                    sequence_name: sequenceName,
+                    is_success: false,
+                    extra_info: { error: 'Failed to get sequence' },
+                });
                 throw new Error('Failed to get sequence id');
             }
+
+            track(CreateSequence, {
+                sequence_id: data.id,
+                sequence_name: sequenceName,
+                is_success: true,
+            });
+
             await createDefaultSequenceSteps(data.id);
             await createDefaultTemplateVariables(data.id);
             toast.success(t('sequences.createSequenceSuccess'));
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('sequences.createSequenceError'));
+
+            track(CreateSequence, {
+                sequence_id: null,
+                sequence_name: sequenceName,
+                is_success: false,
+                extra_info: { error: String(error) },
+            });
         } finally {
             setLoading(false);
             setShowCreateSequenceModal(false);

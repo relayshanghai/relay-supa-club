@@ -1,12 +1,15 @@
 const sequences = {
     sequences: 'Sequences',
-    updateTemplateVariables: 'Update template variables',
+    subtitle:
+        'Sets of email templates that we will customize, schedule, and send to influencers to maximize your outreach conversion.',
+    updateTemplateVariables: 'View sequence templates',
     needsAttention: 'Needs attention',
     autoStart: 'Auto-start',
     inSequence: 'In sequence',
     ignored: 'Ignored',
     totalInfluencers: 'Total influencers',
-    influencerDeleted: 'Influencer successfully deleted from sequence',
+    influencerDeleted: 'Influencer(s) successfully deleted from sequence',
+    influencerDeleteFailed: 'Failed to delete influencer(s) from sequence',
     openRate: 'Open rate',
     replyRate: 'Reply rate',
     bounceRate: 'Bounce rate',
@@ -14,6 +17,11 @@ const sequences = {
     totalInfluencersTooltipDescription:
         'This is all influencers you have added to this sequence, including Needs attention, In sequence, and Ignored.',
     openRateTooltip: 'Open rate',
+    sequenceSendTooltip: 'Sequence send',
+    sequenceSendTooltipDescription: 'This will schedule to send your sequence emails for this influencer.',
+    outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
+    outreachPlanUpgradeTooltipDescription:
+        'This feature is only available for users currently on an Outreach plan. If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
     openRateTooltipDescription:
         'The percentage of emails sent that get opened. Due to some email clients disabling external tracking, this number may not be 100% accurate',
     replyRateTooltip: 'Reply rate',
@@ -117,20 +125,6 @@ const sequences = {
     Mi Band 8
     "The Mi Band 8 is our latest affordable smart watch and fitness tracker."
     * We will include this value as is in your email templates`,
-    productFeatures: 'Product Features',
-    productFeaturesPlaceholder: `It offers a full-color touch display,  sleep, exercise and blood oxygen tracking and has a battery life of over 2 weeks!`,
-    productFeaturesTooltip: `Product Features`,
-    productFeaturesTooltipDescription: `Describe the most important, or most unique
-    features your product offers to let the influencer
-    know what sets your product apart.
-
-    Remember, to write this in a way that is easily
-    understandable by the influencer.
-    Start with “It offers”, “It can”, or “With”
-
-    eg. ”It offers a full-color touch display, sleep, exercise
-      and blood oxygen tracking, and has a battery life  of over 2 weeks!”* We will include this value as is in your
-    email templates`,
     productPrice: 'Product Price',
     productPriceTooltip: 'Product Price',
     productPriceTooltipDescription: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
@@ -152,17 +146,22 @@ const sequences = {
     influencerAccountNameTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipeient!`,
-    recentVideoTitle: 'Influencer Recent Post',
-    recentVideoTitleTooltip: `Influencer Recent Post`,
-    recentVideoTitleTooltipDescription: `No need to enter this! We will pull this
+    recentPostTitle: 'Influencer Recent Post',
+    recentPostTitleTooltip: `Influencer Recent Post`,
+    recentPostTitleTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
+    missingRequiredTemplateVariables: 'Missing required template variables',
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: 'Email preview',
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
     number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
     delete: {
+        deleteSequence_name: 'Delete {{name}}?',
+        deleteSequenceDescription:
+            'Deleting a sequence will stop all scheduled emails for influencers in this sequence. No further messages will be sent. Influencers who have replied and are already in your Influencer Manager will be preserved, however any influencers currently in "Needs Attention", "In Sequence" or "Ignored" will be deleted. Are you sure you want to delete your sequence?',
+        okaySequence: 'Yes. Delete this sequence',
         title: 'Delete influencer from sequence?',
         description:
             "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
@@ -173,6 +172,11 @@ const sequences = {
     deleteConfirm: 'Are you sure you want to delete?',
     deleteSuccess: 'Successfully deleted.',
     deleteFail: 'Failed to delete.',
+    emailAlreadyExists: 'Email already exists',
+    invalidSocialProfileTooltip: 'Updating influencer report',
+    invalidSocialProfileTooltipDescription:
+        'Getting latest data for this influencer, we should be finished in 15 minutes.',
+    invalidSocialProfileTooltipHighlight: 'Please wait and try again later.',
 };
 
 export default sequences;

@@ -3,14 +3,14 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
-import { useContext } from 'react';
-import { createContext } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { profileToIdentifiable, useRudder } from 'src/hooks/use-rudderstack';
 import { useSession } from 'src/hooks/use-session';
-import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import { createTrack } from 'src/utils/analytics/analytics';
+import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
+import { useTranslation } from 'react-i18next';
+import { useSubscription } from 'src/hooks/use-subscription';
 
 export const AnalyticsContext = createContext<
     | {
@@ -42,11 +42,19 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const { session } = useSession();
-
+    const rudderstack = useRudder();
+    const { session, profile, user, company } = useSession();
+    const { i18n } = useTranslation();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
-
     const [track] = useState(() => createTrack(analytics));
+    const { subscription } = useSubscription();
+
+    useEffect(() => {
+        if (profile !== null && user !== null && company !== null && rudderstack) {
+            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
+            rudderstack.identify(id, traits);
+        }
+    }, [rudderstack, profile, user, company, i18n, subscription]);
 
     // set analytics identity
     useEffect(() => {

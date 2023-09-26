@@ -1,24 +1,26 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { LegacyRef } from 'react';
-import i18next from 'i18next';
-import { Globe } from '../icons';
-import useOnOutsideClick from 'src/hooks/use-on-outside-click';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { LANGUAGE_TOGGLE } from 'src/utils/rudderstack/event-names';
+import { LanguageToggleIcon } from '../icons';
+import { useTranslation } from 'react-i18next';
+import { ChangeLanguage } from 'src/utils/analytics/events/change-language';
+import { languageCodeToHumanReadable } from 'src/utils/utils';
 
 export const LanguageToggle = () => {
-    const [displayOptions, setDisplayOptions] = useState(false);
-
+    const { track } = useRudderstackTrack();
+    const { i18n } = useTranslation();
     const toggleLanguage = (value: string) => {
-        i18next.changeLanguage(value, () => {
-            setDisplayOptions(false);
+        track(ChangeLanguage, {
+            current_language: languageCodeToHumanReadable(i18n.language),
+            selected_language: languageCodeToHumanReadable(value),
+        });
+        i18n.changeLanguage(value, () => {
             localStorage.setItem('language', value);
         });
     };
 
-    const optionsRef: LegacyRef<HTMLDivElement> = useRef(null);
     const languageButtonRef: LegacyRef<HTMLButtonElement> = useRef(null);
-    useOnOutsideClick(optionsRef, () => setDisplayOptions(false), languageButtonRef);
     const { trackEvent } = useRudderstack();
     return (
         <div>
@@ -26,40 +28,19 @@ export const LanguageToggle = () => {
                 <button
                     ref={languageButtonRef}
                     onClick={() => {
-                        setDisplayOptions(!displayOptions);
+                        if (i18n.language === 'zh-CN') {
+                            toggleLanguage('en-US');
+                            trackEvent(LANGUAGE_TOGGLE('switch to en-US'));
+                        } else {
+                            toggleLanguage('zh-CN');
+                            trackEvent(LANGUAGE_TOGGLE('switch to zh-CN'));
+                        }
                         trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
-                    data-testid="language-toggle-button"
+                    data-testid="language-toggle"
                 >
-                    <Globe className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500" />
+                    <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-500" />
                 </button>
-                {displayOptions && (
-                    <div
-                        ref={optionsRef}
-                        className="border-gray absolute z-10 mr-20 mt-9 flex w-28 flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
-                    >
-                        <button
-                            onClick={() => {
-                                toggleLanguage('zh-CN');
-                                trackEvent(LANGUAGE_TOGGLE('switch to zh-CN'));
-                            }}
-                            id="zh-CN"
-                            className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
-                        >
-                            中文
-                        </button>
-                        <button
-                            onClick={() => {
-                                toggleLanguage('en-US');
-                                trackEvent(LANGUAGE_TOGGLE('switch to en-US'));
-                            }}
-                            id="en-US"
-                            className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
-                        >
-                            English
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );

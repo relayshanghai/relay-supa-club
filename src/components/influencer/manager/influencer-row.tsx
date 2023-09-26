@@ -6,6 +6,9 @@ import i18n from 'i18n';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { GoToInbox } from 'src/utils/analytics/events/outreach/go-to-inbox';
+import { useUser } from 'src/hooks/use-user';
 
 export type InfluencerRowProps = {
     index: number;
@@ -15,8 +18,20 @@ export type InfluencerRowProps = {
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
-    const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status, email, platform } =
-        influencer;
+    const {
+        name,
+        username,
+        manager_first_name,
+        avatar_url,
+        url,
+        tags,
+        updated_at,
+        funnel_status,
+        email,
+        platform,
+        added_by,
+    } = influencer;
+    const { profile } = useUser();
     const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
@@ -24,14 +39,19 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
         },
         [props],
     );
+    const { track } = useRudderstackTrack();
 
     const handleInboxClick = useCallback(
         (e: any) => {
             e.stopPropagation();
-            // eslint-disable-next-line no-console
-            console.log('inbox clicked', influencer.id);
+            track(GoToInbox, {
+                influencer_id: influencer.id,
+                has_unread_messages: null,
+                current_status: funnel_status,
+                is_users_influencer: added_by === profile?.id,
+            });
         },
-        [influencer],
+        [added_by, funnel_status, influencer.id, profile?.id, track],
     );
 
     return (
@@ -100,17 +120,13 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
             </td>
             <td className="whitespace-nowrap py-4 pl-6">
                 {email && (
-                    <Link
-                        href={encodeURIComponent(`/inbox?q=${new URLSearchParams({ q: email })}`)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <Link href="/inbox" target="_blank" rel="noopener noreferrer">
                         <div
                             onClick={handleInboxClick}
                             className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"
                         >
                             <InboxIcon className="h-6 w-6 stroke-primary-500" />
-                            {/* // TODO Add unread message indication */}
+                            {/* // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/968 Add unread message indication */}
                             {/* <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" /> */}
                         </div>
                     </Link>

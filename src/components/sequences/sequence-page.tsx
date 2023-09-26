@@ -5,66 +5,107 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Spinner } from '../icons';
+import { Brackets, DeleteOutline, Info, Question, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
-import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
+import { Badge, FaqModal, SelectMultipleDropdown, Switch, Tabs } from '../library';
 import { Button } from '../button';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
 import { useTranslation } from 'react-i18next';
-import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useUser } from 'src/hooks/use-user';
+import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
+import toast from 'react-hot-toast';
+import faq from 'i18n/en/faq';
+import { useRouter } from 'next/router';
+import { clientLogger } from 'src/utils/logger-client';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
+import { Banner } from '../library/banner';
+import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
+import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
+import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
-
+    const { push } = useRouter();
+    const { track } = useRudderstackTrack();
+    const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequence && [sequenceId],
+    );
+
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
-        .map((variable) => variable.name) ?? ['Error retrieving variables'];
+        .map((variable) => ` **${variable.name}** `) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
-    useEffect(() => {
-        setInfluencers(sequenceInfluencers);
-    }, [sequenceInfluencers]);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-    const handleStep = useCallback(
-        (filters: CommonStatusType[]) => {
-            setFilterSteps(filters);
-            if (!sequenceInfluencers) {
-                return;
+    const influencers = useMemo<SequenceInfluencerManagerPage[]>(() => {
+        if (!sequenceInfluencers) {
+            return [];
+        }
+        if (filterSteps.length === 0) {
+            return sequenceInfluencers;
+        }
+        const filteredInfluencers = sequenceInfluencers.filter((influencer) => {
+            const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+            return step && step.name && filterSteps.includes(step.name);
+        });
+        return filteredInfluencers;
+    }, [filterSteps, sequenceInfluencers, sequenceSteps]);
+
+    const handleStartSequence = async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
+        const results = await sendSequence(sequenceInfluencersToSend);
+        try {
+            // handle optimistic update
+            const succeeded = results.filter((result) => !result.error);
+            if (succeeded.length > 0) {
+                const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
+
+                refreshSequenceInfluencers(
+                    sequenceInfluencers.map((influencer) => {
+                        if (succeededInfluencerIds.includes(influencer.id)) {
+                            return {
+                                ...influencer,
+                                funnel_status: 'In Sequence',
+                                sequence_step: 1,
+                            };
+                        }
+                        return influencer;
+                    }),
+                    { revalidate: false },
+                );
             }
+            // shouldn't need to update failed
+        } catch (error) {
+            return results;
+        }
 
-            if (filters.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            const filteredInfluencers = sequenceInfluencers.filter((x) => {
-                const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step - 1);
-                return step && step.name && filters.includes(step.name as CommonStatusType);
-            });
-
-            setInfluencers(filteredInfluencers);
-        },
-        [sequenceInfluencers, sequenceSteps],
-    );
-
-    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
-        return await sendSequence(sequenceInfluencers);
+        return results;
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
+        track(ToggleAutoStart, {
+            action: checked ? 'Enable' : 'Disable',
+            total_sequence_influencers: sequenceInfluencers?.length,
+            unstarted_sequence_influencers: sequenceInfluencers?.filter(
+                (influencer) => influencer.funnel_status === 'To Contact',
+            ).length,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || null,
+        });
         if (!sequence) {
             return;
         }
@@ -73,14 +114,18 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
     const handleOpenUpdateTemplateVariables = () => {
+        track(ViewSequenceTemplates, {
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+            variables_set: missingVariables.length === 0,
+        });
         setShowUpdateTemplateVariables(true);
     };
 
-    const needsAttentionInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'To Contact');
-    const inSequenceInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'In Sequence');
-    const ignoredInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
-
-    const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
+    const needsAttentionInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'To Contact');
+    const inSequenceInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'In Sequence');
+    const ignoredInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'Ignored');
+    const tabs: TabsProps<SequenceInfluencerManagerPage['funnel_status']>['tabs'] = [
         {
             label: 'sequences.needsAttention',
             value: 'To Contact',
@@ -106,11 +151,51 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 ) : null,
         },
     ];
-    const [currentTab, setCurrentTab] = useState(tabs[0].value);
+    const [currentTab, setCurrentTabState] = useState(tabs[0].value);
+    const setCurrentTab = (tab: SequenceInfluencerManagerPage['funnel_status']) => {
+        track(ChangeSequenceTab, {
+            current_tab: currentTab,
+            selected_tab: tab,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+        });
+        setCurrentTabState(tab);
+    };
+    const [selection, setSelection] = useState<string[]>([]);
 
-    const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
+    const currentTabInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
+        : [];
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
+
+    const handleDelete = async (influencerIds: string[]) => {
+        try {
+            await deleteSequenceInfluencers(influencerIds);
+            refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
+            setSelection([]);
+            toast.success(t('sequences.influencerDeleted'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.influencerDeleteFailed'));
+        }
+    };
+
+    const handleSetSelectedOptions = useCallback(
+        (filters: CommonStatusType[]) => {
+            track(FilterSequenceInfluencers, {
+                filter_type: filters.toString(),
+                current_tab: currentTab,
+                total_sequence_influencers: influencers?.length,
+                total_filter_results: influencers?.filter((influencer) => filters.includes(influencer.funnel_status))
+                    .length,
+                sequence_id: sequenceId,
+                sequence_name: sequence?.name || '',
+            });
+            setFilterSteps(filters);
+        },
+        [currentTab, influencers, sequence?.name, sequenceId, track],
+    );
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -118,10 +203,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             Object.keys(EMAIL_STEPS).forEach((option) => {
                 emailOptionsWithValue[option as CommonStatusType] = {
                     ...(options[option as CommonStatusType] || {}),
-                    value: influencers.filter((x) => {
-                        const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
-                        return step?.name === option;
-                    }).length,
+                    value: influencers
+                        ? influencers.filter((influencer) => {
+                              const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+                              return step?.name === option;
+                          }).length
+                        : 0,
                 };
             });
 
@@ -137,47 +224,80 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+
+    const autoStartTooltipTitle = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : t('sequences.autoStartTooltip');
+    const autoStartTooltipDescription = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.autoStartTooltipDescription');
+
+    const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+    const hideAutoStart = true; // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+
     return (
         <Layout>
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
+            <FaqModal
+                title={t('faq.sequencesTitle')}
+                visible={showNeedHelp}
+                onClose={() => setShowNeedHelp(false)}
+                content={faq.sequences.map((_, i) => ({
+                    title: t(`faq.sequences.${i}.title`),
+                    detail: t(`faq.sequences.${i}.detail`),
+                }))}
+                getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
+                getMoreInfoButtonAction={() => push('/guide')}
+                source="Sequence"
+            />
             <TemplateVariablesModal
                 sequenceId={sequenceId}
+                sequenceName={sequence?.name}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
             />
-            <div className="flex flex-col space-y-4 p-4">
-                <div className="flex w-full">
-                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
-                        <Tooltip
-                            content={
-                                t('sequences.autoStartTooltip', {
-                                    variables: missingVariables,
-                                }) || ''
-                            }
-                            detail={
-                                isMissingVariables
-                                    ? t('sequences.autoStartTooltipDescription', {
-                                          variables: missingVariables,
-                                      })
-                                    : ''
-                            }
-                            position="bottom-right"
-                        >
-                            <Switch
-                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
-                                checked={sequence?.auto_start ?? false}
-                                afterLabel={t('sequences.autoStart') || ''}
-                                onChange={(e) => {
-                                    handleAutostartToggle(e.target.checked);
-                                }}
-                            />
-                        </Tooltip>
-                    </div>
-                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
+            <div className="flex flex-col space-y-4 p-6">
+                <div className="flex w-full gap-6">
+                    <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
+                    <Button
+                        onClick={handleOpenUpdateTemplateVariables}
+                        variant="secondary"
+                        className="relative flex border-primary-600 bg-white text-primary-600"
+                    >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
+                        {missingVariables.length > 0 && (
+                            <div
+                                data-testid="missing-variables-alert"
+                                className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white"
+                            >
+                                {missingVariables.length}
+                            </div>
+                        )}
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            setShowNeedHelp(true);
+                            track(ClickNeedHelp);
+                        }}
+                        className="ml-auto flex items-center"
+                    >
+                        {t('website.needHelp')}
+                        <Question className="ml-2 h-6 w-6" />
                     </Button>
                 </div>
                 <SequenceStats
@@ -198,33 +318,83 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pb-2">
+                    <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                    {hideAutoStart ? null : (
+                        <div
+                            className="flex flex-row"
+                            onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
+                        >
+                            <Switch
+                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                                checked={sequence?.auto_start ?? false}
+                                afterLabel={t('sequences.autoStart') || ''}
+                                onChange={(e) => {
+                                    handleAutostartToggle(e.target.checked);
+                                }}
+                            />
+                            <Tooltip
+                                content={autoStartTooltipTitle}
+                                detail={autoStartTooltipDescription}
+                                position="bottom-left"
+                                className="w-fit"
+                            >
+                                <Info className="ml-2 h-3 w-3 text-gray-300" />
+                            </Tooltip>
+                        </div>
+                    )}
+                </section>
 
-                <div className="flex flex-row gap-4">
-                    <SelectMultipleDropdown
-                        text={t('sequences.steps.filter')}
-                        options={emailSteps}
-                        selectedOptions={filterSteps}
-                        setSelectedOptions={handleStep}
-                        translationPath="sequences.steps"
-                    />
+                <div className="flex w-full flex-col gap-4 overflow-x-auto">
+                    <div className="sticky left-0 flex w-full flex-row items-center justify-between">
+                        <SelectMultipleDropdown
+                            text={t('sequences.steps.filter')}
+                            options={emailSteps}
+                            selectedOptions={filterSteps}
+                            setSelectedOptions={handleSetSelectedOptions}
+                            translationPath="sequences.steps"
+                        />
+                        <button
+                            data-testid="delete-influencers-button"
+                            className={`h-fit ${
+                                selection.length === 0 && 'hidden'
+                            } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
+                            onClick={() => {
+                                if (selection.length === 0) return;
+                                setShowDeleteConfirmation(true);
+                            }}
+                        >
+                            <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                        </button>
+                    </div>
+                    <div>
+                        {currentTabInfluencers && sequenceSteps ? (
+                            <SequenceTable
+                                sequence={sequence}
+                                sequenceInfluencers={currentTabInfluencers}
+                                sequenceEmails={sequenceEmails}
+                                sequenceSteps={sequenceSteps}
+                                currentTab={currentTab}
+                                missingVariables={missingVariables}
+                                isMissingVariables={isMissingVariables}
+                                setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
+                                templateVariables={templateVariables ?? []}
+                                handleStartSequence={handleStartSequence}
+                                selection={selection}
+                                setSelection={setSelection}
+                            />
+                        ) : (
+                            <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
+                        )}
+                    </div>
                 </div>
-                {currentTabInfluencers && sequenceSteps ? (
-                    <SequenceTable
-                        sequenceInfluencers={currentTabInfluencers}
-                        sequenceEmails={sequenceEmails}
-                        sequenceSteps={sequenceSteps}
-                        currentTab={currentTab}
-                        missingVariables={missingVariables}
-                        isMissingVariables={isMissingVariables}
-                        setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
-                        templateVariables={templateVariables ?? []}
-                        handleStartSequence={handleStartSequence}
-                    />
-                ) : (
-                    <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
-                )}
             </div>
+            <DeleteFromSequenceModal
+                show={showDeleteConfirmation}
+                setShow={setShowDeleteConfirmation}
+                deleteHandler={handleDelete}
+                influencerIds={selection}
+            />
         </Layout>
     );
 };

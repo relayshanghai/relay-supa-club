@@ -14,7 +14,9 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
+import { useSession } from './use-session';
+import { useTranslation } from 'react-i18next';
+import { useSubscription } from './use-subscription';
 
 export type SignupData = {
     email: string;
@@ -83,6 +85,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent, identifyFromProfile } = useRudderstack();
+    const { user, company } = useSession();
+    const { i18n } = useTranslation();
+    const { subscription } = useSubscription();
+
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -117,10 +123,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     });
 
     useEffect(() => {
-        if (profile && identifyFromProfile) {
-            identifyFromProfile(profile);
+        if (profile && identifyFromProfile && user && company && i18n && subscription) {
+            identifyFromProfile(profile, user, company, i18n.language, subscription);
         }
-    }, [identifyFromProfile, profile]);
+    }, [identifyFromProfile, profile, user, company, i18n, subscription]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -131,7 +137,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
-            trackEvent(LOG_IN(), { email });
+            // @note `total_sessions` is an incrementable property
+            trackEvent('Log In, undefined', { email, total_sessions: 1 });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -219,7 +226,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
-        trackEvent(LOG_OUT(), { email });
+        trackEvent('Log Out, undefined', { email });
     };
 
     useEffect(() => {

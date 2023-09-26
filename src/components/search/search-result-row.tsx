@@ -26,6 +26,7 @@ import type { track } from './use-track-event';
 
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { AddToSequenceButton } from './add-to-sequence-button';
+import { useUser } from 'src/hooks/use-user';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -129,6 +130,7 @@ export const SearchResultRow = ({
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
+    const { profile } = useUser();
     const { trackEvent } = useRudderstack();
     const { track } = useAnalytics();
     const {
@@ -175,7 +177,12 @@ export const SearchResultRow = ({
     const analyzeInfluencer = useCallback(
         (args: { platform: CreatorPlatform; user_id: string }) => {
             const { platform, user_id } = args;
-            trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id });
+            trackEvent(SEARCH_RESULT_ROW('open report'), {
+                platform,
+                user_id,
+                // @note total_reports is an incrementable property
+                total_reports: 1,
+            });
         },
         [trackEvent],
     );
@@ -246,7 +253,7 @@ export const SearchResultRow = ({
                         </Button>
                     </Link>
 
-                    {featEmail() ? (
+                    {profile?.created_at && featEmail(new Date(profile?.created_at)) ? (
                         <AddToSequenceButton
                             creatorProfile={creator.account.user_profile}
                             allSequenceInfluencersIqDataIdsAndSequenceNames={
@@ -280,7 +287,7 @@ export const SearchResultRow = ({
                         >
                             {showMenu && (
                                 <div className="px-1 py-1">
-                                    {featEmail() ? (
+                                    {profile?.created_at && featEmail(new Date(profile.created_at)) ? (
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <AddToSequenceButton

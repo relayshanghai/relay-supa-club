@@ -1,45 +1,73 @@
 import Link from 'next/link';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { Sequence } from 'src/utils/api/db';
+import type { Sequence, SequenceStep } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
-import { DeleteOutline } from '../icons';
-import { toast } from 'react-hot-toast';
+import { Brackets } from '../icons';
 import { useSequence } from 'src/hooks/use-sequence';
-import { clientLogger } from 'src/utils/logger-client';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { Button } from '../button';
+import { EmailPreviewModal } from './email-preview-modal';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
 
-export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
+export const SequencesTableRow = ({
+    sequence,
+    onCheckboxChange,
+    checked,
+}: {
+    sequence: Sequence;
+    onCheckboxChange: (id: string) => void;
+    checked: boolean;
+}) => {
     const { t } = useTranslation();
-    const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
+    const { sequenceSteps } = useSequence(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
-    const { deleteSequence } = useSequence();
+    const { sequenceEmails } = useSequenceEmails(sequence.id);
+    const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
         ).length || 0) / (sequenceEmails?.length || 1),
         0,
     );
-    const handleDeleteSequence = async () => {
-        try {
-            const confirmed = confirm(t('sequences.deleteConfirm') || 'Confirm deletion?');
-            if (!confirmed) return;
-            await deleteSequence(sequence.id);
-            toast.success(t('sequences.deleteSuccess'));
-        } catch (error) {
-            toast.error(t('sequences.deleteFail'));
-            clientLogger(error, 'error');
-        }
-        refreshSequenceInfluencers();
-    };
+    const { track } = useRudderstackTrack();
 
+    const handleChange = () => {
+        onCheckboxChange(sequence.id);
+    };
+    const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     return (
         <>
+            <EmailPreviewModal
+                visible={!!showEmailPreview}
+                onClose={() => setShowEmailPreview(null)}
+                sequenceSteps={showEmailPreview || []}
+                templateVariables={templateVariables ?? []}
+            />
             <tr className="border-b-2 border-gray-200 bg-white">
-                <td className="whitespace-nowrap px-6 py-3 text-primary-600">
-                    <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
+                <td className="display-none items-center whitespace-nowrap text-center align-middle">
+                    <input
+                        data-testid="sequence-checkbox"
+                        className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                        checked={checked}
+                        onChange={handleChange}
+                        type="checkbox"
+                    />
+                </td>
+                <td
+                    className="whitespace-nowrap px-6 py-3 text-primary-600"
+                    onClick={() => {
+                        track(OpenSequence, {
+                            sequence_id: sequence.id,
+                            total_influencers: sequenceInfluencers?.length || 0,
+                            open_count: 0, // TODO: increment count V2-872dc
+                        });
+                    }}
+                >
+                    <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
@@ -47,14 +75,15 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
                     {templateVariables?.find((variable) => variable.key === 'productName')?.value ?? '--'}
                 </td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">
-                    <button
-                        onClick={handleDeleteSequence}
-                        className="align-middle"
-                        data-testid={`delete-sequence:${sequence.name}`}
+                <td className="flex items-center gap-2 whitespace-nowrap px-6 py-3 text-gray-700">
+                    <Button
+                        className="flex flex-row gap-2"
+                        variant="ghost"
+                        onClick={() => setShowEmailPreview(sequenceSteps ?? [])}
                     >
-                        <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />
-                    </button>
+                        <Brackets className="h-5 w-5" />
+                        {t('sequences.updateTemplateVariables')}
+                    </Button>
                 </td>
             </tr>
         </>

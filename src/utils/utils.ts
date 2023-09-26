@@ -64,7 +64,7 @@ export const chinaFilter = (str: string) => {
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat?: string) =>
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = 'en-US') =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
@@ -104,3 +104,67 @@ export const isRecommendedInfluencer = (recommendedInfluencers: string[], platfo
     recommendedInfluencers.includes(`${platform}/${user_id}`);
 
 export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Returns a random integer between the specified minimum and maximum values.
+ * @param min - The minimum value of the range (inclusive).
+ * @param max - The maximum value of the range (exclusive).
+ * @returns A random integer between the specified minimum and maximum values.
+ */
+const getRandom = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+/**
+ * Merges three arrays by taking a random number of elements from each array until they run empty, and appending them to the output array.
+ * @param a - The first array to merge.
+ * @param b - The second array to merge.
+ * @param c - The third array to merge.
+ * @returns A new array containing elements from all three input arrays, merged in a random order.
+ */
+export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
+    const output: any[] = [];
+
+    while (a.length || b.length || c.length) {
+        for (const array of [a, b, c]) {
+            const count = getRandom(3, 5);
+            for (let i = 0; i < count; i++) {
+                if (array.length) {
+                    output.push(array.shift());
+                }
+            }
+        }
+    }
+
+    return output;
+};
+
+/**
+ * Filters an array of PromiseSettledResult objects to get only the fulfilled results and returns their values.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the values of the fulfilled results.
+ */
+export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
+};
+
+/**
+ * Filters an array of PromiseSettledResult objects to get only the rejected results and returns their reasons.
+ * @param results - An array of PromiseSettledResult objects to filter.
+ * @returns An array of the reasons for rejection of the rejected results.
+ */
+export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
+    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+};
+
+export const randomNumber = (maxDigits = 8) => Math.round(Math.random() * Math.pow(10, maxDigits));
+
+export const languageCodeToHumanReadable = (code: string) => {
+    if (code.includes('en')) {
+        return 'English';
+    } else if (code.includes('zh')) {
+        return 'Chinese';
+    } else {
+        return code;
+    }
+};

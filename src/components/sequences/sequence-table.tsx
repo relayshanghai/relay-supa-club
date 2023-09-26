@@ -1,25 +1,29 @@
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
-import type { SetStateAction } from 'react';
+import { type SetStateAction, useCallback } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceTableProps {
-    sequenceInfluencers: SequenceInfluencer[];
+    sequence?: Sequence;
+    sequenceInfluencers: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
-    currentTab: SequenceInfluencer['funnel_status'];
+    currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
+    selection: string[];
+    setSelection: (selection: string[]) => void;
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
 const sortInfluencers = (
-    currentTab: SequenceInfluencer['funnel_status'],
-    influencers?: SequenceInfluencer[],
+    currentTab: SequenceInfluencerManagerPage['funnel_status'],
+    influencers?: SequenceInfluencerManagerPage[],
     sequenceEmails?: SequenceEmail[],
 ) => {
     return influencers?.sort((a, b) => {
@@ -44,6 +48,7 @@ const sortInfluencers = (
 };
 
 const SequenceTable: React.FC<SequenceTableProps> = ({
+    sequence,
     sequenceInfluencers,
     sequenceEmails,
     sequenceSteps,
@@ -53,59 +58,87 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     setShowUpdateTemplateVariables,
     templateVariables,
     handleStartSequence,
+    selection,
+    setSelection,
 }) => {
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
 
+    const handleCheckboxChange = useCallback(
+        (id: string) => {
+            if (selection.includes(id)) {
+                setSelection(selection.filter((selectedId) => selectedId !== id));
+                return;
+            }
+            setSelection([...selection, id]);
+        },
+        [selection, setSelection],
+    );
+
+    const handleCheckAll = useCallback(() => {
+        if (selection.length === sequenceInfluencers.length) {
+            setSelection([]);
+            return;
+        }
+        setSelection(sequenceInfluencers.map((influencer) => influencer.id));
+    }, [selection, sequenceInfluencers, setSelection]);
+
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-auto">
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="border-b-2 border-gray-200">
-                        {columns.map((column) => (
-                            <th
-                                key={column}
-                                className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
-                            >
-                                {t(`sequences.columns.${column}`)}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedInfluencers?.map((influencer) => {
-                        const influencerEmails = sequenceEmails?.filter(
-                            (email) => email.sequence_influencer_id === influencer.id,
-                        );
-                        const lastStep = sequenceSteps.find(
-                            (step) => step.step_number === influencer.sequence_step - 1,
-                        );
-                        const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
-                        const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
-                        const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
-
-                        return (
-                            <SequenceRow
-                                key={influencer.id}
-                                sequenceInfluencer={influencer}
-                                lastEmail={lastEmail}
-                                nextEmail={nextEmail}
-                                lastStep={lastStep}
-                                nextStep={nextStep}
-                                sequenceSteps={sequenceSteps}
-                                currentTab={currentTab}
-                                isMissingVariables={isMissingVariables}
-                                missingVariables={missingVariables}
-                                setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
-                                templateVariables={templateVariables}
-                                handleStartSequence={handleStartSequence}
-                            />
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
+        <table className="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr className="border-b-2 border-gray-200">
+                    <th className="bg-white px-4">
+                        <input
+                            data-testid="sequence-influencers-select-all"
+                            className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                            type="checkbox"
+                            checked={sequenceInfluencers.length === selection.length && selection.length > 0}
+                            onChange={handleCheckAll}
+                        />
+                    </th>
+                    {columns.map((column) => (
+                        <th
+                            key={column}
+                            className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
+                        >
+                            {t(`sequences.columns.${column}`)}
+                        </th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {sortedInfluencers?.map((influencer) => {
+                    const influencerEmails = sequenceEmails?.filter(
+                        (email) => email.sequence_influencer_id === influencer.id,
+                    );
+                    const lastStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
+                    const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step + 1);
+                    const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
+                    const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
+                    return (
+                        <SequenceRow
+                            key={influencer.id}
+                            sequence={sequence}
+                            sequenceInfluencer={influencer}
+                            lastEmail={lastEmail}
+                            nextEmail={nextEmail}
+                            lastStep={lastStep}
+                            nextStep={nextStep}
+                            sequenceSteps={sequenceSteps}
+                            currentTab={currentTab}
+                            isMissingVariables={isMissingVariables}
+                            missingVariables={missingVariables}
+                            setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
+                            templateVariables={templateVariables}
+                            handleStartSequence={handleStartSequence}
+                            checked={selection.includes(influencer.id)}
+                            onCheckboxChange={handleCheckboxChange}
+                        />
+                    );
+                })}
+            </tbody>
+        </table>
     );
 };
 

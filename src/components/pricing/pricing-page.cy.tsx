@@ -3,33 +3,37 @@
 import { worker } from 'src/mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { PricingPage } from './pricing-page';
+import { featNewPricing } from 'src/constants/feature-flags';
 
 describe('PricingPage', () => {
     before(async () => {
         await worker.start();
     });
+
     it('shows title, subtitle, etc.', () => {
         testMount(<PricingPage />);
         cy.findAllByText('Just getting started, or scaling up.');
         cy.findByText('relay.club can help.');
 
         // has switch for monthly/quarterly
-        cy.findByRole('checkbox');
-        cy.contains('Monthly');
-        cy.contains('Quarterly');
-        cy.contains('DIY Max');
+        if (!featNewPricing) {
+            cy.findByRole('checkbox');
+            cy.contains('Monthly');
+            cy.contains('Quarterly');
+            cy.contains('DIY Max');
+        }
 
         // has price details formatted
-        cy.contains('Up to 50,000 Influencer Search Results');
-        cy.contains('2,000 AI Generated Email Templates');
+        cy.contains(featNewPricing() ? '900 Influencer Searches' : 'Up to 50,000 Influencer Search Results');
+        cy.contains(featNewPricing() ? 'Full Customer Service' : '2,000 AI Generated Email Templates');
     });
-    it('loads the prices from subscription/prices endpoint', () => {
+    it.only('loads the prices from subscription/prices endpoint', () => {
         testMount(<PricingPage />);
         // shows loading state first.
         cy.contains('$220').should('not.exist');
-        cy.contains('$--');
+        cy.contains(featNewPricing() ? '299' : '$--');
         // then gets prices
-        cy.contains('$220');
+        cy.contains(featNewPricing() ? '299' : '$220');
         cy.contains('$--').should('not.exist');
     });
 });

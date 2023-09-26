@@ -39,6 +39,7 @@ next-env.d.ts
 
 # db backup
 backup.sql
+supabase/seed.sql
 
 # cypress
 cypress/videos
@@ -52,3 +53,7 @@ public/mockServiceWorker.js
 # Google API Key
 src/utils/google/credentials.json
 email-server/.env
+.history
+supabase/supabase.code-workspace
+supabase/supabase/
+.env

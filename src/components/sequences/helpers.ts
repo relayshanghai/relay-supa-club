@@ -1,4 +1,10 @@
-import type { TemplateVariableInsert } from 'src/utils/api/db';
+import type {
+    InfluencerSocialProfileRow,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+    TemplateVariableInsert,
+} from 'src/utils/api/db';
+import type { CreatorReport } from 'types';
 
 /** 
  will leave out the missing variables and wrap them with `**variableName**`  
@@ -25,4 +31,63 @@ export const fillInTemplateVariables = (email: string, templateVariables: Templa
 
 export const replaceNewlinesAndTabs = (text: string) => {
     return text.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+};
+
+// get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
+export const getRelevantTags = (report?: CreatorReport) => {
+    if (!report || !report.user_profile.relevant_tags) {
+        return [];
+    }
+    const relevantTags = report.user_profile.relevant_tags;
+    return relevantTags.slice(0, 3).map((tag) => tag.tag);
+};
+
+/**
+ * Updates the sequence_influencer with the social profile data and the report data if available
+ */
+export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
+    sequenceInfluencer,
+    socialProfile,
+    report,
+    updateSequenceInfluencer,
+    company_id,
+}: {
+    sequenceInfluencer: SequenceInfluencer | null;
+    socialProfile?: InfluencerSocialProfileRow;
+    report?: CreatorReport;
+    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
+    company_id: string;
+}) => {
+    if (!sequenceInfluencer || !company_id || !socialProfile || !report) {
+        return;
+    }
+
+    // for now, what we need from the social profile is the id, email, tags
+    const updatedValues = {
+        id: sequenceInfluencer.id,
+        influencer_social_profile_id: socialProfile.id,
+        email: socialProfile.email,
+        tags: getRelevantTags(report),
+        social_profile_last_fetched: new Date().toISOString(),
+        company_id,
+    };
+
+    if (
+        JSON.stringify(updatedValues.tags) === JSON.stringify(sequenceInfluencer.tags) &&
+        updatedValues.influencer_social_profile_id === sequenceInfluencer.influencer_social_profile_id &&
+        updatedValues.email === sequenceInfluencer.email
+    ) {
+        return;
+    }
+
+    await updateSequenceInfluencer(updatedValues);
+};
+
+export const wasFetchedWithinMinutes = (
+    now = new Date().getTime(),
+    sequenceInfluencer: SequenceInfluencer,
+    timeDifference: number,
+) => {
+    const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
+    return now - socialProfileLastFetched < timeDifference; // 10 minutes
 };

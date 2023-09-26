@@ -6,69 +6,79 @@ import { useCompany } from './use-company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { limiter } from 'src/utils/limiter';
-import type { eventKeys } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
+import type { Influencer } from 'pages/boostbot';
+import { getFulfilledData } from 'src/utils/utils';
 
-export const useBoostbot = () => {
+type UseBoostbotProps = {
+    abortSignal?: AbortController['signal'];
+};
+
+// Majority of these requests will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
+export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { profile } = useUser();
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
-        async (influencerIds: string[]) => {
+        async (influencersToUnlock: Influencer[], freeOfCharge = false) => {
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+
+            const influencersPromises = influencersToUnlock.map(({ user_id, url }) => {
+                const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
+                const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
+
+                const reportQuery: CreatorsReportGetQueries = {
+                    platform: platform,
+                    creator_id: user_id,
+                    company_id: company.id,
+                    user_id: profile.id,
+                    track: SearchAnalyzeInfluencer.eventName,
+                    source: freeOfCharge ? 'boostbot' : 'default',
+                };
+
+                return limiter.schedule(() =>
+                    nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
+                        'creators/report',
+                        reportQuery,
+                    ),
+                );
+            });
+
+            const influencersResults = await Promise.allSettled(influencersPromises);
+
+            return getFulfilledData(influencersResults);
+        },
+        [profile, company],
+    );
+
+    const performFetch = useCallback(
+        async <T, B>(endpoint: string, body: B): Promise<T> => {
             try {
-                if (!company?.id || !profile?.id) throw new Error('No company or profile found');
-
-                const influencersPromises = influencerIds.map((influencerId) => {
-                    const reportQuery = {
-                        // TODO: Right now only handling instagram, make platform dynamic
-                        platform: 'instagram' as CreatorPlatform,
-                        creator_id: influencerId,
-                        company_id: company.id,
-                        user_id: profile.id,
-                        track: SearchAnalyzeInfluencer.eventName as eventKeys,
-                    };
-
-                    return limiter.schedule(() =>
-                        nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
-                            'creators/report',
-                            reportQuery,
-                        ),
-                    );
+                const response = await nextFetch<T>(`boostbot/${endpoint}`, {
+                    signal: abortSignal,
+                    method: 'POST',
+                    body,
                 });
 
-                return await Promise.all(influencersPromises);
+                return response;
             } catch (error) {
                 clientLogger(error, 'error');
                 throw error;
             }
         },
-        [profile, company],
+        [abortSignal],
     );
-
-    const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
-        try {
-            const response = await nextFetch<T>(`boostbot/${endpoint}`, { method: 'POST', body });
-
-            // TODO: remove log when done testing
-            // eslint-disable-next-line no-console
-            console.log('endpoint, response :>> ', endpoint, response);
-            return response;
-        } catch (error) {
-            clientLogger(error, 'error');
-            throw error;
-        }
-    };
 
     const getTopics = useCallback(
         async (productDescription: string) =>
             await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
                 productDescription,
             }),
-        [],
+        [performFetch],
     );
 
     const getRelevantTopics = useCallback(
@@ -77,7 +87,7 @@ export const useBoostbot = () => {
                 topics,
                 platform,
             }),
-        [],
+        [performFetch],
     );
 
     const getTopicClusters = useCallback(
@@ -86,16 +96,21 @@ export const useBoostbot = () => {
                 productDescription,
                 topics,
             }),
-        [],
+        [performFetch],
     );
 
     const getInfluencers = useCallback(
-        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) =>
-            await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+
+            return await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
                 topicClusters,
                 platform,
-            }),
-        [],
+                user_id: profile.id,
+                company_id: company.id,
+            });
+        },
+        [performFetch, company, profile],
     );
 
     return {

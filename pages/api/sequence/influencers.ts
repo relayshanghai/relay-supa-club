@@ -6,14 +6,7 @@ import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-infl
 import { db } from 'src/utils/supabase-client';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
-    iqdata_id?: string;
-    influencer_id?: string;
-    name?: string | null;
     manager_first_name: string;
-    username?: string;
-    avatar_url?: string | null;
-    url?: string;
-    platform?: string;
     address?: Addresses['Update'] | null;
     manager: {
         id: string | null;

@@ -1,38 +1,47 @@
 /* eslint-disable complexity */
 import { useTranslation } from 'react-i18next';
-import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import Link from 'next/link';
-import { imgProxy } from 'src/utils/fetcher';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useState } from 'react';
 import type { SetStateAction } from 'react';
-import { TableInlineInput } from '../library/table-inline-input';
+import { useEffect, useState } from 'react';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AlertCircleOutline, Clock, EmailOpenOutline, Send, Brackets, DeleteOutline, SendOutline } from '../icons';
+import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
 import { Tooltip } from '../library';
+import { TableInlineInput } from '../library/table-inline-input';
 import { EMAIL_STATUS_STYLES } from './constants';
 
-import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
+import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
+import { EmailPreviewModal } from './email-preview-modal';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { clientLogger } from 'src/utils/logger-client';
+import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
+import { useReport } from 'src/hooks/use-report';
+import { useCompany } from 'src/hooks/use-company';
+import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
 
 interface SequenceRowProps {
-    sequenceInfluencer: SequenceInfluencer;
+    sequence?: Sequence;
+    sequenceInfluencer: SequenceInfluencerManagerPage;
     lastEmail?: SequenceEmail;
     nextEmail?: SequenceEmail;
     lastStep?: SequenceStep;
     nextStep?: SequenceStep;
     sequenceSteps: SequenceStep[];
-    currentTab: SequenceInfluencer['funnel_status'];
+    currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
+    onCheckboxChange?: (id: string) => void;
+    checked?: boolean;
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
 const Icons = {
@@ -50,32 +59,77 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
         : sequenceEmail?.email_delivery_status;
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
+    sequence,
     sequenceInfluencer,
     lastEmail,
     nextEmail,
     lastStep,
     nextStep,
-    sequenceSteps,
     currentTab,
     missingVariables,
     isMissingVariables,
     setShowUpdateTemplateVariables,
     templateVariables,
     handleStartSequence,
+    onCheckboxChange,
+    checked,
 }) => {
-    const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
-        sequenceInfluencer && [sequenceInfluencer.sequence_id],
-    );
+    const {
+        sequenceInfluencers,
+        updateSequenceInfluencer,
+        deleteSequenceInfluencers: deleteSequenceInfluencer,
+        refreshSequenceInfluencers,
+    } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
+    const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
+    const missingSocialProfileInfo =
+        !sequenceInfluencer.social_profile_last_fetched || !sequenceInfluencer.influencer_social_profile_id;
+    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
+
+    const { report, socialProfile } = useReport({
+        platform: sequenceInfluencer.platform,
+        creator_id: sequenceInfluencer.iqdata_id,
+        suppressFetch: !shouldFetch,
+    });
+    const { company } = useCompany();
+
+    useEffect(() => {
+        // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company?.id ?? '',
+        });
+    }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+
     const { profile } = useUser();
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);
+    const { track } = useRudderstackTrack();
+
+    const handleChange = () => {
+        onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
+    };
 
     const handleEmailUpdate = async (email: string) => {
         try {
+            const otherInfluencersEmails = sequenceInfluencers.map((influencer) => influencer.email);
+            const uniqueEmail = !otherInfluencersEmails.includes(email);
+            track(EnterInfluencerEmail, {
+                sequence_id: sequence?.id || '',
+                influencer_id: sequenceInfluencer.id,
+                existing_email: sequenceInfluencer.email || '',
+                sequence_name: sequence?.name || '',
+                email: email,
+                unique_email: uniqueEmail,
+            });
+            if (!uniqueEmail) {
+                toast.error(t('sequences.emailAlreadyExists'));
+                return;
+            }
             const updatedSequenceInfluencer = await updateSequenceInfluencer({
                 id: sequenceInfluencer.id,
                 email,
@@ -93,21 +147,71 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             const results = await handleStartSequence([sequenceInfluencer]);
             const failed = results.filter((result) => result.error);
             const succeeded = results.filter((result) => !result.error);
+
+            track(StartSequenceForInfluencer, {
+                influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                sequence_id: sequenceInfluencer.sequence_id,
+                sequence_influencer_id: sequenceInfluencer.id,
+                is_success: true,
+                sent_success: succeeded,
+                sent_success_count: succeeded.length,
+                sent_failed: failed,
+                sent_failed_count: failed.length,
+            });
+
             if (succeeded.length > 0) {
                 toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
             }
             if (failed.length > 0) {
                 toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+                track(StartSequenceForInfluencer, {
+                    influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                    sequence_id: sequenceInfluencer.sequence_id,
+                    sequence_influencer_id: sequenceInfluencer.id,
+                    is_success: false,
+                    extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule' },
+                });
             }
         } catch (error: any) {
+            track(StartSequenceForInfluencer, {
+                influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                sequence_id: sequenceInfluencer.sequence_id,
+                sequence_influencer_id: sequenceInfluencer.id,
+                is_success: false,
+                extra_info: { error: String(error) },
+            });
             toast.error(error?.message ?? '');
         }
+
         setSendingEmail(false);
     };
-    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
-        deleteSequenceInfluencer(sequenceInfluencerId);
-        toast.success(t('sequences.influencerDeleted'));
+    const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
+        try {
+            await deleteSequenceInfluencer([sequenceInfluencerId]);
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId),
+            );
+            toast.success(t('sequences.influencerDeleted'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.influencerDeleteFailed'));
+        }
     };
+
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+
+    const sequenceSendTooltipTitle = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables')
+        : t('sequences.sequenceSendTooltip');
+    const sequenceSendTooltipDescription = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.sequenceSendTooltipDescription');
     return (
         <>
             <EmailPreviewModal
@@ -117,25 +221,32 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 templateVariables={templateVariables}
             />
             <tr className="border-b-2 border-gray-200 bg-white text-sm">
+                <td className="display-none items-center whitespace-nowrap text-center align-middle">
+                    <input
+                        data-testid="influencer-checkbox"
+                        className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                        checked={checked}
+                        onChange={handleChange}
+                        type="checkbox"
+                    />
+                </td>
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <div>
-                            <img
-                                className="inline-block h-14 w-14 bg-slate-300"
-                                src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
-                                alt={`Influencer avatar ${influencerSocialProfile?.name}`}
-                            />
-                        </div>
+                        <img
+                            className="inline-block h-14 w-14 bg-slate-300"
+                            src={imgProxy(sequenceInfluencer.avatar_url ?? '')}
+                            alt={`Influencer avatar ${sequenceInfluencer.name}`}
+                        />
 
                         <div className="flex flex-col">
-                            <p className="font-semibold text-primary-600">{influencerSocialProfile?.name ?? ''}</p>
+                            <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
-                                href={influencerSocialProfile?.url ?? ''}
+                                href={sequenceInfluencer.url ?? ''}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
-                                @{influencerSocialProfile?.username ?? ''}
+                                @{sequenceInfluencer.username ?? ''}
                             </Link>
                         </div>
                     </div>
@@ -143,22 +254,30 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            <TableInlineInput
-                                value={email}
-                                onSubmit={handleEmailUpdate}
-                                textPromptForMissingValue={t('sequences.addEmail')}
-                            />
+                            {sequenceInfluencer.influencer_social_profile_id ? (
+                                <TableInlineInput
+                                    value={email}
+                                    onSubmit={handleEmailUpdate}
+                                    textPromptForMissingValue={t('sequences.addEmail')}
+                                />
+                            ) : (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                            )}
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.tags?.map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
+                            {sequenceInfluencer.influencer_social_profile_id ? (
+                                sequenceInfluencer.tags?.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))
+                            ) : (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                            )}
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
@@ -171,16 +290,29 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={
-                                    isMissingVariables
-                                        ? t('sequences.missingRequiredTemplateVariables_variables', {
-                                              variables: missingVariables,
-                                          })
-                                        : ''
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltip')
+                                        : sequenceSendTooltipTitle
+                                }
+                                detail={
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltipDescription')
+                                        : sequenceSendTooltipDescription
+                                }
+                                highlight={
+                                    !sequenceInfluencer.influencer_social_profile_id
+                                        ? t('sequences.invalidSocialProfileTooltipHighlight')
+                                        : undefined
                                 }
                                 position="left"
                             >
                                 <Button
-                                    disabled={!sequenceInfluencer?.email || sendingEmail}
+                                    disabled={
+                                        isMissingSequenceSendEmail ||
+                                        !sequenceInfluencer?.email ||
+                                        sendingEmail ||
+                                        !sequenceInfluencer.influencer_social_profile_id
+                                    }
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
@@ -190,22 +322,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
-                            <Button
-                                data-testid="show-all-email-previews-button"
-                                className="ml-2"
-                                variant="ghost"
-                                disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
-                                onClick={() => setShowEmailPreview(sequenceSteps)}
-                            >
-                                <Brackets className="h-5 w-5" />
-                            </Button>
-                            <button
-                                className="min-w-max"
-                                onClick={() => setShowDeleteConfirmation(true)}
-                                data-testid="delete-influencer-button"
-                            >
-                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
-                            </button>
                         </td>
                     </>
                 )}
@@ -275,12 +391,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     </>
                 )}
             </tr>
-            <DeleteFromSequenceModal
-                show={showDeleteConfirmation}
-                setShow={setShowDeleteConfirmation}
-                deleteInfluencer={handleDeleteInfluencer}
-                sequenceId={sequenceInfluencer.id}
-            />
         </>
     );
 };

@@ -16,16 +16,15 @@ export const PreviewCard = ({
     onSelect?: (message: MessagesGetMessage) => void;
 }) => {
     const { i18n } = useTranslation();
-
     return (
         <div
             onClick={() => {
-                onSelect && onSelect(message)
-                handleGetThreadEmails(message)
+                onSelect && onSelect(message);
+                handleGetThreadEmails(message);
             }}
             className={`${
                 selectedMessage?.id === message.id
-                    ? 'border-2  border-primary-500  text-primary-500'
+                    ? 'border-2  border-primary-500  bg-primary-100 text-primary-500'
                     : 'border-b-2 border-tertiary-200'
             } group flex h-24 cursor-pointer items-center justify-between  p-3 duration-200 hover:bg-tertiary-200 hover:bg-opacity-50 focus:bg-primary-200 ${
                 loadingSelectedMessages && 'disabled'
@@ -43,10 +42,18 @@ export const PreviewCard = ({
                     {message.from.name || message.from.address}
                 </div>
                 <div className="flex items-center justify-between text-xs text-tertiary-400">
-                    <div className={`truncate font-bold ${message.unseen && 'text-primary-500'}`}>
+                    <div
+                        className={`truncate font-bold ${
+                            message.unseen || (selectedMessage?.id === message.id && 'text-primary-500')
+                        }`}
+                    >
                         {message.subject}
                     </div>
-                    <div className="font-base ml-2 min-w-fit">
+                    <div
+                        className={`font-base ${
+                            selectedMessage?.id === message.id && 'text-primary-500'
+                        } ml-2 min-w-fit`}
+                    >
                         {' '}
                         {new Date(message.date).toLocaleDateString(i18n.language, {
                             year: 'numeric',

@@ -2,7 +2,7 @@ import type { SVGProps } from 'react';
 
 export default function FourSquare({ ...props }: SVGProps<SVGSVGElement>) {
     return (
-        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" {...props}>
+        <svg viewBox="0 0 20 20" fill="none" {...props}>
             <g>
                 <path
                     d="M3.75 6C3.75 4.75736 4.75736 3.75 6 3.75H8.25C9.49264 3.75 10.5 4.75736 10.5 6V8.25C10.5 9.49264 9.49264 10.5 8.25 10.5H6C4.75736 10.5 3.75 9.49264 3.75 8.25V6Z"

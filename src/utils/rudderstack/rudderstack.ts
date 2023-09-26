@@ -1,11 +1,12 @@
-import Analytics from '@rudderstack/rudder-sdk-node';
 import type { constructorOptions } from '@rudderstack/rudder-sdk-node';
-import type { ServerContext } from '../api/iqdata';
+import Analytics from '@rudderstack/rudder-sdk-node';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
-import { getUserSession } from '../api/analytics';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
+import type { TrackEvent, TriggerEvent } from '../analytics/types';
+import { getUserSession } from '../api/analytics';
+import type { ServerContext } from '../api/iqdata';
 import { serverLogger } from '../logger-server';
 const disabled = process.env.NEXT_PUBLIC_ENABLE_RUDDERSTACK !== 'true';
 
@@ -23,6 +24,42 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
         dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
         ...options,
     });
+
+/**
+ * Track function that supports events in /src/utils/analytic/events
+ * @note ideally, we will move all tracking events there
+ */
+export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
+    (rudder, session) => (event, payload) => {
+        if (disabled) return;
+
+        const trigger: TriggerEvent = (eventName, payload) => {
+            if (!session) {
+                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+            }
+
+            const trackPayload: Parameters<typeof rudder.track>[0] = {
+                event: eventName,
+                properties: payload,
+            };
+
+            if (session.user_id) {
+                trackPayload.userId = session.user_id;
+            }
+
+            if (!session.user_id && session.anonymous_id) {
+                trackPayload.anonymousId = session.anonymous_id;
+            }
+
+            if (!trackPayload.userId && !trackPayload.anonymousId) {
+                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+            }
+
+            rudder.track(trackPayload);
+        };
+
+        return event(trigger, payload);
+    };
 
 const client = Symbol('Rudderstack Client');
 
@@ -59,7 +96,7 @@ export class Rudderstack {
 
     serverContext: ServerContext | null = null;
 
-    session: Awaited<ReturnType<ReturnType<typeof getUserSession>>> | null = null;
+    session: (Awaited<ReturnType<ReturnType<typeof getUserSession>>> & { anonymous_id?: string }) | null = null;
 
     context: RudderstackContext | null = null;
 
@@ -72,7 +109,9 @@ export class Rudderstack {
     }
 
     /**
+     * Identifies the current user for the incoming event to be tracked
      * @todo put in (server-side) middleware
+     * @todo decouple from supabase
      */
     async identify(context: ServerContext) {
         if (this.session || disabled) return;
@@ -88,16 +127,39 @@ export class Rudderstack {
         this.serverContext = context;
     }
 
-    // @todo support multiple tracking
+    async identifyWithProfile(userId: string) {
+        this.getClient().identify({
+            userId,
+        });
+
+        this.session = {
+            user_id: userId,
+        };
+    }
+
+    async identifyWithAnonymousID(anonymousId: string) {
+        this.getClient().identify({
+            anonymousId,
+        });
+
+        this.session = {
+            anonymous_id: anonymousId,
+        };
+    }
+
+    getIdentity() {
+        return this.session;
+    }
+
+    /**
+     * Starts tracking an event
+     * @todo support multiple tracking
+     */
     track(params: RudderstackContext) {
         if (disabled) return;
 
         if (this.context && this.context.event !== params.event) {
-            serverLogger(
-                `Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`,
-                'error',
-                true,
-            );
+            serverLogger(`Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`);
             return;
         }
 
@@ -114,10 +176,9 @@ export class Rudderstack {
         this.context = params;
     }
 
-    getContext() {
-        return this.context;
-    }
-
+    /**
+     * Sends the tracked event to rudderstaack
+     */
     async send(payload?: ServerContext['metadata']) {
         if (this.session === null || this.serverContext === null || this.context === null) {
             return;

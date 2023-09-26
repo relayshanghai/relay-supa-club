@@ -20,7 +20,7 @@ describe('<SearchPage />', () => {
             </SearchProvider>,
         );
         cy.contains(
-            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
+            'We found 8.43M+ influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
         );
         cy.contains('T-Series');
     });

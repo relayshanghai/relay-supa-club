@@ -9,10 +9,14 @@ import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { FormWizard } from './signup/form-wizard';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { PasswordReset } from 'src/utils/analytics/events';
+import { SignupStarted } from 'src/utils/analytics/events';
 
 const LoginPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { track } = useRudderstackTrack();
     const { email: emailQuery } = router.query;
     const { login, supabaseClient, profile, refreshProfile } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
@@ -26,11 +30,11 @@ const LoginPage = () => {
     });
 
     useEffect(() => {
-        if (profile?.email) {
+        if (profile) {
             toast.success(t('login.loginSuccess'));
-            router.push('/dashboard');
+            router.push('/boostbot');
         }
-    }, [profile?.email, router, t]);
+    }, [profile, router, t]);
 
     useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
@@ -43,7 +47,7 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password);
-            refreshProfile();
+            await refreshProfile();
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
             setLoggingIn(false);
@@ -64,6 +68,7 @@ const LoginPage = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
+            track(PasswordReset);
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
@@ -106,7 +111,11 @@ const LoginPage = () => {
             <div className="mb-2 mt-6 text-center">
                 <p className="inline text-sm text-gray-500">
                     {t('login.dontHaveAnAccount')}{' '}
-                    <Link href="/signup" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                    <Link
+                        onClick={() => track(SignupStarted)}
+                        href="/signup"
+                        className="inline cursor-pointer text-primary-500 hover:text-primary-700"
+                    >
                         <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
                             {t('login.signUp')}
                         </Button>

@@ -98,7 +98,7 @@ export default function Register() {
             if (!loginRes.user?.id) {
                 throw new Error('Error logging in');
             }
-            router.push('/dashboard');
+            router.push('/boostbot');
         } catch (error: any) {
             if (
                 error?.message === 'User already registered' ||

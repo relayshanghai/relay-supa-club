@@ -3,6 +3,7 @@ import type {
     CreatorPlatform,
     DatabaseWithCustomTypes,
     InfluencerOutreachStatus,
+    InfluencerStepTypes,
     SubscriptionStatus,
     UsageType,
 } from 'types';
@@ -86,6 +87,7 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
+    name: InfluencerStepTypes;
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
@@ -103,8 +105,8 @@ export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
     Row: Database['public']['Tables']['sequence_emails']['Row'] & {
-        email_delivery_status: EmailDeliveryStatus;
-        email_tracking_status: EmailTrackingStatus;
+        email_delivery_status: EmailDeliveryStatus | null;
+        email_tracking_status: EmailTrackingStatus | null;
     };
     Insert: Database['public']['Tables']['sequence_emails']['Insert'] & {
         email_delivery_status?: EmailDeliveryStatus;
@@ -134,9 +136,10 @@ export type FunnelStatus =
     | 'Posted';
 
 type SequenceInfluencerDetailedTypes = {
-    /** 0 means not sent. 1 means first step sent, awaiting 2. */
+    /** 0 means either not sent or first step (outreach) sent. 1 means Follow-up 1 was sent. */
     sequence_step?: number;
     funnel_status?: FunnelStatus;
+    platform?: CreatorPlatform;
 };
 
 export type SequenceInfluencersTable = Database['public']['Tables']['sequence_influencers'] & {
@@ -146,7 +149,14 @@ export type SequenceInfluencersTable = Database['public']['Tables']['sequence_in
 };
 
 export type SequenceInfluencer = SequenceInfluencersTable['Row'];
-export type SequenceInfluencerInsert = SequenceInfluencersTable['Insert'];
+type SequenceInfluencerInsertRequiredFields = {
+    name: string;
+    username: string;
+    avatar_url: string;
+    url: string;
+    platform: CreatorPlatform;
+};
+export type SequenceInfluencerInsert = SequenceInfluencersTable['Insert'] & SequenceInfluencerInsertRequiredFields;
 export type SequenceInfluencerUpdate = SequenceInfluencersTable['Update'];
 
 export type UsagesTable = Database['public']['Tables']['usages'] & {

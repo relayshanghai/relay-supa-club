@@ -23,6 +23,10 @@ env:
     NEXT_PUBLIC_STRIPE_PRICE_QUARTERLY_DIY_MAX: price_1MNBZ8As9LEfZQ294QasjNYv
     NEXT_PUBLIC_STRIPE_PRICE_YEARLY_DIY_MAX: price_1MNBZ8As9LEfZQ29vph62DoE
     NEXT_PUBLIC_STRIPE_PRODUCT_ID_VIP: prod_NJ1l6867a0bkhL
+    NEXT_PUBLIC_STRIPE_PRODUCT_DISCOVERY: prod_OSxVPMxAcggFWP
+    NEXT_PUBLIC_STRIPE_PRODUCT_OUTREACH: prod_OSxdtb3ukjSg08
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DISCOVERY: price_1Ng1a3F5PN4woVWo9KP4S4oM
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_OUTREACH: price_1Ng1iHF5PN4woVWogNiPDp2I
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
@@ -31,8 +35,8 @@ env:
     NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-    NEXT_PUBLIC_FEAT_RECOMMENDED: true
     NEXT_PUBLIC_FEAT_EMAIL: true
+    NEXT_PUBLIC_FEAT_NEW_PRICING: true
     SENTRY_IGNORE_API_RESOLUTION_ERROR: 1
     GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
     GOOGLE_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_PRIVATE_KEY_ID }}
@@ -73,6 +77,8 @@ jobs:
                   cache: 'npm'
 
             - run: npm ci
+            - run: npm run lint
+            - run: npx prettier . --check
             - run: npm run build
             - run: npm run test-cypress-unit
 
@@ -91,13 +97,16 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.77.9
+                  version: 1.88.0
 
             - name: Verify supabase cli version
               run: supabase -v
 
             - name: Create supabase config file
               run: cp supabase/config.toml.example supabase/config.toml
+
+            - name: Create seed file
+              run: cp supabase/seed.example supabase/seed.sql
 
             - name: Start Supabase local development setup
               run: supabase start

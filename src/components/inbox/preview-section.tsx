@@ -16,13 +16,13 @@ export const PreviewSection = ({
     onSelect?: (message: MessagesGetMessage) => void;
 }) => {
     return (
-        <div className="h-full overflow-y-auto border-r-2 border-tertiary-200">
+        <div className="h-full overflow-y-auto border-r-2 border-tertiary-200 bg-white">
             {messages.map((message) => (
                 <div key={message.id}>
                     <PreviewCard
                         onSelect={onSelect}
                         message={message}
-                        selectedMessage={selectedMessages ? selectedMessages[0] : null}
+                        selectedMessage={selectedMessages ? selectedMessages[selectedMessages.length - 1] : null}
                         handleGetThreadEmails={handleGetThreadEmails}
                         loadingSelectedMessages={loadingSelectedMessages}
                     />

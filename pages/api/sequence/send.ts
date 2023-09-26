@@ -17,7 +17,7 @@ export type SequenceSendPostBody = {
     sequenceInfluencers: SequenceInfluencer[];
 };
 
-type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
+export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
 
 export type SequenceSendPostResponse = SendResult[];
 
@@ -34,6 +34,8 @@ const sendAndInsertEmail = async ({
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
+    } else if (!sequenceInfluencer.influencer_social_profile_id) {
+        throw new Error('No influencer social profile id');
     }
     const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
         getInfluencerSocialProfileByIdCall,
@@ -42,20 +44,25 @@ const sendAndInsertEmail = async ({
     if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
     }
-    const recentVideoTitle = influencerSocialProfile.recent_video_title;
-    if (!recentVideoTitle) {
+    const recentPostTitle = influencerSocialProfile.recent_post_title;
+    if (!recentPostTitle) {
         throw new Error('No recent video title');
+    }
+    const recentPostURL = influencerSocialProfile.recent_post_url;
+    if (!recentPostURL) {
+        throw new Error('No recent post url');
     }
     const params = {
         ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
         // fill in the params not in the template variables
         influencerAccountName,
-        recentVideoTitle,
+        recentPostTitle,
+        recentPostURL,
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
     const sendAt = new Date();
-    sendAt.setHours(sendAt.getHours() + wait_time_hours);
+    sendAt.setTime(sendAt.getTime() + wait_time_hours * 60 * 60 * 1000);
     const emailSendAt = sendAt.toISOString();
 
     const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
@@ -102,7 +109,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                     results.push(result);
                 } catch (error: any) {
-                    serverLogger(error, 'error');
+                    serverLogger(error);
                     results.push({
                         sequenceInfluencerId: sequenceInfluencer.id,
                         error: error?.message ?? 'Something went wrong sending the email',
@@ -119,7 +126,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                 });
             }
         } catch (error: any) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             results.push({
                 sequenceInfluencerId: sequenceInfluencer.id,
                 error: error?.message ?? '',

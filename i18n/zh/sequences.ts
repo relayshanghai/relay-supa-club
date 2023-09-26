@@ -1,18 +1,26 @@
 const sequences = {
     sequences: '邮件进程管理',
-    updateTemplateVariables: '更新邮模版件参数',
+    subtitle: '我们系统会将定制化的邮件模板定时发送给KOL，这个定制化的联络流程可以大大提升回复率。',
+    updateTemplateVariables: '查看邮件进程模版',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
     inSequence: '序列中',
     ignored: '被忽略',
     totalInfluencers: 'KOL总数',
     influencerDeleted: 'KOL已成功从序列中删除',
+    influencerDeleteFailed: 'KOL从序列中删除失败',
     openRate: '打开率',
     replyRate: '回复率',
     bounceRate: '退信率',
+    sequenceSendTooltip: '发送序列邮件',
+    sequenceSendTooltipDescription: '这将会安排发送您的序列邮件给这位KOL。',
     totalInfluencersTooltip: 'KOL总数',
     totalInfluencersTooltipDescription:
         '这是您添加到邮件进程管理器的所有KOL数量，包括需要急需回复、联络中和未回复的KOL。',
+    outreachPlanUpgradeTooltip: '仅限拓展方案用户使用',
+    outreachPlanUpgradeTooltipDescription: `此功能仅适用于当前使用拓展方案的付费用户。
+
+    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至 amy.hu@relay.club咨询拓展方案。`,
     openRateTooltip: '邮件打开率',
     openRateTooltipDescription:
         '已发送的邮件中被打开查看邮件占比。由于某些电子邮件客户端禁用外部跟踪，这个数字可能不是百分之百的准确。',
@@ -98,17 +106,6 @@ const sequences = {
     产品介绍：“The Mi Band 8 is our latest affordable smart watch
     and fitness tracker.”
     这将会直接显示于您的电子邮件模版中。`,
-    productFeatures: '产品亮点',
-    productFeaturesPlaceholder: `It offers a full-color touch display,  sleep, exercise and blood oxygen tracking and has a battery life of over 2 weeks!`,
-    productFeaturesTooltip: '产品亮点',
-    productFeaturesTooltipDescription: `描述您的产品最重要或最亮点的功能，让KOL了解您的产品与众不同之处。
-    描述您的产品最重要或最亮点的功能，让KOL了解您的产品与众不同之处。
-    以 "It offers"、"It can "或 "With "开头。
-
-    例如
-    ”It offers a full-color touch display, sleep, exercise and blood oxygen tracking, and has a
-    battery life of over 2 weeks!”
-    这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
     productPriceTooltip: '产品价格',
     productPriceTooltipDescription: `
@@ -129,11 +126,12 @@ const sequences = {
     influencerAccountName: 'KOL名字（或账号）',
     influencerAccountNameTooltip: `KOL名字（或账号）`,
     influencerAccountNameTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
-    recentVideoTitle: '最新发布内容',
-    recentVideoTitleTooltip: '最新发布内容',
-    recentVideoTitleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
+    recentPostTitle: '最新发布内容',
+    recentPostTitleTooltip: '最新发布内容',
+    recentPostTitleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
     wellHandleThisOne: `无需输入此项，我们来搞定！`,
-    missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
+    missingRequiredTemplateVariables: '缺少必填的邮件模版参数',
+    missingRequiredTemplateVariables_variables: '缺少必填的邮件模版参数: {{variables}}',
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
@@ -146,6 +144,10 @@ const sequences = {
         '4th Follow-up': '第四次跟进',
     },
     delete: {
+        deleteSequence_name: '删除 {{name}}?',
+        deleteSequenceDescription:
+            '删除邮件进程管理项目后，系统将不再向此项目中的KOL发送预定邮件。也不再发送任何进一步的信息。已回复且位于“KOL管理跟进“中的KOL将被保留，但处于“急需回复“、”联络中“或”未回复“阶段的KOL将被删除。确定要删除您的邮件进程管理项目吗？',
+        okaySequence: '是的，删除此进程管理项目',
         title: '是否把KOL从此邮件进程管理项目中移除？',
         description:
             '此操作将把KOL从此邮件进程管理项目中移除，并不再向TA发送后续的信息。完成操作后如需要再次添加该KOL，须重新将TA添加至邮件进程管理项目中。',
@@ -156,5 +158,9 @@ const sequences = {
     deleteConfirm: '确认删除？',
     deleteSuccess: '删除成功',
     deleteFail: '删除失败',
+    emailAlreadyExists: '邮箱已存在',
+    invalidSocialProfileTooltip: '正在更新红人报告',
+    invalidSocialProfileTooltipDescription: '正在获取该KOL的最新数据，请耐心等待，预计将在15分钟内完成。',
+    invalidSocialProfileTooltipHighlight: '请稍后再试一次。',
 };
 export default sequences;

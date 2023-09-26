@@ -77,6 +77,7 @@ export const useSubscription = () => {
     }, [company?.id, mutate]);
 
     const cancelSubscription = useCallback(async () => {
+        if (!subscription) throw new Error('No subscription found');
         if (!company?.id) throw new Error('No company found');
         const body: SubscriptionCancelPostBody = {
             company_id: company?.id,
@@ -85,9 +86,12 @@ export const useSubscription = () => {
             method: 'post',
             body: JSON.stringify(body),
         });
-        mutate();
+
+        const status: SubscriptionGetResponse['status'] = 'canceled';
+        mutate({ ...subscription, status });
+
         return res;
-    }, [company?.id, mutate]);
+    }, [company?.id, mutate, subscription]);
 
     return {
         subscription,

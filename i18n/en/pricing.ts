@@ -9,18 +9,23 @@ const pricing = {
     annually: 'Annually',
     perMonth: '/ month',
     usdPerMonth: 'USD / Month',
+    rmbPerMonth: 'RMB / Month',
     startFreeTrial: 'Start Your Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
     blog: 'blog',
     andLearnHowToGetTheMost: ' and learn how to get the most value out of your subscription.',
 
-    upTo_amount_Searches: 'Up to {{amount}} Influencer Search Results',
+    upTo_amount_Searches: '{{amount}} Influencer Searches',
     amount_InfluencerAudienceReports: '{{amount}} Influencer Audience Reports',
     campaignManagementTool: 'Campaign Management Tool',
     amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
     fullCustomerService: 'Full Customer Service',
+    boostBotSearchAndNormalSearch: 'BoostBot AI Search + Traditional Search',
+    personalEmailAccount: '{{amount}} Personalized Email Account',
+    amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 
+    upgrade: 'Upgrade',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
@@ -50,7 +55,16 @@ const pricing = {
         title: 'Free Trial',
         subTitle: 'Check out what we can offer',
     },
+    discovery: {
+        title: 'DISCOVERY',
+        subTitle: 'From AI Search to Sales: Discover Influencers that Drive E-commerce Success.',
+    },
+    outreach: {
+        title: 'OUTREACH',
+        subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
+    },
     saveUpTo33Percent: 'up to 33% off',
+    beta: 'BETA',
 };
 
 export default pricing;

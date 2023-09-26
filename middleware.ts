@@ -1,11 +1,10 @@
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger-server';
-import { featEmail } from 'src/constants/feature-flags';
 import type { RelayDatabase } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -28,7 +27,7 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return { subscriptionStatus: false, subscriptionEndDate: null };
     }
 };
@@ -73,8 +72,12 @@ const checkOnboardingStatus = async (
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
     } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup') {
-            redirectUrl.pathname = '/dashboard';
+        if (
+            req.nextUrl.pathname === '/' ||
+            req.nextUrl.pathname === '/login' ||
+            req.nextUrl.pathname.includes('/signup')
+        ) {
+            redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
 
@@ -82,25 +85,26 @@ const checkOnboardingStatus = async (
         return res;
     } else if (subscriptionStatus === 'canceled') {
         // if subscription ended only allow access to account page, and subscription endpoints
+        //handle landing page - index page separately
+        if (req.nextUrl.pathname === '/') return res;
         const allowedPaths = [
-            '/',
             '/signup',
+            '/free-trial',
             '/login',
             '/account',
             '/api/subscriptions',
-            '/api/subscriptions/payment-method',
-            '/api/subscriptions/portal',
-            '/api/subscriptions/create',
             '/api/company',
             '/pricing',
+            '/payments',
         ];
-        if (allowedPaths.some((path) => req.nextUrl.pathname === path)) return res;
+        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
                 return NextResponse.redirect(redirectUrl);
             }
-
+            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
             const endDate = new Date(subscriptionEndDate);
             if (endDate < new Date()) {
                 redirectUrl.pathname = '/account';
@@ -109,16 +113,15 @@ const checkOnboardingStatus = async (
         }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {
+        if (
+            req.nextUrl.pathname.includes('/api/company') ||
+            req.nextUrl.pathname.includes('/api/subscriptions') ||
+            req.nextUrl.pathname.includes('/free-trial')
+        ) {
             return res;
         }
-        const curStep = new URL(req.url).searchParams.get('curStep');
-        if (curStep === '5') {
-            return res;
-        }
-        redirectUrl.pathname = '/signup';
-        redirectUrl.searchParams.set('curStep', '5');
 
+        redirectUrl.pathname = '/free-trial';
         return NextResponse.redirect(redirectUrl);
     }
 
@@ -168,17 +171,6 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    // don't allow users to use the email pages/apis before they are ready
-    if (!featEmail()) {
-        if (
-            req.nextUrl.pathname.includes('email-engine') ||
-            req.nextUrl.pathname.includes('sequences') ||
-            req.nextUrl.pathname.includes('inbox') ||
-            req.nextUrl.pathname.includes('influencer-manager')
-        ) {
-            return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
-        }
-    }
     if (req.nextUrl.pathname === '/api/ping') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
@@ -229,7 +221,8 @@ export const config = {
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
          * - /api/webhooks/* (webhook routes)
+         * - free-trial - (free-trial page)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|free-trial).*)',
     ],
 };

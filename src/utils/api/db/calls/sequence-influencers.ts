@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceInfluencerUpdate, SequenceInfluencerInsert } from '../types';
+import type { RelayDatabase, SequenceInfluencerInsert, SequenceInfluencerUpdate } from '../types';
 
 export const getSequenceInfluencerByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
     if (!id) {
@@ -88,9 +88,8 @@ export const createSequenceInfluencerCall =
         const { data: existingEmail } = await supabaseClient
             .from('sequence_influencers')
             .select('email')
-            .limit(1)
             .match({ email: sequenceInfluencer.email, company_id: sequenceInfluencer.company_id })
-            .single();
+            .maybeSingle();
         if (existingEmail) {
             throw new Error('Email already exists for this company');
         }
@@ -103,7 +102,7 @@ export const createSequenceInfluencerCall =
         return data;
     };
 
-export const deleteSequenceInfluencerCall = (supabaseClient: RelayDatabase) => async (id: string) => {
-    const { error } = await supabaseClient.from('sequence_influencers').delete().eq('id', id);
+export const deleteSequenceInfluencersCall = (supabaseClient: RelayDatabase) => async (ids: string[]) => {
+    const { error } = await supabaseClient.from('sequence_influencers').delete().in('id', ids);
     if (error) throw error;
 };

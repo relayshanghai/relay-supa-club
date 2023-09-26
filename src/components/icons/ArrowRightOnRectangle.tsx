@@ -2,19 +2,11 @@ import type { SVGProps } from 'react';
 
 export default function ArrowRightOnRectangle(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="icon"
-            {...props}
-        >
+        <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
+                d="M8.75 3.75L8.75 1.25M8.75 1.25H6.25M8.75 1.25L5.41667 4.58333M4.16667 2.08333H3.25C2.54993 2.08333 2.1999 2.08333 1.93251 2.21958C1.69731 2.33942 1.50608 2.53064 1.38624 2.76585C1.25 3.03323 1.25 3.38327 1.25 4.08333V6.75C1.25 7.45007 1.25 7.8001 1.38624 8.06749C1.50608 8.30269 1.69731 8.49392 1.93251 8.61376C2.1999 8.75 2.54993 8.75 3.25 8.75H5.91667C6.61673 8.75 6.96677 8.75 7.23415 8.61376C7.46936 8.49392 7.66058 8.30269 7.78042 8.06749C7.91667 7.8001 7.91667 7.45007 7.91667 6.75V5.83333"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
             />
         </svg>
     );

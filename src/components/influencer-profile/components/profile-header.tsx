@@ -62,7 +62,7 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
                                 <div className="text-lg font-semibold tracking-tight text-gray-400">{profile.name}</div>
                                 <div className="mt-1 inline-flex items-center justify-start gap-2.5">
                                     <span className="relative h-3.5 w-3.5">
-                                        <EmailOutlineColored />
+                                        <EmailOutlineColored className="stroke-primary-500" />
                                     </span>
                                     <span className="relative h-3.5 w-3.5">
                                         <TiktokNoBg />

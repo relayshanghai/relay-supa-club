@@ -129,20 +129,20 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     }, [handleItemSelect, handleItemRemove, isItemSelected, options, clearSelection, multiple]);
 
     return (
-        <>
+        <section className="flex w-full flex-col gap-2">
             <p className="text-sm font-semibold text-gray-500">{label}</p>
             <details
                 open={isDropdownOpen}
                 onClick={handleDropdownOpen}
                 onBlur={handleBlur}
-                className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
+                className="relative flex w-full cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
             >
                 <summary
                     tabIndex={0} // <- make this element focusable
                     className={`flex h-full min-w-full flex-row items-center justify-between`}
                 >
                     {props.preIcon ? <div className="pl-2">{props.preIcon}</div> : null}
-                    <div className="flex grow flex-row items-center gap-2 px-3 py-1">{selectedItemPills}</div>
+                    <div className="flex grow flex-row items-center gap-2 px-3 py-0.5">{selectedItemPills}</div>
                     {postIcon}
                 </summary>
                 <ul
@@ -159,6 +159,6 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
                     {items}
                 </ul>
             </details>
-        </>
+        </section>
     );
 };

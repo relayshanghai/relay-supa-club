@@ -31,7 +31,8 @@ export type AudienceGenderWeighted = z.input<typeof audience_gender> | undefined
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
-export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP';
+export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach';
+export type newActiveSubscriptionTier = 'discovery' | 'outreach';
 export type RelayPlan = {
     currency: string;
     prices: {
@@ -48,6 +49,17 @@ export type RelayPlan = {
     };
 };
 
+export type NewRelayPlan = {
+    currency: string;
+    prices: {
+        monthly: string;
+    };
+    profiles: string;
+    searches: string;
+    priceIds: {
+        monthly: string;
+    };
+};
 export interface RelayPlanStripeProduct extends Stripe.Product {
     metadata: RelayAccountPlanMetadata;
 }

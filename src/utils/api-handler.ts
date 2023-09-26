@@ -124,12 +124,12 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
         } catch (error) {
             // if it's a RelayError, allow silencing the log
             if (error instanceof RelayError && error.shouldLog) {
-                serverLogger(error, 'error', error.sendToSentry);
+                serverLogger(error);
             }
 
             // if it's not a RelayError, log it by default
             if (!(error instanceof RelayError)) {
-                serverLogger(error, 'error');
+                serverLogger(error);
             }
 
             const e = createErrorObject(error);
@@ -149,6 +149,7 @@ export const ApiHandler =
         if (req.method === 'POST' && params.postHandler !== undefined) {
             return await exceptionHandler<T>(params.postHandler)(req, res);
         }
+
         if (req.method === 'PUT' && params.putHandler !== undefined) {
             return await exceptionHandler<T>(params.putHandler)(req, res);
         }

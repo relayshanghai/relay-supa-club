@@ -20,7 +20,7 @@ export interface ThreadMessage {
     isMe?: boolean;
 }
 
-export const Threads = ({ messages, onInfluencerClick }: { messages: SearchResponseMessage[], onInfluencerClick?: (message: ThreadMessage['from']) => void; }) => {
+export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
     const { profile } = useUser();
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -74,8 +74,7 @@ export const Threads = ({ messages, onInfluencerClick }: { messages: SearchRespo
         if (!loading && threadMessages.length === 0) {
             getThreadEmailText(messages);
         }
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading, messages]);
+    }, [loading, messages, getThreadEmailText, threadMessages]);
 
     useEffect(() => {
         scrollToBottom();
@@ -90,16 +89,14 @@ export const Threads = ({ messages, onInfluencerClick }: { messages: SearchRespo
                     {threadMessages.map((message) => (
                         <div
                             key={message.id}
-                            className="rounded-lg bg-white shadow-sm hover:border hover:border-primary-500"
+                            className="rounded-lg border border-transparent bg-white shadow-sm hover:border-primary-500"
                         >
                             <div className="border-b-2 border-gray-200 p-6">
-                                <div className="mb-3 text-lg font-semibold text-gray-400 cursor-pointer" onClick={() => {
-                                    onInfluencerClick && onInfluencerClick(message.from)
-                                }}>
+                                <div className="mb-3 text-lg font-semibold text-gray-400">
                                     {t('inbox.from')}:{' '}
-                                    <span className="text-gray-600 hover:underline hover:underline-offset-4">{message.isMe ? 'Me' : message.from}</span>{' '}
+                                    <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
                                 </div>
-                                <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
+                                <div className="mb-3 text-sm font-medium text-gray-400">
                                     {t('inbox.to')}: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
                                 {message.cc?.length > 0 && (

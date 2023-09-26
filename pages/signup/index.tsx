@@ -5,12 +5,11 @@ import SignUpPage from 'src/components/signup/signup-page';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
-import { PricingSection } from 'src/components/signup/pricing-section';
 
 export default function Register() {
     const router = useRouter();
 
-    const [selectedPriceId, setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [selectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
     const [currentStep, setCurrentStepState] = useState(1);
     const setCurrentStep = (step: number) => {
         router.query.curStep = step.toString();
@@ -25,7 +24,8 @@ export default function Register() {
     return (
         <>
             <LoginSignupLayout
-                left={currentStep !== 5 ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />}
+                leftBgColor="bg-primary-500"
+                left={<ScreenshotsCarousel />}
                 right={
                     <SignUpPage
                         currentStep={currentStep}

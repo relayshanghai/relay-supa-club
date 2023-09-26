@@ -9,4 +9,4 @@ export const SearchAddToCampaign = (trigger: TriggerEvent, value?: SearchAddToCa
 
 export type SearchAddToCampaign = typeof SearchAddToCampaign;
 
-SearchAddToCampaign.eventName = SEARCH_ADD_TO_CAMPAIGN;
+SearchAddToCampaign.eventName = <typeof SEARCH_ADD_TO_CAMPAIGN>SEARCH_ADD_TO_CAMPAIGN;
