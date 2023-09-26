@@ -45,14 +45,14 @@ export const Tooltip = ({
     if (!content) return <>{children}</>;
     return (
         <div className={`${className}`}>
-            <div
-                className="cursor-pointer"
-                onMouseOver={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
-                {children}
-            </div>
             <div className="relative z-50">
+                <div
+                    className="cursor-pointer"
+                    onMouseOver={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    {children}
+                </div>
                 <div
                     className={`absolute ${isHovered ? 'flex' : 'hidden'}  ${positionClass(
                         position,

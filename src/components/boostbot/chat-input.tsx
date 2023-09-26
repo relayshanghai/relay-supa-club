@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Send, Spinner } from 'src/components/icons';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
@@ -15,22 +15,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
     const [message, setMessage] = useState('');
     const { t } = useTranslation();
 
-    const adjustTextareaHeight = () => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        textarea.style.height = 'auto';
-        const adjustedHeight = textarea.scrollHeight;
-        textarea.style.height = `${Math.min(adjustedHeight, 2 * 36)}px`;
-    };
-
     const handleTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
         setMessage(e.target.value);
     };
-
-    useEffect(() => {
-        adjustTextareaHeight();
-    }, [message]);
 
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
@@ -58,8 +45,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
 
             <textarea
                 ref={textareaRef}
-                rows={1}
-                className="flex-grow resize-none rounded-lg border-none px-3 py-4 text-xs ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                rows={2}
+                className="flex-grow resize-none rounded-lg border-none px-2 py-2 text-xs ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 placeholder={t('boostbot.chat.sendPlaceholder') ?? 'Send a product description...'}
                 value={message}
                 onChange={handleTextInput}
