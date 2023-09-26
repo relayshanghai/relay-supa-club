@@ -5,11 +5,12 @@ import CheckoutForm from './checkout-form';
 import { useNewPrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import { randomNumber } from 'src/utils/utils';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -29,6 +30,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = newPrices[priceTier];
+
+    const batchId = useMemo(() => randomNumber(), []);
 
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',
@@ -86,7 +89,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                 <>
                     {selectedPaymentMethod === 'card' && (
                         <StripeElementsProvider stripe={stripePromise} options={cardOptions}>
-                            <CheckoutForm selectedPrice={selectedPrice} />
+                            <CheckoutForm selectedPrice={selectedPrice} batchId={batchId} />
                         </StripeElementsProvider>
                     )}
 
