@@ -6,6 +6,7 @@ export type InputPaymentInfoPayload = EventPayload<{
     complete: boolean;
     empty: boolean;
     type: string;
+    batch_id: number;
 }>;
 
 export const InputPaymentInfo = (trigger: TriggerEvent, value?: InputPaymentInfoPayload) =>

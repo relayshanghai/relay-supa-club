@@ -171,6 +171,8 @@ import type { SelectInfluencerProfileTabPayload } from './outreach/select-influe
 import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
 import type { SearchInboxPayload } from './outreach/search-inbox';
 import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
+import type { PayForUpgradedPlanPayload } from './onboarding/pay-for-upgraded-plan';
+import { PAY_FOR_UPGRADED_PLAN, PayForUpgradedPlan } from './onboarding/pay-for-upgraded-plan';
 import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
 import type { ChangePasswordPayload } from './change-password';
@@ -227,6 +229,7 @@ export {
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
     SearchInbox,
+    PayForUpgradedPlan,
     UpdateProfileInfo,
     ChangePassword,
 };
@@ -309,6 +312,7 @@ export const events = {
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
     [SEARCH_INBOX]: SearchInbox,
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
     [CHANGE_PASSWORD]: ChangePassword,
 };
@@ -391,6 +395,7 @@ export type payloads = {
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
     [SEARCH_INBOX]: SearchInboxPayload;
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
     [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
@@ -475,6 +480,7 @@ export const eventKeys = z.union([
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
     z.literal(SEARCH_INBOX),
+    z.literal(PAY_FOR_UPGRADED_PLAN),
     z.literal(UPDATE_PROFILE_INFO),
     z.literal(CHANGE_PASSWORD),
 ]);
