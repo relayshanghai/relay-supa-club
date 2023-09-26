@@ -98,11 +98,11 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                             <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
 
                             <Image
-                                src="/assets/imgs/qrcodes/relayclub.jpg"
+                                src="/assets/imgs/qrcodes/relayclub-clubby.png"
                                 alt="qr code to contact customer service"
                                 layout="responsive"
                                 width={1000}
-                                height={1320}
+                                height={1000}
                             />
                         </div>
                     )}
