@@ -98,13 +98,21 @@ const Boostbot = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
-    const [messages, setMessages] = usePersistentState<MessageType[]>('boostbot-messages', [
-        {
-            sender: 'Bot',
-            type: 'translation',
-            translationKey: 'boostbot.chat.introMessage',
+    const [messages, setMessages] = usePersistentState<MessageType[]>(
+        'boostbot-messages',
+        [
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+            },
+        ],
+        (onLoadMessages) => {
+            const isUnfinishedLoading = (message: MessageType) =>
+                message.type === 'progress' && message.progressData.totalFound === null;
+            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
         },
-    ]);
+    );
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
