@@ -19,8 +19,6 @@ export default function AlipayPortal() {
         if (!stripe) return;
 
         try {
-            console.log('create a payment intent with customer ======>', company.cus_id);
-
             const { setupIntent } = await createSetupIntentForAlipay(company.cus_id);
 
             console.log('get the setupIntent back =======>', setupIntent.client_secret);
