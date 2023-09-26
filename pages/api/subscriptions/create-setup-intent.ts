@@ -3,6 +3,7 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
 import { APP_URL } from 'src/constants';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CreateSetUpIntentPostBody = {
     customerId: string;
@@ -14,14 +15,22 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const paymentMethod = await stripeClient.paymentMethods.create({
         type: 'alipay',
     });
-    console.log('paymentMethod ====================>', paymentMethod);
+    if (!paymentMethod) {
+        serverLogger('Failed to create payment method');
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to create payment method' });
+    }
     //attach payment method to customer
     const paymentMethodAttach = await stripeClient.paymentMethods.attach(paymentMethod.id, {
         customer: customerId,
     });
-    console.log('paymentMethodAttach ====================>', paymentMethodAttach);
+    if (!paymentMethodAttach) {
+        serverLogger('Failed to attach payment method to customer');
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
+    }
     //create a setup intent
-    const setupIntent = await stripeClient.setupIntents.create({
+    const response = await stripeClient.setupIntents.create({
+        // this create setupIntent works although the stripe doc says it's not supported..
+        //https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
         customer: customerId,
         payment_method_types: paymentMethodTypes,
         confirm: true,
@@ -43,14 +52,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         return_url: `${APP_URL}/payments/confirm-alipay`,
     });
-    console.log('setupIntent ====================>', setupIntent);
 
-    //confirm the setup intent with payment method
-    // const confirmSetupIntent = await stripeClient.setupIntents.confirm(setupIntent.id, {
-    //     payment_method: paymentMethod.id,
-    // });
-    // console.log('confirmSetupIntent ====================>', confirmSetupIntent);
-    res.status(httpCodes.OK).json({ setupIntent });
+    return res.status(httpCodes.OK).json(response);
 };
 
 export default ApiHandler({
