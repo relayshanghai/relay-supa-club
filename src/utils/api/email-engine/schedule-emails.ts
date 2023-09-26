@@ -19,7 +19,7 @@ export const calculateSendAt = async (
     const outbox = await getOutbox();
 
     // Get all emails scheduled for the day for the account
-    const outboxEmails = outbox.messages.filter((email) => email.account === account);
+    const outboxEmails = outbox.filter((email) => email.account === account);
 
     return findNextAvailableDateIfMaxEmailsPerDayMet(outboxEmails, targetDate, TARGET_TIMEZONE, maxDailySend);
 };
