@@ -5,7 +5,7 @@ import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 const MAX_DAILY_SEND = 75;
 const TARGET_TIMEZONE = 'America/Chicago';
 
-/** waitTimeHours is ideally when this email should be scheduled, but if there are more than 75 emails scheduled for that day, it will add another 24 hours. Email send times will always be within Monday-Friday, 9am - 12am US Central Time */
+/** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 75 emails scheduled for that day, it will find the next available day with less than the max scheduled. Email send times will always be within Monday-Friday, 9am - 12am US Central Time */
 export const calculateSendAt = async (
     account: string,
     waitTimeHours: number,
