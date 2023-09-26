@@ -5,7 +5,7 @@ import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 const MAX_DAILY_SEND = 75;
 const TARGET_TIMEZONE = 'America/Chicago';
 
-/** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 75 emails scheduled for that day, it will find the next available day with less than the max scheduled. Email send times will always be within Monday-Friday, 9am - 12am US Central Time */
+/** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 75 emails scheduled for that day, it will find the next available day with less than the max scheduled. Email send times will always be a random hour within Monday-Friday, 9am - 12am US Central Time */
 export const calculateSendAt = async (
     account: string,
     waitTimeHours: number,
@@ -42,7 +42,10 @@ export const findNextAvailableDateIfMaxEmailsPerDayMet = (
     // recursively find the next business day if the max number of emails has been scheduled
     let maxTries = 0;
 
-    while (maxTries < 50 && targetDaysEmails.length >= maxDailySend) {
+    while (targetDaysEmails.length >= maxDailySend) {
+        if (maxTries > 100) {
+            throw new Error('Could not find next available date within 100 tries');
+        }
         targetDate = findNextBusinessDayTime(addHours(targetDate, 24));
         targetDaysEmails = getTargetDaysEmails(targetDate);
         maxTries++;
@@ -65,10 +68,14 @@ export const findNextBusinessDayTime = (currentDate: Date, timeZone = TARGET_TIM
     let maxTries = 0;
 
     while (
-        (maxTries < 100 && isWeekend(targetDate, timeZone)) ||
+        isWeekend(targetDate, timeZone) ||
         getHours(targetDate, timeZone) < 9 ||
         getHours(targetDate, timeZone) >= 17
     ) {
+        if (maxTries > 100) {
+            throw new Error('Could not find next business day within 100 tries');
+        }
+
         let hoursToAdd = 0;
 
         if (isWeekend(targetDate, timeZone)) {
