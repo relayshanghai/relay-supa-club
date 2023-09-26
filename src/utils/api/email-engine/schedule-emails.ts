@@ -72,8 +72,8 @@ export const findNextBusinessDayTime = (currentDate: Date, timeZone = TARGET_TIM
         getHours(targetDate, timeZone) < 9 ||
         getHours(targetDate, timeZone) >= 17
     ) {
-        if (maxTries > 100) {
-            throw new Error('Could not find next business day within 100 tries');
+        if (maxTries > 500) {
+            throw new Error('Could not find next business day within 500 tries'); // cause the random add hours is often wrong so it could generate a lot of tries
         }
 
         let hoursToAdd = 0;
