@@ -13,8 +13,9 @@ import { useInvites } from 'src/hooks/use-invites';
 import { useTeammates } from 'src/hooks/use-teammates';
 import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_COMPANY_DETAILS } from 'src/utils/rudderstack/event-names';
+import { UpdateProfileInfo } from 'src/utils/analytics/events';
 
 export const CompanyDetails = () => {
     const { company, updateCompany, refreshCompany } = useCompany();
@@ -45,17 +46,31 @@ export const CompanyDetails = () => {
     }, [company, resetCompanyValues, refreshTeammates, refreshCompany]);
 
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
 
     const handleUpdateCompany = async () => {
         try {
             setUpdating(true);
+            const oldCompanyName = company?.name;
+            const oldCompanyWebsite = company?.website;
             await updateCompany({
                 name: companyValues.name,
                 website: companyValues.website,
             });
             toast.success(t('account.company.companyProfileUpdated'));
             setEditMode(false);
-            trackEvent(ACCOUNT_COMPANY_DETAILS('update company'));
+            if (companyValues.name !== oldCompanyName) {
+                track(UpdateProfileInfo, {
+                    info_type: 'Company',
+                    info_name: 'Name',
+                });
+            }
+            if (companyValues.website !== oldCompanyWebsite) {
+                track(UpdateProfileInfo, {
+                    info_type: 'Company',
+                    info_name: 'Website',
+                });
+            }
         } catch (e: any) {
             if (hasCustomError(e, updateCompanyErrors)) {
                 // right now we only have the companyWithSameNameExists error that's also used in login
