@@ -37,7 +37,7 @@ describe('Boostbot', () => {
 
         cy.contains('@DANNIVIVIANI');
 
-        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state
+        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state. If we don't and the reload happens too fast, the state doesn't get persisted and gets lost.
         cy.reload();
 
         cy.contains('LED beauty mask');
@@ -45,6 +45,11 @@ describe('Boostbot', () => {
     });
 
     it('persists finished loading progress messages', () => {
+        cy.contains("Hi, I'm BoostBot");
+        cy.contains('Generating topics and niches').should('not.exist');
+        cy.contains('Browsing through millions of influencers in our database').should('not.exist');
+        cy.contains(`I handpicked the ${boostbotGetInfluencers.length * 3} influencers`).should('not.exist');
+
         cy.get('textarea').type('LED beauty mask{enter}');
 
         const checkExistingLoadingMessage = () => {
@@ -55,7 +60,7 @@ describe('Boostbot', () => {
 
         checkExistingLoadingMessage();
 
-        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state
+        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state. If we don't and the reload happens too fast, the state doesn't get persisted and gets lost.
         cy.reload();
 
         checkExistingLoadingMessage();
@@ -72,11 +77,11 @@ describe('Boostbot', () => {
         cy.contains('Browsing through millions of influencers in our database');
         cy.contains('Handpicking the best influencers');
 
-        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state
+        cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state. If we don't and the reload happens too fast, the state doesn't get persisted and gets lost.
         cy.reload();
 
-        cy.contains('LED beauty mask');
-        cy.contains('Generating topics and niches').should('not.exist');
+        cy.contains('LED beauty mask'); // This proves that messages have correctly loaded from indexedDB
+        cy.contains('Generating topics and niches').should('not.exist'); // And this proves that the unfinished messages have been removed
     });
 });
 
