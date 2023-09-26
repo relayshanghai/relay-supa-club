@@ -1,4 +1,15 @@
 const boostbot = {
+    filters: {
+        modalTitle: '基础筛选条件',
+        fromPlatform: '我想要看以下平台的红人',
+        fromGeos: '他们的粉丝所在地区位于',
+        addMoreGeos: '添加更多',
+        selectGeo: '选择一个国家地区',
+        advancedFilters: '高级筛选条件',
+        updateFilters: '更新筛选条件',
+        atLeast: '他们的粉丝中，至少需要有',
+        inLocation: '位于 {{location}} 地区',
+    },
     chat: {
         introMessage: `嗨, 我是BoostBot 🙂
 

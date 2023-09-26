@@ -1,4 +1,15 @@
 const boostbot = {
+    filters: {
+        modalTitle: 'Basic Filters',
+        fromPlatform: 'Show me influencers from',
+        fromGeos: 'who have followers in',
+        addMoreGeos: 'Add more',
+        selectGeo: 'Select a location',
+        advancedFilters: 'Advanced Filters',
+        updateFilters: 'Update',
+        atLeast: 'at least',
+        inLocation: 'of their followers must be in {{location}}',
+    },
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
 
