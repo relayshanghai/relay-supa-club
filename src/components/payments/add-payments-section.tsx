@@ -1,16 +1,15 @@
 import { loadStripe } from '@stripe/stripe-js';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
-import CheckoutForm from './checkout-form';
 import { useNewPrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
 import { useState } from 'react';
-// import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
-import { Button } from '../button';
+import AlipayPortal from './alipay-portal';
+import CheckoutForm from './checkout-form';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -43,15 +42,6 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         },
         locale: i18n.language.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
-    };
-
-    const handleCreateSubscriptionWithAlipay = async () => {
-        // create a setup intent with payment method type alipay, and current customer id
-        // redirect to Alipay website
-        //monitor webhooks
-        //  if setup_intent.succeeded, set the payment method to the customer default payment method
-        //  create a subscription with the setup intent id
-        // if setup_intent.setup_failed webhook, redirect back to payment page with error message
     };
 
     return (
@@ -100,24 +90,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                         </StripeElementsProvider>
                     )}
 
-                    {selectedPaymentMethod === 'alipay' && (
-                        // <div className="mb-2 p-6">
-                        //     <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
-
-                        //     <Image
-                        //         src="/assets/imgs/qrcodes/relayclub.jpg"
-                        //         alt="qr code to contact customer service"
-                        //         layout="responsive"
-                        //         width={1000}
-                        //         height={1320}
-                        //     />
-                        // </div>
-                        <div className="mb-2 p-6">
-                            <Button className="w-full" onClick={handleCreateSubscriptionWithAlipay}>
-                                Proceed to Alipay
-                            </Button>
-                        </div>
-                    )}
+                    {selectedPaymentMethod === 'alipay' && <AlipayPortal />}
                 </>
             ) : (
                 <p className="p-6 text-xs text-gray-500">{t('account.choosePaymentMethod')}</p>
