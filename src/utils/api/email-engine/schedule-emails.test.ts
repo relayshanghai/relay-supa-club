@@ -3,10 +3,11 @@ import { findNextAvailableDateIfMaxEmailsPerDayMet, findNextBusinessDayTime } fr
 import { getHours, getWeekday } from 'src/utils/time-zone-helpers';
 
 const timeZone = 'America/Chicago';
+const chicagoOffset = '-05:00';
 
 describe('findNextBusinessDayTime', () => {
     it('findNextBusinessDayTime on Saturday or Sunday', async () => {
-        const saturday_september_30th_2pm_chicago_time = new Date('2023-09-30T14:00:00-05:00');
+        const saturday_september_30th_2pm_chicago_time = new Date(`2023-09-30T14:00:00${chicagoOffset}`);
 
         // confirm test date is a Saturday in Chicago
         const dayOfWeek = getWeekday(saturday_september_30th_2pm_chicago_time, timeZone);
@@ -18,7 +19,7 @@ describe('findNextBusinessDayTime', () => {
         expect(hour).toBeGreaterThanOrEqual(9);
         expect(hour).toBeLessThan(17);
 
-        const sunday_september_31st_2pm_chicago_time = new Date('2023-09-31T14:00:00-05:00');
+        const sunday_september_31st_2pm_chicago_time = new Date(`2023-09-31T14:00:00${chicagoOffset}`);
 
         // confirm test date is a Sunday
         const weekday2 = getWeekday(sunday_september_31st_2pm_chicago_time, timeZone);
@@ -31,7 +32,7 @@ describe('findNextBusinessDayTime', () => {
         expect(hour2).toBeLessThan(17);
     });
     it('findNextBusinessDayTime on Friday after 5 pm', async () => {
-        const friday_september_29th_6pm_chicago_time = new Date('2023-09-29T18:00:00-05:00');
+        const friday_september_29th_6pm_chicago_time = new Date(`2023-09-29T18:00:00${chicagoOffset}`);
 
         // confirm test date is a Friday in Chicago
         const dayOfWeek = getWeekday(friday_september_29th_6pm_chicago_time, timeZone);
@@ -44,7 +45,7 @@ describe('findNextBusinessDayTime', () => {
         expect(hour).toBeLessThan(17);
     });
     it('findNextBusinessDayTime on Friday before 5 pm', async () => {
-        const friday_september_29th_2pm_chicago_time = new Date('2023-09-29T14:00:00-05:00');
+        const friday_september_29th_2pm_chicago_time = new Date(`2023-09-29T14:00:00${chicagoOffset}`);
 
         // confirm test date is a Friday in Chicago
         const dayOfWeek = getWeekday(friday_september_29th_2pm_chicago_time, timeZone);
@@ -60,9 +61,9 @@ describe('findNextBusinessDayTime', () => {
 
 describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
     it('finds the next available date if max emails per day is met', async () => {
-        const mondayDate = new Date('2023-09-25T14:00:00-05:00').toISOString();
-        const tuesdayDate = new Date('2023-09-26T14:00:00-05:00').toISOString();
-        const wednesdayDate = new Date('2023-09-27T14:00:00-05:00').toISOString();
+        const mondayDate = new Date(`2023-09-25T14:00:00${chicagoOffset}`).toISOString();
+        const tuesdayDate = new Date(`2023-09-26T14:00:00${chicagoOffset}`).toISOString();
+        const wednesdayDate = new Date(`2023-09-27T14:00:00${chicagoOffset}`).toISOString();
         const outbox = [
             // monday has 3 emails scheduled
 
