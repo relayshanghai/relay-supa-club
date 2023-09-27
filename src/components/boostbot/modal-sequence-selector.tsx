@@ -69,7 +69,6 @@ export const ModalSequenceSelector = ({
                         handleAddToSequence();
                         setShow(false);
                     }}
-                    type="submit"
                 >
                     {t('creators.addToSequence')}
                 </Button>
