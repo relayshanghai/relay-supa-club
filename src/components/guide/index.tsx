@@ -44,7 +44,7 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
                         <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
                     )}
                     {cardKey === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
-                    {cardKey === 'sequences' && <Send height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'sequences' && <Send height={24} width={24} className="-mr-2 stroke-primary-500" />}
                     {cardKey === 'templates' && <Brackets height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'inbox' && <Engagements height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'influencerManager' && (
