@@ -4,7 +4,6 @@ export const PLAY_TUTORIAL_VIDEO = 'Play Tutorial Video';
 
 export type PlayTutorialVideoPayload = EventPayload<{
     video: 'Main Demo';
-    user_play_count: number | null;
 }>;
 
 export const PlayTutorialVideo = (trigger: TriggerEvent, payload?: PlayTutorialVideoPayload) =>

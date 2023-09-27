@@ -10,6 +10,7 @@ export type SendInfluencersToOutreachPayload = {
      * the current implementation does not rely on using our own influencer_ids
      */
     influencer_ids: string[];
+    sequence_influencer_ids: string[];
     topics: string[];
     /**
      * I will assume that there will be a time that

@@ -14,8 +14,9 @@ import {
 } from 'src/utils/api/stripe/handle-subscriptions';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { APP_URL } from 'src/constants';
+import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 
-export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
+export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice: NewRelayPlan; batchId: number }) {
     const stripe = useStripe();
     const elements = useElements();
     const { t } = useTranslation();
@@ -70,10 +71,20 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
             });
             // if has error, handle error
             if (error) {
+                track(PayForUpgradedPlan, {
+                    successful: false,
+                    batch_id: batchId,
+                    stripe_error_code: error.code,
+                });
                 handleError(error);
                 // if has error confirm the payment, should cancel the new subscription
                 await cancelSubscriptionWithSubscriptionId(newSubscriptionId);
                 return;
+            } else {
+                track(PayForUpgradedPlan, {
+                    successful: true,
+                    batch_id: batchId,
+                });
             }
         } catch (error) {
             handleError(error);
@@ -98,6 +109,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                         complete,
                         empty,
                         type: value.type,
+                        batch_id: batchId,
                     });
                     setFormReady(complete);
                 }}

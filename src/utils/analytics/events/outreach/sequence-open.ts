@@ -3,7 +3,6 @@ import type { TriggerEvent } from '../../types';
 export const OPEN_SEQUENCE = 'Open Sequence';
 
 export type OpenSequencePayload = {
-    open_count: number;
     sequence_id: string;
     total_influencers: number;
 };

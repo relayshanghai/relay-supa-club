@@ -81,6 +81,8 @@ import type { EmailNewPayload } from './outreach/email-new';
 import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { HoverTooltipPayload } from './hover-tooltip';
+import { HOVER_TOOLTIP, HoverTooltip } from './hover-tooltip';
 import type { ClickNeedHelpPayload } from './click-need-help';
 import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
 import type { GoToLoginPayload } from './go-to-login';
@@ -138,6 +140,8 @@ import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
 import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { UpdateInfluencerProfilePayload } from './outreach/update-influencer-profile';
+import { UpdateInfluencerProfile, UPDATE_INFLUENCER_PROFILE } from './outreach/update-influencer-profile';
 import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
 import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
 import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
@@ -154,6 +158,11 @@ import type { GoToInboxPayload } from './outreach/go-to-inbox';
 import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
 import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
 import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
+import { type SaveInfluencerProfileUpdatesPayload } from './outreach/save-influencer-profile-updates';
+import {
+    SAVE_INFLUENCER_PROFILE_UPDATES,
+    SaveInfluencerProfileUpdates,
+} from './outreach/save-influencer-profile-updates';
 import type { PlayTutorialVideoPayload } from './guide/play-tutorial-video';
 import { PLAY_TUTORIAL_VIDEO, PlayTutorialVideo } from './guide/play-tutorial-video';
 import type { CloseHelpModalPayload } from './outreach/close-help-modal';
@@ -162,6 +171,14 @@ import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influenc
 import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
 import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
 import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
+import type { SearchInboxPayload } from './outreach/search-inbox';
+import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
+import type { PayForUpgradedPlanPayload } from './onboarding/pay-for-upgraded-plan';
+import { PAY_FOR_UPGRADED_PLAN, PayForUpgradedPlan } from './onboarding/pay-for-upgraded-plan';
+import type { UpdateProfileInfoPayload } from './update-profile-info';
+import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
+import type { ChangePasswordPayload } from './change-password';
+import { CHANGE_PASSWORD, ChangePassword } from './change-password';
 
 export {
     Search,
@@ -194,6 +211,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    HoverTooltip,
     ClickNeedHelp,
     GoToLogin,
     PasswordReset,
@@ -204,13 +222,19 @@ export {
     SendEmailReply,
     OpenEmailThread,
     OpenInfluencerProfile,
+    UpdateInfluencerProfile,
     AddInfluencerPost,
     AddNoteToInfluencerProfile,
     UpdateInfluencerStatus,
+    SaveInfluencerProfileUpdates,
     PlayTutorialVideo,
     CloseHelpModal,
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
+    SearchInbox,
+    PayForUpgradedPlan,
+    UpdateProfileInfo,
+    ChangePassword,
 };
 
 export const events = {
@@ -246,6 +270,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [HOVER_TOOLTIP]: HoverTooltip,
     [CLICK_NEED_HELP]: ClickNeedHelp,
     [GO_TO_LOGIN]: GoToLogin,
     [PASSWORD_RESET]: PasswordReset,
@@ -276,6 +301,7 @@ export const events = {
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
     [TOGGLE_AUTO_START]: ToggleAutoStart,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfile,
     [ADD_INFLUENCER_POST]: AddInfluencerPost,
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
@@ -284,10 +310,15 @@ export const events = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
     [GO_TO_INBOX]: GoToInbox,
     [TOGGLE_VIEW_MINE]: ToggleViewMine,
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdates,
     [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideo,
     [CLOSE_HELP_MODAL]: CloseHelpModal,
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
+    [SEARCH_INBOX]: SearchInbox,
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
+    [CHANGE_PASSWORD]: ChangePassword,
 };
 
 export type payloads = {
@@ -323,6 +354,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [HOVER_TOOLTIP]: HoverTooltipPayload;
     [CLICK_NEED_HELP]: ClickNeedHelpPayload;
     [GO_TO_LOGIN]: GoToLoginPayload;
     [PASSWORD_RESET]: PasswordResetPayload;
@@ -353,6 +385,7 @@ export type payloads = {
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
     [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfilePayload;
     [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
@@ -361,10 +394,15 @@ export type payloads = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
     [GO_TO_INBOX]: GoToInboxPayload;
     [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdatesPayload;
     [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideoPayload;
     [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
+    [SEARCH_INBOX]: SearchInboxPayload;
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
+    [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -402,6 +440,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(HOVER_TOOLTIP),
     z.literal(CLICK_NEED_HELP),
     z.literal(GO_TO_LOGIN),
     z.literal(PASSWORD_RESET),
@@ -432,6 +471,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_SEQUENCE_TAB),
     z.literal(TOGGLE_AUTO_START),
     z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_PROFILE),
     z.literal(ADD_INFLUENCER_POST),
     z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
     z.literal(UPDATE_INFLUENCER_STATUS),
@@ -440,10 +480,15 @@ export const eventKeys = z.union([
     z.literal(FILTER_INFLUENCER_MANAGER),
     z.literal(GO_TO_INBOX),
     z.literal(TOGGLE_VIEW_MINE),
+    z.literal(SAVE_INFLUENCER_PROFILE_UPDATES),
     z.literal(PLAY_TUTORIAL_VIDEO),
     z.literal(CLOSE_HELP_MODAL),
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
+    z.literal(SEARCH_INBOX),
+    z.literal(PAY_FOR_UPGRADED_PLAN),
+    z.literal(UPDATE_PROFILE_INFO),
+    z.literal(CHANGE_PASSWORD),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
