@@ -17,6 +17,9 @@ export enum MixpanelPeopleProps {
     total_reports = 'total_reports',
     total_sequence_influencers = 'total_sequence_influencers',
     total_emails_sent = 'total_emails_sent',
+    user_open_count = 'user_open_count',
+    user_play_count = 'user_play_count',
+    sequence_open_count = 'sequence_open_count',
 }
 
 /**
@@ -33,4 +36,7 @@ export type MixpanelPeoplePropsInc =
     | MixpanelPeopleProps.total_searches
     | MixpanelPeopleProps.total_reports
     | MixpanelPeopleProps.total_sequence_influencers
-    | MixpanelPeopleProps.total_emails_sent;
+    | MixpanelPeopleProps.total_emails_sent
+    | MixpanelPeopleProps.user_open_count
+    | MixpanelPeopleProps.user_play_count
+    | MixpanelPeopleProps.sequence_open_count;
