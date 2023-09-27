@@ -155,6 +155,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                     isSelected ? 'bg-primary-200 outline-primary-500' : 'outline-transparent'
                                 }`}
                                 onClick={() => togglePlatform(platform)}
+                                data-testid={`boostbot-filter-${platform}`}
                             >
                                 {platform === 'youtube' ? (
                                     <Youtube className="h-6 w-6 sm:h-10 sm:w-10" />
@@ -178,6 +179,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                         {localFilters['audience_geo'].map((geo) => (
                             <button
                                 key={geo.id}
+                                data-testid={`boostbot-filter-geo-${geo.id}`}
                                 className="flex items-center gap-1 rounded-xl border border-primary-500 bg-primary-50 px-3 text-primary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
                                 onClick={() => removeGeo(geo.id)}
                             >
@@ -187,6 +189,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                     </div>
 
                     <button
+                        data-testid="boostbot-add-more-geos-button"
                         className="flex items-center gap-1 rounded-xl bg-gray-100 px-3 text-gray-500 transition-all hover:bg-gray-200"
                         onClick={() => setShouldShowGeoInput(true)}
                     >
@@ -212,9 +215,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 <select
                                     className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200 hover:ring-gray-300"
                                     value={geo.weight}
-                                    onChange={(e) => {
-                                        setGeoWeight({ id: geo.id, weight: Number(e.target.value) });
-                                    }}
+                                    onChange={(e) => setGeoWeight({ id: geo.id, weight: Number(e.target.value) })}
                                 >
                                     {geoPercentageOptions.map((percentageOption, index) => (
                                         <option key={index} value={percentageOption}>

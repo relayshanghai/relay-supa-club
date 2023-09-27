@@ -36,6 +36,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
     return (
         <div className="z-10 flex flex-row items-center gap-2 p-4 pt-1 shadow-lg">
             <button
+                data-testid="boostbot-open-filters"
                 className="group flex h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-primary-100 disabled:bg-transparent"
                 onClick={openFiltersModal}
                 disabled={isLoading || isDisabled}
@@ -54,6 +55,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
             />
 
             <button
+                data-testid="boostbot-send-message"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white transition-all hover:bg-primary-700 disabled:bg-primary-400"
                 onClick={handleSendMessage}
                 disabled={isLoading || isDisabled}

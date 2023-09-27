@@ -20,7 +20,7 @@ describe('<ChatInput />', () => {
             />,
         );
 
-        cy.get('button').should('not.be.disabled');
+        cy.getByTestId('boostbot-send-message').should('not.be.disabled');
     });
 
     it('Disables textarea, button and send action when isLoading is true', () => {
@@ -36,7 +36,7 @@ describe('<ChatInput />', () => {
         cy.get('textarea').type('Hello, World!{enter}');
 
         cy.wrap(onSendMessage).should('not.have.been.called');
-        cy.get('button').should('be.disabled');
+        cy.getByTestId('boostbot-send-message').should('be.disabled');
     });
 
     it('Disables textarea and button when isDisabled is true', () => {
@@ -52,7 +52,7 @@ describe('<ChatInput />', () => {
         cy.get('textarea').type('Hello, World!{enter}');
 
         cy.wrap(onSendMessage).should('not.have.been.called');
-        cy.get('button').should('be.disabled');
+        cy.getByTestId('boostbot-send-message').should('be.disabled');
     });
 
     it('Handles text input and sends message correctly when clicking button', () => {
@@ -67,7 +67,7 @@ describe('<ChatInput />', () => {
 
         cy.get('textarea').type('Hello, World!').should('have.value', 'Hello, World!');
 
-        cy.get('button').click();
+        cy.getByTestId('boostbot-send-message').click();
 
         cy.wrap(onSendMessage).should('have.been.calledWith', 'Hello, World!');
     });
@@ -100,5 +100,20 @@ describe('<ChatInput />', () => {
         cy.get('textarea').type('Hello, World!{enter}');
 
         cy.get('textarea').should('have.value', '');
+    });
+
+    it('Calls openFiltersModal function when the filters button is clicked', () => {
+        testMount(
+            <ChatInput
+                onSendMessage={onSendMessage}
+                openFiltersModal={openFiltersModal}
+                isLoading={false}
+                isDisabled={false}
+            />,
+        );
+
+        cy.getByTestId('boostbot-open-filters').click();
+
+        cy.wrap(openFiltersModal).should('have.been.called');
     });
 });

@@ -41,7 +41,7 @@ describe('<InputWithSuggestions />', () => {
 
         cy.get('ul').should('be.visible');
 
-        cy.get('body').click(0, 0);
+        cy.get('body').click(500, 500);
 
         cy.get('ul').should('not.exist');
     });
