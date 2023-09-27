@@ -48,7 +48,7 @@ const guidePage = {
             url: '/boostbot',
             sections: [
                 {
-                    title: 'How BoostBot Works',
+                    title: '雷宝是如何运作的',
                     description:
                         'BoostBot 是一款AI辅助的搜索工具，它能找到海外社交媒体可以推广产品的优秀红人，您只需描述产品（任何语言均可），它便会分析相关搜索主题，并从2亿多的红人数据库中找到合适的红人。不仅如此，它可以根据粉丝数、互动率、地区等指标优化搜索结果。最终，BoostBot向您呈现的是一份带有联系方式的庞大的红人名单，您可以立即与名单上的红人开展品牌合作或营销推广。',
                     demo: 'boostbot_demo.gif',
@@ -242,6 +242,6 @@ const guidePage = {
             ],
         },
     },
-};
+} as const;
 
 export default guidePage;

@@ -246,6 +246,6 @@ const guidePage = {
             ],
         },
     },
-};
+} as const;
 
 export default guidePage;
