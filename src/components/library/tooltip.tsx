@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { HoverTooltip } from 'src/utils/analytics/events';
 
 export type ToolTipPositionUnion = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
 
@@ -42,6 +44,15 @@ export const Tooltip = ({
     tooltipClasses,
 }: TooltipProps) => {
     const [isHovered, setIsHovered] = useState(false);
+    const { track } = useRudderstackTrack();
+
+    useEffect(() => {
+        isHovered &&
+            track(HoverTooltip, {
+                tooltip: content,
+            });
+    }, [isHovered, track, content]);
+
     if (!content) return <>{children}</>;
     return (
         <div className={`${className}`}>

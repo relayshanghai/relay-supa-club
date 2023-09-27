@@ -4,8 +4,10 @@ export const OUTREACH_CREATE_SEQUENCE = 'outreach-create_sequence';
 
 export type CreateSequencePayload = EventPayload<{
     sequence_id: string | null;
+    sequence_name: string;
     is_success: boolean;
     extra_info?: any;
+    // product: string
 }>;
 
 export const CreateSequence = (trigger: TriggerEvent<CreateSequencePayload>, payload?: CreateSequencePayload) =>

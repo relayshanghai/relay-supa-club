@@ -14,7 +14,6 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
 import { useSession } from './use-session';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from './use-subscription';
@@ -139,7 +138,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             if (error) throw new Error(error.message || 'Unknown error');
             // @note `total_sessions` is an incrementable property
-            trackEvent(LOG_IN(), { email, total_sessions: 1 });
+            trackEvent('Log In, undefined', { email, total_sessions: 1 });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -227,7 +226,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
-        trackEvent(LOG_OUT(), { email });
+        trackEvent('Log Out, undefined', { email });
     };
 
     useEffect(() => {
