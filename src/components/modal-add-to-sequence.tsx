@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -13,6 +13,7 @@ import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info } from './icons';
 import { Modal } from './modal';
+import { randomNumber } from 'src/utils/utils';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -37,13 +38,12 @@ export const AddToSequenceModal = ({
     sequences: Sequence[];
 }) => {
     const { t } = useTranslation();
-
     const { track } = useRudderstackTrack();
-
     const [submitting, setSubmitting] = useState<boolean>(false);
     const { sendSequence } = useSequence(sequence?.id);
-
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [show]);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -58,6 +58,8 @@ export const AddToSequenceModal = ({
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
             sequence_id: sequence?.id || '',
+            influencer_ids: null,
+            sequence_influencer_ids: null,
             sequence_influencer_id: null,
             is_success: true,
             is_sequence_autostart: sequence?.auto_start || false,
@@ -78,9 +80,13 @@ export const AddToSequenceModal = ({
                 throw new Error('Missing creatorProfile.user_id');
             }
 
+            if (!creatorProfile.username && !creatorProfile.handle) {
+                throw new Error('Missing creatorProfile username and handle');
+            }
+
             newSequenceInfluencer = await createSequenceInfluencer({
-                name: creatorProfile.fullname || creatorProfile.username,
-                username: creatorProfile.username,
+                name: creatorProfile.fullname ?? creatorProfile.username ?? creatorProfile.handle ?? '',
+                username: creatorProfile.handle ?? creatorProfile.username ?? '',
                 avatar_url: creatorProfile.picture || '',
                 url: creatorProfile.url || '',
                 iqdata_id: creatorProfile.user_id,
@@ -88,6 +94,8 @@ export const AddToSequenceModal = ({
                 platform,
             });
             setSequenceInfluencer(newSequenceInfluencer);
+            trackingPayload.influencer_ids = [creatorProfile.user_id];
+            trackingPayload.sequence_influencer_ids = [newSequenceInfluencer.id];
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             trackingPayload['$add'] = { total_sequence_influencers: 1 };
             setSuppressReportFetch(false); // will start getting the report.
@@ -110,8 +118,10 @@ export const AddToSequenceModal = ({
         const startSequencePayload: StartSequenceForInfluencerPayload = {
             influencer_id: null,
             sequence_id: null,
+            sequence_name: sequence.name,
             sequence_influencer_id: null,
             is_success: true,
+            batch_id: batchId,
         };
 
         try {
@@ -159,6 +169,7 @@ export const AddToSequenceModal = ({
         creatorProfile.url,
         creatorProfile.user_id,
         creatorProfile.username,
+        creatorProfile.handle,
         platform,
         sendSequence,
         sequence,
@@ -167,6 +178,7 @@ export const AddToSequenceModal = ({
         setSuppressReportFetch,
         t,
         track,
+        batchId,
     ]);
 
     return (

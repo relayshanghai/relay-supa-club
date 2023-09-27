@@ -4,12 +4,13 @@ import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
 import { useNewPrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import AlipayPortal from './alipay-portal';
 import CheckoutForm from './checkout-form';
+import { randomNumber } from 'src/utils/utils';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -29,6 +30,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = newPrices[priceTier];
+
+    const batchId = useMemo(() => randomNumber(), []);
 
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',
@@ -55,7 +58,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('card');
-                        trackEvent(PAYMENT_PAGE('click on card option'));
+                        trackEvent(PAYMENT_PAGE('click on card option'), { payment_type: 'card' });
                     }}
                 >
                     <Payment
@@ -71,7 +74,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('alipay');
-                        trackEvent(PAYMENT_PAGE('click on alipay option'));
+                        trackEvent(PAYMENT_PAGE('click on alipay option'), { payment_type: 'alipay' });
                     }}
                 >
                     <Alipay
@@ -86,7 +89,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                 <>
                     {selectedPaymentMethod === 'card' && (
                         <StripeElementsProvider stripe={stripePromise} options={cardOptions}>
-                            <CheckoutForm selectedPrice={selectedPrice} />
+                            <CheckoutForm selectedPrice={selectedPrice} batchId={batchId} />
                         </StripeElementsProvider>
                     )}
 

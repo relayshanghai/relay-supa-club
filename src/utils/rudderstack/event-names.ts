@@ -185,11 +185,9 @@ export const LANGUAGE_TOGGLE = generateEventName('Language Toggle');
 // Language Toggle, switch to en-US
 // Language Toggle, switch to zh-CN
 
-export const LOG_IN = generateEventName('Log In');
-// Log In, undefined
-
-export const LOG_OUT = generateEventName('Log Out');
-// Logout, undefined
+// OTHERS
+// Log In, undefined (not in Product-Analytics-Framework)
+// Log Out, undefined
 
 // OTHERS from `trackSearch()`
 // Search Options, Search

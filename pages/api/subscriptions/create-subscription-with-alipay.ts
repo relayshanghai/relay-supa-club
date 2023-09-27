@@ -52,7 +52,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // confirm the payment intent
     const confirmPaymentIntent = await stripeClient.paymentIntents.confirm(paymentIntent.id, {
-        payment_method: (paymentIntent as Stripe.PaymentIntent).payment_method,
+        // payment_method: (paymentIntent as Stripe.PaymentIntent).payment_method,
     });
 
     console.log('confirmPaymentIntent=============================>', confirmPaymentIntent);

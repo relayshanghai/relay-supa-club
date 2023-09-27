@@ -11,7 +11,15 @@ type BoostbotRemoveKolCellProps = {
 };
 
 export const BoostbotRemoveKolCell = ({ row, table }: BoostbotRemoveKolCellProps) => {
+    const influencer = row.original;
     const { track } = useRudderstackTrack();
+    // @note get platform from url for now
+    //       `influencer` was supposed to be `UserAccount` type which contains `type` for platform but it's not there on runtime
+    const platform = influencer.url.includes('youtube')
+        ? 'youtube'
+        : influencer.url.includes('tiktok')
+        ? 'tiktok'
+        : 'instagram';
 
     const removeInfluencer = () => {
         if (!table.options.meta) {
@@ -28,6 +36,9 @@ export const BoostbotRemoveKolCell = ({ row, table }: BoostbotRemoveKolCellProps
                 removeInfluencer();
                 track(RemoveBoostbotKol, {
                     currentPage: CurrentPageEvent.boostbot,
+                    kol_id: influencer.user_id,
+                    platform,
+                    search_id: table.options.meta?.searchId ?? null,
                 });
             }}
             aria-label={table.options.meta?.t('boostbot.table.removeInfluencer')}
