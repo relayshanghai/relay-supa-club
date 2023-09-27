@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { HoverTooltip } from 'src/utils/analytics/events';
 
@@ -15,6 +15,7 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
     linkText?: string | null;
     highlight?: string | null;
     tooltipClasses?: HTMLAttributes<HTMLDivElement>['className'];
+    delay?: number;
 }
 export type TooltipProps = PropsWithChildren<Props>;
 
@@ -42,9 +43,25 @@ export const Tooltip = ({
     linkText,
     highlight,
     tooltipClasses,
+    delay, // add delay prop
 }: TooltipProps) => {
+    // add delay to TooltipProps
     const [isHovered, setIsHovered] = useState(false);
     const { track } = useRudderstackTrack();
+    const [timer, setTimer] = useState<NodeJS.Timeout>(); // declare timer
+
+    const handleMouseOver = useCallback(() => {
+        setTimer(
+            setTimeout(() => {
+                setIsHovered(true);
+            }, delay || 0),
+        );
+    }, [delay]);
+
+    const handleMouseLeave = useCallback(() => {
+        clearTimeout(timer); // clear timer
+        setIsHovered(false);
+    }, [timer]);
 
     useEffect(() => {
         isHovered &&
@@ -56,11 +73,7 @@ export const Tooltip = ({
     if (!content) return <>{children}</>;
     return (
         <div className={`${className}`}>
-            <div
-                className="cursor-pointer"
-                onMouseOver={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
+            <div className="cursor-pointer" onMouseOver={handleMouseOver} onMouseOut={handleMouseLeave}>
                 {children}
             </div>
             <div className="relative z-50">

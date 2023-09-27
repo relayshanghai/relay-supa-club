@@ -22,6 +22,7 @@ import { Button } from './button';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
+import { Tooltip } from './library';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -45,7 +46,7 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
 } as const;
 
 // eslint-disable-next-line complexity
-const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
+const ActiveLink = ({ href, children, expandedName }: { href: string; children: ReactNode; expandedName: string }) => {
     const router = useRouter();
 
     const pathRoot = router.pathname === '/' ? '/' : `/${router.pathname.split('/')[1]}`; // /dashboard/influencers => dashboard
@@ -57,18 +58,20 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
     const { track } = useRudderstackTrack();
 
     return (
-        <Link
-            onMouseOver={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
-            href={href}
-            className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
-                isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
-            }`}
-            onClick={() => track(NavigateToPage, { destination_url: href })}
-        >
-            {links[href](pathRoot, hovering) ?? null}
-            {children}
-        </Link>
+        <Tooltip content={expandedName} delay={800}>
+            <Link
+                onMouseOver={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+                href={href}
+                className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
+                    isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
+                }`}
+                onClick={() => track(NavigateToPage, { destination_url: href })}
+            >
+                {links[href](pathRoot, hovering) ?? null}
+                {children}
+            </Link>
+        </Tooltip>
     );
 };
 
@@ -109,43 +112,43 @@ const NavBarInner = ({
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href={'/boostbot'}>
+                        <ActiveLink href={'/boostbot'} expandedName={t('navbar.boostbot')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
                         </ActiveLink>
                     )}
-                    <ActiveLink href="/dashboard">
+                    <ActiveLink href="/dashboard" expandedName={t('navbar.discover')}>
                         <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href={'/sequences'}>
+                        <ActiveLink href={'/sequences'} expandedName={t('navbar.sequences')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/inbox">
+                        <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/influencer-manager">
+                        <ActiveLink href="/influencer-manager" expandedName={t('navbar.influencerManager')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
-                        <ActiveLink href="/campaigns">
+                        <ActiveLink href="/campaigns" expandedName={t('navbar.campaigns')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
-                        <ActiveLink href="/performance">
+                        <ActiveLink href="/performance" expandedName={t('navbar.performance')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.performance')}
                             </p>
                         </ActiveLink>
                     )}
-                    <ActiveLink href="/guide">
+                    <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`ml-2 whitespace-nowrap text-sm ${open && desktop ? 'relative' : 'hidden'}`}>
                             {t('navbar.guide')}
                         </p>
@@ -153,7 +156,7 @@ const NavBarInner = ({
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className={`${open ? 'ml-6' : 'text-center text-xs'}`}>ADMIN</h2>
-                            <ActiveLink href="/admin/clients">
+                            <ActiveLink href="/admin/clients" expandedName={t('navbar.Clients')}>
                                 <p
                                     className={`ml-2 whitespace-nowrap text-sm ${
                                         open && desktop ? 'relative' : 'hidden'
