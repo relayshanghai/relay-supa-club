@@ -29,7 +29,6 @@ type ModalInfoKeys =
     | 'influencerProfile'
     | 'influencerManager'
     | 'discover'
-    | 'performance'
     | 'account';
 
 export type GeneralModalInfo = ModalInfo<ModalInfoKeys>;

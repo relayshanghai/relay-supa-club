@@ -39,11 +39,6 @@ const guidePage = {
             description:
                 'With a database of over 275 million accounts across 3 platforms, we give you the data driven tools you need to find the perfect influencers.',
         },
-        performance: {
-            title: 'Track Performance',
-            description:
-                'No more spreadsheets - just input the content link and we’ll track views, likes, comments, and sales for you!',
-        },
         account: {
             title: 'Monitor Your Usage',
             description:
@@ -236,17 +231,6 @@ const guidePage = {
                     title: 'Contact Info',
                     description:
                         'To find the contact information for an influencer account, we need to scrape their information from their profile. Many influencers choose not to put this information in their profile, and so we aren’t able to collect it. We are working on new ways to collect this information, but for now showing only results with email available will be a much smaller pool of influencers than without.',
-                },
-            ],
-        },
-        performance: {
-            title: 'Performance',
-            url: '/performance',
-            sections: [
-                {
-                    title: 'You provide the link, we’ll handle the tracking ',
-                    description:
-                        'Once the influencer has posted, click on the “Content” button in the campaign table under the ‘Posted’ tab to add the post directly to your campaign. From there, we will start tracking the overall views, likes, and comments. You can check out your company’s overall performance by clicking “Performance” on the left side of your dashboard. Here you will see overall posts, and a summary of total views, likes, comments, and sales.',
                 },
             ],
         },

@@ -8,7 +8,6 @@ import {
     Send,
     Brackets,
     Engagements,
-    BarGraph,
     User,
     BoostbotSelected,
 } from '../icons';
@@ -55,7 +54,6 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
                     {cardKey === 'boostbot' && (
                         <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
                     )}
-                    {cardKey === 'performance' && <BarGraph height={24} width={24} className="stroke-primary-500" />}
                 </div>
             </div>
             <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>
