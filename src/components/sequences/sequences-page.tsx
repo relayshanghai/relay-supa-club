@@ -7,7 +7,7 @@ import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import { OpenSequencesPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenSequencesPage } from 'src/utils/analytics/events';
 import { Button } from '../button';
 import { DeleteOutline, Plus, Question } from '../icons';
 import { Layout } from '../layout';
@@ -19,6 +19,9 @@ import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
+import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
+import { Banner } from '../library/banner';
+import { useUser } from 'src/hooks/use-user';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -30,6 +33,7 @@ export const SequencesPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
     const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
+    const { profile } = useUser();
 
     const { push } = useRouter();
 
@@ -37,10 +41,13 @@ export const SequencesPage = () => {
         setShowCreateSequenceModal(true);
     };
 
+    const { track } = useRudderstackTrack();
+
     const handleDeleteSequence = async () => {
         try {
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
+            track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
             setSelection([]);
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
@@ -48,8 +55,6 @@ export const SequencesPage = () => {
         }
         refreshSequences(sequences?.filter((sequence) => !selection.includes(sequence.id)));
     };
-
-    const { track } = useRudderstackTrack();
 
     useEffect(() => {
         const { abort } = track(OpenSequencesPage);
@@ -59,6 +64,13 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}
@@ -74,6 +86,7 @@ export const SequencesPage = () => {
                 }))}
                 getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
+                source="Sequences"
             />
             <CreateSequenceModal
                 title={t('sequences.sequenceModal') as string}
@@ -89,7 +102,14 @@ export const SequencesPage = () => {
                         <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>
                     </div>
                     <div>
-                        <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="flex items-center"
+                        >
                             {t('website.needHelp')}
                             <Question className="ml-2 h-6 w-6" />
                         </Button>

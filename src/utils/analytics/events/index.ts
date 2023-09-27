@@ -26,6 +26,8 @@ import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
+import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
+import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -77,12 +79,106 @@ import type { WebhookErrorPayload } from './outreach/email-error';
 import { OUTREACH_WEBHOOK_ERROR, WebhookError } from './outreach/email-error';
 import type { EmailNewPayload } from './outreach/email-new';
 import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
-import type { IncomingWebhookPayload } from './outreach/email-incoming';
-import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 import type { HoverTooltipPayload } from './hover-tooltip';
 import { HOVER_TOOLTIP, HoverTooltip } from './hover-tooltip';
+import type { ClickNeedHelpPayload } from './click-need-help';
+import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
+import type { GoToLoginPayload } from './go-to-login';
+import { GO_TO_LOGIN, GoToLogin } from './go-to-login';
+import type { OpenAccountModalPayload } from './open-account-modal';
+import { OPEN_ACCOUNT_MODAL, OpenAccountModal } from './open-account-modal';
+import type { NavigateToPagePayload } from './navigate-to-page';
+import { NAVIGATE_TO_PAGE, NavigateToPage } from './navigate-to-page';
+import type { SignupStartedPayload } from './signup-started';
+import { SIGNUP_STARTED, SignupStarted } from './signup-started';
+import type { OpenSequencePayload } from './outreach/sequence-open';
+import { OPEN_SEQUENCE, OpenSequence } from './outreach/sequence-open';
+import type { PasswordResetPayload } from './password-reset';
+import { PASSWORD_RESET, PasswordReset } from './password-reset';
+import type { DeleteSequencePayload } from './outreach/sequence-delete';
+import { DELETE_SEQUENCE, DeleteSequence } from './outreach/sequence-delete';
+import type { EnterInfluencerEmailPayload } from './outreach/enter-influencer-email';
+import { ENTER_INFLUENCER_EMAIL, EnterInfluencerEmail } from './outreach/enter-influencer-email';
+import { OpenEmailThread, OPEN_EMAIL_THREAD, type OpenEmailThreadPayload } from './open-email-thread';
+import type { ViewSequenceTemplatesPayload } from './outreach/view-sequence-templates';
+import { VIEW_SEQUENCE_TEMPLATES, ViewSequenceTemplates } from './outreach/view-sequence-templates';
+import type { UpdateTemplateVariablePayload } from './outreach/update-template-variable';
+import { UPDATE_TEMPLATE_VARIABLE, UpdateTemplateVariable } from './outreach/update-template-variable';
+import type { SaveTemplateVariableUpdatesPayload } from './outreach/save-template-variable-updates';
+import { SAVE_TEMPLATE_VARIABLE_UPDATES, SaveTemplateVariableUpdates } from './outreach/save-template-variable-updates';
+import type { InputPaymentInfoPayload } from './onboarding/input-payment-info';
+import { INPUT_PAYMENT_INFO, InputPaymentInfo } from './onboarding/input-payment-info';
+import type { OpenGuideSectionModalPayload } from './guide/open-guide-section-modal';
+import { OPEN_GUIDE_SECTION_MODAL, OpenGuideSectionModal } from './guide/open-guide-section-modal';
+import type { ExpandHelpSectionPayload } from './guide/expand-help-section';
+import { EXPAND_HELP_SECTION, ExpandHelpSection } from './guide/expand-help-section';
+import type { ChangeLanguagePayload } from './change-language';
+import { CHANGE_LANGUAGE, ChangeLanguage } from './change-language';
+import type { StripeWebhookIncomingPayload } from './stripe/stripe-webhook-incoming';
+import { STRIPE_WEBHOOK_INCOMING, StripeWebhookIncoming } from './stripe/stripe-webhook-incoming';
+import type { StripeWebhookErrorPayload } from './stripe/stripe-webhook-error';
+import { STRIPE_WEBHOOK_ERROR, StripeWebhookError } from './stripe/stripe-webhook-error';
+import type { StripeWebhookPaymentFailedPayload } from './stripe/stripe-webhook-payment-failed';
+import { STRIPE_WEBHOOK_PAYMENT_FAILED, StripeWebhookPaymentFailed } from './stripe/stripe-webhook-payment-failed';
+import type { SendEmailReplyPayload } from './send-email-reply';
+import { SEND_EMAIL_REPLY, SendEmailReply } from './send-email-reply';
+import type { NavigateSignupCarousalPayload } from './onboarding/navigate-signup-carousal';
+import { NAVIGATE_SIGNUP_CAROUSAL, NavigateSignupCarousal } from './onboarding/navigate-signup-carousal';
+import type { OpenFiltersModalPayload } from './discover/open-filters-modal';
+import { OPEN_FILTERS_MODAL, OpenFiltersModal } from './discover/open-filters-modal';
+import type { EnterFilterPayload } from './discover/enter-filter';
+import { ENTER_FILTER, EnterFilter } from './discover/enter-filter';
+import type { ClearFiltersPayload } from './discover/clear-filters';
+import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
+import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
+import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
+import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
+import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
+import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
+import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
+import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
+import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { UpdateInfluencerProfilePayload } from './outreach/update-influencer-profile';
+import { UpdateInfluencerProfile, UPDATE_INFLUENCER_PROFILE } from './outreach/update-influencer-profile';
+import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
+import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
+import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
+import { ADD_NOTE_TO_INFLUENCER_PROFILE, AddNoteToInfluencerProfile } from './outreach/add-note-to-influencer-profile';
+import type { UpdateInfluencerStatusPayload } from './outreach/update-influencer-status';
+import { UPDATE_INFLUENCER_STATUS, UpdateInfluencerStatus } from './outreach/update-influencer-status';
+import type { FilterSequenceInfluencersPayload } from './outreach/filter-sequence-influencers';
+import { FILTER_SEQUENCE_INFLUENCERS, FilterSequenceInfluencers } from './outreach/filter-sequence-influencers';
+import type { SearchInfluencerManagerPayload } from './outreach/search-influencer-manager';
+import { SEARCH_INFLUENCER_MANAGER, SearchInfluencerManager } from './outreach/search-influencer-manager';
+import type { FilterInfluencerManagerPayload } from './outreach/filter-influencer-manager';
+import { FILTER_INFLUENCER_MANAGER, FilterInfluencerManager } from './outreach/filter-influencer-manager';
+import type { GoToInboxPayload } from './outreach/go-to-inbox';
+import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
+import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
+import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
+import { type SaveInfluencerProfileUpdatesPayload } from './outreach/save-influencer-profile-updates';
+import {
+    SAVE_INFLUENCER_PROFILE_UPDATES,
+    SaveInfluencerProfileUpdates,
+} from './outreach/save-influencer-profile-updates';
+import type { PlayTutorialVideoPayload } from './guide/play-tutorial-video';
+import { PLAY_TUTORIAL_VIDEO, PlayTutorialVideo } from './guide/play-tutorial-video';
+import type { CloseHelpModalPayload } from './outreach/close-help-modal';
+import { CloseHelpModal, CLOSE_HELP_MODAL } from './outreach/close-help-modal';
+import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influencer-profile-notes';
+import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
+import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
+import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
+import type { SearchInboxPayload } from './outreach/search-inbox';
+import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
+import type { PayForUpgradedPlanPayload } from './onboarding/pay-for-upgraded-plan';
+import { PAY_FOR_UPGRADED_PLAN, PayForUpgradedPlan } from './onboarding/pay-for-upgraded-plan';
+import type { UpdateProfileInfoPayload } from './update-profile-info';
+import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
+import type { ChangePasswordPayload } from './change-password';
+import { CHANGE_PASSWORD, ChangePassword } from './change-password';
 
 export {
     Search,
@@ -116,6 +212,29 @@ export {
     StopBoostbot,
     OpenSocialThumbnails,
     HoverTooltip,
+    ClickNeedHelp,
+    GoToLogin,
+    PasswordReset,
+    OpenAccountModal,
+    NavigateToPage,
+    SignupStarted,
+    OpenVideoGuideModal,
+    SendEmailReply,
+    OpenEmailThread,
+    OpenInfluencerProfile,
+    UpdateInfluencerProfile,
+    AddInfluencerPost,
+    AddNoteToInfluencerProfile,
+    UpdateInfluencerStatus,
+    SaveInfluencerProfileUpdates,
+    PlayTutorialVideo,
+    CloseHelpModal,
+    ViewInfluencerProfileNotes,
+    SelectInfluencerProfileTab,
+    SearchInbox,
+    PayForUpgradedPlan,
+    UpdateProfileInfo,
+    ChangePassword,
 };
 
 export const events = {
@@ -139,7 +258,6 @@ export const events = {
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
-    [OUTREACH_EMAIL_INCOMING]: IncomingWebhook,
     [OUTREACH_WEBHOOK_ERROR]: WebhookError,
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
@@ -153,6 +271,54 @@ export const events = {
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
     [HOVER_TOOLTIP]: HoverTooltip,
+    [CLICK_NEED_HELP]: ClickNeedHelp,
+    [GO_TO_LOGIN]: GoToLogin,
+    [PASSWORD_RESET]: PasswordReset,
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModal,
+    [NAVIGATE_TO_PAGE]: NavigateToPage,
+    [SIGNUP_STARTED]: SignupStarted,
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModal,
+    [OPEN_SEQUENCE]: OpenSequence,
+    [DELETE_SEQUENCE]: DeleteSequence,
+    [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmail,
+    [OPEN_EMAIL_THREAD]: OpenEmailThread,
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplates,
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariable,
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdates,
+    [INPUT_PAYMENT_INFO]: InputPaymentInfo,
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModal,
+    [EXPAND_HELP_SECTION]: ExpandHelpSection,
+    [CHANGE_LANGUAGE]: ChangeLanguage,
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncoming,
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookError,
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailed,
+    [SEND_EMAIL_REPLY]: SendEmailReply,
+    [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
+    [OPEN_FILTERS_MODAL]: OpenFiltersModal,
+    [ENTER_FILTER]: EnterFilter,
+    [CLEAR_FILTERS]: ClearFilters,
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
+    [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
+    [TOGGLE_AUTO_START]: ToggleAutoStart,
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfile,
+    [ADD_INFLUENCER_POST]: AddInfluencerPost,
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencers,
+    [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManager,
+    [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
+    [GO_TO_INBOX]: GoToInbox,
+    [TOGGLE_VIEW_MINE]: ToggleViewMine,
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdates,
+    [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideo,
+    [CLOSE_HELP_MODAL]: CloseHelpModal,
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
+    [SEARCH_INBOX]: SearchInbox,
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
+    [CHANGE_PASSWORD]: ChangePassword,
 };
 
 export type payloads = {
@@ -176,7 +342,6 @@ export type payloads = {
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload;
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload;
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload;
-    [OUTREACH_EMAIL_INCOMING]: IncomingWebhookPayload;
     [OUTREACH_WEBHOOK_ERROR]: WebhookErrorPayload;
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
@@ -190,6 +355,54 @@ export type payloads = {
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
     [HOVER_TOOLTIP]: HoverTooltipPayload;
+    [CLICK_NEED_HELP]: ClickNeedHelpPayload;
+    [GO_TO_LOGIN]: GoToLoginPayload;
+    [PASSWORD_RESET]: PasswordResetPayload;
+    [OPEN_ACCOUNT_MODAL]: OpenAccountModalPayload;
+    [NAVIGATE_TO_PAGE]: NavigateToPagePayload;
+    [SIGNUP_STARTED]: SignupStartedPayload;
+    [BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL]: OpenVideoGuideModalPayload;
+    [OPEN_SEQUENCE]: OpenSequencePayload;
+    [DELETE_SEQUENCE]: DeleteSequencePayload;
+    [ENTER_INFLUENCER_EMAIL]: EnterInfluencerEmailPayload;
+    [OPEN_EMAIL_THREAD]: OpenEmailThreadPayload;
+    [VIEW_SEQUENCE_TEMPLATES]: ViewSequenceTemplatesPayload;
+    [UPDATE_TEMPLATE_VARIABLE]: UpdateTemplateVariablePayload;
+    [SAVE_TEMPLATE_VARIABLE_UPDATES]: SaveTemplateVariableUpdatesPayload;
+    [INPUT_PAYMENT_INFO]: InputPaymentInfoPayload;
+    [OPEN_GUIDE_SECTION_MODAL]: OpenGuideSectionModalPayload;
+    [EXPAND_HELP_SECTION]: ExpandHelpSectionPayload;
+    [CHANGE_LANGUAGE]: ChangeLanguagePayload;
+    [STRIPE_WEBHOOK_INCOMING]: StripeWebhookIncomingPayload;
+    [STRIPE_WEBHOOK_ERROR]: StripeWebhookErrorPayload;
+    [STRIPE_WEBHOOK_PAYMENT_FAILED]: StripeWebhookPaymentFailedPayload;
+    [SEND_EMAIL_REPLY]: SendEmailReplyPayload;
+    [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
+    [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
+    [ENTER_FILTER]: EnterFilterPayload;
+    [CLEAR_FILTERS]: ClearFiltersPayload;
+    [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
+    [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
+    [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
+    [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfilePayload;
+    [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
+    [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
+    [FILTER_SEQUENCE_INFLUENCERS]: FilterSequenceInfluencersPayload;
+    [SEARCH_INFLUENCER_MANAGER]: SearchInfluencerManagerPayload;
+    [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
+    [GO_TO_INBOX]: GoToInboxPayload;
+    [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdatesPayload;
+    [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideoPayload;
+    [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
+    [SEARCH_INBOX]: SearchInboxPayload;
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
+    [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -215,7 +428,6 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_OPENED),
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
-    z.literal(OUTREACH_EMAIL_INCOMING),
     z.literal(OUTREACH_WEBHOOK_ERROR),
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
@@ -229,6 +441,54 @@ export const eventKeys = z.union([
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
     z.literal(HOVER_TOOLTIP),
+    z.literal(CLICK_NEED_HELP),
+    z.literal(GO_TO_LOGIN),
+    z.literal(PASSWORD_RESET),
+    z.literal(OPEN_ACCOUNT_MODAL),
+    z.literal(NAVIGATE_TO_PAGE),
+    z.literal(SIGNUP_STARTED),
+    z.literal(BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL),
+    z.literal(OPEN_SEQUENCE),
+    z.literal(DELETE_SEQUENCE),
+    z.literal(ENTER_INFLUENCER_EMAIL),
+    z.literal(OPEN_EMAIL_THREAD),
+    z.literal(VIEW_SEQUENCE_TEMPLATES),
+    z.literal(UPDATE_TEMPLATE_VARIABLE),
+    z.literal(SAVE_TEMPLATE_VARIABLE_UPDATES),
+    z.literal(INPUT_PAYMENT_INFO),
+    z.literal(OPEN_GUIDE_SECTION_MODAL),
+    z.literal(EXPAND_HELP_SECTION),
+    z.literal(CHANGE_LANGUAGE),
+    z.literal(STRIPE_WEBHOOK_INCOMING),
+    z.literal(STRIPE_WEBHOOK_ERROR),
+    z.literal(STRIPE_WEBHOOK_PAYMENT_FAILED),
+    z.literal(SEND_EMAIL_REPLY),
+    z.literal(NAVIGATE_SIGNUP_CAROUSAL),
+    z.literal(OPEN_FILTERS_MODAL),
+    z.literal(ENTER_FILTER),
+    z.literal(CLEAR_FILTERS),
+    z.literal(SEARCH_INFLUENCER_BY_NAME),
+    z.literal(CHANGE_SEQUENCE_TAB),
+    z.literal(TOGGLE_AUTO_START),
+    z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_PROFILE),
+    z.literal(ADD_INFLUENCER_POST),
+    z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_STATUS),
+    z.literal(FILTER_SEQUENCE_INFLUENCERS),
+    z.literal(SEARCH_INFLUENCER_MANAGER),
+    z.literal(FILTER_INFLUENCER_MANAGER),
+    z.literal(GO_TO_INBOX),
+    z.literal(TOGGLE_VIEW_MINE),
+    z.literal(SAVE_INFLUENCER_PROFILE_UPDATES),
+    z.literal(PLAY_TUTORIAL_VIDEO),
+    z.literal(CLOSE_HELP_MODAL),
+    z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
+    z.literal(SELECT_INFLUENCER_PROFILE_TAB),
+    z.literal(SEARCH_INBOX),
+    z.literal(PAY_FOR_UPGRADED_PLAN),
+    z.literal(UPDATE_PROFILE_INFO),
+    z.literal(CHANGE_PASSWORD),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

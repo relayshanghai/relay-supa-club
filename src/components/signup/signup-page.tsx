@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { useFields } from 'src/hooks/use-fields';
-import { StepOne, StepTwo, StepThree, StepFour } from './steps';
+import { StepOne, StepTwo, StepThree } from './steps';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { clientLogger } from 'src/utils/logger-client';
 import { hasCustomError } from 'src/utils/errors';
@@ -15,9 +15,10 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
+import { GoToLogin } from 'src/utils/analytics/events';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -45,6 +46,7 @@ const SignUpPage = ({
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { track } = useRudderstackTrack();
     const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
     const { trackEvent } = useRudderstack();
@@ -64,7 +66,6 @@ const SignUpPage = ({
     });
 
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
         lastName: '',
@@ -88,7 +89,6 @@ const SignUpPage = ({
         companyName,
         companyWebsite,
         companySize: selectedSize,
-        companyCategory: selectedCategory,
     };
 
     const steps = [
@@ -103,10 +103,6 @@ const SignUpPage = ({
         {
             title: t('signup.step3title'),
             num: 3,
-        },
-        {
-            title: t('signup.step4title'),
-            num: 4,
         },
     ];
 
@@ -130,7 +126,7 @@ const SignUpPage = ({
             await handleProfileCreate(formData);
         }
 
-        if (currentStep === 4) {
+        if (currentStep === 3) {
             const profileId = await handleProfileCreate(formData);
             if (!profileId) {
                 toast.error(t('signup.noProfileId'));
@@ -140,7 +136,7 @@ const SignUpPage = ({
             if (result === 'success') {
                 await router.push('/free-trial');
             }
-        } else if (currentStep < 4) {
+        } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
         trackEvent(SIGNUP(`step-${currentStep}`), {
@@ -151,7 +147,6 @@ const SignUpPage = ({
             companyName,
             companyWebsite,
             companySize: selectedSize ?? '',
-            companyCategory: selectedCategory,
         });
     };
 
@@ -197,11 +192,10 @@ const SignUpPage = ({
     };
 
     const handleCompanyCreate = async (formData: FieldValues, profileId: string) => {
-        const { companyName, companyWebsite, companySize, companyCategory } = formData;
+        const { companyName, companyWebsite, companySize } = formData;
         const data = {
             name: companyName,
             website: companyWebsite,
-            category: companyCategory,
             size: companySize,
             profileId: profileId,
         };
@@ -263,14 +257,6 @@ const SignUpPage = ({
 
                             {currentStep === 3 && (
                                 <StepThree
-                                    setSelectedCategory={setSelectedCategory}
-                                    loading={loading}
-                                    onNext={onNext}
-                                />
-                            )}
-
-                            {currentStep === 4 && (
-                                <StepFour
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
                                     setSelectedSize={setSelectedSize}
@@ -286,7 +272,11 @@ const SignUpPage = ({
             <div className="mb-2 mt-6 text-center">
                 <p className="inline text-sm text-gray-500">
                     {t('login.alreadyHaveAnAccount')}{' '}
-                    <Link href="/login" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                    <Link
+                        onClick={() => track(GoToLogin)}
+                        href="/login"
+                        className="inline cursor-pointer text-primary-500 hover:text-primary-700"
+                    >
                         <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
                             {t('login.logIn')}
                         </Button>

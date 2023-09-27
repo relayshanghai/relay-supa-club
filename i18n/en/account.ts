@@ -80,6 +80,7 @@ const account = {
         },
         upgrade: 'Upgrade',
         upgradeSuccess: 'Upgrade success',
+        upgradeSubscriptionError: 'Unable to upgrade subscription',
     },
     invite: {
         title: 'Invite Members',
@@ -103,7 +104,7 @@ const account = {
         subscriptionCancelled: 'Subscription cancelled',
     },
     planIsReady: 'Your plan is ready!',
-    redirectingMsg: 'Redirecting in 3s',
+    redirectingMsg: 'Redirecting...',
     card: 'Card',
     alipay: 'Alipay',
     choosePaymentMethod: 'Please choose a payment method.',

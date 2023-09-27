@@ -3,8 +3,11 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OUTREACH_ADD_INFLUENCER_TO_SEQUENCE = 'outreach-add_influencer_to_sequence';
 
 export type AddInfluencerToSequencePayload = EventPayload<{
-    influencer_id: string | null;
     sequence_id: string | null;
+    influencer_ids: string[] | null;
+    sequence_influencer_ids: string[] | null;
+    // @note legacy prop since this event was added before
+    //       `BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH` was added
     sequence_influencer_id: string | null;
     is_success: boolean;
     is_sequence_autostart: boolean | null;

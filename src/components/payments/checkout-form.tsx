@@ -4,20 +4,25 @@ import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
-import { nextFetch } from 'src/utils/fetcher';
-import type { SubscriptionUpgradePostResponse } from 'pages/api/subscriptions/upgrade';
 import { clientLogger } from 'src/utils/logger-client';
 import type { NewRelayPlan } from 'types';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import {
+    upgradeSubscriptionWithPaymentIntent,
+    cancelSubscriptionWithSubscriptionId,
+} from 'src/utils/api/stripe/handle-subscriptions';
+import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
+import { APP_URL } from 'src/constants';
+import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 
-export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
+export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice: NewRelayPlan; batchId: number }) {
     const stripe = useStripe();
     const elements = useElements();
     const { t } = useTranslation();
     const { company } = useCompany();
     const { trackEvent } = useRudderstack();
-
+    const { track } = useRudderstackTrack();
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
@@ -28,43 +33,61 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
     };
 
     const handleSubmit = async () => {
+        trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setIsLoading(true);
 
         // Trigger form validation and wallet collection
         const { error: submitError } = await elements.submit();
+
         if (submitError) {
             handleError(submitError);
             return;
         }
 
-        // Create the subscription
         try {
-            const body = {
-                companyId: company.id,
-                customer: company.cus_id,
-                priceId: selectedPrice.priceIds.monthly,
-            };
+            const priceId = selectedPrice.priceIds.monthly;
+            const { clientSecret, newSubscriptionId, oldSubscriptionId } = await upgradeSubscriptionWithPaymentIntent(
+                company.id,
+                company.cus_id,
+                priceId,
+            );
+            if (!clientSecret) {
+                throw new Error('No client secret found');
+            }
+            const returnUrlParams = new URLSearchParams();
+            returnUrlParams.append('subscriptionId', newSubscriptionId);
+            returnUrlParams.append('oldSubscriptionId', oldSubscriptionId);
+            returnUrlParams.append('priceId', priceId);
+            returnUrlParams.append('companyId', company.id);
 
-            const { clientSecret } = await nextFetch<SubscriptionUpgradePostResponse>('/subscriptions/upgrade', {
-                method: 'POST',
-                body,
-            });
-
-            // Confirm the Intent using the details collected by the Payment Element
+            // confirm the payment intent form the created subscription
             const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: 'https://app.relay.club/payments/success',
+                    return_url: `${APP_URL}/payments/success?${returnUrlParams}`,
                 },
             });
-
+            // if has error, handle error
             if (error) {
+                track(PayForUpgradedPlan, {
+                    successful: false,
+                    batch_id: batchId,
+                    stripe_error_code: error.code,
+                });
                 handleError(error);
+                // if has error confirm the payment, should cancel the new subscription
+                await cancelSubscriptionWithSubscriptionId(newSubscriptionId);
+                return;
+            } else {
+                track(PayForUpgradedPlan, {
+                    successful: true,
+                    batch_id: batchId,
+                });
             }
-            trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         } catch (error) {
+            handleError(error);
             clientLogger(error, 'error');
         } finally {
             setIsLoading(false);
@@ -81,8 +104,14 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
         >
             <PaymentElement
                 id="payment-element"
-                onChange={(e) => {
-                    setFormReady(e.complete);
+                onChange={({ complete, empty, value }) => {
+                    track(InputPaymentInfo, {
+                        complete,
+                        empty,
+                        type: value.type,
+                        batch_id: batchId,
+                    });
+                    setFormReady(complete);
                 }}
             />
 

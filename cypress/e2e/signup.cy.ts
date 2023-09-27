@@ -38,11 +38,6 @@ describe('Signup and start trial', () => {
         });
         cy.contains('button', 'Next').click();
         // step three
-        cy.contains('What category of product do you sell?');
-        cy.get('input').click();
-        cy.contains('AR/VR/XR').click();
-        cy.contains('button', 'Next').click();
-        // step four
         cy.contains('Tell us about your Company');
         cy.contains('label', 'Company').within(() => {
             cy.get('input')
@@ -52,11 +47,10 @@ describe('Signup and start trial', () => {
         cy.contains('label', 'Website').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
         });
-
         cy.contains('Size');
         cy.contains('11-50').click();
         cy.contains('button', 'Next').click();
-        //step five - free trial page
+        //last step - free trial page
         cy.contains('Start your free trial');
         cy.contains('label', 'I agree with the Terms and Conditions');
         //open and close terms and conditions modal

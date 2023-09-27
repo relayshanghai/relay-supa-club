@@ -108,9 +108,10 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
 
     const addTag = useCallback(
         (item: CreatorSearchTag) => {
+            const term = tags.length > 0 ? tags[0].tag : 'influencer';
             updateTags([...tags, item]);
             setSelectedTag(null);
-            trackWordCloudAddTag(item);
+            trackWordCloudAddTag({ item, search_topic: term, all_selected_topics: tags });
         },
         [tags, updateTags, trackWordCloudAddTag],
     );

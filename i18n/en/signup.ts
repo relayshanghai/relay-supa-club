@@ -1,9 +1,7 @@
 const signup = {
     step1title: 'Verify your number to get started',
     step2title: 'Add an email and password to your account',
-    step3title: 'What category of product do you sell?',
-    step4title: 'Tell us about your Company',
-    step5title: 'Starting your free trial now!',
+    step3title: 'Tell us about your Company',
     next: 'Next',
     back: 'Back',
     submit: 'Submit',

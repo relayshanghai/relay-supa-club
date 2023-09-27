@@ -1,4 +1,4 @@
-import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
@@ -7,6 +7,7 @@ import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceTableProps {
+    sequence?: Sequence;
     sequenceInfluencers: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
@@ -47,6 +48,7 @@ const sortInfluencers = (
 };
 
 const SequenceTable: React.FC<SequenceTableProps> = ({
+    sequence,
     sequenceInfluencers,
     sequenceEmails,
     sequenceSteps,
@@ -117,6 +119,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                     return (
                         <SequenceRow
                             key={influencer.id}
+                            sequence={sequence}
                             sequenceInfluencer={influencer}
                             lastEmail={lastEmail}
                             nextEmail={nextEmail}

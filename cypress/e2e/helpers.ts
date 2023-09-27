@@ -60,6 +60,11 @@ export const reinsertAlice = async () => {
             sequence_step: 0,
             email,
             iqdata_id: '123',
+            name: '',
+            username: '',
+            url: '',
+            avatar_url: '',
+            platform: 'instagram',
         };
         await supabase.from('sequence_influencers').insert(reinsert);
     } catch (error) {
@@ -110,12 +115,26 @@ export const reinsertCharlie = async () => {
             sequence_step: 0,
             email,
             iqdata_id: '123',
+            name: '',
+            username: '',
+            url: '',
+            avatar_url: '',
+            platform: 'instagram',
         };
         await supabase.from('sequence_influencers').insert(reinsert);
     } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
     }
+};
+
+export const resetBobsStatus = async () => {
+    const supabase = supabaseClientCypress();
+    const email = 'bob.brown@example.com';
+    await supabase
+        .from('sequence_influencers')
+        .update({ funnel_status: 'To Contact', sequence_step: 0 })
+        .match({ email });
 };
 
 export const resetUsages = (supabase: RelayDatabase) => {

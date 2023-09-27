@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInboxPage } from 'src/utils/analytics/events';
+import { OpenEmailThread, OpenInboxPage, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -79,10 +79,26 @@ export const InboxPage = () => {
     const { profile } = useUser();
 
     useEffect(() => {
+        if (!sequenceInfluencer) return;
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw Error('No social profile id');
+        }
         setLocalProfile(mapProfileToFormData(sequenceInfluencer));
-    }, [sequenceInfluencer]);
+        track(OpenInfluencerProfile, {
+            influencer_id: sequenceInfluencer.influencer_social_profile_id,
+            search_id: searchTerm,
+            current_status: sequenceInfluencer?.funnel_status,
+            currently_filtered: false,
+            currently_searched: searchTerm !== '',
+            view_mine_enabled: false,
+            is_users_influencer: false,
+        });
+    }, [sequenceInfluencer, searchTerm, track]);
 
     useEffect(() => {
+        if (!profile || !profile.sequence_send_email) {
+            return;
+        }
         if (searchTerm === '') {
             setSearchResults([]);
             return;
@@ -92,11 +108,17 @@ export const InboxPage = () => {
         });
         const results = fuse.search(searchTerm);
         setSearchResults(results.map((result) => result.item));
-    }, [filteredMessages, searchTerm]);
+        track(SearchInbox, {
+            sequence_email_address: profile.sequence_send_email,
+            search_query: searchTerm,
+            total_results: results.length,
+        });
+    }, [filteredMessages, searchTerm, profile, track]);
 
     const handleGetThreadEmails = useCallback(
         async (message: MessagesGetMessage) => {
             setSelectedMessages([]);
+
             setLoadingSelectedMessages(true);
             setGetSelectedMessagesError('');
             try {
@@ -106,10 +128,24 @@ export const InboxPage = () => {
                 const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
                 const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
                 const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
+
+                if (threadMessages.length === 0) {
+                    setLoadingSelectedMessages(false);
+                    throw new Error('No thread messages found');
+                }
+
                 threadMessages.sort((a, b) => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
                 });
                 setSelectedMessages(threadMessages);
+                track(OpenEmailThread, {
+                    sequence_email_address: profile?.sequence_send_email ?? '',
+                    email_thread_id: threadMessages[0].threadId,
+                    selected_email_id: threadMessages[0].emailId,
+                    sender: threadMessages[0].from,
+                    recipient: threadMessages[0].to,
+                    open_when_clicked: true,
+                });
                 setLoadingSelectedMessages(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -118,7 +154,7 @@ export const InboxPage = () => {
             }
             setLoadingSelectedMessages(false);
         },
-        [getSelectedMessagesError, profile?.email_engine_account_id],
+        [getSelectedMessagesError, profile?.email_engine_account_id, profile?.sequence_send_email, track],
     );
 
     const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
@@ -263,6 +299,7 @@ export const InboxPage = () => {
                                     isOpen={uiState.isNotesListOverlayOpen}
                                     onClose={handleNoteListClose}
                                     onOpen={handleNoteListOpen}
+                                    influencerSocialProfileId={sequenceInfluencer?.id}
                                 />
                             </div>
                         )}

@@ -23,10 +23,18 @@ import toast from 'react-hot-toast';
 import faq from 'i18n/en/faq';
 import { useRouter } from 'next/router';
 import { clientLogger } from 'src/utils/logger-client';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
+import { Banner } from '../library/banner';
+import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
+import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
+import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
+    const { track } = useRudderstackTrack();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
@@ -58,32 +66,27 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         return filteredInfluencers;
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
-    const handleSetSelectedOptions = useCallback(
-        (filters: CommonStatusType[]) => {
-            setFilterSteps(filters);
-        },
-        [setFilterSteps],
-    );
-
-    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencerManagerPage[]) => {
-        const results = await sendSequence(sequenceInfluencers);
+    const handleStartSequence = async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
+        const results = await sendSequence(sequenceInfluencersToSend);
         try {
             // handle optimistic update
             const succeeded = results.filter((result) => !result.error);
             if (succeeded.length > 0) {
                 const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
 
-                const updatedInfluencers: SequenceInfluencerManagerPage[] = sequenceInfluencers.map((influencer) => {
-                    if (succeededInfluencerIds.includes(influencer.id)) {
-                        return {
-                            ...influencer,
-                            funnel_status: 'In Sequence',
-                            sequence_step: 1,
-                        };
-                    }
-                    return influencer;
-                });
-                refreshSequenceInfluencers(updatedInfluencers, { revalidate: false });
+                refreshSequenceInfluencers(
+                    sequenceInfluencers.map((influencer) => {
+                        if (succeededInfluencerIds.includes(influencer.id)) {
+                            return {
+                                ...influencer,
+                                funnel_status: 'In Sequence',
+                                sequence_step: 1,
+                            };
+                        }
+                        return influencer;
+                    }),
+                    { revalidate: false },
+                );
             }
             // shouldn't need to update failed
         } catch (error) {
@@ -94,6 +97,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
+        track(ToggleAutoStart, {
+            action: checked ? 'Enable' : 'Disable',
+            total_sequence_influencers: sequenceInfluencers?.length,
+            unstarted_sequence_influencers: sequenceInfluencers?.filter(
+                (influencer) => influencer.funnel_status === 'To Contact',
+            ).length,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || null,
+        });
         if (!sequence) {
             return;
         }
@@ -102,6 +114,11 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
     const handleOpenUpdateTemplateVariables = () => {
+        track(ViewSequenceTemplates, {
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+            variables_set: missingVariables.length === 0,
+        });
         setShowUpdateTemplateVariables(true);
     };
 
@@ -134,8 +151,16 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 ) : null,
         },
     ];
-    const [currentTab, setCurrentTab] = useState(tabs[0].value);
-
+    const [currentTab, setCurrentTabState] = useState(tabs[0].value);
+    const setCurrentTab = (tab: SequenceInfluencerManagerPage['funnel_status']) => {
+        track(ChangeSequenceTab, {
+            current_tab: currentTab,
+            selected_tab: tab,
+            sequence_id: sequenceId,
+            sequence_name: sequence?.name || '',
+        });
+        setCurrentTabState(tab);
+    };
     const [selection, setSelection] = useState<string[]>([]);
 
     const currentTabInfluencers = influencers
@@ -155,6 +180,22 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             toast.error(t('sequences.influencerDeleteFailed'));
         }
     };
+
+    const handleSetSelectedOptions = useCallback(
+        (filters: CommonStatusType[]) => {
+            track(FilterSequenceInfluencers, {
+                filter_type: filters.toString(),
+                current_tab: currentTab,
+                total_sequence_influencers: influencers?.length,
+                total_filter_results: influencers?.filter((influencer) => filters.includes(influencer.funnel_status))
+                    .length,
+                sequence_id: sequenceId,
+                sequence_name: sequence?.name || '',
+            });
+            setFilterSteps(filters);
+        },
+        [currentTab, influencers, sequence?.name, sequenceId, track],
+    );
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -197,9 +238,17 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         : t('sequences.autoStartTooltipDescription');
 
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+    const hideAutoStart = true; // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
 
     return (
         <Layout>
+            {!profile?.email_engine_account_id && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.title')}
+                    message={t('banner.descriptionSequences')}
+                />
+            )}
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
@@ -210,9 +259,11 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 }))}
                 getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
+                source="Sequence"
             />
             <TemplateVariablesModal
                 sequenceId={sequenceId}
+                sequenceName={sequence?.name}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
                 sequenceSteps={sequenceSteps ?? []}
@@ -237,7 +288,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             </div>
                         )}
                     </Button>
-                    <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="ml-auto flex items-center">
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            setShowNeedHelp(true);
+                            track(ClickNeedHelp);
+                        }}
+                        className="ml-auto flex items-center"
+                    >
                         {t('website.needHelp')}
                         <Question className="ml-2 h-6 w-6" />
                     </Button>
@@ -262,27 +320,29 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 />
                 <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pb-2">
                     <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
-                    <div
-                        className="flex flex-row"
-                        onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
-                    >
-                        <Switch
-                            className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
-                            checked={sequence?.auto_start ?? false}
-                            afterLabel={t('sequences.autoStart') || ''}
-                            onChange={(e) => {
-                                handleAutostartToggle(e.target.checked);
-                            }}
-                        />
-                        <Tooltip
-                            content={autoStartTooltipTitle}
-                            detail={autoStartTooltipDescription}
-                            position="bottom-left"
-                            className="w-fit"
+                    {hideAutoStart ? null : (
+                        <div
+                            className="flex flex-row"
+                            onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
                         >
-                            <Info className="ml-2 h-3 w-3 text-gray-300" />
-                        </Tooltip>
-                    </div>
+                            <Switch
+                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                                checked={sequence?.auto_start ?? false}
+                                afterLabel={t('sequences.autoStart') || ''}
+                                onChange={(e) => {
+                                    handleAutostartToggle(e.target.checked);
+                                }}
+                            />
+                            <Tooltip
+                                content={autoStartTooltipTitle}
+                                detail={autoStartTooltipDescription}
+                                position="bottom-left"
+                                className="w-fit"
+                            >
+                                <Info className="ml-2 h-3 w-3 text-gray-300" />
+                            </Tooltip>
+                        </div>
+                    )}
                 </section>
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto">
@@ -310,6 +370,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <div>
                         {currentTabInfluencers && sequenceSteps ? (
                             <SequenceTable
+                                sequence={sequence}
                                 sequenceInfluencers={currentTabInfluencers}
                                 sequenceEmails={sequenceEmails}
                                 sequenceSteps={sequenceSteps}

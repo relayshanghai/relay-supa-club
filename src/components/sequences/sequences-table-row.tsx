@@ -9,8 +9,9 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Button } from '../button';
-import { useUser } from 'src/hooks/use-user';
 import { EmailPreviewModal } from './email-preview-modal';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
 
 export const SequencesTableRow = ({
     sequence,
@@ -24,7 +25,6 @@ export const SequencesTableRow = ({
     const { t } = useTranslation();
     const { sequenceSteps } = useSequence(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
-    const { profile } = useUser();
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const openRate = decimalToPercent(
@@ -33,6 +33,7 @@ export const SequencesTableRow = ({
         ).length || 0) / (sequenceEmails?.length || 1),
         0,
     );
+    const { track } = useRudderstackTrack();
 
     const handleChange = () => {
         onCheckboxChange(sequence.id);
@@ -56,7 +57,16 @@ export const SequencesTableRow = ({
                         type="checkbox"
                     />
                 </td>
-                <td className="whitespace-nowrap px-6 py-3 text-primary-600">
+                <td
+                    className="whitespace-nowrap px-6 py-3 text-primary-600"
+                    onClick={() => {
+                        track(OpenSequence, {
+                            sequence_id: sequence.id,
+                            total_influencers: sequenceInfluencers?.length || 0,
+                            $add: { sequence_open_count: 1 },
+                        });
+                    }}
+                >
                     <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
@@ -69,7 +79,6 @@ export const SequencesTableRow = ({
                     <Button
                         className="flex flex-row gap-2"
                         variant="ghost"
-                        disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
                         onClick={() => setShowEmailPreview(sequenceSteps ?? [])}
                     >
                         <Brackets className="h-5 w-5" />

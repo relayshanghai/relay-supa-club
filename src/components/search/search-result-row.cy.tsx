@@ -12,6 +12,7 @@ const creator: CreatorSearchAccountObject = {
         user_profile: {
             user_id: '25025320',
             username: 'instagram',
+            handle: 'instagram',
             url: 'https://www.instagram.com/instagram/',
             picture:
                 'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDaDVMq5CUHy%2BkcsdYgF20nDsuUwkRjFVav5M3TrTU9h7%2BxcZBxCJ2RhABotd8JjaVVGHFCcdShtZRKywU%2BQReCwgNlJUwVYqIiahjW32e%2BqWA%3D%3D',

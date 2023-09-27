@@ -4,19 +4,26 @@ import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements,
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
+import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
+import { PlayTutorialVideo } from 'src/utils/analytics/events';
 
 const featVideo = true;
 export type GuideCardKey = keyof typeof guidePage.cards;
 
 export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
     const [guideShow, setGuideShow] = useState<boolean>(false);
+    const { track } = useRudderstackTrack();
 
     const handleGuideModal = () => {
-        trackEvent(GUIDE_PAGE('modal opened'), { guideSection: cardKey });
+        track(OpenGuideSectionModal, {
+            section: cardKey,
+            $add: {
+                user_open_count: 1,
+            },
+        });
         setGuideShow((prev) => !prev);
     };
     return (
@@ -54,6 +61,7 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
 export const GuideComponent = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -68,6 +76,10 @@ export const GuideComponent = () => {
                     muted={false}
                     controls={true}
                     onPlay={(e) => {
+                        track(PlayTutorialVideo, {
+                            video: 'Main Demo',
+                            $add: { user_play_count: 1 },
+                        });
                         trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });

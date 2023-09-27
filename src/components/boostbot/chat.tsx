@@ -15,14 +15,11 @@ import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays } from 'src/utils/utils';
-import type { MessageType } from 'pages/boostbot';
+import type { MessageType } from 'src/components/boostbot/message';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-
-export type ProgressType = {
-    topics: string[];
-    isMidway: boolean;
-    totalFound: number | null;
-};
+import type { ProgressType } from 'src/components/boostbot/chat-progress';
+import { ModalSequenceSelector } from './modal-sequence-selector';
+import type { Sequence } from 'src/utils/api/db';
 
 interface ChatProps {
     messages: MessageType[];
@@ -42,6 +39,9 @@ interface ChatProps {
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
     shortenedButtons: boolean;
     isSearchDisabled: boolean;
+    sequence?: Sequence;
+    setSequence: (sequence: Sequence | undefined) => void;
+    sequences?: Sequence[];
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -59,12 +59,16 @@ export const Chat: React.FC<ChatProps> = ({
     handleUnlockInfluencers,
     shortenedButtons,
     isSearchDisabled,
+    sequence,
+    setSequence,
+    sequences,
 }) => {
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
     const { track } = useRudderstackTrack();
 
@@ -73,9 +77,13 @@ export const Chat: React.FC<ChatProps> = ({
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.stopped')}` });
+        addMessage({
+            sender: 'User',
+            type: 'translation',
+            translationKey: 'boostbot.chat.stopped',
+        });
         setMessages((prevMessages) => {
-            const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
+            const lastProgressIndex = prevMessages.findLastIndex((message) => message.type === 'progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
         });
         track(StopBoostbot, {
@@ -84,23 +92,26 @@ export const Chat: React.FC<ChatProps> = ({
     };
 
     const updateProgress = (progress: ProgressType) =>
-        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', progress }]);
+        setMessages((messages) => [
+            ...messages.slice(0, -1),
+            { sender: 'Neutral', type: 'progress', progressData: progress },
+        ]);
 
     const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.unlockPage')}` });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockPage' });
         handlePageToUnlock();
     };
 
     const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.outreachPage')}` });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachPage' });
         handlePageToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'User', content: productDescription },
-            { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
+            { sender: 'User', type: 'text', text: productDescription },
+            { sender: 'Neutral', type: 'progress', progressData: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsSearchLoading(true);
 
@@ -145,7 +156,9 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.chat.influencersFound', { count: influencers.length }) || '',
+                type: 'translation',
+                translationKey: 'boostbot.chat.influencersFound',
+                translationValues: { count: influencers.length },
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);
@@ -168,6 +181,16 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+            {sequence && sequences && (
+                <ModalSequenceSelector
+                    show={showSequenceSelector}
+                    setShow={setShowSequenceSelector}
+                    handleAddToSequence={chatPageToOutreach}
+                    sequence={sequence}
+                    setSequence={setSequence}
+                    sequences={sequences}
+                />
+            )}
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
@@ -180,7 +203,9 @@ export const Chat: React.FC<ChatProps> = ({
                 isSearchLoading={isSearchLoading}
                 isUnlockOutreachLoading={isUnlockOutreachLoading}
                 handlePageToUnlock={chatPageToUnlock}
-                handlePageToOutreach={chatPageToOutreach}
+                handlePageToOutreach={() => {
+                    setShowSequenceSelector(true);
+                }}
                 stopBoostbot={stopBoostbot}
                 shortenedButtons={shortenedButtons}
             />

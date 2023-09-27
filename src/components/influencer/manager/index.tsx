@@ -1,5 +1,5 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
@@ -8,7 +8,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenInfluencerManagerPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterInfluencers } from './helpers';
@@ -20,6 +20,9 @@ import { useRouter } from 'next/router';
 import faq from 'i18n/en/faq';
 import { Button } from 'src/components/button';
 import { Question } from 'src/components/icons';
+import { FilterInfluencerManager } from 'src/utils/analytics/events/outreach/filter-influencer-manager';
+import { SearchInfluencerManager } from 'src/utils/analytics/events/outreach/search-influencer-manager';
+import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-mine';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -45,10 +48,13 @@ const Manager = () => {
 
     const { track } = useRudderstackTrack();
 
-    const influencers =
-        sequenceInfluencers.length > 0 && profile && sequences
-            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers)
-            : [];
+    const influencers = useMemo(
+        () =>
+            sequenceInfluencers.length > 0 && profile && sequences
+                ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : [],
+        [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
+    );
 
     useEffect(() => {
         const { abort } = track(OpenInfluencerManagerPage);
@@ -57,13 +63,26 @@ const Manager = () => {
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
+            if (!influencer.influencer_social_profile_id) {
+                throw Error('No social profile id');
+            }
             setInfluencer(influencer);
 
             setUiState((s) => {
                 return { ...s, isProfileOverlayOpen: true };
             });
+
+            track(OpenInfluencerProfile, {
+                influencer_id: influencer.influencer_social_profile_id,
+                search_id: searchTerm,
+                current_status: influencer?.funnel_status,
+                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
+                currently_searched: searchTerm !== '',
+                view_mine_enabled: onlyMe,
+                is_users_influencer: influencer.manager_first_name === profile?.first_name,
+            });
         },
-        [setUiState],
+        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
     );
 
     const handleProfileUpdate = useCallback(
@@ -100,16 +119,44 @@ const Manager = () => {
     }, [sequenceInfluencers]);
 
     const handleOnlyMe = useCallback(() => {
+        track(ToggleViewMine, {
+            action: !onlyMe ? 'Enable' : 'Disable',
+            total_managed_influencers: influencers.length,
+            total_users_influencers: influencers.filter(({ added_by }) => added_by === profile?.id).length,
+        });
         setOnlyMe(!onlyMe);
-    }, [onlyMe]);
+    }, [influencers, onlyMe, profile?.id, track]);
 
-    const handleStatus = (filters: CommonStatusType[]) => {
-        setFilterStatuses(filters);
-    };
+    const handleFilterStatus = useCallback(
+        (filters: CommonStatusType[]) => {
+            setFilterStatuses(filters);
+            track(FilterInfluencerManager, {
+                filter_type: 'Status',
+                selected_statuses: filters,
+                view_mine_enabled: onlyMe,
+                total_managed_influencers: influencers.length,
+                total_filter_results: profile
+                    ? filterInfluencers(searchTerm, onlyMe, filters, profile, sequenceInfluencers, sequences)?.length ||
+                      0
+                    : 0,
+            });
+        },
+        [onlyMe, influencers, profile, searchTerm, sequenceInfluencers, sequences, track],
+    );
 
-    const handleSearch = (term: string) => {
-        setSearchTerm(term);
-    };
+    const handleSearch = useCallback(
+        (term: string) => {
+            setSearchTerm(term);
+            const results = profile
+                ? filterInfluencers(term, onlyMe, filterStatuses, profile, sequenceInfluencers, sequences)
+                : null;
+            track(SearchInfluencerManager, {
+                query: term,
+                total_results: results?.length || 0,
+            });
+        },
+        [onlyMe, filterStatuses, profile, sequenceInfluencers, sequences, track],
+    );
 
     const handleProfileOverlayClose = useCallback(() => {
         setUiState((s) => {
@@ -132,6 +179,7 @@ const Manager = () => {
                 }))}
                 getMoreInfoButtonText={t('faq.influencerManagerGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
+                source="Influencer Manager"
             />
             <div className="m-8 flex flex-col">
                 <section className="flex w-full flex-row justify-between">
@@ -140,7 +188,14 @@ const Manager = () => {
                         <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
                     </div>
                     <div>
-                        <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="flex items-center"
+                        >
                             {t('website.needHelp')}
                             <Question className="ml-2 h-6 w-6" />
                         </Button>
@@ -157,7 +212,7 @@ const Manager = () => {
                         <CollabStatus
                             collabOptions={collabOptions}
                             filters={filterStatuses}
-                            onSetFilters={handleStatus}
+                            onSetFilters={handleFilterStatus}
                         />
                     </section>
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />

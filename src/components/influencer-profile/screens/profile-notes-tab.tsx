@@ -13,8 +13,13 @@ import { OutreachNextStepsInput } from '../components/outreach-next-steps-input'
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 import { useTranslation } from 'react-i18next';
+import { AddNoteToInfluencerProfile } from 'src/utils/analytics/events';
+import type { CheckboxDropdownItemData } from '../components/checkbox-dropdown-item';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { UpdateInfluencerStatus } from 'src/utils/analytics/events';
+import type { UpdateInfluencerProfilePayload } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 
-export const COLLAB_STATUS_OPTIONS = [
+export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
         id: 'Negotiating',
         label: 'Negotiating',
@@ -65,6 +70,7 @@ export type ProfileNotes = {
 type Props = {
     profile: SequenceInfluencerManagerPage;
     onUpdate?: (key: keyof ProfileNotes, value: any) => void;
+    trackProfileFieldUpdate: (payload: Omit<UpdateInfluencerProfilePayload, 'batch_id'>) => void;
 };
 
 // eslint-disable-next-line complexity
@@ -74,9 +80,13 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
     const { getNotes, saveNote } = useSequenceInfluencerNotes();
+    const { track } = useRudderstackTrack();
 
     const handleSaveNotes = useCallback(
         (value: string) => {
+            if (!profile.influencer_social_profile_id) {
+                throw new Error('Influencer social profile id missing');
+            }
             saveNote
                 .call({
                     comment: value,
@@ -86,9 +96,25 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 .then(() => {
                     saveNote.refresh();
                 });
+            track(AddNoteToInfluencerProfile, {
+                influencer_id: profile.influencer_social_profile_id,
+                note: value,
+            });
         },
-        [profile, saveNote],
+        [profile, saveNote, track],
     );
+
+    const handleCollabStatusUpate = (items: CheckboxDropdownItemData[]) => {
+        if (!profile) return;
+        if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id missing');
+        const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
+        onUpdate('collabStatus', selected);
+        track(UpdateInfluencerStatus, {
+            influencer_id: profile.influencer_social_profile_id,
+            current_status: profile.funnel_status,
+            selected_status: selected,
+        });
+    };
 
     useEffect(() => {
         // load posts when the modal is opened
@@ -113,10 +139,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
                     <OutreachCollabStatusInput
                         label={t('profile.collabStatus') as string}
-                        onUpdate={(items) => {
-                            const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
-                            onUpdate('collabStatus', selected);
-                        }}
+                        onUpdate={handleCollabStatusUpate}
                         options={COLLAB_STATUS_OPTIONS}
                         selected={[data.notes.collabStatus]}
                     />
@@ -125,7 +148,14 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         label={t('profile.nextStep') as string}
                         placeholder={t('profile.nextStepPlaceholder')}
                         value={data.notes.nextStep}
-                        onChange={(e) => onUpdate('nextStep', e.currentTarget.value)}
+                        onChange={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Next Step',
+                                previously_empty: data.notes.nextStep === '',
+                            });
+                            onUpdate('nextStep', e.currentTarget.value);
+                        }}
                     />
                 </section>
 
@@ -155,12 +185,26 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     <CollabFeeInput
                         label={t('profile.fee') || 'Fee (USD)'}
                         value={data.notes.fee}
-                        onInput={(e) => onUpdate('fee', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Fee',
+                                previously_empty: data.notes.fee === '',
+                            });
+                            onUpdate('fee', e.currentTarget.value);
+                        }}
                     />
                     <CollabScheduledPostDateInput
                         label={t('profile.scheduledPostDate')}
                         value={data.notes.scheduledPostDate}
-                        onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Scheduled Post Date',
+                                previously_empty: data.notes.scheduledPostDate === '',
+                            });
+                            onUpdate('scheduledPostDate', e.currentTarget.value);
+                        }}
                     />
                 </section>
                 <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
@@ -168,13 +212,27 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         label={t('profile.videoDetails') as string}
                         placeholder={t('profile.videoDetailsPlaceholder')}
                         value={data.notes.videoDetails}
-                        onInput={(e) => onUpdate('videoDetails', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Video Details',
+                                previously_empty: data.notes.videoDetails === '',
+                            });
+                            onUpdate('videoDetails', e.currentTarget.value);
+                        }}
                     />
                     <CollabAffiliateLinkInput
                         label={t('profile.affiliateLink') as string}
                         placeholder={t('profile.affiliateLinkPlaceholder')}
                         value={data.notes.affiliateLink}
-                        onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Affiliate Link',
+                                previously_empty: data.notes.affiliateLink === '',
+                            });
+                            onUpdate('affiliateLink', e.currentTarget.value);
+                        }}
                     />
                 </section>
 

@@ -74,8 +74,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
         if (!loading && threadMessages.length === 0) {
             getThreadEmailText(messages);
         }
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading, messages]);
+    }, [loading, messages, getThreadEmailText, threadMessages]);
 
     useEffect(() => {
         scrollToBottom();
