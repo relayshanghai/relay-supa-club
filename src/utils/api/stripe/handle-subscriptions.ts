@@ -57,13 +57,28 @@ export const updateSubscriptionStatusAndUsages = async (companyId: string, subsc
     return res;
 };
 
-export const createSetupIntentForAlipay = async (customerId: string) => {
+export const createSetupIntentForAlipay = async (companyId: string, customerId: string, priceId: string) => {
     const body: CreateSetUpIntentPostBody = {
+        companyId,
         customerId,
         paymentMethodTypes: ['alipay'],
+        priceId,
     };
 
     const res = await nextFetch('subscriptions/create-setup-intent', {
+        method: 'post',
+        body: JSON.stringify(body),
+    });
+    return res;
+};
+
+export const upgradeSubscriptionWithAlipay = async (companyId: string, cusId: string, priceId: string) => {
+    const body: SubscriptionUpgradePostRequestBody = {
+        companyId,
+        cusId,
+        priceId,
+    };
+    const res = await nextFetch('subscriptions/create-subscription-with-alipay', {
         method: 'post',
         body: JSON.stringify(body),
     });
