@@ -19,6 +19,8 @@ const sequences = {
     openRateTooltip: 'Open rate',
     sequenceSendTooltip: 'Sequence send',
     sequenceSendTooltipDescription: 'This will schedule to send your sequence emails for this influencer.',
+    sequenceBatchSendTooltipDescription:
+        'This will start sending sequence emails to all selected influencers. It may take a few minutes to finish completely.',
     outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
     outreachPlanUpgradeTooltipDescription:
         'This feature is only available for users currently on an Outreach plan. If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
@@ -177,6 +179,9 @@ const sequences = {
     invalidSocialProfileTooltipDescription:
         'Getting latest data for this influencer, we should be finished in 15 minutes.',
     invalidSocialProfileTooltipHighlight: 'Please wait and try again later.',
+    startSelectedSequences: 'Start selected sequences',
+    missingEmail: 'Missing email',
+    missingEmailTooltipDescription: 'You must add an email to this influencer in order to start this sequence.',
 };
 
 export default sequences;

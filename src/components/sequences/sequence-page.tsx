@@ -5,7 +5,7 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, DeleteOutline, Info, Question, Spinner } from '../icons';
+import { Brackets, DeleteOutline, Info, Question, SendOutline, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, FaqModal, SelectMultipleDropdown, Switch, Tabs } from '../library';
@@ -30,6 +30,7 @@ import { Banner } from '../library/banner';
 import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
+import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -66,35 +67,38 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         return filteredInfluencers;
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
-    const handleStartSequence = async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
-        const results = await sendSequence(sequenceInfluencersToSend);
-        try {
-            // handle optimistic update
-            const succeeded = results.filter((result) => !result.error);
-            if (succeeded.length > 0) {
-                const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
+    const handleStartSequence = useCallback(
+        async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
+            const results = await sendSequence(sequenceInfluencersToSend);
+            try {
+                // handle optimistic update
+                const succeeded = results.filter((result) => !result.error);
+                if (succeeded.length > 0) {
+                    const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
 
-                refreshSequenceInfluencers(
-                    sequenceInfluencers.map((influencer) => {
-                        if (succeededInfluencerIds.includes(influencer.id)) {
-                            return {
-                                ...influencer,
-                                funnel_status: 'In Sequence',
-                                sequence_step: 1,
-                            };
-                        }
-                        return influencer;
-                    }),
-                    { revalidate: false },
-                );
+                    refreshSequenceInfluencers(
+                        sequenceInfluencers.map((influencer) => {
+                            if (succeededInfluencerIds.includes(influencer.id)) {
+                                return {
+                                    ...influencer,
+                                    funnel_status: 'In Sequence',
+                                    sequence_step: 0,
+                                };
+                            }
+                            return influencer;
+                        }),
+                        { revalidate: false },
+                    );
+                }
+                // shouldn't need to update failed
+            } catch (error) {
+                return results;
             }
-            // shouldn't need to update failed
-        } catch (error) {
-            return results;
-        }
 
-        return results;
-    };
+            return results;
+        },
+        [refreshSequenceInfluencers, sendSequence, sequenceInfluencers],
+    );
 
     const handleAutostartToggle = async (checked: boolean) => {
         track(ToggleAutoStart, {
@@ -240,6 +244,106 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
     const hideAutoStart = true; // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
 
+    const selectedInfluencers = useMemo(
+        () => influencers.filter((influencer) => selection.includes(influencer.id)),
+        [influencers, selection],
+    );
+
+    const handleBatchSend = useCallback(async () => {
+        if (selection.length === 0) {
+            return;
+        }
+
+        // remove them from selection, and optimistically update to "In Sequence"
+        setSelection([]);
+        refreshSequenceInfluencers(
+            sequenceInfluencers.map((influencer) => {
+                if (selection.includes(influencer.id)) {
+                    return {
+                        ...influencer,
+                        funnel_status: 'In Sequence',
+                        sequence_step: 0,
+                    };
+                }
+                return influencer;
+            }),
+            { revalidate: false },
+        );
+
+        try {
+            const results = await handleStartSequence(selectedInfluencers);
+            const failed = results.filter((result) => result.error);
+            const succeeded = results.filter((result) => !result.error);
+
+            track(BatchStartSequence, {
+                sequence_id: sequence?.id ?? null,
+                sequence_name: sequence?.name ?? null,
+                sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
+                is_success: true,
+                sent_success: succeeded,
+                sent_success_count: succeeded.length,
+                sent_failed: failed,
+                sent_failed_count: failed.length,
+            });
+
+            if (succeeded.length > 0) {
+                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
+            }
+            if (failed.length > 0) {
+                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+                track(BatchStartSequence, {
+                    sequence_id: sequence?.id ?? null,
+                    sequence_name: sequence?.name ?? null,
+                    sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
+                    is_success: false,
+                    extra_info: { error: 'sequence-page, sequences.number_emailsFailedToSchedule: ' + failed.length },
+                });
+            }
+        } catch (error: any) {
+            track(BatchStartSequence, {
+                sequence_id: sequence?.id ?? null,
+                sequence_name: sequence?.name ?? null,
+                sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
+                is_success: false,
+                extra_info: { error: String(error) },
+            });
+            toast.error(error?.message ?? '');
+        }
+    }, [
+        handleStartSequence,
+        refreshSequenceInfluencers,
+        selectedInfluencers,
+        selection,
+        sequence?.id,
+        sequence?.name,
+        sequenceInfluencers,
+        t,
+        track,
+    ]);
+
+    const sequenceSendTooltipTitle = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
+        ? t('sequences.invalidSocialProfileTooltip')
+        : selectedInfluencers.some((i) => !i.email)
+        ? t('sequences.missingEmail')
+        : isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables')
+        : t('sequences.sequenceSendTooltip');
+    const sequenceSendTooltipDescription = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
+        ? t('sequences.invalidSocialProfileTooltipDescription')
+        : selectedInfluencers.some((i) => !i.email)
+        ? t('sequences.missingEmailTooltipDescription')
+        : isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.sequenceBatchSendTooltipDescription');
+    const sequenceSendTooltipHighlight = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
+        ? t('sequences.invalidSocialProfileTooltipHighlight')
+        : undefined;
     return (
         <Layout>
             {!profile?.email_engine_account_id && (
@@ -354,18 +458,49 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             setSelectedOptions={handleSetSelectedOptions}
                             translationPath="sequences.steps"
                         />
-                        <button
-                            data-testid="delete-influencers-button"
-                            className={`h-fit ${
-                                selection.length === 0 && 'hidden'
-                            } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
-                            onClick={() => {
-                                if (selection.length === 0) return;
-                                setShowDeleteConfirmation(true);
-                            }}
-                        >
-                            <DeleteOutline className="h-4 w-4 stroke-red-500" />
-                        </button>
+                        <div className="flex space-x-4">
+                            <button
+                                data-testid="delete-influencers-button"
+                                className={`h-fit ${
+                                    selection.length === 0 && 'hidden'
+                                } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
+                                onClick={() => {
+                                    if (selection.length === 0) return;
+                                    setShowDeleteConfirmation(true);
+                                }}
+                            >
+                                <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                            </button>
+                            {selection.length > 0 && (
+                                <Tooltip
+                                    content={sequenceSendTooltipTitle}
+                                    detail={sequenceSendTooltipDescription}
+                                    highlight={sequenceSendTooltipHighlight}
+                                    position="bottom-left"
+                                >
+                                    <Button
+                                        disabled={
+                                            isMissingSequenceSendEmail ||
+                                            selectedInfluencers.some((i) => !i?.email) ||
+                                            selectedInfluencers.some((i) => !i?.influencer_social_profile_id)
+                                        }
+                                        className={
+                                            isMissingVariables
+                                                ? 'flex !border-gray-300 !bg-gray-300 !text-gray-500'
+                                                : 'flex'
+                                        }
+                                        onClick={
+                                            isMissingVariables
+                                                ? () => setShowUpdateTemplateVariables(true)
+                                                : handleBatchSend
+                                        }
+                                    >
+                                        <SendOutline className="mr-2 h-5 w-5 stroke-white" />
+                                        {t('sequences.startSelectedSequences')}
+                                    </Button>
+                                </Tooltip>
+                            )}
+                        </div>
                     </div>
                     <div>
                         {currentTabInfluencers && sequenceSteps ? (

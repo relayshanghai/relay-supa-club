@@ -1,11 +1,14 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
 import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
-import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
+import {
+    updateSequenceInfluencerCall,
+    updateSequenceInfluencersCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
@@ -87,20 +90,30 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
         throw new Error('Missing required parameters');
     }
+
     const sequenceId = sequenceInfluencers[0].sequence_id;
-    const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
-        sequenceId,
-    );
+    const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
     if (!sequenceSteps || sequenceSteps.length === 0) {
         throw new Error('No sequence steps found');
     }
-    const templateVariables = await db<typeof getTemplateVariablesBySequenceIdCall>(
-        getTemplateVariablesBySequenceIdCall,
-    )(sequenceId);
+    const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+
+    // optimistically update all the influencers to 'In Sequence''
+    const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map((i) => ({
+        ...i,
+        funnel_status: 'In Sequence',
+        // some typescript required values, type mismatch with SequenceInfluencer
+        name: i.name ?? '',
+        username: i.username ?? '',
+        avatar_url: i.avatar_url ?? '',
+        url: i.url ?? '',
+    }));
+    await db(updateSequenceInfluencersCall)(optimisticUpdates);
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
             for (const step of sequenceSteps) {
                 try {
+                    // TODO: add a check to make sure that we have not already sent to this sequence_influencer/email
                     const result = await sendAndInsertEmail({
                         step,
                         account,
@@ -116,13 +129,12 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                 }
             }
-            // update the sequence influencer to be in the sequence if the outreach (email 0) was sent successfully
+            // revert the optimistic update if not sent successfully
             const outreachResult = results.find((result) => result.stepNumber === 0);
-            if (outreachResult && !outreachResult.error) {
+            if (!outreachResult || outreachResult.error) {
                 await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
                     id: sequenceInfluencer.id,
-                    funnel_status: 'In Sequence',
-                    sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
+                    funnel_status: 'To Contact',
                 });
             }
         } catch (error: any) {
