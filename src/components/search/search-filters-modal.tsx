@@ -14,6 +14,8 @@ import { OpenFiltersModal } from 'src/utils/analytics/events/discover/open-filte
 import type { EnterFilterPayload } from 'src/utils/analytics/events/discover/enter-filter';
 import { EnterFilter } from 'src/utils/analytics/events/discover/enter-filter';
 import { ClearFilters } from 'src/utils/analytics/events/discover/clear-filters';
+import { getJourney } from 'src/utils/analytics/journey';
+import { clientLogger } from 'src/utils/logger-client';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -51,9 +53,10 @@ type SearchFiltersModalProps = {
     show: boolean;
     setShow: (open: boolean) => void;
     onSearch: (...args: any[]) => any;
+    searchType: string | null;
 };
 
-export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersModalProps) => {
+export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: SearchFiltersModalProps) => {
     const {
         audience,
         setAudience,
@@ -111,11 +114,25 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
             e.preventDefault();
             setActiveSearch(true);
             setPage(0);
+
+            const journey = getJourney();
+
+            if (!journey) {
+                clientLogger('Journey is undefined', 'error', true);
+            }
+
+            if (searchType && journey) {
+                trackSearch('Search Options', {
+                    search_type: searchType,
+                    search_id: journey.id,
+                });
+            }
+
             trackSearch('Search Filters Modal');
             setShow(false);
             onSearch({ searchParams: getSearchParams() });
         },
-        [onSearch, setShow, trackSearch, setPage, setActiveSearch, getSearchParams],
+        [onSearch, setShow, trackSearch, setPage, setActiveSearch, getSearchParams, searchType],
     );
 
     useEffect(() => {

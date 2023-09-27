@@ -26,6 +26,7 @@ import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { clientLogger } from 'src/utils/logger-client';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -70,6 +71,17 @@ export const SearchPageInner = () => {
     const { track } = useTrackEvent();
 
     const [rendered, setRendered] = useState(false);
+    const [searchType, setSearchType] = useState<string | null>(null);
+
+    const handleSearchTypeChange = useCallback(
+        (searchType: string) => {
+            if (!searchType) {
+                clientLogger('Cannot determine search type', 'error', true);
+            }
+            setSearchType(searchType);
+        },
+        [setSearchType],
+    );
 
     /**
      * Handle the SearchOptions.onSearch event
@@ -190,7 +202,13 @@ export const SearchPageInner = () => {
                     <SearchCreators onSearch={handleSearch} />
                 </div>
             </div>
-            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
+            <SearchOptions
+                setPage={setPage}
+                setShowFiltersModal={setShowFiltersModal}
+                onSearch={handleSearch}
+                searchType={searchType}
+                onSearchTypeChange={handleSearchTypeChange}
+            />
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
@@ -261,7 +279,12 @@ export const SearchPageInner = () => {
                 allCampaignCreators={allCampaignCreators}
             />
 
-            <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
+            <SearchFiltersModal
+                show={filterModalOpen}
+                setShow={setShowFiltersModal}
+                onSearch={handleSearch}
+                searchType={searchType}
+            />
         </div>
     );
 };

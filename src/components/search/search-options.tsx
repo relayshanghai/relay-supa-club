@@ -6,22 +6,27 @@ import { Button } from '../button';
 import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
-import { startJourney } from 'src/utils/analytics/journey';
+import { getJourney } from 'src/utils/analytics/journey';
 import { useState, useCallback } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
 import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
     onSearch,
+    searchType,
+    onSearchTypeChange,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
+    searchType: string | null;
+    onSearchTypeChange: (searchType: string) => void;
 }) => {
     const {
         platform,
@@ -53,12 +58,33 @@ export const SearchOptions = ({
             e.preventDefault();
             setActiveSearch(true);
             setPage(0);
-            trackSearch('Search Options');
 
-            startJourney('search');
+            const journey = getJourney();
+
+            if (!journey) {
+                clientLogger('Journey is undefined', 'error', true);
+            }
+
+            if (searchType && journey) {
+                trackSearch('Search Options', {
+                    search_type: searchType,
+                    search_id: journey.id,
+                });
+            }
+
             onSearch({ searchParams: getSearchParams() });
         },
-        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch, getSearchParams],
+        [
+            keywordInput,
+            onSearch,
+            setActiveSearch,
+            setKeywords,
+            setPage,
+            trackKeyword,
+            trackSearch,
+            getSearchParams,
+            searchType,
+        ],
     );
 
     const handleKeywordsBlur = useCallback(
@@ -70,14 +96,17 @@ export const SearchOptions = ({
                 trackTopics({ tags: [] }); // <- @note track clearing topics?
             }
 
+            onSearchTypeChange('keyword');
+
             // @todo will cause an empty text_tag/hashtag item in the filter
             setHashtags([]);
             setHashTagInput('');
 
+            // @note converts the SearchKeywords keywords to a "tag" ui
             setKeywords(keyword);
             trackKeyword({ keyword }); // <- @note should track only on search
         },
-        [setKeywords, trackKeyword, trackTopics, setTopicTags, tags, setHashtags],
+        [setKeywords, trackKeyword, trackTopics, setTopicTags, tags, setHashtags, onSearchTypeChange],
     );
 
     return (
@@ -122,6 +151,7 @@ export const SearchOptions = ({
                                     }
                                 }}
                                 onSetTopics={(topics) => {
+                                    onSearchTypeChange('topic');
                                     setTopicTags(topics);
                                     setHashtags([]);
                                     setHashTagInput('');
@@ -174,6 +204,7 @@ export const SearchOptions = ({
                                 hashtags={hashtags}
                                 platform={platform}
                                 onSetHashtags={(hashtags) => {
+                                    onSearchTypeChange('keyword');
                                     setHashtags(hashtags);
                                     setKeywordInput('');
                                     setKeywords('');
