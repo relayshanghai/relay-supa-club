@@ -58,6 +58,8 @@ export const AddToSequenceModal = ({
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
             sequence_id: sequence?.id || '',
+            influencer_ids: null,
+            sequence_influencer_ids: null,
             sequence_influencer_id: null,
             is_success: true,
             is_sequence_autostart: sequence?.auto_start || false,
@@ -92,6 +94,8 @@ export const AddToSequenceModal = ({
                 platform,
             });
             setSequenceInfluencer(newSequenceInfluencer);
+            trackingPayload.influencer_ids = [creatorProfile.user_id];
+            trackingPayload.sequence_influencer_ids = [newSequenceInfluencer.id];
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             trackingPayload['$add'] = { total_sequence_influencers: 1 };
             setSuppressReportFetch(false); // will start getting the report.
