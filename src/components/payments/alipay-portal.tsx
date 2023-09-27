@@ -6,11 +6,12 @@ import { handleError } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import { useState } from 'react';
 import { Spinner } from '../icons';
+import type { NewRelayPlan } from 'types';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 
-export default function AlipayPortal() {
+export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +45,9 @@ export default function AlipayPortal() {
         if (!stripe) return;
         setIsLoading(true);
         try {
-            const setupIntent = await createSetupIntentForAlipay(company.cus_id);
+            const priceId = selectedPrice.priceIds.monthly;
+
+            const setupIntent = await createSetupIntentForAlipay(company.id, company.cus_id, priceId);
 
             await handleServerResponse(setupIntent);
             //monitor webhooks

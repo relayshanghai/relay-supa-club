@@ -8,9 +8,11 @@ import { serverLogger } from 'src/utils/logger-server';
 export type CreateSetUpIntentPostBody = {
     customerId: string;
     paymentMethodTypes: string[];
+    priceId: string;
+    companyId: string;
 };
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { customerId, paymentMethodTypes } = req.body;
+    const { companyId, customerId, paymentMethodTypes, priceId } = req.body;
     //create an payment method to confirm the setup intent
     const paymentMethod = await stripeClient.paymentMethods.create({
         type: 'alipay',
@@ -27,6 +29,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         serverLogger('Failed to attach payment method to customer');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
     }
+    const returnUrlParams = new URLSearchParams();
+    returnUrlParams.append('customerId', customerId);
+    returnUrlParams.append('priceId', priceId);
+    returnUrlParams.append('companyId', companyId);
+
     //create a setup intent
     const response = await stripeClient.setupIntents.create({
         // this create setupIntent works although the stripe doc says it's not supported..
@@ -50,7 +57,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 },
             },
         },
-        return_url: `${APP_URL}/payments/confirm-alipay`,
+        return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
     });
 
     return res.status(httpCodes.OK).json(response);
