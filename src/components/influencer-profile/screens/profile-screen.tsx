@@ -1,6 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
@@ -11,7 +11,13 @@ import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
+import { randomNumber } from 'src/utils/utils';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import {
+    UpdateInfluencerProfile,
+    type UpdateInfluencerProfilePayload,
+} from 'src/utils/analytics/events/outreach/update-influencer-profile';
+import { SaveInfluencerProfileUpdates } from 'src/utils/analytics/events';
 import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
 
 export type ProfileValue = {
@@ -39,7 +45,19 @@ const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [profile]);
+
     const { track } = useRudderstackTrack();
+    const trackProfileFieldUpdate = useCallback(
+        (payload: Omit<UpdateInfluencerProfilePayload, 'batch_id'>) => {
+            track(UpdateInfluencerProfile, {
+                ...payload,
+                batch_id: batchId,
+            });
+        },
+        [batchId, track],
+    );
 
     useEffect(() => {
         if (!profile) return;
@@ -84,9 +102,17 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
+            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id not found');
+
             onUpdate && onUpdate(data);
+
+            track(SaveInfluencerProfileUpdates, {
+                influencer_id: profile.influencer_social_profile_id,
+                batch_id: batchId,
+                action_type: 'Button',
+            });
         },
-        [onUpdate],
+        [onUpdate, profile, batchId, track],
     );
 
     return (
@@ -118,10 +144,18 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
             <div className="p-8">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab profile={profile} onUpdate={handleNotesDetailsUpdate} />
+                    <ProfileNotesTab
+                        profile={profile}
+                        onUpdate={handleNotesDetailsUpdate}
+                        trackProfileFieldUpdate={trackProfileFieldUpdate}
+                    />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />
+                    <ProfileShippingDetailsTab
+                        profile={profile}
+                        onUpdate={handleShippingUpdate}
+                        trackProfileFieldUpdate={trackProfileFieldUpdate}
+                    />
                 </div>
 
                 <div className="float-right flex pb-4">

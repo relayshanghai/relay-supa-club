@@ -4,6 +4,7 @@ import { openDB } from 'idb';
 export const usePersistentState = <T>(
     key: string,
     initialValue: T,
+    onLoadUpdate?: (currentValue: T) => T,
 ): [T, React.Dispatch<React.SetStateAction<T>>, (key: string) => void] => {
     const [state, setState] = useState<T>(() => {
         // Setup the database and return the initial value
@@ -16,6 +17,7 @@ export const usePersistentState = <T>(
 
             let value = await db.get('app-data', key);
             value = value ?? initialValue;
+            value = onLoadUpdate ? onLoadUpdate(value) : value;
 
             setState(value);
         };
