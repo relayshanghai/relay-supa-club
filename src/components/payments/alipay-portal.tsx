@@ -4,12 +4,14 @@ import { useCompany } from 'src/hooks/use-company';
 import { loadStripe } from '@stripe/stripe-js';
 import { handleError } from 'src/utils/utils';
 import type Stripe from 'stripe';
+import { useState } from 'react';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 
 export default function AlipayPortal() {
     const { company } = useCompany();
+    const [isLoading, setIsLoading] = useState(false);
 
     //handle any next actions https://stripe.com/docs/payments/finalize-payments-on-the-server?platform=web&type=setup#next-actions
     const handleServerResponse = async (setupIntent: Stripe.SetupIntent) => {
@@ -37,15 +39,13 @@ export default function AlipayPortal() {
     const handleSubmit = async () => {
         // create a setup intent with payment method type alipay, and current customer id
         if (!company?.cus_id || !company.id) return;
-
         const stripe = await stripePromise;
-
         if (!stripe) return;
-
+        setIsLoading(true);
         try {
             const setupIntent = await createSetupIntentForAlipay(company.cus_id);
 
-            handleServerResponse(setupIntent);
+            await handleServerResponse(setupIntent);
             //monitor webhooks
 
             // if setup_intent.succeeded, set the payment method to the customer default payment method
@@ -57,6 +57,8 @@ export default function AlipayPortal() {
             console.log('error============>', error);
 
             // clientLogger(error, 'error');
+        } finally {
+            setIsLoading(false);
         }
     };
 
