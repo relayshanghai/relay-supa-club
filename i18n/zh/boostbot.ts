@@ -6,6 +6,7 @@ const boostbot = {
         addMoreGeos: '添加更多',
         selectGeo: '选择一个国家地区',
         advancedFilters: '高级筛选条件',
+        advancedFiltersTooltip: '此功能尚不可用',
         updateFilters: '更新筛选条件',
         atLeast: '他们的粉丝中，至少需要有',
         inLocation: '位于 {{location}} 地区',

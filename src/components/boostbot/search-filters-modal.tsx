@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
@@ -9,6 +9,11 @@ import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { countries } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { Tooltip } from 'src/components/library';
+import { randomNumber } from 'src/utils/utils';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenBoostbotFiltersModal } from 'src/utils/analytics/events/boostbot/open-filters-modal';
+import { SetBoostbotFilter } from 'src/utils/analytics/events/boostbot/set-filter';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 type SearchFiltersModalProps = {
     isOpen: boolean;
@@ -23,20 +28,27 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
     const [localFilters, setLocalFilters] = useState(filters);
 
-    const countryName = (id: number) => {
+    // isOpen is used to force a re-calc of the batchId when the modal is opened
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [isOpen]);
+    const { track } = useRudderstackTrack();
+
+    useEffect(() => {
+        if (isOpen) {
+            track(OpenBoostbotFiltersModal, { batch_id: batchId, currentPage: CurrentPageEvent.boostbot });
+        }
+    }, [batchId, isOpen, track]);
+
+    const getCountryName = (id: number) => countries.find((country) => country.id === id)?.name ?? 'Invalid country id';
+
+    const getTranslatedCountryName = (id: number) => {
         const countryCode = countries.find((country) => country.id === id)?.country.code;
         return t(`geolocations.countries.${countryCode}`);
     };
 
-    const removeGeo = (id: number) => {
-        setLocalFilters((prevFilters) => ({
-            ...prevFilters,
-            audience_geo: prevFilters.audience_geo.filter((geo) => geo.id !== id),
-        }));
-    };
-
     const togglePlatform = (platform: CreatorPlatform) => {
-        if (localFilters.platforms.includes(platform) && localFilters.platforms.length > 1) {
+        const isRemove = localFilters.platforms.includes(platform) && localFilters.platforms.length > 1;
+        if (isRemove) {
             setLocalFilters((prevFilters) => ({
                 ...prevFilters,
                 platforms: prevFilters.platforms.filter((p) => p !== platform),
@@ -46,7 +58,18 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 ...prevFilters,
                 platforms: [...prevFilters.platforms, platform],
             }));
+        } else {
+            // This is the case where the user is trying to deselect the last platform left, but we don't allow that as there always has to be at least one platform selected -> skip tracking.
+            return;
         }
+
+        track(SetBoostbotFilter, {
+            batch_id: batchId,
+            currentPage: CurrentPageEvent.boostbot,
+            name: 'Platform',
+            key: platform,
+            value: isRemove ? 'remove' : 'add',
+        });
     };
 
     const geoSuggestions = countries
@@ -56,17 +79,47 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         }))
         .filter((country) => !localFilters.audience_geo.find((geo) => geo.id === Number(country.value)));
 
-    const addNewGeo = (geoId: string) =>
+    const addNewGeo = (geoId: string) => {
         setLocalFilters((prevFilters) => ({
             ...prevFilters,
             audience_geo: [...prevFilters.audience_geo, { id: Number(geoId), weight: 0.15 }],
         }));
+        track(SetBoostbotFilter, {
+            batch_id: batchId,
+            currentPage: CurrentPageEvent.boostbot,
+            name: 'Location',
+            key: getCountryName(Number(geoId)),
+            value: 'add',
+        });
+    };
 
-    const setGeoWeight = ({ id, weight }: { id: number; weight: number }) =>
+    const removeGeo = (id: number) => {
+        setLocalFilters((prevFilters) => ({
+            ...prevFilters,
+            audience_geo: prevFilters.audience_geo.filter((geo) => geo.id !== id),
+        }));
+        track(SetBoostbotFilter, {
+            batch_id: batchId,
+            currentPage: CurrentPageEvent.boostbot,
+            name: 'Location',
+            key: getCountryName(id),
+            value: 'remove',
+        });
+    };
+
+    const setGeoWeight = ({ id, weight }: { id: number; weight: number }) => {
         setLocalFilters((prevFilters) => ({
             ...prevFilters,
             audience_geo: prevFilters.audience_geo.map((g) => (g.id === id ? { ...g, weight } : g)),
         }));
+        track(SetBoostbotFilter, {
+            batch_id: batchId,
+            currentPage: CurrentPageEvent.boostbot,
+            name: 'Location',
+            key: getCountryName(id),
+            value: weight.toString(),
+        });
+    };
 
     const geoPercentageOptions = Array.from(Array(20).keys()).map((i) => ((i + 1) * 5) / 100); // [0.05, 0.1, ..., 0.95, 1]
 
@@ -128,7 +181,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 className="flex items-center gap-1 rounded-xl border border-primary-500 bg-primary-50 px-3 text-primary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
                                 onClick={() => removeGeo(geo.id)}
                             >
-                                {countryName(geo.id)} <XMarkIcon className="w-3" />
+                                {getTranslatedCountryName(geo.id)} <XMarkIcon className="w-3" />
                             </button>
                         ))}
                     </div>
@@ -171,7 +224,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 </select>
 
                                 <p className="text-sm text-gray-500">
-                                    {t('boostbot.filters.inLocation', { location: countryName(geo.id) })}
+                                    {t('boostbot.filters.inLocation', { location: getTranslatedCountryName(geo.id) })}
                                 </p>
                             </div>
                         </div>
@@ -182,7 +235,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
 
                 <div className="flex w-full justify-end gap-4">
                     <Tooltip
-                        content="You must select at least one platform to search for influencers."
+                        content={t('boostbot.filters.advancedFiltersTooltip')}
                         className="w-fit"
                         position="top-left"
                     >
