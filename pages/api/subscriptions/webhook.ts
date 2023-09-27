@@ -17,13 +17,15 @@ import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
 import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
+import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-webhook';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
+    setupIntentSucceeded: 'setup_intent.succeeded',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed;
+export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | SetupIntentSucceeded;
 
 const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
     const customerId = event.data?.object?.customer;
