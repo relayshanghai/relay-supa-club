@@ -30,6 +30,7 @@ import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { Sequence } from 'src/utils/api/db';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -51,7 +52,10 @@ const Boostbot = () => {
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
-    const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
+    const [sequence, setSequence] = useState<Sequence | undefined>(
+        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+    );
+
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
@@ -333,6 +337,9 @@ const Boostbot = () => {
                         addMessage={addMessage}
                         shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
+                        setSequence={setSequence}
+                        sequence={sequence}
+                        sequences={sequences}
                     />
                 </div>
 
