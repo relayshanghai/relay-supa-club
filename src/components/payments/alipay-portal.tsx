@@ -5,6 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { handleError } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import { useState } from 'react';
+import { Spinner } from '../icons';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -66,7 +67,11 @@ export default function AlipayPortal() {
         <>
             <div className="mb-2 p-6">
                 <Button className="w-full" onClick={handleSubmit}>
-                    Proceed to Alipay
+                    {isLoading ? (
+                        <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
+                    ) : (
+                        'Enable Alipay Agreement'
+                    )}
                 </Button>
             </div>
         </>
