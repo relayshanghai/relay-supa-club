@@ -7,7 +7,11 @@ export type OpenSocialThumbnailsPayload = {
     results_index: number;
     thumbnail_index: number;
     kol_id: string;
-    search_id: string | null;
+    platform: string;
+    social_url: string;
+    search_id: string | number | null;
+    // search_results_page: number // 9999 for report
+    // search_results_index: number // 9999 for report
 };
 
 export const OpenSocialThumbnails = (trigger: TriggerEvent, value?: OpenSocialThumbnailsPayload) =>
