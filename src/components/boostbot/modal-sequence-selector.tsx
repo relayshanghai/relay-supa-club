@@ -42,7 +42,7 @@ export const ModalSequenceSelector = ({
                         data-testid="sequence-dropdown"
                         onChange={(e) => handleSelectChange(e)}
                         value={sequence?.name}
-                        className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none  focus:border-primary-500 focus:ring-primary-500"
+                        className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none focus:border-primary-500 focus:ring-primary-500"
                     >
                         {(!sequences || sequences.length === 0) && <option>{t('creators.noSequence')}</option>}
                         {sequences?.map((sequence) => (
