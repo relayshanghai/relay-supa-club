@@ -79,8 +79,6 @@ import type { WebhookErrorPayload } from './outreach/email-error';
 import { OUTREACH_WEBHOOK_ERROR, WebhookError } from './outreach/email-error';
 import type { EmailNewPayload } from './outreach/email-new';
 import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
-import type { IncomingWebhookPayload } from './outreach/email-incoming';
-import { IncomingWebhook, OUTREACH_EMAIL_INCOMING } from './outreach/email-incoming';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
 import type { ClickNeedHelpPayload } from './click-need-help';
@@ -140,6 +138,8 @@ import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
 import { TOGGLE_AUTO_START, ToggleAutoStart } from './outreach/toggle-auto-start';
 import type { OpenInfluencerProfilePayload } from './outreach/open-influencer-profile';
 import { OPEN_INFLUENCER_PROFILE, OpenInfluencerProfile } from './outreach/open-influencer-profile';
+import type { UpdateInfluencerProfilePayload } from './outreach/update-influencer-profile';
+import { UpdateInfluencerProfile, UPDATE_INFLUENCER_PROFILE } from './outreach/update-influencer-profile';
 import type { AddInfluencerPostPayload } from './outreach/add-influencer-post';
 import { ADD_INFLUENCER_POST, AddInfluencerPost } from './outreach/add-influencer-post';
 import type { AddNoteToInfluencerProfilePayload } from './outreach/add-note-to-influencer-profile';
@@ -156,6 +156,27 @@ import type { GoToInboxPayload } from './outreach/go-to-inbox';
 import { GO_TO_INBOX, GoToInbox } from './outreach/go-to-inbox';
 import type { ToggleViewMinePayload } from './outreach/toggle-view-mine';
 import { TOGGLE_VIEW_MINE, ToggleViewMine } from './outreach/toggle-view-mine';
+import { type SaveInfluencerProfileUpdatesPayload } from './outreach/save-influencer-profile-updates';
+import {
+    SAVE_INFLUENCER_PROFILE_UPDATES,
+    SaveInfluencerProfileUpdates,
+} from './outreach/save-influencer-profile-updates';
+import type { PlayTutorialVideoPayload } from './guide/play-tutorial-video';
+import { PLAY_TUTORIAL_VIDEO, PlayTutorialVideo } from './guide/play-tutorial-video';
+import type { CloseHelpModalPayload } from './outreach/close-help-modal';
+import { CloseHelpModal, CLOSE_HELP_MODAL } from './outreach/close-help-modal';
+import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influencer-profile-notes';
+import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
+import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
+import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
+import type { SearchInboxPayload } from './outreach/search-inbox';
+import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
+import type { PayForUpgradedPlanPayload } from './onboarding/pay-for-upgraded-plan';
+import { PAY_FOR_UPGRADED_PLAN, PayForUpgradedPlan } from './onboarding/pay-for-upgraded-plan';
+import type { UpdateProfileInfoPayload } from './update-profile-info';
+import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
+import type { ChangePasswordPayload } from './change-password';
+import { CHANGE_PASSWORD, ChangePassword } from './change-password';
 
 export {
     Search,
@@ -198,9 +219,19 @@ export {
     SendEmailReply,
     OpenEmailThread,
     OpenInfluencerProfile,
+    UpdateInfluencerProfile,
     AddInfluencerPost,
     AddNoteToInfluencerProfile,
     UpdateInfluencerStatus,
+    SaveInfluencerProfileUpdates,
+    PlayTutorialVideo,
+    CloseHelpModal,
+    ViewInfluencerProfileNotes,
+    SelectInfluencerProfileTab,
+    SearchInbox,
+    PayForUpgradedPlan,
+    UpdateProfileInfo,
+    ChangePassword,
 };
 
 export const events = {
@@ -224,7 +255,6 @@ export const events = {
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
-    [OUTREACH_EMAIL_INCOMING]: IncomingWebhook,
     [OUTREACH_WEBHOOK_ERROR]: WebhookError,
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
@@ -267,6 +297,7 @@ export const events = {
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTab,
     [TOGGLE_AUTO_START]: ToggleAutoStart,
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfile,
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfile,
     [ADD_INFLUENCER_POST]: AddInfluencerPost,
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfile,
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatus,
@@ -275,6 +306,15 @@ export const events = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManager,
     [GO_TO_INBOX]: GoToInbox,
     [TOGGLE_VIEW_MINE]: ToggleViewMine,
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdates,
+    [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideo,
+    [CLOSE_HELP_MODAL]: CloseHelpModal,
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
+    [SEARCH_INBOX]: SearchInbox,
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
+    [CHANGE_PASSWORD]: ChangePassword,
 };
 
 export type payloads = {
@@ -298,7 +338,6 @@ export type payloads = {
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload;
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload;
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload;
-    [OUTREACH_EMAIL_INCOMING]: IncomingWebhookPayload;
     [OUTREACH_WEBHOOK_ERROR]: WebhookErrorPayload;
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
@@ -341,6 +380,7 @@ export type payloads = {
     [CHANGE_SEQUENCE_TAB]: ChangeSequenceTabPayload;
     [TOGGLE_AUTO_START]: ToggleAutoStartPayload;
     [OPEN_INFLUENCER_PROFILE]: OpenInfluencerProfilePayload;
+    [UPDATE_INFLUENCER_PROFILE]: UpdateInfluencerProfilePayload;
     [ADD_INFLUENCER_POST]: AddInfluencerPostPayload;
     [ADD_NOTE_TO_INFLUENCER_PROFILE]: AddNoteToInfluencerProfilePayload;
     [UPDATE_INFLUENCER_STATUS]: UpdateInfluencerStatusPayload;
@@ -349,6 +389,15 @@ export type payloads = {
     [FILTER_INFLUENCER_MANAGER]: FilterInfluencerManagerPayload;
     [GO_TO_INBOX]: GoToInboxPayload;
     [TOGGLE_VIEW_MINE]: ToggleViewMinePayload;
+    [SAVE_INFLUENCER_PROFILE_UPDATES]: SaveInfluencerProfileUpdatesPayload;
+    [PLAY_TUTORIAL_VIDEO]: PlayTutorialVideoPayload;
+    [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
+    [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
+    [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
+    [SEARCH_INBOX]: SearchInboxPayload;
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
+    [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
+    [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -374,7 +423,6 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_OPENED),
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
-    z.literal(OUTREACH_EMAIL_INCOMING),
     z.literal(OUTREACH_WEBHOOK_ERROR),
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
@@ -417,6 +465,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_SEQUENCE_TAB),
     z.literal(TOGGLE_AUTO_START),
     z.literal(OPEN_INFLUENCER_PROFILE),
+    z.literal(UPDATE_INFLUENCER_PROFILE),
     z.literal(ADD_INFLUENCER_POST),
     z.literal(ADD_NOTE_TO_INFLUENCER_PROFILE),
     z.literal(UPDATE_INFLUENCER_STATUS),
@@ -425,6 +474,15 @@ export const eventKeys = z.union([
     z.literal(FILTER_INFLUENCER_MANAGER),
     z.literal(GO_TO_INBOX),
     z.literal(TOGGLE_VIEW_MINE),
+    z.literal(SAVE_INFLUENCER_PROFILE_UPDATES),
+    z.literal(PLAY_TUTORIAL_VIDEO),
+    z.literal(CLOSE_HELP_MODAL),
+    z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
+    z.literal(SELECT_INFLUENCER_PROFILE_TAB),
+    z.literal(SEARCH_INBOX),
+    z.literal(PAY_FOR_UPGRADED_PLAN),
+    z.literal(UPDATE_PROFILE_INFO),
+    z.literal(CHANGE_PASSWORD),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

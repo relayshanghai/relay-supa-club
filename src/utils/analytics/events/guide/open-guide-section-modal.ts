@@ -4,7 +4,6 @@ export const OPEN_GUIDE_SECTION_MODAL = 'Guide Page, modal opened';
 
 export type OpenGuideSectionModalPayload = EventPayload<{
     section: string;
-    user_open_count: number | null;
 }>;
 
 export const OpenGuideSectionModal = (trigger: TriggerEvent, value?: OpenGuideSectionModalPayload) =>

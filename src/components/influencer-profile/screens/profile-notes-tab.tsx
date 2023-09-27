@@ -17,6 +17,7 @@ import { AddNoteToInfluencerProfile } from 'src/utils/analytics/events';
 import type { CheckboxDropdownItemData } from '../components/checkbox-dropdown-item';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateInfluencerStatus } from 'src/utils/analytics/events';
+import type { UpdateInfluencerProfilePayload } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
@@ -69,6 +70,7 @@ export type ProfileNotes = {
 type Props = {
     profile: SequenceInfluencerManagerPage;
     onUpdate?: (key: keyof ProfileNotes, value: any) => void;
+    trackProfileFieldUpdate: (payload: Omit<UpdateInfluencerProfilePayload, 'batch_id'>) => void;
 };
 
 // eslint-disable-next-line complexity
@@ -146,7 +148,14 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         label={t('profile.nextStep') as string}
                         placeholder={t('profile.nextStepPlaceholder')}
                         value={data.notes.nextStep}
-                        onChange={(e) => onUpdate('nextStep', e.currentTarget.value)}
+                        onChange={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Next Step',
+                                previously_empty: data.notes.nextStep === '',
+                            });
+                            onUpdate('nextStep', e.currentTarget.value);
+                        }}
                     />
                 </section>
 
@@ -176,12 +185,26 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     <CollabFeeInput
                         label={t('profile.fee') || 'Fee (USD)'}
                         value={data.notes.fee}
-                        onInput={(e) => onUpdate('fee', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Fee',
+                                previously_empty: data.notes.fee === '',
+                            });
+                            onUpdate('fee', e.currentTarget.value);
+                        }}
                     />
                     <CollabScheduledPostDateInput
                         label={t('profile.scheduledPostDate')}
                         value={data.notes.scheduledPostDate}
-                        onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Scheduled Post Date',
+                                previously_empty: data.notes.scheduledPostDate === '',
+                            });
+                            onUpdate('scheduledPostDate', e.currentTarget.value);
+                        }}
                     />
                 </section>
                 <section className="grid grid-rows-2 gap-4 xl:grid-cols-2 xl:grid-rows-none">
@@ -189,13 +212,27 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         label={t('profile.videoDetails') as string}
                         placeholder={t('profile.videoDetailsPlaceholder')}
                         value={data.notes.videoDetails}
-                        onInput={(e) => onUpdate('videoDetails', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Video Details',
+                                previously_empty: data.notes.videoDetails === '',
+                            });
+                            onUpdate('videoDetails', e.currentTarget.value);
+                        }}
                     />
                     <CollabAffiliateLinkInput
                         label={t('profile.affiliateLink') as string}
                         placeholder={t('profile.affiliateLinkPlaceholder')}
                         value={data.notes.affiliateLink}
-                        onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
+                        onInput={(e) => {
+                            props.trackProfileFieldUpdate({
+                                influencer_id: profile.influencer_social_profile_id ?? '',
+                                updated_field: 'Affiliate Link',
+                                previously_empty: data.notes.affiliateLink === '',
+                            });
+                            onUpdate('affiliateLink', e.currentTarget.value);
+                        }}
                     />
                 </section>
 

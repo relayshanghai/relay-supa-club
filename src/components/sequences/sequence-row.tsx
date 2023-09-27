@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import Link from 'next/link';
 import type { SetStateAction } from 'react';
+import { useMemo } from 'react';
 import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
@@ -25,6 +26,7 @@ import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-
 import { useReport } from 'src/hooks/use-report';
 import { useCompany } from 'src/hooks/use-company';
 import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
+import { randomNumber } from 'src/utils/utils';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -81,11 +83,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
+    const missingSocialProfileInfo =
+        !sequenceInfluencer.social_profile_last_fetched || !sequenceInfluencer.influencer_social_profile_id;
+    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
-        suppressFetch: !!sequenceInfluencer.influencer_social_profile_id || wasFetchedWithin10Minutes,
+        suppressFetch: !shouldFetch,
     });
     const { company } = useCompany();
 
@@ -106,6 +111,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);
     const { track } = useRudderstackTrack();
+    const sequenceId = sequence?.id ?? 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [sequenceId]);
 
     const handleChange = () => {
         onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
@@ -148,12 +156,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             track(StartSequenceForInfluencer, {
                 influencer_id: sequenceInfluencer.influencer_social_profile_id,
                 sequence_id: sequenceInfluencer.sequence_id,
+                sequence_name: sequence?.name ?? null,
                 sequence_influencer_id: sequenceInfluencer.id,
                 is_success: true,
                 sent_success: succeeded,
                 sent_success_count: succeeded.length,
                 sent_failed: failed,
                 sent_failed_count: failed.length,
+                batch_id: batchId,
             });
 
             if (succeeded.length > 0) {
@@ -164,18 +174,22 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 track(StartSequenceForInfluencer, {
                     influencer_id: sequenceInfluencer.influencer_social_profile_id,
                     sequence_id: sequenceInfluencer.sequence_id,
+                    sequence_name: sequence?.name ?? null,
                     sequence_influencer_id: sequenceInfluencer.id,
                     is_success: false,
                     extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule' },
+                    batch_id: batchId,
                 });
             }
         } catch (error: any) {
             track(StartSequenceForInfluencer, {
                 influencer_id: sequenceInfluencer.influencer_social_profile_id,
                 sequence_id: sequenceInfluencer.sequence_id,
+                sequence_name: sequence?.name ?? null,
                 sequence_influencer_id: sequenceInfluencer.id,
                 is_success: false,
                 extra_info: { error: String(error) },
+                batch_id: batchId,
             });
             toast.error(error?.message ?? '');
         }

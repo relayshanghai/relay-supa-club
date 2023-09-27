@@ -18,6 +18,8 @@ import { mixArrays, randomNumber } from 'src/utils/utils';
 import type { MessageType } from 'src/components/boostbot/message';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { ProgressType } from 'src/components/boostbot/chat-progress';
+import { ModalSequenceSelector } from './modal-sequence-selector';
+import type { Sequence } from 'src/utils/api/db';
 
 interface ChatProps {
     messages: MessageType[];
@@ -38,6 +40,9 @@ interface ChatProps {
     shortenedButtons: boolean;
     isSearchDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
+    sequence?: Sequence;
+    setSequence: (sequence: Sequence | undefined) => void;
+    sequences?: Sequence[];
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -56,6 +61,9 @@ export const Chat: React.FC<ChatProps> = ({
     shortenedButtons,
     isSearchDisabled,
     setSearchId,
+    sequence,
+    setSequence,
+    sequences,
 }) => {
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
@@ -63,6 +71,8 @@ export const Chat: React.FC<ChatProps> = ({
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+
     const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
@@ -178,6 +188,16 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+            {sequence && sequences && (
+                <ModalSequenceSelector
+                    show={showSequenceSelector}
+                    setShow={setShowSequenceSelector}
+                    handleAddToSequence={chatPageToOutreach}
+                    sequence={sequence}
+                    setSequence={setSequence}
+                    sequences={sequences}
+                />
+            )}
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
@@ -190,7 +210,9 @@ export const Chat: React.FC<ChatProps> = ({
                 isSearchLoading={isSearchLoading}
                 isUnlockOutreachLoading={isUnlockOutreachLoading}
                 handlePageToUnlock={chatPageToUnlock}
-                handlePageToOutreach={chatPageToOutreach}
+                handlePageToOutreach={() => {
+                    setShowSequenceSelector(true);
+                }}
                 stopBoostbot={stopBoostbot}
                 shortenedButtons={shortenedButtons}
             />

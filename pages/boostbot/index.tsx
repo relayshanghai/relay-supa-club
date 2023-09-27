@@ -30,6 +30,7 @@ import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { Sequence } from 'src/utils/api/db';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -51,7 +52,10 @@ const Boostbot = () => {
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
-    const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
+    const [sequence, setSequence] = useState<Sequence | undefined>(
+        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+    );
+
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
@@ -98,13 +102,21 @@ const Boostbot = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
 
-    const [messages, setMessages] = usePersistentState<MessageType[]>('boostbot-messages', [
-        {
-            sender: 'Bot',
-            type: 'translation',
-            translationKey: 'boostbot.chat.introMessage',
+    const [messages, setMessages] = usePersistentState<MessageType[]>(
+        'boostbot-messages',
+        [
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+            },
+        ],
+        (onLoadMessages) => {
+            const isUnfinishedLoading = (message: MessageType) =>
+                message.type === 'progress' && message.progressData.totalFound === null;
+            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
         },
-    ]);
+    );
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
@@ -220,6 +232,7 @@ const Boostbot = () => {
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
             currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
+            sequence_influencer_ids: [],
             topics: [],
             is_multiple: null,
             is_success: true,
@@ -264,6 +277,7 @@ const Boostbot = () => {
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
+            trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
             addMessage({
@@ -324,6 +338,9 @@ const Boostbot = () => {
                         shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
                         setSearchId={setSearchId}
+                        setSequence={setSequence}
+                        sequence={sequence}
+                        sequences={sequences}
                     />
                 </div>
 
