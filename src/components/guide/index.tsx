@@ -1,6 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
-import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements, BarGraph, User } from '../icons';
+import {
+    Compass,
+    Account,
+    ArrowRight,
+    ProfilePlus,
+    Send,
+    Brackets,
+    Engagements,
+    BarGraph,
+    User,
+    BoostbotSelected,
+} from '../icons';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -41,6 +52,9 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
                         <ProfilePlus height={24} width={24} className="stroke-primary-500" />
                     )}
                     {cardKey === 'influencerProfile' && <User height={24} width={24} className="stroke-primary-500" />}{' '}
+                    {cardKey === 'boostbot' && (
+                        <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
+                    )}
                     {cardKey === 'performance' && <BarGraph height={24} width={24} className="stroke-primary-500" />}
                 </div>
             </div>

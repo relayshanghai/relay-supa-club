@@ -7,12 +7,39 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 import { CloseHelpModal } from 'src/utils/analytics/events';
 
+type Section = {
+    title: string;
+    description: string;
+    demo?: string;
+};
+
+type ModalInfo<T extends string> = {
+    [K in T]: {
+        title: string;
+        url: string;
+        sections: Section[];
+    };
+};
+
+type ModalInfoKeys =
+    | 'boostbot'
+    | 'sequences'
+    | 'templates'
+    | 'inbox'
+    | 'influencerProfile'
+    | 'influencerManager'
+    | 'discover'
+    | 'performance'
+    | 'account';
+
+export type GeneralModalInfo = ModalInfo<ModalInfoKeys>;
+
 export const GuideModal = ({
     section,
     show,
     setShow,
 }: {
-    section: string;
+    section: ModalInfoKeys;
     show: boolean;
     setShow: (open: boolean) => void;
 }) => {
@@ -20,7 +47,8 @@ export const GuideModal = ({
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
 
-    const selectedGuide = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
+    const modalInfo = guidePage.modalInfo as GeneralModalInfo;
+    const selectedGuide = modalInfo[section];
 
     return (
         <Modal
@@ -38,7 +66,7 @@ export const GuideModal = ({
         >
             <div className="flex flex-col rounded-full">
                 <div className="max-h-[50vh] overflow-y-auto lg:max-h-[70vh]">
-                    {Object.keys(selectedGuide['sections' as keyof typeof selectedGuide]).map((guideSection, index) => {
+                    {Object.keys(selectedGuide.sections).map((guideSection, index) => {
                         return (
                             <div key={index} className="mt-6 flex flex-col gap-2">
                                 {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`) !== '' && (
@@ -49,6 +77,15 @@ export const GuideModal = ({
                                 <p className="font-regular text-sm text-gray-500">
                                     {t(`guidePage.modalInfo.${section}.sections.${guideSection}.description`)}
                                 </p>
+                                {modalInfo[section].sections[parseInt(guideSection)].demo && (
+                                    <img
+                                        className="rounded-xl"
+                                        alt="Demo GIF"
+                                        src={`/assets/videos/${
+                                            modalInfo[section].sections[parseInt(guideSection)].demo
+                                        }`}
+                                    />
+                                )}
                             </div>
                         );
                     })}

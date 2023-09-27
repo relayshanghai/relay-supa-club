@@ -5,6 +5,11 @@ const guidePage = {
     goto: '前往',
     learnMore: '了解更多',
     cards: {
+        boostbot: {
+            title: 'BoostBot 雷宝',
+            description:
+                '不要再花费大量时间在寻找合适的红人上了。有了relay.club的BoostBot AI技术，只需几分钟，即可开启红人联系工作，和红人商谈品牌合作和产品测评！',
+        },
         sequences: {
             title: '邮件进程管理',
             description:
@@ -42,6 +47,18 @@ const guidePage = {
         },
     },
     modalInfo: {
+        boostbot: {
+            title: 'BoostBot 雷宝',
+            url: '/boostbot',
+            sections: [
+                {
+                    title: 'How BoostBot Works',
+                    description:
+                        'BoostBot 是一款AI辅助的搜索工具，它能找到海外社交媒体可以推广产品的优秀红人，您只需描述产品（任何语言均可），它便会分析相关搜索主题，并从2亿多的红人数据库中找到合适的红人。不仅如此，它可以根据粉丝数、互动率、地区等指标优化搜索结果。最终，BoostBot向您呈现的是一份带有联系方式的庞大的红人名单，您可以立即与名单上的红人开展品牌合作或营销推广。',
+                    demo: 'boostbot_demo.gif',
+                },
+            ],
+        },
         sequences: {
             title: '邮件进程管理',
             url: '/sequences',
