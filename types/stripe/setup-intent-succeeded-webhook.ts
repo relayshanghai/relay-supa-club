@@ -1,7 +1,7 @@
 export type SetupIntentSucceeded = {
     id: string;
     object: string;
-    api_version: Date;
+    api_version: string | null;
     created: number;
     data: Data;
     livemode: boolean;

@@ -18,6 +18,7 @@ import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
 import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-webhook';
+import { handleSetupIntentSucceeded } from 'src/utils/api/stripe/handle-setup-intent-succeeded-webhook';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -27,7 +28,7 @@ const handledWebhooks = {
 
 export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | SetupIntentSucceeded;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
+const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | SetupIntentSucceeded) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -43,8 +44,12 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
     }
     rudderstack.identifyWithProfile(profile.id);
 };
+
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
+        case handledWebhooks.setupIntentSucceeded:
+            console.log('setupinent_succeeded =========================>', event);
+            return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
@@ -67,7 +72,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'POST') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
-
     let trackData: StripeWebhookIncomingPayload = {
         type: 'unknown',
         extra_info: { event: null, error: null },
@@ -100,12 +104,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'no body or body.type' });
         }
 
-        if (!Object.values(handledWebhooks).includes(event.type)) {
-            serverLogger('stripe unhandled event type', { level: 'error' });
-            return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
-                message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
-            });
-        }
+        // if (!Object.values(handledWebhooks).includes(event.type)) {
+        //     serverLogger('stripe unhandled event type', { level: 'error' });
+        //     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
+        //         message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
+        //     });
+        // }
 
         await identifyWebhook(event as HandledEvent);
 
