@@ -1,5 +1,5 @@
 import { deleteDB } from 'idb';
-import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
+import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
 import { randomString, reinsertAlice, reinsertCharlie, resetBobsStatus, resetSequenceEmails } from './helpers';
@@ -27,14 +27,9 @@ const resetData = async () => {
 describe('outreach', () => {
     beforeEach(() => {
         new Cypress.Promise(resetData);
-        setupIntercepts();
-        // turn back on the real database
-        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
-            req.continue();
-        });
-        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, (req) => {
-            req.continue();
-        });
+        // turn back on the real database sequence calls
+        setupIntercepts({ useRealSequences: true });
+
         cy.loginTestUser();
     });
     it('displays sequence page stats and influencers table', () => {
