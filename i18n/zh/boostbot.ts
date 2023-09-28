@@ -5,6 +5,7 @@ const boostbot = {
 请向我发送您的产品英文描述，我将为您推荐适合该产品在海外社媒推广的红人。
 
 产品描述案例："IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"。`,
+        noInfluencersFound: '看上去好像没有符合目前设定的筛选条件的网红达人诶。你可在此处再次调整筛选条件:',
         influencersFound: '我精选了 {{count}} 位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
