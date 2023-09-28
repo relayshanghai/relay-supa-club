@@ -98,17 +98,25 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     }
     const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
 
-    // optimistically update all the influencers to 'In Sequence''
-    const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map((i) => ({
-        ...i,
-        funnel_status: 'In Sequence',
-        // some typescript required values, type mismatch with SequenceInfluencer
-        name: i.name ?? '',
-        username: i.username ?? '',
-        avatar_url: i.avatar_url ?? '',
-        url: i.url ?? '',
-    }));
+    // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
+    const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
+        ({ id, name, username, avatar_url, url, added_by, platform, company_id, iqdata_id, sequence_id }) => ({
+            id,
+            funnel_status: 'In Sequence',
+            // some typescript required values for the bulk update that have a mismatch with SequenceInfluencer row type.
+            name: name ?? '',
+            username: username ?? '',
+            avatar_url: avatar_url ?? '',
+            url: url ?? '',
+            platform,
+            added_by,
+            company_id,
+            iqdata_id,
+            sequence_id,
+        }),
+    );
     await db(updateSequenceInfluencersCall)(optimisticUpdates);
+
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
             for (const step of sequenceSteps) {
