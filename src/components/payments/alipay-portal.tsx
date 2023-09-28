@@ -23,7 +23,7 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
         // redirect to Alipay website
         if (setupIntent.status === 'requires_action') {
             // Use Stripe.js to handle required next action
-            const { error: errorConfirm, setupIntent: setUpIntentConfirm } = await stripe.handleNextAction({
+            const { error: errorConfirm } = await stripe.handleNextAction({
                 clientSecret: setupIntent.client_secret,
             });
 
@@ -31,9 +31,8 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
                 handleError(errorConfirm);
                 return;
             } else {
-                console.log('Success!!!!!!!');
                 // Show a success message to your customer
-                // handlePaymentIntent(paymentIntentConfirm);
+                // handlePaymentIntent(setUpIntentConfirm);
             }
         }
     };

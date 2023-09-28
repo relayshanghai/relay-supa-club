@@ -48,7 +48,7 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
         case handledWebhooks.setupIntentSucceeded:
-            console.log('setupinent_succeeded =========================>', event);
+            // console.log('setupinent_succeeded =========================>', event);
             return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
@@ -104,12 +104,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'no body or body.type' });
         }
 
-        // if (!Object.values(handledWebhooks).includes(event.type)) {
-        //     serverLogger('stripe unhandled event type', { level: 'error' });
-        //     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
-        //         message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
-        //     });
-        // }
+        if (!Object.values(handledWebhooks).includes(event.type)) {
+            serverLogger('stripe unhandled event type', { level: 'error' });
+            return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
+                message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
+            });
+        }
 
         await identifyWebhook(event as HandledEvent);
 

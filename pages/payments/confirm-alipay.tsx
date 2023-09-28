@@ -9,19 +9,21 @@ const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const { companyId, customerId, priceId } = router.query;
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
-        setIsProcessing(true);
         if (typeof companyId !== 'string' || typeof customerId !== 'string' || typeof priceId !== 'string') {
             return;
         }
+        setIsProcessing(true);
         try {
             const { confirmPaymentIntent } = await upgradeSubscriptionWithAlipay(companyId, customerId, priceId);
-            console.log('confirmPaymentIntent =================>', confirmPaymentIntent);
+            console.log('=======================> Done!', confirmPaymentIntent);
 
-            // router.push('/account');
-        } catch (error) {
+            router.push('/account');
+        } catch (error: any) {
             console.log('error', error);
+            setErrorMessage(error.message);
         } finally {
             setIsProcessing(false);
         }
@@ -37,10 +39,16 @@ const ConfirmAlipayPaymentPage = () => {
                 <LanguageToggle />
             </div>
             <div className="flex h-full flex-col justify-center pb-32 text-center">
-                {isProcessing ? (
-                    <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
-                ) : (
-                    ' this is the redirected page after confirm the setupIntent succeeded'
+                {isProcessing && (
+                    <div className="flex flex-col">
+                        <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
+                        <div className="p-3">We are generating new subscription for you...</div>
+                    </div>
+                )}
+                {errorMessage && (
+                    <div className="flex flex-col text-red-500 ">
+                        <div>{errorMessage}</div>
+                    </div>
                 )}
             </div>
         </div>
