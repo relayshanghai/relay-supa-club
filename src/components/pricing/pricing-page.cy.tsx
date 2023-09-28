@@ -27,7 +27,7 @@ describe('PricingPage', () => {
         cy.contains(featNewPricing() ? '900 Influencer Searches' : 'Up to 50,000 Influencer Search Results');
         cy.contains(featNewPricing() ? 'Full Customer Service' : '2,000 AI Generated Email Templates');
     });
-    it.only('loads the prices from subscription/prices endpoint', () => {
+    it('loads the prices from subscription/prices endpoint', () => {
         testMount(<PricingPage />);
         // shows loading state first.
         cy.contains('$220').should('not.exist');

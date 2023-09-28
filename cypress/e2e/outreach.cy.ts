@@ -38,7 +38,7 @@ describe('outreach', () => {
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        // cy.contains('Auto-start', { timeout: 10000 });  // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // cy.contains('Auto-start', { timeout: 10000 });  // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         cy.contains('button', 'View sequence templates');
 
         // stats
@@ -145,7 +145,7 @@ describe('outreach', () => {
             cy.get('button[type=submit]').click();
         });
     });
-    it.only('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
@@ -156,7 +156,7 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
 
-        // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         // cy.contains('div', 'Auto-start').within(() => {
         //     cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         // });
@@ -170,7 +170,7 @@ describe('outreach', () => {
         // cy.contains(
         //     'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         // );
-        // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         cy.contains('View sequence templates').click(); // and then remove this line
         // can View sequence templates
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
