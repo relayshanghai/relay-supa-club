@@ -71,34 +71,26 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const handleStartSequence = useCallback(
         async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
             const results = await sendSequence(sequenceInfluencersToSend);
-            try {
-                // handle optimistic update
-                const succeeded = results.filter((result) => !result.error);
-                if (succeeded.length > 0) {
-                    const succeededInfluencerIds = succeeded.map(({ sequenceInfluencerId }) => sequenceInfluencerId);
 
-                    refreshSequenceInfluencers(
-                        sequenceInfluencers.map((influencer) => {
-                            if (succeededInfluencerIds.includes(influencer.id)) {
-                                return {
-                                    ...influencer,
-                                    funnel_status: 'In Sequence',
-                                    sequence_step: 0,
-                                };
-                            }
-                            return influencer;
-                        }),
-                        { revalidate: false },
-                    );
-                }
-                // shouldn't need to update failed
-            } catch (error) {
-                return results;
-            }
-
+            // handle optimistic update
+            const succeeded = results.filter((result) => !result.error);
+            const failed = results.filter((result) => result.error);
+            refreshSequenceInfluencers((influencers) =>
+                influencers?.map(
+                    (influencer) => ({
+                        ...influencer,
+                        funnel_status: succeeded.some((i) => i.sequenceInfluencerId === influencer.id)
+                            ? 'In Sequence'
+                            : failed.some((i) => i.sequenceInfluencerId === influencer.id)
+                            ? 'To Contact'
+                            : influencer.funnel_status,
+                    }),
+                    { revalidate: false },
+                ),
+            );
             return results;
         },
-        [refreshSequenceInfluencers, sendSequence, sequenceInfluencers],
+        [refreshSequenceInfluencers, sendSequence],
     );
 
     const handleAutostartToggle = async (checked: boolean) => {
