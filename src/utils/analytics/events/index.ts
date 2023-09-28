@@ -24,6 +24,8 @@ import type { ChangePagePayload } from './change-page';
 import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
+import type { OpenAnalyzeProfilePayload } from './open-analyze-profle';
+import { OPEN_ANALYZE_PROFILE, OpenAnalyzeProfile } from './open-analyze-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
@@ -207,6 +209,7 @@ export {
     UnlockInfluencers,
     SendInfluencersToOutreach,
     OpenSocialProfile,
+    OpenAnalyzeProfile,
     RemoveBoostbotKol,
     ChangePage,
     StopBoostbot,
@@ -266,6 +269,7 @@ export const events = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
+    [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfile,
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKol,
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
@@ -350,6 +354,7 @@ export type payloads = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
+    [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfilePayload;
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKolPayload;
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
@@ -436,6 +441,7 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
+    z.literal(OPEN_ANALYZE_PROFILE),
     z.literal(REMOVE_BOOSTBOT_KOL),
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
