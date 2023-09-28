@@ -145,7 +145,7 @@ describe('outreach', () => {
             cy.get('button[type=submit]').click();
         });
     });
-    it.only('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
