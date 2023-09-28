@@ -7,7 +7,11 @@ export type OpenSocialProfilePayload = {
     results_index: number;
     results_page: number;
     kol_id: string;
-    search_id: string | null;
+    platform: string;
+    social_url: string;
+    search_id: string | number | null;
+    // search_results_page: number // 9999 for report
+    // search_results_index: number // 9999 for report
 };
 
 export const OpenSocialProfile = (trigger: TriggerEvent, value?: OpenSocialProfilePayload) =>

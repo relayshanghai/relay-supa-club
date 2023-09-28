@@ -81,6 +81,8 @@ import type { EmailNewPayload } from './outreach/email-new';
 import { EmailNew, OUTREACH_EMAIL_NEW } from './outreach/email-new';
 import type { StopBoostbotPayload } from './stop-boostbot';
 import { STOP_BOOSTBOT, StopBoostbot } from './stop-boostbot';
+import type { HoverTooltipPayload } from './hover-tooltip';
+import { HOVER_TOOLTIP, HoverTooltip } from './hover-tooltip';
 import type { ClickNeedHelpPayload } from './click-need-help';
 import { CLICK_NEED_HELP, ClickNeedHelp } from './click-need-help';
 import type { GoToLoginPayload } from './go-to-login';
@@ -169,6 +171,10 @@ import type { ViewInfluencerProfileNotesPayload } from './outreach/view-influenc
 import { ViewInfluencerProfileNotes, VIEW_INFLUENCER_PROFILE_NOTES } from './outreach/view-influencer-profile-notes';
 import type { SelectInfluencerProfileTabPayload } from './outreach/select-influencer-profile-tab';
 import { SelectInfluencerProfileTab, SELECT_INFLUENCER_PROFILE_TAB } from './outreach/select-influencer-profile-tab';
+import type { SearchInboxPayload } from './outreach/search-inbox';
+import { SearchInbox, SEARCH_INBOX } from './outreach/search-inbox';
+import type { PayForUpgradedPlanPayload } from './onboarding/pay-for-upgraded-plan';
+import { PAY_FOR_UPGRADED_PLAN, PayForUpgradedPlan } from './onboarding/pay-for-upgraded-plan';
 import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
 import type { ChangePasswordPayload } from './change-password';
@@ -205,6 +211,7 @@ export {
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
+    HoverTooltip,
     ClickNeedHelp,
     GoToLogin,
     PasswordReset,
@@ -224,6 +231,8 @@ export {
     CloseHelpModal,
     ViewInfluencerProfileNotes,
     SelectInfluencerProfileTab,
+    SearchInbox,
+    PayForUpgradedPlan,
     UpdateProfileInfo,
     ChangePassword,
 };
@@ -261,6 +270,7 @@ export const events = {
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
+    [HOVER_TOOLTIP]: HoverTooltip,
     [CLICK_NEED_HELP]: ClickNeedHelp,
     [GO_TO_LOGIN]: GoToLogin,
     [PASSWORD_RESET]: PasswordReset,
@@ -305,6 +315,8 @@ export const events = {
     [CLOSE_HELP_MODAL]: CloseHelpModal,
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotes,
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTab,
+    [SEARCH_INBOX]: SearchInbox,
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
     [CHANGE_PASSWORD]: ChangePassword,
 };
@@ -342,6 +354,7 @@ export type payloads = {
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
+    [HOVER_TOOLTIP]: HoverTooltipPayload;
     [CLICK_NEED_HELP]: ClickNeedHelpPayload;
     [GO_TO_LOGIN]: GoToLoginPayload;
     [PASSWORD_RESET]: PasswordResetPayload;
@@ -386,6 +399,8 @@ export type payloads = {
     [CLOSE_HELP_MODAL]: CloseHelpModalPayload;
     [VIEW_INFLUENCER_PROFILE_NOTES]: ViewInfluencerProfileNotesPayload;
     [SELECT_INFLUENCER_PROFILE_TAB]: SelectInfluencerProfileTabPayload;
+    [SEARCH_INBOX]: SearchInboxPayload;
+    [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
     [CHANGE_PASSWORD]: ChangePasswordPayload;
 };
@@ -425,6 +440,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
+    z.literal(HOVER_TOOLTIP),
     z.literal(CLICK_NEED_HELP),
     z.literal(GO_TO_LOGIN),
     z.literal(PASSWORD_RESET),
@@ -469,6 +485,8 @@ export const eventKeys = z.union([
     z.literal(CLOSE_HELP_MODAL),
     z.literal(VIEW_INFLUENCER_PROFILE_NOTES),
     z.literal(SELECT_INFLUENCER_PROFILE_TAB),
+    z.literal(SEARCH_INBOX),
+    z.literal(PAY_FOR_UPGRADED_PLAN),
     z.literal(UPDATE_PROFILE_INFO),
     z.literal(CHANGE_PASSWORD),
 ]);

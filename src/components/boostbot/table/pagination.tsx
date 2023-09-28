@@ -38,6 +38,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanPreviousPage() ? 1 : null,
+                                search_id: table.options.meta?.searchId ?? null,
                             });
                         }}
                         disabled={!table.getCanPreviousPage()}
@@ -54,6 +55,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanPreviousPage() ? table.getState().pagination.pageIndex : null,
+                                search_id: table.options.meta?.searchId ?? null,
                             });
                         }}
                         disabled={!table.getCanPreviousPage()}
@@ -70,6 +72,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanNextPage() ? table.getState().pagination.pageIndex + 2 : null,
+                                search_id: table.options.meta?.searchId ?? null,
                             });
                         }}
                         disabled={!table.getCanNextPage()}
@@ -86,6 +89,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                                 currentPage: CurrentPageEvent.boostbot,
                                 from_page: table.getState().pagination.pageIndex + 1,
                                 to_page: table.getCanNextPage() ? table.getPageCount() : null,
+                                search_id: table.options.meta?.searchId ?? null,
                             });
                         }}
                         disabled={!table.getCanNextPage()}

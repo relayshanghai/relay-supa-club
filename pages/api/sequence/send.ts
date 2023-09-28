@@ -8,6 +8,7 @@ import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails'
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
+import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
@@ -61,9 +62,7 @@ const sendAndInsertEmail = async ({
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
-    const sendAt = new Date();
-    sendAt.setTime(sendAt.getTime() + wait_time_hours * 60 * 60 * 1000);
-    const emailSendAt = sendAt.toISOString();
+    const emailSendAt = (await calculateSendAt(account, wait_time_hours)).toISOString();
 
     const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
 
@@ -76,6 +75,7 @@ const sendAndInsertEmail = async ({
         sequence_step_id: step.id,
         email_delivery_status: 'Scheduled',
         email_message_id: res.messageId,
+        email_send_at: emailSendAt,
     });
 
     return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
