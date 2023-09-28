@@ -58,7 +58,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('card');
-                        trackEvent(PAYMENT_PAGE('click on card option'));
+                        trackEvent(PAYMENT_PAGE('click on card option'), { payment_type: 'card' });
                     }}
                 >
                     <Payment
@@ -74,7 +74,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('alipay');
-                        trackEvent(PAYMENT_PAGE('click on alipay option'));
+                        trackEvent(PAYMENT_PAGE('click on alipay option'), { payment_type: 'alipay' });
                     }}
                 >
                     <Alipay
@@ -98,11 +98,11 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                             <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
 
                             <Image
-                                src="/assets/imgs/qrcodes/relayclub.jpg"
+                                src="/assets/imgs/qrcodes/relayclub-clubby.png"
                                 alt="qr code to contact customer service"
                                 layout="responsive"
                                 width={1000}
-                                height={1320}
+                                height={1000}
                             />
                         </div>
                     )}

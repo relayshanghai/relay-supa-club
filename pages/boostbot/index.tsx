@@ -30,6 +30,7 @@ import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { Sequence } from 'src/utils/api/db';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -51,16 +52,19 @@ const Boostbot = () => {
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
-    const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
+    const [sequence, setSequence] = useState<Sequence | undefined>(
+        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+    );
+
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
-
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    const [searchId, setSearchId] = useState<string | number | null>(null);
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
@@ -333,6 +337,10 @@ const Boostbot = () => {
                         addMessage={addMessage}
                         shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
+                        setSearchId={setSearchId}
+                        setSequence={setSequence}
+                        sequence={sequence}
+                        sequences={sequences}
                     />
                 </div>
 
@@ -343,7 +351,7 @@ const Boostbot = () => {
                         columns={columns}
                         data={influencers}
                         setCurrentPageInfluencers={setCurrentPageInfluencers}
-                        meta={{ handleUnlockInfluencer, removeInfluencer, t }}
+                        meta={{ handleUnlockInfluencer, removeInfluencer, t, searchId }}
                     />
                 )}
             </div>
