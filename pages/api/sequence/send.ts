@@ -1,10 +1,10 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
-import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
+import { getSequenceEmailsBySequenceCall, insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 import {
     updateSequenceInfluencerCall,
     updateSequenceInfluencersCall,
@@ -30,20 +30,22 @@ const sendAndInsertEmail = async ({
     account,
     sequenceInfluencer,
     templateVariables,
+    sequenceEmails,
 }: {
     step: SequenceStep;
     sequenceInfluencer: SequenceInfluencer;
     account: string;
     templateVariables: TemplateVariable[];
+    sequenceEmails: SequenceEmail[];
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
     } else if (!sequenceInfluencer.influencer_social_profile_id) {
         throw new Error('No influencer social profile id');
     }
-    const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
-        getInfluencerSocialProfileByIdCall,
-    )(sequenceInfluencer.influencer_social_profile_id);
+    const influencerSocialProfile = await db(getInfluencerSocialProfileByIdCall)(
+        sequenceInfluencer.influencer_social_profile_id,
+    );
     const influencerAccountName = influencerSocialProfile.name || influencerSocialProfile.username;
     if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
@@ -56,6 +58,16 @@ const sendAndInsertEmail = async ({
     if (!recentPostURL) {
         throw new Error('No recent post url');
     }
+    // make sure there is not an existing sequence email for this influencer for this step:
+    const existingSequenceEmail = sequenceEmails.find(
+        (sequenceEmail) =>
+            sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
+            sequenceEmail.sequence_step_id === step.id,
+    );
+    if (existingSequenceEmail) {
+        throw new Error('Email already sent');
+    }
+
     const params = {
         ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
         // fill in the params not in the template variables
@@ -72,7 +84,7 @@ const sendAndInsertEmail = async ({
     if ('error' in res) {
         throw new Error(res.error);
     }
-    await db<typeof insertSequenceEmailCall>(insertSequenceEmailCall)({
+    await db(insertSequenceEmailCall)({
         sequence_influencer_id: sequenceInfluencer.id,
         sequence_id: sequenceInfluencer.sequence_id,
         sequence_step_id: step.id,
@@ -97,6 +109,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
         throw new Error('No sequence steps found');
     }
     const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    const sequenceEmails = await db(getSequenceEmailsBySequenceCall)(sequenceId);
 
     // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
     const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
@@ -121,12 +134,12 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
         try {
             for (const step of sequenceSteps) {
                 try {
-                    // TODO: add a check to make sure that we have not already sent to this sequence_influencer/email
                     const result = await sendAndInsertEmail({
                         step,
                         account,
                         sequenceInfluencer,
                         templateVariables,
+                        sequenceEmails,
                     });
                     results.push(result);
                 } catch (error: any) {
