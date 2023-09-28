@@ -20,6 +20,7 @@ declare module '@tanstack/react-table' {
         handleUnlockInfluencer: (influencer: Influencer) => void;
         removeInfluencer: (userId: string) => void;
         t: TFunction<'translation', undefined, 'translation'>;
+        searchId: string | number | null;
     }
 }
 

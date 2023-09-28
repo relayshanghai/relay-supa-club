@@ -1,5 +1,5 @@
 import { Bars3BottomLeftIcon, EyeIcon, HandThumbUpIcon } from '@heroicons/react/24/solid';
-import type { Row } from '@tanstack/react-table';
+import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
 import type { Influencer } from 'pages/boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -9,14 +9,22 @@ import { numberFormatter } from 'src/utils/formatter';
 
 export type BoostbotTopPostsCellProps = {
     row: Row<Influencer>;
+    table: Table<Influencer>;
 };
 
-export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
+export const BoostbotTopPostsCell = ({ row, table }: BoostbotTopPostsCellProps) => {
     const influencer = row.original;
     const posts = 'top_posts' in influencer && influencer.top_posts && influencer.top_posts.slice(0, 3);
     const description = 'description' in influencer && influencer.description;
     const topicsList = influencer.topics.map((topic) => `#${topic}`).join(', ');
     const { track } = useRudderstackTrack();
+    // @note get platform from url for now
+    //       `influencer` was supposed to be `UserAccount` type which contains `type` for platform but it's not there on runtime
+    const platform = influencer.url.includes('youtube')
+        ? 'youtube'
+        : influencer.url.includes('tiktok')
+        ? 'tiktok'
+        : 'instagram';
 
     return (
         <div className="flex flex-col gap-4">
@@ -36,7 +44,9 @@ export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
                                     results_index: row.index,
                                     thumbnail_index: index,
                                     kol_id: influencer.user_id,
-                                    search_id: null,
+                                    platform,
+                                    social_url: influencer.url,
+                                    search_id: table.options.meta?.searchId ?? null,
                                 });
                             }}
                         >
@@ -70,7 +80,9 @@ export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
                                     results_index: row.index,
                                     thumbnail_index: 0,
                                     kol_id: influencer.user_id,
-                                    search_id: null,
+                                    platform,
+                                    social_url: influencer.url,
+                                    search_id: table.options.meta?.searchId ?? null,
                                 });
                             }}
                         />
@@ -83,7 +95,9 @@ export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
                                     results_index: row.index,
                                     thumbnail_index: 1,
                                     kol_id: influencer.user_id,
-                                    search_id: null,
+                                    platform,
+                                    social_url: influencer.url,
+                                    search_id: table.options.meta?.searchId ?? null,
                                 });
                             }}
                         />
@@ -96,7 +110,9 @@ export const BoostbotTopPostsCell = ({ row }: BoostbotTopPostsCellProps) => {
                                     results_index: row.index,
                                     thumbnail_index: 2,
                                     kol_id: influencer.user_id,
-                                    search_id: null,
+                                    platform,
+                                    social_url: influencer.url,
+                                    search_id: table.options.meta?.searchId ?? null,
                                 });
                             }}
                         />
