@@ -282,8 +282,9 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         trackData.sequence_influencer_id = sequenceInfluencer.id;
         trackData = (await deleteScheduledEmails(trackData as any, sequenceInfluencer)) as any; // deleteScheduledEmails requires another Payload type and it is too troublesome to get it to accept both Payload types. I've confirmed that the keys set in deleteScheduledEmails won't be undefined.
         trackData.is_success = true;
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
-    } catch (error) {
+    } catch (error: any) {
+        trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
+    } finally {
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
     }
     return res.status(httpCodes.OK).json({});
