@@ -9,9 +9,9 @@ export type BatchStartSequencePayload = EventPayload<{
     sequence_influencer_ids: string[] | null;
     is_success: boolean;
     sent_success?: SendResult[];
-    sent_success_count?: number;
+    sent_success_count?: number | null;
     sent_failed?: SendResult[];
-    sent_failed_count?: number;
+    sent_failed_count?: number | null;
     extra_info?: any;
 }>;
 

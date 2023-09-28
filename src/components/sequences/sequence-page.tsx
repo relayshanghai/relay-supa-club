@@ -30,6 +30,7 @@ import { Banner } from '../library/banner';
 import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
+import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
@@ -249,77 +250,77 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [influencers, selection],
     );
 
-    const handleBatchSend = useCallback(async () => {
-        if (selection.length === 0) {
-            return;
-        }
+    const handleBatchSend = useCallback(
+        async (batchSendInfluencers: SequenceInfluencerManagerPage[]) => {
+            if (selection.length === 0) {
+                return;
+            }
 
-        // remove them from selection, and optimistically update to "In Sequence"
-        setSelection([]);
-        refreshSequenceInfluencers(
-            sequenceInfluencers.map((influencer) => {
-                if (selection.includes(influencer.id)) {
-                    return {
-                        ...influencer,
-                        funnel_status: 'In Sequence',
-                        sequence_step: 0,
-                    };
-                }
-                return influencer;
-            }),
-            { revalidate: false },
-        );
-
-        try {
-            const results = await handleStartSequence(selectedInfluencers);
-            const failed = results.filter((result) => result.error);
-            const succeeded = results.filter((result) => !result.error);
-
-            track(BatchStartSequence, {
+            // remove them from selection, and optimistically update to "In Sequence"
+            setSelection([]);
+            refreshSequenceInfluencers(
+                sequenceInfluencers.map((influencer) => {
+                    if (batchSendInfluencers.some((i) => i.id === influencer.id)) {
+                        return {
+                            ...influencer,
+                            funnel_status: 'In Sequence',
+                            sequence_step: 0,
+                        };
+                    }
+                    return influencer;
+                }),
+                { revalidate: false },
+            );
+            const trackData: BatchStartSequencePayload = {
                 sequence_id: sequence?.id ?? null,
                 sequence_name: sequence?.name ?? null,
-                sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
-                is_success: true,
-                sent_success: succeeded,
-                sent_success_count: succeeded.length,
-                sent_failed: failed,
-                sent_failed_count: failed.length,
-            });
-
-            if (succeeded.length > 0) {
-                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
-            }
-            if (failed.length > 0) {
-                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
-                track(BatchStartSequence, {
-                    sequence_id: sequence?.id ?? null,
-                    sequence_name: sequence?.name ?? null,
-                    sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
-                    is_success: false,
-                    extra_info: { error: 'sequence-page, sequences.number_emailsFailedToSchedule: ' + failed.length },
-                });
-            }
-        } catch (error: any) {
-            track(BatchStartSequence, {
-                sequence_id: sequence?.id ?? null,
-                sequence_name: sequence?.name ?? null,
-                sequence_influencer_ids: selectedInfluencers.map((si) => si.id),
+                sequence_influencer_ids: batchSendInfluencers.map((si) => si.id),
                 is_success: false,
-                extra_info: { error: String(error) },
-            });
-            toast.error(error?.message ?? '');
-        }
-    }, [
-        handleStartSequence,
-        refreshSequenceInfluencers,
-        selectedInfluencers,
-        selection,
-        sequence?.id,
-        sequence?.name,
-        sequenceInfluencers,
-        t,
-        track,
-    ]);
+                sent_success: [],
+                sent_success_count: null,
+                sent_failed: [],
+                sent_failed_count: null,
+            };
+
+            try {
+                const results = await handleStartSequence(batchSendInfluencers);
+                const failed = results.filter((result) => result.error);
+                const succeeded = results.filter((result) => !result.error);
+
+                trackData.sent_success = succeeded;
+                trackData.sent_success_count = succeeded.length;
+                trackData.sent_failed = failed;
+                trackData.sent_failed_count = failed.length;
+                trackData.is_success = true;
+                track(BatchStartSequence, trackData);
+
+                if (succeeded.length > 0) {
+                    toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
+                }
+                if (failed.length > 0) {
+                    toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+                    trackData.extra_info = {
+                        error: 'sequence-page, sequences.number_emailsFailedToSchedule: ' + failed.length,
+                    };
+                    track(BatchStartSequence, trackData);
+                }
+            } catch (error: any) {
+                trackData.extra_info = { error: `error: ${error?.message} \nstack: ${error?.stack}` };
+                track(BatchStartSequence, trackData);
+                toast.error(error?.message ?? '');
+            }
+        },
+        [
+            handleStartSequence,
+            refreshSequenceInfluencers,
+            selection.length,
+            sequence?.id,
+            sequence?.name,
+            sequenceInfluencers,
+            t,
+            track,
+        ],
+    );
 
     const sequenceSendTooltipTitle = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
         ? t('sequences.invalidSocialProfileTooltip')
@@ -492,7 +493,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                         onClick={
                                             isMissingVariables
                                                 ? () => setShowUpdateTemplateVariables(true)
-                                                : handleBatchSend
+                                                : () => handleBatchSend(selectedInfluencers)
                                         }
                                     >
                                         <SendOutline className="mr-2 h-5 w-5 stroke-white" />
