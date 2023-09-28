@@ -21,7 +21,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, UserProfile } from 'types';
+import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -31,6 +31,8 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import { updateSequenceInfluencerIfSocialProfileAvailable } from 'src/components/sequences/helpers';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -56,7 +58,7 @@ const Boostbot = () => {
         sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
     );
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
@@ -239,36 +241,41 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
-            const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
-            const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+            trackingPayload.is_multiple = currentPageInfluencers ? currentPageInfluencers.length > 1 : null;
 
-            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
-
-            if (!unlockedInfluencers) {
+            if (!currentPageInfluencers) {
                 throw new Error('Error unlocking influencers');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
+            const topics: string[] = [];
+            currentPageInfluencers.forEach((influencer) => {
+                influencer.topics.forEach((topic) => {
+                    if (!topics.includes(topic)) {
+                        topics.push(topic);
+                    }
+                });
+            });
 
-            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
-                const creatorProfileId = influencer.user_profile.user_id;
+            const sequenceInfluencerPromises = currentPageInfluencers.map((influencer) => {
+                const creatorProfileId = influencer.user_id;
 
                 trackingPayload.influencer_ids.push(creatorProfileId);
-                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+                trackingPayload.topics = topics;
 
+                const platform = extractPlatformFromURL(influencer.url);
+                if (!platform) {
+                    throw new Error('Error creating sequence influencer: no platform detected');
+                }
                 return createSequenceInfluencer({
                     iqdata_id: creatorProfileId,
-                    influencer_social_profile_id: influencer.socialProfile.id,
-                    tags,
-                    avatar_url: influencer.socialProfile.avatar_url ?? '',
-                    name: influencer.socialProfile.name || '',
-                    platform: influencer.socialProfile.platform as CreatorPlatform,
-                    username: influencer.socialProfile.username,
-                    url: influencer.socialProfile.url,
+                    avatar_url: influencer.picture ?? '',
+                    platform,
+                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
+                    username: influencer.handle ?? influencer.username ?? '',
+
+                    url: influencer.url,
                     sequence_id: sequence?.id,
                 });
             });
@@ -297,6 +304,25 @@ const Boostbot = () => {
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
+            }
+
+            // get all the reports and update the influencers. If this doesn't finish it doesn't matter because in the sequence-row we fetch the report if there is none.
+            const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
+            if (!unlockedInfluencers) {
+                return;
+            }
+            for (const { socialProfile, influencer, ...report } of unlockedInfluencers) {
+                const sequenceInfluencer = sequenceInfluencers.find((si) => si.id === influencer.id);
+                if (!sequenceInfluencer) {
+                    continue;
+                }
+                await updateSequenceInfluencerIfSocialProfileAvailable({
+                    sequenceInfluencer,
+                    socialProfile,
+                    report,
+                    updateSequenceInfluencer,
+                    company_id: profile?.company_id ?? '',
+                });
             }
         } catch (error) {
             clientLogger(error, 'error');
