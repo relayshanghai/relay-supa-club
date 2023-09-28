@@ -221,10 +221,6 @@ export class Rudderstack {
             return;
         }
 
-        this.getClient().identify({
-            userId: this.session.user_id,
-        });
-
         this.getClient().track(
             {
                 userId: this.session.user_id,
