@@ -5,16 +5,21 @@ import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { AnalyzeOpenExternalSocialProfile } from 'src/utils/analytics/events';
+import { featEmail } from 'src/constants/feature-flags';
+import { useUser } from 'src/hooks/use-user';
 
 export const TitleSection = ({
     user_profile,
     onAddToCampaign,
     platform,
+    onAddToSequence,
 }: {
     user_profile: CreatorReport['user_profile'];
     onAddToCampaign: (selectedCreatorUserId: string) => void;
     platform: CreatorPlatform;
+    onAddToSequence: () => void;
 }) => {
+    const { profile } = useUser();
     const { track } = useAnalytics();
     const { t } = useTranslation();
     const trackOpenLink = () => {
@@ -48,9 +53,15 @@ export const TitleSection = ({
                     </a>
                 </div>
             </div>
-            <Button onClick={() => onAddToCampaign(user_profile.user_id)} className="my-6" variant="secondary">
-                {t('creators.show.addToCampaign')}
-            </Button>
+            {profile?.created_at && featEmail(new Date(profile?.created_at)) ? (
+                <Button onClick={onAddToSequence} className="my-6" variant="secondary">
+                    {t('creators.addToSequence')}
+                </Button>
+            ) : (
+                <Button onClick={() => onAddToCampaign(user_profile.user_id)} className="my-6" variant="secondary">
+                    {t('creators.show.addToCampaign')}
+                </Button>
+            )}
         </div>
     );
 };

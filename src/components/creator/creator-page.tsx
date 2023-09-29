@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
@@ -20,9 +20,23 @@ import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import type { eventKeys } from 'src/utils/analytics/events';
 import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
+import { AddToSequenceModal } from '../modal-add-to-sequence';
+import { useSequences } from 'src/hooks/use-sequences';
+import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
+import { updateSequenceInfluencerIfSocialProfileAvailable } from '../sequences/helpers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useCompany } from 'src/hooks/use-company';
+import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
-    const { loading, report, reportCreatedAt, errorMessage } = useReport({
+    const { sequences } = useSequences();
+    const { company } = useCompany();
+    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
+
+    const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    const { loading, report, socialProfile, reportCreatedAt, errorMessage } = useReport({
         platform,
         creator_id,
         track: SearchAnalyzeInfluencer.eventName as eventKeys,
@@ -30,12 +44,36 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+    const [showSequenceListModal, setShowSequenceListModal] = useState(false);
+    const [selectedSequence, setSelectedSequence] = useState<string>();
+    const [showAlreadyAddedSequenceModal, setShowAlreadyAddedSequenceModal] = useState(false);
 
+    const alreadyAddedSequence = allSequenceInfluencersIqDataIdsAndSequenceNames?.find(
+        ({ iqdata_id }) => iqdata_id === creator_id,
+    );
+    const addToSequence = () => {
+        if (alreadyAddedSequence || selectedSequence) {
+            setShowAlreadyAddedSequenceModal(true);
+        } else {
+            setShowSequenceListModal(true);
+        }
+    };
     const { t } = useTranslation();
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
     const { track } = useAnalytics();
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencer | null>(null);
+
+    useEffect(() => {
+        updateSequenceInfluencerIfSocialProfileAvailable({
+            sequenceInfluencer,
+            socialProfile,
+            report,
+            updateSequenceInfluencer,
+            company_id: company?.id ?? '',
+        });
+    }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
     const addToCampaign = async (selectedCreatorUserId: string) => {
         let isAlreadyInCampaign = false;
@@ -80,6 +118,30 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                         });
                 }}
             />
+            <AddToSequenceModal
+                show={showSequenceListModal}
+                setShow={setShowSequenceListModal}
+                creatorProfile={report?.user_profile || {}}
+                platform={platform}
+                sequence={sequence}
+                sequences={sequences || []}
+                setSequence={setSequence}
+                setSequenceInfluencer={(sequenceInfluencer) => {
+                    setSelectedSequence(sequenceInfluencer?.sequence_id);
+                    setSequenceInfluencer(sequenceInfluencer);
+                }}
+            />
+            <InfluencerAlreadyAddedSequenceModal
+                visible={showAlreadyAddedSequenceModal}
+                onClose={() => {
+                    setShowAlreadyAddedSequenceModal(false);
+                }}
+                alreadyAddedSequence={
+                    alreadyAddedSequence?.sequenceName ||
+                    sequences?.find((sequence) => sequence.id === selectedSequence)?.name ||
+                    ''
+                }
+            />
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
@@ -100,6 +162,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                             user_profile={report.user_profile}
                             platform={platform}
                             onAddToCampaign={addToCampaign}
+                            onAddToSequence={addToSequence}
                         />
                         <CreatorOverview report={report} />
                         <MetricsSection report={report} />
