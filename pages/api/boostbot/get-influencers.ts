@@ -4,14 +4,12 @@ import { limiter } from 'src/utils/limiter';
 import type { CreatorAccount } from 'types';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
-import { platform_enum } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
+import { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 
 const GetInfluencersBody = z.object({
-    topicClusters: z.string().array().array(),
-    platform: platform_enum,
+    searchPayloads: SearchInfluencersPayloadRequired.array(),
     company_id: z.string(),
     user_id: z.string(),
 });
@@ -27,23 +25,24 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
     }
 
-    const { company_id, user_id, topicClusters, platform } = result.data;
+    const { company_id, user_id, searchPayloads } = result.data;
 
     // We want a single Boostbot search to cost 5 credits. Each Boostbot search consists of all 3 platforms, calling this endpoint 3 times. This achieves a total of 5.
     const platformCosts = { instagram: 2, tiktok: 2, youtube: 1 };
+    const platform = searchPayloads[0].query.platform;
     const cost = platformCosts[platform];
     const { error: recordError } = await recordSearchUsage(company_id, user_id, cost);
     if (recordError) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
     }
 
-    const influencerPayloads = topicClusters.map(createBoostbotInfluencerPayload(platform));
-    const influencersPromises = influencerPayloads.map((payload) => limiter.schedule(() => searchInfluencers(payload)));
+    const influencersPromises = searchPayloads.map((payload) => limiter.schedule(() => searchInfluencers(payload)));
     const influencersResults = await Promise.all(influencersPromises);
+    const topics = searchPayloads.map((p) => p.body.filter?.relevance?.value.split(',').map((topic) => topic.trim()));
     const flattenedAccounts = influencersResults
         .map((result, index) =>
             // We want to display the topics for each influencer found, so we add them to the account object
-            result.accounts.map((creator) => ({ ...creator.account.user_profile, topics: topicClusters[index] })),
+            result.accounts.map((creator) => ({ ...creator.account.user_profile, topics: topics[index] ?? [] })),
         )
         .flat();
     const uniqueInfluencers: GetInfluencersResponse = flattenedAccounts.filter(

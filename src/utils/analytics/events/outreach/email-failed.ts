@@ -11,6 +11,13 @@ export type EmailFailedPayload = EventPayload<{
     //  - bounced: https://emailengine.app/webhooks#messageBounce
     error_type: 'quit' | 'bounced' | 'failed';
     extra_info?: any;
+    sequence_influencer_id?: string | null;
+    sequence_emails_pre_delete?: string[];
+    sequence_emails_after_delete?: string[];
+    scheduled_emails?: string[];
+    deleted_emails?: string[];
+    email_updates?: string[];
+    is_success?: boolean;
 }>;
 
 export const EmailFailed = (trigger: TriggerEvent<EmailFailedPayload>, payload?: EmailFailedPayload) =>

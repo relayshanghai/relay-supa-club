@@ -52,7 +52,11 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
     await handleResError(res, path, context);
     const json = await res.json();
 
-    await rudderstack.send(json);
+    if (context) {
+        await rudderstack.identify(context);
+        await rudderstack.send(json);
+    }
+
     return json as T;
 };
 

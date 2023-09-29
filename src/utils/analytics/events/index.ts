@@ -134,6 +134,10 @@ import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
 import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
 import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
+import type { OpenBoostbotFiltersModalPayload } from './boostbot/open-filters-modal';
+import { OPEN_BOOSTBOT_FILTERS_MODAL, OpenBoostbotFiltersModal } from './boostbot/open-filters-modal';
+import type { SetBoostbotFilterPayload } from './boostbot/set-filter';
+import { SET_BOOSTBOT_FILTER, SetBoostbotFilter } from './boostbot/set-filter';
 import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
 import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
 import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
@@ -295,6 +299,8 @@ export const events = {
     [SEND_EMAIL_REPLY]: SendEmailReply,
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
+    [OPEN_BOOSTBOT_FILTERS_MODAL]: OpenBoostbotFiltersModal,
+    [SET_BOOSTBOT_FILTER]: SetBoostbotFilter,
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
@@ -379,6 +385,8 @@ export type payloads = {
     [SEND_EMAIL_REPLY]: SendEmailReplyPayload;
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
+    [OPEN_BOOSTBOT_FILTERS_MODAL]: OpenBoostbotFiltersModalPayload;
+    [SET_BOOSTBOT_FILTER]: SetBoostbotFilterPayload;
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
@@ -465,6 +473,8 @@ export const eventKeys = z.union([
     z.literal(SEND_EMAIL_REPLY),
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
     z.literal(OPEN_FILTERS_MODAL),
+    z.literal(OPEN_BOOSTBOT_FILTERS_MODAL),
+    z.literal(SET_BOOSTBOT_FILTER),
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
     z.literal(SEARCH_INFLUENCER_BY_NAME),
