@@ -33,6 +33,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group text-xs"
+                data-testid="boostbot-social-profile-link"
                 onClick={() => {
                     track(OpenSocialProfile, {
                         currentPage: CurrentPageEvent.boostbot,
@@ -64,9 +65,10 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
             </Link>
 
             <Link
-                href={`/influencer/${platform}/${user_id}`}
+                href={`/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(user_id)}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-testid="boostbot-analyze-profile-link"
                 onClick={() => track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })}
             >
                 <Button className="flex flex-row items-center" variant="secondary">
