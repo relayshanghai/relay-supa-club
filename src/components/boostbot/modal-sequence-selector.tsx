@@ -14,7 +14,7 @@ export const ModalSequenceSelector = ({
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
-    sequence: Sequence | null;
+    sequence?: Sequence | null;
     setSequence: (sequence: Sequence | undefined) => void;
     sequences: Sequence[];
     handleAddToSequence: () => void;
@@ -65,6 +65,7 @@ export const ModalSequenceSelector = ({
                 </Button>
 
                 <Button
+                    disabled={!sequence?.id}
                     onClick={() => {
                         handleAddToSequence();
                         setShow(false);

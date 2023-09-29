@@ -209,16 +209,14 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
-            {sequence && sequences && (
-                <ModalSequenceSelector
-                    show={showSequenceSelector}
-                    setShow={setShowSequenceSelector}
-                    handleAddToSequence={chatPageToOutreach}
-                    sequence={sequence}
-                    setSequence={setSequence}
-                    sequences={sequences}
-                />
-            )}
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={chatPageToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />

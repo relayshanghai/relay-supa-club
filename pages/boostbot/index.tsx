@@ -53,8 +53,14 @@ const Boostbot = () => {
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const [sequence, setSequence] = useState<Sequence | undefined>(
-        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
+
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
