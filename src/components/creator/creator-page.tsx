@@ -32,7 +32,10 @@ import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { sequences } = useSequences();
     const { company } = useCompany();
-    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
+    const {
+        allSequenceInfluencersIqDataIdsAndSequenceNames,
+        refresh: refreshAllSequenceInfluencersIqDataIdsAndSequenceNames,
+    } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
@@ -52,7 +55,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         ({ iqdata_id }) => iqdata_id === creator_id,
     );
     const addToSequence = () => {
-        if (alreadyAddedSequence || selectedSequence) {
+        if (alreadyAddedSequence) {
             setShowAlreadyAddedSequenceModal(true);
         } else {
             setShowSequenceListModal(true);
@@ -127,6 +130,28 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 sequences={sequences || []}
                 setSequence={setSequence}
                 setSequenceInfluencer={(sequenceInfluencer) => {
+                    if (!sequenceInfluencer) {
+                        return;
+                    }
+                    const sequenceName = sequences?.find(
+                        (sequence) => sequence.id === sequenceInfluencer.sequence_id,
+                    )?.name;
+                    refreshAllSequenceInfluencersIqDataIdsAndSequenceNames([
+                        ...allSequenceInfluencersIqDataIdsAndSequenceNames.map((seqInfluencer) => {
+                            return {
+                                iqdata_id: seqInfluencer.iqdata_id,
+                                sequences: {
+                                    name: sequenceName ?? '',
+                                },
+                            };
+                        }),
+                        {
+                            iqdata_id: sequenceInfluencer.iqdata_id,
+                            sequences: {
+                                name: sequenceName ?? '',
+                            },
+                        },
+                    ]);
                     setSelectedSequence(sequenceInfluencer?.sequence_id);
                     setSequenceInfluencer(sequenceInfluencer);
                 }}
