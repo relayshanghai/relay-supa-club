@@ -38,6 +38,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+
     const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
     const { loading, report, socialProfile, reportCreatedAt, errorMessage } = useReport({
         platform,
@@ -48,6 +49,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [showSequenceListModal, setShowSequenceListModal] = useState(false);
+
     const [selectedSequence, setSelectedSequence] = useState<string>();
     const [showAlreadyAddedSequenceModal, setShowAlreadyAddedSequenceModal] = useState(false);
 
