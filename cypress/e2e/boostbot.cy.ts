@@ -15,6 +15,18 @@ describe('Boostbot', () => {
         cy.visit('/boostbot');
     });
 
+    it('displays no results when no influencers found', () => {
+        cy.intercept('POST', '/api/boostbot/get-influencers', { body: [] });
+
+        cy.contains("Hi, I'm BoostBot");
+        cy.contains("I can't seem to find influencers under your selected filters").should('not.exist');
+
+        cy.get('textarea').type('LED beauty mask{enter}');
+
+        cy.contains("I can't seem to find influencers under your selected filters");
+        cy.contains('No results');
+    });
+
     it('can search for a list of influencers and display results', () => {
         const { fullname, followers } = danniCreatorReport.user_profile;
         const influencerName = fullname;
