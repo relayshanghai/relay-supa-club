@@ -18,8 +18,18 @@ import { mixArrays, randomNumber } from 'src/utils/utils';
 import type { MessageType } from 'src/components/boostbot/message';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { ProgressType } from 'src/components/boostbot/chat-progress';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
+import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
+import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
+
+export type Filters = {
+    platforms: CreatorPlatform[];
+    audience_geo: AudienceGeo[];
+};
 
 interface ChatProps {
     messages: MessageType[];
@@ -65,6 +75,14 @@ export const Chat: React.FC<ChatProps> = ({
     setSequence,
     sequences,
 }) => {
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+        platforms: ['youtube', 'tiktok', 'instagram'],
+        audience_geo: [
+            { id: countriesByCode.US.id, weight: 0.15 },
+            { id: countriesByCode.CA.id, weight: 0.1 },
+        ],
+    });
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -139,7 +157,11 @@ export const Chat: React.FC<ChatProps> = ({
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
-                const influencers = await getInfluencers({ topicClusters, platform });
+                const influencerPayloads = topicClusters.map((topics) =>
+                    createBoostbotInfluencerPayload({ platform, filters, topics }),
+                );
+
+                const influencers = await getInfluencers(influencerPayloads);
 
                 payload.valid_topics.push(...relevantTopics);
                 payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
@@ -147,12 +169,11 @@ export const Chat: React.FC<ChatProps> = ({
                 return influencers;
             };
 
-            const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-            const parallelSearchPromises = platforms.map((platform) =>
+            const parallelSearchPromises = filters.platforms.map((platform) =>
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
-            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
-            const influencers = mixArrays(youtube, tiktok, instagram).filter((i) => !!i.url);
+            const searchResults = await Promise.all(parallelSearchPromises);
+            const influencers = mixArrays(searchResults).filter((i) => !!i.url);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -218,6 +239,13 @@ export const Chat: React.FC<ChatProps> = ({
                 </h1>
             </div>
 
+            <SearchFiltersModal
+                isOpen={isFiltersModalOpen}
+                setIsOpen={setIsFiltersModalOpen}
+                filters={filters}
+                setFilters={setFilters}
+            />
+
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
@@ -238,6 +266,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isUnlockOutreachLoading}
                     onSendMessage={onSendMessage}
+                    openFiltersModal={() => setIsFiltersModalOpen(true)}
                 />
             </div>
         </div>

@@ -24,6 +24,8 @@ import type { ChangePagePayload } from './change-page';
 import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
 import { OPEN_SOCIAL_PROFILE, OpenSocialProfile } from './open-social-profle';
+import type { OpenAnalyzeProfilePayload } from './open-analyze-profle';
+import { OPEN_ANALYZE_PROFILE, OpenAnalyzeProfile } from './open-analyze-profle';
 import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
@@ -134,6 +136,10 @@ import type { ClearFiltersPayload } from './discover/clear-filters';
 import { CLEAR_FILTERS, ClearFilters } from './discover/clear-filters';
 import type { SearchInfluencerByNamePayload } from './discover/search-influencer-by-name';
 import { SEARCH_INFLUENCER_BY_NAME, SearchInfluencerByName } from './discover/search-influencer-by-name';
+import type { OpenBoostbotFiltersModalPayload } from './boostbot/open-filters-modal';
+import { OPEN_BOOSTBOT_FILTERS_MODAL, OpenBoostbotFiltersModal } from './boostbot/open-filters-modal';
+import type { SetBoostbotFilterPayload } from './boostbot/set-filter';
+import { SET_BOOSTBOT_FILTER, SetBoostbotFilter } from './boostbot/set-filter';
 import type { ChangeSequenceTabPayload } from './outreach/change-sequence-tab';
 import { CHANGE_SEQUENCE_TAB, ChangeSequenceTab } from './outreach/change-sequence-tab';
 import type { ToggleAutoStartPayload } from './outreach/toggle-auto-start';
@@ -207,6 +213,7 @@ export {
     UnlockInfluencers,
     SendInfluencersToOutreach,
     OpenSocialProfile,
+    OpenAnalyzeProfile,
     RemoveBoostbotKol,
     ChangePage,
     StopBoostbot,
@@ -266,6 +273,7 @@ export const events = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
+    [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfile,
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKol,
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
@@ -295,6 +303,8 @@ export const events = {
     [SEND_EMAIL_REPLY]: SendEmailReply,
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousal,
     [OPEN_FILTERS_MODAL]: OpenFiltersModal,
+    [OPEN_BOOSTBOT_FILTERS_MODAL]: OpenBoostbotFiltersModal,
+    [SET_BOOSTBOT_FILTER]: SetBoostbotFilter,
     [ENTER_FILTER]: EnterFilter,
     [CLEAR_FILTERS]: ClearFilters,
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByName,
@@ -350,6 +360,7 @@ export type payloads = {
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
+    [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfilePayload;
     [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKolPayload;
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
@@ -379,6 +390,8 @@ export type payloads = {
     [SEND_EMAIL_REPLY]: SendEmailReplyPayload;
     [NAVIGATE_SIGNUP_CAROUSAL]: NavigateSignupCarousalPayload;
     [OPEN_FILTERS_MODAL]: OpenFiltersModalPayload;
+    [OPEN_BOOSTBOT_FILTERS_MODAL]: OpenBoostbotFiltersModalPayload;
+    [SET_BOOSTBOT_FILTER]: SetBoostbotFilterPayload;
     [ENTER_FILTER]: EnterFilterPayload;
     [CLEAR_FILTERS]: ClearFiltersPayload;
     [SEARCH_INFLUENCER_BY_NAME]: SearchInfluencerByNamePayload;
@@ -436,6 +449,7 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
+    z.literal(OPEN_ANALYZE_PROFILE),
     z.literal(REMOVE_BOOSTBOT_KOL),
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
@@ -465,6 +479,8 @@ export const eventKeys = z.union([
     z.literal(SEND_EMAIL_REPLY),
     z.literal(NAVIGATE_SIGNUP_CAROUSAL),
     z.literal(OPEN_FILTERS_MODAL),
+    z.literal(OPEN_BOOSTBOT_FILTERS_MODAL),
+    z.literal(SET_BOOSTBOT_FILTER),
     z.literal(ENTER_FILTER),
     z.literal(CLEAR_FILTERS),
     z.literal(SEARCH_INFLUENCER_BY_NAME),

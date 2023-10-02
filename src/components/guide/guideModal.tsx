@@ -12,7 +12,7 @@ export const GuideModal = ({
     show,
     setShow,
 }: {
-    section: string;
+    section: keyof (typeof guidePage)['modalInfo'];
     show: boolean;
     setShow: (open: boolean) => void;
 }) => {
@@ -20,7 +20,7 @@ export const GuideModal = ({
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
 
-    const selectedGuide = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
+    const selectedGuide = guidePage.modalInfo[section];
 
     return (
         <Modal
@@ -38,17 +38,24 @@ export const GuideModal = ({
         >
             <div className="flex flex-col rounded-full">
                 <div className="max-h-[50vh] overflow-y-auto lg:max-h-[70vh]">
-                    {Object.keys(selectedGuide['sections' as keyof typeof selectedGuide]).map((guideSection, index) => {
+                    {selectedGuide.sections.map((guideSection, index) => {
                         return (
                             <div key={index} className="mt-6 flex flex-col gap-2">
-                                {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`) !== '' && (
+                                {t(`guidePage.modalInfo.${section}.sections.${index}.title`) !== '' && (
                                     <p className="text-xl font-semibold text-gray-700">
-                                        {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`)}
+                                        {t(`guidePage.modalInfo.${section}.sections.${index}.title`)}
                                     </p>
                                 )}
                                 <p className="font-regular text-sm text-gray-500">
-                                    {t(`guidePage.modalInfo.${section}.sections.${guideSection}.description`)}
+                                    {t(`guidePage.modalInfo.${section}.sections.${index}.description`)}
                                 </p>
+                                {'demo' in guideSection && (
+                                    <img
+                                        className="rounded-xl"
+                                        alt="Demo GIF"
+                                        src={`/assets/videos/${guideSection.demo}`}
+                                    />
+                                )}
                             </div>
                         );
                     })}
