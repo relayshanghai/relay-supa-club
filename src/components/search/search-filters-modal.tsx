@@ -115,17 +115,21 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
             setActiveSearch(true);
             setPage(0);
 
-            const journey = getJourney();
+            try {
+                const journey = getJourney();
 
-            if (!journey) {
-                clientLogger('Journey is undefined', 'error', true);
-            }
+                if (!journey) {
+                    clientLogger('Journey is undefined', 'error', true);
+                }
 
-            if (searchType && journey) {
-                trackSearch('Search Options', {
-                    search_type: searchType,
-                    search_id: journey.id,
-                });
+                if (searchType && journey) {
+                    trackSearch('Search Options', {
+                        search_type: searchType,
+                        search_id: journey.id,
+                    });
+                }
+            } catch (error) {
+                clientLogger(error, 'error', true);
             }
 
             trackSearch('Search Filters Modal');
