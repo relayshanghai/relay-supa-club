@@ -177,7 +177,7 @@ export const Chat: React.FC<ChatProps> = ({
                 addMessage({
                     sender: 'Bot',
                     type: 'video',
-                    videoUrl: '/assets/videos/no-influencers-found.mp4',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
                     eventToTrack: OpenVideoGuideModal.eventName,
                 });
             }
