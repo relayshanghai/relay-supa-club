@@ -12,12 +12,16 @@ const boostbot = {
         inLocation: '位于 {{location}} 地区',
     },
     chat: {
-        introMessage: `嗨, 我是BoostBot 🙂
+        introMessage: `你好，我是雷宝 🙂
 
-请向我发送您的产品英文描述，我将为您推荐适合该产品在海外社媒推广的红人。
+你可以使用任何语言向我描述你的产品, 我将根据产品描述向你推荐相关的网红达人帮你在YouTube、TikTok和Instagram上推广产品。
 
-产品描述案例："IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"。`,
-        influencersFound: '我精选了 {{count}} 位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
+例如: “一款重量轻、可折叠的4K HDR迷你相机无人机”`,
+        influencersFound:
+            '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在美国和加拿大。你也可以在此处更改目标地域：',
+        influencersFoundAddToSequence:
+            '你可以将这些网红达人添加到名为<customLink>Sequence</customLink>「邮件进程管理」的邮件列表中。「邮件进程管理」功能可以让你直接向网红达人发送电子邮件。',
+        influencersFoundNextSteps: '你希望做什么呢？',
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
         stopped: 'Boostbot已停止搜索',
@@ -36,13 +40,8 @@ const boostbot = {
         unlockDone: `太棒了, 你刚刚解锁了新的红人 {{count}}, 在试用期间, 你最多可以解锁50位红人报告, 或者你也可以<customLink>升级方案解锁更多</customLink>。
 
 小贴士：您也可以选择逐个解锁 KOL。`,
-        outreachDone: `太棒了！ 我正在安排发送邮件。
-
-一个小提示：你可以在"<customLink>拓展方案中</customLink>"查看邮件状态。`,
+        outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
-        hasUsedOutreach: `好的，我正在安排发送邮件。
-
-一个小提示：你也可以选择不给其中一部分红人发送邮件，只需将他们从列表中删除即可。`,
     },
     table: {
         account: '账号',

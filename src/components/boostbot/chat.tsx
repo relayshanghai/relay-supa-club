@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
+import { RecommendInfluencers, StopBoostbot, OpenVideoGuideModal } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
@@ -186,7 +186,31 @@ export const Chat: React.FC<ChatProps> = ({
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.chat.influencersFound',
-                translationValues: { count: influencers.length },
+                // TODO Sergej: geolocations string
+                // translationValues: { count: influencers.length, geolocations:  },
+            });
+            addMessage({
+                sender: 'Bot',
+                type: 'video',
+                videoUrl: '/assets/videos/bootbot-filters-guide.mp4',
+                eventToTrack: OpenVideoGuideModal.eventName,
+            });
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                translationLink: '/sequences',
+            });
+            addMessage({
+                sender: 'Bot',
+                type: 'video',
+                videoUrl: '/assets/videos/sequence-guide.mp4',
+                eventToTrack: OpenVideoGuideModal.eventName,
+            });
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.influencersFoundNextSteps',
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);

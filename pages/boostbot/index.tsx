@@ -13,7 +13,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import {
-    // OpenVideoGuideModal,
+    OpenVideoGuideModal,
     OpenBoostbotPage,
     SendInfluencersToOutreach,
     UnlockInfluencers,
@@ -31,7 +31,6 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
-// import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -283,16 +282,14 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
-                translationLink: '/sequences',
+                translationKey: 'boostbot.chat.outreachDone',
             });
-            // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-            // addMessage({
-            //     sender: 'Bot',
-            //     type: 'video',
-            //     videoUrl: '/assets/videos/sequence-guide.mp4',
-            //     eventToTrack: OpenVideoGuideModal.eventName,
-            // });
+            addMessage({
+                sender: 'Bot',
+                type: 'video',
+                videoUrl: '/assets/videos/sequence-guide.mp4',
+                eventToTrack: OpenVideoGuideModal.eventName,
+            });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));

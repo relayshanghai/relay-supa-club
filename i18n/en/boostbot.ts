@@ -14,18 +14,21 @@ const boostbot = {
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
 
-Please send me an English description of your product and I'll recommend influencers to promote it on social media.
+Please send me a description of your product - in any language - and I'll recommend influencers to promote it on YouTube, TikTok, and Instagram.
 
-For example: "IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"`,
+For example: “A lightweight and foldable mini camera drone with 4K HDR video”`,
         influencersFound:
-            'I handpicked the {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
+            'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
+        influencersFoundAddToSequence:
+            'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
+        influencersFoundNextSteps: 'What would you like to do?',
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
         noInfluencersToUnlock: 'It looks like you already unlocked all influencers on the current page',
-        unlockPage: 'Unlock influencers on current page',
+        unlockPage: 'Unlock selected influencers',
         unlockPageShort: 'Unlock page',
-        outreachPage: 'Email influencers on current page',
+        outreachPage: 'Add selected influencers to Sequence',
         outreachPageShort: 'Email page',
         progress: {
             step1: 'Generating topics and niches',
@@ -37,13 +40,9 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
         unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
 
 Tip: You can also unlock influencers one by one.`,
-        outreachDone: `Great. I'm scheduling the emails now.
-
-Tip: You can check the email status on “<customLink>Outreach</customLink>”`,
+        outreachDone:
+            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
-        hasUsedOutreach: `Great. I'm scheduling the emails now.
-
-Tip: You can opt not to email some influencers by taking them out of the list.`,
     },
     table: {
         account: 'Account',
