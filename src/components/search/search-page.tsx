@@ -30,6 +30,7 @@ import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
+
     const {
         platform,
         searchParams,

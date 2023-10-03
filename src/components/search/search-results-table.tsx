@@ -7,6 +7,7 @@ import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useCompany } from 'src/hooks/use-company';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
@@ -36,6 +37,7 @@ export const SearchResultsTable = ({
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
+    const { company } = useCompany();
     const noResults = !results || results.length === 0;
 
     const loading = resultsLoading || topSearchLoading || (noResults && validating);
@@ -78,6 +80,18 @@ export const SearchResultsTable = ({
                             </td>
                         </tr>
                     )}
+                    {company?.subscription_status === 'canceled' && (
+                        <tr className="w-full">
+                            <td className="space-y-4 py-4 text-center" colSpan={6}>
+                                <p className="mb-4">
+                                    Your free trial has expired. Please upgrade your account to use this feature.
+                                </p>
+                                <Link href="/pricing">
+                                    <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                                </Link>
+                            </td>
+                        </tr>
+                    )}
                     {!error &&
                         !usageExceeded &&
                         noResults &&
@@ -92,24 +106,28 @@ export const SearchResultsTable = ({
                             <td />
                         </tr>
                     )}
-                    {!error && !usageExceeded && !noResults && results && (
-                        <>
-                            {results.map((creator, i) => (
-                                <SearchResultRow
-                                    key={i}
-                                    creator={creator}
-                                    setShowCampaignListModal={setShowCampaignListModal}
-                                    setSelectedCreator={setSelectedCreator}
-                                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                    allCampaignCreators={allCampaignCreators}
-                                    allSequenceInfluencersIqDataIdsAndSequenceNames={
-                                        allSequenceInfluencersIqDataIdsAndSequenceNames
-                                    }
-                                />
-                            ))}
-                            {moreResults}
-                        </>
-                    )}
+                    {!error &&
+                        !usageExceeded &&
+                        !noResults &&
+                        results &&
+                        company?.subscription_status !== 'canceled' && (
+                            <>
+                                {results.map((creator, i) => (
+                                    <SearchResultRow
+                                        key={i}
+                                        creator={creator}
+                                        setShowCampaignListModal={setShowCampaignListModal}
+                                        setSelectedCreator={setSelectedCreator}
+                                        setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                        allCampaignCreators={allCampaignCreators}
+                                        allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                            allSequenceInfluencersIqDataIdsAndSequenceNames
+                                        }
+                                    />
+                                ))}
+                                {moreResults}
+                            </>
+                        )}
 
                     {error && (
                         <tr>
