@@ -37,6 +37,7 @@ interface ChatProps {
     addMessage: (message: MessageType) => void;
     isUnlockOutreachLoading: boolean;
     isSearchLoading: boolean;
+    areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
@@ -61,6 +62,7 @@ export const Chat: React.FC<ChatProps> = ({
     addMessage,
     isUnlockOutreachLoading,
     isSearchLoading,
+    areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
@@ -243,6 +245,7 @@ export const Chat: React.FC<ChatProps> = ({
                 }}
                 stopBoostbot={stopBoostbot}
                 shortenedButtons={shortenedButtons}
+                areChatActionsDisabled={areChatActionsDisabled}
             />
 
             <div className="relative">

@@ -61,6 +61,7 @@ const Boostbot = () => {
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+    const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
@@ -97,6 +98,7 @@ const Boostbot = () => {
                 translationKey: 'boostbot.error.outOfProfileCredits',
                 translationLink: '/pricing',
             });
+            setAreChatActionsDisabled(true);
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,6 +333,7 @@ const Boostbot = () => {
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isUnlockOutreachLoading={isUnlockOutreachLoading}
                         isSearchLoading={isSearchLoading}
+                        areChatActionsDisabled={areChatActionsDisabled}
                         setIsSearchLoading={setIsSearchLoading}
                         messages={messages}
                         setMessages={setMessages}
