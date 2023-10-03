@@ -7,6 +7,7 @@ import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { useGetCurrentPage } from './use-get-current-page';
 import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
+import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -96,7 +97,7 @@ export const profileToIdentifiable = (
     company?: CompanyDB,
     user?: any,
     lang?: string,
-    subscription?: any,
+    subscription?: SubscriptionGetResponse,
 ) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const traits: apiObject = {
@@ -112,7 +113,7 @@ export const profileToIdentifiable = (
         number: user?.phone ?? '',
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
-        subscriptionStatus: subscription?.name ?? '',
+        subscriptionStatus: subscription?.name.toLowerCase() ?? '',
     };
 
     return { id, traits };
@@ -141,7 +142,13 @@ export const useRudderstack = () => {
     }, []);
 
     const identifyFromProfile = useCallback(
-        (profile: ProfileDB, company?: CompanyDB, user?: any, lang?: string, subscription?: any) => {
+        (
+            profile: ProfileDB,
+            company?: CompanyDB,
+            user?: any,
+            lang?: string,
+            subscription?: SubscriptionGetResponse,
+        ) => {
             if (!profile) return;
             const { id, traits } = profileToIdentifiable(profile, company, user, lang, subscription);
             identifyUser(id, traits);
