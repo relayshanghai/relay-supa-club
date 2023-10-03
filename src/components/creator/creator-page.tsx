@@ -80,6 +80,29 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         });
     }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
+    const handleSetSequenceInfluencer = (sequenceInfluencer: SequenceInfluencer | null) => {
+        if (!sequenceInfluencer) {
+            return;
+        }
+        const sequenceName = sequences?.find((sequence) => sequence.id === sequenceInfluencer.sequence_id)?.name;
+        refreshAllSequenceInfluencersIqDataIdsAndSequenceNames([
+            ...allSequenceInfluencersIqDataIdsAndSequenceNames.map((influencer) => ({
+                iqdata_id: influencer.iqdata_id,
+                sequences: {
+                    name: sequenceName ?? '',
+                },
+            })),
+            {
+                iqdata_id: sequenceInfluencer.iqdata_id,
+                sequences: {
+                    name: sequenceName ?? '',
+                },
+            },
+        ]);
+        setSelectedSequence(sequenceInfluencer?.sequence_id);
+        setSequenceInfluencer(sequenceInfluencer);
+    };
+
     const addToCampaign = async (selectedCreatorUserId: string) => {
         let isAlreadyInCampaign = false;
 
@@ -131,32 +154,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 sequence={sequence}
                 sequences={sequences || []}
                 setSequence={setSequence}
-                setSequenceInfluencer={(sequenceInfluencer) => {
-                    if (!sequenceInfluencer) {
-                        return;
-                    }
-                    const sequenceName = sequences?.find(
-                        (sequence) => sequence.id === sequenceInfluencer.sequence_id,
-                    )?.name;
-                    refreshAllSequenceInfluencersIqDataIdsAndSequenceNames([
-                        ...allSequenceInfluencersIqDataIdsAndSequenceNames.map((seqInfluencer) => {
-                            return {
-                                iqdata_id: seqInfluencer.iqdata_id,
-                                sequences: {
-                                    name: sequenceName ?? '',
-                                },
-                            };
-                        }),
-                        {
-                            iqdata_id: sequenceInfluencer.iqdata_id,
-                            sequences: {
-                                name: sequenceName ?? '',
-                            },
-                        },
-                    ]);
-                    setSelectedSequence(sequenceInfluencer?.sequence_id);
-                    setSequenceInfluencer(sequenceInfluencer);
-                }}
+                setSequenceInfluencer={handleSetSequenceInfluencer}
             />
             <InfluencerAlreadyAddedSequenceModal
                 visible={showAlreadyAddedSequenceModal}

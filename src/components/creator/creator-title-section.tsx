@@ -53,7 +53,7 @@ export const TitleSection = ({
                     </a>
                 </div>
             </div>
-            {profile?.created_at && featEmail(new Date(profile?.created_at)) ? (
+            {profile?.created_at && featEmail(new Date(profile.created_at)) ? (
                 <Button onClick={onAddToSequence} className="my-6" variant="secondary">
                     {t('creators.addToSequence')}
                 </Button>
