@@ -52,13 +52,20 @@ const Boostbot = () => {
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const [sequence, setSequence] = useState<Sequence | undefined>(
-        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
+
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+    const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
@@ -95,6 +102,7 @@ const Boostbot = () => {
                 translationKey: 'boostbot.error.outOfProfileCredits',
                 translationLink: '/pricing',
             });
+            setAreChatActionsDisabled(true);
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -326,6 +334,7 @@ const Boostbot = () => {
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isUnlockOutreachLoading={isUnlockOutreachLoading}
                         isSearchLoading={isSearchLoading}
+                        areChatActionsDisabled={areChatActionsDisabled}
                         setIsSearchLoading={setIsSearchLoading}
                         messages={messages}
                         setMessages={setMessages}

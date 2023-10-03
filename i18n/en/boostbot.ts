@@ -17,6 +17,8 @@ const boostbot = {
 Please send me a description of your product - in any language - and I'll recommend influencers to promote it on YouTube, TikTok, and Instagram.
 
 For example: “A lightweight and foldable mini camera drone with 4K HDR video”`,
+        noInfluencersFound:
+            "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
         influencersFound:
             'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
         influencersFoundAddToSequence:

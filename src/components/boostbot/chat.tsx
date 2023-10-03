@@ -37,6 +37,7 @@ interface ChatProps {
     addMessage: (message: MessageType) => void;
     isUnlockOutreachLoading: boolean;
     isSearchLoading: boolean;
+    areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
@@ -60,6 +61,7 @@ export const Chat: React.FC<ChatProps> = ({
     addMessage,
     isUnlockOutreachLoading,
     isSearchLoading,
+    areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
@@ -196,38 +198,52 @@ export const Chat: React.FC<ChatProps> = ({
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.influencersFound',
-                translationValues: {
-                    count: influencers.length,
-                    geolocations: geolocationsToString(filters.audience_geo),
-                },
-            });
-            addMessage({
-                sender: 'Bot',
-                type: 'video',
-                videoUrl: '/assets/videos/bootbot-filters-guide.mp4',
-                eventToTrack: OpenVideoGuideModal.eventName,
-            });
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.influencersFoundAddToSequence',
-                translationLink: '/sequences',
-            });
-            addMessage({
-                sender: 'Bot',
-                type: 'video',
-                videoUrl: '/assets/videos/sequence-guide.mp4',
-                eventToTrack: OpenVideoGuideModal.eventName,
-            });
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.influencersFoundNextSteps',
-            });
+            if (influencers.length > 0) {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFound',
+                    translationValues: {
+                        count: influencers.length,
+                        geolocations: geolocationsToString(filters.audience_geo),
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                    translationLink: '/sequences',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/sequence-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundNextSteps',
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.noInfluencersFound',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+            }
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);
         } catch (error) {
@@ -249,16 +265,14 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
-            {sequence && sequences && (
-                <ModalSequenceSelector
-                    show={showSequenceSelector}
-                    setShow={setShowSequenceSelector}
-                    handleAddToSequence={chatPageToOutreach}
-                    sequence={sequence}
-                    setSequence={setSequence}
-                    sequences={sequences}
-                />
-            )}
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={chatPageToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
@@ -282,6 +296,7 @@ export const Chat: React.FC<ChatProps> = ({
                     setShowSequenceSelector(true);
                 }}
                 stopBoostbot={stopBoostbot}
+                areChatActionsDisabled={areChatActionsDisabled}
             />
 
             <div className="relative">
