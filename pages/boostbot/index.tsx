@@ -58,7 +58,6 @@ const Boostbot = () => {
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
-    const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const { subscription } = useSubscription();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
@@ -311,7 +310,6 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsUnlockOutreachLoading(false);
-            setHasUsedOutreach(true);
         }
     };
 
@@ -332,7 +330,6 @@ const Boostbot = () => {
                         messages={messages}
                         setMessages={setMessages}
                         addMessage={addMessage}
-                        shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
                         setSearchId={setSearchId}
                         setSequence={setSequence}

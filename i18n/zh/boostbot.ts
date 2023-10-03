@@ -18,7 +18,7 @@ const boostbot = {
 
 例如: “一款重量轻、可折叠的4K HDR迷你相机无人机”`,
         influencersFound:
-            '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在美国和加拿大。你也可以在此处更改目标地域：',
+            '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在{{geolocations}}。你也可以在此处更改目标地域：',
         influencersFoundAddToSequence:
             '你可以将这些网红达人添加到名为<customLink>Sequence</customLink>「邮件进程管理」的邮件列表中。「邮件进程管理」功能可以让你直接向网红达人发送电子邮件。',
         influencersFoundNextSteps: '你希望做什么呢？',
@@ -26,10 +26,8 @@ const boostbot = {
         stop: '停止BoostBot搜索',
         stopped: 'Boostbot已停止搜索',
         noInfluencersToUnlock: '您已经解锁了当前页面上的所有KOL。',
-        unlockPage: '解锁当前页面的KOL',
-        unlockPageShort: '解锁KOL',
-        outreachPage: '给当前页面的KOL发邮件',
-        outreachPageShort: '给KOL发送电子邮件',
+        unlockSelected: '解锁已选中的网红达人',
+        outreachSelected: '将已选中的网红达人添加至邮件进程管理项目',
         progress: {
             step1: '生成话题和细分领域中',
             step2: '在数据库中浏览上亿名KOL信息中',
@@ -42,6 +40,7 @@ const boostbot = {
 小贴士：您也可以选择逐个解锁 KOL。`,
         outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
+        and: '和',
     },
     table: {
         account: '账号',

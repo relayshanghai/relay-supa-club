@@ -24,7 +24,6 @@ describe('<ChatContent />', () => {
             handlePageToUnlock,
             handlePageToOutreach,
             stopBoostbot,
-            shortenedButtons: false,
             isUnlockOutreachLoading: false,
         };
     });

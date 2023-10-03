@@ -26,10 +26,8 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
         noInfluencersToUnlock: 'It looks like you already unlocked all influencers on the current page',
-        unlockPage: 'Unlock selected influencers',
-        unlockPageShort: 'Unlock page',
-        outreachPage: 'Add selected influencers to Sequence',
-        outreachPageShort: 'Email page',
+        unlockSelected: 'Unlock selected influencers',
+        outreachSelected: 'Add selected influencers to Sequence',
         progress: {
             step1: 'Generating topics and niches',
             step2: 'Browsing through millions of influencers in our database',
@@ -43,6 +41,7 @@ Tip: You can also unlock influencers one by one.`,
         outreachDone:
             "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
+        and: 'and',
     },
     table: {
         account: 'Account',

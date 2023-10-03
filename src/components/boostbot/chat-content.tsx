@@ -13,7 +13,6 @@ export interface ChatContentProps {
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     stopBoostbot: () => void;
-    shortenedButtons: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -24,7 +23,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
     stopBoostbot,
-    shortenedButtons,
 }) => {
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
@@ -47,15 +45,17 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                         data-testid="boostbot-button-unlock"
                         onClick={handlePageToUnlock}
                         disabled={isUnlockOutreachLoading}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
+                        {t('boostbot.chat.unlockSelected')}
                     </Button>
                     <Button
                         data-testid="boostbot-button-outreach"
                         onClick={handlePageToOutreach}
                         disabled={isUnlockOutreachLoading}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
+                        {t('boostbot.chat.outreachSelected')}
                     </Button>
                 </div>
             )}

@@ -21,7 +21,7 @@ import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
-import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
@@ -47,7 +47,6 @@ interface ChatProps {
         influencers: Influencer[],
         freeOfCharge: boolean,
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
-    shortenedButtons: boolean;
     isSearchDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
@@ -68,7 +67,6 @@ export const Chat: React.FC<ChatProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
     handleUnlockInfluencers,
-    shortenedButtons,
     isSearchDisabled,
     setSearchId,
     sequence,
@@ -95,6 +93,22 @@ export const Chat: React.FC<ChatProps> = ({
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
+    const geolocationsToString = (geolocations: AudienceGeo[]) => {
+        const and = t('boostbot.chat.and');
+
+        const getTranslatedCountryName = (id: number) => {
+            const countryCode = countries.find((country) => country.id === id)?.country.code;
+            return t(`geolocations.countries.${countryCode}`);
+        };
+        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
+
+        if (translatedCountries.length === 2) {
+            return translatedCountries.join(` ${and} `);
+        } else {
+            return translatedCountries.join(', ');
+        }
+    };
+
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
@@ -120,12 +134,12 @@ export const Chat: React.FC<ChatProps> = ({
         ]);
 
     const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockPage' });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
         handlePageToUnlock();
     };
 
     const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachPage' });
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
         handlePageToOutreach();
     };
 
@@ -186,8 +200,10 @@ export const Chat: React.FC<ChatProps> = ({
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.chat.influencersFound',
-                // TODO Sergej: geolocations string
-                // translationValues: { count: influencers.length, geolocations:  },
+                translationValues: {
+                    count: influencers.length,
+                    geolocations: geolocationsToString(filters.audience_geo),
+                },
             });
             addMessage({
                 sender: 'Bot',
@@ -266,7 +282,6 @@ export const Chat: React.FC<ChatProps> = ({
                     setShowSequenceSelector(true);
                 }}
                 stopBoostbot={stopBoostbot}
-                shortenedButtons={shortenedButtons}
             />
 
             <div className="relative">
