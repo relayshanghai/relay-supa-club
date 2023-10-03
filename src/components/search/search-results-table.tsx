@@ -19,6 +19,7 @@ export interface SearchResultsTableProps {
     validating: boolean;
     moreResults?: JSX.Element;
     error: any;
+    batchId: number;
 }
 
 // eslint-disable-next-line complexity
@@ -33,6 +34,7 @@ export const SearchResultsTable = ({
     validating,
     moreResults,
     error,
+    batchId,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
@@ -105,6 +107,9 @@ export const SearchResultsTable = ({
                                     allSequenceInfluencersIqDataIdsAndSequenceNames={
                                         allSequenceInfluencersIqDataIdsAndSequenceNames
                                     }
+                                    batchId={batchId}
+                                    page={1}
+                                    resultIndex={i}
                                 />
                             ))}
                             {moreResults}
