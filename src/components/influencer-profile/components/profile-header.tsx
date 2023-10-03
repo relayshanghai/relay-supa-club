@@ -66,7 +66,11 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
                                 </sup>
                             </div>
                             <div className="flex flex-col items-start justify-center pl-7">
-                                <Link href={`/influencer/${profile.platform}/${profile.iqdata_id}`} target="_blank">
+                                <Link
+                                    href={`/influencer/${profile.platform}/${profile.iqdata_id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     <div className="text-lg font-semibold tracking-tight text-gray-400">
                                         {profile.name}
                                     </div>
