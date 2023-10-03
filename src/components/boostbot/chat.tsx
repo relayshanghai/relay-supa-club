@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
+import { RecommendInfluencers, StopBoostbot, OpenVideoGuideModal } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
@@ -37,6 +37,7 @@ interface ChatProps {
     addMessage: (message: MessageType) => void;
     isUnlockOutreachLoading: boolean;
     isSearchLoading: boolean;
+    areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
@@ -61,6 +62,7 @@ export const Chat: React.FC<ChatProps> = ({
     addMessage,
     isUnlockOutreachLoading,
     isSearchLoading,
+    areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
@@ -182,12 +184,26 @@ export const Chat: React.FC<ChatProps> = ({
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.influencersFound',
-                translationValues: { count: influencers.length },
-            });
+            if (influencers.length > 0) {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFound',
+                    translationValues: { count: influencers.length },
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.noInfluencersFound',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+            }
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers, payload);
         } catch (error) {
@@ -209,16 +225,14 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
-            {sequence && sequences && (
-                <ModalSequenceSelector
-                    show={showSequenceSelector}
-                    setShow={setShowSequenceSelector}
-                    handleAddToSequence={chatPageToOutreach}
-                    sequence={sequence}
-                    setSequence={setSequence}
-                    sequences={sequences}
-                />
-            )}
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={chatPageToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
@@ -243,6 +257,7 @@ export const Chat: React.FC<ChatProps> = ({
                 }}
                 stopBoostbot={stopBoostbot}
                 shortenedButtons={shortenedButtons}
+                areChatActionsDisabled={areChatActionsDisabled}
             />
 
             <div className="relative">

@@ -26,6 +26,7 @@ describe('<ChatContent />', () => {
             stopBoostbot,
             shortenedButtons: false,
             isUnlockOutreachLoading: false,
+            areChatActionsDisabled: false,
         };
     });
 
@@ -38,6 +39,14 @@ describe('<ChatContent />', () => {
 
     it('Buttons are disabled while loading', () => {
         props.isUnlockOutreachLoading = true;
+        testMount(<ChatContent {...props} />);
+
+        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
+        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
+    });
+
+    it('Buttons are disabled when chat actions are disabled', () => {
+        props.areChatActionsDisabled = true;
         testMount(<ChatContent {...props} />);
 
         cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');

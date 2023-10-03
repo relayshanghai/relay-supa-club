@@ -31,7 +31,7 @@ export const AddToSequenceModal = ({
     setShow: (show: boolean) => void;
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
-    setSuppressReportFetch: (suppress: boolean) => void;
+    setSuppressReportFetch?: (suppress: boolean) => void;
     sequence: Sequence | null;
     setSequence: (sequence: Sequence | null) => void;
     setSequenceInfluencer: (sequenceInfluencer: SequenceInfluencer | null) => void;
@@ -98,7 +98,7 @@ export const AddToSequenceModal = ({
             trackingPayload.sequence_influencer_ids = [newSequenceInfluencer.id];
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             trackingPayload['$add'] = { total_sequence_influencers: 1 };
-            setSuppressReportFetch(false); // will start getting the report.
+            setSuppressReportFetch && setSuppressReportFetch(false); // will start getting the report.
 
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
