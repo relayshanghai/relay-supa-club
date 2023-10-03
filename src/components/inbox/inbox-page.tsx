@@ -20,7 +20,6 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
-import { mapProfileToNotes, mapProfileToShippingDetails } from '../influencer-profile/screens/profile-overlay-screen';
 import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
@@ -30,14 +29,7 @@ import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list
 import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-
-const mapProfileToFormData = (p?: SequenceInfluencerManagerPage | null) => {
-    if (!p) return null;
-    return {
-        notes: mapProfileToNotes(p),
-        shippingDetails: mapProfileToShippingDetails(p),
-    };
-};
+import { mapProfileToFormData } from './helpers';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
