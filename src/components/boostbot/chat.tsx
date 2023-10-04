@@ -42,8 +42,8 @@ interface ChatProps {
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     handleUnlockInfluencers: (
         influencers: Influencer[],
         freeOfCharge: boolean,
@@ -66,8 +66,8 @@ export const Chat: React.FC<ChatProps> = ({
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     handleUnlockInfluencers,
     isSearchDisabled,
     setSearchId,
@@ -135,14 +135,14 @@ export const Chat: React.FC<ChatProps> = ({
             { sender: 'Neutral', type: 'progress', progressData: progress },
         ]);
 
-    const chatPageToUnlock = () => {
+    const chatSelectedInfluencersToUnlock = () => {
         addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
-        handlePageToUnlock();
+        handleSelectedInfluencersToUnlock();
     };
 
-    const chatPageToOutreach = () => {
+    const chatSelectedInfluencersToOutreach = () => {
         addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
-        handlePageToOutreach();
+        handleSelectedInfluencersToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
@@ -244,7 +244,7 @@ export const Chat: React.FC<ChatProps> = ({
                     eventToTrack: OpenVideoGuideModal.eventName,
                 });
             }
-            document.dispatchEvent(new Event('influencerTableSetFirstPage'));
+            document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
             track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -268,7 +268,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ModalSequenceSelector
                 show={showSequenceSelector}
                 setShow={setShowSequenceSelector}
-                handleAddToSequence={chatPageToOutreach}
+                handleAddToSequence={chatSelectedInfluencersToOutreach}
                 sequence={sequence}
                 setSequence={setSequence}
                 sequences={sequences || []}
@@ -291,8 +291,8 @@ export const Chat: React.FC<ChatProps> = ({
                 shouldShowButtons={shouldShowButtons}
                 isSearchLoading={isSearchLoading}
                 isUnlockOutreachLoading={isUnlockOutreachLoading}
-                handlePageToUnlock={chatPageToUnlock}
-                handlePageToOutreach={() => {
+                handleSelectedInfluencersToUnlock={chatSelectedInfluencersToUnlock}
+                handleSelectedInfluencersToOutreach={() => {
                     setShowSequenceSelector(true);
                 }}
                 stopBoostbot={stopBoostbot}
