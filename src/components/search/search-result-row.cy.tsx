@@ -38,6 +38,9 @@ const setupProps = () => {
         setShowAlreadyAddedModal: cy.stub(),
         setCampaignsWithCreator: cy.stub(),
         setShowSequenceListModal: cy.stub(),
+        batchId: 0,
+        page: 1,
+        resultIndex: 0,
     };
 };
 
