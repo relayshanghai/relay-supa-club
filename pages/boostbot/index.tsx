@@ -334,8 +334,8 @@ const Boostbot = () => {
             {company?.subscription_status === 'canceled' && (
                 <Banner
                     buttonText={t('banner.button')}
-                    title={t('banner.title')}
-                    message={t('banner.descriptionManager')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
                 />
             )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">

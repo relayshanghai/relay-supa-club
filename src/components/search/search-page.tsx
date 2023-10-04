@@ -276,8 +276,8 @@ export const SearchPage = () => {
             {company?.subscription_status === 'canceled' && (
                 <Banner
                     buttonText={t('banner.button')}
-                    title={t('banner.title')}
-                    message={t('banner.descriptionManager')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
                 />
             )}
             {IQDATA_MAINTENANCE ? (
