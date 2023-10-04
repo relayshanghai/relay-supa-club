@@ -11,4 +11,10 @@ describe('Expired User Experience', () => {
         cy.visit('/sequences');
         cy.visit('/influencer-manager');
     });
+    it('r button leads to boostbot', () => {
+        cy.loginExpired();
+        cy.visit('/account');
+        cy.contains('span', 'r').click();
+        cy.url().should('include', '/boostbot');
+    });
 });
