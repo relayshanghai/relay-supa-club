@@ -2,7 +2,7 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { apiFetch } from 'src/utils/api/api-fetch';
+// import { apiFetch } from 'src/utils/api/api-fetch';
 import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 
@@ -103,13 +103,14 @@ export const useSession = (params?: useSessionParams) => {
         [supabaseClient],
     );
 
-    const getSubscription = useCallback(async (company: string) => {
-        if (company === null) return null;
+    const getSubscription = useCallback(async (_company: string) => {
+        return null;
+        // if (company === null) return null;
 
-        const query = { id: company };
-        const response = await apiFetch<SubscriptionGetResponse>('/api/subscriptions', { query });
+        // const query = { id: company };
+        // const response = await apiFetch<SubscriptionGetResponse>('/api/subscriptions', { query });
 
-        return response.content;
+        // return response.content;
     }, []);
 
     const refreshSession = useCallback(() => {
