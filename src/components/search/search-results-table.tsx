@@ -85,9 +85,7 @@ export const SearchResultsTable = ({
                     {company?.subscription_status === 'canceled' && (
                         <tr className="w-full">
                             <td className="space-y-4 py-4 text-center" colSpan={6}>
-                                <p className="mb-4">
-                                    Your free trial has expired. Please upgrade your account to use this feature.
-                                </p>
+                                <p className="mb-4">{t('creators.accountExpired')}</p>
                                 <Link href="/pricing">
                                     <Button>{t('account.subscription.upgradeSubscription')}</Button>
                                 </Link>
@@ -125,12 +123,14 @@ export const SearchResultsTable = ({
                                         allSequenceInfluencersIqDataIdsAndSequenceNames={
                                             allSequenceInfluencersIqDataIdsAndSequenceNames
                                         }
+                                        batchId={batchId}
+                                        page={1}
+                                        resultIndex={i}
                                     />
                                 ))}
                                 {moreResults}
                             </>
-                        )
-                    }
+                        )}
 
                     {error && (
                         <tr>
