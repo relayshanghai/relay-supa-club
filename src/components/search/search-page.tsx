@@ -26,6 +26,7 @@ import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -54,7 +55,7 @@ export const SearchPageInner = () => {
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
     const { trackEvent } = useRudderstack();
-
+    const [batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
         results: firstPageSearchResults,
@@ -80,6 +81,8 @@ export const SearchPageInner = () => {
             if (searchParams === undefined) return;
 
             const tracker = (results: any) => {
+                setBatchId(randomNumber());
+
                 return track({
                     event: Search,
                     payload: {
@@ -97,7 +100,7 @@ export const SearchPageInner = () => {
             // @note this triggers the search api call
             setSearchParams(searchParams);
         },
-        [track, setSearchParams, setOnLoad],
+        [track, setSearchParams, setOnLoad, setBatchId],
     );
 
     /**
@@ -209,6 +212,7 @@ export const SearchPageInner = () => {
                 validating={isValidating}
                 results={firstPageSearchResults}
                 error={error}
+                batchId={batchId}
                 moreResults={
                     <>
                         {new Array(page).fill(0).map((_, i) => (
@@ -220,6 +224,8 @@ export const SearchPageInner = () => {
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 allCampaignCreators={allCampaignCreators}
                                 trackSearch={track}
+                                batchId={batchId}
+                                resultIndex={i}
                             />
                         ))}
                     </>
