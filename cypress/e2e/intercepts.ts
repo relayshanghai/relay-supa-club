@@ -148,6 +148,17 @@ export const setupIntercepts = (options?: InterceptOptions) => {
             },
         });
     });
+    cy.intercept('/api/subscriptions', (req) => {
+        req.reply({
+            body: {
+                name: 'DIY',
+                interval: 'annually',
+                current_period_end: oneMonthFromNow.getTime() / 1000,
+                current_period_start: twoMonthsAgo.getTime() / 1000,
+                status: 'active',
+            },
+        });
+    });
     cy.intercept('/api/subscriptions/payment-method*', {
         body: [
             {
