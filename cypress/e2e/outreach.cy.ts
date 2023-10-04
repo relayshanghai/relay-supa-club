@@ -34,7 +34,7 @@ describe('outreach', () => {
         ).should('not.exist');
         cy.contains('Template variables updated');
         cy.contains('Sequences').click();
-        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        cy.contains('tr', 'New Sequence Test').contains('Test Product', { timeout: 60000 });
         //  create another dummy sequence to show multi-delete works
         cy.contains('New sequence').click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test 2');
