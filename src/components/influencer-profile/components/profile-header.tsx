@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { imgProxy } from 'src/utils/fetcher';
+import Link from 'next/link';
 
 // @note probably exists already
 export type Profile = {
@@ -51,15 +52,29 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
                         <div className="inline-flex flex-col items-start justify-center">
                             <div>
                                 <span className="text-2xl font-semibold tracking-tight text-violet-500">@</span>
-                                <span className="text-2xl font-semibold tracking-tight text-gray-600">
-                                    {profile.username}
-                                </span>
+                                <Link
+                                    href={`/influencer/${profile.platform}/${profile.iqdata_id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <span className="text-2xl font-semibold tracking-tight text-gray-600">
+                                        {profile.username}
+                                    </span>
+                                </Link>
                                 <sup className="relative -top-4 ml-1 text-sm font-semibold leading-tight tracking-tight text-violet-500">
                                     {platform}
                                 </sup>
                             </div>
                             <div className="flex flex-col items-start justify-center pl-7">
-                                <div className="text-lg font-semibold tracking-tight text-gray-400">{profile.name}</div>
+                                <Link
+                                    href={`/influencer/${profile.platform}/${profile.iqdata_id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <div className="text-lg font-semibold tracking-tight text-gray-400">
+                                        {profile.name}
+                                    </div>
+                                </Link>
                                 <div className="mt-1 inline-flex items-center justify-start gap-2.5">
                                     <span className="relative h-3.5 w-3.5">
                                         <EmailOutlineColored className="stroke-primary-500" />
