@@ -42,17 +42,17 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
     const rudderstack = useRudder();
-    const { session, profile, user, company, subscription } = useSession();
+    const { session, profile, user, company } = useSession();
     const { i18n } = useTranslation();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
 
     useEffect(() => {
-        if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
-            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
+        if (profile !== null && user !== null && company !== null && rudderstack) {
+            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language);
             rudderstack.identify(id, traits);
         }
-    }, [rudderstack, profile, user, company, i18n, subscription]);
+    }, [rudderstack, profile, user, company, i18n]);
 
     // set analytics identity
     useEffect(() => {
