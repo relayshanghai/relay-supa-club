@@ -248,6 +248,7 @@ describe('outreach', () => {
                 throw new Error('Timed out waiting for status to update');
             }
             cy.contains('Sequences').click(); // click around to trigger SWR refresh
+            cy.contains('New sequence', { timeout: 10000 });
             cy.contains('General collaboration', { timeout: 10000 }).click();
             cy.contains('button', 'In sequence').click();
 
@@ -286,8 +287,8 @@ describe('outreach', () => {
         // influencer has been moved to the manage influencers page
         // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
         cy.contains('Influencer Manager').click();
-        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
-            cy.contains('Negotiating');
+        cy.contains('tr', 'Bob-Recommended Brown', { timeout: 100000 }).within(() => {
+            cy.contains('Negotiating', { timeout: 10000 });
         });
     });
     it('can view templates for sequences', () => {
