@@ -48,7 +48,11 @@ export function InfluencersTable<TData, TValue>({
     useEffect(() => {
         const setFirstPage = () => {
             table.setPageIndex(0);
-            table.toggleAllPageRowsSelected(true);
+            table.toggleAllRowsSelected(false);
+            setTimeout(() => {
+                // The timeout is here to make sure page is set to 0 before selecting all page rows.
+                table.toggleAllPageRowsSelected(true);
+            }, 0);
         };
         document.addEventListener('influencerTableLoadInfluencers', setFirstPage);
 

@@ -49,6 +49,8 @@ const boostbot = {
         unlockInfluencer: '解锁红人报告',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
+        selectAll: '选定全部达人',
+        selectInfluencer: '选定达人',
     },
     success: {
         influencersToOutreach: '该红人已成功添加至联络列表’',

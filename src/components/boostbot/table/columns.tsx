@@ -22,7 +22,7 @@ export const columns: ColumnDef<Influencer>[] = [
                 type="checkbox"
                 className="checkbox mr-0"
                 checked={row.getIsSelected()}
-                aria-label={table.options.meta?.t('boostbot.table.selectRow')}
+                aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
                 onChange={(e) => row.toggleSelected(!!e.target.checked)}
             />
         ),

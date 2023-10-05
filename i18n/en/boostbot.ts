@@ -52,7 +52,7 @@ Tip: You can also unlock influencers one by one.`,
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
-        selectRow: 'Select row',
+        selectInfluencer: 'Select influencer',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',
