@@ -21,10 +21,11 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 
     return (
         <div className="flex items-center justify-end">
-            {/* TODO Sergej: add translation */}
             <div className="text-muted-foreground ml-2 flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{' '}
-                influencer(s) selected.
+                {t('boostbot.table.selectedAmount', {
+                    selectedCount: table.getFilteredSelectedRowModel().rows.length,
+                    total: table.getFilteredRowModel().rows.length,
+                })}
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex w-[100px] items-center justify-center text-sm font-medium">

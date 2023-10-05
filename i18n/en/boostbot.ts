@@ -53,6 +53,7 @@ Tip: You can also unlock influencers one by one.`,
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
         selectInfluencer: 'Select influencer',
+        selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',
