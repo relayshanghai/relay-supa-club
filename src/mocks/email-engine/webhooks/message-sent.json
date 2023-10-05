@@ -2,7 +2,7 @@
   "data": {
     "queueId": "18a1658082cb9740718",
     "envelope": {
-      "to": ["tech.relay.club@gmail.com"],
+      "to": ["test@example.com"],
       "from": "bob.brown@example.com"
     },
     "response": "250 2.0.0 OK  1692591986 r6-20020a62e406000000b006749c22d079sm5130625pfh.167 - gsmtp",
