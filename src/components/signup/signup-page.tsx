@@ -137,7 +137,16 @@ const SignUpPage = ({
         } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
-        track(CompleteSignupStep, { current_step: currentStep });
+        track(CompleteSignupStep, {
+            current_step: currentStep,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            companyName,
+            companyWebsite,
+            companySize: selectedSize ?? '',
+        });
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
