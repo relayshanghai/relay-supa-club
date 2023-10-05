@@ -180,7 +180,6 @@ export const MANAGE_POSTS_MODAL = generateEventName('Manage Posts Modal');
 export const NAVBAR = generateEventName('Navbar');
 // Navbar, Hamburger Menu Clicked
 
-export const LANGUAGE_TOGGLE = generateEventName('Language Toggle');
 // Language Toggle, Clicked
 // Language Toggle, switch to en-US
 // Language Toggle, switch to zh-CN
