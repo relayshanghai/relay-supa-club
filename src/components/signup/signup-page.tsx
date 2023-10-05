@@ -15,10 +15,9 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
-import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { SIGNUP } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
-import { GoToLogin } from 'src/utils/analytics/events';
+import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -49,7 +48,6 @@ const SignUpPage = ({
     const { track } = useRudderstackTrack();
     const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
-    const { trackEvent } = useRudderstack();
 
     const {
         values: { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite },
@@ -139,15 +137,7 @@ const SignUpPage = ({
         } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
-        trackEvent(SIGNUP(`step-${currentStep}`), {
-            firstName,
-            lastName,
-            phoneNumber,
-            email,
-            companyName,
-            companyWebsite,
-            companySize: selectedSize ?? '',
-        });
+        track(CompleteSignupStep, { current_step: currentStep });
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
