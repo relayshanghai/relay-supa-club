@@ -100,6 +100,7 @@ export const Chat: React.FC<ChatProps> = ({
 
         const getTranslatedCountryName = (id: number) => {
             const countryCode = countries.find((country) => country.id === id)?.country.code;
+            if (!countryCode) return 'Invalid country code';
             return t(`geolocations.countries.${countryCode}`);
         };
         const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
