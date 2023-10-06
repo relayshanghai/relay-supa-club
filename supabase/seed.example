@@ -720,8 +720,8 @@ BEGIN
     'William Edward',
     'Douglas',
     'company_owner',
-    'e7ustgsqqvy9al6f',
-    'tech.relay.club@gmail.com'
+    'nqnwq6g9ooqhfexa',
+    'test@example.com'
   );
   _profile_christopher := create_profile(
     _company_test.id,
@@ -740,7 +740,7 @@ BEGIN
     'User',
     'company_owner',
     'e7ustgsqqvy9al6f',
-    'tech.relay.club@gmail.com'
+    'expired_user@example.com'
   );
 
   _campaign_beauty_for_all := create_campaign(
