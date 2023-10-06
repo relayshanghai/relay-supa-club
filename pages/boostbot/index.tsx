@@ -44,7 +44,11 @@ const Boostbot = () => {
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
-    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
+    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+        'boostbot-selected-influencers',
+        {},
+    );
+    const selectedInfluencersData = Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
     const [isSearchLoading, setIsSearchLoading] = useState(false);
@@ -193,18 +197,9 @@ const Boostbot = () => {
 
     const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const removeInfluencer = (userId: string) => {
-        setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
-    };
-
-    const handlePageToUnlock = async () => {
-        const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
+    const handleSelectedInfluencersToUnlock = async () => {
+        const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.noInfluencersToUnlock',
-            });
             return;
         }
 
@@ -232,7 +227,7 @@ const Boostbot = () => {
         return unlockedInfluencers;
     };
 
-    const handlePageToOutreach = async () => {
+    const handleSelectedInfluencersToOutreach = async () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
@@ -245,9 +240,9 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
+            const alreadyUnlockedInfluencers = selectedInfluencersData.filter(isUserProfile);
             const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
+                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : selectedInfluencersData;
             const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
@@ -328,8 +323,8 @@ const Boostbot = () => {
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
-                        handlePageToUnlock={handlePageToUnlock}
-                        handlePageToOutreach={handlePageToOutreach}
+                        handleSelectedInfluencersToUnlock={handleSelectedInfluencersToUnlock}
+                        handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isUnlockOutreachLoading={isUnlockOutreachLoading}
@@ -353,8 +348,9 @@ const Boostbot = () => {
                     <InfluencersTable
                         columns={columns}
                         data={influencers}
-                        setCurrentPageInfluencers={setCurrentPageInfluencers}
-                        meta={{ handleUnlockInfluencer, removeInfluencer, t, searchId }}
+                        selectedInfluencers={selectedInfluencers}
+                        setSelectedInfluencers={setSelectedInfluencers}
+                        meta={{ handleUnlockInfluencer, t, searchId }}
                     />
                 )}
             </div>

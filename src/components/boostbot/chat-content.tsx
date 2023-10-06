@@ -10,8 +10,8 @@ export interface ChatContentProps {
     isSearchLoading: boolean;
     isUnlockOutreachLoading: boolean;
     shouldShowButtons: boolean;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     stopBoostbot: () => void;
     areChatActionsDisabled: boolean;
 }
@@ -21,8 +21,8 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     isSearchLoading,
     isUnlockOutreachLoading,
     shouldShowButtons,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     stopBoostbot,
     areChatActionsDisabled,
 }) => {
@@ -45,7 +45,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                 <div className="z-10 flex flex-wrap gap-2">
                     <Button
                         data-testid="boostbot-button-unlock"
-                        onClick={handlePageToUnlock}
+                        onClick={handleSelectedInfluencersToUnlock}
                         disabled={isUnlockOutreachLoading || areChatActionsDisabled}
                         className="text-xs"
                     >
@@ -53,7 +53,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     </Button>
                     <Button
                         data-testid="boostbot-button-outreach"
-                        onClick={handlePageToOutreach}
+                        onClick={handleSelectedInfluencersToOutreach}
                         disabled={isUnlockOutreachLoading || areChatActionsDisabled}
                         className="text-xs"
                     >

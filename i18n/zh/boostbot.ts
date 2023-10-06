@@ -26,7 +26,6 @@ const boostbot = {
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
         stopped: 'Boostbot已停止搜索',
-        noInfluencersToUnlock: '您已经解锁了当前页面上的所有KOL。',
         unlockSelected: '解锁已选中的网红达人',
         outreachSelected: '将已选中的网红达人添加至邮件进程管理项目',
         progress: {
@@ -48,9 +47,11 @@ const boostbot = {
         topPosts: '热门发布帖子',
         email: '邮箱地址',
         unlockInfluencer: '解锁红人报告',
-        removeInfluencer: '移除该红人',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
+        selectAll: '选定全部达人',
+        selectInfluencer: '选定达人',
+        selectedAmount: '从{{total}}位达人中选定{{selectedCount}}位',
     },
     success: {
         influencersToOutreach: '该红人已成功添加至联络列表’',
