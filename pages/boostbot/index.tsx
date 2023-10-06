@@ -28,7 +28,6 @@ import { useUsages } from 'src/hooks/use-usages';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { useCompany } from 'src/hooks/use-company';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
@@ -44,7 +43,6 @@ const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { company } = useCompany();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);

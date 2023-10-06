@@ -11,7 +11,7 @@ describe('Expired User Experience', () => {
         cy.visit('/sequences');
         cy.visit('/influencer-manager');
     });
-    it.only('Cannot search and shows error', () => {
+    it('Cannot search and shows error', () => {
         cy.loginExpired();
         cy.visit('/dashboard');
         cy.getByTestId('search-topics').within(() => {
@@ -20,6 +20,14 @@ describe('Expired User Experience', () => {
         });
         cy.contains('Your free trial has expired. Please upgrade your account to use this feature.');
         cy.contains('Upgrade subscription');
+    });
+    it.only('Cannot use boostbot and shows error', () => {
+        cy.loginExpired();
+        cy.visit('/boostbot');
+        cy.getByTestId('boostbot-send-message').should('be.disabled');
+        cy.contains(
+            'Oh no, it looks like your account has expired. Please upgrade your account to continue using BoostBot',
+        );
     });
     it('r button leads to boostbot', () => {
         cy.loginExpired();
