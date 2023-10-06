@@ -61,14 +61,14 @@ describe('Boostbot', () => {
         cy.contains("Hi, I'm BoostBot");
         cy.contains('Generating topics and niches').should('not.exist');
         cy.contains('Browsing through millions of influencers in our database').should('not.exist');
-        cy.contains(`I handpicked the ${boostbotGetInfluencers.length * 3} influencers`).should('not.exist');
+        cy.contains(`I handpicked ${boostbotGetInfluencers.length * 3} influencers`).should('not.exist');
 
         cy.get('textarea').type('LED beauty mask{enter}');
 
         const checkExistingLoadingMessage = () => {
             cy.contains('Generating topics and niches');
             cy.contains('Browsing through millions of influencers in our database');
-            cy.contains(`I handpicked the ${boostbotGetInfluencers.length * 3} influencers`);
+            cy.contains(`I handpicked ${boostbotGetInfluencers.length * 3} influencers`);
         };
 
         checkExistingLoadingMessage();
@@ -126,7 +126,7 @@ describe('Boostbot', () => {
             expect(audience_geo).to.not.deep.include(unexpectedCountryInclusion);
         });
 
-        cy.contains(`I handpicked the ${boostbotGetInfluencers.length} influencers`); // boostbotGetInfluencers.length is only for one platform, which is correct. Default Boostbot search test above checks boostbotGetInfluencers.length * 3 for all three platforms.
+        cy.contains(`I handpicked ${boostbotGetInfluencers.length} influencers`); // boostbotGetInfluencers.length is only for one platform, which is correct. Default Boostbot search test above checks boostbotGetInfluencers.length * 3 for all three platforms.
     });
 });
 
