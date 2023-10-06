@@ -47,7 +47,8 @@ const Boostbot = () => {
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
     const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
     const { trackEvent: track } = useRudderstack();
-    const { sequences } = useSequences();
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
