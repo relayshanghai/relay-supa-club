@@ -1,5 +1,5 @@
 import { deleteDB } from 'idb';
-import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
+import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
 import { randomString, reinsertAlice, reinsertCharlie, resetBobsStatus, resetSequenceEmails } from './helpers';
@@ -27,15 +27,45 @@ const resetData = async () => {
 describe('outreach', () => {
     beforeEach(() => {
         new Cypress.Promise(resetData);
-        setupIntercepts();
-        // turn back on the real database
-        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
-            req.continue();
-        });
-        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, (req) => {
-            req.continue();
-        });
+        // turn back on the real database sequence calls
+        setupIntercepts({ useRealSequences: true });
+
         cy.loginTestUser();
+    });
+    it('can create new sequences. Can delete sequences', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('a', 'New Sequence Test').click({ timeout: 10000 });
+        cy.contains('tr', 'View sequence templates').should('not.exist');
+        cy.contains('button', 'View sequence templates').click({ timeout: 10000 });
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains(
+            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
+        ).should('not.exist');
+        cy.contains('Template variables updated');
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        //  create another dummy sequence to show multi-delete works
+        cy.contains('New sequence').click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test 2');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('a', 'New Sequence Test 2');
+        // cleanup and test delete
+        cy.getByTestId('delete-sequences-button').should('not.be.visible');
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('sequences-select-all').check();
+        cy.getByTestId('sequence-checkbox').eq(0).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(1).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(2).should('be.checked');
+        cy.getByTestId('sequence-checkbox').eq(0).uncheck();
+        cy.getByTestId('sequences-select-all').should('not.be.checked');
+        cy.getByTestId('delete-sequences-button').click();
+        cy.contains('button', 'Yes. Delete this sequence').click();
+        cy.contains('tr', 'New Sequence Test').should('not.exist');
+        cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
     it('displays sequence page stats and influencers table', () => {
         cy.contains('Sequences').click();
@@ -43,7 +73,7 @@ describe('outreach', () => {
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        // cy.contains('Auto-start', { timeout: 10000 });  // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // cy.contains('Auto-start', { timeout: 10000 });  // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         cy.contains('button', 'View sequence templates');
 
         // stats
@@ -150,7 +180,7 @@ describe('outreach', () => {
             cy.get('button[type=submit]').click();
         });
     });
-    it.only('can edit template variables. sending is enabled/disabled based on missing variables', () => {
+    it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
@@ -161,7 +191,7 @@ describe('outreach', () => {
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
 
-        // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         // cy.contains('div', 'Auto-start').within(() => {
         //     cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         // });
@@ -175,7 +205,7 @@ describe('outreach', () => {
         // cy.contains(
         //     'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         // );
-        // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
+        // TODO: reenable when reenabling auto-start https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/974
         cy.contains('View sequence templates').click(); // and then remove this line
         // can View sequence templates
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
@@ -218,6 +248,7 @@ describe('outreach', () => {
                 throw new Error('Timed out waiting for status to update');
             }
             cy.contains('Sequences').click(); // click around to trigger SWR refresh
+            cy.contains('New sequence', { timeout: 10000 });
             cy.contains('General collaboration', { timeout: 10000 }).click();
             cy.contains('button', 'In sequence').click();
 
@@ -256,8 +287,8 @@ describe('outreach', () => {
         // influencer has been moved to the manage influencers page
         // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
         cy.contains('Influencer Manager').click();
-        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
-            cy.contains('Negotiating');
+        cy.contains('tr', 'Bob-Recommended Brown', { timeout: 100000 }).within(() => {
+            cy.contains('Negotiating', { timeout: 10000 });
         });
     });
     it('can view templates for sequences', () => {
@@ -276,41 +307,6 @@ describe('outreach', () => {
             "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
         cy.contains(thirdFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
-    });
-    it('can create new sequences. Can delete sequences', () => {
-        cy.contains('Sequences').click();
-        cy.contains('New sequence', { timeout: 10000 }).click();
-        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
-        cy.contains('button', 'Create new sequence').click();
-        cy.contains('a', 'New Sequence Test').click({ timeout: 10000 });
-        cy.contains('tr', 'View sequence templates').should('not.exist');
-        cy.contains('button', 'View sequence templates').click({ timeout: 10000 });
-        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
-        cy.contains('button', 'Update variables').click();
-        cy.contains(
-            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
-        ).should('not.exist');
-        cy.contains('Template variables updated');
-        cy.contains('Sequences').click();
-        cy.contains('tr', 'New Sequence Test').contains('Test Product');
-        //  create another dummy sequence to show multi-delete works
-        cy.contains('New sequence').click();
-        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test 2');
-        cy.contains('button', 'Create new sequence').click();
-        cy.contains('a', 'New Sequence Test 2');
-        // cleanup and test delete
-        cy.getByTestId('delete-sequences-button').should('not.be.visible');
-        cy.getByTestId('sequences-select-all').should('not.be.checked');
-        cy.getByTestId('sequences-select-all').check();
-        cy.getByTestId('sequence-checkbox').eq(0).should('be.checked');
-        cy.getByTestId('sequence-checkbox').eq(1).should('be.checked');
-        cy.getByTestId('sequence-checkbox').eq(2).should('be.checked');
-        cy.getByTestId('sequence-checkbox').eq(0).uncheck();
-        cy.getByTestId('sequences-select-all').should('not.be.checked');
-        cy.getByTestId('delete-sequences-button').click();
-        cy.contains('button', 'Yes. Delete this sequence').click();
-        cy.contains('tr', 'New Sequence Test').should('not.exist');
-        cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
 });
 

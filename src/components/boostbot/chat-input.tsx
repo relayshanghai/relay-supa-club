@@ -1,34 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Send, Spinner } from 'src/components/icons';
+import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 interface ChatInputProps {
     onSendMessage: (message: string) => void;
     isLoading: boolean;
     isDisabled: boolean;
+    openFiltersModal: () => void;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, isDisabled }) => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, isDisabled, openFiltersModal }) => {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null);
     const [message, setMessage] = useState('');
     const { t } = useTranslation();
 
-    const adjustTextareaHeight = () => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        textarea.style.height = 'auto';
-        const adjustedHeight = textarea.scrollHeight;
-        textarea.style.height = `${Math.min(adjustedHeight, 2 * 36)}px`;
-    };
-
     const handleTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
         setMessage(e.target.value);
     };
-
-    useEffect(() => {
-        adjustTextareaHeight();
-    }, [message]);
 
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
@@ -46,10 +35,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
 
     return (
         <div className="z-10 flex flex-row items-center gap-2 p-4 pt-1 shadow-lg">
+            <button
+                data-testid="boostbot-open-filters"
+                className="group flex h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-primary-100 disabled:bg-transparent"
+                onClick={openFiltersModal}
+                disabled={isLoading || isDisabled}
+            >
+                <AdjustmentsVerticalIcon className="h-6 w-6 fill-primary-500 group-disabled:fill-primary-200" />
+            </button>
+
             <textarea
                 ref={textareaRef}
-                rows={1}
-                className="flex-grow resize-none rounded-lg border-none px-3 py-4 text-xs ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                rows={2}
+                className="flex-grow resize-none rounded-lg border-none px-2 py-2 text-xs ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 placeholder={t('boostbot.chat.sendPlaceholder') ?? 'Send a product description...'}
                 value={message}
                 onChange={handleTextInput}
@@ -57,6 +55,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
             />
 
             <button
+                data-testid="boostbot-send-message"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white transition-all hover:bg-primary-700 disabled:bg-primary-400"
                 onClick={handleSendMessage}
                 disabled={isLoading || isDisabled}

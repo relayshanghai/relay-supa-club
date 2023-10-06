@@ -1,10 +1,24 @@
 const boostbot = {
+    filters: {
+        modalTitle: 'Basic Filters',
+        fromPlatform: 'Show me influencers from',
+        fromGeos: 'who have followers in',
+        addMoreGeos: 'Add more',
+        selectGeo: 'Select a location',
+        advancedFilters: 'Advanced Filters',
+        advancedFiltersTooltip: 'This feature is not yet available',
+        updateFilters: 'Update',
+        atLeast: 'at least',
+        inLocation: 'of their followers must be in {{location}}',
+    },
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
 
 Please send me an English description of your product and I'll recommend influencers to promote it on social media.
 
 For example: "IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"`,
+        noInfluencersFound:
+            "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
         influencersFound:
             'I handpicked the {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
         sendPlaceholder: 'Send me a product description',
