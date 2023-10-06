@@ -185,6 +185,8 @@ import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
 import type { ChangePasswordPayload } from './change-password';
 import { CHANGE_PASSWORD, ChangePassword } from './change-password';
+import type { VisitPagePayload } from './visit-page';
+import { VISIT_PAGE, VisitPage } from './visit-page';
 import type { CompleteSignupStepPayload } from './onboarding/complete-signup-step';
 import { COMPLETE_SIGNUP_STEP, CompleteSignupStep } from './onboarding/complete-signup-step';
 
@@ -244,6 +246,7 @@ export {
     PayForUpgradedPlan,
     UpdateProfileInfo,
     ChangePassword,
+    VisitPage,
     CompleteSignupStep,
 };
 
@@ -332,6 +335,7 @@ export const events = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
     [CHANGE_PASSWORD]: ChangePassword,
+    [VISIT_PAGE]: VisitPage,
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStep,
 };
 
@@ -420,6 +424,7 @@ export type payloads = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
     [CHANGE_PASSWORD]: ChangePasswordPayload;
+    [VISIT_PAGE]: VisitPagePayload;
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStepPayload;
 };
 
@@ -510,6 +515,7 @@ export const eventKeys = z.union([
     z.literal(PAY_FOR_UPGRADED_PLAN),
     z.literal(UPDATE_PROFILE_INFO),
     z.literal(CHANGE_PASSWORD),
+    z.literal(VISIT_PAGE),
     z.literal(COMPLETE_SIGNUP_STEP),
 ]);
 
