@@ -26,6 +26,8 @@ import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { Banner } from '../library/banner';
+import { useCompany } from 'src/hooks/use-company';
 import { randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
@@ -273,8 +275,17 @@ export const SearchPageInner = () => {
 };
 
 export const SearchPage = () => {
+    const { company } = useCompany();
+    const { t } = useTranslation();
     return (
         <Layout>
+            {company?.subscription_status === 'canceled' && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             {IQDATA_MAINTENANCE ? (
                 <MaintenanceMessage />
             ) : (
