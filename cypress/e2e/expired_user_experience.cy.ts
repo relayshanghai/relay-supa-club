@@ -16,5 +16,13 @@ describe('Expired User Experience', () => {
         cy.visit('/account');
         cy.contains('span', 'r').click();
         cy.url().should('include', '/boostbot');
+    it('Can see banners on boostbot and discover', () => {
+        cy.loginExpired();
+        cy.visit('/boostbot');
+        cy.contains('Your free trial has expired');
+        cy.contains('Please upgrade your account to use this feature.');
+        cy.visit('/dashboard');
+        cy.contains('Your free trial has expired');
+        cy.contains('Please upgrade your account to use this feature.');
     });
 });
