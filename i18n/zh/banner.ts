@@ -1,8 +1,14 @@
 const banner = {
-    title: '拓展方案专属功能：',
-    descriptionManager: 'KOL管理跟进目前仅拓展方案客户可以使用',
-    descriptionInbox: '收件箱目前仅拓展方案客户可以使用',
-    descriptionSequences: '邮件进程管理目前仅拓展方案客户可以使用',
+    outreach: {
+        title: '拓展方案专属功能：',
+        descriptionManager: 'KOL管理跟进目前仅拓展方案客户可以使用',
+        descriptionInbox: '收件箱目前仅拓展方案客户可以使用',
+        descriptionSequences: '邮件进程管理目前仅拓展方案客户可以使用',
+    },
+    expired: {
+        title: '你的免费试用已到期。',
+        description: '你可在升级帐户后继续使用此功能。',
+    },
     button: '立即升级你的订阅',
 };
 
