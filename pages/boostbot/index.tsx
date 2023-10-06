@@ -132,9 +132,11 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            const isErrorMessage = (message: MessageType) =>
+                message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
+            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
