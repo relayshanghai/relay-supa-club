@@ -42,7 +42,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     );
 
     const { sequenceEmails } = useSequenceEmails(sequenceId);
-    const { templateVariables } = useTemplateVariables(sequenceId);
+    const { templateVariables, refreshTemplateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => ` **${variable.name}** `) ?? ['Error retrieving variables'];
@@ -223,6 +223,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         }
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
+
+    useEffect(() => {
+        refreshTemplateVariables();
+    }, [refreshTemplateVariables]);
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
