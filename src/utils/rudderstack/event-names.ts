@@ -30,7 +30,6 @@ export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 // Signup Wizard, Pricing Section, click to select DIY
 
 export const SIGNUP = generateEventName('Signup');
-// Signup, step-<number>
 // Signup, Start free trial success
 // Signup, Start free trial failed
 // Signup, check Terms and Conditions
