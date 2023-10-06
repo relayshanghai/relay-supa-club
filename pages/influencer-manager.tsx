@@ -17,8 +17,8 @@ const ManagerPage = () => {
                 <>
                     <Banner
                         buttonText={t('banner.button')}
-                        title={t('banner.title')}
-                        message={t('banner.descriptionManager')}
+                        title={t('banner.outreach.title')}
+                        message={t('banner.outreach.descriptionManager')}
                     />
                     <ManagerDummy />
                 </>

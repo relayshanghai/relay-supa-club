@@ -7,7 +7,7 @@ import { Sidebar } from 'src/components/sidebar';
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import ClientRoleWarning from './search/client-role-warning';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { NAVBAR } from 'src/utils/rudderstack/event-names';
 import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useReport } from 'src/hooks/use-report';
 import type { CreatorPlatform } from 'types';
+import { VisitPage } from 'src/utils/analytics/events';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -30,6 +31,11 @@ const pageNameMap: { [key: string]: string } = {
 
 export const Layout = ({ children }: any) => {
     const { profile, loading, refreshProfile, logout } = useUser();
+    const { track } = useRudderstackTrack();
+
+    useEffect(() => {
+        track(VisitPage);
+    }, [track]);
 
     useEffect(() => {
         // this fixes a bug where the profile is not loaded on the first page load when coming from signup
