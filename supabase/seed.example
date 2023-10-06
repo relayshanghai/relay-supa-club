@@ -718,7 +718,7 @@ BEGIN
     'Douglas',
     'company_owner',
     'nqnwq6g9ooqhfexa',
-    'test@boostbot.ai'
+    'test@example.com'
   );
   _profile_christopher := create_profile(
     _company_test.id,
