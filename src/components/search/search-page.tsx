@@ -33,6 +33,7 @@ import { randomNumber } from 'src/utils/utils';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
+
     const {
         platform,
         searchParams,
