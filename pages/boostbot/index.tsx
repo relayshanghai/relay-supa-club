@@ -31,6 +31,8 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
+import { Banner } from 'src/components/library/banner';
+import { useCompany } from 'src/hooks/use-company';
 // import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -42,6 +44,7 @@ const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 const Boostbot = () => {
     const { t } = useTranslation();
+    const { company } = useCompany();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
@@ -328,6 +331,13 @@ const Boostbot = () => {
 
     return (
         <Layout>
+            {company?.subscription_status === 'canceled' && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
                 <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
