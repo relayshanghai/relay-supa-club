@@ -114,7 +114,7 @@ export const SearchResultsTable = ({
                             <>
                                 {results.map((creator, i) => (
                                     <SearchResultRow
-                                        key={i}
+                                        key={`${creator.account.user_profile.username}-${creator.account.user_profile.user_id}`}
                                         creator={creator}
                                         setShowCampaignListModal={setShowCampaignListModal}
                                         setSelectedCreator={setSelectedCreator}
