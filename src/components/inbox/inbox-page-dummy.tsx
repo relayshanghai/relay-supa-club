@@ -164,7 +164,11 @@ export const InboxPageDummy = () => {
 
     return (
         <Layout>
-            <Banner buttonText={t('banner.button')} title={t('banner.title')} message={t('banner.descriptionInbox')} />
+            <Banner
+                buttonText={t('banner.button')}
+                title={t('banner.outreach.title')}
+                message={t('banner.outreach.descriptionInbox')}
+            />
             <div className="grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">

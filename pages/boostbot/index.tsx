@@ -31,6 +31,8 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
+import { Banner } from 'src/components/library/banner';
+import { useCompany } from 'src/hooks/use-company';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -72,6 +74,7 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
+    const { company } = useCompany();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -109,9 +112,19 @@ const Boostbot = () => {
             });
             setAreChatActionsDisabled(true);
         }
+        if (company?.subscription_status === 'canceled') {
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.error.expiredAccount',
+                translationLink: '/pricing',
+            });
+            setIsSearchDisabled(true);
+            setAreChatActionsDisabled(true);
+        }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
     const [messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
@@ -123,9 +136,11 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            const isErrorMessage = (message: MessageType) =>
+                message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
+            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
@@ -319,6 +334,13 @@ const Boostbot = () => {
 
     return (
         <Layout>
+            {company?.subscription_status === 'canceled' && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
                 <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
