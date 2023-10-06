@@ -138,9 +138,8 @@ export const SubscriptionDetails = () => {
                         <Link href="/pricing">
                             <Button
                                 onClick={() =>
-                                    trackEvent(
-                                        ACCOUNT_SUBSCRIPTION('click upgrade subscription and go to pricing page'),
-                                    )
+                                    // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page
+                                    trackEvent('Start Upgrade Subscription')
                                 }
                             >
                                 {t('account.subscription.upgradeSubscription')}

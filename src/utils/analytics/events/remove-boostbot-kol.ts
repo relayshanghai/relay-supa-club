@@ -1,7 +1,9 @@
 import type { TriggerEvent } from '../types';
 import type { CurrentPageEvent } from './current-pages';
 
-export const REMOVE_BOOSTBOT_KOL = 'Remove KOL';
+// Event names:
+// - Remove KOL
+export const REMOVE_BOOSTBOT_KOL = 'Remove BoostBot Search Result';
 
 export type RemoveBoostbotKolPayload = {
     currentPage: CurrentPageEvent;

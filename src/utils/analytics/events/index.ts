@@ -30,8 +30,6 @@ import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
 import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
-import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
-import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
 import type { EmailClickedPayload } from './outreach/email-clicked';
@@ -197,7 +195,6 @@ export {
     SearchAnalyzeInfluencer,
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
-    AddInfluencerToSequence,
     OpenSequencesPage,
     OpenInboxPage,
     OpenInfluencerManagerPage,
@@ -256,7 +253,6 @@ export const events = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaign,
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
-    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequence,
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPage,
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPage,
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
@@ -344,7 +340,6 @@ export type payloads = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaignPayload;
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaignPayload;
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfilePayload;
-    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequencePayload;
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload;
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload;
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload;
@@ -434,7 +429,6 @@ export const eventKeys = z.union([
     z.literal(SEARCH_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE),
-    z.literal(OUTREACH_ADD_INFLUENCER_TO_SEQUENCE),
     z.literal(OUTREACH_OPEN_SEQUENCES_PAGE),
     z.literal(OUTREACH_OPEN_INBOX_PAGE),
     z.literal(OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE),

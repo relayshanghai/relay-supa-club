@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useRouter } from 'next/router';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { PRICING_PAGE } from 'src/utils/rudderstack/event-names';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -54,7 +53,8 @@ export const PriceCard = ({
 
     const handleUpgradeClicked = () => {
         if (featNewPricing()) {
-            trackEvent(PRICING_PAGE('clicked on upgrade'), { plan: priceTier });
+            // @note previous name: Pricing Page, clicked on upgrade
+            trackEvent('Select Upgrade Plan', { plan: priceTier });
             router.push(`/payments?plan=${priceTier}`);
         } else {
             openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier]);
