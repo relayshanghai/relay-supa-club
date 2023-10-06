@@ -54,6 +54,8 @@ export function InfluencersTable<TData, TValue>({
                 table.toggleAllPageRowsSelected(true);
             }, 0);
         };
+
+        setFirstPage();
         document.addEventListener('influencerTableLoadInfluencers', setFirstPage);
 
         return () => document.removeEventListener('influencerTableLoadInfluencers', setFirstPage);
