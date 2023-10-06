@@ -43,7 +43,6 @@ const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { company } = useCompany();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
@@ -74,6 +73,7 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
+    const { company } = useCompany();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -111,9 +111,19 @@ const Boostbot = () => {
             });
             setAreChatActionsDisabled(true);
         }
+        if (company?.subscription_status === 'canceled') {
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.error.expiredAccount',
+                translationLink: '/pricing',
+            });
+            setIsSearchDisabled(true);
+            setAreChatActionsDisabled(true);
+        }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
     const [messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
@@ -125,9 +135,11 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            const isErrorMessage = (message: MessageType) =>
+                message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
+            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 

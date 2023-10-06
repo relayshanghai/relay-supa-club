@@ -64,6 +64,8 @@ Tip: You can also unlock influencers one by one.`,
         influencersToOutreach: 'Adding influencers to outreach failed',
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
         outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
+        expiredAccount:
+            'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
     },
 };
 
