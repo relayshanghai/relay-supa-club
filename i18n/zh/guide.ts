@@ -5,6 +5,11 @@ const guidePage = {
     goto: '前往',
     learnMore: '了解更多',
     cards: {
+        boostbot: {
+            title: 'BoostBot 雷宝',
+            description:
+                '不要再花费大量时间在寻找合适的红人上了。有了relay.club的BoostBot AI技术，只需几分钟，即可开启红人联系工作，和红人商谈品牌合作和产品测评！',
+        },
         sequences: {
             title: '邮件进程管理',
             description:
@@ -32,16 +37,24 @@ const guidePage = {
             description:
                 '我们的数据库涵盖了3个平台共计超过2.75亿个的红人帐户，并提供数据驱动工具助您找到完美的网红达人。',
         },
-        performance: {
-            title: '追踪绩效',
-            description: '您将不再需要电子表格 - 只需输入内容链接，我们将为您追踪浏览量、点赞数、评论和销售情况！',
-        },
         account: {
             title: '监控您的使用情况',
             description: '查看谁有您管理项目的访问权，以及您打开了多少位网红达人的档案。',
         },
     },
     modalInfo: {
+        boostbot: {
+            title: 'BoostBot 雷宝',
+            url: '/boostbot',
+            sections: [
+                {
+                    title: '雷宝是如何运作的',
+                    description:
+                        'BoostBot 是一款AI辅助的搜索工具，它能找到海外社交媒体可以推广产品的优秀红人，您只需描述产品（任何语言均可），它便会分析相关搜索主题，并从2亿多的红人数据库中找到合适的红人。不仅如此，它可以根据粉丝数、互动率、地区等指标优化搜索结果。最终，BoostBot向您呈现的是一份带有联系方式的庞大的红人名单，您可以立即与名单上的红人开展品牌合作或营销推广。',
+                    demo: 'boostbot_demo.gif',
+                },
+            ],
+        },
         sequences: {
             title: '邮件进程管理',
             url: '/sequences',
@@ -217,17 +230,6 @@ const guidePage = {
                 },
             ],
         },
-        performance: {
-            title: '追踪绩效',
-            url: '/performance',
-            sections: [
-                {
-                    title: '您提供链接，我们负责跟踪数据',
-                    description:
-                        '达人发布帖子后，你需要在项目管理的“已发布”状态下，点击“内容”按钮并添加链接，即可开始追踪总浏览量、点赞数和评论。通过点击控制面板左侧的“数据中心”按钮，您可以查看公司的整体绩效表现，包括帖子总数和总的浏览量、点赞数、评论和销售情况的摘要。',
-                },
-            ],
-        },
         account: {
             title: '监控您的使用情况',
             url: '/account',
@@ -240,6 +242,6 @@ const guidePage = {
             ],
         },
     },
-};
+} as const;
 
 export default guidePage;

@@ -26,10 +26,14 @@ import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { Banner } from '../library/banner';
+import { useCompany } from 'src/hooks/use-company';
+import { randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
+
     const {
         platform,
         searchParams,
@@ -53,7 +57,7 @@ export const SearchPageInner = () => {
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
     const { trackEvent } = useRudderstack();
-
+    const [batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
         results: firstPageSearchResults,
@@ -79,6 +83,8 @@ export const SearchPageInner = () => {
             if (searchParams === undefined) return;
 
             const tracker = (results: any) => {
+                setBatchId(randomNumber());
+
                 return track({
                     event: Search,
                     payload: {
@@ -96,7 +102,7 @@ export const SearchPageInner = () => {
             // @note this triggers the search api call
             setSearchParams(searchParams);
         },
-        [track, setSearchParams, setOnLoad],
+        [track, setSearchParams, setOnLoad, setBatchId],
     );
 
     /**
@@ -208,6 +214,7 @@ export const SearchPageInner = () => {
                 validating={isValidating}
                 results={firstPageSearchResults}
                 error={error}
+                batchId={batchId}
                 moreResults={
                     <>
                         {new Array(page).fill(0).map((_, i) => (
@@ -219,6 +226,8 @@ export const SearchPageInner = () => {
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 allCampaignCreators={allCampaignCreators}
                                 trackSearch={track}
+                                batchId={batchId}
+                                resultIndex={i}
                             />
                         ))}
                     </>
@@ -267,8 +276,17 @@ export const SearchPageInner = () => {
 };
 
 export const SearchPage = () => {
+    const { company } = useCompany();
+    const { t } = useTranslation();
     return (
         <Layout>
+            {company?.subscription_status === 'canceled' && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             {IQDATA_MAINTENANCE ? (
                 <MaintenanceMessage />
             ) : (

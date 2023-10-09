@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import { UsersIcon } from '@heroicons/react/24/solid';
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
 import type { Influencer } from 'pages/boostbot';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { OpenSocialProfile } from 'src/utils/analytics/events';
+import { OpenSocialProfile, OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { numberFormatter } from 'src/utils/formatter';
+import { Button } from 'src/components/button';
 
 export type BoostbotAccountCellProps = {
     row: Row<Influencer>;
@@ -14,8 +16,9 @@ export type BoostbotAccountCellProps = {
 };
 
 export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) => {
+    const { t } = useTranslation();
     const influencer = row.original;
-    const { username, custom_name, fullname, url = '', picture, followers } = influencer;
+    const { username, custom_name, fullname, url = '', picture, followers, user_id } = influencer;
     const handle = username || custom_name || fullname || '';
     const Icon = url.includes('youtube') ? Youtube : url.includes('tiktok') ? Tiktok : Instagram;
     const { track } = useRudderstackTrack();
@@ -24,19 +27,20 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
     return (
-        <>
+        <div className="flex flex-col items-center gap-2">
             <Link
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group text-xs"
+                data-testid="boostbot-social-profile-link"
                 onClick={() => {
                     track(OpenSocialProfile, {
                         currentPage: CurrentPageEvent.boostbot,
                         is_unlocked: true,
                         results_index: row.index,
                         results_page: table.getState().pagination.pageIndex + 1,
-                        kol_id: influencer.user_id,
+                        kol_id: user_id,
                         platform,
                         social_url: influencer.url,
                         search_id: table.options.meta?.searchId ?? null,
@@ -59,6 +63,18 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                     </p>
                 </div>
             </Link>
-        </>
+
+            <Link
+                href={`/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(user_id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="boostbot-analyze-profile-link"
+                onClick={() => track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })}
+            >
+                <Button className="flex flex-row items-center" variant="secondary">
+                    <span className="">{t('creators.analyzeProfile')}</span>
+                </Button>
+            </Link>
+        </div>
     );
 };

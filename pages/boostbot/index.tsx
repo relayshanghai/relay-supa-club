@@ -13,7 +13,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import {
-    // OpenVideoGuideModal,
+    OpenVideoGuideModal,
     OpenBoostbotPage,
     SendInfluencersToOutreach,
     UnlockInfluencers,
@@ -31,7 +31,8 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
-// import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
+import { Banner } from 'src/components/library/banner';
+import { useCompany } from 'src/hooks/use-company';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -45,23 +46,35 @@ const Boostbot = () => {
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
-    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
+    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+        'boostbot-selected-influencers',
+        {},
+    );
+    const selectedInfluencersData = Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]);
     const { trackEvent: track } = useRudderstack();
-    const { sequences } = useSequences();
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const [sequence, setSequence] = useState<Sequence | undefined>(
-        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
+
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
-    const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+    const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
+    const { company } = useCompany();
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -97,10 +110,21 @@ const Boostbot = () => {
                 translationKey: 'boostbot.error.outOfProfileCredits',
                 translationLink: '/pricing',
             });
+            setAreChatActionsDisabled(true);
+        }
+        if (company?.subscription_status === 'canceled') {
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.error.expiredAccount',
+                translationLink: '/pricing',
+            });
+            setIsSearchDisabled(true);
+            setAreChatActionsDisabled(true);
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
     const [messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
@@ -112,9 +136,11 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            const isErrorMessage = (message: MessageType) =>
+                message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
+            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
@@ -187,18 +213,9 @@ const Boostbot = () => {
 
     const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const removeInfluencer = (userId: string) => {
-        setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
-    };
-
-    const handlePageToUnlock = async () => {
-        const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
+    const handleSelectedInfluencersToUnlock = async () => {
+        const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.noInfluencersToUnlock',
-            });
             return;
         }
 
@@ -226,7 +243,7 @@ const Boostbot = () => {
         return unlockedInfluencers;
     };
 
-    const handlePageToOutreach = async () => {
+    const handleSelectedInfluencersToOutreach = async () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
@@ -239,9 +256,9 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
+            const alreadyUnlockedInfluencers = selectedInfluencersData.filter(isUserProfile);
             const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
+                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : selectedInfluencersData;
             const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
@@ -283,16 +300,14 @@ const Boostbot = () => {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
-                translationLink: '/sequences',
+                translationKey: 'boostbot.chat.outreachDone',
             });
-            // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-            // addMessage({
-            //     sender: 'Bot',
-            //     type: 'video',
-            //     videoUrl: '/assets/videos/sequence-guide.mp4',
-            //     eventToTrack: OpenVideoGuideModal.eventName,
-            // });
+            addMessage({
+                sender: 'Bot',
+                type: 'video',
+                videoUrl: '/assets/videos/sequence-guide.mp4',
+                eventToTrack: OpenVideoGuideModal.eventName,
+            });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
@@ -314,28 +329,34 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsUnlockOutreachLoading(false);
-            setHasUsedOutreach(true);
         }
     };
 
     return (
         <Layout>
+            {company?.subscription_status === 'canceled' && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
                 <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
-                        handlePageToUnlock={handlePageToUnlock}
-                        handlePageToOutreach={handlePageToOutreach}
+                        handleSelectedInfluencersToUnlock={handleSelectedInfluencersToUnlock}
+                        handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isUnlockOutreachLoading={isUnlockOutreachLoading}
                         isSearchLoading={isSearchLoading}
+                        areChatActionsDisabled={areChatActionsDisabled}
                         setIsSearchLoading={setIsSearchLoading}
                         messages={messages}
                         setMessages={setMessages}
                         addMessage={addMessage}
-                        shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
                         setSearchId={setSearchId}
                         setSequence={setSequence}
@@ -350,8 +371,9 @@ const Boostbot = () => {
                     <InfluencersTable
                         columns={columns}
                         data={influencers}
-                        setCurrentPageInfluencers={setCurrentPageInfluencers}
-                        meta={{ handleUnlockInfluencer, removeInfluencer, t, searchId }}
+                        selectedInfluencers={selectedInfluencers}
+                        setSelectedInfluencers={setSelectedInfluencers}
+                        meta={{ handleUnlockInfluencer, t, searchId }}
                     />
                 )}
             </div>

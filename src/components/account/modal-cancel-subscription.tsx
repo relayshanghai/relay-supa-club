@@ -9,7 +9,7 @@ import { CANCEL_SUBSCRIPTION_MODAL } from 'src/utils/rudderstack/event-names';
 
 export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
     const { t } = useTranslation();
-    const { createDiscountRenew, cancelSubscription } = useSubscription();
+    const { cancelSubscription } = useSubscription();
     const { trackEvent } = useRudderstack();
 
     const [submitting, setSubmitting] = useState(false);
@@ -28,22 +28,7 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
             setSubmitting(false);
         }
     };
-    const handleRenewWithDiscount = async () => {
-        setSubmitting(true);
-        const id = toast.loading(t('account.subscription.modal.subscribing'));
-        try {
-            const result = await createDiscountRenew();
-            if (result?.status === 'active')
-                toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
-            trackEvent(CANCEL_SUBSCRIPTION_MODAL('renewed subscription'));
-        } catch (e) {
-            toast.error(t('account.subscription.modal.wentWrong'), {
-                id,
-            });
-        } finally {
-            setSubmitting(false);
-        }
-    };
+
     const handleClose = () => {
         if (!submitting) {
             onClose();
@@ -71,13 +56,6 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
                         {t('account.cancelModal.cancelSubscription')}
                     </Button>
                 </div>
-                <p className="text-gray-500">
-                    {t('account.cancelModal.orRenewAtDiscount_percentage', { percentage: 20 })}
-                </p>
-
-                <Button disabled={submitting} className="m-auto" onClick={handleRenewWithDiscount}>
-                    {t('account.cancelModal.renewNow')}
-                </Button>
             </div>
         </Modal>
     );
