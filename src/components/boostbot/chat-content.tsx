@@ -14,6 +14,8 @@ export interface ChatContentProps {
     handleSelectedInfluencersToOutreach: () => void;
     stopBoostbot: () => void;
     areChatActionsDisabled: boolean;
+    isUnlockButtonDisabled: boolean;
+    isOutreachButtonDisabled: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -25,6 +27,8 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     handleSelectedInfluencersToOutreach,
     stopBoostbot,
     areChatActionsDisabled,
+    isUnlockButtonDisabled,
+    isOutreachButtonDisabled,
 }) => {
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
@@ -46,7 +50,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     <Button
                         data-testid="boostbot-button-unlock"
                         onClick={handleSelectedInfluencersToUnlock}
-                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled || isUnlockButtonDisabled}
                         className="text-xs"
                     >
                         {t('boostbot.chat.unlockSelected')}
@@ -54,7 +58,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     <Button
                         data-testid="boostbot-button-outreach"
                         onClick={handleSelectedInfluencersToOutreach}
-                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled}
                         className="text-xs"
                     >
                         {t('boostbot.chat.outreachSelected')}

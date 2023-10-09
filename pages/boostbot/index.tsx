@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
@@ -50,7 +51,9 @@ const Boostbot = () => {
         'boostbot-selected-influencers',
         {},
     );
-    const selectedInfluencersData = Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]);
+    const selectedInfluencersData =
+        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : []; // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
@@ -69,6 +72,9 @@ const Boostbot = () => {
     }, [sequence, sequences]);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((s) => s.id),
+    );
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
@@ -213,12 +219,15 @@ const Boostbot = () => {
 
     const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const handleSelectedInfluencersToUnlock = async () => {
-        const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
-        if (influencersToUnlock.length === 0) {
-            return;
-        }
+    const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
+    const influencersToOutreach = selectedInfluencersData.filter(
+        (i) => !allSequenceInfluencers.find((si) => si.iqdata_id === i?.user_id),
+    );
 
+    const isUnlockButtonDisabled = influencersToUnlock.length === 0;
+    const isOutreachButtonDisabled = influencersToOutreach.length === 0;
+
+    const handleSelectedInfluencersToUnlock = async () => {
         setIsUnlockOutreachLoading(true);
 
         const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
@@ -231,13 +240,6 @@ const Boostbot = () => {
             translationLink: '/pricing',
             translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
-        // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-        // addMessage({
-        //     sender: 'Bot',
-        //     type: 'video',
-        //     videoUrl: '/assets/videos/delete-guide.mp4',
-        //     eventToTrack: OpenVideoGuideModal.eventName,
-        // });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -256,10 +258,7 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = selectedInfluencersData.filter(isUserProfile);
-            const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : selectedInfluencersData;
-            const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+            const unlockedInfluencers = await handleUnlockInfluencers(influencersToOutreach);
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
@@ -290,10 +289,11 @@ const Boostbot = () => {
                 });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]); // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
@@ -358,6 +358,8 @@ const Boostbot = () => {
                         setMessages={setMessages}
                         addMessage={addMessage}
                         isSearchDisabled={isSearchDisabled}
+                        isUnlockButtonDisabled={isUnlockButtonDisabled}
+                        isOutreachButtonDisabled={isOutreachButtonDisabled}
                         setSearchId={setSearchId}
                         setSequence={setSequence}
                         sequence={sequence}
