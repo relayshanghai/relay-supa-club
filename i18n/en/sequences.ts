@@ -157,8 +157,8 @@ const sequences = {
     missingRequiredTemplateVariables: 'Missing required template variables',
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: 'Email preview',
-    number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
-    number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
+    number_emailsSuccessfullyScheduled: '{{number}} email(s) successfully scheduled to send',
+    number_emailsFailedToSchedule: 'Failed to submit {{number}} email(s) to send',
     delete: {
         deleteSequence_name: 'Delete {{name}}?',
         deleteSequenceDescription:
