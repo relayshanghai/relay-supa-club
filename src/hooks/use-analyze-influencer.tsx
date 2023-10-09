@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useRudderstack } from './use-rudderstack';
 import type { CreatorPlatform } from 'types';
-import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 
 export type analyzeInfluencerParams = {
     platform: CreatorPlatform;
@@ -20,7 +19,8 @@ export const useAnalyzeInfluencer = () => {
     const analyzeInfluencer = useCallback(
         (args: analyzeInfluencerParams) => {
             const { platform, user_id } = args;
-            trackEvent(SEARCH_RESULT_ROW('open report'), {
+            // @note previous name: Search Result Row, open report
+            trackEvent('Open Report', {
                 platform,
                 user_id,
                 // @note total_reports is an incrementable property
