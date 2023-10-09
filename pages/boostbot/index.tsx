@@ -53,7 +53,7 @@ const Boostbot = () => {
     const [sequence, setSequence] = useState<Sequence | undefined>(
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
-
+    console.log('root log boostbot');
     useEffect(() => {
         console.log('log-2 start sequence');
         if (sequences && !sequence) {
