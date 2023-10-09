@@ -4,11 +4,11 @@ import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
 export const useSearchTrackers = () => {
     const { trackEvent } = useRudderstack();
-    const trackSearch = async (_modal: string) => {
+    const trackSearch = async (_modal: string, payload: any = {}) => {
         // Event names:
         // - Search Options, Search
         // - Search Filters Modal, Search
-        trackEvent(`Search For Influencers`, { total_searches: 1 });
+        trackEvent(`Search For Influencers`, { total_searches: 1, ...payload });
     };
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
