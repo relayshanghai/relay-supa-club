@@ -33,7 +33,7 @@ const LoginPage = () => {
         if (profile) {
             toast.success(t('login.loginSuccess'));
             // eslint-disable-next-line no-console
-            console.log('pushing');
+            console.log('pushing to boostbot');
             router.push('/boostbot');
         }
     }, [profile, router, t]);

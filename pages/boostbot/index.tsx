@@ -1,11 +1,8 @@
+/* eslint-disable no-console */
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
-import { Chat } from 'src/components/boostbot/chat';
-import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
-import { columns } from 'src/components/boostbot/table/columns';
-import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
 import { Layout } from 'src/components/layout';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -27,7 +24,6 @@ import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
-import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
@@ -38,11 +34,11 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 const Boostbot = () => {
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
-    const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
+    const [_isInitialLogoScreen, _setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
-    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+    const [selectedInfluencers, _setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
     );
@@ -50,8 +46,8 @@ const Boostbot = () => {
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
-    const [isSearchLoading, setIsSearchLoading] = useState(false);
-    const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
+    const [_isSearchLoading, _setIsSearchLoading] = useState(false);
+    const [_isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const [sequence, setSequence] = useState<Sequence | undefined>(
@@ -59,21 +55,23 @@ const Boostbot = () => {
     );
 
     useEffect(() => {
+        console.log('log-2 start sequence');
         if (sequences && !sequence) {
             setSequence(sequences[0]);
         }
+        console.log('log-2 end sequence');
     }, [sequence, sequences]);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
-    const [isSearchDisabled, _setIsSearchDisabled] = useState(false);
-    const [areChatActionsDisabled, _setAreChatActionsDisabled] = useState(false);
+    const [_isSearchDisabled, _setIsSearchDisabled] = useState(false);
+    const [_areChatActionsDisabled, _setAreChatActionsDisabled] = useState(false);
     // const { subscription } = useSubscription();
     const { company } = useCompany();
     // const periodStart = unixEpochToISOString(subscription?.current_period_start);
     // const periodEnd = unixEpochToISOString(subscription?.current_period_end);
-    const [searchId, setSearchId] = useState<string | number | null>(null);
+    const [_searchId, _setSearchId] = useState<string | number | null>(null);
 
     // const { usages, isUsageLoaded, refreshUsages } = useUsages(
     //     true,
@@ -122,7 +120,7 @@ const Boostbot = () => {
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
-    const [messages, setMessages] = usePersistentState<MessageType[]>(
+    const [_messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
         [
             {
@@ -143,6 +141,7 @@ const Boostbot = () => {
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
     useEffect(() => {
+        console.log('log-1 Boosebot opened');
         track(OpenBoostbotPage.eventName);
     }, [track]);
 
@@ -207,9 +206,9 @@ const Boostbot = () => {
         }
     };
 
-    const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
+    const _handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const handleSelectedInfluencersToUnlock = async () => {
+    const _handleSelectedInfluencersToUnlock = async () => {
         const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
             return;
@@ -239,7 +238,7 @@ const Boostbot = () => {
         return unlockedInfluencers;
     };
 
-    const handleSelectedInfluencersToOutreach = async () => {
+    const _handleSelectedInfluencersToOutreach = async () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
@@ -328,53 +327,7 @@ const Boostbot = () => {
         }
     };
 
-    return (
-        <Layout>
-            {company?.subscription_status === 'canceled' && (
-                <Banner
-                    buttonText={t('banner.button')}
-                    title={t('banner.expired.title')}
-                    message={t('banner.expired.description')}
-                />
-            )}
-            <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
-                <div className="w-full flex-shrink-0 md:w-80">
-                    <Chat
-                        influencers={influencers}
-                        setInfluencers={setInfluencers}
-                        handleSelectedInfluencersToUnlock={handleSelectedInfluencersToUnlock}
-                        handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
-                        setIsInitialLogoScreen={setIsInitialLogoScreen}
-                        handleUnlockInfluencers={handleUnlockInfluencers}
-                        isUnlockOutreachLoading={isUnlockOutreachLoading}
-                        isSearchLoading={isSearchLoading}
-                        areChatActionsDisabled={areChatActionsDisabled}
-                        setIsSearchLoading={setIsSearchLoading}
-                        messages={messages}
-                        setMessages={setMessages}
-                        addMessage={addMessage}
-                        isSearchDisabled={isSearchDisabled}
-                        setSearchId={setSearchId}
-                        setSequence={setSequence}
-                        sequence={sequence}
-                        sequences={sequences}
-                    />
-                </div>
-
-                {isInitialLogoScreen ? (
-                    <InitialLogoScreen />
-                ) : (
-                    <InfluencersTable
-                        columns={columns}
-                        data={influencers}
-                        selectedInfluencers={selectedInfluencers}
-                        setSelectedInfluencers={setSelectedInfluencers}
-                        meta={{ handleUnlockInfluencer, t, searchId }}
-                    />
-                )}
-            </div>
-        </Layout>
-    );
+    return <Layout>LMAO</Layout>;
 };
 
 export default Boostbot;
