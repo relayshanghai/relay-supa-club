@@ -32,7 +32,9 @@ const LoginPage = () => {
     useEffect(() => {
         if (profile) {
             toast.success(t('login.loginSuccess'));
-            router.push('/');
+            // eslint-disable-next-line no-console
+            console.log('pushing');
+            router.push('/login');
         }
     }, [profile, router, t]);
 
