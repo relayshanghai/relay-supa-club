@@ -4,9 +4,11 @@ import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
 export const useSearchTrackers = () => {
     const { trackEvent } = useRudderstack();
-    const trackSearch = async (modal: string, payload: any = {}) => {
-        // @note total_searches is an incrementable property
-        trackEvent(`${modal}, Search`, { total_searches: 1, ...payload });
+    const trackSearch = async (_modal: string, payload: any = {}) => {
+        // Event names:
+        // - Search Options, Search
+        // - Search Filters Modal, Search
+        trackEvent(`Search For Influencers`, { total_searches: 1, ...payload });
     };
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
@@ -21,7 +23,8 @@ export const useSearchTrackers = () => {
         all_selected_topics: CreatorSearchTag[];
     }) => {
         // @note previous implementation of this event sends two props called `tag` and `value`
-        trackEvent(WORD_CLOUD_COMPONENT('Added tag from wordcloud'), {
+        // @note previous name: Word Cloud Component, Added tag from wordcloud
+        trackEvent('Select TopicCloud Topic', {
             tag: item.tag,
             value: item.value,
             search_topic,
@@ -47,7 +50,8 @@ export const useSearchTrackers = () => {
         platform: CreatorPlatform;
         current_platform: CreatorPlatform;
     }) => {
-        trackEvent(SEARCH_OPTIONS('change platform'), { platform, current_platform });
+        // Search Options, change platform
+        trackEvent('Change Targeted Platform', { platform, current_platform });
     };
     return {
         trackPlatformChange,

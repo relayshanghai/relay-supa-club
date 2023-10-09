@@ -1,7 +1,9 @@
 import type { TriggerEvent } from '../../types';
 import type { CurrentPageEvent } from '../current-pages';
 
-export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'boostbot-send_influencers_to_outreach';
+// Event names:
+// - boostbot-send_influencers_to_outreach
+export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'Add to Sequence';
 
 export type SendInfluencersToOutreachPayload = {
     currentPage: CurrentPageEvent;
@@ -9,9 +11,9 @@ export type SendInfluencersToOutreachPayload = {
      * For now, influencer_ids are reference_ids
      * the current implementation does not rely on using our own influencer_ids
      */
-    influencer_ids: string[];
-    sequence_influencer_ids: string[];
-    topics: string[];
+    influencer_ids: string[] | null;
+    sequence_influencer_ids: string[] | null;
+    topics: string[] | null;
     /**
      * I will assume that there will be a time that
      * the user will want to send a single influencer
@@ -22,6 +24,10 @@ export type SendInfluencersToOutreachPayload = {
     is_multiple: boolean | null;
     is_success: boolean;
     extra_info?: any;
+    // @note legacy props after AddInfluencerToSequence got merged here
+    sequence_id: string | null;
+    sequence_influencer_id: string | null;
+    is_sequence_autostart: boolean | null;
 };
 
 export const SendInfluencersToOutreach = (

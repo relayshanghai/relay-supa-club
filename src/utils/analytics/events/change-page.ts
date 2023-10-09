@@ -1,6 +1,8 @@
 import type { TriggerEvent } from '../types';
 
-export const CHANGE_PAGE = 'Change Page';
+// Event names:
+// - Change Page
+export const CHANGE_PAGE = 'Change Search Result Page';
 
 export type ChangePagePayload = {
     from_page: number;
