@@ -118,13 +118,17 @@ export const updateSequenceInfluencersCall =
 
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
-        const { data: existingEmail } = await supabaseClient
+        const { data: existingIqdata } = await supabaseClient
             .from('sequence_influencers')
-            .select('email')
-            .match({ email: sequenceInfluencer.email, company_id: sequenceInfluencer.company_id })
+            .select('iqdata_id, company_id, email')
+            .match({ iqdata_id: sequenceInfluencer.iqdata_id })
             .maybeSingle();
-        if (existingEmail) {
-            throw new Error('Email already exists for this company');
+        if (
+            existingIqdata &&
+            (existingIqdata.company_id === sequenceInfluencer.company_id ||
+                existingIqdata.email === sequenceInfluencer.email)
+        ) {
+            throw new Error('Influencer already exists for this company');
         }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')

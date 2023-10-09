@@ -10,10 +10,10 @@ export interface ChatContentProps {
     isSearchLoading: boolean;
     isUnlockOutreachLoading: boolean;
     shouldShowButtons: boolean;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     stopBoostbot: () => void;
-    shortenedButtons: boolean;
+    areChatActionsDisabled: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -21,10 +21,10 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     isSearchLoading,
     isUnlockOutreachLoading,
     shouldShowButtons,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     stopBoostbot,
-    shortenedButtons,
+    areChatActionsDisabled,
 }) => {
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
@@ -45,17 +45,19 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                 <div className="z-10 flex flex-wrap gap-2">
                     <Button
                         data-testid="boostbot-button-unlock"
-                        onClick={handlePageToUnlock}
-                        disabled={isUnlockOutreachLoading}
+                        onClick={handleSelectedInfluencersToUnlock}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
+                        {t('boostbot.chat.unlockSelected')}
                     </Button>
                     <Button
                         data-testid="boostbot-button-outreach"
-                        onClick={handlePageToOutreach}
-                        disabled={isUnlockOutreachLoading}
+                        onClick={handleSelectedInfluencersToOutreach}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
+                        {t('boostbot.chat.outreachSelected')}
                     </Button>
                 </div>
             )}

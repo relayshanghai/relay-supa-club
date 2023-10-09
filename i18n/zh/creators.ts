@@ -12,6 +12,7 @@ const creators = {
     searchResultError: '无法获取搜索结果',
     clearFilter: '清除筛选',
     failedToFetchReport: '无法获取报告',
+    accountExpired: '你的免费试用已到期。你可在升级帐户后继续使用此功能。',
     subscribers: '粉丝',
     avgViews: '平均观看量',
     engagements: '互动次数',

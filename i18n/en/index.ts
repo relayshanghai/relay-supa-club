@@ -19,6 +19,7 @@ import manager from './manager';
 import profile from './profile';
 import faq from './faq';
 import banner from './banner';
+import geolocations from './geolocations';
 
 const translations = {
     translation: {
@@ -43,6 +44,7 @@ const translations = {
         profile,
         faq,
         banner,
+        geolocations,
     },
 };
 export default translations;

@@ -1,6 +1,8 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const CLEAR_FILTERS = 'Search Filter Modal, Clear search filters'; // use old name and update view name in mixpanel to 'Clear Filters'
+// Event names:
+// - Search Filter Modal, Clear search filters
+export const CLEAR_FILTERS = 'Clear Filters';
 
 export type ClearFiltersPayload = EventPayload<{
     batch_id: number;

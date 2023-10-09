@@ -1,20 +1,34 @@
 const boostbot = {
+    filters: {
+        modalTitle: 'Basic Filters',
+        fromPlatform: 'Show me influencers from',
+        fromGeos: 'who have followers in',
+        addMoreGeos: 'Add more',
+        selectGeo: 'Select a location',
+        advancedFilters: 'Advanced Filters',
+        advancedFiltersTooltip: 'This feature is not yet available',
+        updateFilters: 'Update',
+        atLeast: 'at least',
+        inLocation: 'of their followers must be in {{location}}',
+    },
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
 
-Please send me an English description of your product and I'll recommend influencers to promote it on social media.
+Please send me a description of your product - in any language - and I'll recommend influencers to promote it on YouTube, TikTok, and Instagram.
 
-For example: "IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"`,
+For example: “A lightweight and foldable mini camera drone with 4K HDR video”`,
+        noInfluencersFound:
+            "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
         influencersFound:
-            'I handpicked the {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
+            'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
+        influencersFoundAddToSequence:
+            'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
+        influencersFoundNextSteps: 'What would you like to do?',
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        noInfluencersToUnlock: 'It looks like you already unlocked all influencers on the current page',
-        unlockPage: 'Unlock influencers on current page',
-        unlockPageShort: 'Unlock page',
-        outreachPage: 'Email influencers on current page',
-        outreachPageShort: 'Email page',
+        unlockSelected: 'Unlock selected influencers',
+        outreachSelected: 'Add selected influencers to Sequence',
         progress: {
             step1: 'Generating topics and niches',
             step2: 'Browsing through millions of influencers in our database',
@@ -25,22 +39,21 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
         unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
 
 Tip: You can also unlock influencers one by one.`,
-        outreachDone: `Great. I'm scheduling the emails now.
-
-Tip: You can check the email status on “<customLink>Outreach</customLink>”`,
+        outreachDone:
+            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
-        hasUsedOutreach: `Great. I'm scheduling the emails now.
-
-Tip: You can opt not to email some influencers by taking them out of the list.`,
+        and: 'and',
     },
     table: {
         account: 'Account',
         topPosts: 'Top Posts',
         email: 'Email',
         unlockInfluencer: 'Unlock influencer',
-        removeInfluencer: 'Remove influencer',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
+        selectAll: 'Select all',
+        selectInfluencer: 'Select influencer',
+        selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',
@@ -51,6 +64,8 @@ Tip: You can opt not to email some influencers by taking them out of the list.`,
         influencersToOutreach: 'Adding influencers to outreach failed',
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
         outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
+        expiredAccount:
+            'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
     },
 };
 

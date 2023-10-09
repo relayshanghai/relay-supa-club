@@ -3,8 +3,8 @@ import { ChatContent, type ChatContentProps } from './chat-content';
 import type { MessageType } from 'src/components/boostbot/message';
 
 describe('<ChatContent />', () => {
-    let handlePageToUnlock: () => void;
-    let handlePageToOutreach: () => void;
+    let handleSelectedInfluencersToUnlock: () => void;
+    let handleSelectedInfluencersToOutreach: () => void;
     let stopBoostbot: () => void;
     const messages: MessageType[] = [
         { sender: 'Bot', type: 'text', text: 'test message 1' },
@@ -13,19 +13,19 @@ describe('<ChatContent />', () => {
     let props: ChatContentProps;
 
     beforeEach(() => {
-        handlePageToUnlock = cy.stub();
-        handlePageToOutreach = cy.stub();
+        handleSelectedInfluencersToUnlock = cy.stub();
+        handleSelectedInfluencersToOutreach = cy.stub();
         stopBoostbot = cy.stub();
 
         props = {
             messages,
             isSearchLoading: false,
             shouldShowButtons: true,
-            handlePageToUnlock,
-            handlePageToOutreach,
+            handleSelectedInfluencersToUnlock,
+            handleSelectedInfluencersToOutreach,
             stopBoostbot,
-            shortenedButtons: false,
             isUnlockOutreachLoading: false,
+            areChatActionsDisabled: false,
         };
     });
 
@@ -44,14 +44,22 @@ describe('<ChatContent />', () => {
         cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
     });
 
+    it('Buttons are disabled when chat actions are disabled', () => {
+        props.areChatActionsDisabled = true;
+        testMount(<ChatContent {...props} />);
+
+        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
+        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
+    });
+
     it('Calls correct actions when buttons are clicked', () => {
         testMount(<ChatContent {...props} />);
 
         cy.get('[data-testid="boostbot-button-unlock"]').click();
-        cy.wrap(handlePageToUnlock).should('have.been.called');
+        cy.wrap(handleSelectedInfluencersToUnlock).should('have.been.called');
 
         cy.get('[data-testid="boostbot-button-outreach"]').click();
-        cy.wrap(handlePageToOutreach).should('have.been.called');
+        cy.wrap(handleSelectedInfluencersToOutreach).should('have.been.called');
     });
 
     it('Calls stop action when stop button is clicked', () => {

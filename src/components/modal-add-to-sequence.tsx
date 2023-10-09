@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
-import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
+import { SendInfluencersToOutreach, StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
 import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
@@ -14,6 +13,7 @@ import { Button } from './button';
 import { Info } from './icons';
 import { Modal } from './modal';
 import { randomNumber } from 'src/utils/utils';
+import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -31,7 +31,7 @@ export const AddToSequenceModal = ({
     setShow: (show: boolean) => void;
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
-    setSuppressReportFetch: (suppress: boolean) => void;
+    setSuppressReportFetch?: (suppress: boolean) => void;
     sequence: Sequence | null;
     setSequence: (sequence: Sequence | null) => void;
     setSequenceInfluencer: (sequenceInfluencer: SequenceInfluencer | null) => void;
@@ -56,24 +56,26 @@ export const AddToSequenceModal = ({
     const handleAddToSequence = useCallback(async () => {
         setSubmitting(true);
         let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
-        const trackingPayload: AddInfluencerToSequencePayload & { $add?: any } = {
+        const trackingPayload: Omit<SendInfluencersToOutreachPayload, 'currentPage'> & { $add?: any } = {
             sequence_id: sequence?.id || '',
             influencer_ids: null,
             sequence_influencer_ids: null,
             sequence_influencer_id: null,
             is_success: true,
             is_sequence_autostart: sequence?.auto_start || false,
+            is_multiple: false,
+            topics: null,
         };
         try {
             if (!sequence) {
-                track(AddInfluencerToSequence, {
+                track(SendInfluencersToOutreach, {
                     ...trackingPayload,
                     extra_info: { error: 'Missing sequence' },
                 });
                 throw new Error('Missing selectedSequence');
             }
             if (!creatorProfile.user_id) {
-                track(AddInfluencerToSequence, {
+                track(SendInfluencersToOutreach, {
                     ...trackingPayload,
                     extra_info: { error: 'Missing creatorProfile.user_id' },
                 });
@@ -98,10 +100,10 @@ export const AddToSequenceModal = ({
             trackingPayload.sequence_influencer_ids = [newSequenceInfluencer.id];
             trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             trackingPayload['$add'] = { total_sequence_influencers: 1 };
-            setSuppressReportFetch(false); // will start getting the report.
+            setSuppressReportFetch && setSuppressReportFetch(false); // will start getting the report.
 
             toast.success(t('creators.addToSequenceSuccess'));
-            track(AddInfluencerToSequence, trackingPayload);
+            track(SendInfluencersToOutreach, trackingPayload);
             // when the report is fetched, we will update the sequence influencer row with the report data.
             // It will keep running when the modal is not visible
         } catch (error: any) {
@@ -111,7 +113,7 @@ export const AddToSequenceModal = ({
 
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: errorMessageAndStack };
-            track(AddInfluencerToSequence, trackingPayload);
+            track(SendInfluencersToOutreach, trackingPayload);
             setSubmitting(false);
             return;
         }

@@ -7,6 +7,7 @@ import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useCompany } from 'src/hooks/use-company';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
@@ -19,6 +20,7 @@ export interface SearchResultsTableProps {
     validating: boolean;
     moreResults?: JSX.Element;
     error: any;
+    batchId: number;
 }
 
 // eslint-disable-next-line complexity
@@ -33,9 +35,11 @@ export const SearchResultsTable = ({
     validating,
     moreResults,
     error,
+    batchId,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
+    const { company } = useCompany();
     const noResults = !results || results.length === 0;
 
     const loading = resultsLoading || topSearchLoading || (noResults && validating);
@@ -78,6 +82,16 @@ export const SearchResultsTable = ({
                             </td>
                         </tr>
                     )}
+                    {company?.subscription_status === 'canceled' && (
+                        <tr className="w-full">
+                            <td className="space-y-4 py-4 text-center" colSpan={6}>
+                                <p className="mb-4">{t('creators.accountExpired')}</p>
+                                <Link href="/pricing">
+                                    <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                                </Link>
+                            </td>
+                        </tr>
+                    )}
                     {!error &&
                         !usageExceeded &&
                         noResults &&
@@ -92,24 +106,31 @@ export const SearchResultsTable = ({
                             <td />
                         </tr>
                     )}
-                    {!error && !usageExceeded && !noResults && results && (
-                        <>
-                            {results.map((creator, i) => (
-                                <SearchResultRow
-                                    key={i}
-                                    creator={creator}
-                                    setShowCampaignListModal={setShowCampaignListModal}
-                                    setSelectedCreator={setSelectedCreator}
-                                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                    allCampaignCreators={allCampaignCreators}
-                                    allSequenceInfluencersIqDataIdsAndSequenceNames={
-                                        allSequenceInfluencersIqDataIdsAndSequenceNames
-                                    }
-                                />
-                            ))}
-                            {moreResults}
-                        </>
-                    )}
+                    {!error &&
+                        !usageExceeded &&
+                        !noResults &&
+                        results &&
+                        company?.subscription_status !== 'canceled' && (
+                            <>
+                                {results.map((creator, i) => (
+                                    <SearchResultRow
+                                        key={`${creator.account.user_profile.username}-${creator.account.user_profile.user_id}`}
+                                        creator={creator}
+                                        setShowCampaignListModal={setShowCampaignListModal}
+                                        setSelectedCreator={setSelectedCreator}
+                                        setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                        allCampaignCreators={allCampaignCreators}
+                                        allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                            allSequenceInfluencersIqDataIdsAndSequenceNames
+                                        }
+                                        batchId={batchId}
+                                        page={1}
+                                        resultIndex={i}
+                                    />
+                                ))}
+                                {moreResults}
+                            </>
+                        )}
 
                     {error && (
                         <tr>
