@@ -17,7 +17,7 @@ import sequenceInfluencers from './api/sequence/influencers/sequence-influencers
 import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
 
 import templates from './api/email-engine/templates.json';
-import templateVariablesBySequenceId from './supabase/template_variables/by-sequence-id.json';
+import templateVariablesBySequenceId from './supabase/template_variables/by-sequence-id';
 import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';

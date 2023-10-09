@@ -14,6 +14,7 @@ const sequences = {
     bounceRate: '退信率',
     sequenceSendTooltip: '发送序列邮件',
     sequenceSendTooltipDescription: '这将会安排发送您的序列邮件给这位KOL。',
+    sequenceBatchSendTooltipDescription: '这将会开始向所有选中的KOL发送序列邮件。可能需要几分钟才能完全完成。',
     totalInfluencersTooltip: 'KOL总数',
     totalInfluencersTooltipDescription:
         '这是您添加到邮件进程管理器的所有KOL数量，包括需要急需回复、联络中和未回复的KOL。',
@@ -162,5 +163,8 @@ const sequences = {
     invalidSocialProfileTooltip: '正在更新红人报告',
     invalidSocialProfileTooltipDescription: '正在获取该KOL的最新数据，请耐心等待，预计将在15分钟内完成。',
     invalidSocialProfileTooltipHighlight: '请稍后再试一次。',
+    startSelectedSequences: '开始选中的序列',
+    missingEmail: '缺少邮箱',
+    missingEmailTooltipDescription: '您必须为此KOL添加电子邮件，以便开始此序列。',
 };
 export default sequences;
