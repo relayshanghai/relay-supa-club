@@ -32,7 +32,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (profile) {
             toast.success(t('login.loginSuccess'));
-            router.push('/boostbot');
+            router.push('/');
         }
     }, [profile, router, t]);
 
