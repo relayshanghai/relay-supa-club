@@ -84,7 +84,7 @@ export const updateSequenceInfluencerCall =
     };
 
 /*
- * @note do note use this for updating emails!!!!!!!
+ * @note DO NOT use this for updating emails!!!!!!!
  * Instead use the updateSequenceInfluencerCall which has special logic for updating emails
  */
 export const updateSequenceInfluencersCall =
