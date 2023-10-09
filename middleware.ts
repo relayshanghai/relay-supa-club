@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import type { RelayDatabase } from 'src/utils/api/db';
+import { type RelayDatabase } from 'src/utils/api/db';
+import { supabaseLogger } from 'src/utils/api/db/calls/frontend-logs';
 import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
@@ -68,8 +69,7 @@ const checkOnboardingStatus = async (
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         if (req.nextUrl.pathname.includes('signup')) return res;
-        //eslint-disable-next-line
-        console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
+        supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 72' }); // because either they don't have a session, or they should be awaiting_payment or active etc
     } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
@@ -77,6 +77,7 @@ const checkOnboardingStatus = async (
             req.nextUrl.pathname === '/login' ||
             req.nextUrl.pathname.includes('/signup')
         ) {
+            supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 80' });
             redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
@@ -99,6 +100,7 @@ const checkOnboardingStatus = async (
 
     // should never reach here.
     redirectUrl.pathname = '/signup';
+    supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 103' });
     return NextResponse.redirect(redirectUrl);
 };
 
@@ -153,6 +155,7 @@ export async function middleware(req: NextRequest) {
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
+    supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 158' });
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
@@ -176,6 +179,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/signup') return res;
     redirectUrl.pathname = '/';
+    supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 182' });
     return NextResponse.redirect(redirectUrl);
 }
 
