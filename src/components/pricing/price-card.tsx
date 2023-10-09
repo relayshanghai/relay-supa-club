@@ -29,6 +29,14 @@ const disableButton = (
     subscription?: SubscriptionGetResponse,
     company?: CompanyDB,
 ) => {
+    // eslint-disable-next-line no-console
+    console.log(subscription);
+    // eslint-disable-next-line no-console
+    console.log(tier);
+    // eslint-disable-next-line no-console
+    console.log(period);
+    // eslint-disable-next-line no-console
+    console.log(company?.subscription_status);
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
