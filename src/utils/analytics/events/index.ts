@@ -58,8 +58,6 @@ import {
     OUTREACH_START_SEQUENCE_FOR_INFLUENCER,
     StartSequenceForInfluencer,
 } from './outreach/start-sequence-for-influencer';
-import type { RemoveBoostbotKolPayload } from './remove-boostbot-kol';
-import { REMOVE_BOOSTBOT_KOL, RemoveBoostbotKol } from './remove-boostbot-kol';
 import type { SearchPayload } from './search';
 import { SEARCH as SEARCH_KEY, Search } from './search';
 import type { SearchAddToCampaignPayload } from './search-add_to_campaign';
@@ -183,6 +181,8 @@ import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
 import type { ChangePasswordPayload } from './change-password';
 import { CHANGE_PASSWORD, ChangePassword } from './change-password';
+import type { VisitPagePayload } from './visit-page';
+import { VISIT_PAGE, VisitPage } from './visit-page';
 import type { CompleteSignupStepPayload } from './onboarding/complete-signup-step';
 import { COMPLETE_SIGNUP_STEP, CompleteSignupStep } from './onboarding/complete-signup-step';
 
@@ -213,7 +213,6 @@ export {
     SendInfluencersToOutreach,
     OpenSocialProfile,
     OpenAnalyzeProfile,
-    RemoveBoostbotKol,
     ChangePage,
     StopBoostbot,
     OpenSocialThumbnails,
@@ -241,6 +240,7 @@ export {
     PayForUpgradedPlan,
     UpdateProfileInfo,
     ChangePassword,
+    VisitPage,
     CompleteSignupStep,
 };
 
@@ -273,7 +273,6 @@ export const events = {
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfile,
-    [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKol,
     [CHANGE_PAGE]: ChangePage,
     [STOP_BOOSTBOT]: StopBoostbot,
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnails,
@@ -328,6 +327,7 @@ export const events = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
     [CHANGE_PASSWORD]: ChangePassword,
+    [VISIT_PAGE]: VisitPage,
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStep,
 };
 
@@ -360,7 +360,6 @@ export type payloads = {
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfilePayload;
-    [REMOVE_BOOSTBOT_KOL]: RemoveBoostbotKolPayload;
     [CHANGE_PAGE]: ChangePagePayload;
     [STOP_BOOSTBOT]: StopBoostbotPayload;
     [OPEN_SOCIAL_THUMBNAILS]: OpenSocialThumbnailsPayload;
@@ -415,6 +414,7 @@ export type payloads = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
     [CHANGE_PASSWORD]: ChangePasswordPayload;
+    [VISIT_PAGE]: VisitPagePayload;
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStepPayload;
 };
 
@@ -449,7 +449,6 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
     z.literal(OPEN_ANALYZE_PROFILE),
-    z.literal(REMOVE_BOOSTBOT_KOL),
     z.literal(CHANGE_PAGE),
     z.literal(STOP_BOOSTBOT),
     z.literal(OPEN_SOCIAL_THUMBNAILS),
@@ -504,6 +503,7 @@ export const eventKeys = z.union([
     z.literal(PAY_FOR_UPGRADED_PLAN),
     z.literal(UPDATE_PROFILE_INFO),
     z.literal(CHANGE_PASSWORD),
+    z.literal(VISIT_PAGE),
     z.literal(COMPLETE_SIGNUP_STEP),
 ]);
 

@@ -668,8 +668,10 @@ DO $$
 DECLARE
   _company_test RECORD;
   _company_relay RECORD;
+  _company_expired RECORD;
   _profile_william RECORD;
   _profile_christopher RECORD;
+  _profile_expired RECORD;
   _campaign_beauty_for_all RECORD;
   _sequence_general RECORD;
   _campaign_gaming RECORD;
@@ -708,6 +710,7 @@ DECLARE
 BEGIN
   -- Test Company
   _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
+  _company_expired := create_company('Expired Company', 'https://expired-company.com', 'canceled');
 
   PERFORM create_company_category(_company_test.id, 'Video Game Streaming');
 
@@ -728,6 +731,16 @@ BEGIN
     'company_teammate',
     null,
     null
+  );
+
+  _profile_expired := create_profile(
+    _company_expired.id,
+    'expired_user@expired.com',
+    'Expired',
+    'User',
+    'company_owner',
+    'e7ustgsqqvy9al6f',
+    'expired_user@example.com'
   );
 
   _campaign_beauty_for_all := create_campaign(

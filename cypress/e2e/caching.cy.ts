@@ -26,7 +26,7 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes').should('not.exist', { timeout: 2500 }); // report is not loaded yet
 
         cy.contains('Generating influencer Report. Please wait'); // loading analyze page
-        cy.contains('Cocomelon - Nursery Rhymes'); // loads analyze page
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 10000 }); // loads analyze page
 
         cy.intercept('/api/creators/report*', (req) => {
             req.reply({ body: cocomelon, delay: 10000 });

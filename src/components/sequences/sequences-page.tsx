@@ -67,8 +67,8 @@ export const SequencesPage = () => {
             {!profile?.email_engine_account_id && (
                 <Banner
                     buttonText={t('banner.button')}
-                    title={t('banner.title')}
-                    message={t('banner.descriptionSequences')}
+                    title={t('banner.outreach.title')}
+                    message={t('banner.outreach.descriptionSequences')}
                 />
             )}
             <DeleteSequenceModal
