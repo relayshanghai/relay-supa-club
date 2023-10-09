@@ -62,7 +62,7 @@ const checkOnboardingStatus = async (
         // for new user signup. We have checks in the next endpoint
         return res;
     }
-    const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
+    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
@@ -83,6 +83,34 @@ const checkOnboardingStatus = async (
 
         // Authentication successful, forward request to protected route.
         return res;
+    } else if (subscriptionStatus === 'canceled') {
+        // if subscription ended only allow access to account page, and subscription endpoints
+        //handle landing page - index page separately
+        if (req.nextUrl.pathname === '/') return res;
+        const allowedPaths = [
+            '/signup',
+            '/free-trial',
+            '/login',
+            '/account',
+            '/api/subscriptions',
+            '/api/company',
+            '/pricing',
+            '/payments',
+        ];
+        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
+        else {
+            if (!subscriptionEndDate) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            }
+            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
+            const endDate = new Date(subscriptionEndDate);
+            if (endDate < new Date()) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            } else return res;
+        }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (
