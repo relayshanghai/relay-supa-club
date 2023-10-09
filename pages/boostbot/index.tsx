@@ -22,11 +22,8 @@ const Boostbot = () => {
     // const { t } = useTranslation();
     const { unlockInfluencers: _unlockInfluencersTest } = useBoostbot({});
     const [_isInitialLogoScreen, _setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, _setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
-    const [selectedInfluencers, _setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
-        'boostbot-selected-influencers',
-        {},
-    );
+    const [influencers, _setInfluencers] = usePersistentState('boostbot-influencers', []);
+    const [selectedInfluencers, _setSelectedInfluencers] = usePersistentState('boostbot-selected-influencers', {});
     const _selectedInfluencersData = Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]);
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
