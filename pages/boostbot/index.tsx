@@ -22,12 +22,8 @@ import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/event
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, UserProfile } from 'types';
-import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
+import { getFulfilledData } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
-import { useUsages } from 'src/hooks/use-usages';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
-import { featNewPricing } from 'src/constants/feature-flags';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
@@ -71,60 +67,60 @@ const Boostbot = () => {
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
-    const [isSearchDisabled, setIsSearchDisabled] = useState(false);
-    const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
-    const { subscription } = useSubscription();
+    const [isSearchDisabled, _setIsSearchDisabled] = useState(false);
+    const [areChatActionsDisabled, _setAreChatActionsDisabled] = useState(false);
+    // const { subscription } = useSubscription();
     const { company } = useCompany();
-    const periodStart = unixEpochToISOString(subscription?.current_period_start);
-    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    // const periodStart = unixEpochToISOString(subscription?.current_period_start);
+    // const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
 
-    const { usages, isUsageLoaded, refreshUsages } = useUsages(
-        true,
-        featNewPricing() && periodStart && periodEnd
-            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
-            : periodStart
-            ? getCurrentMonthPeriod(new Date(periodStart))
-            : undefined,
-    );
+    // const { usages, isUsageLoaded, refreshUsages } = useUsages(
+    //     true,
+    //     featNewPricing() && periodStart && periodEnd
+    //         ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
+    //         : periodStart
+    //         ? getCurrentMonthPeriod(new Date(periodStart))
+    //         : undefined,
+    // );
 
-    useEffect(() => {
-        refreshUsages();
-    }, [influencers, refreshUsages]);
+    // useEffect(() => {
+    //     refreshUsages();
+    // }, [influencers, refreshUsages]);
 
-    useEffect(() => {
-        if (isSearchLoading || !isUsageLoaded) return;
-        if (usages.search.remaining < 5) {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.error.outOfSearchCredits',
-                translationLink: '/pricing',
-            });
-            setIsSearchDisabled(true);
-        }
-        if (usages.profile.remaining <= 0) {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.error.outOfProfileCredits',
-                translationLink: '/pricing',
-            });
-            setAreChatActionsDisabled(true);
-        }
-        if (company?.subscription_status === 'canceled') {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.error.expiredAccount',
-                translationLink: '/pricing',
-            });
-            setIsSearchDisabled(true);
-            setAreChatActionsDisabled(true);
-        }
-        // Omitting 't' from the dependencies array to not resend messages when language is changed.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
+    // useEffect(() => {
+    //     if (isSearchLoading || !isUsageLoaded) return;
+    //     if (usages.search.remaining < 5) {
+    //         addMessage({
+    //             sender: 'Bot',
+    //             type: 'translation',
+    //             translationKey: 'boostbot.error.outOfSearchCredits',
+    //             translationLink: '/pricing',
+    //         });
+    //         setIsSearchDisabled(true);
+    //     }
+    //     if (usages.profile.remaining <= 0) {
+    //         addMessage({
+    //             sender: 'Bot',
+    //             type: 'translation',
+    //             translationKey: 'boostbot.error.outOfProfileCredits',
+    //             translationLink: '/pricing',
+    //         });
+    //         setAreChatActionsDisabled(true);
+    //     }
+    //     if (company?.subscription_status === 'canceled') {
+    //         addMessage({
+    //             sender: 'Bot',
+    //             type: 'translation',
+    //             translationKey: 'boostbot.error.expiredAccount',
+    //             translationLink: '/pricing',
+    //         });
+    //         setIsSearchDisabled(true);
+    //         setAreChatActionsDisabled(true);
+    //     }
+    //     // Omitting 't' from the dependencies array to not resend messages when language is changed.
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
     const [messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
@@ -258,7 +254,7 @@ const Boostbot = () => {
         try {
             const alreadyUnlockedInfluencers = selectedInfluencersData.filter(isUserProfile);
             const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : selectedInfluencersData;
+                company?.subscription_status === 'canceled' ? alreadyUnlockedInfluencers : selectedInfluencersData;
             const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
 
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
