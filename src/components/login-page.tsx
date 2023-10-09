@@ -12,6 +12,7 @@ import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PasswordReset } from 'src/utils/analytics/events';
 import { SignupStarted } from 'src/utils/analytics/events';
+import { supabaseLogger } from 'src/utils/api/db/calls/frontend-logs';
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -32,11 +33,10 @@ const LoginPage = () => {
     useEffect(() => {
         if (profile) {
             toast.success(t('login.loginSuccess'));
-            // eslint-disable-next-line no-console
-            console.log('pushing to boostbot');
+            supabaseLogger(supabaseClient)({ type: 'login-bug', message: 'login-page log: line 36' });
             router.push('/boostbot');
         }
-    }, [profile, router, t]);
+    }, [profile, router, t, supabaseClient]);
 
     useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
