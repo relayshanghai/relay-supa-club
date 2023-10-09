@@ -3,8 +3,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import { type RelayDatabase } from 'src/utils/api/db';
-import { supabaseLogger } from 'src/utils/api/db/calls/frontend-logs';
+import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
@@ -63,27 +62,55 @@ const checkOnboardingStatus = async (
         // for new user signup. We have checks in the next endpoint
         return res;
     }
-    const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
+    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         if (req.nextUrl.pathname.includes('signup')) return res;
-        await supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 72' }); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
+        //eslint-disable-next-line
+        console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
+    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
             req.nextUrl.pathname === '/login' ||
             req.nextUrl.pathname.includes('/signup')
         ) {
-            await supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 80' });
             redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
 
         // Authentication successful, forward request to protected route.
         return res;
+    } else if (subscriptionStatus === 'canceled') {
+        // if subscription ended only allow access to account page, and subscription endpoints
+        //handle landing page - index page separately
+        if (req.nextUrl.pathname === '/') return res;
+        const allowedPaths = [
+            '/signup',
+            '/free-trial',
+            '/login',
+            '/account',
+            '/api/subscriptions',
+            '/api/company',
+            '/pricing',
+            '/payments',
+        ];
+        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
+        else {
+            if (!subscriptionEndDate) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            }
+            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
+            const endDate = new Date(subscriptionEndDate);
+            if (endDate < new Date()) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            } else return res;
+        }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (
@@ -100,7 +127,6 @@ const checkOnboardingStatus = async (
 
     // should never reach here.
     redirectUrl.pathname = '/signup';
-    await supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 103' });
     return NextResponse.redirect(redirectUrl);
 };
 
@@ -155,7 +181,6 @@ export async function middleware(req: NextRequest) {
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
-    await supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 158' });
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
@@ -179,7 +204,6 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/signup') return res;
     redirectUrl.pathname = '/';
-    await supabaseLogger(supabase)({ type: 'login-bug', message: 'middleware log: line 182' });
     return NextResponse.redirect(redirectUrl);
 }
 
