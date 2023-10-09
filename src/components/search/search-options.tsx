@@ -14,6 +14,7 @@ import SearchHashtags from './search-hashtags';
 import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { clientLogger } from 'src/utils/logger-client';
+import { useCompany } from 'src/hooks/use-company';
 
 export const SearchOptions = ({
     setPage,
@@ -28,6 +29,7 @@ export const SearchOptions = ({
     searchType: string | null;
     onSearchTypeChange: (searchType: string) => void;
 }) => {
+    const { company } = useCompany();
     const {
         platform,
         tags,
@@ -231,7 +233,12 @@ export const SearchOptions = ({
                             <Button
                                 data-testid="search-button"
                                 className="col-span-1 h-full"
-                                onClick={(e) => handleSearch(e)}
+                                onClick={(e) => {
+                                    if (company?.subscription_status === 'canceled') {
+                                        return;
+                                    }
+                                    handleSearch(e);
+                                }}
                             >
                                 {t('campaigns.index.search')}
                             </Button>

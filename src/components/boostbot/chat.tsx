@@ -21,7 +21,7 @@ import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
-import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
@@ -42,13 +42,12 @@ interface ChatProps {
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     handleUnlockInfluencers: (
         influencers: Influencer[],
         freeOfCharge: boolean,
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
-    shortenedButtons: boolean;
     isSearchDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
@@ -67,10 +66,9 @@ export const Chat: React.FC<ChatProps> = ({
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     handleUnlockInfluencers,
-    shortenedButtons,
     isSearchDisabled,
     setSearchId,
     sequence,
@@ -97,6 +95,23 @@ export const Chat: React.FC<ChatProps> = ({
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
+    const geolocationsToString = (geolocations: AudienceGeo[]) => {
+        const and = t('boostbot.chat.and');
+
+        const getTranslatedCountryName = (id: number) => {
+            const countryCode = countries.find((country) => country.id === id)?.country.code;
+            if (!countryCode) return 'Invalid country code';
+            return t(`geolocations.countries.${countryCode}`);
+        };
+        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
+
+        if (translatedCountries.length === 2) {
+            return translatedCountries.join(` ${and} `);
+        } else {
+            return translatedCountries.join(', ');
+        }
+    };
+
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
@@ -121,14 +136,14 @@ export const Chat: React.FC<ChatProps> = ({
             { sender: 'Neutral', type: 'progress', progressData: progress },
         ]);
 
-    const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockPage' });
-        handlePageToUnlock();
+    const chatSelectedInfluencersToUnlock = () => {
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
+        handleSelectedInfluencersToUnlock();
     };
 
-    const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachPage' });
-        handlePageToOutreach();
+    const chatSelectedInfluencersToOutreach = () => {
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
+        handleSelectedInfluencersToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
@@ -189,7 +204,33 @@ export const Chat: React.FC<ChatProps> = ({
                     sender: 'Bot',
                     type: 'translation',
                     translationKey: 'boostbot.chat.influencersFound',
-                    translationValues: { count: influencers.length },
+                    translationValues: {
+                        count: influencers.length,
+                        geolocations: geolocationsToString(filters.audience_geo),
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                    translationLink: '/sequences',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/sequence-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundNextSteps',
                 });
             } else {
                 addMessage({
@@ -204,7 +245,7 @@ export const Chat: React.FC<ChatProps> = ({
                     eventToTrack: OpenVideoGuideModal.eventName,
                 });
             }
-            document.dispatchEvent(new Event('influencerTableSetFirstPage'));
+            document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
             track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -228,7 +269,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ModalSequenceSelector
                 show={showSequenceSelector}
                 setShow={setShowSequenceSelector}
-                handleAddToSequence={chatPageToOutreach}
+                handleAddToSequence={chatSelectedInfluencersToOutreach}
                 sequence={sequence}
                 setSequence={setSequence}
                 sequences={sequences || []}
@@ -251,12 +292,11 @@ export const Chat: React.FC<ChatProps> = ({
                 shouldShowButtons={shouldShowButtons}
                 isSearchLoading={isSearchLoading}
                 isUnlockOutreachLoading={isUnlockOutreachLoading}
-                handlePageToUnlock={chatPageToUnlock}
-                handlePageToOutreach={() => {
+                handleSelectedInfluencersToUnlock={chatSelectedInfluencersToUnlock}
+                handleSelectedInfluencersToOutreach={() => {
                     setShowSequenceSelector(true);
                 }}
                 stopBoostbot={stopBoostbot}
-                shortenedButtons={shortenedButtons}
                 areChatActionsDisabled={areChatActionsDisabled}
             />
 
