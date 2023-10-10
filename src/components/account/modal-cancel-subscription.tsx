@@ -5,7 +5,6 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { CANCEL_SUBSCRIPTION_MODAL } from 'src/utils/rudderstack/event-names';
 
 export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
     const { t } = useTranslation();
@@ -19,7 +18,8 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
         try {
             const result = await cancelSubscription();
             if (result?.status) toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
-            trackEvent(CANCEL_SUBSCRIPTION_MODAL('canceled subscription'));
+            // @note previous name: Cancel Subscription Modal, canceled subscription
+            trackEvent('Cancel Subscription');
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,
