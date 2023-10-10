@@ -22,7 +22,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
+import type { CreatorPlatform, UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -34,8 +34,6 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
 import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
-import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
-import { updateSequenceInfluencerIfSocialProfileAvailable } from 'src/components/sequences/helpers';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -73,7 +71,7 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((s) => s.id),
     );
@@ -260,41 +258,33 @@ const Boostbot = () => {
         };
 
         try {
-            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+            const unlockedInfluencers = await handleUnlockInfluencers(influencersToOutreach);
 
-            if (!selectedInfluencersData) {
+            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
+
+            if (!unlockedInfluencers) {
                 throw new Error('Error unlocking influencers');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
-            const topics: string[] = [];
-            selectedInfluencersData.forEach((influencer) => {
-                influencer.topics.forEach((topic) => {
-                    if (!topics.includes(topic)) {
-                        topics.push(topic);
-                    }
-                });
-            });
-            trackingPayload.topics = topics;
 
-            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
-                const creatorProfileId = influencer.user_id;
+            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
+                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
+                const creatorProfileId = influencer.user_profile.user_id;
 
                 trackingPayload.influencer_ids.push(creatorProfileId);
+                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                const platform = extractPlatformFromURL(influencer.url);
-                if (!platform) {
-                    throw new Error('Error creating sequence influencer: no platform detected');
-                }
                 return createSequenceInfluencer({
                     iqdata_id: creatorProfileId,
-                    avatar_url: influencer.picture ?? '',
-                    platform,
-                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
-                    username: influencer.handle ?? influencer.username ?? '',
-
-                    url: influencer.url,
+                    influencer_social_profile_id: influencer.socialProfile.id,
+                    tags,
+                    avatar_url: influencer.socialProfile.avatar_url ?? '',
+                    name: influencer.socialProfile.name || '',
+                    platform: influencer.socialProfile.platform as CreatorPlatform,
+                    username: influencer.socialProfile.username,
+                    url: influencer.socialProfile.url,
                     sequence_id: sequence?.id,
                 });
             });
@@ -322,25 +312,6 @@ const Boostbot = () => {
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
-            }
-
-            // get all the reports and update the influencers. If this doesn't finish it doesn't matter because in the sequence-row we fetch the report if there is none.
-            const unlockedInfluencers = await handleUnlockInfluencers(selectedInfluencersData);
-            if (!unlockedInfluencers) {
-                return;
-            }
-            for (const { socialProfile, influencer, ...report } of unlockedInfluencers) {
-                const sequenceInfluencer = sequenceInfluencers.find((si) => si.id === influencer.id);
-                if (!sequenceInfluencer) {
-                    continue;
-                }
-                await updateSequenceInfluencerIfSocialProfileAvailable({
-                    sequenceInfluencer,
-                    socialProfile,
-                    report,
-                    updateSequenceInfluencer,
-                    company_id: profile?.company_id ?? '',
-                });
             }
         } catch (error) {
             clientLogger(error, 'error');
