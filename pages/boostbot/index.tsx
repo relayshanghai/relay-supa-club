@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
@@ -21,7 +22,7 @@ import {
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, UserProfile } from 'types';
+import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -33,6 +34,8 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
 import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import { updateSequenceInfluencerIfSocialProfileAvailable } from 'src/components/sequences/helpers';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -50,7 +53,10 @@ const Boostbot = () => {
         'boostbot-selected-influencers',
         {},
     );
-    const selectedInfluencersData = Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]);
+    const selectedInfluencersData =
+        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
+
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
@@ -68,7 +74,10 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((s) => s.id),
+    );
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
@@ -213,12 +222,15 @@ const Boostbot = () => {
 
     const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const handleSelectedInfluencersToUnlock = async () => {
-        const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
-        if (influencersToUnlock.length === 0) {
-            return;
-        }
+    const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
+    const influencersToOutreach = selectedInfluencersData.filter(
+        (i) => !allSequenceInfluencers.find((si) => si.iqdata_id === i?.user_id),
+    );
 
+    const isUnlockButtonDisabled = influencersToUnlock.length === 0;
+    const isOutreachButtonDisabled = influencersToOutreach.length === 0;
+
+    const handleSelectedInfluencersToUnlock = async () => {
         setIsUnlockOutreachLoading(true);
 
         const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
@@ -231,13 +243,6 @@ const Boostbot = () => {
             translationLink: '/pricing',
             translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
-        // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-        // addMessage({
-        //     sender: 'Bot',
-        //     type: 'video',
-        //     videoUrl: '/assets/videos/delete-guide.mp4',
-        //     eventToTrack: OpenVideoGuideModal.eventName,
-        // });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
@@ -259,49 +264,48 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = selectedInfluencersData.filter(isUserProfile);
-            const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : selectedInfluencersData;
-            const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
 
-            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
-
-            if (!unlockedInfluencers) {
+            if (!selectedInfluencersData) {
                 throw new Error('Error unlocking influencers');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
 
-            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
-                const creatorProfileId = influencer.user_profile.user_id;
+            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+                const creatorProfileId = influencer.user_id;
 
                 if (trackingPayload.influencer_ids !== null) {
                     trackingPayload.influencer_ids.push(creatorProfileId);
                 }
 
                 if (trackingPayload.topics !== null) {
-                    trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+                    trackingPayload.topics.push(...influencer.topics.map((v) => v));
                 }
 
+                const platform = extractPlatformFromURL(influencer.url);
+                if (!platform) {
+                    throw new Error('Error creating sequence influencer: no platform detected');
+                }
                 return createSequenceInfluencer({
                     iqdata_id: creatorProfileId,
-                    influencer_social_profile_id: influencer.socialProfile.id,
-                    tags,
-                    avatar_url: influencer.socialProfile.avatar_url ?? '',
-                    name: influencer.socialProfile.name || '',
-                    platform: influencer.socialProfile.platform as CreatorPlatform,
-                    username: influencer.socialProfile.username,
-                    url: influencer.socialProfile.url,
+                    avatar_url: influencer.picture ?? '',
+                    platform,
+                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
+                    username: influencer.handle ?? influencer.username ?? '',
+
+                    url: influencer.url,
                     sequence_id: sequence?.id,
                 });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
@@ -320,6 +324,25 @@ const Boostbot = () => {
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
+            }
+
+            // get all the reports and update the influencers. If this doesn't finish it doesn't matter because in the sequence-row we fetch the report if there is none.
+            const unlockedInfluencers = await handleUnlockInfluencers(selectedInfluencersData);
+            if (!unlockedInfluencers) {
+                return;
+            }
+            for (const { socialProfile, influencer, ...report } of unlockedInfluencers) {
+                const sequenceInfluencer = sequenceInfluencers.find((si) => si.id === influencer.id);
+                if (!sequenceInfluencer) {
+                    continue;
+                }
+                await updateSequenceInfluencerIfSocialProfileAvailable({
+                    sequenceInfluencer,
+                    socialProfile,
+                    report,
+                    updateSequenceInfluencer,
+                    company_id: profile?.company_id ?? '',
+                });
             }
         } catch (error) {
             clientLogger(error, 'error');
@@ -366,6 +389,8 @@ const Boostbot = () => {
                         setMessages={setMessages}
                         addMessage={addMessage}
                         isSearchDisabled={isSearchDisabled}
+                        isUnlockButtonDisabled={isUnlockButtonDisabled}
+                        isOutreachButtonDisabled={isOutreachButtonDisabled}
                         setSearchId={setSearchId}
                         setSequence={setSequence}
                         sequence={sequence}
