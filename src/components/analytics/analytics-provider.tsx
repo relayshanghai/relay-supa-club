@@ -12,6 +12,7 @@ import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-s
 import i18n from 'i18n';
 import { formatDate } from 'src/utils/datetime';
 import { useAppcues } from 'src/hooks/useAppcues';
+import { useTranslation } from 'react-i18next';
 
 export const AnalyticsContext = createContext<
     | {
@@ -45,17 +46,17 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
     const rudderstack = useRudder();
     const appcues = useAppcues();
-    const { session, profile, company } = useSession();
-
+    const { session, profile, user, company, subscription } = useSession();
+    const { i18n } = useTranslation();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
 
     useEffect(() => {
-        if (profile !== null && rudderstack) {
-            const { id, traits } = profileToIdentifiable(profile);
+        if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
+            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
             rudderstack.identify(id, traits);
         }
-    }, [rudderstack, profile]);
+    }, [rudderstack, profile, user, company, i18n, subscription]);
 
     useEffect(() => {
         if (profile !== null && company !== null && appcues) {

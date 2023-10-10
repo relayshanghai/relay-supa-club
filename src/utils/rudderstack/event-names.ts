@@ -29,13 +29,7 @@ export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 // Signup Wizard, Pricing Section, click to select DIY Max
 // Signup Wizard, Pricing Section, click to select DIY
 
-export const CAROUSEL = generateEventName('Carousel');
-// Carousel, click to go to previous slide
-// Carousel, click to go to next slide
-// Carousel, go to slide <number>
-
 export const SIGNUP = generateEventName('Signup');
-// Signup, step-<number>
 // Signup, Start free trial success
 // Signup, Start free trial failed
 // Signup, check Terms and Conditions
@@ -76,7 +70,6 @@ export const SEARCH_OPTIONS = generateEventName('Search Options');
 // Search Options, Set keyword
 // Search Options, Set hashtag
 // Search Options, Set topics
-// Search Options, search for an influencer
 // Search Options, change platform
 // Search Options, search topics
 
@@ -186,16 +179,13 @@ export const MANAGE_POSTS_MODAL = generateEventName('Manage Posts Modal');
 export const NAVBAR = generateEventName('Navbar');
 // Navbar, Hamburger Menu Clicked
 
-export const LANGUAGE_TOGGLE = generateEventName('Language Toggle');
 // Language Toggle, Clicked
 // Language Toggle, switch to en-US
 // Language Toggle, switch to zh-CN
 
-export const LOG_IN = generateEventName('Log In');
-// Log In, undefined
-
-export const LOG_OUT = generateEventName('Log Out');
-// Logout, undefined
+// OTHERS
+// Log In, undefined (not in Product-Analytics-Framework)
+// Log Out, undefined
 
 // OTHERS from `trackSearch()`
 // Search Options, Search

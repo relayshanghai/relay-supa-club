@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
+import { RecommendInfluencers, StopBoostbot, OpenVideoGuideModal } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
@@ -14,14 +14,21 @@ import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
-import { mixArrays } from 'src/utils/utils';
-import type { MessageType } from 'pages/boostbot';
+import { mixArrays, randomNumber } from 'src/utils/utils';
+import type { MessageType } from 'src/components/boostbot/message';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { ProgressType } from 'src/components/boostbot/chat-progress';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
+import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
+import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
+import { ModalSequenceSelector } from './modal-sequence-selector';
+import type { Sequence } from 'src/utils/api/db';
 
-export type ProgressType = {
-    topics: string[];
-    isMidway: boolean;
-    totalFound: number | null;
+export type Filters = {
+    platforms: CreatorPlatform[];
+    audience_geo: AudienceGeo[];
 };
 
 interface ChatProps {
@@ -30,18 +37,22 @@ interface ChatProps {
     addMessage: (message: MessageType) => void;
     isUnlockOutreachLoading: boolean;
     isSearchLoading: boolean;
+    areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     handleUnlockInfluencers: (
         influencers: Influencer[],
         freeOfCharge: boolean,
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
-    shortenedButtons: boolean;
     isSearchDisabled: boolean;
+    setSearchId: Dispatch<SetStateAction<string | number | null>>;
+    sequence?: Sequence;
+    setSequence: (sequence: Sequence | undefined) => void;
+    sequences?: Sequence[];
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -50,57 +61,98 @@ export const Chat: React.FC<ChatProps> = ({
     addMessage,
     isUnlockOutreachLoading,
     isSearchLoading,
+    areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     handleUnlockInfluencers,
-    shortenedButtons,
     isSearchDisabled,
+    setSearchId,
+    sequence,
+    setSequence,
+    sequences,
 }) => {
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+        platforms: ['youtube', 'tiktok', 'instagram'],
+        audience_geo: [
+            { id: countriesByCode.US.id, weight: 0.15 },
+            { id: countriesByCode.CA.id, weight: 0.1 },
+        ],
+    });
+    let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
     const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
+    const geolocationsToString = (geolocations: AudienceGeo[]) => {
+        const and = t('boostbot.chat.and');
+
+        const getTranslatedCountryName = (id: number) => {
+            const countryCode = countries.find((country) => country.id === id)?.country.code;
+            if (!countryCode) return 'Invalid country code';
+            return t(`geolocations.countries.${countryCode}`);
+        };
+        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
+
+        if (translatedCountries.length === 2) {
+            return translatedCountries.join(` ${and} `);
+        } else {
+            return translatedCountries.join(', ');
+        }
+    };
+
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.stopped')}` });
+        addMessage({
+            sender: 'User',
+            type: 'translation',
+            translationKey: 'boostbot.chat.stopped',
+        });
         setMessages((prevMessages) => {
-            const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
+            const lastProgressIndex = prevMessages.findLastIndex((message) => message.type === 'progress');
             return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
         });
         track(StopBoostbot, {
             currentPage: CurrentPageEvent.boostbot,
+            search_id: searchId,
         });
     };
 
     const updateProgress = (progress: ProgressType) =>
-        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', progress }]);
+        setMessages((messages) => [
+            ...messages.slice(0, -1),
+            { sender: 'Neutral', type: 'progress', progressData: progress },
+        ]);
 
-    const chatPageToUnlock = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.unlockPage')}` });
-        handlePageToUnlock();
+    const chatSelectedInfluencersToUnlock = () => {
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
+        handleSelectedInfluencersToUnlock();
     };
 
-    const chatPageToOutreach = () => {
-        addMessage({ sender: 'User', content: `${t('boostbot.chat.outreachPage')}` });
-        handlePageToOutreach();
+    const chatSelectedInfluencersToOutreach = () => {
+        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
+        handleSelectedInfluencersToOutreach();
     };
 
     const onSendMessage = async (productDescription: string) => {
+        searchId = randomNumber();
+        setSearchId(searchId);
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'User', content: productDescription },
-            { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
+            { sender: 'User', type: 'text', text: productDescription },
+            { sender: 'Neutral', type: 'progress', progressData: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsSearchLoading(true);
 
@@ -111,6 +163,7 @@ export const Chat: React.FC<ChatProps> = ({
             valid_topics: [],
             recommended_influencers: [],
             is_success: true,
+            search_id: searchId,
         };
 
         try {
@@ -121,7 +174,11 @@ export const Chat: React.FC<ChatProps> = ({
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
-                const influencers = await getInfluencers({ topicClusters, platform });
+                const influencerPayloads = topicClusters.map((topics) =>
+                    createBoostbotInfluencerPayload({ platform, filters, topics }),
+                );
+
+                const influencers = await getInfluencers(influencerPayloads);
 
                 payload.valid_topics.push(...relevantTopics);
                 payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
@@ -129,12 +186,11 @@ export const Chat: React.FC<ChatProps> = ({
                 return influencers;
             };
 
-            const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-            const parallelSearchPromises = platforms.map((platform) =>
+            const parallelSearchPromises = filters.platforms.map((platform) =>
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
-            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
-            const influencers = mixArrays(youtube, tiktok, instagram).filter((i) => !!i.url);
+            const searchResults = await Promise.all(parallelSearchPromises);
+            const influencers = mixArrays(searchResults).filter((i) => !!i.url);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -143,11 +199,53 @@ export const Chat: React.FC<ChatProps> = ({
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
-            addMessage({
-                sender: 'Bot',
-                content: t('boostbot.chat.influencersFound', { count: influencers.length }) || '',
-            });
-            document.dispatchEvent(new Event('influencerTableSetFirstPage'));
+            if (influencers.length > 0) {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFound',
+                    translationValues: {
+                        count: influencers.length,
+                        geolocations: geolocationsToString(filters.audience_geo),
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                    translationLink: '/sequences',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/sequence-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.influencersFoundNextSteps',
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.noInfluencersFound',
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'video',
+                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    eventToTrack: OpenVideoGuideModal.eventName,
+                });
+            }
+            document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
             track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -168,21 +266,38 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={chatSelectedInfluencersToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
 
+            <SearchFiltersModal
+                isOpen={isFiltersModalOpen}
+                setIsOpen={setIsFiltersModalOpen}
+                filters={filters}
+                setFilters={setFilters}
+            />
+
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
                 isSearchLoading={isSearchLoading}
                 isUnlockOutreachLoading={isUnlockOutreachLoading}
-                handlePageToUnlock={chatPageToUnlock}
-                handlePageToOutreach={chatPageToOutreach}
+                handleSelectedInfluencersToUnlock={chatSelectedInfluencersToUnlock}
+                handleSelectedInfluencersToOutreach={() => {
+                    setShowSequenceSelector(true);
+                }}
                 stopBoostbot={stopBoostbot}
-                shortenedButtons={shortenedButtons}
+                areChatActionsDisabled={areChatActionsDisabled}
             />
 
             <div className="relative">
@@ -192,6 +307,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isUnlockOutreachLoading}
                     onSendMessage={onSendMessage}
+                    openFiltersModal={() => setIsFiltersModalOpen(true)}
                 />
             </div>
         </div>

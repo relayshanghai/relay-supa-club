@@ -1,12 +1,15 @@
 import type { TriggerEvent } from '../types';
-import type { CurrentPageEvent } from './current-pages';
 
-export const CHANGE_PAGE = 'Change Page';
+// Event names:
+// - Change Page
+export const CHANGE_PAGE = 'Change Search Result Page';
 
 export type ChangePagePayload = {
-    currentPage: CurrentPageEvent;
     from_page: number;
     to_page: number | null;
+    search_id: string | number | null;
+    // current_page_unlocks: boolean,
+    // current_page_add: boolean,
 };
 
 export const ChangePage = (trigger: TriggerEvent, value?: ChangePagePayload) => trigger(CHANGE_PAGE, { ...value });

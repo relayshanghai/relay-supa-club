@@ -1,11 +1,15 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_CREATE_SEQUENCE = 'outreach-create_sequence';
+// Event names:
+// - outreach-create_sequence
+export const OUTREACH_CREATE_SEQUENCE = 'Create Sequence';
 
 export type CreateSequencePayload = EventPayload<{
     sequence_id: string | null;
+    sequence_name: string;
     is_success: boolean;
     extra_info?: any;
+    // product: string
 }>;
 
 export const CreateSequence = (trigger: TriggerEvent<CreateSequencePayload>, payload?: CreateSequencePayload) =>

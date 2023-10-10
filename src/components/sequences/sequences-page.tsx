@@ -47,8 +47,8 @@ export const SequencesPage = () => {
         try {
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
-            setSelection([]);
             track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
+            setSelection([]);
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
@@ -67,8 +67,8 @@ export const SequencesPage = () => {
             {!profile?.email_engine_account_id && (
                 <Banner
                     buttonText={t('banner.button')}
-                    title={t('banner.title')}
-                    message={t('banner.descriptionSequences')}
+                    title={t('banner.outreach.title')}
+                    message={t('banner.outreach.descriptionSequences')}
                 />
             )}
             <DeleteSequenceModal
@@ -86,6 +86,7 @@ export const SequencesPage = () => {
                 }))}
                 getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
+                source="Sequences"
             />
             <CreateSequenceModal
                 title={t('sequences.sequenceModal') as string}

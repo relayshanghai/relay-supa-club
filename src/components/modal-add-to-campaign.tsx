@@ -18,7 +18,7 @@ export const AddToCampaignModal = ({
     show: boolean;
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
-    selectedCreator: CreatorUserProfile | null;
+    selectedCreator?: CreatorUserProfile | null;
     campaigns?: CampaignDB[] | undefined;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
     track: (campaign: string) => void;

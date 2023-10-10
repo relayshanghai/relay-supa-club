@@ -21,7 +21,10 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
         headers,
     });
 
-    await rudderstack.send(content);
+    if (context) {
+        await rudderstack.identify(context);
+        await rudderstack.send(content);
+    }
 
     // @note refactor. content should return the Response object itself
     if (context && content && 'status' in content && 'error' in content) {

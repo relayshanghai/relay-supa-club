@@ -91,6 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 items: [{ price: featNewPricing() ? discoveryTrialPriceId : diyTrialPriceId }],
                 proration_behavior: 'create_prorations',
                 trial_period_days: Number(trial_days),
+                cancel_at_period_end: true,
             };
 
             const subscription: SubscriptionCreateTrialResponse = await stripeClient.subscriptions.create(createParams);

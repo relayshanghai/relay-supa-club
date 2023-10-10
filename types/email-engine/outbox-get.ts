@@ -27,8 +27,8 @@ interface Envelope {
 
 interface Progress {
     status: string;
-    response: string;
-    error: Error;
+    response?: string;
+    error?: Error;
 }
 
 interface Error {

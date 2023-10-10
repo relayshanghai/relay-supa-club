@@ -1,4 +1,5 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
+import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
@@ -10,6 +11,10 @@ import postPerformance from '../../src/mocks/api/post-performance/by-campaign.js
 import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
 import createTrialWithoutPaymentIntent from '../../src/mocks/api/subscription/create-trial-without-payment-intent.json';
 import createSequenceSteps from '../../src/mocks/supabase/sequences/createSequenceSteps.json';
+import boostbotGetTopics from '../../src/mocks/api/boostbot/get-topics.json';
+import boostbotGetRelevantTopics from '../../src/mocks/api/boostbot/get-relevant-topics.json';
+import boostbotGetTopicClusters from '../../src/mocks/api/boostbot/get-topic-clusters.json';
+import boostbotGetInfluencers from '../../src/mocks/api/boostbot/get-influencers.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -26,11 +31,14 @@ const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, no
 const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
 if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set in intercepts');
 export const SUPABASE_URL_CYPRESS = `${supabaseUrl}/rest/v1`;
+interface InterceptOptions {
+    useRealSequences: boolean;
+}
 
 /**
  * Note that this turns off sequences calls (for faster page loads) if you need sequences in your test, use `req.continue();` see outreach.cy.ts for an example
  */
-export const setupIntercepts = () => {
+export const setupIntercepts = (options?: InterceptOptions) => {
     const supabase = supabaseClientCypress();
     resetUsages(supabase);
     // IQData intercepts
@@ -233,17 +241,22 @@ export const setupIntercepts = () => {
     cy.intercept('/api/post-performance/by-campaign', {
         body: postPerformance,
     });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, {
-        body: [],
-    });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, {
-        body: [],
-    });
+    if (!options?.useRealSequences) {
+        cy.intercept(/\/sequence_influencers\?/, {
+            body: [],
+        });
+        cy.intercept(/\/sequences\?/, {
+            body: [],
+        });
+        cy.intercept('/api/sequence/influencers', {
+            body: [],
+        });
+    }
     // TODO: archive campaigns features https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaigns*`, {
+    cy.intercept(/\/campaigns\?/, {
         body: [],
     });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaign_creators*`, {
+    cy.intercept(/\/campaign_creators\?/, {
         body: [],
     });
 };
@@ -317,4 +330,12 @@ export const insertPostIntercept = () => {
 
         req.reply({ body: { successful: [mockPostData], failed: [] } });
     });
+};
+
+export const boostbotIntercepts = () => {
+    cy.intercept('POST', '/api/boostbot/get-topics', { body: boostbotGetTopics });
+    cy.intercept('POST', '/api/boostbot/get-relevant-topics', { body: boostbotGetRelevantTopics });
+    cy.intercept('POST', '/api/boostbot/get-topic-clusters', { body: boostbotGetTopicClusters });
+    cy.intercept('POST', '/api/boostbot/get-influencers', { body: boostbotGetInfluencers });
+    cy.intercept('GET', '/api/creators/report*', { body: danniCreatorReport });
 };

@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useRouter } from 'next/router';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { PRICING_PAGE } from 'src/utils/rudderstack/event-names';
+import { useCompany } from 'src/hooks/use-company';
+import { type CompanyDB } from 'src/utils/api/db';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -19,11 +20,17 @@ const isCurrentPlan = (
     return subscription?.name === tierName && subscription.interval === period && subscription.status === 'active';
 };
 
+const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment'];
+
 const disableButton = (
     tier: ActiveSubscriptionTier,
     period: ActiveSubscriptionPeriod,
     subscription?: SubscriptionGetResponse,
+    company?: CompanyDB,
 ) => {
+    if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
+        return false;
+    }
     if (!subscription?.name || !subscription.interval || !subscription.status) {
         return true;
     }
@@ -49,12 +56,14 @@ export const PriceCard = ({
 
     const prices = usePrices();
     const { subscription } = useSubscription();
+    const { company } = useCompany();
     const freeTier = priceTier === 'free';
     const router = useRouter();
 
     const handleUpgradeClicked = () => {
         if (featNewPricing()) {
-            trackEvent(PRICING_PAGE('clicked on upgrade'), { plan: priceTier });
+            // @note previous name: Pricing Page, clicked on upgrade
+            trackEvent('Select Upgrade Plan', { plan: priceTier });
             router.push(`/payments?plan=${priceTier}`);
         } else {
             openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier]);
@@ -88,7 +97,7 @@ export const PriceCard = ({
                 {!landingPage && (
                     <Button
                         onClick={handleUpgradeClicked}
-                        disabled={disableButton(priceTier, period, subscription)}
+                        disabled={disableButton(priceTier, period, subscription, company)}
                         className="mt-auto"
                     >
                         {isCurrentPlan(priceTier, period, subscription)

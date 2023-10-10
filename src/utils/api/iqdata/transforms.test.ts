@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import { recommendedInfluencersFilter } from './transforms-filters';
+import type { LocationWeighted } from 'types';
 
 const defaultOptions: FetchCreatorsFilteredParams = {
     platform: 'youtube',
@@ -59,12 +60,20 @@ describe('prepareFetchCreatorsFiltered', () => {
     });
 
     it('adds the audience and influencer location filter', () => {
+        const location: LocationWeighted = {
+            id: 'test id',
+            name: 'test name',
+            title: 'test title',
+            country: { id: 'test country id', code: 'test code' },
+            weight: 1,
+            type: ['test type'],
+        };
         const options: FetchCreatorsFilteredParams = {
             ...defaultOptions,
-            influencerLocation: [{ id: '123', weight: 50 }],
+            influencerLocation: [{ ...location, id: '123', weight: 50 }],
             audienceLocation: [
-                { id: '345', weight: 75 },
-                { id: '678', weight: 25 },
+                { ...location, id: '345', weight: 75 },
+                { ...location, id: '678', weight: 25 },
             ],
         };
         const { body } = prepareFetchCreatorsFiltered(options);

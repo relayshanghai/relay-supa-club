@@ -1,6 +1,9 @@
 {
   "cSpell.words": [
+    "geolocations",
+    "boostbot",
     "camelcase",
+    "collab",
     "commenters",
     "countup",
     "Descr",
@@ -15,6 +18,7 @@
     "linebreak",
     "nextjs",
     "onboarded",
+    "openai",
     "relayclub",
     "rudderanalytics",
     "RUDDERSTACK",
@@ -25,9 +29,7 @@
     "testid",
     "tiktok",
     "upsert",
-    "wechat",
-    "boostbot",
-    "openai"
+    "wechat"
   ],
   "sqlfluff.dialect": "postgres",
   "sqlfluff.executablePath": "sqlfluff",

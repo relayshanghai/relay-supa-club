@@ -17,7 +17,7 @@ import sequenceInfluencers from './api/sequence/influencers/sequence-influencers
 import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
 
 import templates from './api/email-engine/templates.json';
-import templateVariablesBySequenceId from './supabase/template_variables/by-sequence-id.json';
+import templateVariablesBySequenceId from './supabase/template_variables/by-sequence-id';
 import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
@@ -87,6 +87,10 @@ const frontendHandlers = [
     }),
     rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
         return res(ctx.json(sequenceInfluencers));
+    }),
+    rest.post(`${APP_URL_CYPRESS}/sequence_influencers`, (req, res, ctx) => {
+        const id = req.url.searchParams.get('id')?.split('eq.')[1];
+        return res(ctx.json(sequenceInfluencers.find((x) => x.id === id)));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/email-engine/templates`, (_req, res, ctx) => {
         return res(ctx.json(templates));

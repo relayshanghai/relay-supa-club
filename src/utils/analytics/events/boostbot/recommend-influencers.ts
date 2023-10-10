@@ -11,6 +11,7 @@ export type RecommendInfluencersPayload = {
     recommended_influencers: string[];
     is_success: boolean;
     extra_info?: any;
+    search_id: string | number | null;
 };
 
 export const RecommendInfluencers = (trigger: TriggerEvent, value?: RecommendInfluencersPayload) =>

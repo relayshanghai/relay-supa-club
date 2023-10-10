@@ -8,7 +8,11 @@ export const Title = ({ size = 'default', open }: TitleProps) => {
     const sizeClass = size === 'small' ? 'text-lg' : size === 'large' ? 'text-4xl' : 'text-2xl';
 
     return (
-        <Link className={`flex ${open ? 'justify-start' : 'justify-center'} md:self-start ${sizeClass}`} href="/">
+        <Link
+            className={`flex ${open ? 'justify-start' : 'justify-center'} md:self-start ${sizeClass}`}
+            href="/boostbot"
+            prefetch={false}
+        >
             <div className={`flex cursor-pointer items-center ${open ? 'pl-5' : 'px-4'} font-poppins`}>
                 <div className="poppins text-3xl font-extrabold tracking-wide text-tertiary-600">
                     <span className={`${!open && 'text-relay-purple'}`}>r</span>

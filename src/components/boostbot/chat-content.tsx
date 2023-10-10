@@ -2,19 +2,18 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StopIcon } from '@heroicons/react/24/solid';
 import { Button } from 'src/components/button';
-import type { MessageType } from 'pages/boostbot';
+import type { MessageType } from 'src/components/boostbot/message';
 import Message from './message';
-import ChatProgress from './chat-progress';
 
-interface ChatContentProps {
+export interface ChatContentProps {
     messages: MessageType[];
     isSearchLoading: boolean;
     isUnlockOutreachLoading: boolean;
     shouldShowButtons: boolean;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     stopBoostbot: () => void;
-    shortenedButtons: boolean;
+    areChatActionsDisabled: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -22,42 +21,54 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     isSearchLoading,
     isUnlockOutreachLoading,
     shouldShowButtons,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     stopBoostbot,
-    shortenedButtons,
+    areChatActionsDisabled,
 }) => {
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
-        chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+            chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50);
     }, [messages]);
 
     return (
         <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3">
-            {messages.map((message, index) =>
-                message.progress ? (
-                    <ChatProgress key={index} progress={message.progress} />
-                ) : (
-                    <Message key={index} message={message} />
-                ),
-            )}
+            {messages.map((message, index) => (
+                <Message key={index} message={message} />
+            ))}
 
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">
-                    <Button onClick={handlePageToUnlock} disabled={isUnlockOutreachLoading}>
-                        {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
+                    <Button
+                        data-testid="boostbot-button-unlock"
+                        onClick={handleSelectedInfluencersToUnlock}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        className="text-xs"
+                    >
+                        {t('boostbot.chat.unlockSelected')}
                     </Button>
-                    <Button onClick={handlePageToOutreach} disabled={isUnlockOutreachLoading}>
-                        {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
+                    <Button
+                        data-testid="boostbot-button-outreach"
+                        onClick={handleSelectedInfluencersToOutreach}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled}
+                        className="text-xs"
+                    >
+                        {t('boostbot.chat.outreachSelected')}
                     </Button>
                 </div>
             )}
 
             {isSearchLoading && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
-                    <Button onClick={stopBoostbot} className="z-10 flex items-center gap-1 border-none">
+                    <Button
+                        data-testid="boostbot-button-stop"
+                        onClick={stopBoostbot}
+                        className="z-10 flex items-center gap-1 border-none"
+                    >
                         <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}
                     </Button>
                 </div>

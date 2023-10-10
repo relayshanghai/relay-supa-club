@@ -1,22 +1,39 @@
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
-import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements, BarGraph, User } from '../icons';
+import {
+    Compass,
+    Account,
+    ArrowRight,
+    ProfilePlus,
+    Send,
+    Brackets,
+    Engagements,
+    User,
+    BoostbotSelected,
+} from '../icons';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
+import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
+import { PlayTutorialVideo } from 'src/utils/analytics/events';
 
 const featVideo = true;
 export type GuideCardKey = keyof typeof guidePage.cards;
 
 export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
     const [guideShow, setGuideShow] = useState<boolean>(false);
+    const { track } = useRudderstackTrack();
 
     const handleGuideModal = () => {
-        trackEvent(GUIDE_PAGE('modal opened'), { guideSection: cardKey });
+        track(OpenGuideSectionModal, {
+            section: cardKey,
+            $add: {
+                user_open_count: 1,
+            },
+        });
         setGuideShow((prev) => !prev);
     };
     return (
@@ -27,14 +44,16 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
                         <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
                     )}
                     {cardKey === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
-                    {cardKey === 'sequences' && <Send height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'sequences' && <Send height={24} width={24} className="-mr-2 stroke-primary-500" />}
                     {cardKey === 'templates' && <Brackets height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'inbox' && <Engagements height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'influencerManager' && (
                         <ProfilePlus height={24} width={24} className="stroke-primary-500" />
                     )}
                     {cardKey === 'influencerProfile' && <User height={24} width={24} className="stroke-primary-500" />}{' '}
-                    {cardKey === 'performance' && <BarGraph height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'boostbot' && (
+                        <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
+                    )}
                 </div>
             </div>
             <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>
@@ -54,6 +73,7 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
 export const GuideComponent = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -68,6 +88,10 @@ export const GuideComponent = () => {
                     muted={false}
                     controls={true}
                     onPlay={(e) => {
+                        track(PlayTutorialVideo, {
+                            video: 'Main Demo',
+                            $add: { user_play_count: 1 },
+                        });
                         trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });

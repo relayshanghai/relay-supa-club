@@ -116,17 +116,15 @@ const getRandom = (min: number, max: number): number => {
 };
 
 /**
- * Merges three arrays by taking a random number of elements from each array until they run empty, and appending them to the output array.
- * @param a - The first array to merge.
- * @param b - The second array to merge.
- * @param c - The third array to merge.
- * @returns A new array containing elements from all three input arrays, merged in a random order.
+ * Merges n arrays by taking a random number of elements from each array until they run empty, and appending them to the output array.
+ * @param arrays - An array of arrays to be merged.
+ * @returns A new array containing elements from all input arrays, merged in a random order.
  */
-export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
+export const mixArrays = (arrays: any[][]): any[] => {
     const output: any[] = [];
 
-    while (a.length || b.length || c.length) {
-        for (const array of [a, b, c]) {
+    while (arrays.some((array) => array.length > 0)) {
+        for (const array of arrays) {
             const count = getRandom(3, 5);
             for (let i = 0; i < count; i++) {
                 if (array.length) {
@@ -155,4 +153,16 @@ export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
  */
 export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
     return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+};
+
+export const randomNumber = (maxDigits = 8) => Math.round(Math.random() * Math.pow(10, maxDigits));
+
+export const languageCodeToHumanReadable = (code: string) => {
+    if (code.includes('en')) {
+        return 'English';
+    } else if (code.includes('zh')) {
+        return 'Chinese';
+    } else {
+        return code;
+    }
 };

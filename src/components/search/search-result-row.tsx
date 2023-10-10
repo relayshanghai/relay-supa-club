@@ -10,7 +10,7 @@ import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorPlatform, CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -27,6 +27,10 @@ import type { track } from './use-track-event';
 import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import { useUser } from 'src/hooks/use-user';
+import type { analyzeInfluencerParams } from 'src/hooks/use-analyze-influencer';
+import { useAnalyzeInfluencer } from 'src/hooks/use-analyze-influencer';
+import { getJourney } from 'src/utils/analytics/journey';
+import { clientLogger } from 'src/utils/logger-client';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -36,6 +40,9 @@ export interface SearchResultRowProps {
     allCampaignCreators?: CampaignCreatorBasicInfo[];
     allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
     trackSearch?: track;
+    batchId: number;
+    page: number;
+    resultIndex: number;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -49,6 +56,8 @@ export const MoreResultsRows = ({
     allCampaignCreators,
     allSequenceInfluencersIqDataIdsAndSequenceNames,
     trackSearch,
+    batchId,
+    resultIndex,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit, searchParams } = useSearch();
@@ -110,6 +119,9 @@ export const MoreResultsRows = ({
                         allSequenceInfluencersIqDataIdsAndSequenceNames={
                             allSequenceInfluencersIqDataIdsAndSequenceNames
                         }
+                        batchId={batchId}
+                        page={page}
+                        resultIndex={resultIndex}
                     />
                 ))}
             </>
@@ -127,6 +139,9 @@ export const SearchResultRow = ({
     allCampaignCreators,
     allSequenceInfluencersIqDataIdsAndSequenceNames,
     setShowAlreadyAddedModal,
+    batchId,
+    page,
+    resultIndex,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
@@ -173,13 +188,18 @@ export const SearchResultRow = ({
     const desktop = useAboveScreenWidth(500);
     const [clientRoleData] = useAtom(clientRoleAtom);
     const inActAsMode = clientRoleData.companyId?.length > 0;
+    const journey = getJourney();
 
+    const analyzeInfluencerFn = useAnalyzeInfluencer();
     const analyzeInfluencer = useCallback(
-        (args: { platform: CreatorPlatform; user_id: string }) => {
-            const { platform, user_id } = args;
-            trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id });
+        (params: Omit<analyzeInfluencerParams, 'searchId' | 'initiator' | 'openType'>) => {
+            if (!journey) {
+                clientLogger('Journey is undefined', 'error', true);
+                return;
+            }
+            analyzeInfluencerFn({ ...params, searchId: journey.id, initiator: 'user', openType: 'single' });
         },
-        [trackEvent],
+        [analyzeInfluencerFn, journey],
     );
 
     const openSocialProfile = useCallback(
@@ -240,7 +260,7 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target={inActAsMode ? '_self' : '_blank'}
                         rel="noopener noreferrer"
-                        onClick={() => analyzeInfluencer({ platform, user_id })}
+                        onClick={() => analyzeInfluencer({ platform, user_id, batchId, page, resultIndex })}
                         data-testid={`analyze-button/${user_id}`}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
@@ -327,7 +347,13 @@ export const SearchResultRow = ({
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                                     onClick={() => {
-                                                        analyzeInfluencer({ platform, user_id });
+                                                        analyzeInfluencer({
+                                                            platform,
+                                                            user_id,
+                                                            batchId,
+                                                            page,
+                                                            resultIndex,
+                                                        });
                                                         setShowMenu(false);
                                                     }}
                                                 >
