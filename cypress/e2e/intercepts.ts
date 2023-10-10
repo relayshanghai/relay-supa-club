@@ -32,7 +32,8 @@ const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
 if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set in intercepts');
 export const SUPABASE_URL_CYPRESS = `${supabaseUrl}/rest/v1`;
 interface InterceptOptions {
-    useRealSequences: boolean;
+    useRealSequences?: boolean;
+    useRealUsages?: boolean;
 }
 
 /**
@@ -250,6 +251,28 @@ export const setupIntercepts = (options?: InterceptOptions) => {
         });
         cy.intercept('/api/sequence/influencers', {
             body: [],
+        });
+    }
+    if (!options?.useRealUsages) {
+        cy.intercept('/api/usages*', {
+            body: [
+                {
+                    type: 'profile',
+                    created_at: '2023-10-10T16:55:21.834199+00:00',
+                },
+                {
+                    type: 'profile',
+                    created_at: '2023-10-10T16:56:12.316606+00:00',
+                },
+                {
+                    type: 'profile',
+                    created_at: '2023-10-10T16:56:12.325158+00:00',
+                },
+                {
+                    type: 'profile',
+                    created_at: '2023-10-10T17:02:48.482965+00:00',
+                },
+            ],
         });
     }
     // TODO: archive campaigns features https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
