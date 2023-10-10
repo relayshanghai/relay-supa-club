@@ -49,6 +49,8 @@ interface ChatProps {
         freeOfCharge: boolean,
     ) => Promise<CreatorsReportGetResponse[] | undefined>;
     isSearchDisabled: boolean;
+    isUnlockButtonDisabled: boolean;
+    isOutreachButtonDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
     setSequence: (sequence: Sequence | undefined) => void;
@@ -70,6 +72,8 @@ export const Chat: React.FC<ChatProps> = ({
     handleSelectedInfluencersToOutreach,
     handleUnlockInfluencers,
     isSearchDisabled,
+    isUnlockButtonDisabled,
+    isOutreachButtonDisabled,
     setSearchId,
     sequence,
     setSequence,
@@ -298,6 +302,8 @@ export const Chat: React.FC<ChatProps> = ({
                 }}
                 stopBoostbot={stopBoostbot}
                 areChatActionsDisabled={areChatActionsDisabled}
+                isUnlockButtonDisabled={isUnlockButtonDisabled}
+                isOutreachButtonDisabled={isOutreachButtonDisabled}
             />
 
             <div className="relative">
