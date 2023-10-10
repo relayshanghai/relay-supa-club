@@ -16,7 +16,7 @@ export const LandingPage = () => {
                     {t('signup.alreadySignedUp')}
                     <Link
                         href="/login"
-                        className="ml-2 text-primary-500"
+                        className="text-primary-500"
                         // @note previous name: Landing Page, go to Login Page
                         onClick={() => trackEvent('Go To Login')}
                     >
