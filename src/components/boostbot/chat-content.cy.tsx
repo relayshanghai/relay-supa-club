@@ -26,6 +26,8 @@ describe('<ChatContent />', () => {
             stopBoostbot,
             isUnlockOutreachLoading: false,
             areChatActionsDisabled: false,
+            isUnlockButtonDisabled: false,
+            isOutreachButtonDisabled: false,
         };
     });
 
@@ -49,6 +51,22 @@ describe('<ChatContent />', () => {
         testMount(<ChatContent {...props} />);
 
         cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
+        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
+    });
+
+    it('Unlock button gets correctly disabled', () => {
+        props.isUnlockButtonDisabled = true;
+        testMount(<ChatContent {...props} />);
+
+        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
+        cy.get('[data-testid="boostbot-button-outreach"]').should('not.be.disabled');
+    });
+
+    it('Outreach button gets correctly disabled', () => {
+        props.isOutreachButtonDisabled = true;
+        testMount(<ChatContent {...props} />);
+
+        cy.get('[data-testid="boostbot-button-unlock"]').should('not.be.disabled');
         cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
     });
 

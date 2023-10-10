@@ -1,4 +1,6 @@
-export const extractPlatformFromURL = (url: string): string | null => {
+import type { CreatorPlatform } from 'types';
+
+export const extractPlatformFromURL = (url: string): CreatorPlatform | null => {
     const hostname = new URL(url).hostname.toLowerCase();
 
     const youtubeRegex = /^(www\.)?youtu(\.be|be\.com)$/;
