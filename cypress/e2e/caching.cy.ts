@@ -36,7 +36,7 @@ describe('Caches SWR requests', () => {
 
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
-    it.only('caches searches on the dashboard', () => {
+    it('caches searches on the dashboard', () => {
         cy.intercept('/api/influencer-search*', (req) => {
             req.reply({
                 body: defaultLandingPageInfluencerSearch,
