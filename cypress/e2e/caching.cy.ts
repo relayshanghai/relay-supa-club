@@ -40,13 +40,13 @@ describe('Caches SWR requests', () => {
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
                 body: defaultLandingPageInfluencerSearch,
-                delay: 1000,
+                delay: 3000,
             });
         });
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
 
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist');
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2999 }).should('not.exist');
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
@@ -56,7 +56,7 @@ describe('Caches SWR requests', () => {
         });
         cy.reload();
         cy.contains('Search by Topics', { timeout: 10000 });
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 999 }); // loads faster than it did before // cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist') even thought the intercept timeout is longer.
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2999 }); // loads faster than it did before // cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist') even thought the intercept timeout is longer.
     });
 });
 
