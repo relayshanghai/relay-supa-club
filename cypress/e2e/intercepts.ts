@@ -45,7 +45,7 @@ export const setupIntercepts = (options?: InterceptOptions) => {
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });
-    cy.intercept('/api/influencer-search*', (req) => {
+    cy.intercept('POST', '/api/influencer-search', (req) => {
         const body: InfluencerPostRequest = req.body;
         const justNow = new Date(); // lets do 18 hours ago to be safe if the test is running in another timezone
         const eighteenHours = 18 * 60 * 60 * 1000;
