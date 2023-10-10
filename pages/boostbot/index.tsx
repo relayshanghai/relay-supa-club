@@ -52,7 +52,8 @@ const Boostbot = () => {
         {},
     );
     const selectedInfluencersData =
-        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : []; // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
 
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
@@ -293,7 +294,8 @@ const Boostbot = () => {
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
-            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]); // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
