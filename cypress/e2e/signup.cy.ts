@@ -1,8 +1,9 @@
 import { randomString } from './helpers';
-import { signupIntercept } from './intercepts';
+import { setupIntercepts, signupIntercept } from './intercepts';
 
 describe('Signup and start trial', () => {
     beforeEach(() => {
+        setupIntercepts();
         signupIntercept();
     });
     it('Landing page loads, has both languages, and links to signup', () => {

@@ -1,7 +1,7 @@
 import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 
-describe('discovery', () => {
+describe('Admin mode and search usages', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         setupIntercepts({ useRealUsages: true, useRealSequences: true });
