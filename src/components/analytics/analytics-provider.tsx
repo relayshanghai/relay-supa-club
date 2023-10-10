@@ -9,7 +9,6 @@ import { useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
-import i18n from 'i18n';
 import { formatDate } from 'src/utils/datetime';
 import { useAppcues } from 'src/hooks/useAppcues';
 import { useTranslation } from 'react-i18next';
@@ -69,7 +68,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
                 ...traits,
             });
         }
-    }, [appcues, profile, company]);
+    }, [appcues, profile, company, i18n.language]);
 
     // set analytics identity
     useEffect(() => {
