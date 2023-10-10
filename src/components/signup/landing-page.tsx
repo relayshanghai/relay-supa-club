@@ -20,7 +20,7 @@ export const LandingPage = () => {
                         // @note previous name: Landing Page, go to Login Page
                         onClick={() => trackEvent('Go To Login')}
                     >
-                        {t('login.logIn')}
+                        &nbsp; {t('login.logIn')}
                     </Link>
                 </p>
             </div>

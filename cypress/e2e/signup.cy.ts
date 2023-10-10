@@ -12,7 +12,7 @@ describe('Signup and start trial', () => {
         cy.getByTestId('language-toggle').click();
         cy.contains('relay.club可以帮助').should('not.exist');
         cy.contains('relay.club can help.');
-        cy.contains('Already signed up?Log in');
+        cy.contains('Already signed up? Log in');
         cy.contains('button', 'Start Your Free Trial').click();
         cy.url().should('include', '/signup');
     });

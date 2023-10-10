@@ -229,7 +229,7 @@ export const searchIntercepts = () => {
             item_id: ulid(),
             created_at: justNow.toISOString(),
         };
-        // cy.log(JSON.stringify(usage));
+
         if (body.username === 'GRTR' || body.text === 'GRTR') {
             return supabase
                 .from('usages')
