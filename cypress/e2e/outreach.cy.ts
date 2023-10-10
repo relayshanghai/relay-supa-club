@@ -235,7 +235,7 @@ describe('outreach', () => {
         });
 
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
-        cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
+        cy.contains('4 email(s) successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
 
