@@ -226,7 +226,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
-        trackEvent('Log Out, undefined', { email });
+        trackEvent('Logout', { email });
     };
 
     useEffect(() => {

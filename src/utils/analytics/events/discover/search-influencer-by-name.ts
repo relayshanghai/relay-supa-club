@@ -1,6 +1,8 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const SEARCH_INFLUENCER_BY_NAME = 'Search Options, search for an influencer'; // renamed to 'Search Influencer By Name' in mixpanel lexicon.
+// Event names:
+// - Search Options, search for an influencer
+export const SEARCH_INFLUENCER_BY_NAME = 'Search Influencer By Name';
 
 export type SearchInfluencerByNamePayload = EventPayload<{
     search_query: string;

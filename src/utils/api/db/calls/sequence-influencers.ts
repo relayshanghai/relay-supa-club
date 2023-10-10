@@ -83,6 +83,39 @@ export const updateSequenceInfluencerCall =
         return data;
     };
 
+/*
+ * @note DO NOT use this for updating emails!!!!!!!
+ * Instead use the updateSequenceInfluencerCall which has special logic for updating emails
+ */
+export const updateSequenceInfluencersCall =
+    (supabaseClient: RelayDatabase) => async (updates: SequenceInfluencerInsert[]) => {
+        // throw if includes email updates:
+        const emailUpdates = updates.filter((update) => update.email);
+        if (emailUpdates.length > 0) {
+            throw new Error('Cannot update emails in batch update');
+        }
+
+        // supabase does not have batch updates so we need to use `upsert` to do a batch update, but we still want to make sure the row exists and throw an error if it doesn't.
+        // we don't want to allow misformed insert
+        const { count, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select('', { count: 'exact', head: true })
+            .in(
+                'id',
+                updates.map((update) => update.id),
+            );
+
+        if (error) throw error;
+
+        if (count !== updates.length) {
+            throw new Error('One or more rows do not exist');
+        }
+
+        const { data, error: updateError } = await supabaseClient.from('sequence_influencers').upsert(updates).select();
+        if (updateError) throw updateError;
+        return data;
+    };
+
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
         const { data: existingIqdata } = await supabaseClient

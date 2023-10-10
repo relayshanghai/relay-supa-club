@@ -256,6 +256,9 @@ const Boostbot = () => {
             topics: [],
             is_multiple: null,
             is_success: true,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_sequence_autostart: null,
         };
 
         try {
@@ -274,8 +277,13 @@ const Boostbot = () => {
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
 
-                trackingPayload.influencer_ids.push(creatorProfileId);
-                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+                if (trackingPayload.influencer_ids !== null) {
+                    trackingPayload.influencer_ids.push(creatorProfileId);
+                }
+
+                if (trackingPayload.topics !== null) {
+                    trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+                }
 
                 return createSequenceInfluencer({
                     iqdata_id: creatorProfileId,
