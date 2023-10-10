@@ -35,7 +35,8 @@ export const InviteMembersModal = ({
             setShowAddMoreMembers(false);
             toast.success('Invite sent');
             refreshCompany();
-            trackEvent(ACCOUNT_COMPANY_DETAILS('send invite'), {
+            // @note previous name: Account, CompanyDetails, send invite
+            trackEvent('Add Team Members', {
                 invite_email: inviteEmail,
                 new_admin: companyOwner,
             });

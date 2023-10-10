@@ -30,8 +30,6 @@ import type { OpenSocialThumbnailsPayload } from './open-social-thumbnails';
 import { OPEN_SOCIAL_THUMBNAILS, OpenSocialThumbnails } from './open-social-thumbnails';
 import type { OpenVideoGuideModalPayload } from './boostbot/open-video-guide-modal';
 import { BOOSTBOT_OPEN_VIDEO_GUIDE_MODAL, OpenVideoGuideModal } from './boostbot/open-video-guide-modal';
-import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
-import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
 import type { EmailClickedPayload } from './outreach/email-clicked';
@@ -183,6 +181,8 @@ import type { UpdateProfileInfoPayload } from './update-profile-info';
 import { UPDATE_PROFILE_INFO, UpdateProfileInfo } from './update-profile-info';
 import type { ChangePasswordPayload } from './change-password';
 import { CHANGE_PASSWORD, ChangePassword } from './change-password';
+import type { BatchStartSequencePayload } from './outreach/batch-start-sequence';
+import { BATCH_START_SEQUENCE, BatchStartSequence } from './outreach/batch-start-sequence';
 import type { VisitPagePayload } from './visit-page';
 import { VISIT_PAGE, VisitPage } from './visit-page';
 import type { CompleteSignupStepPayload } from './onboarding/complete-signup-step';
@@ -197,7 +197,6 @@ export {
     SearchAnalyzeInfluencer,
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
-    AddInfluencerToSequence,
     OpenSequencesPage,
     OpenInboxPage,
     OpenInfluencerManagerPage,
@@ -256,7 +255,6 @@ export const events = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaign,
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
-    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequence,
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPage,
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPage,
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
@@ -331,6 +329,7 @@ export const events = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlan,
     [UPDATE_PROFILE_INFO]: UpdateProfileInfo,
     [CHANGE_PASSWORD]: ChangePassword,
+    [BATCH_START_SEQUENCE]: BatchStartSequence,
     [VISIT_PAGE]: VisitPage,
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStep,
 };
@@ -344,7 +343,6 @@ export type payloads = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaignPayload;
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaignPayload;
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfilePayload;
-    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequencePayload;
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload;
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload;
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload;
@@ -419,6 +417,7 @@ export type payloads = {
     [PAY_FOR_UPGRADED_PLAN]: PayForUpgradedPlanPayload;
     [UPDATE_PROFILE_INFO]: UpdateProfileInfoPayload;
     [CHANGE_PASSWORD]: ChangePasswordPayload;
+    [BATCH_START_SEQUENCE]: BatchStartSequencePayload;
     [VISIT_PAGE]: VisitPagePayload;
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStepPayload;
 };
@@ -434,7 +433,6 @@ export const eventKeys = z.union([
     z.literal(SEARCH_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE),
-    z.literal(OUTREACH_ADD_INFLUENCER_TO_SEQUENCE),
     z.literal(OUTREACH_OPEN_SEQUENCES_PAGE),
     z.literal(OUTREACH_OPEN_INBOX_PAGE),
     z.literal(OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE),
@@ -509,6 +507,7 @@ export const eventKeys = z.union([
     z.literal(PAY_FOR_UPGRADED_PLAN),
     z.literal(UPDATE_PROFILE_INFO),
     z.literal(CHANGE_PASSWORD),
+    z.literal(BATCH_START_SEQUENCE),
     z.literal(VISIT_PAGE),
     z.literal(COMPLETE_SIGNUP_STEP),
 ]);

@@ -54,7 +54,8 @@ const Boostbot = () => {
         {},
     );
     const selectedInfluencersData =
-        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : []; // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
 
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
@@ -257,6 +258,9 @@ const Boostbot = () => {
             topics: [],
             is_multiple: null,
             is_success: true,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_sequence_autostart: null,
         };
 
         try {
@@ -268,20 +272,17 @@ const Boostbot = () => {
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
-            const topics: string[] = [];
-            selectedInfluencersData.forEach((influencer) => {
-                influencer.topics.forEach((topic) => {
-                    if (!topics.includes(topic)) {
-                        topics.push(topic);
-                    }
-                });
-            });
-            trackingPayload.topics = topics;
 
             const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
                 const creatorProfileId = influencer.user_id;
 
-                trackingPayload.influencer_ids.push(creatorProfileId);
+                if (trackingPayload.influencer_ids !== null) {
+                    trackingPayload.influencer_ids.push(creatorProfileId);
+                }
+
+                if (trackingPayload.topics !== null) {
+                    trackingPayload.topics.push(...influencer.topics.map((v) => v));
+                }
 
                 const platform = extractPlatformFromURL(influencer.url);
                 if (!platform) {
@@ -303,7 +304,8 @@ const Boostbot = () => {
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
-            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]); // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 

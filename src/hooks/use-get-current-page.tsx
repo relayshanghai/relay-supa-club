@@ -65,6 +65,10 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.performance;
     }
 
+    if (/^\/free-trial\/?/.test(pathname)) {
+        return CurrentPageEvent['free-trial'];
+    }
+
     if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index;
     }
