@@ -166,5 +166,6 @@ const sequences = {
     startSelectedSequences: '开始选中的序列',
     missingEmail: '缺少邮箱',
     missingEmailTooltipDescription: '您必须为此KOL添加电子邮件，以便开始此序列。',
+    emailAlreadyExistsPleaseDeleteThisInfluencer: '邮箱已存在。请删除此KOL。',
 };
 export default sequences;

@@ -93,20 +93,51 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         suppressFetch: !shouldFetch,
     });
     const { company } = useCompany();
+    const { i18n, t } = useTranslation();
 
     useEffect(() => {
-        // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
-        updateSequenceInfluencerIfSocialProfileAvailable({
-            sequenceInfluencer,
-            socialProfile,
-            report,
-            updateSequenceInfluencer,
-            company_id: company?.id ?? '',
-        });
-    }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+        const tryUpdate = async () => {
+            // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
+            const res = await updateSequenceInfluencerIfSocialProfileAvailable({
+                sequenceInfluencer,
+                socialProfile,
+                report,
+                updateSequenceInfluencer,
+                company_id: company?.id ?? '',
+            });
+            if (res && res === 'Email already exists') {
+                // This should not happen anymore because we now make sure during `sequence_influencer` creation that the email is unique. see `createSequenceInfluencerCall`
+                // But this should help for the existing ones that slipped through, and if it happens again the future.
+                const updateWithError = {
+                    ...sequenceInfluencer,
+                    // This won't actually update the database, just show a warning in the UI
+                    email: t('sequences.emailAlreadyExistsPleaseDeleteThisInfluencer'),
+                };
+                const updatedInfluencers = sequenceInfluencers.map((influencer) =>
+                    influencer.id === sequenceInfluencer.id ? updateWithError : influencer,
+                );
+                refreshSequenceInfluencers(updatedInfluencers);
+            } else if (res) {
+                refreshSequenceInfluencers(
+                    sequenceInfluencers.map((influencer) =>
+                        influencer.id === sequenceInfluencer.id ? { ...sequenceInfluencer, ...res } : influencer,
+                    ),
+                );
+            }
+        };
+        tryUpdate();
+    }, [
+        company?.id,
+        refreshSequenceInfluencers,
+        report,
+        sequenceInfluencer,
+        sequenceInfluencers,
+        socialProfile,
+        t,
+        updateSequenceInfluencer,
+    ]);
 
     const { profile } = useUser();
-    const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);

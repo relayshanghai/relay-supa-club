@@ -4,6 +4,7 @@ import type {
     SequenceInfluencerUpdate,
     TemplateVariableInsert,
 } from 'src/utils/api/db';
+import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorReport } from 'types';
 
 /** 
@@ -57,9 +58,9 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     report?: CreatorReport;
     updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencer>;
     company_id: string;
-}) => {
+}): Promise<SequenceInfluencer | 'Email already exists' | null> => {
     if (!sequenceInfluencer || !company_id || !socialProfile || !report) {
-        return;
+        return null;
     }
 
     // for now, what we need from the social profile is the id, email, tags
@@ -77,10 +78,17 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         updatedValues.influencer_social_profile_id === sequenceInfluencer.influencer_social_profile_id &&
         updatedValues.email === sequenceInfluencer.email
     ) {
-        return;
+        return null;
     }
-
-    await updateSequenceInfluencer(updatedValues);
+    try {
+        return await updateSequenceInfluencer(updatedValues);
+    } catch (error: any) {
+        clientLogger(error, 'error');
+        if (error.message?.includes('Email already exists for this company for influencer')) {
+            return 'Email already exists';
+        }
+        return null;
+    }
 };
 
 export const wasFetchedWithinMinutes = (
