@@ -1,4 +1,4 @@
-import type { SupabaseClient} from '@supabase/auth-helpers-nextjs';
+import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -151,7 +151,7 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     }
 
     return false;
-}
+};
 
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
@@ -173,7 +173,7 @@ export async function middleware(req: NextRequest) {
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
 
-   if (await isSessionClean(supabase) === false) {
+    if ((await isSessionClean(supabase)) === false) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
