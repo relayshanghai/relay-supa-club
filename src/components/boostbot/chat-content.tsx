@@ -30,6 +30,8 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     isUnlockButtonDisabled,
     isOutreachButtonDisabled,
 }) => {
+    // Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
+    const temporarilyDisableStopButton = true;
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
@@ -44,7 +46,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
             {messages.map((message, index) => (
                 <Message key={index} message={message} />
             ))}
-
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">
                     <Button
@@ -65,8 +66,8 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     </Button>
                 </div>
             )}
-
-            {isSearchLoading && (
+            {/* Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007 */}
+            {isSearchLoading && !temporarilyDisableStopButton && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
                     <Button
                         data-testid="boostbot-button-stop"
@@ -77,7 +78,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     </Button>
                 </div>
             )}
-
             <div className="relative top-10" ref={chatBottomRef} />
         </div>
     );
