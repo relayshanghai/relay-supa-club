@@ -79,6 +79,7 @@ export const Chat: React.FC<ChatProps> = ({
     setSequence,
     sequences,
 }) => {
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
     const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
         platforms: ['youtube', 'tiktok', 'instagram'],
@@ -204,38 +205,48 @@ export const Chat: React.FC<ChatProps> = ({
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             if (influencers.length > 0) {
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFound',
-                    translationValues: {
-                        count: influencers.length,
-                        geolocations: geolocationsToString(filters.audience_geo),
-                    },
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFoundAddToSequence',
-                    translationLink: '/sequences',
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/sequence-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFoundNextSteps',
-                });
+                if (isFirstTimeSearch) {
+                    setIsFirstTimeSearch(false);
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTime',
+                        translationValues: {
+                            count: influencers.length,
+                            geolocations: geolocationsToString(filters.audience_geo),
+                        },
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'video',
+                        videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                        eventToTrack: OpenVideoGuideModal.eventName,
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                        translationLink: '/sequences',
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'video',
+                        videoUrl: '/assets/videos/sequence-guide.mp4',
+                        eventToTrack: OpenVideoGuideModal.eventName,
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundNextSteps',
+                    });
+                } else {
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFound',
+                        translationValues: { count: influencers.length },
+                    });
+                }
             } else {
                 addMessage({
                     sender: 'Bot',
