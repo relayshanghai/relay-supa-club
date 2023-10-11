@@ -363,6 +363,19 @@ const Boostbot = () => {
         }
     };
 
+    const clearChatHistory = () => {
+        setMessages([
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+            },
+        ]);
+        setIsInitialLogoScreen(true);
+        setInfluencers([]);
+        setSelectedInfluencers({});
+    };
+
     return (
         <Layout>
             {company?.subscription_status === 'canceled' && (
@@ -395,6 +408,7 @@ const Boostbot = () => {
                         setSequence={setSequence}
                         sequence={sequence}
                         sequences={sequences}
+                        clearChatHistory={clearChatHistory}
                     />
                 </div>
 
