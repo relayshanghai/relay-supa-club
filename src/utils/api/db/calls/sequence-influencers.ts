@@ -70,7 +70,7 @@ export const updateSequenceInfluencerCall =
                 .match({ email: update.email, company_id: update.company_id })
                 .single();
             if (existingEmail) {
-                throw new Error('Email already exists for this company');
+                throw new Error(`Email already exists for this company for influencer ${update.id} ${update.email}`);
             }
         }
         const { data, error } = await supabaseClient
