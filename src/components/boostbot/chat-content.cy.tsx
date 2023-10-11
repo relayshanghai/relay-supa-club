@@ -80,12 +80,13 @@ describe('<ChatContent />', () => {
         cy.wrap(handleSelectedInfluencersToOutreach).should('have.been.called');
     });
 
-    it('Calls stop action when stop button is clicked', () => {
-        props.isSearchLoading = true;
-        props.shouldShowButtons = false;
-        testMount(<ChatContent {...props} />);
+    // Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
+    // it('Calls stop action when stop button is clicked', () => {
+    //     props.isSearchLoading = true;
+    //     props.shouldShowButtons = false;
+    //     testMount(<ChatContent {...props} />);
 
-        cy.get('[data-testid="boostbot-button-stop"]').click();
-        cy.wrap(stopBoostbot).should('have.been.called');
-    });
+    //     cy.get('[data-testid="boostbot-button-stop"]').click();
+    //     cy.wrap(stopBoostbot).should('have.been.called');
+    // });
 });
