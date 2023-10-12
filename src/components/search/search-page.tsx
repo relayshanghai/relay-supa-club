@@ -300,10 +300,15 @@ export const SearchPageInner = () => {
 
 export const SearchPage = () => {
     const { company } = useCompany();
+    const isExpired =
+        company?.subscription_status === 'canceled' &&
+        company?.subscription_end_date &&
+        new Date().toISOString() >= company?.subscription_end_date;
+
     const { t } = useTranslation();
     return (
         <Layout>
-            {company?.subscription_status === 'canceled' && (
+            {isExpired && (
                 <Banner
                     buttonText={t('banner.button')}
                     title={t('banner.expired.title')}

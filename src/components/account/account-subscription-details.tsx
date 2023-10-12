@@ -18,6 +18,10 @@ import { featNewPricing } from 'src/constants/feature-flags';
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
     const { company, refreshCompany } = useCompany();
+    const isExpired =
+        company?.subscription_status === 'canceled' &&
+        company?.subscription_end_date &&
+        new Date().toISOString() >= company?.subscription_end_date;
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
     const { trackEvent } = useRudderstack();
@@ -67,8 +71,7 @@ export const SubscriptionDetails = () => {
                                             {subscription.name}
                                             {subscription.status === 'trialing' &&
                                                 ` - ${t('account.subscription.freeTrial')}`}
-                                            {subscription.status === 'canceled' &&
-                                                ` - ${t('account.subscription.canceled')}`}
+                                            {isExpired && ` - ${t('account.subscription.canceled')}`}
                                         </div>
                                     </div>
                                     <div className="flex flex-col space-y-3">

@@ -30,6 +30,10 @@ export const SearchOptions = ({
     onSearchTypeChange: (searchType: string) => void;
 }) => {
     const { company } = useCompany();
+    const isExpired =
+        company?.subscription_status === 'canceled' &&
+        company?.subscription_end_date &&
+        new Date().toISOString() >= company?.subscription_end_date;
     const {
         platform,
         tags,
@@ -234,7 +238,7 @@ export const SearchOptions = ({
                                 data-testid="search-button"
                                 className="col-span-1 h-full"
                                 onClick={(e) => {
-                                    if (company?.subscription_status === 'canceled') {
+                                    if (isExpired) {
                                         return;
                                     }
                                     handleSearch(e);
