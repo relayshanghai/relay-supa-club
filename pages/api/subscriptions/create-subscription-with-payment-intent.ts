@@ -34,6 +34,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             .status(httpCodes.BAD_REQUEST)
             .json({ error: 'More than one subscription found for customer: ' + cusId });
     }
+
+    if (!Array.isArray(oldSubscription.data)) {
+        serverLogger(new Error('cannot_retrieve_customer_subscription'), (scope) => {
+            return scope.setContext('stripe_subscriptions_list', { response: oldSubscription });
+        });
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Cannot retrieve customer subscription' });
+    }
+
     const oldSubscriptionId = oldSubscription.data[0].id;
 
     // create a new subscription with the attached paymentMethod
