@@ -1,11 +1,21 @@
 import { randomString } from './helpers';
-import { signupIntercept } from './intercepts';
+import { setupIntercepts, signupIntercept } from './intercepts';
 
 describe('Signup and start trial', () => {
     beforeEach(() => {
+        setupIntercepts();
         signupIntercept();
     });
-
+    it('Landing page loads, has both languages, and links to signup', () => {
+        cy.visit('/');
+        cy.contains('relay.club可以帮助');
+        cy.getByTestId('language-toggle').click();
+        cy.contains('relay.club可以帮助').should('not.exist');
+        cy.contains('relay.club can help.');
+        cy.contains('Already signed up? Log in');
+        cy.contains('button', 'Start Your Free Trial').click();
+        cy.url().should('include', '/signup');
+    });
     it('Can signup without input payment wall', () => {
         cy.visit('/signup');
         cy.switchToEnglish();

@@ -21,6 +21,8 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         noInfluencersFound:
             "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
         influencersFound:
+            'I handpicked {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
+        influencersFoundFirstTime:
             'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
         influencersFoundAddToSequence:
             'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
