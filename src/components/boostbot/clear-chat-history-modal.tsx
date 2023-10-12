@@ -19,7 +19,7 @@ export const ClearChatHistoryModal = ({ isOpen, setIsOpen, onConfirm }: ClearCha
     return (
         <Modal maxWidth="max-w-3xl" visible={isOpen} onClose={() => setIsOpen(false)}>
             <div className="flex flex-col items-center justify-center gap-4">
-                {t('boostbot.chat.clearChatModal.title')}
+                <h3>{t('boostbot.chat.clearChatModal.title')}</h3>
 
                 <div className="flex gap-4">
                     <Button variant="ghost" onClick={() => setIsOpen(false)}>
