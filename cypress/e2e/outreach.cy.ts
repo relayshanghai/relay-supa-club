@@ -311,6 +311,9 @@ describe('outreach', () => {
 });
 
 describe('non-outreach user', () => {
+    beforeEach(() => {
+        setupIntercepts();
+    });
     it('Shows banner and preview pages when logged in as non outreach user', () => {
         cy.loginAdmin();
 
