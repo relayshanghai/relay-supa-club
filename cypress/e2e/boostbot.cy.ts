@@ -100,6 +100,7 @@ describe('Boostbot', () => {
     it('accepts limited filters and fetches influencers only for 1 platform', () => {
         cy.contains("Hi, I'm BoostBot");
 
+        cy.getByTestId('boostbot-open-options').click();
         cy.getByTestId('boostbot-open-filters').click();
 
         cy.contains('Basic Filters');
