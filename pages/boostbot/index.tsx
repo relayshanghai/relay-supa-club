@@ -83,11 +83,8 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
-    const { company } = useCompany();
-    const isExpired =
-        company?.subscription_status === 'canceled' &&
-        company?.subscription_end_date &&
-        new Date().toISOString() >= company?.subscription_end_date;
+    const { isExpired } = useCompany();
+
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);

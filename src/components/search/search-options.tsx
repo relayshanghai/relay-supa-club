@@ -29,11 +29,7 @@ export const SearchOptions = ({
     searchType: string | null;
     onSearchTypeChange: (searchType: string) => void;
 }) => {
-    const { company } = useCompany();
-    const isExpired =
-        company?.subscription_status === 'canceled' &&
-        company?.subscription_end_date &&
-        new Date().toISOString() >= company?.subscription_end_date;
+    const { isExpired } = useCompany();
     const {
         platform,
         tags,

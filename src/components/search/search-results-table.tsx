@@ -39,12 +39,9 @@ export const SearchResultsTable = ({
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
     const noResults = !results || results.length === 0;
-    const isExpired =
-        company?.subscription_status === 'canceled' &&
-        company?.subscription_end_date &&
-        new Date().toISOString() >= company?.subscription_end_date;
+
     const loading = resultsLoading || topSearchLoading || (noResults && validating);
 
     return (

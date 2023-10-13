@@ -17,11 +17,7 @@ import { featNewPricing } from 'src/constants/feature-flags';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-    const { company, refreshCompany } = useCompany();
-    const isExpired =
-        company?.subscription_status === 'canceled' &&
-        company?.subscription_end_date &&
-        new Date().toISOString() >= company?.subscription_end_date;
+    const { company, refreshCompany, isExpired } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
     const { trackEvent } = useRudderstack();
