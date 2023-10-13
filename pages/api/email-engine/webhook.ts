@@ -394,7 +394,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         if (!currentStep?.step_number) {
             throw new Error('No sequence step found');
         }
-        if (sequenceInfluencer.sequence_step <= currentStep.step_number) {
+        if (sequenceInfluencer.sequence_step >= currentStep.step_number) {
             throw new Error('Sequence step already updated');
         }
 
