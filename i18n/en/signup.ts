@@ -36,7 +36,7 @@ const signup = {
         title: 'Start your free trial now',
         bulletPoint1: 'BoostBot AI Search: Up to 2,000 Influencer Search Results',
         bulletPoint2: '50 Influencer Profile Reports',
-        bulletPoint3: 'Search Free for 7 days',
+        bulletPoint3: 'Search Free for 14 days',
         bulletPoint4: "Upgrade to 'Outreach Plan' and start emailing influencers today!",
         submitButton: 'Start free trial',
         termsAndConditionCheckboxLabel: 'I agree with the ',
