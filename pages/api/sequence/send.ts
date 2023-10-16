@@ -71,8 +71,10 @@ const sendAndInsertEmail = async ({
                 id: sequenceInfluencer.id,
                 funnel_status: 'In Sequence',
             });
+            return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
+        } else {
+            throw new Error('Email already sent');
         }
-        throw new Error('Email already sent');
     }
 
     const params = {
