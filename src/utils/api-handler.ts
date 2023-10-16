@@ -4,6 +4,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
+import { nanoid } from 'nanoid';
 
 export type ApiError = { error: any };
 
@@ -79,17 +80,19 @@ const isJsonable = (error: any) => {
     );
 };
 
-const createErrorObject = (error: any) => {
+const createErrorObject = (error: any, tag: string) => {
     const e: {
         httpCode: number;
         message: any;
+        tag: string;
     } = {
         httpCode: httpCodes.INTERNAL_SERVER_ERROR,
-        message: 'Unknown Error',
+        message: `Unknown Error - ERR:${tag}`,
+        tag,
     };
 
     if (error instanceof Error) {
-        e.message = error.message;
+        e.message = `${error.message} - ERR:${tag}`;
     }
 
     if (error instanceof ZodError) {
@@ -98,20 +101,21 @@ const createErrorObject = (error: any) => {
 
     if (error instanceof RelayError) {
         e.httpCode = error.httpCode;
-        e.message = error.message;
+        e.message = `${error.message} - ERR:${tag}`;
     }
 
     if (typeof error === 'string') {
-        e.message = error;
+        e.message = `${error} - ERR:${tag}`;
     }
 
     if (isJsonable(error)) {
-        e.message = JSON.stringify(error);
+        const message = JSON.stringify(error);
+        e.message = `${message} - ERR:${tag}`;
     }
 
     // Hide server errors if not in development
     if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
-        e.message = 'Error occurred';
+        e.message = `Error occurred - ERR:${tag}`;
     }
 
     return e;
@@ -122,17 +126,12 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
         try {
             await fn(req, res);
         } catch (error) {
-            // if it's a RelayError, allow silencing the log
-            if (error instanceof RelayError && error.shouldLog) {
-                serverLogger(error);
-            }
+            const tag = nanoid();
+            const e = createErrorObject(error, tag);
 
-            // if it's not a RelayError, log it by default
-            if (!(error instanceof RelayError)) {
-                serverLogger(error);
-            }
-
-            const e = createErrorObject(error);
+            serverLogger(error, (scope) => {
+                return scope.setTag('error_code_tag', e.tag);
+            });
 
             return res.status(e.httpCode).json({ error: e.message });
         }
