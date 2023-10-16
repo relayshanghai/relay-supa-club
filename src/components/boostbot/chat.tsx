@@ -23,6 +23,7 @@ import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
 import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
+import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 
@@ -55,6 +56,7 @@ interface ChatProps {
     sequence?: Sequence;
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
+    clearChatHistory: () => void;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -78,7 +80,9 @@ export const Chat: React.FC<ChatProps> = ({
     sequence,
     setSequence,
     sequences,
+    clearChatHistory,
 }) => {
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
     const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
@@ -302,6 +306,12 @@ export const Chat: React.FC<ChatProps> = ({
                 setFilters={setFilters}
             />
 
+            <ClearChatHistoryModal
+                isOpen={isClearChatHistoryModalOpen}
+                setIsOpen={setIsClearChatHistoryModalOpen}
+                onConfirm={clearChatHistory}
+            />
+
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
@@ -325,6 +335,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isLoading={isSearchLoading || isUnlockOutreachLoading}
                     onSendMessage={onSendMessage}
                     openFiltersModal={() => setIsFiltersModalOpen(true)}
+                    openClearChatHistoryModal={() => setIsClearChatHistoryModalOpen(true)}
                 />
             </div>
         </div>

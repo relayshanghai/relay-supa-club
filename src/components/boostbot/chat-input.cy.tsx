@@ -4,10 +4,12 @@ import { ChatInput } from './chat-input';
 describe('<ChatInput />', () => {
     let onSendMessage: (message: string) => void;
     let openFiltersModal: () => void;
+    let openClearChatHistoryModal: () => void;
 
     beforeEach(() => {
         onSendMessage = cy.stub();
         openFiltersModal = cy.stub();
+        openClearChatHistoryModal = cy.stub();
     });
 
     it('Enables button when isLoading and isDisabled are false', () => {
@@ -15,6 +17,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={false}
                 isDisabled={false}
             />,
@@ -28,6 +31,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={true}
                 isDisabled={false}
             />,
@@ -44,6 +48,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={false}
                 isDisabled={true}
             />,
@@ -60,6 +65,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={false}
                 isDisabled={false}
             />,
@@ -77,6 +83,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={false}
                 isDisabled={false}
             />,
@@ -92,6 +99,7 @@ describe('<ChatInput />', () => {
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openFiltersModal}
                 isLoading={false}
                 isDisabled={false}
             />,
@@ -102,18 +110,53 @@ describe('<ChatInput />', () => {
         cy.get('textarea').should('have.value', '');
     });
 
-    it('Calls openFiltersModal function when the filters button is clicked', () => {
+    it('Opens the options modal when the options button is clicked', () => {
         testMount(
             <ChatInput
                 onSendMessage={onSendMessage}
                 openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openClearChatHistoryModal}
                 isLoading={false}
                 isDisabled={false}
             />,
         );
 
-        cy.getByTestId('boostbot-open-filters').click();
+        cy.getByTestId('boostbot-open-options').click();
+        cy.contains('Filter influencers');
+        cy.contains('Clear chat history');
+    });
+
+    it('Calls openFiltersModal function when the filters button is clicked', () => {
+        testMount(
+            <ChatInput
+                onSendMessage={onSendMessage}
+                openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openClearChatHistoryModal}
+                isLoading={false}
+                isDisabled={false}
+            />,
+        );
+
+        cy.getByTestId('boostbot-open-options').click();
+        cy.getByTestId('boostbot-open-filters').click({ force: true });
 
         cy.wrap(openFiltersModal).should('have.been.called');
+    });
+
+    it('Calls openClearChatHistoryModal function when the clear chat history button is clicked', () => {
+        testMount(
+            <ChatInput
+                onSendMessage={onSendMessage}
+                openFiltersModal={openFiltersModal}
+                openClearChatHistoryModal={openClearChatHistoryModal}
+                isLoading={false}
+                isDisabled={false}
+            />,
+        );
+
+        cy.getByTestId('boostbot-open-options').click();
+        cy.getByTestId('boostbot-open-clear-chat-history').click({ force: true });
+
+        cy.wrap(openClearChatHistoryModal).should('have.been.called');
     });
 });

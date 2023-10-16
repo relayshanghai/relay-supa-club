@@ -1,5 +1,6 @@
 const boostbot = {
     filters: {
+        openModalButton: '筛选红人',
         modalTitle: '基础筛选条件',
         fromPlatform: '我想要看以下平台的红人',
         fromGeos: '他们的粉丝所在地区位于',
@@ -42,6 +43,12 @@ const boostbot = {
         outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
         and: '和',
+        clearChatModal: {
+            open: '删除对话记录',
+            title: '你确定要删除和BoostBot的对话记录和红人搜索结果吗?',
+            confirm: '是',
+            cancel: '返回',
+        },
     },
     table: {
         account: '账号',
