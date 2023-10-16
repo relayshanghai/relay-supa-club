@@ -5,7 +5,7 @@ import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
-import * as Sentry from '@sentry/node';
+import { setUser } from '@sentry/nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export type ApiError = { error: any };
@@ -149,7 +149,7 @@ export const ApiHandler =
         } = await supabase.auth.getSession();
 
         if (session) {
-            Sentry.setUser({
+            setUser({
                 id: session.user.id,
                 email: session.user.email,
             });
