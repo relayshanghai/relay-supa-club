@@ -394,7 +394,6 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         if (typeof currentStep?.step_number !== 'number') {
             throw new Error('No sequence step found');
         }
-        const isSameStep = sequenceInfluencer.sequence_step === currentStep.step_number;
         const isValidUpdate = currentStep.step_number > sequenceInfluencer.sequence_step;
 
         trackData.sequence_step = currentStep.step_number;
@@ -405,7 +404,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             sequence_step: currentStep.step_number,
         };
 
-        if (!isSameStep && isValidUpdate) {
+        if (isValidUpdate) {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
