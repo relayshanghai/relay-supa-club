@@ -117,6 +117,7 @@ export const log = (message: unknown) => {
  * @todo send server logs to rudderstack https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/295
  */
 export const serverLogger = (message: unknown, captureContext?: LogLevel | CaptureContext) => {
+    const messageRaw = message;
     const isUnknown = isUnknownError(message);
 
     if (isUnknown) {
@@ -137,7 +138,7 @@ export const serverLogger = (message: unknown, captureContext?: LogLevel | Captu
             _captureContext = (scope) => {
                 if (isUnknown) {
                     scope.setTag('unknown_error_type', true);
-                    scope.setContext('unknown_error_raw', { error: message });
+                    scope.setContext('unknown_error_raw', { error: messageRaw });
                 }
 
                 if (!captureContext || typeof captureContext !== 'function') {
