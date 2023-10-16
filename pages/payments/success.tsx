@@ -31,7 +31,7 @@ const UpgradeSubscriptionSuccess = () => {
             // cancel previous subscription when new one is created successfully
             await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
             // and update subscription status with new subscription id and usages
-            await updateSubscriptionStatusAndUsages(companyId, oldSubscriptionId, priceId);
+            await updateSubscriptionStatusAndUsages(companyId, subscriptionId, priceId);
             trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
             router.push('/account');
         } catch (error) {
