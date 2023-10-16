@@ -1,5 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import type { SequenceEmail, SequenceInfluencerUpdate } from 'src/utils/api/db';
+import type { SequenceEmail } from 'src/utils/api/db';
+import type { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 
 const DAYS_BEFORE_MARKING_AS_IGNORED = 14;
 
@@ -15,7 +16,7 @@ export const checkForIgnoredEmails = async ({
 }: {
     sequenceInfluencer?: SequenceInfluencerManagerPage | null;
     lastEmail?: SequenceEmail | null;
-    updateSequenceInfluencer: (update: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPage>;
+    updateSequenceInfluencer: ReturnType<typeof updateSequenceInfluencerCall>;
 }) => {
     if (!sequenceInfluencer || !lastEmail) {
         return null;

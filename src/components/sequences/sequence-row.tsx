@@ -27,6 +27,7 @@ import { useReport } from 'src/hooks/use-report';
 import { useCompany } from 'src/hooks/use-company';
 import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
 import { randomNumber } from 'src/utils/utils';
+import { checkForIgnoredEmails } from './check-for-ignored-emails';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -104,6 +105,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             company_id: company?.id ?? '',
         });
     }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+
+    useEffect(() => {
+        checkForIgnoredEmails({
+            sequenceInfluencer,
+            lastEmail,
+            updateSequenceInfluencer,
+        });
+    }, [lastEmail, sequenceInfluencer, updateSequenceInfluencer]);
 
     const { profile } = useUser();
     const { i18n, t } = useTranslation();
