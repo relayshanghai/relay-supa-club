@@ -391,7 +391,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         const currentStep = sequenceSteps.find((step) => step.id === sequenceEmail.sequence_step_id);
         trackData.extra_info.currentStep = currentStep;
-        if (!currentStep?.step_number) {
+        if (typeof currentStep?.step_number !== 'number') {
             throw new Error('No sequence step found');
         }
         if (sequenceInfluencer.sequence_step >= currentStep.step_number) {
