@@ -9,8 +9,6 @@ import {
 } from './analyze-open_external_social_profile';
 import type { BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
 import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer } from './boostbot-analyze-influencer';
-import type { OpenBoostbotPagePayload } from './boostbot/open-boostbot-page';
-import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
 import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
 import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
 import type { SendInfluencersToOutreachPayload } from './boostbot/send-influencers-to-outreach';
@@ -44,15 +42,6 @@ import type { EmailReplyPayload } from './outreach/email-reply';
 import { EmailReply, OUTREACH_EMAIL_REPLY } from './outreach/email-reply';
 import type { EmailSentPayload } from './outreach/email-sent';
 import { EmailSent, OUTREACH_EMAIL_SENT } from './outreach/email-sent';
-import type { OpenInboxPagePayload } from './outreach/open-inbox-page';
-import { OUTREACH_OPEN_INBOX_PAGE, OpenInboxPage } from './outreach/open-inbox-page';
-import type { OpenInfluencerManagerPagePayload } from './outreach/open-influencer-manager-page';
-import {
-    OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE,
-    OpenInfluencerManagerPage,
-} from './outreach/open-influencer-manager-page';
-import type { OpenSequencesPagePayload } from './outreach/open-sequences-page';
-import { OUTREACH_OPEN_SEQUENCES_PAGE, OpenSequencesPage } from './outreach/open-sequences-page';
 import type { StartSequenceForInfluencerPayload } from './outreach/start-sequence-for-influencer';
 import {
     OUTREACH_START_SEQUENCE_FOR_INFLUENCER,
@@ -197,9 +186,6 @@ export {
     SearchAnalyzeInfluencer,
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
-    OpenSequencesPage,
-    OpenInboxPage,
-    OpenInfluencerManagerPage,
     CreateSequence,
     StartSequenceForInfluencer,
     EmailSent,
@@ -209,7 +195,6 @@ export {
     EmailClicked,
     EmailReply,
     BoostbotAnalyzeInfluencer,
-    OpenBoostbotPage,
     RecommendInfluencers,
     UnlockInfluencers,
     SendInfluencersToOutreach,
@@ -255,9 +240,6 @@ export const events = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaign,
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
-    [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPage,
-    [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPage,
-    [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
     [OUTREACH_CREATE_SEQUENCE]: CreateSequence,
     [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencer,
     [OUTREACH_EMAIL_SENT]: EmailSent,
@@ -269,7 +251,6 @@ export const events = {
     [OUTREACH_WEBHOOK_ERROR]: WebhookError,
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
-    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
@@ -343,9 +324,6 @@ export type payloads = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaignPayload;
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaignPayload;
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfilePayload;
-    [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload;
-    [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload;
-    [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload;
     [OUTREACH_CREATE_SEQUENCE]: CreateSequencePayload;
     [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload;
     [OUTREACH_EMAIL_SENT]: EmailSentPayload;
@@ -357,7 +335,6 @@ export type payloads = {
     [OUTREACH_WEBHOOK_ERROR]: WebhookErrorPayload;
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
-    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload;
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
@@ -433,9 +410,6 @@ export const eventKeys = z.union([
     z.literal(SEARCH_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE),
-    z.literal(OUTREACH_OPEN_SEQUENCES_PAGE),
-    z.literal(OUTREACH_OPEN_INBOX_PAGE),
-    z.literal(OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE),
     z.literal(OUTREACH_CREATE_SEQUENCE),
     z.literal(OUTREACH_START_SEQUENCE_FOR_INFLUENCER),
     z.literal(OUTREACH_EMAIL_SENT),
@@ -447,7 +421,6 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_WEBHOOK_ERROR),
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
-    z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
