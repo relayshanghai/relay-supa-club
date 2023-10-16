@@ -5,6 +5,8 @@ import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
+import * as Sentry from '@sentry/node';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export type ApiError = { error: any };
 
@@ -126,7 +128,7 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
         try {
             await fn(req, res);
         } catch (error) {
-            const tag = nanoid();
+            const tag = nanoid(6);
             const e = createErrorObject(error, tag);
 
             serverLogger(error, (scope) => {
@@ -141,6 +143,18 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
 export const ApiHandler =
     <T = any>(params: ApiHandlerParams) =>
     async (req: NextApiRequest, res: NextApiResponse) => {
+        const supabase = createServerSupabaseClient({ req, res });
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+            Sentry.setUser({
+                id: session.user.id,
+                email: session.user.email,
+            });
+        }
+
         if (req.method === 'GET' && params.getHandler !== undefined) {
             return await exceptionHandler<T>(params.getHandler)(req, res);
         }
