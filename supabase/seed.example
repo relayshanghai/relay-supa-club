@@ -2,9 +2,7 @@ BEGIN;
 
 -- seed helpers
 CREATE
-OR REPLACE FUNCTION create_supabase_user(
-email TEXT, _first_name TEXT, _last_name TEXT
-) RETURNS UUID SECURITY DEFINER AS $$
+OR REPLACE FUNCTION create_supabase_user (email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
 DECLARE
   user_id UUID;
 BEGIN
@@ -90,14 +88,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE
-OR REPLACE FUNCTION create_profile(
-company_id UUID,
-email TEXT,
-first_name TEXT,
-last_name TEXT,
-_role TEXT,
-_email_engine_account TEXT DEFAULT null,
-_email_engine_email TEXT DEFAULT null
+OR REPLACE FUNCTION create_profile (
+    company_id UUID,
+    email TEXT,
+    first_name TEXT,
+    last_name TEXT,
+    _role TEXT,
+    _email_engine_account TEXT DEFAULT NULL,
+    _email_engine_email TEXT DEFAULT NULL
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   user_id UUID;
@@ -114,14 +112,15 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_company(
-company_name TEXT,
-website TEXT,
-subscription_status TEXT,
-subscription_current_period_start TIMESTAMP WITH TIME ZONE DEFAULT now(),
-subscription_current_period_end TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00',
-subscription_start_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
-subscription_end_date TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00'
+CREATE
+OR REPLACE FUNCTION create_company (
+    company_name TEXT,
+    website TEXT,
+    subscription_status TEXT,
+    subscription_current_period_start TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    subscription_current_period_end TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00',
+    subscription_start_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    subscription_end_date TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -162,10 +161,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_company_category(
-company UUID,
-category TEXT
-) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+OR REPLACE FUNCTION create_company_category (company UUID, category TEXT) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
   BEGIN
@@ -185,12 +181,12 @@ category TEXT
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_campaign(
-company_id UUID,
-campaign_name TEXT,
-campaign_description TEXT,
-product_name TEXT,
-tags TEXT[]
+OR REPLACE FUNCTION create_campaign (
+    company_id UUID,
+    campaign_name TEXT,
+    campaign_description TEXT,
+    product_name TEXT,
+    tags TEXT[]
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -231,13 +227,13 @@ tags TEXT[]
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_campaign_creator(
-campaign_id UUID,
-added_by_id UUID,
-avatar_url TEXT,
-creator_id TEXT,
-fullname TEXT,
-updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+OR REPLACE FUNCTION create_campaign_creator (
+    campaign_id UUID,
+    added_by_id UUID,
+    avatar_url TEXT,
+    creator_id TEXT,
+    fullname TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -286,11 +282,11 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence(
-company_id UUID,
-name TEXT,
-manager_first_name TEXT,
-manager_id UUID
+OR REPLACE FUNCTION create_sequence (
+    company_id UUID,
+    NAME TEXT,
+    manager_first_name TEXT,
+    manager_id UUID
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -323,12 +319,12 @@ manager_id UUID
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence_steps(
-sequence_id UUID,
-name TEXT,
-template_id TEXT,
-step_number NUMERIC,
-wait_time_hours NUMERIC
+OR REPLACE FUNCTION create_sequence_steps (
+    sequence_id UUID,
+    NAME TEXT,
+    template_id TEXT,
+    step_number NUMERIC,
+    wait_time_hours NUMERIC
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -361,15 +357,15 @@ wait_time_hours NUMERIC
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence_influencer(
-company_id UUID,
-sequence_id UUID,
-added_by UUID,
-influencer_social_profile_id UUID,
-email TEXT,
-funnel_status TEXT,
-sequence_step NUMERIC DEFAULT 0,
-created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+OR REPLACE FUNCTION create_sequence_influencer (
+    company_id UUID,
+    sequence_id UUID,
+    added_by UUID,
+    influencer_social_profile_id UUID,
+    email TEXT,
+    funnel_status TEXT,
+    sequence_step NUMERIC DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -421,12 +417,13 @@ created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
   END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_influencer(
-_name TEXT,
-_email TEXT,
-_address TEXT,
-_avatar_url TEXT,
-_is_recommended BOOLEAN DEFAULT false
+CREATE
+OR REPLACE FUNCTION create_influencer (
+    _name TEXT,
+    _email TEXT,
+    _address TEXT,
+    _avatar_url TEXT,
+    _is_recommended BOOLEAN DEFAULT FALSE
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -454,16 +451,17 @@ RETURN _row;
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_influencer_social_profile(
-_url TEXT,
-_platform TEXT,
-_influencer_id UUID,
-_reference_id TEXT,
-_username TEXT,
-_name TEXT,
-_email TEXT,
-_avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
-_recent_post_title TEXT DEFAULT 'Recent Video Title'
+CREATE
+OR REPLACE FUNCTION create_influencer_social_profile (
+    _url TEXT,
+    _platform TEXT,
+    _influencer_id UUID,
+    _reference_id TEXT,
+    _username TEXT,
+    _name TEXT,
+    _email TEXT,
+    _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
+    _recent_post_title TEXT DEFAULT 'Recent Video Title'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -499,15 +497,16 @@ RETURN _row;
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_sequence_email(
-_sequence_id UUID,
-_sequence_influencer_id UUID,
-_sequence_step_id UUID,
-_email_message_id TEXT DEFAULT null,
-_email_delivery_status TEXT DEFAULT null,
-_email_tracking_status TEXT DEFAULT null,
-_email_send_at TIMESTAMP WITH TIME ZONE DEFAULT null,
-_updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+CREATE
+OR REPLACE FUNCTION create_sequence_email (
+    _sequence_id UUID,
+    _sequence_influencer_id UUID,
+    _sequence_step_id UUID,
+    _email_message_id TEXT DEFAULT NULL,
+    _email_delivery_status TEXT DEFAULT NULL,
+    _email_tracking_status TEXT DEFAULT NULL,
+    _email_send_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    _updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -542,13 +541,14 @@ RETURN _row;
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_influencer_post(
-_url TEXT,
-_campaign_id UUID,
-_influencer_social_profile_id UUID,
-_platform TEXT,
-_type TEXT DEFAULT 'video',
-_is_reusable BOOLEAN DEFAULT false
+CREATE
+OR REPLACE FUNCTION create_influencer_post (
+    _url TEXT,
+    _campaign_id UUID,
+    _influencer_social_profile_id UUID,
+    _platform TEXT,
+    _type TEXT DEFAULT 'video',
+    _is_reusable BOOLEAN DEFAULT FALSE
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -582,18 +582,18 @@ RETURN _row;
 END;
 $$;
 
-
-CREATE OR REPLACE FUNCTION create_posts_performance(
-_campaign_id UUID,
-_influencer_social_profile_id UUID,
-_post_id UUID,
-_updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-_likes_total NUMERIC DEFAULT 0,
-_views_total NUMERIC DEFAULT 0,
-_comments_total NUMERIC DEFAULT 0,
-_orders_total NUMERIC DEFAULT 0,
-_sales_total NUMERIC DEFAULT 0,
-_sales_revenue NUMERIC DEFAULT 0
+CREATE
+OR REPLACE FUNCTION create_posts_performance (
+    _campaign_id UUID,
+    _influencer_social_profile_id UUID,
+    _post_id UUID,
+    _updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    _likes_total NUMERIC DEFAULT 0,
+    _views_total NUMERIC DEFAULT 0,
+    _comments_total NUMERIC DEFAULT 0,
+    _orders_total NUMERIC DEFAULT 0,
+    _sales_total NUMERIC DEFAULT 0,
+    _sales_revenue NUMERIC DEFAULT 0
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -631,12 +631,13 @@ RETURN _row;
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_template_variable(
-_sequence_id UUID,
-_key TEXT,
-_name TEXT,
-_value TEXT DEFAULT '',
-_required BOOLEAN DEFAULT true
+CREATE
+OR REPLACE FUNCTION create_template_variable (
+    _sequence_id UUID,
+    _key TEXT,
+    _name TEXT,
+    _value TEXT DEFAULT '',
+    _required BOOLEAN DEFAULT TRUE
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -1233,18 +1234,33 @@ $$;
 
 -- cleanup
 DROP FUNCTION IF EXISTS create_company;
+
 DROP FUNCTION IF EXISTS create_company_category;
+
 DROP FUNCTION IF EXISTS create_profile;
+
 DROP FUNCTION IF EXISTS create_supabase_user;
+
 DROP FUNCTION IF EXISTS create_campaign;
+
 DROP FUNCTION IF EXISTS create_campaign_creator;
+
 DROP FUNCTION IF EXISTS create_influencer;
+
 DROP FUNCTION IF EXISTS create_influencer_social_profile;
+
 DROP FUNCTION IF EXISTS create_influencer_post;
+
 DROP FUNCTION IF EXISTS create_posts_performance;
+
 DROP FUNCTION IF EXISTS create_sequence;
+
 DROP FUNCTION IF EXISTS create_sequence_influencer;
+
 DROP FUNCTION IF EXISTS create_sequence_steps;
+
 DROP FUNCTION IF EXISTS create_sequence_email;
+
 DROP FUNCTION IF EXISTS create_template_variable;
+
 COMMIT;
