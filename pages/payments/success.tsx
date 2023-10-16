@@ -6,10 +6,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
-import {
-    cancelSubscriptionWithSubscriptionId,
-    updateSubscriptionStatusAndUsages,
-} from 'src/utils/api/stripe/handle-subscriptions';
+import { cancelSubscriptionWithSubscriptionId } from 'src/utils/api/stripe/handle-subscriptions';
 import toast from 'react-hot-toast';
 
 const UpgradeSubscriptionSuccess = () => {
@@ -30,8 +27,7 @@ const UpgradeSubscriptionSuccess = () => {
         try {
             // cancel previous subscription when new one is created successfully
             await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
-            // and update subscription status with new subscription id and usages
-            await updateSubscriptionStatusAndUsages(companyId, oldSubscriptionId, priceId);
+            // and the update subscription status and usages will be handled from the webhook
             trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
             router.push('/account');
         } catch (error) {
