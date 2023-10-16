@@ -37,7 +37,7 @@ export const emailEngineApiFetch = async <T = any>(path: string, passedOptions: 
     const stringified = body && typeof body !== 'string' ? JSON.stringify(body) : body;
     const optionsWithBody = { ...options, body: stringified };
     const res = await fetch(`${EMAIL_ENGINE_API_URL}${path}`, optionsWithBody);
-    await handleResError(res, 'Email Engine: ' + path);
+    await handleResError(res);
     const json = await res.json();
     return json as T;
 };
