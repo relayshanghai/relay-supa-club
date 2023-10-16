@@ -91,19 +91,19 @@ export const updateSequenceInfluencersCall =
     (supabaseClient: RelayDatabase) => async (updates: SequenceInfluencerInsert[]) => {
         // throw if includes email updates:
         const emailUpdates = updates.filter((update) => update.email);
+
         if (emailUpdates.length > 0) {
             throw new Error('Cannot update emails in batch update');
         }
 
         // supabase does not have batch updates so we need to use `upsert` to do a batch update, but we still want to make sure the row exists and throw an error if it doesn't.
         // we don't want to allow misformed insert
+        const ids = updates.map((update) => update.id);
+
         const { count, error } = await supabaseClient
             .from('sequence_influencers')
-            .select('', { count: 'exact', head: true })
-            .in(
-                'id',
-                updates.map((update) => update.id),
-            );
+            .select('*', { count: 'exact' })
+            .in('id', ids);
 
         if (error) throw error;
 
@@ -112,6 +112,7 @@ export const updateSequenceInfluencersCall =
         }
 
         const { data, error: updateError } = await supabaseClient.from('sequence_influencers').upsert(updates).select();
+
         if (updateError) throw updateError;
         return data;
     };
