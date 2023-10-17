@@ -235,6 +235,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const sequenceSendTooltipHighlight = !sequenceInfluencer.influencer_social_profile_id
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
+
+    const isDuplicateInfluencer = sequenceInfluencers.some(
+        (influencer) =>
+            // isn't itself
+            influencer.id !== sequenceInfluencer.id &&
+            // has same email or iqdata id
+            (influencer.email === sequenceInfluencer.email || influencer.iqdata_id === sequenceInfluencer.iqdata_id) &&
+            influencer.funnel_status === 'To Contact',
+    );
     return (
         <>
             <EmailPreviewModal
@@ -277,7 +286,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.influencer_social_profile_id ? (
+                            {isDuplicateInfluencer ? (
+                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
+                            ) : sequenceInfluencer.influencer_social_profile_id ? (
                                 <TableInlineInput
                                     value={email}
                                     onSubmit={handleEmailUpdate}
