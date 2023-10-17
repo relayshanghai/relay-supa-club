@@ -21,7 +21,7 @@ import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
-import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
@@ -98,23 +98,6 @@ export const Chat: React.FC<ChatProps> = ({
     const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
-
-    const geolocationsToString = (geolocations: AudienceGeo[]) => {
-        const and = t('boostbot.chat.and');
-
-        const getTranslatedCountryName = (id: number) => {
-            const countryCode = countries.find((country) => country.id === id)?.country.code;
-            if (!countryCode) return 'Invalid country code';
-            return t(`geolocations.countries.${countryCode}`);
-        };
-        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
-
-        if (translatedCountries.length === 2) {
-            return translatedCountries.join(` ${and} `);
-        } else {
-            return translatedCountries.join(', ');
-        }
-    };
 
     const stopBoostbot = () => {
         abortController.abort();
@@ -210,7 +193,9 @@ export const Chat: React.FC<ChatProps> = ({
                     translationKey: 'boostbot.chat.influencersFound',
                     translationValues: {
                         count: influencers.length,
-                        geolocations: geolocationsToString(filters.audience_geo),
+                    },
+                    translationValuesToTranslate: {
+                        geolocations: filters.audience_geo,
                     },
                 });
                 addMessage({

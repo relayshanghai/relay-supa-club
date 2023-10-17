@@ -1,14 +1,21 @@
 import Link from 'next/link';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import ChatProgress from './chat-progress';
+import { countries } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
 
 type TranslationMessage = {
     type: 'translation';
     translationKey: string;
     translationLink?: string;
+    // Dynamic values to be inserted into the translation string, such as {{ count }}.
     translationValues?: Record<string, string | number>;
+    // Some dynamic values, such as {{ geolocations }, need to be translated as they get inserted into translation strings. A translation within a translation. Since they will be uncommon and require specific types, we explicitly list them here.
+    translationValuesToTranslate?: {
+        geolocations: AudienceGeo[];
+    };
 };
 
 type ProgressMessage = {
@@ -33,17 +40,53 @@ export type MessageType = {
     sender: 'User' | 'Bot' | 'Neutral';
 } & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage);
 
-const Translation = ({ translationKey, translationLink, translationValues }: TranslationMessage) => (
-    <Trans
-        i18nKey={translationKey}
-        components={
-            translationLink
-                ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
-                : undefined
+const Translation = ({
+    translationKey,
+    translationLink,
+    translationValues,
+    translationValuesToTranslate,
+}: TranslationMessage) => {
+    const { t } = useTranslation();
+
+    const translateGeolocations = (geolocations: AudienceGeo[] | undefined) => {
+        // The string type is a fallback for already existing messages in users' indexedDBs from when this feature was not yet implemented.
+        if (typeof geolocations === 'string' || typeof geolocations === 'undefined') return geolocations;
+
+        const and = t('boostbot.chat.and');
+
+        const getTranslatedCountryName = (id: number) => {
+            const countryCode = countries.find((country) => country.id === id)?.country.code;
+            if (!countryCode) return 'Invalid country code';
+            return t(`geolocations.countries.${countryCode}`);
+        };
+        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
+
+        if (translatedCountries.length === 2) {
+            return translatedCountries.join(` ${and} `);
+        } else {
+            return translatedCountries.join(', ');
         }
-        values={translationValues}
-    />
-);
+    };
+
+    const translatedValues = translationValues
+        ? {
+              ...translationValues,
+              geolocations: translateGeolocations(translationValuesToTranslate?.geolocations),
+          }
+        : undefined;
+
+    return (
+        <Trans
+            i18nKey={translationKey}
+            components={
+                translationLink
+                    ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
+                    : undefined
+            }
+            values={translatedValues}
+        />
+    );
+};
 
 const Video = ({ videoUrl = '', eventToTrack = '' }: VideoMessage) => (
     <VideoPreviewWithModal eventToTrack={eventToTrack} videoUrl={videoUrl} />
