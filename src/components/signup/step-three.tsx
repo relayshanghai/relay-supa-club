@@ -6,7 +6,9 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
 import type { SignUpValidationErrors } from './signup-page';
 import { Spinner } from '../icons';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { useCompany } from 'src/hooks/use-company';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const StepThree = ({
     companyName,
@@ -26,6 +28,7 @@ export const StepThree = ({
     onNext: any;
 }) => {
     const { t } = useTranslation();
+    const { companyExists } = useCompany();
     const companySizeOptions = [
         { label: '1-10', value: 'small' },
         { label: '11-50', value: 'medium' },
@@ -36,20 +39,60 @@ export const StepThree = ({
         setSelectedSize(newValue);
     };
 
+    const [companyError, setCompanyError] = useState(false);
+    const [inputLoading, setInputLoading] = useState(false);
+
     const invalidFormInput =
         isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
     const submitDisabled = invalidFormInput || loading;
     const websiteRef = useRef<HTMLInputElement>(null);
     const sizeRef = useRef<HTMLInputElement>(null);
 
+    const setCompanyExists = async (name: string) => {
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+        try {
+            const res = await companyExists(name, signal);
+            if (res) {
+                setCompanyError(true);
+            } else {
+                setCompanyError(false);
+            }
+        } catch (error: any) {
+            clientLogger(error);
+        }
+
+        setInputLoading(false);
+
+        // Abort fetch request after 5 seconds
+        setTimeout(() => {
+            abortController.abort();
+        }, 5000);
+    };
+
+    const [debouncedFunction, setDebouncedFunction] = useState<NodeJS.Timeout | undefined>();
+
     return (
         <>
             <Input
                 label={t('signup.company')}
                 value={companyName}
+                error={companyError ? 'Company already exists' : undefined}
+                loading={inputLoading}
                 placeholder={t('signup.companyPlaceholder')}
                 required
-                onChange={(e) => setAndValidate('companyName', e.target.value)}
+                onChange={async (e) => {
+                    if (debouncedFunction) {
+                        clearTimeout(debouncedFunction);
+                    }
+                    setAndValidate('companyName', e.target.value);
+                    setInputLoading(true);
+                    setDebouncedFunction(
+                        setTimeout(() => {
+                            setCompanyExists(e.target.value);
+                        }, 1000),
+                    );
+                }}
                 autoFocus
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -82,7 +125,7 @@ export const StepThree = ({
             />
 
             <Button
-                disabled={submitDisabled}
+                disabled={submitDisabled || companyError || inputLoading}
                 type="submit"
                 className="mt-12 flex w-full justify-center"
                 onClick={onNext}

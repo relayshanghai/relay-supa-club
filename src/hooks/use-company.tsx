@@ -32,6 +32,7 @@ export interface CompanyContext {
         profileId: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
+    companyExists: (name: string, signal: AbortSignal) => Promise<boolean>;
 }
 
 export const companyContext = createContext<CompanyContext>({
@@ -40,6 +41,7 @@ export const companyContext = createContext<CompanyContext>({
     createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
+    companyExists: async () => false,
 });
 
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
@@ -102,6 +104,22 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         },
         [refreshProfile, profile],
     );
+
+    const companyExists = async (name: string, signal: AbortSignal) => {
+        try {
+            const res = await nextFetch<{ message: string } | { error: string }>(`company/exists?name=${name}`, {
+                signal,
+                method: 'get',
+            });
+            if (res) {
+                return false;
+            }
+            return true;
+        } catch (e) {
+            return true;
+        }
+    };
+
     const createCompany = useCallback(
         async (input: { name: string; website?: string; size?: CompanySize; category?: string; profileId: string }) => {
             if (!input.profileId) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
@@ -130,6 +148,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
                 createCompany,
                 createCompanyLegacy,
                 refreshCompany,
+                companyExists,
             }}
         >
             {children}

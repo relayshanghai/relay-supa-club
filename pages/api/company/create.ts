@@ -38,12 +38,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Do not allow users to create a company with our reserved name for internal employees
     if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
+        await deleteUserById(user_id);
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
 
     const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name.toLowerCase());
 
     if (companies.length > 0) {
+        await deleteUserById(user_id);
         throw new RelayError(createCompanyErrors.companyWithSameNameExists, httpCodes.BAD_REQUEST);
     }
 
