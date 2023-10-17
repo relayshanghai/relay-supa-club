@@ -32,7 +32,11 @@ export interface CompanyContext {
         profileId: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
-    companyExists: (name: string, signal: AbortSignal) => Promise<boolean>;
+    companyExists: (name: string) => Promise<{
+        exists: boolean;
+        error?: string;
+        mail?: string;
+    } | null>;
     isExpired: boolean;
 }
 
@@ -42,7 +46,7 @@ export const companyContext = createContext<CompanyContext>({
     createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
-    companyExists: async () => false,
+    companyExists: async () => null,
     isExpired: false,
 });
 
@@ -107,19 +111,28 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         [refreshProfile, profile],
     );
 
-    const companyExists = async (name: string, signal: AbortSignal) => {
+    const companyExists = async (name: string) => {
         try {
             const res = await nextFetch<{ message: string } | { error: string }>(`company/exists?name=${name}`, {
-                signal,
                 method: 'get',
             });
             if (res) {
-                return false;
+                return {
+                    exists: false,
+                };
             }
-            return true;
         } catch (e) {
-            return true;
+            if (e instanceof Error) {
+                return {
+                    exists: true,
+                    mail: e.message,
+                };
+            }
         }
+        return {
+            exists: false,
+            error: 'unknown error',
+        };
     };
 
     const createCompany = useCallback(

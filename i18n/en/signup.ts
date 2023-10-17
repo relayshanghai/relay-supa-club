@@ -67,5 +67,6 @@ const signup = {
         },
     },
     errorStartingTrial: 'Error starting trial',
+    errorCompanyExists: `Company already exists, contact {{ companyOwnerEmail }} for an invitation, or choose a different name.`,
 };
 export default signup;

@@ -2,8 +2,8 @@ import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
-import { findCompaniesByNames } from 'src/utils/api/db';
+import { ApiHandler } from 'src/utils/api-handler';
+import { findCompaniesByNames, getTeammatesByCompanyId } from 'src/utils/api/db';
 import { db } from 'src/utils/supabase-client';
 import { z } from 'zod';
 
@@ -32,7 +32,14 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name.toLowerCase());
 
     if (companies.length > 0) {
-        throw new RelayError(createCompanyErrors.companyWithSameNameExists, httpCodes.BAD_REQUEST);
+        const owners = await getTeammatesByCompanyId(companies[0].id);
+        if (owners && owners.length > 0) {
+            return res
+                .status(httpCodes.BAD_REQUEST)
+                .json({ error: owners[0].email ?? createCompanyErrors.companyWithSameNameExists });
+        } else {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR);
+        }
     }
 
     return res.status(200).json({ message: `Company name available` });
