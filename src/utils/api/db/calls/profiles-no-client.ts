@@ -28,3 +28,7 @@ export const getProfileBySequenceSendEmail = (email: string) =>
     supabase.from('profiles').select().limit(1).eq('sequence_send_email', email).single();
 
 export const getProfileById = (id: string) => supabase.from('profiles').select().eq('id', id).single();
+
+export const deleteUserById = (profileId: string) => {
+    return supabase.from('profiles').delete().eq('id', profileId);
+};

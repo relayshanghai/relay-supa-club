@@ -4,7 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { RelayError, ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB } from 'src/utils/api/db';
-import { findCompaniesByNames } from 'src/utils/api/db';
+import { deleteUserById, findCompaniesByNames } from 'src/utils/api/db';
 import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
@@ -38,12 +38,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Do not allow users to create a company with our reserved name for internal employees
     if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
+        await deleteUserById(user_id);
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
 
     const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name.toLowerCase());
 
     if (companies.length > 0) {
+        await deleteUserById(user_id);
         throw new RelayError(createCompanyErrors.companyWithSameNameExists, httpCodes.BAD_REQUEST);
     }
 
@@ -51,6 +53,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (error || !company?.id) {
         serverLogger(error);
+        await deleteUserById(user_id);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 

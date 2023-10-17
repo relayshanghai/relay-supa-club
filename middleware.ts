@@ -177,6 +177,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/email-engine/webhook') {
         return allowEmailWebhookCors(req, res);
     }
+    if (req.nextUrl.pathname === '/api/company/exists') return res;
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
