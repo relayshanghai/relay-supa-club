@@ -106,7 +106,7 @@ interface AudienceBrandElement {
     /** default .1 */
     weight?: number;
 }
-interface AudienceGeo {
+export interface AudienceGeo {
     id: number;
     /** default .05 */
     weight?: number;

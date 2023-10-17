@@ -83,15 +83,53 @@ export const updateSequenceInfluencerCall =
         return data;
     };
 
+/*
+ * @note DO NOT use this for updating emails!!!!!!!
+ * Instead use the updateSequenceInfluencerCall which has special logic for updating emails
+ */
+export const updateSequenceInfluencersCall =
+    (supabaseClient: RelayDatabase) => async (updates: SequenceInfluencerInsert[]) => {
+        // throw if includes email updates:
+        const emailUpdates = updates.filter((update) => update.email);
+
+        if (emailUpdates.length > 0) {
+            throw new Error('Cannot update emails in batch update');
+        }
+
+        // supabase does not have batch updates so we need to use `upsert` to do a batch update, but we still want to make sure the row exists and throw an error if it doesn't.
+        // we don't want to allow misformed insert
+        const ids = updates.map((update) => update.id);
+
+        const { count, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select('*', { count: 'exact' })
+            .in('id', ids);
+
+        if (error) throw error;
+
+        if (count !== updates.length) {
+            throw new Error('One or more rows do not exist');
+        }
+
+        const { data, error: updateError } = await supabaseClient.from('sequence_influencers').upsert(updates).select();
+
+        if (updateError) throw updateError;
+        return data;
+    };
+
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
-        const { data: existingEmail } = await supabaseClient
+        const { data: existingIqdata } = await supabaseClient
             .from('sequence_influencers')
-            .select('email')
-            .match({ email: sequenceInfluencer.email, company_id: sequenceInfluencer.company_id })
+            .select('iqdata_id, company_id, email')
+            .match({ iqdata_id: sequenceInfluencer.iqdata_id })
             .maybeSingle();
-        if (existingEmail) {
-            throw new Error('Email already exists for this company');
+        if (
+            existingIqdata &&
+            (existingIqdata.company_id === sequenceInfluencer.company_id ||
+                existingIqdata.email === sequenceInfluencer.email)
+        ) {
+            throw new Error('Influencer already exists for this company');
         }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')

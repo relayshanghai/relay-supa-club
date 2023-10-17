@@ -40,6 +40,7 @@ declare global {
             getByTestId(selector: string, options?: Partial<Loggable & Timeoutable & Withinable>): Chainable<any>;
             loginTestUser: typeof loginTestUser;
             loginAdmin: typeof loginAdmin;
+            loginExpired: typeof loginExpired;
             switchToEnglish: typeof switchToEnglish;
             mount: typeof mount;
         }
@@ -53,15 +54,20 @@ Cypress.Commands.add('getByTestId', (selector, ...args) => {
 function loginTestUser(
     role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'company_owner',
     switchLangToEnglish = true,
+    expired = false,
 ) {
     if (switchLangToEnglish) {
         switchToEnglish();
     }
     let email = Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER');
-    if (role === 'company_teammate') {
-        email = Cypress.env('TEST_USER_EMAIL_COMPANY_TEAMMATE');
-    } else if (role === 'relay_employee') {
-        email = Cypress.env('TEST_USER_EMAIL_RELAY_EMPLOYEE');
+    if (!expired) {
+        if (role === 'company_teammate') {
+            email = Cypress.env('TEST_USER_EMAIL_COMPANY_TEAMMATE');
+        } else if (role === 'relay_employee') {
+            email = Cypress.env('TEST_USER_EMAIL_RELAY_EMPLOYEE');
+        }
+    } else {
+        email = Cypress.env('TEST_USER_EMAIL_EXPIRED');
     }
     cy.log(email);
     cy.visit('/login');
@@ -80,6 +86,11 @@ function loginAdmin(switchLangToEnglish = true) {
     loginTestUser('relay_employee', switchLangToEnglish);
 }
 Cypress.Commands.add('loginAdmin', loginAdmin);
+
+function loginExpired(switchLangToEnglish = true) {
+    loginTestUser('company_owner', switchLangToEnglish, true);
+}
+Cypress.Commands.add('loginExpired', loginExpired);
 
 function switchToEnglish() {
     localStorage.setItem('language', 'en-US');

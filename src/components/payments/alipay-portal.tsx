@@ -57,6 +57,7 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
 
             // if setup_intent.setup_failed webhook, redirect back to payment page with error message
         } catch (error) {
+            //eslint-disable-next-line
             console.log('error============>', error);
             // clientLogger(error, 'error');
         } finally {

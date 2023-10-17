@@ -7,7 +7,6 @@ import type {
     SubscriptionUpgradePostRequestBody,
     SubscriptionUpgradePostResponse,
 } from 'pages/api/subscriptions/create-subscription-with-payment-intent';
-import type { UpdateStatusAndUsagesRequestBody } from 'pages/api/subscriptions/update-status-and-usages';
 import { nextFetch } from 'src/utils/fetcher';
 
 export const upgradeSubscriptionWithPaymentIntent = async (
@@ -37,20 +36,6 @@ export const cancelSubscriptionWithSubscriptionId = async (subscriptionId: strin
         subscriptionId,
     };
     const res = await nextFetch<SubscriptionCancelPostResponseBody>('subscriptions/cancel-with-subscription-id', {
-        method: 'post',
-        body: JSON.stringify(body),
-    });
-    return res;
-};
-
-export const updateSubscriptionStatusAndUsages = async (companyId: string, subscriptionId: string, priceId: string) => {
-    const body: UpdateStatusAndUsagesRequestBody = {
-        companyId,
-        subscriptionId,
-        priceId,
-    };
-
-    const res = await nextFetch('subscriptions/update-status-and-usages', {
         method: 'post',
         body: JSON.stringify(body),
     });

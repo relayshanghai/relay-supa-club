@@ -61,6 +61,14 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.admin;
     }
 
+    if (/^\/performance\/?/.test(pathname)) {
+        return CurrentPageEvent.performance;
+    }
+
+    if (/^\/free-trial\/?/.test(pathname)) {
+        return CurrentPageEvent['free-trial'];
+    }
+
     if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index;
     }

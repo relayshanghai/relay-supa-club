@@ -7,7 +7,6 @@ import type { newActiveSubscriptionTier } from 'types';
 import { useMemo, useState } from 'react';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import AlipayPortal from './alipay-portal';
 import CheckoutForm from './checkout-form';
 import { randomNumber } from 'src/utils/utils';
@@ -58,7 +57,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('card');
-                        trackEvent(PAYMENT_PAGE('click on card option'), { payment_type: 'card' });
+                        // @note previous name: Payment Page, click on card option
+                        trackEvent('Select Payment Type', { payment_type: 'card' });
                     }}
                 >
                     <Payment
@@ -74,7 +74,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => {
                         setSelectedPaymentMethod('alipay');
-                        trackEvent(PAYMENT_PAGE('click on alipay option'), { payment_type: 'alipay' });
+                        // @note previous name: Payment Page, click on alipay option
+                        trackEvent('Select Payment Type', { payment_type: 'alipay' });
                     }}
                 >
                     <Alipay

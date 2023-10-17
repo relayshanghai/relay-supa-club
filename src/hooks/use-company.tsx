@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import type { PropsWithChildren } from 'react';
-import { createContext, useCallback, useContext, useEffect } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
@@ -32,6 +32,7 @@ export interface CompanyContext {
         profileId: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
+    isExpired: boolean;
 }
 
 export const companyContext = createContext<CompanyContext>({
@@ -40,6 +41,7 @@ export const companyContext = createContext<CompanyContext>({
     createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
+    isExpired: false,
 });
 
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
@@ -122,6 +124,16 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         [refreshProfile],
     );
 
+    const isExpired = useMemo(
+        () =>
+            company?.subscription_status === 'canceled' &&
+            company?.subscription_end_date &&
+            new Date().toISOString() >= company?.subscription_end_date
+                ? true
+                : false,
+        [company],
+    );
+
     return (
         <companyContext.Provider
             value={{
@@ -130,6 +142,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
                 createCompany,
                 createCompanyLegacy,
                 refreshCompany,
+                isExpired,
             }}
         >
             {children}

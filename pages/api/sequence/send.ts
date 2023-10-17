@@ -1,11 +1,14 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
-import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
-import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceEmailsBySequenceCall, insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
+import {
+    updateSequenceInfluencerCall,
+    updateSequenceInfluencersCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
@@ -27,20 +30,22 @@ const sendAndInsertEmail = async ({
     account,
     sequenceInfluencer,
     templateVariables,
+    sequenceEmails,
 }: {
     step: SequenceStep;
     sequenceInfluencer: SequenceInfluencer;
     account: string;
     templateVariables: TemplateVariable[];
+    sequenceEmails: SequenceEmail[];
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
     } else if (!sequenceInfluencer.influencer_social_profile_id) {
         throw new Error('No influencer social profile id');
     }
-    const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
-        getInfluencerSocialProfileByIdCall,
-    )(sequenceInfluencer.influencer_social_profile_id);
+    const influencerSocialProfile = await db(getInfluencerSocialProfileByIdCall)(
+        sequenceInfluencer.influencer_social_profile_id,
+    );
     const influencerAccountName = influencerSocialProfile.name || influencerSocialProfile.username;
     if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
@@ -53,6 +58,25 @@ const sendAndInsertEmail = async ({
     if (!recentPostURL) {
         throw new Error('No recent post url');
     }
+    // make sure there is not an existing sequence email for this influencer for this step:
+    const existingSequenceEmail = sequenceEmails.find(
+        (sequenceEmail) =>
+            sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
+            sequenceEmail.sequence_step_id === step.id,
+    );
+    if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
+        // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
+        if (sequenceInfluencer.funnel_status === 'To Contact') {
+            await db(updateSequenceInfluencerCall)({
+                id: sequenceInfluencer.id,
+                funnel_status: 'In Sequence',
+            });
+            return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
+        } else {
+            throw new Error('Email already sent');
+        }
+    }
+
     const params = {
         ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
         // fill in the params not in the template variables
@@ -69,7 +93,7 @@ const sendAndInsertEmail = async ({
     if ('error' in res) {
         throw new Error(res.error);
     }
-    await db<typeof insertSequenceEmailCall>(insertSequenceEmailCall)({
+    await db(insertSequenceEmailCall)({
         sequence_influencer_id: sequenceInfluencer.id,
         sequence_id: sequenceInfluencer.sequence_id,
         sequence_step_id: step.id,
@@ -87,16 +111,34 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
         throw new Error('Missing required parameters');
     }
+
     const sequenceId = sequenceInfluencers[0].sequence_id;
-    const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
-        sequenceId,
-    );
+    const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
     if (!sequenceSteps || sequenceSteps.length === 0) {
         throw new Error('No sequence steps found');
     }
-    const templateVariables = await db<typeof getTemplateVariablesBySequenceIdCall>(
-        getTemplateVariablesBySequenceIdCall,
-    )(sequenceId);
+    const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    const sequenceEmails = await db(getSequenceEmailsBySequenceCall)(sequenceId);
+
+    // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
+    const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
+        ({ id, name, username, avatar_url, url, added_by, platform, company_id, iqdata_id, sequence_id }) => ({
+            id,
+            funnel_status: 'In Sequence',
+            // some typescript required values for the bulk update that have a mismatch with SequenceInfluencer row type.
+            name: name ?? '',
+            username: username ?? '',
+            avatar_url: avatar_url ?? '',
+            url: url ?? '',
+            platform,
+            added_by,
+            company_id,
+            iqdata_id,
+            sequence_id,
+        }),
+    );
+    await db(updateSequenceInfluencersCall)(optimisticUpdates);
+
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
             for (const step of sequenceSteps) {
@@ -106,6 +148,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                         account,
                         sequenceInfluencer,
                         templateVariables,
+                        sequenceEmails,
                     });
                     results.push(result);
                 } catch (error: any) {
@@ -116,13 +159,12 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                 }
             }
-            // update the sequence influencer to be in the sequence if the outreach (email 0) was sent successfully
+            // revert the optimistic update if not sent successfully
             const outreachResult = results.find((result) => result.stepNumber === 0);
-            if (outreachResult && !outreachResult.error) {
+            if (!outreachResult || outreachResult.error) {
                 await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
                     id: sequenceInfluencer.id,
-                    funnel_status: 'In Sequence',
-                    sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
+                    funnel_status: 'To Contact',
                 });
             }
         } catch (error: any) {

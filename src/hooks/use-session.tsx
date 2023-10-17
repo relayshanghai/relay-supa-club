@@ -1,6 +1,8 @@
 import type { Session } from '@supabase/auth-helpers-react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
+import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { apiFetch } from 'src/utils/api/api-fetch';
 import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 
@@ -57,6 +59,9 @@ export const useSession = (params?: useSessionParams) => {
     const [company, setCompany] = useState<CompanyTable['Row'] | null>(() =>
         typeof window !== 'undefined' && window.session ? window.session.company : null,
     );
+    const [subscription, setSubscription] = useState<SubscriptionGetResponse | null>(() =>
+        typeof window !== 'undefined' && window.session ? window.session.subscription : null,
+    );
 
     const getProfile = useCallback(
         async (session: Session | null) => {
@@ -98,6 +103,15 @@ export const useSession = (params?: useSessionParams) => {
         [supabaseClient],
     );
 
+    const getSubscription = useCallback(async (company: string) => {
+        if (company === null) return null;
+
+        const query = { id: company };
+        const response = await apiFetch<SubscriptionGetResponse>('/api/subscriptions', { query });
+
+        return response.content;
+    }, []);
+
     const refreshSession = useCallback(() => {
         setSession(supabaseSession);
     }, [supabaseSession]);
@@ -127,6 +141,11 @@ export const useSession = (params?: useSessionParams) => {
                         ? window.session.company
                         : s;
                 });
+                setSubscription((s) => {
+                    return window.session && window.session.subscription && s !== window.session.subscription
+                        ? window.session.subscription
+                        : s;
+                });
             }
 
             return;
@@ -139,13 +158,18 @@ export const useSession = (params?: useSessionParams) => {
 
         getProfile(supabaseSession).then(async (loadedProfile) => {
             const company = loadedProfile ? await getCompany(loadedProfile.company_id) : null;
+            const subscription = company ? await getSubscription(company.id) : null;
 
-            if (supabaseSession && loadedProfile && company) {
+            if (supabaseSession && loadedProfile && company && subscription) {
                 // persist profile & company to window global
-                window.session = { user: supabaseSession.user, profile: loadedProfile, company };
+                window.session = { user: supabaseSession.user, profile: loadedProfile, company, subscription };
 
                 setCompany((s) => {
                     return company && s?.id !== company.id ? company : s;
+                });
+
+                setSubscription((s) => {
+                    return subscription && s !== subscription ? subscription : s;
                 });
 
                 setProfile((s) => {
@@ -174,11 +198,12 @@ export const useSession = (params?: useSessionParams) => {
             if (supabaseSession === null) {
                 setProfile((s) => (s !== null ? null : s));
                 setCompany((s) => (s !== null ? null : s));
+                setSubscription((s) => (s !== null ? null : s));
             }
         });
 
         return cleanup;
-    }, [supabaseSession, session, profile, getProfile, getCompany, params]);
+    }, [supabaseSession, session, profile, getProfile, getCompany, getSubscription, params]);
 
-    return { session, user, profile, company, refreshSession };
+    return { session, user, profile, company, subscription, refreshSession };
 };

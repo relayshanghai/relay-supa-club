@@ -1,10 +1,11 @@
 import { deleteDB } from 'idb';
-import { cocomelonId, setupIntercepts } from './intercepts';
+import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         setupIntercepts();
+        searchIntercepts();
     });
 
     it('can search for an influencer', () => {

@@ -1,8 +1,6 @@
 import httpCodes from 'src/constants/httpCodes';
-
 import { STRIPE_PRODUCT_ID_VIP } from 'src/utils/api/stripe/constants';
 import { serverLogger } from 'src/utils/logger-server';
-
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
@@ -19,16 +17,25 @@ import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
 import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-webhook';
 import { handleSetupIntentSucceeded } from 'src/utils/api/stripe/handle-setup-intent-succeeded-webhook';
+import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
+import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
+    invoicePaymentSucceeded: 'invoice.payment_succeeded',
     setupIntentSucceeded: 'setup_intent.succeeded',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | SetupIntentSucceeded;
+export type HandledEvent =
+    | CustomerSubscriptionCreated
+    | InvoicePaymentFailed
+    | InvoicePaymentSucceeded
+    | SetupIntentSucceeded;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | SetupIntentSucceeded) => {
+const identifyWebhook = async (
+    event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded | SetupIntentSucceeded,
+) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -50,6 +57,8 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
         case handledWebhooks.setupIntentSucceeded:
             // console.log('setupinent_succeeded =========================>', event);
             return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
+        case handledWebhooks.invoicePaymentSucceeded:
+            return await handleInvoicePaymentSucceeded(res, event as InvoicePaymentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
@@ -119,7 +128,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
-
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
         serverLogger('stripe caught error', { level: 'error' });

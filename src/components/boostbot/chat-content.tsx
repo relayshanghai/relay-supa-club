@@ -10,10 +10,12 @@ export interface ChatContentProps {
     isSearchLoading: boolean;
     isUnlockOutreachLoading: boolean;
     shouldShowButtons: boolean;
-    handlePageToUnlock: () => void;
-    handlePageToOutreach: () => void;
+    handleSelectedInfluencersToUnlock: () => void;
+    handleSelectedInfluencersToOutreach: () => void;
     stopBoostbot: () => void;
-    shortenedButtons: boolean;
+    areChatActionsDisabled: boolean;
+    isUnlockButtonDisabled: boolean;
+    isOutreachButtonDisabled: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -21,11 +23,15 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     isSearchLoading,
     isUnlockOutreachLoading,
     shouldShowButtons,
-    handlePageToUnlock,
-    handlePageToOutreach,
+    handleSelectedInfluencersToUnlock,
+    handleSelectedInfluencersToOutreach,
     stopBoostbot,
-    shortenedButtons,
+    areChatActionsDisabled,
+    isUnlockButtonDisabled,
+    isOutreachButtonDisabled,
 }) => {
+    // Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
+    const temporarilyDisableStopButton = true;
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
@@ -40,27 +46,28 @@ export const ChatContent: React.FC<ChatContentProps> = ({
             {messages.map((message, index) => (
                 <Message key={index} message={message} />
             ))}
-
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">
                     <Button
                         data-testid="boostbot-button-unlock"
-                        onClick={handlePageToUnlock}
-                        disabled={isUnlockOutreachLoading}
+                        onClick={handleSelectedInfluencersToUnlock}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled || isUnlockButtonDisabled}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
+                        {t('boostbot.chat.unlockSelected')}
                     </Button>
                     <Button
                         data-testid="boostbot-button-outreach"
-                        onClick={handlePageToOutreach}
-                        disabled={isUnlockOutreachLoading}
+                        onClick={handleSelectedInfluencersToOutreach}
+                        disabled={isUnlockOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled}
+                        className="text-xs"
                     >
-                        {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
+                        {t('boostbot.chat.outreachSelected')}
                     </Button>
                 </div>
             )}
-
-            {isSearchLoading && (
+            {/* Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007 */}
+            {isSearchLoading && !temporarilyDisableStopButton && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
                     <Button
                         data-testid="boostbot-button-stop"
@@ -71,7 +78,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     </Button>
                 </div>
             )}
-
             <div className="relative top-10" ref={chatBottomRef} />
         </div>
     );

@@ -9,8 +9,9 @@ import { useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
+import { formatDate } from 'src/utils/datetime';
+import { useAppcues } from 'src/hooks/useAppcues';
 import { useTranslation } from 'react-i18next';
-import { useSubscription } from 'src/hooks/use-subscription';
 
 export const AnalyticsContext = createContext<
     | {
@@ -43,18 +44,31 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
     const rudderstack = useRudder();
-    const { session, profile, user, company } = useSession();
+    const appcues = useAppcues();
+    const { session, profile, user, company, subscription } = useSession();
     const { i18n } = useTranslation();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
-    const { subscription } = useSubscription();
 
     useEffect(() => {
-        if (profile !== null && user !== null && company !== null && rudderstack) {
+        if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
             const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
             rudderstack.identify(id, traits);
         }
     }, [rudderstack, profile, user, company, i18n, subscription]);
+
+    useEffect(() => {
+        if (profile !== null && company !== null && appcues) {
+            const { id, traits } = profileToIdentifiable(profile);
+
+            appcues.identify(id, {
+                language: i18n.language,
+                createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : null,
+                companyName: company.name,
+                ...traits,
+            });
+        }
+    }, [appcues, profile, company, i18n.language]);
 
     // set analytics identity
     useEffect(() => {
