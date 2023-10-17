@@ -8,6 +8,7 @@ import { useGetCurrentPage } from './use-get-current-page';
 import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
+import { formatDate } from 'src/utils/datetime';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -116,6 +117,7 @@ export const profileToIdentifiable = (
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
         subscriptionStatus: subscriptionStatus.toLowerCase(),
+        createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : '',
     };
 
     return { id, traits };
