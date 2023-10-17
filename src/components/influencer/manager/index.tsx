@@ -8,7 +8,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
-import { ClickNeedHelp, OpenInfluencerManagerPage, OpenInfluencerProfile } from 'src/utils/analytics/events';
+import { ClickNeedHelp, OpenInfluencerProfile } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterInfluencers } from './helpers';
@@ -55,11 +55,6 @@ const Manager = () => {
                 : [],
         [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
     );
-
-    useEffect(() => {
-        const { abort } = track(OpenInfluencerManagerPage);
-        return abort;
-    }, [track]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
