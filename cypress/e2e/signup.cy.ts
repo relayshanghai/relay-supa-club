@@ -49,11 +49,23 @@ describe('Signup and start trial', () => {
         cy.contains('button', 'Next').click();
         // step three
         cy.contains('Tell us about your Company');
+
+        // start check if 'compnay already exists' check works
+        cy.contains('label', 'Company').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Enter your company name').type(`Expired Company`);
+        });
+        cy.contains('Company already exists');
+        cy.contains('button', 'Next').should('be.disabled');
+        // end check
+
         cy.contains('label', 'Company').within(() => {
             cy.get('input')
                 .should('have.attr', 'placeholder', 'Enter your company name')
+                .clear()
                 .type(`Test Company ${randomString()}`);
         });
+        cy.contains('button', 'Next').should('be.not.disabled');
+
         cy.contains('label', 'Website').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
         });
