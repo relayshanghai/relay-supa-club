@@ -100,7 +100,7 @@ export const profileToIdentifiable = (
     subscription?: SubscriptionGetResponse,
 ) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
-    const subscriptionType = subscription?.name ?? '';
+    const subscriptionStatus = subscription?.status ?? '';
 
     const traits: apiObject = {
         email: email || '',
@@ -115,7 +115,7 @@ export const profileToIdentifiable = (
         number: user?.phone ?? '',
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
-        subscriptionStatus: subscriptionType.toLowerCase(),
+        subscriptionStatus: subscriptionStatus.toLowerCase(),
     };
 
     return { id, traits };
