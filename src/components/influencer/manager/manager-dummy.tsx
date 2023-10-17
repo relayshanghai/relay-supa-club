@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-dummy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
-import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterInfluencers } from './helpers';
@@ -36,17 +34,10 @@ const ManagerDummy = () => {
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
-    const { track } = useRudderstackTrack();
-
     const influencers =
         sequenceInfluencers.length > 0 && profile
             ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequenceInfluencers)
             : [];
-
-    useEffect(() => {
-        const { abort } = track(OpenInfluencerManagerPage);
-        return abort;
-    }, [track]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {

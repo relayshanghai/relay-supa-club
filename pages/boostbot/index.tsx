@@ -13,12 +13,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import {
-    OpenVideoGuideModal,
-    OpenBoostbotPage,
-    SendInfluencersToOutreach,
-    UnlockInfluencers,
-} from 'src/utils/analytics/events';
+import { OpenVideoGuideModal, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
@@ -155,10 +150,6 @@ const Boostbot = () => {
     );
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
-
-    useEffect(() => {
-        track(OpenBoostbotPage.eventName);
-    }, [track]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
         setInfluencers((prevInfluencers) =>
