@@ -43,7 +43,12 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
+    const [influencers, setInfluencers] = usePersistentState<Influencer[]>(
+        'boostbot-influencers',
+        [],
+        // Some of the influencers can get stuck in a loading state if the user navigates away/closes the tab prematurely. We just reset the isLoading state to false on load to correctly reflect it in the UI.
+        (onLoadInfluencers) => onLoadInfluencers.map((i) => ({ ...i, isLoading: false })),
+    );
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
