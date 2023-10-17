@@ -1,3 +1,4 @@
+import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -134,6 +135,32 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     }
     return res;
 };
+
+/**
+ * Determines whether the local session from the given supabase client is clean
+ *
+ *  "clean" means that this local session is either non-existent
+ *   or existent AND valid (matches the backend session)
+ */
+const isSessionClean = async (supabase: SupabaseClient) => {
+    const { data: sessiondata } = await supabase.auth.getSession();
+
+    // Session is null, nothing to verify if clean or not
+    if (sessiondata.session === null) {
+        return true;
+    }
+
+    const { data: userdata } = await supabase.auth.getUser();
+
+    // Given that the user is not null, determine if the session is clean by comparing
+    // the local user id and the retrieved user id
+    if (userdata.user !== null && sessiondata.session.user.id === userdata.user.id) {
+        return true;
+    }
+
+    return false;
+};
+
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
  *
@@ -154,6 +181,18 @@ export async function middleware(req: NextRequest) {
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
+
+    if ((await isSessionClean(supabase)) === false) {
+        const redirectUrl = req.nextUrl.clone();
+
+        if (req.nextUrl.pathname.includes('api')) {
+            return NextResponse.rewrite(`${req.nextUrl.origin}/api/forbidden`, { status: httpCodes.FORBIDDEN });
+        }
+
+        redirectUrl.pathname = '/logout';
+        return NextResponse.redirect(redirectUrl);
+    }
+
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {

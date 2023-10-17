@@ -69,6 +69,7 @@ const mockCompanyContext: CompanyContext = {
     createCompany: async () => null,
     companyExists: async () => false,
     refreshCompany: () => null,
+    isExpired: false,
 };
 
 const HydrateAtoms = ({ initialValues, children }: { initialValues: InitialValues; children: React.ReactNode }) => {

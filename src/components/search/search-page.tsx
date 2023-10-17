@@ -299,11 +299,12 @@ export const SearchPageInner = () => {
 };
 
 export const SearchPage = () => {
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
+
     const { t } = useTranslation();
     return (
         <Layout>
-            {company?.subscription_status === 'canceled' && (
+            {isExpired && (
                 <Banner
                     buttonText={t('banner.button')}
                     title={t('banner.expired.title')}

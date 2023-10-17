@@ -64,8 +64,17 @@ const sendAndInsertEmail = async ({
             sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
             sequenceEmail.sequence_step_id === step.id,
     );
-    if (existingSequenceEmail) {
-        throw new Error('Email already sent');
+    if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
+        // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
+        if (sequenceInfluencer.funnel_status === 'To Contact') {
+            await db(updateSequenceInfluencerCall)({
+                id: sequenceInfluencer.id,
+                funnel_status: 'In Sequence',
+            });
+            return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
+        } else {
+            throw new Error('Email already sent');
+        }
     }
 
     const params = {
