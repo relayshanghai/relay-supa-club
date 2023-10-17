@@ -1,5 +1,6 @@
 const boostbot = {
     filters: {
+        openModalButton: '筛选红人',
         modalTitle: '基础筛选条件',
         fromPlatform: '我想要看以下平台的红人',
         fromGeos: '他们的粉丝所在地区位于',
@@ -18,7 +19,8 @@ const boostbot = {
 
 例如: “一款重量轻、可折叠的4K HDR迷你相机无人机”`,
         noInfluencersFound: '看上去好像没有符合目前设定的筛选条件的网红达人诶。你可在此处再次调整筛选条件:',
-        influencersFound:
+        influencersFound: '我精选了 {{count}} 位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
+        influencersFoundFirstTime:
             '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在{{geolocations}}。你也可以在此处更改目标地域：',
         influencersFoundAddToSequence:
             '你可以将这些网红达人添加到名为<customLink>Sequence</customLink>「邮件进程管理」的邮件列表中。「邮件进程管理」功能可以让你直接向网红达人发送电子邮件。',
@@ -41,6 +43,12 @@ const boostbot = {
         outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
         and: '和',
+        clearChatModal: {
+            open: '删除对话记录',
+            title: '你确定要删除和BoostBot的对话记录和红人搜索结果吗?',
+            confirm: '是',
+            cancel: '返回',
+        },
     },
     table: {
         account: '账号',

@@ -1,5 +1,6 @@
 const boostbot = {
     filters: {
+        openModalButton: 'Filter influencers',
         modalTitle: 'Basic Filters',
         fromPlatform: 'Show me influencers from',
         fromGeos: 'who have followers in',
@@ -20,6 +21,8 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         noInfluencersFound:
             "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
         influencersFound:
+            'I handpicked {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
+        influencersFoundFirstTime:
             'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
         influencersFoundAddToSequence:
             'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
@@ -43,6 +46,12 @@ Tip: You can also unlock influencers one by one.`,
             "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
         and: 'and',
+        clearChatModal: {
+            open: 'Clear chat history',
+            title: 'Are you sure you want to delete your BoostBot chat history and influencer results?',
+            confirm: 'Yes',
+            cancel: 'Back',
+        },
     },
     table: {
         account: 'Account',

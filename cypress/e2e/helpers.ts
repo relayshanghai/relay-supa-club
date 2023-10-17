@@ -137,9 +137,8 @@ export const resetBobsStatus = async () => {
         .match({ email });
 };
 
-export const resetUsages = (supabase: RelayDatabase) => {
-    supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
-};
+export const resetUsages = async (supabase: RelayDatabase) =>
+    await supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
 
 export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfluencers: SequenceInfluencer[]) => {
     const results = [];

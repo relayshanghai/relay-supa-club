@@ -13,12 +13,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import {
-    OpenVideoGuideModal,
-    OpenBoostbotPage,
-    SendInfluencersToOutreach,
-    UnlockInfluencers,
-} from 'src/utils/analytics/events';
+import { OpenVideoGuideModal, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
@@ -83,7 +78,8 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
+
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -121,7 +117,7 @@ const Boostbot = () => {
             });
             setAreChatActionsDisabled(true);
         }
-        if (company?.subscription_status === 'canceled') {
+        if (isExpired) {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
@@ -154,10 +150,6 @@ const Boostbot = () => {
     );
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
-
-    useEffect(() => {
-        track(OpenBoostbotPage.eventName);
-    }, [track]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
         setInfluencers((prevInfluencers) =>
@@ -363,9 +355,22 @@ const Boostbot = () => {
         }
     };
 
+    const clearChatHistory = () => {
+        setMessages([
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+            },
+        ]);
+        setIsInitialLogoScreen(true);
+        setInfluencers([]);
+        setSelectedInfluencers({});
+    };
+
     return (
         <Layout>
-            {company?.subscription_status === 'canceled' && (
+            {isExpired && (
                 <Banner
                     buttonText={t('banner.button')}
                     title={t('banner.expired.title')}
@@ -395,6 +400,7 @@ const Boostbot = () => {
                         setSequence={setSequence}
                         sequence={sequence}
                         sequences={sequences}
+                        clearChatHistory={clearChatHistory}
                     />
                 </div>
 

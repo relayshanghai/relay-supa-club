@@ -391,12 +391,10 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         const currentStep = sequenceSteps.find((step) => step.id === sequenceEmail.sequence_step_id);
         trackData.extra_info.currentStep = currentStep;
-        if (!currentStep?.step_number) {
+        if (typeof currentStep?.step_number !== 'number') {
             throw new Error('No sequence step found');
         }
-        if (sequenceInfluencer.sequence_step <= currentStep.step_number) {
-            throw new Error('Sequence step already updated');
-        }
+        const isValidUpdate = currentStep.step_number > sequenceInfluencer.sequence_step;
 
         trackData.sequence_step = currentStep.step_number;
         trackData.sequence_step_id = currentStep.id;
@@ -405,8 +403,11 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             id: sequenceInfluencer.id,
             sequence_step: currentStep.step_number,
         };
-        await updateSequenceInfluencer(sequenceInfluencerUpdate);
-        trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
+
+        if (isValidUpdate) {
+            await updateSequenceInfluencer(sequenceInfluencerUpdate);
+            trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
+        }
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,

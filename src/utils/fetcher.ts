@@ -1,9 +1,6 @@
 import { getItem } from '@analytics/storage-utils';
 import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
 import { ANALYTICS_HEADER_NAME } from './analytics/constants';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
-import { forensicTrack } from './api/forensicTrack';
 
 interface ResponseWithError extends Response {
     success?: boolean;
@@ -14,23 +11,9 @@ interface ResponseWithError extends Response {
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).then((res) => res.json());
 
-export const handleResError = async (
-    res: ResponseWithError,
-    action: string,
-    context?: { req: NextApiRequest; res: NextApiResponse },
-) => {
+export const handleResError = async (res: ResponseWithError) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
-        if (context) {
-            if (res.status === 429) {
-                await logRateLimitError(action, context);
-                forensicTrack(context, 'rate_limit_error');
-            }
-            if (json.error === 'daily_tokens_limit_exceeded') {
-                await logDailyTokensError(action, context);
-                forensicTrack(context, 'daily_tokens_limit_exceeded');
-            }
-        }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)
             throw new Error(typeof json.message === 'string' ? json.message : JSON.stringify(json.message));
@@ -69,7 +52,7 @@ export const nextFetch = async <T = any>(path: string, options: RequestInitWithB
     const stringified = body && typeof body !== 'string' ? JSON.stringify(body) : body;
     const optionsWithBody = { ...options, body: stringified };
     const res = await fetch('/api/' + path, optionsWithBody);
-    await handleResError(res, path);
+    await handleResError(res);
     const json = await res.json();
     return json as T;
 };
@@ -93,7 +76,7 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
     }
     options.headers = { ...options.headers, [ANALYTICS_HEADER_NAME]: anonymous_id };
     const res = await fetch(url.toString(), options);
-    await handleResError(res, path);
+    await handleResError(res);
     const json = await res.json();
     return json as T;
 };

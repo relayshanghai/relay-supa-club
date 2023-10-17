@@ -29,7 +29,7 @@ export const SearchOptions = ({
     searchType: string | null;
     onSearchTypeChange: (searchType: string) => void;
 }) => {
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
     const {
         platform,
         tags,
@@ -234,7 +234,7 @@ export const SearchOptions = ({
                                 data-testid="search-button"
                                 className="col-span-1 h-full"
                                 onClick={(e) => {
-                                    if (company?.subscription_status === 'canceled') {
+                                    if (isExpired) {
                                         return;
                                     }
                                     handleSearch(e);

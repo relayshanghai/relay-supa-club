@@ -23,6 +23,7 @@ import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
 import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
+import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 
@@ -55,6 +56,7 @@ interface ChatProps {
     sequence?: Sequence;
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
+    clearChatHistory: () => void;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -78,7 +80,10 @@ export const Chat: React.FC<ChatProps> = ({
     sequence,
     setSequence,
     sequences,
+    clearChatHistory,
 }) => {
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
     const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
         platforms: ['youtube', 'tiktok', 'instagram'],
@@ -187,40 +192,50 @@ export const Chat: React.FC<ChatProps> = ({
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             if (influencers.length > 0) {
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFound',
-                    translationValues: {
-                        count: influencers.length,
-                    },
-                    translationValuesToTranslate: {
-                        geolocations: filters.audience_geo,
-                    },
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFoundAddToSequence',
-                    translationLink: '/sequences',
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/sequence-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.influencersFoundNextSteps',
-                });
+                if (isFirstTimeSearch) {
+                    setIsFirstTimeSearch(false);
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTime',
+                        translationValues: {
+                            count: influencers.length,
+                        },
+                        translationValuesToTranslate: {
+                            geolocations: filters.audience_geo,
+                        },
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'video',
+                        videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                        eventToTrack: OpenVideoGuideModal.eventName,
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundAddToSequence',
+                        translationLink: '/sequences',
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'video',
+                        videoUrl: '/assets/videos/sequence-guide.mp4',
+                        eventToTrack: OpenVideoGuideModal.eventName,
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundNextSteps',
+                    });
+                } else {
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFound',
+                        translationValues: { count: influencers.length },
+                    });
+                }
             } else {
                 addMessage({
                     sender: 'Bot',
@@ -276,6 +291,12 @@ export const Chat: React.FC<ChatProps> = ({
                 setFilters={setFilters}
             />
 
+            <ClearChatHistoryModal
+                isOpen={isClearChatHistoryModalOpen}
+                setIsOpen={setIsClearChatHistoryModalOpen}
+                onConfirm={clearChatHistory}
+            />
+
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
@@ -299,6 +320,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isLoading={isSearchLoading || isUnlockOutreachLoading}
                     onSendMessage={onSendMessage}
                     openFiltersModal={() => setIsFiltersModalOpen(true)}
+                    openClearChatHistoryModal={() => setIsClearChatHistoryModalOpen(true)}
                 />
             </div>
         </div>
