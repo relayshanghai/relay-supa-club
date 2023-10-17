@@ -136,16 +136,24 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     return res;
 };
 
+/**
+ * Determines whether the local session from the given supabase client is clean
+ *
+ *  "clean" means that this local session is either non-existent
+ *   or existent AND valid (matches the backend session)
+ */
 const isSessionClean = async (supabase: SupabaseClient) => {
     const { data: sessiondata } = await supabase.auth.getSession();
 
-    // nothing to check here
+    // Session is null, nothing to verify if clean or not
     if (sessiondata.session === null) {
         return true;
     }
 
     const { data: userdata } = await supabase.auth.getUser();
 
+    // Given that the user is not null, determine if the session is clean by comparing
+    // the local user id and the retrieved user id
     if (userdata.user !== null && sessiondata.session.user.id === userdata.user.id) {
         return true;
     }
