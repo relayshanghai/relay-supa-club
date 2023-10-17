@@ -4,7 +4,6 @@ import httpCodes from 'src/constants/httpCodes';
 import type Stripe from 'stripe';
 import { ApiHandler } from 'src/utils/api-handler';
 import { serverLogger } from 'src/utils/logger-server';
-import { updateSubscriptionStatusAndUsages } from 'src/utils/api/stripe/handle-subscriptions';
 
 export type SubscriptionUpgradeWithAlipayPostRequestBody = {
     companyId: string;
@@ -19,7 +18,7 @@ export interface SubscriptionUpgradeWithAlipayPostResponse extends Stripe.Respon
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { companyId, cusId, priceId } = req.body as SubscriptionUpgradeWithAlipayPostRequestBody;
+    const { cusId, priceId } = req.body as SubscriptionUpgradeWithAlipayPostRequestBody;
     if (!cusId || !priceId) {
         serverLogger('Missing cusId, priceId');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing cusId, priceId' });
@@ -50,24 +49,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         serverLogger('Failed to get payment intent');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to get payment intent' });
     }
-    // confirm the payment intent
-    console.log('=============================>confirmPaymentIntent');
-    const confirmPaymentIntent = await stripeClient.paymentIntents.confirm(paymentIntent.id, {
-        payment_method: (paymentIntent as Stripe.PaymentIntent).payment_method,
-    });
 
-    console.log('=============================>confirmed!', confirmPaymentIntent);
-
-    if (confirmPaymentIntent.status === 'succeeded') {
-        // cancel the old subscription
-        const cancelSubscription = await stripeClient.subscriptions.del(oldSubscriptionId);
-        console.log('=============================>cancelSubscription', cancelSubscription);
-        // and update subscription status with new subscription id and usages
-        await updateSubscriptionStatusAndUsages(companyId, oldSubscriptionId, priceId);
-        console.log('=============================>Update plan and usages');
-    }
-
-    return res.status(httpCodes.OK).json({ confirmPaymentIntent });
+    return res.status(httpCodes.OK).json({ paymentIntent, oldSubscriptionId });
 };
 
 export default ApiHandler({

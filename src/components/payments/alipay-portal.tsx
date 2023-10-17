@@ -7,6 +7,7 @@ import type Stripe from 'stripe';
 import { useState } from 'react';
 import { Spinner } from '../icons';
 import type { NewRelayPlan } from 'types';
+import { clientLogger } from 'src/utils/logger-client';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -32,7 +33,6 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
                 return;
             } else {
                 // Show a success message to your customer
-                // handlePaymentIntent(setUpIntentConfirm);
             }
         }
     };
@@ -49,17 +49,10 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
             const setupIntent = await createSetupIntentForAlipay(company.id, company.cus_id, priceId);
 
             await handleServerResponse(setupIntent);
-            //monitor webhooks
-
-            // if setup_intent.succeeded, set the payment method to the customer default payment method
-
-            // create a subscription with the setup intent id
-
-            // if setup_intent.setup_failed webhook, redirect back to payment page with error message
         } catch (error) {
             //eslint-disable-next-line
             console.log('error============>', error);
-            // clientLogger(error, 'error');
+            clientLogger(error, 'error');
         } finally {
             setIsLoading(false);
         }

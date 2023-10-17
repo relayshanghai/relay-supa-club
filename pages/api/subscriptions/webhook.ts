@@ -55,7 +55,6 @@ const identifyWebhook = async (
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
         case handledWebhooks.setupIntentSucceeded:
-            // console.log('setupinent_succeeded =========================>', event);
             return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
         case handledWebhooks.invoicePaymentSucceeded:
             return await handleInvoicePaymentSucceeded(res, event as InvoicePaymentSucceeded);

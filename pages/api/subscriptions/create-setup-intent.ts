@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
-// import { APP_URL } from 'src/constants';
+import { APP_URL } from 'src/constants';
 import { serverLogger } from 'src/utils/logger-server';
 
 export type CreateSetUpIntentPostBody = {
@@ -41,24 +41,24 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         //https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
         customer: customerId,
         payment_method_types: paymentMethodTypes,
-        // confirm: true,
-        // payment_method: paymentMethod.id,
-        // payment_method_options: {
-        //     alipay: {
-        //         currency: 'cny',
-        //     },
-        // },
-        // usage: 'off_session',
-        // mandate_data: {
-        //     customer_acceptance: {
-        //         type: 'online',
-        //         online: {
-        //             ip_address: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
-        //             user_agent: req.headers['user-agent'],
-        //         },
-        //     },
-        // },
-        // return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
+        confirm: true,
+        payment_method: paymentMethod.id,
+        payment_method_options: {
+            alipay: {
+                currency: 'cny',
+            },
+        },
+        usage: 'off_session',
+        mandate_data: {
+            customer_acceptance: {
+                type: 'online',
+                online: {
+                    ip_address: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+                    user_agent: req.headers['user-agent'],
+                },
+            },
+        },
+        return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
     });
 
     return res.status(httpCodes.OK).json(response);

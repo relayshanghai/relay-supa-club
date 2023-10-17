@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Title } from 'src/components/title';
-import { upgradeSubscriptionWithAlipay } from 'src/utils/api/stripe/handle-subscriptions';
+import {
+    cancelSubscriptionWithSubscriptionId,
+    upgradeSubscriptionWithAlipay,
+} from 'src/utils/api/stripe/handle-subscriptions';
+import toast from 'react-hot-toast';
 
 const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
@@ -17,17 +21,22 @@ const ConfirmAlipayPaymentPage = () => {
         }
         setIsProcessing(true);
         try {
-            const { confirmPaymentIntent } = await upgradeSubscriptionWithAlipay(companyId, customerId, priceId);
-            console.log('=======================> Done!', confirmPaymentIntent);
-
+            const { paymentIntent, oldSubscriptionId } = await upgradeSubscriptionWithAlipay(
+                companyId,
+                customerId,
+                priceId,
+            );
+            if (paymentIntent.status === 'succeeded') {
+                await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
+                toast.success('Your subscription has been upgraded successfully!');
+            }
             router.push('/account');
         } catch (error: any) {
-            console.log('error', error);
             setErrorMessage(error.message);
         } finally {
             setIsProcessing(false);
         }
-    }, [companyId, customerId, priceId]);
+    }, [companyId, customerId, priceId, router]);
 
     useEffect(() => {
         handleCreateSubscriptionWithAlipay();
