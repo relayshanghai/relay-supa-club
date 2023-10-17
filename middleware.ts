@@ -189,7 +189,6 @@ export async function middleware(req: NextRequest) {
         }
 
         redirectUrl.pathname = '/logout';
-        redirectUrl.search = 'session-expired=1';
         return NextResponse.redirect(redirectUrl);
     }
 
