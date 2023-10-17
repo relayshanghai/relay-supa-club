@@ -39,7 +39,7 @@ export const SearchResultsTable = ({
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
     const noResults = !results || results.length === 0;
 
     const loading = resultsLoading || topSearchLoading || (noResults && validating);
@@ -82,7 +82,7 @@ export const SearchResultsTable = ({
                             </td>
                         </tr>
                     )}
-                    {company?.subscription_status === 'canceled' && (
+                    {isExpired && (
                         <tr className="w-full">
                             <td className="space-y-4 py-4 text-center" colSpan={6}>
                                 <p className="mb-4">{t('creators.accountExpired')}</p>
@@ -106,31 +106,27 @@ export const SearchResultsTable = ({
                             <td />
                         </tr>
                     )}
-                    {!error &&
-                        !usageExceeded &&
-                        !noResults &&
-                        results &&
-                        company?.subscription_status !== 'canceled' && (
-                            <>
-                                {results.map((creator, i) => (
-                                    <SearchResultRow
-                                        key={`${creator.account.user_profile.username}-${creator.account.user_profile.user_id}`}
-                                        creator={creator}
-                                        setShowCampaignListModal={setShowCampaignListModal}
-                                        setSelectedCreator={setSelectedCreator}
-                                        setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                        allCampaignCreators={allCampaignCreators}
-                                        allSequenceInfluencersIqDataIdsAndSequenceNames={
-                                            allSequenceInfluencersIqDataIdsAndSequenceNames
-                                        }
-                                        batchId={batchId}
-                                        page={1}
-                                        resultIndex={i}
-                                    />
-                                ))}
-                                {moreResults}
-                            </>
-                        )}
+                    {!error && !usageExceeded && !noResults && results && !isExpired && (
+                        <>
+                            {results.map((creator, i) => (
+                                <SearchResultRow
+                                    key={`${creator.account.user_profile.username}-${creator.account.user_profile.user_id}`}
+                                    creator={creator}
+                                    setShowCampaignListModal={setShowCampaignListModal}
+                                    setSelectedCreator={setSelectedCreator}
+                                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                    allCampaignCreators={allCampaignCreators}
+                                    allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                        allSequenceInfluencersIqDataIdsAndSequenceNames
+                                    }
+                                    batchId={batchId}
+                                    page={1}
+                                    resultIndex={i}
+                                />
+                            ))}
+                            {moreResults}
+                        </>
+                    )}
 
                     {error && (
                         <tr>

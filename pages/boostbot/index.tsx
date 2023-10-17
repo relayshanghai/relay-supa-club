@@ -83,7 +83,8 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
-    const { company } = useCompany();
+    const { isExpired } = useCompany();
+
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -121,7 +122,7 @@ const Boostbot = () => {
             });
             setAreChatActionsDisabled(true);
         }
-        if (company?.subscription_status === 'canceled') {
+        if (isExpired) {
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
@@ -378,7 +379,7 @@ const Boostbot = () => {
 
     return (
         <Layout>
-            {company?.subscription_status === 'canceled' && (
+            {isExpired && (
                 <Banner
                     buttonText={t('banner.button')}
                     title={t('banner.expired.title')}
