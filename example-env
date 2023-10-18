@@ -101,6 +101,3 @@ EMAIL_ENGINE_API_KEY=asdfasdf
 
 # Enable rudderstack
 NEXT_PUBLIC_ENABLE_RUDDERSTACK=true
-
-# Appcues
-APPCUES_ACCOUNT_ID=
