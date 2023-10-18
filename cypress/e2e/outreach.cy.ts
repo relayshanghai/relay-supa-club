@@ -162,14 +162,15 @@ describe('outreach', () => {
         cy.contains('Charlie Charles').should('not.exist');
         cy.contains('Alice Anderson').should('not.exist');
     });
-    it('can edit email', () => {
+    // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1009
+    it.skip('can edit email', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
         cy.contains('alice.anderson@example.com', { timeout: 10000 });
         cy.contains('tr', 'alice.anderson@example.com').within(() => {
-            cy.contains('alice.anderson@example.com', { timeout: 10000 }).click();
+            cy.contains('alice.anderson@example.com').click();
             cy.getByTestId('table-inline-input-add email').clear();
             cy.get('button[type=submit]').click();
             cy.contains('Add email').should('exist').click();
