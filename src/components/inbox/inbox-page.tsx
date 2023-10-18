@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenEmailThread, OpenInboxPage, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
+import { OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -20,7 +20,6 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
-import { mapProfileToNotes, mapProfileToShippingDetails } from '../influencer-profile/screens/profile-overlay-screen';
 import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
@@ -30,14 +29,7 @@ import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list
 import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-
-const mapProfileToFormData = (p?: SequenceInfluencerManagerPage | null) => {
-    if (!p) return null;
-    return {
-        notes: mapProfileToNotes(p),
-        shippingDetails: mapProfileToShippingDetails(p),
-    };
-};
+import { mapProfileToFormData } from './helpers';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -57,11 +49,6 @@ export const InboxPage = () => {
     const { t } = useTranslation();
 
     const { track } = useRudderstackTrack();
-
-    useEffect(() => {
-        const { abort } = track(OpenInboxPage);
-        return abort;
-    }, [track]);
 
     useEffect(() => {
         if (!inboxMessages) {

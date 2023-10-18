@@ -3,7 +3,6 @@ import { LanguageToggle } from '../common/language-toggle';
 import { PricingPage } from '../pricing/pricing-page';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const LandingPage = () => {
     const { t } = useTranslation();
@@ -17,10 +16,11 @@ export const LandingPage = () => {
                     {t('signup.alreadySignedUp')}
                     <Link
                         href="/login"
-                        className="ml-2 text-primary-500"
-                        onClick={() => trackEvent(LANDING_PAGE('go to Login Page'))}
+                        className="text-primary-500"
+                        // @note previous name: Landing Page, go to Login Page
+                        onClick={() => trackEvent('Go To Login')}
                     >
-                        {t('login.logIn')}
+                        &nbsp; {t('login.logIn')}
                     </Link>
                 </p>
             </div>

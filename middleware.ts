@@ -1,3 +1,4 @@
+import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -62,7 +63,7 @@ const checkOnboardingStatus = async (
         // for new user signup. We have checks in the next endpoint
         return res;
     }
-    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
+    const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
@@ -70,7 +71,7 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('signup')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
+    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
@@ -83,34 +84,6 @@ const checkOnboardingStatus = async (
 
         // Authentication successful, forward request to protected route.
         return res;
-    } else if (subscriptionStatus === 'canceled') {
-        // if subscription ended only allow access to account page, and subscription endpoints
-        //handle landing page - index page separately
-        if (req.nextUrl.pathname === '/') return res;
-        const allowedPaths = [
-            '/signup',
-            '/free-trial',
-            '/login',
-            '/account',
-            '/api/subscriptions',
-            '/api/company',
-            '/pricing',
-            '/payments',
-        ];
-        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
-        // if they are trying to access other pages or make other api requests, they should be redirected back to account page
-        else {
-            if (!subscriptionEndDate) {
-                redirectUrl.pathname = '/account';
-                return NextResponse.redirect(redirectUrl);
-            }
-            // if they have subscriptionEndDate, user can still access the app until the SubscriptionEndDate
-            const endDate = new Date(subscriptionEndDate);
-            if (endDate < new Date()) {
-                redirectUrl.pathname = '/account';
-                return NextResponse.redirect(redirectUrl);
-            } else return res;
-        }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (
@@ -162,6 +135,32 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     }
     return res;
 };
+
+/**
+ * Determines whether the local session from the given supabase client is clean
+ *
+ *  "clean" means that this local session is either non-existent
+ *   or existent AND valid (matches the backend session)
+ */
+const isSessionClean = async (supabase: SupabaseClient) => {
+    const { data: sessiondata } = await supabase.auth.getSession();
+
+    // Session is null, nothing to verify if clean or not
+    if (sessiondata.session === null) {
+        return true;
+    }
+
+    const { data: userdata } = await supabase.auth.getUser();
+
+    // Given that the user is not null, determine if the session is clean by comparing
+    // the local user id and the retrieved user id
+    if (userdata.user !== null && sessiondata.session.user.id === userdata.user.id) {
+        return true;
+    }
+
+    return false;
+};
+
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
  *
@@ -178,9 +177,22 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/email-engine/webhook') {
         return allowEmailWebhookCors(req, res);
     }
+    if (req.nextUrl.pathname === '/api/company/exists') return res;
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
+
+    if ((await isSessionClean(supabase)) === false) {
+        const redirectUrl = req.nextUrl.clone();
+
+        if (req.nextUrl.pathname.includes('api')) {
+            return NextResponse.rewrite(`${req.nextUrl.origin}/api/forbidden`, { status: httpCodes.FORBIDDEN });
+        }
+
+        redirectUrl.pathname = '/logout';
+        return NextResponse.redirect(redirectUrl);
+    }
+
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {

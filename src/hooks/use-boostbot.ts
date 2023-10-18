@@ -11,8 +11,10 @@ import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-to
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
+import type { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { Influencer } from 'pages/boostbot';
 import { getFulfilledData } from 'src/utils/utils';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -28,11 +30,11 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
             const influencersPromises = influencersToUnlock.map(({ user_id, url }) => {
-                const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-                const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
+                const platform = extractPlatformFromURL(url);
+                if (!platform) throw new Error('No platform found');
 
                 const reportQuery: CreatorsReportGetQueries = {
-                    platform: platform,
+                    platform,
                     creator_id: user_id,
                     company_id: company.id,
                     user_id: profile.id,
@@ -100,12 +102,11 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     );
 
     const getInfluencers = useCallback(
-        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
+        async (searchPayloads: SearchInfluencersPayloadRequired[]) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
             return await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
-                topicClusters,
-                platform,
+                searchPayloads,
                 user_id: profile.id,
                 company_id: company.id,
             });

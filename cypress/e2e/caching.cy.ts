@@ -26,7 +26,7 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes').should('not.exist', { timeout: 2500 }); // report is not loaded yet
 
         cy.contains('Generating influencer Report. Please wait'); // loading analyze page
-        cy.contains('Cocomelon - Nursery Rhymes'); // loads analyze page
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 10000 }); // loads analyze page
 
         cy.intercept('/api/creators/report*', (req) => {
             req.reply({ body: cocomelon, delay: 10000 });
@@ -37,25 +37,26 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
     it('caches searches on the dashboard', () => {
-        cy.intercept('/api/influencer-search*', (req) => {
+        cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
                 body: defaultLandingPageInfluencerSearch,
-                delay: 1000,
+                delay: 3000,
             });
         });
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
 
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist');
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2999 }).should('not.exist');
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
-        cy.intercept('/api/influencer-search*', (req) => {
+        cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
                 body: defaultLandingPageInfluencerSearch,
                 delay: 10000,
             });
         });
         cy.reload();
-        cy.contains('Cocomelon - Nursery Rhymes').should('exist'); // even though the delay is 10 seconds, the search is cached
+        cy.contains('Search by Topics', { timeout: 10000 });
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2999 }); // loads faster than it did before // cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist') even thought the intercept timeout is longer.
     });
 });
 

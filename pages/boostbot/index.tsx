@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
@@ -12,16 +13,11 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import {
-    // OpenVideoGuideModal,
-    OpenBoostbotPage,
-    SendInfluencersToOutreach,
-    UnlockInfluencers,
-} from 'src/utils/analytics/events';
+import { OpenVideoGuideModal, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, UserProfile } from 'types';
+import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -31,7 +27,10 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
-// import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
+import { Banner } from 'src/components/library/banner';
+import { useCompany } from 'src/hooks/use-company';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import { updateSequenceInfluencerIfSocialProfileAvailable } from 'src/components/sequences/helpers';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -44,24 +43,48 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
-    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
+    const [influencers, setInfluencers] = usePersistentState<Influencer[]>(
+        'boostbot-influencers',
+        [],
+        // Some of the influencers can get stuck in a loading state if the user navigates away/closes the tab prematurely. We just reset the isLoading state to false on load to correctly reflect it in the UI.
+        (onLoadInfluencers) => onLoadInfluencers.map((i) => ({ ...i, isLoading: false })),
+    );
+    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+        'boostbot-selected-influencers',
+        {},
+    );
+    const selectedInfluencersData =
+        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
+
     const { trackEvent: track } = useRudderstack();
-    const { sequences } = useSequences();
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const [sequence, setSequence] = useState<Sequence | undefined>(
-        sequences?.find((sequence) => sequence.name === defaultSequenceName) || (sequences && sequences[0]),
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
+
+    const { createSequenceInfluencer, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((s) => s.id),
+    );
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = usePersistentState('boostbot-has-used-unlock', false);
-    const [hasUsedOutreach, setHasUsedOutreach] = usePersistentState('boostbot-has-used-outreach', false);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+    const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
+    const { isExpired } = useCompany();
+
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     const [searchId, setSearchId] = useState<string | number | null>(null);
@@ -97,10 +120,21 @@ const Boostbot = () => {
                 translationKey: 'boostbot.error.outOfProfileCredits',
                 translationLink: '/pricing',
             });
+            setAreChatActionsDisabled(true);
+        }
+        if (isExpired) {
+            addMessage({
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.error.expiredAccount',
+                translationLink: '/pricing',
+            });
+            setIsSearchDisabled(true);
+            setAreChatActionsDisabled(true);
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded]);
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
     const [messages, setMessages] = usePersistentState<MessageType[]>(
         'boostbot-messages',
@@ -112,17 +146,15 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            const isErrorMessage = (message: MessageType) =>
+                message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isUnfinishedLoading(message));
+            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
-
-    useEffect(() => {
-        track(OpenBoostbotPage.eventName);
-    }, [track]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
         setInfluencers((prevInfluencers) =>
@@ -187,21 +219,15 @@ const Boostbot = () => {
 
     const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
-    const removeInfluencer = (userId: string) => {
-        setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
-    };
+    const influencersToUnlock = selectedInfluencersData.filter((i) => !isUserProfile(i));
+    const influencersToOutreach = selectedInfluencersData.filter(
+        (i) => !allSequenceInfluencers.find((si) => si.iqdata_id === i?.user_id),
+    );
 
-    const handlePageToUnlock = async () => {
-        const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
-        if (influencersToUnlock.length === 0) {
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.noInfluencersToUnlock',
-            });
-            return;
-        }
+    const isUnlockButtonDisabled = influencersToUnlock.length === 0;
+    const isOutreachButtonDisabled = influencersToOutreach.length === 0;
 
+    const handleSelectedInfluencersToUnlock = async () => {
         setIsUnlockOutreachLoading(true);
 
         const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
@@ -214,19 +240,12 @@ const Boostbot = () => {
             translationLink: '/pricing',
             translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
-        // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-        // addMessage({
-        //     sender: 'Bot',
-        //     type: 'video',
-        //     videoUrl: '/assets/videos/delete-guide.mp4',
-        //     eventToTrack: OpenVideoGuideModal.eventName,
-        // });
         setHasUsedUnlock(true);
 
         return unlockedInfluencers;
     };
 
-    const handlePageToOutreach = async () => {
+    const handleSelectedInfluencersToOutreach = async () => {
         setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
@@ -236,67 +255,91 @@ const Boostbot = () => {
             topics: [],
             is_multiple: null,
             is_success: true,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_sequence_autostart: null,
         };
 
         try {
-            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
-            const influencersToUnlock =
-                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
-            const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
 
-            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
-
-            if (!unlockedInfluencers) {
+            if (!selectedInfluencersData) {
                 throw new Error('Error unlocking influencers');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
 
-            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
-                const creatorProfileId = influencer.user_profile.user_id;
+            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+                const creatorProfileId = influencer.user_id;
 
-                trackingPayload.influencer_ids.push(creatorProfileId);
-                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+                if (trackingPayload.influencer_ids !== null) {
+                    trackingPayload.influencer_ids.push(creatorProfileId);
+                }
 
+                if (trackingPayload.topics !== null) {
+                    trackingPayload.topics.push(...influencer.topics.map((v) => v));
+                }
+
+                const platform = extractPlatformFromURL(influencer.url);
+                if (!platform) {
+                    throw new Error('Error creating sequence influencer: no platform detected');
+                }
                 return createSequenceInfluencer({
                     iqdata_id: creatorProfileId,
-                    influencer_social_profile_id: influencer.socialProfile.id,
-                    tags,
-                    avatar_url: influencer.socialProfile.avatar_url ?? '',
-                    name: influencer.socialProfile.name || '',
-                    platform: influencer.socialProfile.platform as CreatorPlatform,
-                    username: influencer.socialProfile.username,
-                    url: influencer.socialProfile.url,
+                    avatar_url: influencer.picture ?? '',
+                    platform,
+                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
+                    username: influencer.handle ?? influencer.username ?? '',
+
+                    url: influencer.url,
                     sequence_id: sequence?.id,
                 });
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
             addMessage({
                 sender: 'Bot',
                 type: 'translation',
-                translationKey: `boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`,
-                translationLink: '/sequences',
+                translationKey: 'boostbot.chat.outreachDone',
             });
-            // Temporarily disabled, will be re-added, more info here: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/848
-            // addMessage({
-            //     sender: 'Bot',
-            //     type: 'video',
-            //     videoUrl: '/assets/videos/sequence-guide.mp4',
-            //     eventToTrack: OpenVideoGuideModal.eventName,
-            // });
+            addMessage({
+                sender: 'Bot',
+                type: 'video',
+                videoUrl: '/assets/videos/sequence-guide.mp4',
+                eventToTrack: OpenVideoGuideModal.eventName,
+            });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
+            }
+
+            // get all the reports and update the influencers. If this doesn't finish it doesn't matter because in the sequence-row we fetch the report if there is none.
+            const unlockedInfluencers = await handleUnlockInfluencers(selectedInfluencersData);
+            if (!unlockedInfluencers) {
+                return;
+            }
+            for (const { socialProfile, influencer, ...report } of unlockedInfluencers) {
+                const sequenceInfluencer = sequenceInfluencers.find((si) => si.id === influencer.id);
+                if (!sequenceInfluencer) {
+                    continue;
+                }
+                await updateSequenceInfluencerIfSocialProfileAvailable({
+                    sequenceInfluencer,
+                    socialProfile,
+                    report,
+                    updateSequenceInfluencer,
+                    company_id: profile?.company_id ?? '',
+                });
             }
         } catch (error) {
             clientLogger(error, 'error');
@@ -314,33 +357,55 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsUnlockOutreachLoading(false);
-            setHasUsedOutreach(true);
         }
+    };
+
+    const clearChatHistory = () => {
+        setMessages([
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+            },
+        ]);
+        setIsInitialLogoScreen(true);
+        setInfluencers([]);
+        setSelectedInfluencers({});
     };
 
     return (
         <Layout>
+            {isExpired && (
+                <Banner
+                    buttonText={t('banner.button')}
+                    title={t('banner.expired.title')}
+                    message={t('banner.expired.description')}
+                />
+            )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
                 <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
-                        handlePageToUnlock={handlePageToUnlock}
-                        handlePageToOutreach={handlePageToOutreach}
+                        handleSelectedInfluencersToUnlock={handleSelectedInfluencersToUnlock}
+                        handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isUnlockOutreachLoading={isUnlockOutreachLoading}
                         isSearchLoading={isSearchLoading}
+                        areChatActionsDisabled={areChatActionsDisabled}
                         setIsSearchLoading={setIsSearchLoading}
                         messages={messages}
                         setMessages={setMessages}
                         addMessage={addMessage}
-                        shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                         isSearchDisabled={isSearchDisabled}
+                        isUnlockButtonDisabled={isUnlockButtonDisabled}
+                        isOutreachButtonDisabled={isOutreachButtonDisabled}
                         setSearchId={setSearchId}
                         setSequence={setSequence}
                         sequence={sequence}
                         sequences={sequences}
+                        clearChatHistory={clearChatHistory}
                     />
                 </div>
 
@@ -350,8 +415,9 @@ const Boostbot = () => {
                     <InfluencersTable
                         columns={columns}
                         data={influencers}
-                        setCurrentPageInfluencers={setCurrentPageInfluencers}
-                        meta={{ handleUnlockInfluencer, removeInfluencer, t, searchId }}
+                        selectedInfluencers={selectedInfluencers}
+                        setSelectedInfluencers={setSelectedInfluencers}
+                        meta={{ handleUnlockInfluencer, t, searchId }}
                     />
                 )}
             </div>

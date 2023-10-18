@@ -51,6 +51,7 @@ import type { EmailNewPayload } from 'src/utils/analytics/events/outreach/email-
 import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
+import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -91,9 +92,46 @@ export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmai
         sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId),
     );
 };
+/** Deletes all outgoing, scheduled emails from the outbox for a given influencer */
+const deleteScheduledEmails = async (
+    trackData: Omit<EmailReplyPayload, 'is_success'>,
+    sequenceInfluencer: SequenceInfluencer,
+): Promise<Omit<EmailReplyPayload, 'is_success'>> => {
+    try {
+        // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
+        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+        trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
+        const toDelete = sequenceEmails.filter((email) => email.email_delivery_status === 'Scheduled');
+        const outbox = await getOutbox();
+        // If there are any scheduled emails in the outbox to this address, cancel them
+        const scheduledMessages = getScheduledMessages(outbox, toDelete);
+        trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
+        if (scheduledMessages.length === 0) {
+            return trackData;
+        }
+        for (const message of scheduledMessages) {
+            try {
+                const { deleted } = await deleteEmailFromOutbox(message.queueId);
+                if (!deleted) {
+                    throw new Error('failed to delete email from outbox');
+                }
+                await deleteSequenceEmailByMessageId(message.messageId);
+                trackData.deleted_emails.push(message.messageId);
+            } catch (error: any) {
+                trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
+                trackData.extra_info.email_delete_errors.push(`error: ${error?.message}\n stack ${error?.stack}`);
+            }
+        }
+        return trackData;
+    } catch (error: any) {
+        trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
+        trackData.extra_info.email_delete_errors.push(`error: ${error?.message}\n stack ${error?.stack}`);
+        return trackData;
+    }
+};
 
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
-    const trackData: Omit<EmailReplyPayload, 'is_success'> = {
+    let trackData: Omit<EmailReplyPayload, 'is_success'> = {
         account_id: event.account,
         sequence_influencer_id: sequenceInfluencer.id,
         sequence_emails_pre_delete: [],
@@ -104,40 +142,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         extra_info: { event_data: event.data },
     };
     try {
-        const deleteScheduledEmails = async () => {
-            try {
-                // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
-                const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-                trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
-                const outbox = await getOutbox();
-                // If there are any scheduled emails in the outbox to this address, cancel them
-                const scheduledMessages = getScheduledMessages(outbox, sequenceEmails);
-                trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
-                if (scheduledMessages.length === 0) {
-                    return;
-                }
-                for (const message of scheduledMessages) {
-                    try {
-                        const { deleted } = await deleteEmailFromOutbox(message.queueId);
-                        if (!deleted) {
-                            throw new Error('failed to delete email from outbox');
-                        }
-                        await deleteSequenceEmailByMessageId(message.messageId);
-                        trackData.deleted_emails.push(message.messageId);
-                    } catch (error: any) {
-                        trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
-                        trackData.extra_info.email_delete_errors.push(
-                            `error: ${error?.message}\n stack ${error?.stack}`,
-                        );
-                    }
-                }
-            } catch (error: any) {
-                trackData.extra_info.email_delete_errors = trackData.extra_info.email_delete_errors || [];
-                trackData.extra_info.email_delete_errors.push(`error: ${error?.message}\n stack ${error?.stack}`);
-            }
-        };
-
-        await deleteScheduledEmails();
+        trackData = await deleteScheduledEmails(trackData, sequenceInfluencer);
         // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         trackData.sequence_emails_after_delete = sequenceEmails.map((email) => email.id);
@@ -161,7 +166,8 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 
         const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
 
-        await updateSequenceInfluencer(influencerUpdate);
+        const update = await updateSequenceInfluencer(influencerUpdate);
+        trackData.extra_info.influencer_update = update;
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: true,
@@ -258,16 +264,32 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         id: sequenceEmail.id,
         email_delivery_status: 'Bounced',
     };
-
-    await updateSequenceEmail(update);
-
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
+    let trackData: EmailFailedPayload = {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
         error_type: 'bounced',
-        extra_info: { event_data: event.data, update },
-    });
+        extra_info: { event_data: event.data, update, email_delete_errors: null },
+        is_success: false,
+        sequence_influencer_id: null,
+        sequence_emails_pre_delete: [],
+        sequence_emails_after_delete: [],
+        scheduled_emails: [],
+        deleted_emails: [],
+        email_updates: [],
+    };
 
+    try {
+        await updateSequenceEmail(update);
+
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
+        trackData.sequence_influencer_id = sequenceInfluencer.id;
+        trackData = (await deleteScheduledEmails(trackData as any, sequenceInfluencer)) as any; // deleteScheduledEmails requires another Payload type and it is too troublesome to get it to accept both Payload types. I've confirmed that the keys set in deleteScheduledEmails won't be undefined.
+        trackData.is_success = true;
+    } catch (error: any) {
+        trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
+    } finally {
+        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
+    }
     return res.status(httpCodes.OK).json({});
 };
 
@@ -372,12 +394,10 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         const currentStep = sequenceSteps.find((step) => step.id === sequenceEmail.sequence_step_id);
         trackData.extra_info.currentStep = currentStep;
-        if (!currentStep?.step_number) {
+        if (typeof currentStep?.step_number !== 'number') {
             throw new Error('No sequence step found');
         }
-        if (sequenceInfluencer.sequence_step <= currentStep.step_number) {
-            throw new Error('Sequence step already updated');
-        }
+        const isValidUpdate = currentStep.step_number > sequenceInfluencer.sequence_step;
 
         trackData.sequence_step = currentStep.step_number;
         trackData.sequence_step_id = currentStep.id;
@@ -386,8 +406,11 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             id: sequenceInfluencer.id,
             sequence_step: currentStep.step_number,
         };
-        await updateSequenceInfluencer(sequenceInfluencerUpdate);
-        trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
+
+        if (isValidUpdate) {
+            await updateSequenceInfluencer(sequenceInfluencerUpdate);
+            trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
+        }
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,

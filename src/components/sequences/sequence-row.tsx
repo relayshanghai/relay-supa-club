@@ -177,7 +177,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     sequence_name: sequence?.name ?? null,
                     sequence_influencer_id: sequenceInfluencer.id,
                     is_success: false,
-                    extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule' },
+                    extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule ' + failed.length },
                     batch_id: batchId,
                 });
             }
@@ -211,18 +211,39 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const sequenceSendTooltipTitle = isMissingSequenceSendEmail
+    const sequenceSendTooltipTitle = !sequenceInfluencer.influencer_social_profile_id
+        ? t('sequences.invalidSocialProfileTooltip')
+        : !sequenceInfluencer?.email
+        ? t('sequences.missingEmail')
+        : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = isMissingSequenceSendEmail
+    const sequenceSendTooltipDescription = !sequenceInfluencer.influencer_social_profile_id
+        ? t('sequences.invalidSocialProfileTooltipDescription')
+        : !sequenceInfluencer?.email
+        ? t('sequences.missingEmailTooltipDescription')
+        : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables_variables', {
               variables: missingVariables,
           })
         : t('sequences.sequenceSendTooltipDescription');
+
+    const sequenceSendTooltipHighlight = !sequenceInfluencer.influencer_social_profile_id
+        ? t('sequences.invalidSocialProfileTooltipHighlight')
+        : undefined;
+
+    const isDuplicateInfluencer = sequenceInfluencers.some(
+        (influencer) =>
+            // isn't itself
+            influencer.id !== sequenceInfluencer.id &&
+            // has same email or iqdata id
+            (influencer.email === sequenceInfluencer.email || influencer.iqdata_id === sequenceInfluencer.iqdata_id) &&
+            influencer.funnel_status === 'To Contact',
+    );
     return (
         <>
             <EmailPreviewModal
@@ -265,7 +286,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.influencer_social_profile_id ? (
+                            {isDuplicateInfluencer ? (
+                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
+                            ) : sequenceInfluencer.influencer_social_profile_id ? (
                                 <TableInlineInput
                                     value={email}
                                     onSubmit={handleEmailUpdate}
@@ -300,21 +323,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
-                                content={
-                                    !sequenceInfluencer.influencer_social_profile_id
-                                        ? t('sequences.invalidSocialProfileTooltip')
-                                        : sequenceSendTooltipTitle
-                                }
-                                detail={
-                                    !sequenceInfluencer.influencer_social_profile_id
-                                        ? t('sequences.invalidSocialProfileTooltipDescription')
-                                        : sequenceSendTooltipDescription
-                                }
-                                highlight={
-                                    !sequenceInfluencer.influencer_social_profile_id
-                                        ? t('sequences.invalidSocialProfileTooltipHighlight')
-                                        : undefined
-                                }
+                                content={sequenceSendTooltipTitle}
+                                detail={sequenceSendTooltipDescription}
+                                highlight={sequenceSendTooltipHighlight}
                                 position="left"
                             >
                                 <Button

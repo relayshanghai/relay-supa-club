@@ -5,6 +5,11 @@ const guidePage = {
     goto: 'Go to',
     learnMore: 'Learn More',
     cards: {
+        boostbot: {
+            title: 'BoostBot',
+            description:
+                'Stop spending hours on finding the right influencers. With relay.club’s BoostBot AI technology, you can start contacting the perfect influencers to do product reviews and brand collabs in minutes! ',
+        },
         sequences: {
             title: 'Sequences',
             description:
@@ -34,11 +39,6 @@ const guidePage = {
             description:
                 'With a database of over 275 million accounts across 3 platforms, we give you the data driven tools you need to find the perfect influencers.',
         },
-        performance: {
-            title: 'Track Performance',
-            description:
-                'No more spreadsheets - just input the content link and we’ll track views, likes, comments, and sales for you!',
-        },
         account: {
             title: 'Monitor Your Usage',
             description:
@@ -46,6 +46,18 @@ const guidePage = {
         },
     },
     modalInfo: {
+        boostbot: {
+            title: 'BoostBot',
+            url: '/boostbot',
+            sections: [
+                {
+                    title: 'How BoostBot Works',
+                    description:
+                        'BoostBot is an AI assisted search tool that finds influencers who can successfully market products on social media. Just input a description of your product or service - in any language - and BoostBot will think of relevant topics to search for, find influencers from a database of 200+ million, and optimize the results against metrics such as audience following, engagement and location. The result is a large list of influencers, along with their contact information, so you can get in touch with them for a brand deal or collaboration. ',
+                    demo: 'boostbot_demo.gif',
+                },
+            ],
+        },
         sequences: {
             title: 'Sequences',
             url: '/sequences',
@@ -222,17 +234,6 @@ const guidePage = {
                 },
             ],
         },
-        performance: {
-            title: 'Performance',
-            url: '/performance',
-            sections: [
-                {
-                    title: 'You provide the link, we’ll handle the tracking ',
-                    description:
-                        'Once the influencer has posted, click on the “Content” button in the campaign table under the ‘Posted’ tab to add the post directly to your campaign. From there, we will start tracking the overall views, likes, and comments. You can check out your company’s overall performance by clicking “Performance” on the left side of your dashboard. Here you will see overall posts, and a summary of total views, likes, comments, and sales.',
-                },
-            ],
-        },
         account: {
             title: 'My Account',
             url: '/account',
@@ -245,6 +246,6 @@ const guidePage = {
             ],
         },
     },
-};
+} as const;
 
 export default guidePage;

@@ -1,8 +1,6 @@
 import httpCodes from 'src/constants/httpCodes';
-
 import { STRIPE_PRODUCT_ID_VIP } from 'src/utils/api/stripe/constants';
 import { serverLogger } from 'src/utils/logger-server';
-
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
@@ -17,15 +15,18 @@ import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
 import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
+import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
+import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
+    invoicePaymentSucceeded: 'invoice.payment_succeeded',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed;
+export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed) => {
+const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -43,6 +44,8 @@ const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePayme
 };
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
+        case handledWebhooks.invoicePaymentSucceeded:
+            return await handleInvoicePaymentSucceeded(res, event as InvoicePaymentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
             const price = (event as CustomerSubscriptionCreated).data.object.items.data[0].price;
             const productID = price.product;
@@ -113,7 +116,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
-
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
         serverLogger('stripe caught error', { level: 'error' });

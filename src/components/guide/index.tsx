@@ -1,6 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
-import { Compass, Account, ArrowRight, ProfilePlus, Send, Brackets, Engagements, BarGraph, User } from '../icons';
+import {
+    Compass,
+    Account,
+    ArrowRight,
+    ProfilePlus,
+    Send,
+    Brackets,
+    Engagements,
+    User,
+    BoostbotSelected,
+} from '../icons';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -34,14 +44,16 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
                         <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
                     )}
                     {cardKey === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
-                    {cardKey === 'sequences' && <Send height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'sequences' && <Send height={24} width={24} className="-mr-2 stroke-primary-500" />}
                     {cardKey === 'templates' && <Brackets height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'inbox' && <Engagements height={24} width={24} className="stroke-primary-500" />}
                     {cardKey === 'influencerManager' && (
                         <ProfilePlus height={24} width={24} className="stroke-primary-500" />
                     )}
                     {cardKey === 'influencerProfile' && <User height={24} width={24} className="stroke-primary-500" />}{' '}
-                    {cardKey === 'performance' && <BarGraph height={24} width={24} className="stroke-primary-500" />}
+                    {cardKey === 'boostbot' && (
+                        <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
+                    )}
                 </div>
             </div>
             <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>

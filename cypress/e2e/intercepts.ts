@@ -1,9 +1,6 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
-import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
-import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
-import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
@@ -15,11 +12,19 @@ import boostbotGetTopics from '../../src/mocks/api/boostbot/get-topics.json';
 import boostbotGetRelevantTopics from '../../src/mocks/api/boostbot/get-relevant-topics.json';
 import boostbotGetTopicClusters from '../../src/mocks/api/boostbot/get-topic-clusters.json';
 import boostbotGetInfluencers from '../../src/mocks/api/boostbot/get-influencers.json';
+import pricesMock from '../../src/mocks/api/subscription/prices/prices.json';
+import usagesMock from '../../src/mocks/api/usages/usages.json';
+import paymentMethodsMock from '../../src/mocks/api/subscription/payment-methods.json';
+import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
+import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
+import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
-import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
+import type { UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
-import { insertSequenceEmails, resetUsages, supabaseClientCypress } from './helpers';
+import type { SequenceInfluencer } from 'src/utils/api/db';
+
+import { insertSequenceEmails, supabaseClientCypress } from './helpers';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -31,99 +36,29 @@ const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, no
 const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
 if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set in intercepts');
 export const SUPABASE_URL_CYPRESS = `${supabaseUrl}/rest/v1`;
+interface InterceptOptions {
+    useRealSequences?: boolean;
+    useRealUsages?: boolean;
+}
 
 /**
  * Note that this turns off sequences calls (for faster page loads) if you need sequences in your test, use `req.continue();` see outreach.cy.ts for an example
  */
-export const setupIntercepts = () => {
+export const setupIntercepts = (options?: InterceptOptions) => {
     const supabase = supabaseClientCypress();
-    resetUsages(supabase);
     // IQData intercepts
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });
-    cy.intercept('/api/influencer-search*', (req) => {
-        const body: InfluencerPostRequest = req.body;
-        const justNow = new Date(); // lets do 18 hours ago to be safe if the test is running in another timezone
-        const eighteenHours = 18 * 60 * 60 * 1000;
-        justNow.setTime(now.getTime() - eighteenHours);
-        const usage: UsagesDBInsert = {
-            company_id: body.company_id,
-            user_id: body.user_id,
-            type: 'search',
-            item_id: ulid(),
-            created_at: justNow.toISOString(),
-        };
-        if (body.username === 'GRTR' || body.text === 'GRTR') {
-            return supabase
-                .from('usages')
-                .insert(usage)
-                .then(() => {
-                    req.reply({
-                        body: influencerSearch,
-                    });
-                });
-        } else if (body.tags && body.tags[0]?.tag === 'alligators') {
-            return supabase
-                .from('usages')
-                .insert(usage)
-                .then(() => {
-                    req.reply({
-                        body: keywordSearch,
-                    });
-                });
-        } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
-            return supabase
-                .from('usages')
-                .insert(usage)
-                .then(() => {
-                    req.reply({
-                        body: keywordSearchMonkeys,
-                    });
-                });
-        } else {
-            return req.reply({
-                body: defaultLandingPageInfluencerSearch,
-            });
-        }
+    cy.intercept('POST', '/api/influencer-search*', {
+        body: defaultLandingPageInfluencerSearch,
     });
     cy.intercept('/api/topics/tensor', { body: topicTensorMock });
-    cy.intercept('/api/influencer-search/topics*', (req) => {
-        const body = req.body;
-        if (body.term === 'alligators') {
-            req.reply({
-                body: {
-                    success: true,
-                    data: [
-                        { tag: 'alligator', value: 'alligator' },
-                        { tag: 'alligators', value: 'alligators' },
-                        { tag: 'alligator_attack', value: 'alligator attack' },
-                    ],
-                },
-                delay: 1000,
-            });
-        } else if (body.term === 'monkeys') {
-            req.reply({
-                body: {
-                    data: [
-                        { tag: 'monkeys', value: 'monkeys' },
-                        { tag: 'arctic_monkeys', value: 'arctic monkeys' },
-                        { tag: 'five_little_monkeys', value: 'five little monkeys' },
-                        { tag: 'funny_monkeys', value: 'funny monkeys' },
-                        { tag: 'monkeys_jumping_on_the_bed', value: 'monkeys jumping on the bed' },
-                    ],
-                    success: true,
-                },
-                delay: 1000,
-            });
-        } else {
-            req.reply({
-                body: {
-                    success: true,
-                    data: [],
-                },
-            });
-        }
+    cy.intercept('/api/influencer-search/topics*', {
+        body: {
+            success: true,
+            data: [],
+        },
     });
     cy.intercept('/api/influencer-search/locations*', {
         body: [],
@@ -146,72 +81,10 @@ export const setupIntercepts = () => {
         });
     });
     cy.intercept('/api/subscriptions/payment-method*', {
-        body: [
-            {
-                id: 'pm_1234',
-                object: 'payment_method',
-                billing_details: {
-                    address: { city: null, country: 'US', line1: null, line2: null, postal_code: '12345', state: null },
-                },
-                card: {
-                    brand: 'visa',
-                    checks: {
-                        address_line1_check: null,
-                        address_postal_code_check: 'unchecked',
-                        cvc_check: 'unchecked',
-                    },
-                    country: 'US',
-                    exp_month: 1,
-                    exp_year: 2027,
-                    fingerprint: '1234',
-                    funding: 'credit',
-                    generated_from: null,
-                    last4: '1234',
-                    networks: { available: ['visa'], preferred: null },
-                    three_d_secure_usage: { supported: true },
-                    wallet: null,
-                },
-                created: 1676267850,
-                customer: 'cus_1234',
-                livemode: true,
-                metadata: {},
-                type: 'card',
-            },
-        ],
+        body: paymentMethodsMock,
     });
     cy.intercept('/api/subscriptions/prices', {
-        body: {
-            diy: {
-                currency: 'usd',
-                prices: {
-                    monthly: '150.00',
-                    quarterly: '297.00',
-                    annually: '1068.00',
-                },
-                profiles: '200',
-                searches: '2500',
-                priceIds: {
-                    monthly: 'price_1LwffoF5PN4woVWob7yJToHj',
-                    quarterly: 'price_1LwffoF5PN4woVWoyRKbIMNh',
-                    annually: 'price_1LwffoF5PN4woVWoduBnXnJ8',
-                },
-            },
-            diyMax: {
-                currency: 'usd',
-                prices: {
-                    monthly: '270.00',
-                    quarterly: '660.00',
-                    annually: '2388.00',
-                },
-                profiles: '450',
-                searches: '5000',
-                priceIds: {
-                    monthly: 'price_1LwfcmF5PN4woVWoDElUtab4',
-                    quarterly: 'price_1LwfcnF5PN4woVWoHVSSEvWJ',
-                    annually: 'price_1LwfcnF5PN4woVWolz3tTxzc',
-                },
-            },
-        },
+        body: pricesMock,
     });
 
     cy.intercept('/api/sequence/send', async (req) => {
@@ -238,17 +111,27 @@ export const setupIntercepts = () => {
     cy.intercept('/api/post-performance/by-campaign', {
         body: postPerformance,
     });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, {
-        body: [],
-    });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequences*`, {
-        body: [],
-    });
+    if (!options?.useRealSequences) {
+        cy.intercept(/\/sequence_influencers\?/, {
+            body: [],
+        });
+        cy.intercept(/\/sequences\?/, {
+            body: [],
+        });
+        cy.intercept('/api/sequence/influencers', {
+            body: [],
+        });
+    }
+    if (!options?.useRealUsages) {
+        cy.intercept('/api/usages*', {
+            body: usagesMock,
+        });
+    }
     // TODO: archive campaigns features https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaigns*`, {
+    cy.intercept(/\/campaigns\?/, {
         body: [],
     });
-    cy.intercept(`${SUPABASE_URL_CYPRESS}/campaign_creators*`, {
+    cy.intercept(/\/campaign_creators\?/, {
         body: [],
     });
 };
@@ -330,4 +213,91 @@ export const boostbotIntercepts = () => {
     cy.intercept('POST', '/api/boostbot/get-topic-clusters', { body: boostbotGetTopicClusters });
     cy.intercept('POST', '/api/boostbot/get-influencers', { body: boostbotGetInfluencers });
     cy.intercept('GET', '/api/creators/report*', { body: danniCreatorReport });
+};
+
+export const searchIntercepts = () => {
+    cy.intercept('POST', '/api/influencer-search*', (req) => {
+        const supabase = supabaseClientCypress();
+        const body: InfluencerPostRequest = req.body;
+        const justNow = new Date(); // lets do 18 hours ago to be safe if the test is running in another timezone
+        const eighteenHours = 18 * 60 * 60 * 1000;
+        justNow.setTime(now.getTime() - eighteenHours);
+        const usage: UsagesDBInsert = {
+            company_id: body.company_id,
+            user_id: body.user_id,
+            type: 'search',
+            item_id: ulid(),
+            created_at: justNow.toISOString(),
+        };
+
+        if (body.username === 'GRTR' || body.text === 'GRTR') {
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    return req.reply({
+                        body: influencerSearch,
+                    });
+                });
+        } else if (body.tags && body.tags[0]?.tag === 'alligators') {
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    return req.reply({
+                        body: keywordSearch,
+                    });
+                });
+        } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    return req.reply({
+                        body: keywordSearchMonkeys,
+                    });
+                });
+        } else {
+            return req.reply({
+                body: defaultLandingPageInfluencerSearch,
+            });
+        }
+    });
+    cy.intercept('/api/influencer-search/topics*', (req) => {
+        const body = req.body;
+        if (body.term === 'alligators') {
+            req.reply({
+                body: {
+                    success: true,
+                    data: [
+                        { tag: 'alligator', value: 'alligator' },
+                        { tag: 'alligators', value: 'alligators' },
+                        { tag: 'alligator_attack', value: 'alligator attack' },
+                    ],
+                },
+                delay: 1000,
+            });
+        } else if (body.term === 'monkeys') {
+            req.reply({
+                body: {
+                    data: [
+                        { tag: 'monkeys', value: 'monkeys' },
+                        { tag: 'arctic_monkeys', value: 'arctic monkeys' },
+                        { tag: 'five_little_monkeys', value: 'five little monkeys' },
+                        { tag: 'funny_monkeys', value: 'funny monkeys' },
+                        { tag: 'monkeys_jumping_on_the_bed', value: 'monkeys jumping on the bed' },
+                    ],
+                    success: true,
+                },
+                delay: 1000,
+            });
+        } else {
+            req.reply({
+                body: {
+                    success: true,
+                    data: [],
+                },
+            });
+        }
+    });
 };

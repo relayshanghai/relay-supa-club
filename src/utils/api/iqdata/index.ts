@@ -8,6 +8,7 @@ import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
+import { logIqdataLimits } from '../forensicTrack';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -49,10 +50,15 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
         },
     });
 
-    await handleResError(res, path, context);
+    await logIqdataLimits(res, path, context);
+    await handleResError(res);
     const json = await res.json();
 
-    await rudderstack.send(json);
+    if (context) {
+        await rudderstack.identify(context);
+        await rudderstack.send(json);
+    }
+
     return json as T;
 };
 
