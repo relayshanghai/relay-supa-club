@@ -68,7 +68,7 @@ const ActiveLink = ({
     const { track } = useRudderstackTrack();
 
     return (
-        <Tooltip content={expandedName} contentSize="medium" delay={700} enabled={sidebarState === 'hidden'}>
+        <Tooltip content={expandedName} contentSize="small" delay={500} enabled={sidebarState === 'hidden'}>
             <Link
                 onMouseOver={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}

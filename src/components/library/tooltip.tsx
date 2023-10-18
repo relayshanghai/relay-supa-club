@@ -88,7 +88,13 @@ export const Tooltip = ({
                         )} rounded bg-gray-800 ${tooltipClasses}`}
                         role="tooltip"
                     >
-                        <div className="w-max max-w-md whitespace-normal rounded-md p-4 shadow-lg">
+                        <div
+                            className={`w-max max-w-md whitespace-normal rounded-md ${
+                                ((contentSize === 'large' || !contentSize) && 'py-4') ||
+                                (contentSize === 'medium' && 'py-2') ||
+                                (contentSize === 'small' && 'py-0')
+                            } px-4  shadow-lg`}
+                        >
                             <p
                                 className={`my-2 ${
                                     ((contentSize === 'large' || !contentSize) && 'text-lg') ||
