@@ -58,7 +58,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                 },
             },
-            return_url: `https://relay-supa-club-git-alipay-subscription-spike-relay-club.vercel.app/payments/confirm-alipay?${returnUrlParams}`,
+            return_url: `https://preview.relay.club/payments/confirm-alipay?${returnUrlParams}`,
             // return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
         },
         undefined,
