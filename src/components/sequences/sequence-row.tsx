@@ -95,14 +95,21 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const { company } = useCompany();
 
     useEffect(() => {
-        // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
-        updateSequenceInfluencerIfSocialProfileAvailable({
-            sequenceInfluencer,
-            socialProfile,
-            report,
-            updateSequenceInfluencer,
-            company_id: company?.id ?? '',
-        });
+        const update = async () => {
+            const result =
+                // See `modal-add-to-sequence`. If we weren't able to get the report during that step, we will try again here.
+                await updateSequenceInfluencerIfSocialProfileAvailable({
+                    sequenceInfluencer,
+                    socialProfile,
+                    report,
+                    updateSequenceInfluencer,
+                    company_id: company?.id ?? '',
+                });
+            if (result?.email) {
+                setEmail(result.email);
+            }
+        };
+        update();
     }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     const { profile } = useUser();
@@ -236,14 +243,24 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
-    const isDuplicateInfluencer = sequenceInfluencers.some(
-        (influencer) =>
-            // isn't itself
-            influencer.id !== sequenceInfluencer.id &&
-            // has same email or iqdata id
-            (influencer.email === sequenceInfluencer.email || influencer.iqdata_id === sequenceInfluencer.iqdata_id) &&
-            influencer.funnel_status === 'To Contact',
-    );
+    const isDuplicateInfluencer = useMemo(() => {
+        return sequenceInfluencers.some((influencer) => {
+            if (!influencer?.id || !sequenceInfluencer?.id) {
+                return false;
+            }
+            if (influencer.id === sequenceInfluencer.id) {
+                return false;
+            }
+            if (influencer.funnel_status !== 'To Contact') {
+                return false;
+            }
+            return (
+                (influencer.email && sequenceInfluencer.email && influencer.email === sequenceInfluencer.email) ||
+                influencer.iqdata_id === sequenceInfluencer.iqdata_id
+            );
+        });
+    }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
+
     return (
         <>
             <EmailPreviewModal
