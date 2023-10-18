@@ -1,7 +1,18 @@
 // These come from https://iqdata.social/docs/api#tag/Dictionaries/operation/list-geolocations
 // Example request: https://socapi.icu/v2.0/api/geos/?types=country&limit=50000
 
-export const countries = [
+export type Country = {
+    id: number;
+    type: string[];
+    name: string;
+    title: string;
+    country: {
+        id: number;
+        code: string;
+    };
+};
+
+export const countries: Country[] = [
     {
         id: 1428125,
         type: ['country'],
