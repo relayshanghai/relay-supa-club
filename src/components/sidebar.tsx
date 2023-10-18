@@ -46,7 +46,17 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
 } as const;
 
 // eslint-disable-next-line complexity
-const ActiveLink = ({ href, children, expandedName }: { href: string; children: ReactNode; expandedName: string }) => {
+const ActiveLink = ({
+    href,
+    children,
+    expandedName,
+    sidebarState,
+}: {
+    href: string;
+    children: ReactNode;
+    expandedName: string;
+    sidebarState: 'visible' | 'hidden';
+}) => {
     const router = useRouter();
 
     const pathRoot = router.pathname === '/' ? '/' : `/${router.pathname.split('/')[1]}`; // /dashboard/influencers => dashboard
@@ -58,7 +68,7 @@ const ActiveLink = ({ href, children, expandedName }: { href: string; children: 
     const { track } = useRudderstackTrack();
 
     return (
-        <Tooltip content={expandedName} delay={800}>
+        <Tooltip content={expandedName} contentSize="medium" delay={700} enabled={sidebarState === 'hidden'}>
             <Link
                 onMouseOver={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
@@ -112,43 +122,55 @@ const NavBarInner = ({
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href={'/boostbot'} expandedName={t('navbar.boostbot')}>
+                        <ActiveLink sidebarState={sidebarState} href={'/boostbot'} expandedName={t('navbar.boostbot')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
                         </ActiveLink>
                     )}
-                    <ActiveLink href="/dashboard" expandedName={t('navbar.discover')}>
+                    <ActiveLink sidebarState={sidebarState} href="/dashboard" expandedName={t('navbar.discover')}>
                         <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href={'/sequences'} expandedName={t('navbar.sequences')}>
+                        <ActiveLink
+                            sidebarState={sidebarState}
+                            href={'/sequences'}
+                            expandedName={t('navbar.sequences')}
+                        >
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
+                        <ActiveLink sidebarState={sidebarState} href="/inbox" expandedName={t('navbar.inbox')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/influencer-manager" expandedName={t('navbar.influencerManager')}>
+                        <ActiveLink
+                            sidebarState={sidebarState}
+                            href="/influencer-manager"
+                            expandedName={t('navbar.influencerManager')}
+                        >
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
-                        <ActiveLink href="/campaigns" expandedName={t('navbar.campaigns')}>
+                        <ActiveLink sidebarState={sidebarState} href="/campaigns" expandedName={t('navbar.campaigns')}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
-                        <ActiveLink href="/performance" expandedName={t('navbar.performance')}>
+                        <ActiveLink
+                            sidebarState={sidebarState}
+                            href="/performance"
+                            expandedName={t('navbar.performance')}
+                        >
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.performance')}
                             </p>
                         </ActiveLink>
                     )}
-                    <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
+                    <ActiveLink sidebarState={sidebarState} href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`ml-2 whitespace-nowrap text-sm ${open && desktop ? 'relative' : 'hidden'}`}>
                             {t('navbar.guide')}
                         </p>
@@ -156,7 +178,11 @@ const NavBarInner = ({
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className={`${open ? 'ml-6' : 'text-center text-xs'}`}>ADMIN</h2>
-                            <ActiveLink href="/admin/clients" expandedName={t('navbar.Clients')}>
+                            <ActiveLink
+                                sidebarState={sidebarState}
+                                href="/admin/clients"
+                                expandedName={t('navbar.Clients')}
+                            >
                                 <p
                                     className={`ml-2 whitespace-nowrap text-sm ${
                                         open && desktop ? 'relative' : 'hidden'

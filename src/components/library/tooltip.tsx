@@ -8,6 +8,7 @@ export type ToolTipPositionUnion = 'top-right' | 'top-left' | 'bottom-right' | '
 
 interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
     content: string;
+    contentSize?: 'small' | 'medium' | 'large';
     detail?: string | null;
     children: React.ReactNode;
     position?: ToolTipPositionUnion;
@@ -16,18 +17,19 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
     highlight?: string | null;
     tooltipClasses?: HTMLAttributes<HTMLDivElement>['className'];
     delay?: number;
+    enabled?: boolean;
 }
 export type TooltipProps = PropsWithChildren<Props>;
 
 const positionClass = (position?: string) =>
     position === 'top-right'
-        ? 'bottom-[120%] left-0'
+        ? 'bottom-[120%] left-full'
         : position === 'top-left'
-        ? 'bottom-[120%] right-0'
+        ? 'bottom-[120%] right-full'
         : position === 'bottom-right'
-        ? 'left-0 top-[120%]'
+        ? 'left-full top-[120%]'
         : position === 'bottom-left'
-        ? 'right-0 top-[120%]'
+        ? 'right-full top-[120%]'
         : position === 'left'
         ? 'bottom-0 right-[110%]'
         : 'bottom-0 left-[110%]';
@@ -36,6 +38,7 @@ const positionClass = (position?: string) =>
 export const Tooltip = ({
     children,
     content,
+    contentSize,
     detail,
     className,
     position,
@@ -44,6 +47,7 @@ export const Tooltip = ({
     highlight,
     tooltipClasses,
     delay, // add delay prop
+    enabled = true, // tooltip enabled prop
 }: TooltipProps) => {
     // add delay to TooltipProps
     const [isHovered, setIsHovered] = useState(false);
@@ -76,25 +80,35 @@ export const Tooltip = ({
             <div className="cursor-pointer" onMouseOver={handleMouseOver} onMouseOut={handleMouseLeave}>
                 {children}
             </div>
-            <div className="relative z-50">
-                <div
-                    className={`absolute ${isHovered ? 'flex' : 'hidden'}  ${positionClass(
-                        position,
-                    )} rounded bg-gray-800 ${tooltipClasses}`}
-                    role="tooltip"
-                >
-                    <div className="w-max max-w-md whitespace-normal rounded-md p-4 shadow-lg">
-                        <p className="my-2 text-lg font-semibold leading-6 text-gray-100">{content}</p>
-                        {detail && <p className="text-sm font-normal leading-6 text-gray-200">{detail}</p>}
-                        {highlight && <p className="text-sm font-medium italic text-gray-200">{highlight}</p>}
-                        {link && linkText && (
-                            <Link className="font-normal text-primary-400" href={link}>
-                                {linkText}
-                            </Link>
-                        )}
+            {enabled && (
+                <div className="relative z-50">
+                    <div
+                        className={`absolute ${isHovered ? 'flex' : 'hidden'}  ${positionClass(
+                            position,
+                        )} rounded bg-gray-800 ${tooltipClasses}`}
+                        role="tooltip"
+                    >
+                        <div className="w-max max-w-md whitespace-normal rounded-md p-4 shadow-lg">
+                            <p
+                                className={`my-2 ${
+                                    ((contentSize === 'large' || !contentSize) && 'text-lg') ||
+                                    (contentSize === 'medium' && 'text-base') ||
+                                    (contentSize === 'small' && 'text-sm')
+                                } font-semibold leading-6 text-gray-100`}
+                            >
+                                {content}
+                            </p>
+                            {detail && <p className="text-sm font-normal leading-6 text-gray-200">{detail}</p>}
+                            {highlight && <p className="text-sm font-medium italic text-gray-200">{highlight}</p>}
+                            {link && linkText && (
+                                <Link className="font-normal text-primary-400" href={link}>
+                                    {linkText}
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
