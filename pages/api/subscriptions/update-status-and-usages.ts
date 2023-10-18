@@ -1,7 +1,7 @@
 import { ApiHandler } from 'src/utils/api-handler';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import updateSubscriptionStatusAndUsages from 'src/utils/api/update-subscription-usage-status';
+import updateSubscriptionUsagesAndStatus from 'src/utils/api/update-subscription-usage-status';
 
 export type UpdateStatusAndUsagesRequestBody = {
     companyId: string;
@@ -12,7 +12,7 @@ export type UpdateStatusAndUsagesRequestBody = {
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { companyId, subscriptionId, priceId } = req.body as UpdateStatusAndUsagesRequestBody;
 
-    updateSubscriptionStatusAndUsages(companyId, subscriptionId, priceId);
+    updateSubscriptionUsagesAndStatus(companyId, subscriptionId, priceId);
 
     return res.status(httpCodes.OK).json('success');
 };
