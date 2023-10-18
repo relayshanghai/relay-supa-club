@@ -182,6 +182,7 @@ const sequences = {
     startSelectedSequences: 'Start selected sequences',
     missingEmail: 'Missing email',
     missingEmailTooltipDescription: 'You must add an email to this influencer in order to start this sequence.',
+    warningDuplicateInfluencer: 'Warning: duplicate influencer could cause issues',
 };
 
 export default sequences;

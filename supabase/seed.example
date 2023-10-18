@@ -2,7 +2,7 @@ BEGIN;
 
 -- seed helpers
 CREATE
-OR REPLACE FUNCTION create_supabase_user (email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
+OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
 DECLARE
   user_id UUID;
 BEGIN
@@ -88,7 +88,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE
-OR REPLACE FUNCTION create_profile (
+OR REPLACE FUNCTION create_profile(
   company_id UUID,
   email TEXT,
   first_name TEXT,
@@ -113,13 +113,13 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_company (
+OR REPLACE FUNCTION create_company(
   company_name TEXT,
   website TEXT,
   subscription_status TEXT,
-  subscription_current_period_start TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  subscription_current_period_start TIMESTAMP WITH TIME ZONE DEFAULT now(),
   subscription_current_period_end TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00',
-  subscription_start_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  subscription_start_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
   subscription_end_date TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
@@ -161,7 +161,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_company_category (company UUID, category TEXT) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+OR REPLACE FUNCTION create_company_category(company UUID, category TEXT) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
   BEGIN
@@ -181,7 +181,7 @@ OR REPLACE FUNCTION create_company_category (company UUID, category TEXT) RETURN
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_campaign (
+OR REPLACE FUNCTION create_campaign(
   company_id UUID,
   campaign_name TEXT,
   campaign_description TEXT,
@@ -227,13 +227,13 @@ OR REPLACE FUNCTION create_campaign (
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_campaign_creator (
+OR REPLACE FUNCTION create_campaign_creator(
   campaign_id UUID,
   added_by_id UUID,
   avatar_url TEXT,
   creator_id TEXT,
   fullname TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -282,7 +282,7 @@ OR REPLACE FUNCTION create_campaign_creator (
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence (
+OR REPLACE FUNCTION create_sequence(
   company_id UUID,
   NAME TEXT,
   manager_first_name TEXT,
@@ -319,7 +319,7 @@ OR REPLACE FUNCTION create_sequence (
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence_steps (
+OR REPLACE FUNCTION create_sequence_steps(
   sequence_id UUID,
   NAME TEXT,
   template_id TEXT,
@@ -357,7 +357,7 @@ OR REPLACE FUNCTION create_sequence_steps (
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence_influencer (
+OR REPLACE FUNCTION create_sequence_influencer(
   company_id UUID,
   sequence_id UUID,
   added_by UUID,
@@ -365,7 +365,7 @@ OR REPLACE FUNCTION create_sequence_influencer (
   email TEXT,
   funnel_status TEXT,
   sequence_step NUMERIC DEFAULT 0,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
@@ -410,7 +410,7 @@ OR REPLACE FUNCTION create_sequence_influencer (
         sequence_step,
         ARRAY['tag1', 'tag2'],
         'video_details',
-        'iqdata_id'
+        uuid_generate_v4()
       )
     RETURNING * INTO _row;
     RETURN _row;
@@ -418,7 +418,7 @@ OR REPLACE FUNCTION create_sequence_influencer (
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_influencer (
+OR REPLACE FUNCTION create_influencer(
   _name TEXT,
   _email TEXT,
   _address TEXT,
@@ -452,7 +452,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_influencer_social_profile (
+OR REPLACE FUNCTION create_influencer_social_profile(
   _url TEXT,
   _platform TEXT,
   _influencer_id UUID,
@@ -498,7 +498,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_sequence_email (
+OR REPLACE FUNCTION create_sequence_email(
   _sequence_id UUID,
   _sequence_influencer_id UUID,
   _sequence_step_id UUID,
@@ -506,7 +506,7 @@ OR REPLACE FUNCTION create_sequence_email (
   _email_delivery_status TEXT DEFAULT NULL,
   _email_tracking_status TEXT DEFAULT NULL,
   _email_send_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-  _updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -542,7 +542,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_influencer_post (
+OR REPLACE FUNCTION create_influencer_post(
   _url TEXT,
   _campaign_id UUID,
   _influencer_social_profile_id UUID,
@@ -583,11 +583,11 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_posts_performance (
+OR REPLACE FUNCTION create_posts_performance(
   _campaign_id UUID,
   _influencer_social_profile_id UUID,
   _post_id UUID,
-  _updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   _likes_total NUMERIC DEFAULT 0,
   _views_total NUMERIC DEFAULT 0,
   _comments_total NUMERIC DEFAULT 0,
@@ -632,7 +632,7 @@ END;
 $$;
 
 CREATE
-OR REPLACE FUNCTION create_template_variable (
+OR REPLACE FUNCTION create_template_variable(
   _sequence_id UUID,
   _key TEXT,
   _name TEXT,
