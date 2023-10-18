@@ -16,6 +16,8 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
     });
     if (!cacheProvider) {
         clientLogger('cache-provider error', 'error', false);
+        // eslint-disable-next-line no-console
+        console.log(cacheProvider);
         return <></>;
     }
     return <SWRConfig value={{ provider: cacheProvider }}>{children}</SWRConfig>;
