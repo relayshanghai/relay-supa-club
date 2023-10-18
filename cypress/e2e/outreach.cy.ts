@@ -168,7 +168,7 @@ describe('outreach', () => {
         const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
         cy.contains('alice.anderson@example.com', { timeout: 10000 });
-        cy.contains('tr', 'Alice Anderson').within(() => {
+        cy.contains('tr', 'alice.anderson@example.com').within(() => {
             cy.contains('alice.anderson@example.com').click();
             cy.getByTestId('table-inline-input-add email').clear();
             cy.get('button[type=submit]').click();
