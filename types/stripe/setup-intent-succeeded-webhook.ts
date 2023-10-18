@@ -41,8 +41,8 @@ export type DataObject = {
     usage: string;
 };
 
-//eslint-disable-next-line @typescript-eslint/no-empty-interface
-export type Metadata = {};
+//eslint-disable-next-line
+export type Metadata = Object;
 
 export type PaymentMethodOptions = {
     alipay: Alipay;

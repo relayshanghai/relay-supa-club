@@ -36,30 +36,32 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     returnUrlParams.append('companyId', companyId);
 
     //create a setup intent
-    const response = await stripeClient.setupIntents.create({
-        // this create setupIntent works although the stripe doc says it's not supported..
-        //https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
-        customer: customerId,
-        payment_method_types: paymentMethodTypes,
-        confirm: true,
-        payment_method: paymentMethod.id,
-        payment_method_options: {
-            alipay: {
-                currency: 'cny',
-            },
-        },
-        usage: 'off_session',
-        mandate_data: {
-            customer_acceptance: {
-                type: 'online',
-                online: {
-                    ip_address: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
-                    user_agent: req.headers['user-agent'],
+    const response = await stripeClient.setupIntents.create(
+        {
+            customer: customerId,
+            payment_method_types: paymentMethodTypes,
+            confirm: true,
+            payment_method: paymentMethod.id,
+            payment_method_options: {
+                //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
+                alipay: {
+                    currency: 'cny',
                 },
             },
+            usage: 'off_session',
+            mandate_data: {
+                customer_acceptance: {
+                    type: 'online',
+                    online: {
+                        ip_address: String(req.headers['x-forwarded-for'] || req.socket.remoteAddress),
+                        user_agent: req.headers['user-agent'] ?? 'Unknown user-agent',
+                    },
+                },
+            },
+            return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
         },
-        return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
-    });
+        undefined,
+    );
 
     return res.status(httpCodes.OK).json(response);
 };
