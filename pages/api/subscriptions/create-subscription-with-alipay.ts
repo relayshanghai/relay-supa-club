@@ -44,7 +44,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent;
-    console.log('=============================>paymentIntent', paymentIntent);
     if (!paymentIntent) {
         serverLogger('Failed to get payment intent');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to get payment intent' });
