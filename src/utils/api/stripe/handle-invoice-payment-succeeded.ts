@@ -33,7 +33,9 @@ export const handleInvoicePaymentSucceeded = async (res: NextApiResponse, invoic
         await updateSubscriptionUsagesAndStatus(companyId, subscriptionId, priceId);
     } catch (error) {
         serverLogger(error);
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: error });
+        return res
+            .status(httpCodes.INTERNAL_SERVER_ERROR)
+            .json({ error: 'Cannot update subscription usages and status' });
     }
     return res.status(httpCodes.OK).json({ message: 'success' });
 };
