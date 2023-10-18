@@ -67,6 +67,7 @@ const mockCompanyContext: CompanyContext = {
     updateCompany: async () => null,
     createCompanyLegacy: async () => null,
     createCompany: async () => null,
+    companyExists: async () => null,
     refreshCompany: () => null,
     isExpired: false,
 };

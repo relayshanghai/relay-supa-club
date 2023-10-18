@@ -85,4 +85,11 @@ describe('<SequencePage />', () => {
             cy.contains('19');
         });
     });
+    it('shows a warning for duplicate influencers', () => {
+        testMount(<SequencePage {...props} />);
+        // the allegra rows are duplicates
+        cy.contains('tr', '@allegraalynn').within(() => {
+            cy.contains('Warning: duplicate influencer could cause issues');
+        });
+    });
 });

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenEmailThread, OpenInboxPage, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
+import { OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -49,11 +49,6 @@ export const InboxPage = () => {
     const { t } = useTranslation();
 
     const { track } = useRudderstackTrack();
-
-    useEffect(() => {
-        const { abort } = track(OpenInboxPage);
-        return abort;
-    }, [track]);
 
     useEffect(() => {
         if (!inboxMessages) {

@@ -9,6 +9,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     placeholder?: string | null;
     type?: HTMLInputTypeAttribute;
     isRelative?: boolean; // <- toggle relative positioning
+    loading?: boolean;
 }
 
 function InputWithRef(
@@ -28,7 +29,9 @@ function InputWithRef(
                 <input
                     ref={ref}
                     placeholder={placeholder || ''}
-                    className={`my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs ${
+                    className={`my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 ${
+                        error ? 'focus:border-red-500' : 'focus:border-primary-500'
+                    } focus:outline-none ${error ? 'focus:ring-red-500' : 'focus:ring-primary-500'} sm:text-xs ${
                         rest.disabled
                             ? 'cursor-not-allowed bg-gray-100 text-gray-500 ring-gray-500'
                             : 'text-gray-900 ring-gray-900'

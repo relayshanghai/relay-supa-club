@@ -66,5 +66,6 @@ const signup = {
         },
     },
     errorStartingTrial: '开始免费试用时出错',
+    errorCompanyExists: `该公司已存在，请与{{ companyOwnerEmail }}联系获取登录权限，或请选择其它公司名。`,
 };
 export default signup;

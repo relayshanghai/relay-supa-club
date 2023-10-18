@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -7,7 +7,7 @@ import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import { ClickNeedHelp, OpenSequencesPage } from 'src/utils/analytics/events';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { Button } from '../button';
 import { DeleteOutline, Plus, Question } from '../icons';
 import { Layout } from '../layout';
@@ -56,10 +56,6 @@ export const SequencesPage = () => {
         refreshSequences(sequences?.filter((sequence) => !selection.includes(sequence.id)));
     };
 
-    useEffect(() => {
-        const { abort } = track(OpenSequencesPage);
-        return abort;
-    }, [track]);
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
 
     return (

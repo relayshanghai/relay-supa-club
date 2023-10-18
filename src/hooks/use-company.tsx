@@ -32,6 +32,11 @@ export interface CompanyContext {
         profileId: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
+    companyExists: (name: string) => Promise<{
+        exists: boolean;
+        error?: string;
+        mail?: string;
+    } | null>;
     isExpired: boolean;
 }
 
@@ -41,6 +46,7 @@ export const companyContext = createContext<CompanyContext>({
     createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
+    companyExists: async () => null,
     isExpired: false,
 });
 
@@ -104,6 +110,31 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         },
         [refreshProfile, profile],
     );
+
+    const companyExists = async (name: string) => {
+        try {
+            const res = await nextFetch<{ message: string } | { error: string }>(`company/exists?name=${name}`, {
+                method: 'get',
+            });
+            if (res) {
+                return {
+                    exists: false,
+                };
+            }
+        } catch (e) {
+            if (e instanceof Error) {
+                return {
+                    exists: true,
+                    mail: e.message,
+                };
+            }
+        }
+        return {
+            exists: false,
+            error: 'unknown error',
+        };
+    };
+
     const createCompany = useCallback(
         async (input: { name: string; website?: string; size?: CompanySize; category?: string; profileId: string }) => {
             if (!input.profileId) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
@@ -142,6 +173,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
                 createCompany,
                 createCompanyLegacy,
                 refreshCompany,
+                companyExists,
                 isExpired,
             }}
         >

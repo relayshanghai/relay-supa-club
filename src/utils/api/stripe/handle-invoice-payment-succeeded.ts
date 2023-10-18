@@ -3,6 +3,7 @@ import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succe
 import { getCompanyByCusId } from '../db';
 import updateSubscriptionUsagesAndStatus from '../update-subscription-usage-status';
 import httpCodes from 'src/constants/httpCodes';
+import { serverLogger } from 'src/utils/logger-server';
 
 export const handleInvoicePaymentSucceeded = async (res: NextApiResponse, invoiceBody: InvoicePaymentSucceeded) => {
     //when receive this webhook, update the company with its companyId, subscriptionId and priceId
@@ -28,7 +29,13 @@ export const handleInvoicePaymentSucceeded = async (res: NextApiResponse, invoic
         throw new Error('Missing price ID in invoice body');
     }
 
-    await updateSubscriptionUsagesAndStatus(companyId, subscriptionId, priceId);
-
+    try {
+        await updateSubscriptionUsagesAndStatus(companyId, subscriptionId, priceId);
+    } catch (error) {
+        serverLogger(error);
+        return res
+            .status(httpCodes.INTERNAL_SERVER_ERROR)
+            .json({ error: 'Cannot update subscription usages and status' });
+    }
     return res.status(httpCodes.OK).json({ message: 'success' });
 };

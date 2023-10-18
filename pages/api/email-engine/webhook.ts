@@ -92,6 +92,7 @@ export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmai
         sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId),
     );
 };
+/** Deletes all outgoing, scheduled emails from the outbox for a given influencer */
 const deleteScheduledEmails = async (
     trackData: Omit<EmailReplyPayload, 'is_success'>,
     sequenceInfluencer: SequenceInfluencer,
@@ -100,9 +101,10 @@ const deleteScheduledEmails = async (
         // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
+        const toDelete = sequenceEmails.filter((email) => email.email_delivery_status === 'Scheduled');
         const outbox = await getOutbox();
         // If there are any scheduled emails in the outbox to this address, cancel them
-        const scheduledMessages = getScheduledMessages(outbox, sequenceEmails);
+        const scheduledMessages = getScheduledMessages(outbox, toDelete);
         trackData.scheduled_emails = scheduledMessages.map((message) => message.messageId);
         if (scheduledMessages.length === 0) {
             return trackData;
@@ -164,7 +166,8 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 
         const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
 
-        await updateSequenceInfluencer(influencerUpdate);
+        const update = await updateSequenceInfluencer(influencerUpdate);
+        trackData.extra_info.influencer_update = update;
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: true,
