@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { appCacheDBKey } from 'src/constants';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
+import { clientLogger } from 'src/utils/logger-client';
 import { useAnalytics } from 'use-analytics';
 
 export default function Logout() {
@@ -26,6 +27,7 @@ export default function Logout() {
                     throwOnError: false,
                 });
                 await deleteDB(appCacheDBKey);
+                clientLogger('logout-page deleting cachedbkey', 'error', true);
                 return;
             }
 
