@@ -47,10 +47,6 @@ export const getSequenceInfluencer =
             }
         }
 
-        if (!manager) {
-            throw new Error('Sequence influencer not found');
-        }
-
         return {
             ...sequenceInfluencer,
             manager_first_name: manager?.first_name ?? '',
@@ -61,11 +57,11 @@ export const getSequenceInfluencer =
             platform: (socialProfile?.platform as CreatorPlatform) ?? 'youtube',
             address,
             manager: {
-                id: manager.id,
-                avatar_url: manager.avatar_url,
-                company_id: manager.company_id,
-                first_name: manager.first_name,
-                last_name: manager.last_name,
+                id: manager?.id ?? '',
+                avatar_url: manager?.avatar_url ?? '',
+                company_id: manager?.company_id ?? '',
+                first_name: manager?.first_name ?? '',
+                last_name: manager?.last_name ?? '',
             },
         };
     };
