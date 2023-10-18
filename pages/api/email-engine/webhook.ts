@@ -164,7 +164,8 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 
         const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
 
-        await updateSequenceInfluencer(influencerUpdate);
+        const update = await updateSequenceInfluencer(influencerUpdate);
+        trackData.extra_info.influencer_update = update;
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: true,
