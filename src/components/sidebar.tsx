@@ -68,20 +68,20 @@ const ActiveLink = ({
     const { track } = useRudderstackTrack();
 
     return (
-        <Tooltip content={expandedName} contentSize="small" delay={500} enabled={sidebarState === 'hidden'}>
-            <Link
-                onMouseOver={() => setHovering(true)}
-                onMouseLeave={() => setHovering(false)}
-                href={href}
-                className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
-                    isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
-                }`}
-                onClick={() => track(NavigateToPage, { destination_url: href })}
-            >
+        <Link
+            onMouseOver={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+            href={href}
+            className={`flex items-center overflow-visible border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
+                isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
+            }`}
+            onClick={() => track(NavigateToPage, { destination_url: href })}
+        >
+            <Tooltip content={expandedName} contentSize="small" delay={500} enabled={sidebarState === 'hidden'}>
                 {links[href](pathRoot, hovering) ?? null}
                 {children}
-            </Link>
-        </Tooltip>
+            </Tooltip>
+        </Link>
     );
 };
 
