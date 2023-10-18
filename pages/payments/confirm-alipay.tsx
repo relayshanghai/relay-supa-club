@@ -41,6 +41,7 @@ const ConfirmAlipayPaymentPage = () => {
     useEffect(() => {
         handleCreateSubscriptionWithAlipay();
     }, [handleCreateSubscriptionWithAlipay]);
+
     return (
         <div className="h-screen">
             <div className="mb-3 flex w-full items-center justify-between p-5">

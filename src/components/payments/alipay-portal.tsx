@@ -31,8 +31,6 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
             if (errorConfirm) {
                 handleError(errorConfirm);
                 return;
-            } else {
-                // Show a success message to your customer
             }
         }
     };
@@ -51,7 +49,6 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
             await handleServerResponse(setupIntent);
         } catch (error) {
             //eslint-disable-next-line
-            console.log('error============>', error);
             clientLogger(error, 'error');
         } finally {
             setIsLoading(false);
