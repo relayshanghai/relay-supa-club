@@ -113,7 +113,7 @@ export const profileToIdentifiable = (
         },
         companyId: company_id ?? '',
         companyName: company?.name ?? '',
-        number: user?.phone ?? '',
+        number: profile?.phone ?? '',
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
         subscriptionStatus: subscriptionStatus.toLowerCase(),
