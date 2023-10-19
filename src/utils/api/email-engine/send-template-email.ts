@@ -9,6 +9,7 @@ export const sendTemplateEmail = async (
     template: string,
     sendAt: string,
     params: Record<string, string>,
+    referenceMessageID?: string | null,
 ): Promise<{ error: string } | SendEmailPostResponseBody> => {
     const body: SendEmailRequestBody = {
         to: [{ address: toEmail }],
@@ -20,6 +21,13 @@ export const sendTemplateEmail = async (
         trackingEnabled: true,
         sendAt,
     };
+
+    if (referenceMessageID) {
+        body.reference = {
+            message: referenceMessageID,
+            action: 'reply',
+        };
+    }
 
     try {
         return await sendEmailCall(body, account);

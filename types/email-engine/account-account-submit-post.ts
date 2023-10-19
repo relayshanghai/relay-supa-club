@@ -73,10 +73,10 @@ interface MailMerge {
 interface Reference {
     message: string;
     action: string;
-    inline: boolean;
-    forwardAttachments: boolean;
-    ignoreMissing: boolean;
-    documentStore: boolean;
+    inline?: boolean;
+    forwardAttachments?: boolean;
+    ignoreMissing?: boolean;
+    documentStore?: boolean;
 }
 
 interface Render {

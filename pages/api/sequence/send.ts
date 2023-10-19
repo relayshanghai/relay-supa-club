@@ -31,12 +31,14 @@ const sendAndInsertEmail = async ({
     sequenceInfluencer,
     templateVariables,
     sequenceEmails,
+    sequenceSteps,
 }: {
     step: SequenceStep;
     sequenceInfluencer: SequenceInfluencer;
     account: string;
     templateVariables: TemplateVariable[];
     sequenceEmails: SequenceEmail[];
+    sequenceSteps: SequenceStep[];
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
@@ -64,6 +66,7 @@ const sendAndInsertEmail = async ({
             sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
             sequenceEmail.sequence_step_id === step.id,
     );
+
     if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
         // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
         if (sequenceInfluencer.funnel_status === 'To Contact') {
@@ -88,7 +91,21 @@ const sendAndInsertEmail = async ({
     const { template_id, wait_time_hours } = step;
     const emailSendAt = (await calculateSendAt(account, wait_time_hours)).toISOString();
 
-    const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
+    const previousStep = sequenceSteps.find((sequenceStep) => sequenceStep.step_number === step.step_number - 1);
+    const previousSequenceEmail = sequenceEmails.find(
+        (sequenceEmail) =>
+            sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
+            sequenceEmail.sequence_step_id === previousStep?.id,
+    );
+
+    const res = await sendTemplateEmail(
+        account,
+        sequenceInfluencer.email,
+        template_id,
+        emailSendAt,
+        params,
+        previousSequenceEmail?.email_message_id,
+    );
 
     if ('error' in res) {
         throw new Error(res.error);
@@ -149,6 +166,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                         sequenceInfluencer,
                         templateVariables,
                         sequenceEmails,
+                        sequenceSteps,
                     });
                     results.push(result);
                 } catch (error: any) {
