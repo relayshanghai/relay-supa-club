@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { featNewPricing } from 'src/constants/feature-flags';
 import httpCodes from 'src/constants/httpCodes';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
@@ -73,13 +72,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const discoveryTrialPriceId = discoveryTrialPrice?.id ?? '';
             if (!discoveryTrialPriceId || !discoveryTrialPrice) {
-                serverLogger(new Error(featNewPricing() ? 'Missing Discovery trial price' : 'Missing DIY trial price'));
+                serverLogger(new Error('Missing Discovery trial price'));
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const { trial_days, trial_profiles, trial_searches, trial_ai_emails } = featNewPricing()
-                ? discoveryTrialPrice.product.metadata
-                : diyTrialPrice.product.metadata;
+            const { trial_days, trial_profiles, trial_searches, trial_ai_emails } =
+                discoveryTrialPrice.product.metadata;
 
             if (!trial_days || !trial_profiles || !trial_searches || !trial_ai_emails) {
                 serverLogger(new Error('Missing product metadata'));
@@ -88,7 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
-                items: [{ price: featNewPricing() ? discoveryTrialPriceId : diyTrialPriceId }],
+                items: [{ price: discoveryTrialPriceId }],
                 proration_behavior: 'create_prorations',
                 trial_period_days: Number(trial_days),
                 cancel_at_period_end: true,
@@ -103,12 +101,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // free trial follows DIY prices and Discovery prices on new pricing
-            const price = (await stripeClient.prices.retrieve(
-                featNewPricing() ? discoveryTrialPriceId : diyTrialPriceId,
-                {
-                    expand: ['product'],
-                },
-            )) as StripePriceWithProductMetadata;
+            const price = (await stripeClient.prices.retrieve(discoveryTrialPriceId, {
+                expand: ['product'],
+            })) as StripePriceWithProductMetadata;
 
             const { searches, profiles, ai_emails } = price.product.metadata;
             if (!profiles || !searches || !ai_emails) {

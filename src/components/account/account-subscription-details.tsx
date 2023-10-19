@@ -5,7 +5,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
-import { getCurrentMonthPeriod, checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
+import { checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
@@ -13,7 +13,6 @@ import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
-import { featNewPricing } from 'src/constants/feature-flags';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
@@ -37,10 +36,8 @@ export const SubscriptionDetails = () => {
 
     const { usages, refreshUsages } = useUsages(
         true,
-        featNewPricing() && periodStart && periodEnd
+        periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
-            : periodStart
-            ? getCurrentMonthPeriod(new Date(periodStart))
             : undefined,
     );
 
@@ -117,15 +114,6 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2 text-right">{usages.search.current}</td>
                                         <td className="border px-4 py-2 text-right">{usages.search.limit}</td>
                                     </tr>
-                                    {!featNewPricing() && (
-                                        <tr>
-                                            <td className="border px-4 py-2">
-                                                {t('account.subscription.aiEmailGeneration')}
-                                            </td>
-                                            <td className="border px-4 py-2 text-right">{usages.aiEmail.current}</td>
-                                            <td className="border px-4 py-2 text-right">{usages.aiEmail.limit}</td>
-                                        </tr>
-                                    )}
                                 </tbody>
                             </table>
                         </div>
