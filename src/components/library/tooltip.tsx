@@ -4,7 +4,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { HoverTooltip } from 'src/utils/analytics/events';
 
-export type ToolTipPositionUnion = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
+export type ToolTipPositionUnion =
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'left'
+    | 'right'
+    | 'inset-right'
+    | 'inset-left';
 
 interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
     content: string;
@@ -32,7 +40,11 @@ const positionClass = (position?: string) =>
         ? 'right-full top-[120%]'
         : position === 'left'
         ? 'bottom-0 right-[110%]'
-        : 'bottom-0 left-[110%]';
+        : position === 'right'
+        ? 'bottom-0 left-[110%]'
+        : position === 'inset-right'
+        ? 'bottom-0 left-[80%]'
+        : 'bottom-0 right-[80%]';
 
 /** Wrap this around the component that you'd like to have the tooltip appear over when hovered. see `pages/component-previews/library.tsx` for examples*/
 export const Tooltip = ({
@@ -63,8 +75,9 @@ export const Tooltip = ({
     }, [delay]);
 
     const handleMouseLeave = useCallback(() => {
-        clearTimeout(timer); // clear timer
+        clearTimeout(timer); // clear timeout
         setIsHovered(false);
+        setTimer(undefined); // cleanup timer
     }, [timer]);
 
     useEffect(() => {
