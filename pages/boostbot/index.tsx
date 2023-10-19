@@ -21,8 +21,6 @@ import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
-import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
@@ -91,10 +89,8 @@ const Boostbot = () => {
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
-        featNewPricing() && periodStart && periodEnd
+        periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
-            : periodStart
-            ? getCurrentMonthPeriod(new Date(periodStart))
             : undefined,
     );
 
