@@ -36,7 +36,7 @@ import {
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
-import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
+import type { SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { WebhookMessageBounce } from 'types/email-engine/webhook-message-bounce';
 import type { WebhookMessageComplaint } from 'types/email-engine/webhook-message-complaint';
 import type { WebhookMessageDeliveryError } from 'types/email-engine/webhook-message-delivery-error';
@@ -52,10 +52,6 @@ import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
-
-export type SendEmailPostRequestBody = SendEmailRequestBody & {
-    account: string;
-};
 
 export type WebhookEvent =
     | WebhookMessageBounce
