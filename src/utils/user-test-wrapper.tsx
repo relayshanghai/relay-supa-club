@@ -50,6 +50,7 @@ export const mockCompany: CompanyDB = {
     trial_ai_email_generator_limit: '10',
     size: 'small',
     terms_accepted: true,
+    subscription_plan: 'discovery',
 };
 export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */
