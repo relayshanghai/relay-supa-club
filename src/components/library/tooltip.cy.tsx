@@ -26,7 +26,7 @@ describe('<Tooltip />', () => {
     });
     it('should render without crashing with delay', () => {
         testMount(<EmptyComponent delay={1000} />);
-        // shounlt not show tooltip for 1 second
+        // shouldn't show tooltip for 1 second
         cy.contains('test').trigger('mouseover');
         cy.get('content').should('not.exist');
         cy.get('content').should('not.exist', { timeout: 999 });
