@@ -4,7 +4,11 @@ import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmail, SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
-import { getSequenceEmailsBySequenceCall, insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
+import {
+    getSequenceEmailByInfluencerIdAndSequenceStepIdCall,
+    getSequenceEmailsBySequenceCall,
+    insertSequenceEmailCall,
+} from 'src/utils/api/db/calls/sequence-emails';
 import {
     updateSequenceInfluencerCall,
     updateSequenceInfluencersCall,
@@ -92,11 +96,17 @@ const sendAndInsertEmail = async ({
     const emailSendAt = (await calculateSendAt(account, wait_time_hours)).toISOString();
 
     const previousStep = sequenceSteps.find((sequenceStep) => sequenceStep.step_number === step.step_number - 1);
-    const previousSequenceEmail = sequenceEmails.find(
-        (sequenceEmail) =>
-            sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
-            sequenceEmail.sequence_step_id === previousStep?.id,
-    );
+
+    let previousSequenceEmailMessageId: string | null = null;
+    if (previousStep) {
+        const previousEmail = await db(getSequenceEmailByInfluencerIdAndSequenceStepIdCall)(
+            sequenceInfluencer.id,
+            previousStep.id,
+        );
+        if (previousEmail) {
+            previousSequenceEmailMessageId = previousEmail.email_message_id;
+        }
+    }
 
     const res = await sendTemplateEmail(
         account,
@@ -104,7 +114,7 @@ const sendAndInsertEmail = async ({
         template_id,
         emailSendAt,
         params,
-        previousSequenceEmail?.email_message_id,
+        previousSequenceEmailMessageId,
     );
 
     if ('error' in res) {
@@ -156,11 +166,14 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     );
     await db(updateSequenceInfluencersCall)(optimisticUpdates);
 
+    sequenceSteps.sort((a, b) => a.step_number - b.step_number);
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
+            // let i = 0;
             for (const step of sequenceSteps) {
                 try {
                     const result = await sendAndInsertEmail({
+                        // step: { ...step, wait_time_hours: i + 0.1 },
                         step,
                         account,
                         sequenceInfluencer,

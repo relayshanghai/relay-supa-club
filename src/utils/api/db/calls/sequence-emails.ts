@@ -30,6 +30,18 @@ export const getSequenceEmailByMessageIdCall = (supabaseClient: RelayDatabase) =
     return data;
 };
 
+export const getSequenceEmailByInfluencerIdAndSequenceStepIdCall =
+    (supabaseClient: RelayDatabase) => async (influencerId: string, sequenceStepId: string) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_emails')
+            .select('*')
+            .eq('sequence_influencer_id', influencerId)
+            .eq('sequence_step_id', sequenceStepId)
+            .single();
+        if (error) throw error;
+        return data;
+    };
+
 export const getSequenceEmailAndSequencesByMessageIdCall =
     (supabaseClient: RelayDatabase) => async (messageId: string) => {
         const { data, error } = await supabaseClient
