@@ -9,7 +9,8 @@ export const sendTemplateEmail = async (
     template: string,
     sendAt: string,
     params: Record<string, string>,
-    referenceMessageID?: string | null,
+    /** note this is the email id not the message id https://docs.emailengine.app/ids-explained/ */
+    referenceEmailId?: string | null,
 ): Promise<{ error: string } | SendEmailPostResponseBody> => {
     const body: SendEmailRequestBody = {
         to: [{ address: toEmail }],
@@ -22,13 +23,14 @@ export const sendTemplateEmail = async (
         sendAt,
     };
 
-    if (referenceMessageID) {
+    if (referenceEmailId) {
         body.reference = {
-            message: referenceMessageID,
+            message: referenceEmailId,
             action: 'reply',
+            documentStore: true,
         };
     }
-
+    console.log('sendTemplateEmail', body);
     try {
         return await sendEmailCall(body, account);
     } catch (error: any) {

@@ -35,6 +35,7 @@ export const getSequenceEmailByInfluencerIdAndSequenceStepIdCall =
         const { data, error } = await supabaseClient
             .from('sequence_emails')
             .select('*')
+            .limit(1)
             .eq('sequence_influencer_id', influencerId)
             .eq('sequence_step_id', sequenceStepId)
             .single();

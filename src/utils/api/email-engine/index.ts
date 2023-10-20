@@ -34,11 +34,16 @@ const getEmailsPath = (account: string, mailboxPath: string, page = 0, pageSize 
         documentStore: String(documentStore),
     })}`;
 
-const getEmailPath = (account: string, messageId: string, textType: TextType, documentStore = true) =>
-    `account/${encodeURIComponent(account)}/message/${encodeURIComponent(messageId)}?${new URLSearchParams({
-        textType,
+const getEmailPath = (account: string, messageId: string, textType: TextType | null, documentStore = true) => {
+    const urlParams = new URLSearchParams({
         documentStore: String(documentStore),
-    })}`;
+    });
+    if (textType) {
+        urlParams.append('textType', textType);
+    }
+    const base64MessageId = Buffer.from(messageId).toString('base64');
+    return `account/${encodeURIComponent(account)}/message/${base64MessageId}?${urlParams}`;
+};
 
 const updateEmailPath = (account: string, messageId: string) =>
     `account/${encodeURIComponent(account)}/message/${encodeURIComponent(messageId)}`;
@@ -84,8 +89,10 @@ export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
 export const getEmails = async (account: string, mailboxPath: string) =>
     await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
 
-export const getMessage = async (account: string, messageId: string, textType: TextType = '*') =>
-    await emailEngineApiFetch<AccountAccountMessageGet>(getEmailPath(account, messageId, textType));
+export const getMessage = async (account: string, messageId: string, textType: TextType | null = '*') => {
+    console.log('getMessage', account, messageId, textType, getEmailPath(account, messageId, textType));
+    return await emailEngineApiFetch<AccountAccountMessageGet>(getEmailPath(account, messageId, textType));
+};
 
 export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));

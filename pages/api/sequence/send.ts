@@ -15,6 +15,7 @@ import {
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
+import { getMessage } from 'src/utils/api/email-engine';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { serverLogger } from 'src/utils/logger-server';
@@ -94,18 +95,25 @@ const sendAndInsertEmail = async ({
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
     const emailSendAt = (await calculateSendAt(account, wait_time_hours)).toISOString();
+    let previousStep: SequenceStep | null = null;
+    let previousSequenceEmailEmailId: string | null = null;
+    try {
+        previousStep = sequenceSteps.find((sequenceStep) => sequenceStep.step_number === step.step_number - 1) ?? null;
+        if (previousStep) {
+            const previousEmail = await db(getSequenceEmailByInfluencerIdAndSequenceStepIdCall)(
+                sequenceInfluencer.id,
+                previousStep.id,
+            );
+            console.log('previousEmail', previousEmail);
 
-    const previousStep = sequenceSteps.find((sequenceStep) => sequenceStep.step_number === step.step_number - 1);
-
-    let previousSequenceEmailMessageId: string | null = null;
-    if (previousStep) {
-        const previousEmail = await db(getSequenceEmailByInfluencerIdAndSequenceStepIdCall)(
-            sequenceInfluencer.id,
-            previousStep.id,
-        );
-        if (previousEmail) {
-            previousSequenceEmailMessageId = previousEmail.email_message_id;
+            if (previousEmail?.email_message_id) {
+                const messageInfo = await getMessage(account, previousEmail?.email_message_id, null);
+                console.log('messageInfo', messageInfo);
+                previousSequenceEmailEmailId = messageInfo.id;
+            }
         }
+    } catch (error) {
+        serverLogger(error);
     }
 
     const res = await sendTemplateEmail(
@@ -114,9 +122,9 @@ const sendAndInsertEmail = async ({
         template_id,
         emailSendAt,
         params,
-        previousSequenceEmailMessageId,
+        previousSequenceEmailEmailId,
     );
-
+    console.log('res', res);
     if ('error' in res) {
         throw new Error(res.error);
     }
@@ -166,15 +174,15 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     );
     await db(updateSequenceInfluencersCall)(optimisticUpdates);
 
-    sequenceSteps.sort((a, b) => a.step_number - b.step_number);
+    sequenceSteps.sort((a, b) => a.step_number - b.step_number); // sort by step number to make sure the previous sequence email is created and we can pull the messageId from it so we can add it as a reference to the next one
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
-            // let i = 0;
+            let i = 0;
             for (const step of sequenceSteps) {
                 try {
                     const result = await sendAndInsertEmail({
-                        // step: { ...step, wait_time_hours: i + 0.1 },
-                        step,
+                        step: { ...step, wait_time_hours: (i += 0.1) }, // make the wait time small so we can see the emails send quickly
+                        // step,
                         account,
                         sequenceInfluencer,
                         templateVariables,
