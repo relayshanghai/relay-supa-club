@@ -15,6 +15,8 @@ import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { clientLogger } from 'src/utils/logger-client';
 import { useCompany } from 'src/hooks/use-company';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SearchOptions = ({
     setPage,
@@ -48,6 +50,7 @@ export const SearchOptions = ({
 
     const { t } = useTranslation();
     const { trackSearch, trackKeyword, trackHashtags, trackTopics } = useSearchTrackers();
+    const { track } = useRudderstackTrack();
 
     const handleSearch = useCallback(
         (e: any) => {
@@ -139,7 +142,7 @@ export const SearchOptions = ({
                                 variant="ghost"
                                 onClick={() => {
                                     setShowNeedHelpModal(true);
-                                    // track(ClickNeedHelp);
+                                    track(ClickNeedHelp);
                                 }}
                                 className="mb-2 flex items-center"
                             >
