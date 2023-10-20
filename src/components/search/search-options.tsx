@@ -118,7 +118,7 @@ export const SearchOptions = ({
             <div className="flex h-full  flex-row">
                 <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
-                        <div className="flex justify-between gap-1">
+                        <div className="flex place-items-center justify-between gap-1">
                             <div className="flex gap-1">
                                 <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
                                 <Tooltip
