@@ -7,12 +7,7 @@ import {
     updateCompanyUsageLimits,
     updateCompany,
 } from 'src/utils/api/db';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_DIY,
-    STRIPE_PRODUCT_ID_DISCOVERY,
-    STRIPE_PRODUCT_ID_DIY,
-} from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRODUCT_ID_DISCOVERY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 import { unixEpochToISOString } from 'src/utils/utils';
@@ -49,18 +44,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             if (subscriptions.data.length > 0) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
-            }
-            const diyPrices = (await stripeClient.prices.list({
-                active: true,
-                expand: ['data.product'],
-                product: STRIPE_PRODUCT_ID_DIY,
-            })) as Stripe.ApiList<StripePriceWithProductMetadata>;
-            const diyTrialPrice = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY);
-
-            const diyTrialPriceId = diyTrialPrice?.id ?? '';
-            if (!diyTrialPriceId || !diyTrialPrice) {
-                serverLogger(new Error('Missing DIY trial price'));
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const discoveryPrices = (await stripeClient.prices.list({
