@@ -1,14 +1,22 @@
 import Link from 'next/link';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { VideoPreviewWithModal } from 'src/components/video-preview-with-modal';
 import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import ChatProgress from './chat-progress';
+import { countries } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { translateGeolocations } from 'src/utils/api/iqdata/dictionaries/helpers';
+import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
 
 type TranslationMessage = {
     type: 'translation';
     translationKey: string;
     translationLink?: string;
+    // Dynamic values to be inserted into the translation string, such as {{ count }}.
     translationValues?: Record<string, string | number>;
+    // Some dynamic values, such as {{ geolocations }, need to be translated as they get inserted into translation strings. A translation within a translation. Since they will be uncommon and require specific types, we explicitly list them here.
+    translationValuesToTranslate?: {
+        geolocations: AudienceGeo[];
+    };
 };
 
 type ProgressMessage = {
@@ -33,17 +41,39 @@ export type MessageType = {
     sender: 'User' | 'Bot' | 'Neutral';
 } & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage);
 
-const Translation = ({ translationKey, translationLink, translationValues }: TranslationMessage) => (
-    <Trans
-        i18nKey={translationKey}
-        components={
-            translationLink
-                ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
-                : undefined
-        }
-        values={translationValues}
-    />
-);
+const Translation = ({
+    translationKey,
+    translationLink,
+    translationValues,
+    translationValuesToTranslate,
+}: TranslationMessage) => {
+    const { t } = useTranslation();
+
+    const translatedValues = {
+        ...translationValues,
+        ...(translationValuesToTranslate
+            ? {
+                  geolocations: translateGeolocations({
+                      t,
+                      countries,
+                      geolocations: translationValuesToTranslate.geolocations,
+                  }),
+              }
+            : {}),
+    };
+
+    return (
+        <Trans
+            i18nKey={translationKey}
+            components={
+                translationLink
+                    ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
+                    : undefined
+            }
+            values={translatedValues}
+        />
+    );
+};
 
 const Video = ({ videoUrl = '', eventToTrack = '' }: VideoMessage) => (
     <VideoPreviewWithModal eventToTrack={eventToTrack} videoUrl={videoUrl} />

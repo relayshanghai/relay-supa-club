@@ -9,7 +9,6 @@ import { useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
-import { useAppcues } from 'src/hooks/useAppcues';
 import { useTranslation } from 'react-i18next';
 
 export const AnalyticsContext = createContext<
@@ -43,7 +42,6 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
     const rudderstack = useRudder();
-    const appcues = useAppcues();
     const { session, profile, user, company, subscription } = useSession();
     const { i18n } = useTranslation();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
@@ -55,13 +53,6 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             rudderstack.identify(id, traits);
         }
     }, [rudderstack, profile, user, company, i18n, subscription]);
-
-    useEffect(() => {
-        if (profile !== null && user !== null && company !== null && subscription && appcues) {
-            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
-            appcues.identify(id, traits);
-        }
-    }, [appcues, profile, user, company, i18n, subscription]);
 
     // set analytics identity
     useEffect(() => {

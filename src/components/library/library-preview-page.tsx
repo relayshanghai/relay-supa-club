@@ -80,6 +80,14 @@ const Tooltips = () => (
             <library.Tooltip content="explaining this" position="left">
                 <library.Badge>Hover position left</library.Badge>
             </library.Tooltip>
+
+            <library.Tooltip content="explaining this" position="inset-left">
+                <library.Badge>Hover position inset-left</library.Badge>
+            </library.Tooltip>
+
+            <library.Tooltip content="explaining this" position="inset-right">
+                <library.Badge>Hover position inset-right</library.Badge>
+            </library.Tooltip>
         </div>
     </div>
 );

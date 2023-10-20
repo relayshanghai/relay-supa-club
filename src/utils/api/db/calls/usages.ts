@@ -1,8 +1,6 @@
-import { featNewPricing } from 'src/constants/feature-flags';
 import { usageErrors } from 'src/errors/usages';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
@@ -69,7 +67,7 @@ const recordUsage = async ({
     const limit = Number(subscriptionLimit);
     const now = new Date();
 
-    let subscriptionStartDate = startDate.toISOString();
+    let _subscriptionStartDate = startDate.toISOString();
 
     // if end date is in the past, we need to query stripe for latest subscription info and update the subscription current period end date
     if (endDate < now) {
@@ -77,12 +75,10 @@ const recordUsage = async ({
         if (result.error || !result.subscription_current_period_start || !result.subscription_current_period_end) {
             return { error: result.error };
         }
-        subscriptionStartDate = result.subscription_current_period_start;
+        _subscriptionStartDate = result.subscription_current_period_start;
     }
 
-    const { thisMonthStartDate, thisMonthEndDate } = featNewPricing()
-        ? { thisMonthStartDate: startDate, thisMonthEndDate: endDate }
-        : getCurrentMonthPeriod(new Date(subscriptionStartDate));
+    const { thisMonthStartDate, thisMonthEndDate } = { thisMonthStartDate: startDate, thisMonthEndDate: endDate };
 
     const { data: usagesData, error: usagesError } = await supabase
         .from('usages')

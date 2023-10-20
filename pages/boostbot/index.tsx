@@ -21,8 +21,6 @@ import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
-import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
@@ -43,7 +41,12 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
+    const [influencers, setInfluencers] = usePersistentState<Influencer[]>(
+        'boostbot-influencers',
+        [],
+        // Some of the influencers can get stuck in a loading state if the user navigates away/closes the tab prematurely. We just reset the isLoading state to false on load to correctly reflect it in the UI.
+        (onLoadInfluencers) => onLoadInfluencers.map((i) => ({ ...i, isLoading: false })),
+    );
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
@@ -86,10 +89,8 @@ const Boostbot = () => {
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
-        featNewPricing() && periodStart && periodEnd
+        periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
-            : periodStart
-            ? getCurrentMonthPeriod(new Date(periodStart))
             : undefined,
     );
 
