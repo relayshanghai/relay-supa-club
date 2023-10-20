@@ -24,19 +24,19 @@ export const getSequenceInfluencers =
         if (error) {
             serverLogger(error);
         } else {
-            //convert to SequenceInfluencerManagerPage format
+            // convert to SequenceInfluencerManagerPage format
             influencers.forEach((influencer) => {
+                const { socialProfile, ...rest } = influencer;
                 results.push({
-                    ...influencer,
+                    ...rest,
+                    name: socialProfile?.name ?? '',
                     manager_first_name: '',
-                    username: influencer.socialProfile?.username ?? '',
-                    avatar_url: influencer.socialProfile?.avatar_url ?? '',
-                    url: influencer.socialProfile?.url ?? '',
-                    platform: (influencer.socialProfile?.platform as CreatorPlatform) ?? 'youtube',
-                    address: influencer.address,
+                    username: socialProfile?.username ?? '',
+                    avatar_url: socialProfile?.avatar_url ?? '',
+                    url: socialProfile?.url ?? '',
+                    platform: (socialProfile?.platform as CreatorPlatform) ?? 'youtube',
                 });
             });
-
             // add the manager first name to each influencer if their added_by id matches a manager id:
             results.forEach((influencer) => {
                 const manager = managers.find((manager) => manager.id === influencer.added_by);
