@@ -2,6 +2,7 @@ import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { unixEpochToISOString } from '../utils';
 import { serverLogger } from '../logger-server';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from './db';
+import { transformStripeStatus } from './stripe/helpers';
 
 const updateSubscriptionUsagesAndStatus = async (companyId: string, subscriptionId: string, priceId: string) => {
     const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
@@ -25,11 +26,12 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
     });
 
     await updateCompanySubscriptionStatus({
-        subscription_status: 'active',
+        subscription_status: transformStripeStatus(subscription.status),
         subscription_start_date,
         subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
         subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
         id: companyId,
+        // subscription_plan: product.name,
     });
 };
 
