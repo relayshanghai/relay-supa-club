@@ -7,13 +7,15 @@ import type { RelayDatabase, SequenceInfluencersTable } from '../types';
 import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
 
-// @note gets sequence influencers by sequence
+/**
+ * gets sequence influencers by sequence ids.
+ * Gets the manager first name for each influencer and formats the return object to match the SequenceInfluencerManagerPage type
+ */
 export const getSequenceInfluencers =
     (db: RelayDatabase) =>
     async (sequenceIds: string[]): Promise<SequenceInfluencerManagerPage[]> => {
         const influencers = await getSequenceInfluencersBySequenceIdsCall(db)(sequenceIds);
-        // add the manager first name to each influencer:
-        // make sure there arent duplicate manager ids:
+        // add the manager first name to each influencer, making sure there aren't duplicate manager ids
         const managerIds = Array.from(new Set(influencers.map((influencer) => influencer.added_by)));
 
         const { data: managers, error } = await db.from('profiles').select('first_name, id').in('id', managerIds);
