@@ -288,7 +288,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         />
 
                         <div className="flex flex-col">
-                            <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
+                            <p className="font-semibold text-yellow-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
                                 href={sequenceInfluencer.url ?? ''}

@@ -130,7 +130,6 @@ const postHandler: NextApiHandler = async (
         ...sequenceInfluencer,
         manager_first_name: manager.first_name,
         address,
-        manager,
     });
 };
 

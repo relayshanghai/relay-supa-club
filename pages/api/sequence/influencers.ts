@@ -8,13 +8,6 @@ import { db } from 'src/utils/supabase-client';
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     manager_first_name: string;
     address?: Addresses['Update'] | null;
-    manager: {
-        id: string | null;
-        company_id: string | null;
-        avatar_url?: string | null;
-        first_name: string;
-        last_name: string;
-    };
 };
 
 const postHandler: NextApiHandler = async (
@@ -22,14 +15,9 @@ const postHandler: NextApiHandler = async (
     res: NextApiResponse<SequenceInfluencerManagerPage[]>,
 ) => {
     const sequenceIds: string[] = req.body;
-    const influencersPromises = sequenceIds.map(db(getSequenceInfluencers));
-    const influencersArrays = await Promise.all(influencersPromises);
+    const influencers = await db(getSequenceInfluencers)(sequenceIds);
 
-    const combinedInfluencers = influencersArrays.reduce((accumulator, influencers) => {
-        return [...accumulator, ...influencers];
-    }, [] as SequenceInfluencerManagerPage[]);
-
-    return res.status(httpCodes.OK).json(combinedInfluencers);
+    return res.status(httpCodes.OK).json(influencers);
 };
 
 export default ApiHandler({ postHandler });
