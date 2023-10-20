@@ -32,7 +32,6 @@ import { useCompany } from 'src/hooks/use-company';
 import { randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
-// import { NeedHelpModal } from './nned-help-modal';
 import { FaqModal } from '../library';
 import discoveryfaq from 'i18n/en/discovery-faq';
 import { useRouter } from 'next/router';
@@ -304,21 +303,16 @@ export const SearchPageInner = () => {
                 onSearch={handleSearch}
                 searchType={searchType}
             />
-            {/* add new modal dito */}
-            {/* <NeedHelpModal 
-                show={filterNeedHelpModalOpen}
-                setShow={setShowFiltersModal}
-            /> */}
             <FaqModal
-                title={t('discoveryfaq.discoveryfaqTitle')}
+                title={t(discoveryfaq.discoveryfaqTitle)}
                 description=""
                 visible={filterNeedHelpModalOpen}
                 onClose={() => setShowNeedHelpModal(false)}
-                content={discoveryfaq.discovery.map((_, i) => ({
-                    title: t(`discoveryfaq.discovery.${i}.title`),
-                    detail: t(`discoveryfaq.discovery.${i}.detail`),
+                content={discoveryfaq.discovery.map((content) => ({
+                    title: t(content.title),
+                    detail: t(content.detail),
                 }))}
-                getMoreInfoButtonText={t('discoveryfaq.influencerManagerGetMoreInfo') || ''}
+                getMoreInfoButtonText={t(discoveryfaq.discoveryGetMoreInfo) || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
                 source="Discovery"
             />
