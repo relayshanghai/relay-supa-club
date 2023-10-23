@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
-// import { APP_URL } from 'src/constants';
+import { APP_URL } from 'src/constants';
 import { serverLogger } from 'src/utils/logger-server';
 
 export type CreateSetUpIntentPostBody = {
@@ -58,8 +58,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                 },
             },
-            return_url: `https://preview.relay.club/payments/confirm-alipay?${returnUrlParams}`,
-            // return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
+            //TODO: change the return url to the APP_URL before production
+            // return_url: `https://preview.relay.club/payments/confirm-alipay?${returnUrlParams}`,
+            return_url: `${APP_URL}/payments/confirm-alipay?${returnUrlParams}`,
         },
         undefined,
     );

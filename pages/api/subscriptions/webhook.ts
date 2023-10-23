@@ -19,22 +19,31 @@ import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-w
 import { handleSetupIntentSucceeded } from 'src/utils/api/stripe/handle-setup-intent-succeeded-webhook';
 import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
+import type { SetupIntentFailed } from 'types/stripe/setup-intent-failed-webhook';
+import { handleSetupIntentFailed } from 'src/utils/api/stripe/handle-setup-intent-failed-webhook';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
     invoicePaymentSucceeded: 'invoice.payment_succeeded',
     setupIntentSucceeded: 'setup_intent.succeeded',
+    setupIntentFailed: 'setup_intent.failed',
 };
 
 export type HandledEvent =
     | CustomerSubscriptionCreated
     | InvoicePaymentFailed
     | InvoicePaymentSucceeded
-    | SetupIntentSucceeded;
+    | SetupIntentSucceeded
+    | SetupIntentFailed;
 
 const identifyWebhook = async (
-    event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded | SetupIntentSucceeded,
+    event:
+        | CustomerSubscriptionCreated
+        | InvoicePaymentFailed
+        | InvoicePaymentSucceeded
+        | SetupIntentSucceeded
+        | SetupIntentFailed,
 ) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
@@ -53,7 +62,11 @@ const identifyWebhook = async (
 };
 
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
+    console.log('type======================', event.type);
+
     switch (event.type) {
+        case handledWebhooks.setupIntentFailed:
+            return await handleSetupIntentFailed(res, event as SetupIntentFailed);
         case handledWebhooks.setupIntentSucceeded:
             return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
         case handledWebhooks.invoicePaymentSucceeded:
@@ -77,6 +90,8 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    console.log('======================start!');
+
     if (req.method !== 'POST') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
@@ -104,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             serverLogger('stripe signatures do not match', { level: 'error' });
             return res.status(httpCodes.FORBIDDEN).json({ message: 'signatures do not match' });
         }
-
+        console.log('======================checked sig', event);
         // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
 
         if (!event || !event.type) {
@@ -127,6 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
+        console.log('======================', event);
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
         serverLogger('stripe caught error', { level: 'error' });

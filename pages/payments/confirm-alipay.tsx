@@ -13,7 +13,7 @@ const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const { companyId, customerId, priceId } = router.query;
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
         if (typeof companyId !== 'string' || typeof customerId !== 'string' || typeof priceId !== 'string') {
