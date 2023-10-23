@@ -3,6 +3,7 @@ import { unixEpochToISOString } from '../utils';
 import { serverLogger } from '../logger-server';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from './db';
 import { transformStripeStatus } from './stripe/helpers';
+import type { SubscriptionPlans } from 'types/appTypes';
 
 const updateSubscriptionUsagesAndStatus = async (companyId: string, subscriptionId: string, priceId: string) => {
     const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
@@ -17,6 +18,12 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
         throw new Error('Missing product metadata');
     }
+    //watch out for the product, update the types if needed
+    if (product.name !== 'Discovery' && product.name !== 'Outreach') {
+        throw new Error(`Invalid subscription plan: ${product.name}`);
+    }
+
+    const subscriptionPlan = product.name as SubscriptionPlans;
 
     await updateCompanyUsageLimits({
         profiles_limit: profiles,
@@ -31,7 +38,7 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
         subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
         id: companyId,
-        // subscription_plan: product.name,
+        subscription_plan: subscriptionPlan,
     });
 };
 

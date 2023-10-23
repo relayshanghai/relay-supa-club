@@ -4,6 +4,7 @@ import type {
     DatabaseWithCustomTypes,
     InfluencerOutreachStatus,
     InfluencerStepTypes,
+    SubscriptionPlans,
     SubscriptionStatus,
     UsageType,
 } from 'types';
@@ -30,12 +31,15 @@ export type ProfileDBInsert = ProfilesTable['Insert'];
 export type CompanyTable = Database['public']['Tables']['companies'] & {
     Row: Database['public']['Tables']['companies']['Row'] & {
         subscription_status: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
     Insert: Database['public']['Tables']['companies']['Insert'] & {
         subscription_status?: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
     Update: Database['public']['Tables']['companies']['Update'] & {
         subscription_status?: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
 };
 
