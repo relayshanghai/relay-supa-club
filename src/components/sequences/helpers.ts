@@ -80,7 +80,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         return;
     }
 
-    await updateSequenceInfluencer(updatedValues);
+    return await updateSequenceInfluencer(updatedValues);
 };
 
 export const wasFetchedWithinMinutes = (
