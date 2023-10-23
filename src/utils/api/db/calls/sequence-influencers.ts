@@ -18,6 +18,21 @@ export const getSequenceInfluencersBySequenceIdCall = (supabaseClient: RelayData
     if (error) throw error;
     return data;
 };
+export const getSequenceInfluencersBySequenceIdsCall =
+    (supabaseClient: RelayDatabase) => async (sequenceIds: string[]) => {
+        if (!sequenceIds) {
+            throw new Error('No sequenceIds provided');
+        }
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select(
+                '*, socialProfile: influencer_social_profiles (name, username, avatar_url, url, platform), address: addresses (*)',
+            )
+            .in('sequence_id', sequenceIds);
+
+        if (error) throw error;
+        return data;
+    };
 
 export const getSequenceInfluencersCountByCompanyIdCall =
     (supabaseClient: RelayDatabase) => async (companyId: string) => {
