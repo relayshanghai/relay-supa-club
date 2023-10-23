@@ -19,7 +19,7 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         throw new Error('Missing product metadata');
     }
     //watch out for the product, update the types if needed
-    if (product.name !== 'Discovery' && product.name !== 'Outreach') {
+    if (product.name !== 'Discovery' && product.name !== 'Outreach' && product.name !== 'Company Demo') {
         throw new Error(`Invalid subscription plan: ${product.name}`);
     }
 
