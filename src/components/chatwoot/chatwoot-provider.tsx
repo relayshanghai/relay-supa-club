@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import type { Chatwoot, ChatwootSettings, ChatwootSDKParams, WindowChatwoot } from 'src/utils/chatwoot/types';
 import { clientLogger } from 'src/utils/logger-client';
 
+const disableChatwoot = process.env.NEXT_PUBLIC_DISABLE_CHATWOOT === 'true';
+
 const ChatWootContext = createContext<Chatwoot | null>(null);
 
 export const useChatwoot = () => useContext(ChatWootContext);
@@ -43,6 +45,7 @@ export default function ChatwootProvider({ children, ...chatwootOptions }: Chatw
     }, [chatwoot, settings.locale, pathname]);
 
     useEffect(() => {
+        if (disableChatwoot) return;
         if (chatwoot !== null) return;
 
         (window as WindowChatwoot).chatwootSettings = settings || {};
