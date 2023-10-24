@@ -34,10 +34,13 @@ const Clients = () => {
             const client = data.find((d) => d.id === clientId);
             if (!client) return;
             const hasEmailEngineAccountProfile = client.profiles.find(
-                (p) => p.email_engine_account_id && p.email_engine_account_id.length > 1,
+                (p) =>
+                    p.email_engine_account_id &&
+                    p.email_engine_account_id.length > 1 &&
+                    p.user_role === 'company_owner',
             );
-            const emailEngineAccountId = hasEmailEngineAccountProfile?.email_engine_account_id ?? '';
-            const sequenceSendEmail = hasEmailEngineAccountProfile?.sequence_send_email ?? '';
+            const emailEngineAccountId = hasEmailEngineAccountProfile?.email_engine_account_id || '';
+            const sequenceSendEmail = hasEmailEngineAccountProfile?.sequence_send_email || '';
 
             setClientRoleData({
                 companyId: clientId,
