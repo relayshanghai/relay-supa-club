@@ -94,15 +94,15 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <AnalyticsProvider>
                     <CacheProvider>
-                        <UserProvider>
-                            <ChatwootProvider {...chatwootConfig} locale={lang}>
-                                <JotaiProvider>
+                        <JotaiProvider>
+                            <UserProvider>
+                                <ChatwootProvider {...chatwootConfig} locale={lang}>
                                     <CompanyProvider>
                                         <Component {...pageProps} />
                                     </CompanyProvider>
-                                </JotaiProvider>
-                            </ChatwootProvider>
-                        </UserProvider>
+                                </ChatwootProvider>
+                            </UserProvider>
+                        </JotaiProvider>
                     </CacheProvider>
                 </AnalyticsProvider>
             </SessionContextProvider>
