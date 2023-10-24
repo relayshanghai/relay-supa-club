@@ -118,6 +118,8 @@ const SignUpPage = ({
     };
 
     const onNext = async () => {
+        let isDone = false;
+
         if (currentStep > steps.length) {
             return;
         }
@@ -133,15 +135,11 @@ const SignUpPage = ({
                 throw new Error('Could not find profile id');
             }
             const result = await handleCompanyCreate(formData, profileId);
-
-            if (result === 'success') {
-                identifySession(() => {
-                    router.push('/free-trial');
-                });
-            }
+            isDone = result === 'success';
         } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
+
         track(CompleteSignupStep, {
             current_step: currentStep,
             firstName,
@@ -152,6 +150,12 @@ const SignUpPage = ({
             companyWebsite,
             companySize: selectedSize ?? '',
         });
+
+        if (isDone === true) {
+            identifySession(() => {
+                router.push('/free-trial');
+            });
+        }
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {

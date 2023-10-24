@@ -12,6 +12,7 @@ import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PasswordReset } from 'src/utils/analytics/events';
 import { SignupStarted } from 'src/utils/analytics/events';
+import { useIdentifySession } from 'src/hooks/use-session';
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -29,12 +30,16 @@ const LoginPage = () => {
         password: '',
     });
 
+    const identifySession = useIdentifySession();
+
     useEffect(() => {
         if (profile) {
             toast.success(t('login.loginSuccess'));
-            router.push('/boostbot');
+            identifySession(() => {
+                router.push('/boostbot');
+            });
         }
-    }, [profile, router, t]);
+    }, [profile, router, t, identifySession]);
 
     useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
