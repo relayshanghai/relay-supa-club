@@ -154,7 +154,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
 
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
-            const messageIds = gatherMessageIds(sequenceInfluencer.id, sequenceSteps);
+            const messageIds = gatherMessageIds(sequenceInfluencer.email ?? '', sequenceSteps);
             for (const step of sequenceSteps) {
                 try {
                     const references = generateReferences(messageIds, step.step_number);
