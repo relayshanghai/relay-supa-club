@@ -34,6 +34,8 @@ export const sendTemplateEmail = async ({
         body.messageId = messageId;
     }
     if (references) {
+        // enables threading of outgoing emails
+        // see https://docs.emailengine.app/sending-multiple-emails-in-the-same-thread/
         if (!body.headers) body.headers = {};
         body.headers.references = references;
     }
