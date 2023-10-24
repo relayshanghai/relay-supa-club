@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
 import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
+import { useIdentifySession } from 'src/hooks/use-session';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -46,6 +47,7 @@ const SignUpPage = ({
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
+    const identifySession = useIdentifySession();
     const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
 
@@ -131,8 +133,11 @@ const SignUpPage = ({
                 throw new Error('Could not find profile id');
             }
             const result = await handleCompanyCreate(formData, profileId);
+
             if (result === 'success') {
-                await router.push('/free-trial');
+                identifySession(() => {
+                    router.push('/free-trial');
+                });
             }
         } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
