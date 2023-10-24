@@ -18,7 +18,12 @@ const ClientRoleWarning = () => {
             <XCircleIcon
                 className="w-7 cursor-pointer md:w-5"
                 onClick={() => {
-                    setClientRoleData({ companyId: '', companyName: '' });
+                    setClientRoleData({
+                        companyId: '',
+                        companyName: '',
+                        emailEngineAccountId: '',
+                        sequenceSendEmail: '',
+                    });
                     router.push('/admin/clients');
                 }}
             />

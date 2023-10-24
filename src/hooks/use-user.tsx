@@ -17,6 +17,8 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { useSession } from './use-session';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from './use-subscription';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAtomValue } from 'jotai';
 
 export type SignupData = {
     email: string;
@@ -88,6 +90,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { user, company } = useSession();
     const { i18n } = useTranslation();
     const { subscription } = useSubscription();
+    const clientRoleData = useAtomValue(clientRoleAtom);
 
     useEffect(() => {
         setLoading(isLoading);
@@ -249,6 +252,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         updateEmail();
     }, [session?.user.email, profile?.email, updateProfile, profile, session, refreshProfile]);
 
+    const profileWithAdminOverrides: ProfileDB | undefined = profile
+        ? {
+              ...profile,
+              email_engine_account_id: clientRoleData.emailEngineAccountId || profile?.email_engine_account_id,
+              sequence_send_email: clientRoleData.sequenceSendEmail || profile?.sequence_send_email,
+          }
+        : undefined;
+
     return (
         <UserContext.Provider
             value={{
@@ -257,7 +268,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 createEmployee,
                 signup,
                 loading,
-                profile,
+                profile: profileWithAdminOverrides,
                 updateProfile,
                 refreshProfile,
                 logout,
