@@ -31,9 +31,22 @@ const Clients = () => {
 
     const clientRoleDataHandler = (clientName: string, clientId: string) => {
         if (clientName && clientId) {
+            const client = data.find((d) => d.id === clientId);
+            if (!client) return;
+            const hasEmailEngineAccountProfile = client.profiles.find(
+                (p) =>
+                    p.email_engine_account_id &&
+                    p.email_engine_account_id.length > 1 &&
+                    p.user_role === 'company_owner',
+            );
+            const emailEngineAccountId = hasEmailEngineAccountProfile?.email_engine_account_id || '';
+            const sequenceSendEmail = hasEmailEngineAccountProfile?.sequence_send_email || '';
+
             setClientRoleData({
                 companyId: clientId,
                 companyName: clientName,
+                emailEngineAccountId,
+                sequenceSendEmail,
             });
         }
     };
@@ -42,6 +55,8 @@ const Clients = () => {
         setClientRoleData({
             companyId: '',
             companyName: '',
+            emailEngineAccountId: '',
+            sequenceSendEmail: '',
         });
     };
 
