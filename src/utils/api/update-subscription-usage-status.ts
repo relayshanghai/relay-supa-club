@@ -18,8 +18,9 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
         throw new Error('Missing product metadata');
     }
-    //watch out for the product, update the types if needed
-    if (product.name !== 'Discovery' && product.name !== 'Outreach' && product.name !== 'Company Demo') {
+    //the subscription plan are from Stripe Product, some of the old plans should be archived when all user data is migrated to the new plans
+    const stripePlans = ['Discovery', 'Outreach', 'Company Demo', 'DIY', 'DIY Max', 'VIP', 'Discovery(deprecated)'];
+    if (!stripePlans.includes(product.name)) {
         throw new Error(`Invalid subscription plan: ${product.name}`);
     }
 
