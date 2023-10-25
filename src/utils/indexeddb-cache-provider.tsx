@@ -3,7 +3,6 @@ import { SWRConfig } from 'swr';
 import { appCacheDBKey, appCacheStoreKey } from 'src/constants';
 import type { FC, PropsWithChildren } from 'react';
 import { useEffect } from 'react';
-import { clientLogger } from './logger-client';
 
 export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
     useEffect(() => {
@@ -15,10 +14,7 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
         storeName: appCacheStoreKey,
     });
     if (!cacheProvider) {
-        clientLogger('cache-provider error', 'error', false);
-        // eslint-disable-next-line no-console
-        console.log(cacheProvider);
-        return <></>;
+        return <>Loading...</>;
     }
     return <SWRConfig value={{ provider: cacheProvider }}>{children}</SWRConfig>;
 };
