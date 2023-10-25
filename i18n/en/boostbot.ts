@@ -30,7 +30,6 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        unlockSelected: 'Unlock selected influencers',
         outreachSelected: 'Add selected influencers to Sequence',
         progress: {
             step1: 'Generating topics and niches',
@@ -39,12 +38,8 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
             step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
             step3B: '{{count}} influencers selected',
         },
-        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
-
-Tip: You can also unlock influencers one by one.`,
         outreachDone:
             "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
-        hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
         and: 'and',
         clearChatModal: {
             open: 'Clear chat history',
@@ -57,7 +52,6 @@ Tip: You can also unlock influencers one by one.`,
         account: 'Account',
         topPosts: 'Top Posts',
         email: 'Email',
-        unlockInfluencer: 'Unlock influencer',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
@@ -69,10 +63,8 @@ Tip: You can also unlock influencers one by one.`,
     },
     error: {
         influencerSearch: 'Error fetching BoostBot influencers',
-        influencerUnlock: 'Unlocking influencer failed',
         influencersToOutreach: 'Adding influencers to outreach failed',
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
-        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
     },

@@ -16,8 +16,6 @@ import {
     BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH,
     SendInfluencersToOutreach,
 } from './boostbot/send-influencers-to-outreach';
-import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
-import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { ChangePagePayload } from './change-page';
 import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
@@ -196,7 +194,6 @@ export {
     EmailReply,
     BoostbotAnalyzeInfluencer,
     RecommendInfluencers,
-    UnlockInfluencers,
     SendInfluencersToOutreach,
     OpenSocialProfile,
     OpenAnalyzeProfile,
@@ -252,7 +249,6 @@ export const events = {
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
-    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfile,
@@ -336,7 +332,6 @@ export type payloads = {
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
-    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfilePayload;
@@ -422,7 +417,6 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
-    z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
     z.literal(OPEN_ANALYZE_PROFILE),

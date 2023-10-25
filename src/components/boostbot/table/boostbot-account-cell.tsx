@@ -37,7 +37,6 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                 onClick={() => {
                     track(OpenSocialProfile, {
                         currentPage: CurrentPageEvent.boostbot,
-                        is_unlocked: true,
                         results_index: row.index,
                         results_page: table.getState().pagination.pageIndex + 1,
                         kol_id: user_id,

@@ -12,7 +12,6 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
-import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays, randomNumber } from 'src/utils/utils';
 import type { MessageType } from 'src/components/boostbot/message';
@@ -36,21 +35,15 @@ interface ChatProps {
     messages: MessageType[];
     setMessages: Dispatch<SetStateAction<MessageType[]>>;
     addMessage: (message: MessageType) => void;
-    isUnlockOutreachLoading: boolean;
+    isOutreachLoading: boolean;
     isSearchLoading: boolean;
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
-    handleSelectedInfluencersToUnlock: () => void;
     handleSelectedInfluencersToOutreach: () => void;
-    handleUnlockInfluencers: (
-        influencers: Influencer[],
-        freeOfCharge: boolean,
-    ) => Promise<CreatorsReportGetResponse[] | undefined>;
     isSearchDisabled: boolean;
-    isUnlockButtonDisabled: boolean;
     isOutreachButtonDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
@@ -63,18 +56,15 @@ export const Chat: React.FC<ChatProps> = ({
     messages,
     setMessages,
     addMessage,
-    isUnlockOutreachLoading,
+    isOutreachLoading,
     isSearchLoading,
     areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
-    handleSelectedInfluencersToUnlock,
     handleSelectedInfluencersToOutreach,
-    handleUnlockInfluencers,
     isSearchDisabled,
-    isUnlockButtonDisabled,
     isOutreachButtonDisabled,
     setSearchId,
     sequence,
@@ -128,11 +118,6 @@ export const Chat: React.FC<ChatProps> = ({
             { sender: 'Neutral', type: 'progress', progressData: progress },
         ]);
 
-    const chatSelectedInfluencersToUnlock = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
-        handleSelectedInfluencersToUnlock();
-    };
-
     const chatSelectedInfluencersToOutreach = () => {
         addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
         handleSelectedInfluencersToOutreach();
@@ -163,6 +148,12 @@ export const Chat: React.FC<ChatProps> = ({
             payload.topics_generated = topics;
             updateProgress({ topics, isMidway: false, totalFound: null });
 
+            // Since we are getting rid of unlocking the top 3 influencers, we instead simulate the 2nd loading step with a timer.
+            const secondStepTimeout = setTimeout(
+                () => updateProgress({ topics, isMidway: true, totalFound: null }),
+                5000,
+            );
+
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
@@ -184,11 +175,8 @@ export const Chat: React.FC<ChatProps> = ({
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
 
-            updateProgress({ topics, isMidway: true, totalFound: null });
+            clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             setInfluencers(influencers);
-
-            await handleUnlockInfluencers(influencers.slice(0, 3), true);
-
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             if (influencers.length > 0) {
@@ -301,14 +289,10 @@ export const Chat: React.FC<ChatProps> = ({
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
                 isSearchLoading={isSearchLoading}
-                isUnlockOutreachLoading={isUnlockOutreachLoading}
-                handleSelectedInfluencersToUnlock={chatSelectedInfluencersToUnlock}
-                handleSelectedInfluencersToOutreach={() => {
-                    setShowSequenceSelector(true);
-                }}
+                isOutreachLoading={isOutreachLoading}
+                handleSelectedInfluencersToOutreach={() => setShowSequenceSelector(true)}
                 stopBoostbot={stopBoostbot}
                 areChatActionsDisabled={areChatActionsDisabled}
-                isUnlockButtonDisabled={isUnlockButtonDisabled}
                 isOutreachButtonDisabled={isOutreachButtonDisabled}
             />
 
@@ -317,7 +301,7 @@ export const Chat: React.FC<ChatProps> = ({
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
                 <ChatInput
                     isDisabled={isSearchDisabled}
-                    isLoading={isSearchLoading || isUnlockOutreachLoading}
+                    isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
                     openFiltersModal={() => setIsFiltersModalOpen(true)}
                     openClearChatHistoryModal={() => setIsClearChatHistoryModalOpen(true)}
