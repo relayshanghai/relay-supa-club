@@ -22,6 +22,7 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
         subscription_start_date: _filter_out4,
         subscription_current_period_start: _filter_out5,
         subscription_current_period_end: _filter_out6,
+        subscription_plan: _filter_out7,
         ...updateData
     } = update;
     const { data, error } = await supabase.from('companies').update(updateData).eq('id', update.id).select().single();
