@@ -13,6 +13,7 @@ type Props = {
     onOpen?: () => void;
     onClose?: () => void;
     onUpdate?: (data: Partial<ProfileValue>) => void;
+    onChange?: (data: Partial<ProfileValue>) => void;
 };
 
 export const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
@@ -44,6 +45,7 @@ export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPa
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
+    const [localProfileData,setLocalProfileData]=useState({});
 
     const mapProfileToFormData = useCallback((p: typeof profile) => {
         if (!p) return null;
@@ -59,13 +61,25 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
         setLocalProfile(mapProfileToFormData(profile));
     }, [profile, mapProfileToFormData]);
 
-    const handleClose = useCallback(() => {
+
+    const handleChange=useCallback( (data: Partial<ProfileValue>)=>{
+            setLocalProfileData(data);
+    },[props])
+
+    const handleClose = useCallback(() => { // im trying to edit this  one //add update here 
+        if(localProfileData){
+            handleUpdate(localProfileData)
+        }
         props.onClose && props.onClose();
+
+        
     }, [props]);
+
+ 
 
     const handleUpdate = useCallback(
         (data: Partial<ProfileValue>) => {
-            handleClose();
+            // handleClose();
             if (profile === null) return;
 
             saveSequenceInfluencer.call(profile.id, data).then((profile) => {
@@ -97,7 +111,7 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
             <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
                 {profile && initialValue ? (
                     <ProfileScreenProvider initialValue={initialValue}>
-                        <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} />
+                        <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} onChange={handleChange}  />
                     </ProfileScreenProvider>
                 ) : null}
             </OverlayRight>

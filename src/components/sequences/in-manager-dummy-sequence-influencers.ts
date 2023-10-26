@@ -27,6 +27,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/TwATSqebhZtNIsWLdoNzgiPRtAWkj4ihlOQr1DV0Erv5x7Y3Q4Nae68zlUq9i5uu5Uv8_6Lb=s480-c-k-c0x00ffffff-no-rj',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -64,6 +65,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZJmHB%2FJQVia9h6eajZVUPa6%2Fs%2F%2FjPQB0XNV04ZkymubB7OZvw7JFJsfQcFwkSgJDPvlyl09YpAtl48sffpX2fagNlJUwVYqIiahjW32e%2BqWA%3D%3D',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -101,6 +103,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/ZHdQMCfP7s_mk5PjRCF3LepHWKyepoqNfJeaTYqs_9MEGjnsHSMISlLpSr01ZX0p-ru1QskT=s480-c-k-c0x00ffffff-no-rj',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -138,6 +141,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDbju279wv%2FGu1tNVXNCvT1jGy9nV3lyUmr262NBO692R%2BEdGdWSN5u9jBf4HgAFli%2FtDEbbsex14K0we28lJvy%2BrOPQt%2BBH8xfdE2dL1avFgg%3D%3D',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -175,6 +179,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/pyIe7BQfaQbWf2LtZ-JilvalK70hckYQllrnT-birMtm7zBICVlaPTdj5iDw1g790WF3l3OXCA=s480-c-k-c0x00ffffff-no-rj',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -212,6 +217,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/ytc/AOPolaRUz0I8cyScrswQMuxxkcBeDP5XpEOJvEodAn52=s480-c-k-c0x00ffffff-no-rj',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -249,6 +255,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/3ce534053bda69fce70002f21945e3cc~c5_720x720.jpeg',
         url: 'example.com',
+        affiliate_link:'eaxmple.com',
         platform: 'tiktok',
         address: null,
         manager: {

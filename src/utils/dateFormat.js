@@ -144,6 +144,8 @@ export const masks = {
     isoDateTime: "yyyy-mm-dd'T'HH:MM:sso",
     isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
     expiresHeaderFormat: 'ddd, dd mmm yyyy HH:MM:ss Z',
+    datetime_for_database: "yyyy-mm-ddTHH:MM:ss+00:00"
+   
 };
 
 // Internationalization strings

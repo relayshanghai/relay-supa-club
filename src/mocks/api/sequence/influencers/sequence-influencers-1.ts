@@ -28,6 +28,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/67456fa9aa8342692591b7b21d30f774~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6765597816304993286',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -65,6 +66,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/2915f84665cbd4d504111b1c1e574ee0~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@101882497042456576',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -102,6 +104,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/cd1b744b36ed1ce097a1ba3101a52455~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6798592762641449989',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -139,6 +142,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDaDVMq5CUHy%2BkcsdYgF20nDDhJdyXGdsvpTYvc4du9ZgzWcF4nQEiLSQHHOigRW%2FegRW%2FN3FPE7LTR429NMJkDcWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/hty.04',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -176,6 +180,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDaDVMq5CUHy%2BkcsdYgF20nDDhJdyXGdsvpTYvc4du9ZgzWcF4nQEiLSQHHOigRW%2FegRW%2FN3FPE7LTR429NMJkDcWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/hty.04',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -213,6 +218,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/8SE88QTz6K3AqzkcBLe9H2Rp9rtTfsx-VX---qMJQYn__RzDQSD6xLSwDfQQkNtC2mM_m-QNOw=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UCfjpfd1ZEYBcrv6umNKDANw',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -250,6 +256,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDa7h3gIKtFwRaRXOkXjQOtbs181G56%2FANYcgPntQwPu9dm48Jug6YTyUiMb%2BQdSWpiqmAqqIhLRJRp8NV9l1TGHWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/learnchinesewith_yiyi',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -287,6 +294,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/658f36383d9f484cfe771f71f8f6ab4c~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7011312492174394374',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -324,6 +332,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDbL6c3yyQ1fIuJmCtJ9JHtMGu9l%2Fdxyixe4IZZgWw%2BG1Shp20%2FnHuSmEeTlnOXXGnaItjM5nI6%2BuFCfHl59XEGtWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/karissadumbacher',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -361,6 +370,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/94599bba65b101093b7793d24f6e82c8~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@68881045395279872',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -397,6 +407,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         username: 'winela.world',
         avatar_url: 'https://p16-amd-va.tiktokcdn.com/musically-maliva-obj/1663955860367365~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6772666090943202309',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -434,6 +445,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDYg2J10wN0R%2Fbn7zRVUhoqeFXzRKGXN0FesP2waMmg0p3AnyprqcbHDxaKb0sHDbMfoFi8wI%2BO6dWYQ1XCTX%2FdHWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/xiaomanyc',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -471,6 +483,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDb05bk9EAgW7oQoJCzCEnmGP%2FexvSwhZY%2F3NOv%2FJxmzQ55bnp2z0ktjUIjnMSavdVIfCNpTCs2MNWGV93vwLDKEgNlJUwVYqIiahjW32e%2BqWA%3D%3D',
         url: 'https://www.instagram.com/obie_lebeau',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -508,6 +521,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/0f0be61e7f2a1905030e4ddc8c7e4d45~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7790351',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -545,6 +559,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZqwMezQuCGaZDpqOPjbUqjQSBiBedfEqN6FqZZBTJnUmNM8i4nK%2Bu8Nra4jiqotzlovehaWXAS2sI8xAUZGaParOPQt%2BBH8xfdE2dL1avFgg%3D%3D',
         url: 'https://www.instagram.com/allegraalynn',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -582,6 +597,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZqwMezQuCGaZDpqOPjbUqjQSBiBedfEqN6FqZZBTJnUmNM8i4nK%2Bu8Nra4jiqotzlovehaWXAS2sI8xAUZGaParOPQt%2BBH8xfdE2dL1avFgg%3D%3D',
         url: 'https://www.instagram.com/allegraalynn',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -619,6 +635,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/a565e22e5df9fd61119093c047cf4c84~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6772025837963002886',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -656,6 +673,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDat1QLGClxLKQGAKLBUyw%2BxyJarOVzYeES0I2d2%2Fsdp%2BHiyL5exbZ1pGMrsVsPYS2KzWRfts%2BVDCRnSgnNaDCZHgNlJUwVYqIiahjW32e%2BqWA%3D%3D',
         url: 'https://www.instagram.com/thewritereviewsforyou',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -693,6 +711,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/871d66fe15116af7d71f63d8f4f08cab~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6781075313683465221',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -730,6 +749,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/bb25070f38849fbb71daf053dcd136ff~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7114040125419619374',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -767,6 +787,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/mEuv_ocuLpPatGUEi5OJg6ih7A-bMOU9O2XpOT8RSSrKcyVhwR3AI4j8Gm0rNYMCHxHNVU9A=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UC8o9OGdiIG-Gh2hujz_lmOw',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -804,6 +825,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/cef2a1d34b7aa3d2b04c3c0f9cbd0f42~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7192990976599770155',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -841,6 +863,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/y09IJ-yTr1fK7C-G_5xsTgwdqnOydya061id3PRsxLSZjpDHRpPxN-pomUj025-WhhmVYKDvCg=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UCcYJ99drXoC2SECyTIy_ozA',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -878,6 +901,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/e14cba67d8092e682bc0df68586ed67e~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6848417463878370310',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -915,6 +939,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/3lqTs6fKaXc42ohnfeyna5TSyrUE6fcCtpm2vZOINjxOmqnz2o5wHBAVkFzmGOVREOH2iD_b=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UC-m5VmOsc8aJt0elxk1Ia8A',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -952,6 +977,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?c%2BZ6gMi8pzyyj3IdIuQSsDBpwchEsdg%2FtvYkoZ9FuoSA4x4y%2FySYx09IiplqvqzaP06JkYEIXQwB%2FtzT0t92201HXgA38hlxJ1cbgWed%2F49%2FAqnEelm7J22T%2F7d5GB47',
         url: 'https://www.instagram.com/trendiguyd',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -989,6 +1015,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/ytc/AOPolaRGQsCHOoJG8qHGy2Rrw1NJwqcadDDj4kttsG3GyQ=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UCG2OQSvqQop9zeLvNTHA31w',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -1026,6 +1053,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/d052f579561f7b577ba64e454d66ba99~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6894773686939780102',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -1063,6 +1091,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/18d8297978044ead6a7fe56b8aaf2b80~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6795378862013285381',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -1100,6 +1129,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZqwMezQuCGaZDpqOPjbUqjzqT0feYWARcXR8fT7belSNgzfg7MfpKcevcpuSi%2BYOC1otadv8qObjpI8bbu6D%2B6gNlJUwVYqIiahjW32e%2BqWA%3D%3D',
         url: 'https://www.instagram.com/skincarewithyuri',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -1137,6 +1167,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/Ecr22u95OoDeNQT4zcj-kUhGwNFq57VITYiBR4qREcMNiR-p8Fjii5pDaHgAFFFglzMc42NRIA=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UCH4lbCrzfEFi11uUWFGEigg',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -1174,6 +1205,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/ab89c0baa17f9dd4cb53b3e286e82e31~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7083923892403733550',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -1211,6 +1243,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/rqYktkU_7f3ZWOdsM-drU-enLVRnJCjKKRUq8kKIClgSO7yN_aIBCLgsptK6zHQPJsD7acAxTg=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UC0yGitmJuu7ko8n4GTtFe3A',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -1248,6 +1281,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDYh28Tk9a7bGKoUKT%2BDVsKQ0R%2FzTetxjKcFKA3DikUPrUWzZTceJ8EJNe7XK5oDvg9UwqeX0W%2BCo4nOy1GqgEAxWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/foufouesthetics',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -1285,6 +1319,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/51fdb35abc8a1b0c82d230742551d6b1~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@7169322017328989189',
+        affiliate_link:'example.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -1322,6 +1357,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDat1QLGClxLKQGAKLBUyw%2BxYtuL%2FvsM%2BnarwdvMn3ju%2BrN6YzkMUG9oLKUZTbzZr4g%2B%2BcZv8bvyrelD8FGMY9G5gNlJUwVYqIiahjW32e%2BqWA%3D%3D',
         url: 'https://www.instagram.com/sarahpalmyra',
+        affiliate_link:'example.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -1359,6 +1395,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://yt3.googleusercontent.com/ytc/AOPolaRlgoBiLgQV9b43T4atb1vQ4ntP401LxV9b9DuABzo=s480-c-k-c0x00ffffff-no-rj',
         url: 'https://www.youtube.com/channel/UCzq-GBe1v0fkptsNnVr6DHQ',
+        affiliate_link:'example.com',
         platform: 'youtube',
         address: null,
         manager: {
@@ -1396,6 +1433,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/79ba918e7ea1319c57b8a231641b0b5b~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6810503182772569093',
+        affiliate_link:'eaxmple.com',
         platform: 'tiktok',
         address: null,
         manager: {
@@ -1433,6 +1471,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDaou00V3dIWSDHq8sLncF6YtKef98hm09I14iOjJrOTbjzWX9%2F%2BHwXgwrWU%2FtnPXQdx4ijeSy2%2BHZf4ovOgHNIrWwq5%2BhsabX0Nc9aXCBbcsw%3D%3D',
         url: 'https://www.instagram.com/dr.zionko',
+        affiliate_link:'eaxmple.com',
         platform: 'instagram',
         address: null,
         manager: {
@@ -1470,6 +1509,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/553765342d0b94558201e448867e5c4e~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6748124403534349317',
+        affiliate_link:'eaxmple.com',
         platform: 'tiktok',
         address: null,
         manager: {

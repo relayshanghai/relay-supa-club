@@ -29,6 +29,7 @@ type Props = {
     profile: SequenceInfluencerManagerPage;
     selectedTab?: 'notes' | 'shipping-details';
     onUpdate?: (data: ProfileValue) => void;
+    onChange?: (data: ProfileValue) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -42,7 +43,7 @@ const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
     };
 };
 
-export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, onChange, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,6 +58,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
             });
         },
         [batchId, track],
+        
     );
 
     useEffect(() => {
@@ -85,8 +87,12 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const handleNotesDetailsUpdate = useCallback(
         (k: string, v: any) => {
             setState((state) => {
-                return { ...state, notes: { ...state.notes, [k]: v } };
+                const newState = { ...state, notes: { ...state.notes, [k]: v } };
+                onChange && onChange(newState);
+                return newState;
             });
+           
+            
         },
         [setState],
     );
@@ -94,9 +100,13 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const handleShippingUpdate = useCallback(
         (k: string, v: any) => {
             setState((state) => {
-                return { ...state, shippingDetails: { ...state.shippingDetails, [k]: v } };
+                const newState = { ...state, shippingDetails: { ...state.shippingDetails, [k]: v } };
+                onChange && onChange(newState);
+                return newState;
             });
+            
         },
+        
         [setState],
     );
 
@@ -148,6 +158,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         profile={profile}
                         onUpdate={handleNotesDetailsUpdate}
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
+                        
+                        
                     />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
@@ -155,14 +167,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         profile={profile}
                         onUpdate={handleShippingUpdate}
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
+                        
                     />
-                </div>
-
-                <div className="float-right flex pb-4">
-                    <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
-                        {t('creators.cancel')}
-                    </Button>
-                    <Button onClick={() => handleUpdateClick(state)}>{t('profile.updateProfileButton')}</Button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 /**
  * Return the current timestamp
  */
-export const timestamp = () => new Date().getTime();
+    export const timestamp = () => new Date().getTime();
 
 /**
  * Return the current iso string

@@ -76,6 +76,7 @@ type Props = {
 // eslint-disable-next-line complexity
 export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
+    const { onChange } = { onChange: () => null, ...props };
     const { t } = useTranslation();
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
@@ -127,6 +128,8 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // @todo do some error handling
         // .catch((e) => console.error(e))
     }, [getNotes, onUpdate, profile]);
+
+
 
     return (
         <>
@@ -192,8 +195,10 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                                 previously_empty: data.notes.fee === '',
                             });
                             onUpdate('fee', e.currentTarget.value);
+                            
                         }}
                     />
+                    
                     <CollabScheduledPostDateInput
                         label={t('profile.scheduledPostDate')}
                         value={data.notes.scheduledPostDate}

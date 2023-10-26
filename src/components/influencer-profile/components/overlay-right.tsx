@@ -3,6 +3,9 @@ import { useRouter } from 'next/router';
 import type { PropsWithChildren } from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { cls } from 'src/utils/classnames';
+import { ProfileNotes } from '../screens/profile-notes-tab';
+import { ProfileShippingDetails } from '../screens/profile-shipping-details-tab';
+
 
 type Props = PropsWithChildren<{
     isOpen?: boolean;

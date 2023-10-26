@@ -88,7 +88,7 @@ const Manager = () => {
                 ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
                 { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
                 ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
-            ];
+            ];  
             refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
         },
         [refreshSequenceInfluencers, sequenceInfluencers, influencer],
@@ -153,7 +153,8 @@ const Manager = () => {
         [onlyMe, filterStatuses, profile, sequenceInfluencers, sequences, track],
     );
 
-    const handleProfileOverlayClose = useCallback(() => {
+    const handleProfileOverlayClose = useCallback(
+        () => {
         setUiState((s) => {
             return { ...s, isProfileOverlayOpen: false };
         });

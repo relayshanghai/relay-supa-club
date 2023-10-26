@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import { useCallback, type InputHTMLAttributes, use } from 'react';
 import { ArrowRightOnRectangle, Spinner } from 'src/components/icons';
 
 type Props = {
@@ -10,6 +10,9 @@ type Props = {
     onOpenList?: () => void;
     disabled?: boolean;
 } & InputHTMLAttributes<HTMLTextAreaElement>;
+
+
+
 
 export const OutreachNotesInput = ({
     buttonText,
@@ -33,6 +36,7 @@ export const OutreachNotesInput = ({
                     {...props}
                     value={value}
                     onInput={(e) => onUpdate && onUpdate(e.currentTarget.value)}
+                    onBlur={()=>onSave && onSave(value)}
                     className="textarea-field"
                     cols={3}
                     rows={5}
@@ -41,7 +45,8 @@ export const OutreachNotesInput = ({
                     disabled={props.disabled}
                 />
 
-                <button
+                
+                {/* <button
                     disabled={props.disabled}
                     onClick={() => onSave && onSave(value)}
                     className="group text-center text-sm font-medium leading-tight tracking-tight text-violet-500"
@@ -49,7 +54,7 @@ export const OutreachNotesInput = ({
                     <div className="inline-flex items-center justify-center gap-1 rounded-md border border-violet-500 px-4 py-2 group-disabled:border-slate-300 group-disabled:bg-slate-200 group-disabled:text-slate-300">
                         {!props.disabled ? buttonText : <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
                     </div>
-                </button>
+                </button> */}
             </div>
             <p className="text-xs text-primary-400">&nbsp;</p>
         </div>

@@ -267,6 +267,7 @@ describe('wasFetchedWithinMinutes', () => {
         avatar_url:
             'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZqwMezQuCGaZDpqOPjbUqjQSBiBedfEqN6FqZZBTJnUmNM8i4nK%2Bu8Nra4jiqotzlovehaWXAS2sI8xAUZGaParOPQt%2BBH8xfdE2dL1avFgg%3D%3D',
         url: 'https://www.instagram.com/allegraalynn',
+        affiliate_link:'example.com',
         platform: 'instagram',
         social_profile_last_fetched: '2022-01-01T00:00:00.000Z',
     };
