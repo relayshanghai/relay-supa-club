@@ -47,7 +47,7 @@ const SignUpPage = ({
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
-    const identifySession = useIdentifySession();
+    const { identifySession } = useIdentifySession();
     const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
 
@@ -118,8 +118,6 @@ const SignUpPage = ({
     };
 
     const onNext = async () => {
-        let isDone = false;
-
         if (currentStep > steps.length) {
             return;
         }
@@ -135,7 +133,11 @@ const SignUpPage = ({
                 throw new Error('Could not find profile id');
             }
             const result = await handleCompanyCreate(formData, profileId);
-            isDone = result === 'success';
+            if (result === 'success') {
+                identifySession(() => {
+                    router.push('/free-trial');
+                });
+            }
         } else if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
         }
@@ -150,12 +152,6 @@ const SignUpPage = ({
             companyWebsite,
             companySize: selectedSize ?? '',
         });
-
-        if (isDone === true) {
-            identifySession(() => {
-                router.push('/free-trial');
-            });
-        }
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {

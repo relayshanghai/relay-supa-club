@@ -4,7 +4,6 @@ import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useRudder } from 'src/hooks/use-rudderstack';
 import { useIdentifySession, useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
@@ -40,22 +39,15 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const rudderstack = useRudder();
-    const { session, profile } = useSession();
-    const identifySession = useIdentifySession();
+    const { session } = useSession();
+    const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
 
+    // identify the session if the user is logged in
     useEffect(() => {
-        if (profile && rudderstack) {
-            identifySession();
-        }
-
-        // identify anonymously
-        if (!profile && rudderstack) {
-            rudderstack.identify();
-        }
-    }, [rudderstack, profile, identifySession]);
+        identifySession();
+    }, [identifySession]);
 
     // set analytics identity
     useEffect(() => {

@@ -217,18 +217,20 @@ export const useIdentifySession = () => {
 
     const identifySession = useCallback(
         (cb?: () => void) => {
-            cb =
-                cb ??
-                function () {
-                    // return void
-                };
+            const noopfn = function () {
+                // return void
+            };
+
             if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
                 const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
-                rudderstack.identify(id, traits, undefined, cb);
+                rudderstack.identify(id, traits, cb ?? noopfn);
+                return true;
             }
+
+            return false;
         },
         [rudderstack, profile, user, company, i18n, subscription],
     );
 
-    return identifySession;
+    return { identifySession };
 };
