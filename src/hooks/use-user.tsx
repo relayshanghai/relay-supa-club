@@ -14,6 +14,8 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAtomValue } from 'jotai';
 
 export type SignupData = {
     email: string;
@@ -82,6 +84,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent } = useRudderstack();
+    const clientRoleData = useAtomValue(clientRoleAtom);
 
     useEffect(() => {
         setLoading(isLoading);
@@ -236,6 +239,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         updateEmail();
     }, [session?.user.email, profile?.email, updateProfile, profile, session, refreshProfile]);
 
+    const profileWithAdminOverrides: ProfileDB | undefined = profile
+        ? {
+              ...profile,
+              email_engine_account_id: clientRoleData.emailEngineAccountId || profile?.email_engine_account_id,
+              sequence_send_email: clientRoleData.sequenceSendEmail || profile?.sequence_send_email,
+          }
+        : undefined;
+
     return (
         <UserContext.Provider
             value={{
@@ -244,7 +255,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 createEmployee,
                 signup,
                 loading,
-                profile,
+                profile: profileWithAdminOverrides,
                 updateProfile,
                 refreshProfile,
                 logout,

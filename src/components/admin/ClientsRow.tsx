@@ -54,7 +54,7 @@ const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRol
                         {dataPoints.map((dataPoint, index) => (
                             <td
                                 key={columnHeaders[index] + dataPoint}
-                                className="whitespace-nowrap px-6 py-4 text-sm text-gray-900"
+                                className="max-w-[100px] overflow-scroll whitespace-nowrap px-6 py-4 text-sm text-gray-900"
                             >
                                 {columnHeaders[index] === 'Manage' ? (
                                     <Link

@@ -88,6 +88,15 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
 }
 
 export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
+//the subscription plan are from Stripe Product, some of the old plans should be archived when all user data is migrated to the new plans
+export type SubscriptionPlans =
+    | 'Discovery'
+    | 'Outreach'
+    | 'Company Demo'
+    | 'DIY'
+    | 'DIY Max'
+    | 'VIP'
+    | 'Discovery(deprecated)';
 /** "profile" for creator report, "search" for creator search, "ai_email" for usage of the ai email generator */
 export type UsageType = 'profile' | 'search' | 'ai_email';
 
