@@ -13,6 +13,7 @@ import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequenc
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
+import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
 
@@ -31,12 +32,16 @@ const sendAndInsertEmail = async ({
     sequenceInfluencer,
     templateVariables,
     sequenceEmails,
+    messageId,
+    references,
 }: {
     step: SequenceStep;
     sequenceInfluencer: SequenceInfluencer;
     account: string;
     templateVariables: TemplateVariable[];
     sequenceEmails: SequenceEmail[];
+    messageId: string;
+    references: string;
 }): Promise<SendResult> => {
     if (!sequenceInfluencer.email) {
         throw new Error('No email address');
@@ -88,7 +93,15 @@ const sendAndInsertEmail = async ({
     const { template_id, wait_time_hours } = step;
     const emailSendAt = (await calculateSendAt(account, wait_time_hours)).toISOString();
 
-    const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
+    const res = await sendTemplateEmail({
+        account,
+        toEmail: sequenceInfluencer.email,
+        template: template_id,
+        sendAt: emailSendAt,
+        params,
+        messageId,
+        references,
+    });
 
     if ('error' in res) {
         throw new Error(res.error);
@@ -141,14 +154,18 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
 
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
+            const messageIds = gatherMessageIds(sequenceInfluencer.email ?? '', sequenceSteps);
             for (const step of sequenceSteps) {
                 try {
+                    const references = generateReferences(messageIds, step.step_number);
                     const result = await sendAndInsertEmail({
                         step,
                         account,
                         sequenceInfluencer,
                         templateVariables,
                         sequenceEmails,
+                        references,
+                        messageId: messageIds[step.step_number],
                     });
                     results.push(result);
                 } catch (error: any) {
