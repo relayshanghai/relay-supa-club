@@ -1,7 +1,7 @@
 import { getCompanyCusId } from 'src/utils/api/db';
-
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import type Stripe from 'stripe';
+import type { SubscriptionStatus } from 'types';
 
 export interface ExpandedPlanWithProduct extends Stripe.Plan {
     product: Stripe.Product;
@@ -33,4 +33,21 @@ export const getSubscription = async (companyId: string) => {
         subscription = trial.data[0] as StripeSubscriptionWithPlan | undefined;
     }
     return subscription;
+};
+
+//We had our own subscription status types, so we need to convert the stripe status to our own. Gradually, we should use Stripe's status types to cover all needed use cases.
+export const transformStripeStatus = (stripeStatus: Stripe.Subscription.Status): SubscriptionStatus => {
+    switch (stripeStatus) {
+        case 'trialing':
+            return 'trial';
+        case 'active':
+            return 'active';
+        case 'canceled':
+            return 'canceled';
+        case 'incomplete':
+        case 'incomplete_expired':
+            return 'awaiting_payment_method';
+        default:
+            throw new Error(`Unhandled stripe status: ${stripeStatus}`);
+    }
 };

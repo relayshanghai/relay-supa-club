@@ -52,6 +52,7 @@ env:
     NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
     EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
     EMAIL_ENGINE_API_URL: https://email.relay.club
+    NEXT_PUBLIC_DISABLE_CHATWOOT: true
 
 jobs:
     component-test:

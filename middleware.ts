@@ -235,6 +235,6 @@ export const config = {
          * - /api/webhooks/* (webhook routes)
          * - free-trial - (free-trial page)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|free-trial).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|free-trial).*)',
     ],
 };

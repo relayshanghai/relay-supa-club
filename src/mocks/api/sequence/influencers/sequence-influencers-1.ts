@@ -30,13 +30,6 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6765597816304993286',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -67,13 +60,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@101882497042456576',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -104,13 +91,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6798592762641449989',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -141,13 +122,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/hty.04',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -178,13 +153,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/hty.04',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -215,13 +184,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCfjpfd1ZEYBcrv6umNKDANw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -252,13 +215,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/learnchinesewith_yiyi',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -289,13 +246,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7011312492174394374',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -326,13 +277,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/karissadumbacher',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -363,13 +308,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@68881045395279872',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -399,13 +338,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6772666090943202309',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -436,13 +369,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/xiaomanyc',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -473,13 +400,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/obie_lebeau',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -510,13 +431,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7790351',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -547,13 +462,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/allegraalynn',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -584,13 +493,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/allegraalynn',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -621,13 +524,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6772025837963002886',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -658,13 +555,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/thewritereviewsforyou',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -695,13 +586,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6781075313683465221',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -732,13 +617,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7114040125419619374',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -769,13 +648,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UC8o9OGdiIG-Gh2hujz_lmOw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -806,13 +679,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7192990976599770155',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -843,13 +710,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCcYJ99drXoC2SECyTIy_ozA',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -880,13 +741,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6848417463878370310',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -917,13 +772,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UC-m5VmOsc8aJt0elxk1Ia8A',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -954,13 +803,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/trendiguyd',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -991,13 +834,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCG2OQSvqQop9zeLvNTHA31w',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1028,13 +865,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6894773686939780102',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1065,13 +896,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6795378862013285381',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1102,13 +927,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/skincarewithyuri',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1139,13 +958,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCH4lbCrzfEFi11uUWFGEigg',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1176,13 +989,6 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7083923892403733550',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1213,13 +1019,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UC0yGitmJuu7ko8n4GTtFe3A',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1250,13 +1050,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/foufouesthetics',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1287,13 +1081,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7169322017328989189',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1324,13 +1112,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/sarahpalmyra',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1361,13 +1143,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCzq-GBe1v0fkptsNnVr6DHQ',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1398,13 +1174,6 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6810503182772569093',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1435,13 +1204,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/dr.zionko',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -1472,13 +1235,7 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6748124403534349317',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: mockProfile?.id,
-            avatar_url: mockProfile?.avatar_url,
-            company_id: mockProfile?.company_id,
-            first_name: mockProfile?.first_name,
-            last_name: mockProfile?.last_name,
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
 ];

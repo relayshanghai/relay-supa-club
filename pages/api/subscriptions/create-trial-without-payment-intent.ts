@@ -112,6 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
                 subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
                 id: companyId,
+                subscription_plan: 'Discovery',
             });
 
             return res.status(httpCodes.OK).json(subscription);
