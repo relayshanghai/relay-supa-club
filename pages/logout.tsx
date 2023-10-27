@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { appCacheDBKey } from 'src/constants';
 import { useUser } from 'src/hooks/use-user';
 import { useAnalytics } from 'use-analytics';
+import * as Sentry from '@sentry/nextjs';
 
 export default function Logout() {
     const router = useRouter();
@@ -24,6 +25,7 @@ export default function Logout() {
             throwOnError: false,
         });
         deleteDB(appCacheDBKey);
+        Sentry.setUser(null);
         analytics.reset();
 
         window.location.href = email ? `/login?email=${email}` : '/login';

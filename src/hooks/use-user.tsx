@@ -1,6 +1,5 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
-import * as Sentry from '@sentry/browser';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
 import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
@@ -113,15 +112,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');
         }
-
-        // only set Sentry user if it is the first time we are fetching the profile
-        if (fetchedProfile?.email && !profile?.email) {
-            Sentry.setUser({
-                email: fetchedProfile.email,
-                id: fetchedProfile.id,
-                name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
-            });
-        }
         return fetchedProfile;
     });
 
@@ -224,7 +214,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [session?.user],
     );
     const logout = async () => {
-        Sentry.setUser(null);
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
