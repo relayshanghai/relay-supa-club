@@ -47,8 +47,10 @@ const boostbot = {
     },
     table: {
         account: '账号',
-        topPosts: '热门发布帖子',
-        email: '邮箱地址',
+        score: 'TODO',
+        followers: 'TODO',
+        audienceDemo: 'TODO',
+        audienceGeolocations: 'TODO',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
         selectAll: '选定全部达人',

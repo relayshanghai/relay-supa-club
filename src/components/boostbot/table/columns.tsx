@@ -1,7 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Influencer } from 'pages/boostbot';
 import { BoostbotAccountCell } from './boostbot-account-cell';
-import { BoostbotTopPostsCell } from './boostbot-top-post-cell';
 
 export const columns: ColumnDef<Influencer>[] = [
     {
@@ -31,8 +30,28 @@ export const columns: ColumnDef<Influencer>[] = [
         cell: BoostbotAccountCell,
     },
     {
-        id: 'topPosts',
-        header: ({ table }) => table.options.meta?.t('boostbot.table.topPosts'),
-        cell: BoostbotTopPostsCell,
+        id: 'boostbotScore',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.score'),
+        cell: 'score here',
+    },
+    {
+        id: 'followers',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.followers'),
+        cell: 'followers here',
+    },
+    {
+        id: 'audienceDemo',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceDemo'),
+        cell: 'audience here',
+    },
+    {
+        id: 'audienceGeolocations',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceGeolocations'),
+        cell: 'geolocations here',
+    },
+    {
+        id: 'openDetail',
+        header: '',
+        cell: 'icon',
     },
 ];

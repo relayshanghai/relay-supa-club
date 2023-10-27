@@ -41,7 +41,6 @@ describe('Boostbot', () => {
         cy.contains(influencerName);
         cy.contains(formattedFollowers);
         cy.contains('@DANNIVIVIANI');
-        cy.contains('#facialhair, #bodyhair, #epilator');
     });
 
     it('can persist chat messages and influencer result states across reloads', () => {

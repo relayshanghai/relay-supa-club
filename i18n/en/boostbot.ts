@@ -50,8 +50,10 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
     },
     table: {
         account: 'Account',
-        topPosts: 'Top Posts',
-        email: 'Email',
+        score: 'BoostBot Score',
+        followers: 'Followers',
+        audienceDemo: 'Audience Demo',
+        audienceGeolocations: 'Audience in U.S., Canada',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
