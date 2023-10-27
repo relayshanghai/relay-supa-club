@@ -35,7 +35,7 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     topics: string[];
 };
 // UserProfile is the unlocked influencer/generated report type. Used for checking which influencers are already unlocked and which are not.
-const isUserProfile = (influencer: Influencer) => 'type' in influencer;
+const isUserProfile = (influencer: Influencer) => influencer && 'type' in influencer;
 
 const Boostbot = () => {
     const { t } = useTranslation();

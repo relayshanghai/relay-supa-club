@@ -234,6 +234,6 @@ export const config = {
          * - Stripe webhook (instead use signing key to protect)
          * - /api/webhooks/* (webhook routes)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel).*)',
     ],
 };
