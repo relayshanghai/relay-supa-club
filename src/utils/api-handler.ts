@@ -1,14 +1,13 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import type { ApiError } from 'src/errors/api-error';
 import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
 import { setUser } from '@sentry/nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-
-export type ApiError = { error: any };
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //

@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { ApiError } from 'src/utils/api-handler';
+import type { ApiError } from 'src/errors/api-error';
 import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import type { SequenceInfluencersTable } from 'src/utils/api/db';
 import { getInfluencerPostsBySocialProfile } from 'src/utils/api/db/calls/influencer-post';
