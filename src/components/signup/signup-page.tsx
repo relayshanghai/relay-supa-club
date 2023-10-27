@@ -89,18 +89,22 @@ const SignUpPage = ({
         companySize: selectedSize,
     };
 
+    const PROFILE_FORM_STEP = 1;
+    const EMAIL_FORM_STEP = 2;
+    const COMPANY_FORM_STEP = 3;
+
     const steps = [
         {
             title: t('signup.step1title'),
-            num: 1,
+            num: PROFILE_FORM_STEP,
         },
         {
             title: t('signup.step2title'),
-            num: 2,
+            num: EMAIL_FORM_STEP,
         },
         {
             title: t('signup.step3title'),
-            num: 3,
+            num: COMPANY_FORM_STEP,
         },
     ];
 
@@ -116,27 +120,33 @@ const SignUpPage = ({
     };
 
     const onNext = async () => {
-        let isDone = false;
+        let isSignupSuccess = false;
 
+        // @note log error when user failed redirecting to free-trial page
         if (currentStep > steps.length) {
+            toast.error(t('signup.errorStartingTrial'));
+            clientLogger(`Error occured signing up: ${email}`, 'error', true);
             return;
         }
 
-        if (currentStep === 2 && EMPLOYEE_EMAILS.includes(email)) {
-            await handleProfileCreate(formData);
-        }
-
-        if (currentStep === 3) {
+        // @note this depends on a useEffect below to redirect
+        if (currentStep === EMAIL_FORM_STEP && EMPLOYEE_EMAILS.includes(email)) {
             const profileId = await handleProfileCreate(formData);
             if (!profileId) {
-                toast.error(t('signup.noProfileId'));
-                throw new Error('Could not find profile id');
+                clientLogger(`Could not create profile for employee: ${email}`, 'error', true);
             }
-            const result = await handleCompanyCreate(formData, profileId);
-            isDone = result === 'success';
-        } else if (currentStep < 3) {
-            setCurrentStep(currentStep + 1);
+            return;
         }
+
+        if (currentStep === COMPANY_FORM_STEP) {
+            const profileId = await handleProfileCreate(formData);
+            if (profileId) {
+                const result = await handleCompanyCreate(formData, profileId);
+                isSignupSuccess = result === 'success';
+            }
+        }
+
+        setCurrentStep(currentStep + 1);
 
         track(CompleteSignupStep, {
             current_step: currentStep,
@@ -149,7 +159,13 @@ const SignUpPage = ({
             companySize: selectedSize ?? '',
         });
 
-        if (isDone) {
+        // @note log when handleProfileCreate failed creating a user
+        if (currentStep === COMPANY_FORM_STEP && !isSignupSuccess) {
+            toast.error(t('signup.noProfileId'));
+            clientLogger(`Could not find profile id: ${email}`, 'error', true);
+        }
+
+        if (isSignupSuccess) {
             router.push('/free-trial');
         }
     };
@@ -235,7 +251,7 @@ const SignUpPage = ({
                 (step) =>
                     step.num === currentStep && (
                         <FormWizard title={step.title} key={step.num} steps={steps} currentStep={currentStep}>
-                            {currentStep === 1 && (
+                            {currentStep === PROFILE_FORM_STEP && (
                                 <StepOne
                                     firstName={firstName}
                                     lastName={lastName}
@@ -247,7 +263,7 @@ const SignUpPage = ({
                                 />
                             )}
 
-                            {currentStep === 2 && (
+                            {currentStep === EMAIL_FORM_STEP && (
                                 <StepTwo
                                     email={email}
                                     password={password}
@@ -259,7 +275,7 @@ const SignUpPage = ({
                                 />
                             )}
 
-                            {currentStep === 3 && (
+                            {currentStep === COMPANY_FORM_STEP && (
                                 <StepThree
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
