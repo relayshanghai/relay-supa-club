@@ -1,8 +1,8 @@
-import { RelayError } from 'src/utils/api-handler';
 import { limiter } from 'src/utils/limiter';
 import type { CreatorPlatform } from 'types';
 import type { ServerContext } from '..';
 import { apiFetch } from '../api-fetch';
+import { RelayError } from 'src/errors/relay-error';
 
 export type GetRelevantTopicTagsParams = {
     limit?: number;

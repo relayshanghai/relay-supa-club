@@ -8,6 +8,7 @@ import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
 import { setUser } from '@sentry/nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { RelayError } from 'src/errors/relay-error';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -44,29 +45,6 @@ export type ApiHandlerParams = {
     deleteHandler?: NextApiHandler;
     putHandler?: NextApiHandler;
 };
-
-export type RelayErrorOptions = {
-    shouldLog?: boolean;
-};
-
-export class RelayError extends Error {
-    readonly _httpCode: number;
-    readonly _shouldLog: boolean;
-
-    constructor(msg: string, httpCode = 500, options?: RelayErrorOptions) {
-        super(msg);
-        this._httpCode = httpCode;
-        this._shouldLog = options?.shouldLog || true; // log to server by default
-    }
-
-    get httpCode() {
-        return this._httpCode;
-    }
-
-    get shouldLog() {
-        return this._shouldLog;
-    }
-}
 
 const isJsonable = (error: any) => {
     return (

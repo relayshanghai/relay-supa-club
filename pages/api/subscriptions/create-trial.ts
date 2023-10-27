@@ -1,7 +1,8 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { RelayError } from 'src/errors/relay-error';
 import { createSubscriptionErrors } from 'src/errors/subscription';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import { updateCompanyUsageLimits, updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
