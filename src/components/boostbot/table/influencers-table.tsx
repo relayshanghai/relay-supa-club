@@ -3,7 +3,6 @@ import type { TFunction } from 'i18next';
 import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 
-import type { Influencer } from 'pages/boostbot';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 
@@ -18,7 +17,6 @@ interface DataTableProps<TData, TValue> {
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
-        handleUnlockInfluencer: (influencer: Influencer) => void;
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
     }
@@ -44,7 +42,7 @@ export function InfluencersTable<TData, TValue>({
     });
     const page = table.getState().pagination.pageIndex;
 
-    // Handle table pagination reset when for example new influencers are loaded. But not when individual ones are unlocked/removed.
+    // Handle table pagination reset when for example new influencers are loaded. But not when individual influencers are removed.
     useEffect(() => {
         const setFirstPage = () => {
             table.setPageIndex(0);

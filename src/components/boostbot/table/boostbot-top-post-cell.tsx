@@ -40,7 +40,6 @@ export const BoostbotTopPostsCell = ({ row, table }: BoostbotTopPostsCellProps) 
                             onClick={() => {
                                 track(OpenSocialThumbnails, {
                                     currentPage: CurrentPageEvent.boostbot,
-                                    is_unlocked: true,
                                     results_index: row.index,
                                     thumbnail_index: index,
                                     kol_id: influencer.user_id,
@@ -76,7 +75,6 @@ export const BoostbotTopPostsCell = ({ row, table }: BoostbotTopPostsCellProps) 
                             onClick={() => {
                                 track(OpenSocialThumbnails, {
                                     currentPage: CurrentPageEvent.boostbot,
-                                    is_unlocked: false,
                                     results_index: row.index,
                                     thumbnail_index: 0,
                                     kol_id: influencer.user_id,
@@ -91,7 +89,6 @@ export const BoostbotTopPostsCell = ({ row, table }: BoostbotTopPostsCellProps) 
                             onClick={() => {
                                 track(OpenSocialThumbnails, {
                                     currentPage: CurrentPageEvent.boostbot,
-                                    is_unlocked: false,
                                     results_index: row.index,
                                     thumbnail_index: 1,
                                     kol_id: influencer.user_id,
@@ -106,7 +103,6 @@ export const BoostbotTopPostsCell = ({ row, table }: BoostbotTopPostsCellProps) 
                             onClick={() => {
                                 track(OpenSocialThumbnails, {
                                     currentPage: CurrentPageEvent.boostbot,
-                                    is_unlocked: false,
                                     results_index: row.index,
                                     thumbnail_index: 2,
                                     kol_id: influencer.user_id,

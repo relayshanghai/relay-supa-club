@@ -41,7 +41,6 @@ describe('Boostbot', () => {
         cy.contains(influencerName);
         cy.contains(formattedFollowers);
         cy.contains('@DANNIVIVIANI');
-        cy.contains('IG: @therealdanni_v Contact me @ typicalmarie123@gmail.com ***Business Only****');
         cy.contains('#facialhair, #bodyhair, #epilator');
     });
 
@@ -81,14 +80,11 @@ describe('Boostbot', () => {
 
     it('does not persist unfinished loading progress messages', () => {
         cy.intercept('POST', '/api/boostbot/get-influencers', { body: boostbotGetInfluencers, delay: 2000 });
-        cy.intercept('GET', '/api/creators/report*', { body: danniCreatorReport, delay: 2000 });
 
         cy.get('textarea').type('LED beauty mask{enter}');
 
         cy.contains('LED beauty mask');
         cy.contains('Generating topics and niches');
-        cy.contains('Browsing through millions of influencers in our database');
-        cy.contains('Handpicking the best influencers');
 
         cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state. If we don't and the reload happens too fast, the state doesn't get persisted and gets lost.
         cy.reload();
