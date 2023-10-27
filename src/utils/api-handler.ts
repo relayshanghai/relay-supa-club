@@ -47,19 +47,16 @@ export type ApiHandlerParams = {
 
 export type RelayErrorOptions = {
     shouldLog?: boolean;
-    sendToSentry?: boolean;
 };
 
 export class RelayError extends Error {
     readonly _httpCode: number;
     readonly _shouldLog: boolean;
-    readonly _sendToSentry: boolean;
 
-    constructor(msg: string, httpCode = httpCodes.INTERNAL_SERVER_ERROR, options?: RelayErrorOptions) {
+    constructor(msg: string, httpCode = 500, options?: RelayErrorOptions) {
         super(msg);
         this._httpCode = httpCode;
         this._shouldLog = options?.shouldLog || true; // log to server by default
-        this._sendToSentry = !!options?.sendToSentry && process.env.NODE_ENV !== 'development'; // Don’t send to sentry unless explicitly set in options, and only in production
     }
 
     get httpCode() {
@@ -68,10 +65,6 @@ export class RelayError extends Error {
 
     get shouldLog() {
         return this._shouldLog;
-    }
-
-    get sendToSentry() {
-        return this._sendToSentry;
     }
 }
 

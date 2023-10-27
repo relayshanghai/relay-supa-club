@@ -75,7 +75,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         !ai_emails
     ) {
         serverLogger('Missing product metadata: ' + JSON.stringify({ priceId, price }));
-        throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
+        throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR);
     }
 
     const createParams: Stripe.SubscriptionCreateParams = {
