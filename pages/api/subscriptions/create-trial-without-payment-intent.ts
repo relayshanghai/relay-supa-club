@@ -72,7 +72,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 items: [{ price: discoveryTrialPriceId }],
                 proration_behavior: 'create_prorations',
                 trial_period_days: Number(trial_days),
-                cancel_at_period_end: true,
+                trial_settings: {
+                    end_behavior: {
+                        missing_payment_method: 'pause',
+                    },
+                },
             };
 
             const subscription: SubscriptionCreateTrialResponse = await stripeClient.subscriptions.create(createParams);
