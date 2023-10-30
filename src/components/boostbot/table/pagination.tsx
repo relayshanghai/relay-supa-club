@@ -20,7 +20,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
     const { track } = useRudderstackTrack();
 
     return (
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end bg-yellow-100">
             <div className="text-muted-foreground ml-2 flex-1 text-sm">
                 {t('boostbot.table.selectedAmount', {
                     selectedCount: table.getFilteredSelectedRowModel().rows.length,

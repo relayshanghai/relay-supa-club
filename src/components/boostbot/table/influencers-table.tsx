@@ -64,17 +64,36 @@ export function InfluencersTable<TData, TValue>({
     }, [page]);
 
     return (
-        <div className="relative h-full w-full flex-shrink-0 overflow-scroll md:flex-shrink">
-            <div className="h-full w-full overflow-scroll rounded-md border pb-10">
-                {/* Scroll to the top of the table when changing pagination pages */}
-                <div ref={tableRef} />
-
-                <Table>
-                    <TableHeader>
+        <div ref={tableRef} className="relative h-full w-full flex-shrink-0 md:flex-shrink ">
+            <Table>
+                <TableHeader className="m-0 rounded-md border p-0 ">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    //edit here to be sticky
+                                    <TableHead className="rounded-md bg-slate-100 text-center" key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </TableHead>
+                                );
+                            })}
+                        </TableRow>
+                    ))}
+                </TableHeader>
+            </Table>
+            <div className="relative h-full w-full flex-shrink-0 overflow-scroll md:flex-shrink">
+                <div className="h-full w-full  overflow-scroll  rounded-md border pb-10">
+                    {/* Scroll to the top of the table when changing pagination pages */}
+                    <div ref={tableRef} />
+                    <Table>
+                        {/* <TableHeader className='sticky top-0 z-50 bg-slate-300'>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
+                                        //edit here to be sticky
                                         <TableHead className="text-center" key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
@@ -84,30 +103,31 @@ export function InfluencersTable<TData, TValue>({
                                 })}
                             </TableRow>
                         ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
+                    </TableHeader> */}
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                                        {meta.t('boostbot.table.noResults')}
+                                    </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    {meta.t('boostbot.table.noResults')}
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            )}
+                        </TableBody>
+                    </Table>
 
-                <div className="absolute bottom-0 left-0 right-0 w-full border bg-white p-2">
-                    <DataTablePagination table={table} />
+                    <div className="absolute sticky bottom-0 left-0 right-0 m-0 w-full border bg-white p-2">
+                        <DataTablePagination table={table} />
+                    </div>
                 </div>
             </div>
         </div>
