@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
-import { OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
+import { ChangeInboxFolder, OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
@@ -165,13 +165,13 @@ export const InboxPage = () => {
     );
 
     const handleSelectedTabChange = (tab: { value: string; name: string }) => {
-        // eslint-disable-next-line no-console
-        console.log({
-            sequence_email_address: profile?.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
-            selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
-            total_unread_emails: messages.filter((message) => message.unseen).length,
-        });
+        profile &&
+            track(ChangeInboxFolder, {
+                sequence_email_address: profile.sequence_send_email ?? '',
+                current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
+                selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
+                total_unread_emails: messages.filter((message) => message.unseen).length,
+            });
         setSelectedTab(tab.value);
     };
 
