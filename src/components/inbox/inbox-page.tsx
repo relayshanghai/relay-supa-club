@@ -168,8 +168,8 @@ export const InboxPage = () => {
         // eslint-disable-next-line no-console
         console.log({
             sequence_email_address: profile?.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? t('inbox.unread') : t('inbox.inbox'),
-            selected_email_folder: tab.name,
+            current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
+            selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
             total_unread_emails: messages.filter((message) => message.unseen).length,
         });
         setSelectedTab(tab.value);
