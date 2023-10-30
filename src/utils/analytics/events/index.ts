@@ -176,6 +176,8 @@ import type { VisitPagePayload } from './visit-page';
 import { VISIT_PAGE, VisitPage } from './visit-page';
 import type { CompleteSignupStepPayload } from './onboarding/complete-signup-step';
 import { COMPLETE_SIGNUP_STEP, CompleteSignupStep } from './onboarding/complete-signup-step';
+import type { ChangeInboxFolderPayload } from './change-inbox-folder';
+import { CHANGE_INBOX_FOLDER, ChangeInboxFolder } from './change-inbox-folder';
 
 export {
     Search,
@@ -229,6 +231,7 @@ export {
     ChangePassword,
     VisitPage,
     CompleteSignupStep,
+    ChangeInboxFolder,
 };
 
 export const events = {
@@ -313,6 +316,7 @@ export const events = {
     [BATCH_START_SEQUENCE]: BatchStartSequence,
     [VISIT_PAGE]: VisitPage,
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStep,
+    [CHANGE_INBOX_FOLDER]: ChangeInboxFolder,
 };
 
 export type payloads = {
@@ -397,6 +401,7 @@ export type payloads = {
     [BATCH_START_SEQUENCE]: BatchStartSequencePayload;
     [VISIT_PAGE]: VisitPagePayload;
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStepPayload;
+    [CHANGE_INBOX_FOLDER]: ChangeInboxFolderPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -483,6 +488,7 @@ export const eventKeys = z.union([
     z.literal(BATCH_START_SEQUENCE),
     z.literal(VISIT_PAGE),
     z.literal(COMPLETE_SIGNUP_STEP),
+    z.literal(CHANGE_INBOX_FOLDER),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

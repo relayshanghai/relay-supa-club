@@ -164,6 +164,17 @@ export const InboxPage = () => {
         [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
     );
 
+    const handleSelectedTabChange = (tab: { value: string; name: string }) => {
+        // eslint-disable-next-line no-console
+        console.log({
+            sequence_email_address: profile?.sequence_send_email,
+            current_email_folder: selectedTab,
+            selected_email_folder: tab.name,
+            total_unread_emails: messages.filter((message) => message.unseen).length,
+        });
+        setSelectedTab(tab.value);
+    };
+
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
             if (!profile) return;
@@ -231,7 +242,7 @@ export const InboxPage = () => {
                                 <>
                                     <ToolBar
                                         selectedTab={selectedTab}
-                                        setSelectedTab={setSelectedTab}
+                                        setSelectedTab={handleSelectedTabChange}
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
                                     />
