@@ -69,6 +69,9 @@ jobs:
             - name: Check linked project
               run: ./supabase/db.sh get_proj
 
+            - name: Deploy migrations and seed
+              run: supabase db push --include-all --include-seed
+
     deploy:
         runs-on: ubuntu-22.04
         environment: production
