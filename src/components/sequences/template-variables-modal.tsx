@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Info, Spinner } from '../icons';
 import { Tooltip } from '../library';
 import type { SequenceStep, TemplateVariable, TemplateVariableInsert } from 'src/utils/api/db';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '../button';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
@@ -168,6 +168,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     }, [templateVariables, sequenceId]);
     const [variables, setVariables] = useState(prepareTemplateVariables(templateVariables ?? []));
     const { track } = useRudderstackTrack();
+
     const setKey = (key: DefaultTemplateVariableKey, value: string) => {
         if (!variables[key]) return;
         track(UpdateTemplateVariable, {
@@ -183,6 +184,23 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     const [submitting, setSubmitting] = useState(false);
     const { emailTemplates } = useEmailTemplates(props.sequenceSteps.map((step) => step.template_id));
     const [previewPage, setPreviewPage] = useState(0);
+
+    const handleSetPreviewPage = useCallback(
+        (pageNum: number) => {
+            const currentPage = previewPage;
+
+            setPreviewPage(pageNum);
+
+            emailTemplates &&
+                track(ChangeTemplatePreview, {
+                    sequence_id: sequenceId ?? '',
+                    sequence_name: sequenceName ?? '',
+                    current_template_preview: emailTemplates[currentPage].name,
+                    selected_template_preview: emailTemplates[pageNum]?.name,
+                });
+        },
+        [previewPage, emailTemplates, sequenceId, sequenceName, track],
+    );
 
     const handleUpdate = async () => {
         setSubmitting(true);
@@ -304,17 +322,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                     <nav className="flex space-x-2">
                         <button
                             onClick={() => {
-                                const currentPage = previewPage;
-
-                                setPreviewPage(0);
-
-                                emailTemplates &&
-                                    track(ChangeTemplatePreview, {
-                                        sequence_id: sequenceId,
-                                        sequence_name: sequenceName ?? '',
-                                        current_template_preview: emailTemplates[currentPage].name,
-                                        selected_template_preview: emailTemplates[0].name,
-                                    });
+                                handleSetPreviewPage(0);
                             }}
                             type="button"
                             className={`${
@@ -325,17 +333,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         </button>
                         <button
                             onClick={() => {
-                                const currentPage = previewPage;
-
-                                setPreviewPage(1);
-
-                                emailTemplates &&
-                                    track(ChangeTemplatePreview, {
-                                        sequence_id: sequenceId ?? '',
-                                        sequence_name: sequenceName ?? '',
-                                        current_template_preview: emailTemplates[currentPage].name,
-                                        selected_template_preview: emailTemplates[1].name,
-                                    });
+                                handleSetPreviewPage(1);
                             }}
                             type="button"
                             className={`${
@@ -346,17 +344,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         </button>
                         <button
                             onClick={() => {
-                                const currentPage = previewPage;
-
-                                setPreviewPage(2);
-
-                                emailTemplates &&
-                                    track(ChangeTemplatePreview, {
-                                        sequence_id: sequenceId ?? '',
-                                        sequence_name: sequenceName ?? '',
-                                        current_template_preview: emailTemplates[currentPage].name,
-                                        selected_template_preview: emailTemplates[2].name,
-                                    });
+                                handleSetPreviewPage(2);
                             }}
                             type="button"
                             className={`${
@@ -367,17 +355,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         </button>
                         <button
                             onClick={() => {
-                                const currentPage = previewPage;
-
-                                setPreviewPage(3);
-
-                                emailTemplates &&
-                                    track(ChangeTemplatePreview, {
-                                        sequence_id: sequenceId ?? '',
-                                        sequence_name: sequenceName ?? '',
-                                        current_template_preview: emailTemplates[currentPage].name,
-                                        selected_template_preview: emailTemplates[3].name,
-                                    });
+                                handleSetPreviewPage(3);
                             }}
                             type="button"
                             className={`${
