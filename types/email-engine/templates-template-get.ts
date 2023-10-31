@@ -1,9 +1,9 @@
-import type { InfluencerStepTypes } from 'types/appTypes';
+import type { InfluencerStepType } from 'types/appTypes';
 
 export interface TemplatesTemplateGetResponse {
     account: null;
     id: string;
-    name: InfluencerStepTypes;
+    name: InfluencerStepType;
     description: string;
     format: string;
     created: string;

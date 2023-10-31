@@ -19,7 +19,7 @@ import { SaveTemplateVariableUpdates } from 'src/utils/analytics/events/outreach
 import { ChangeTemplatePreview } from 'src/utils/analytics/events';
 
 export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'> {
-    sequenceId?: string;
+    sequenceId: string;
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
     sequenceName?: string;
@@ -171,7 +171,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     const setKey = (key: DefaultTemplateVariableKey, value: string) => {
         if (!variables[key]) return;
         track(UpdateTemplateVariable, {
-            sequence_id: sequenceId || '',
+            sequence_id: sequenceId,
             sequence_name: sequenceName || '',
             template_variable: key,
             variable_value: value,
@@ -310,7 +310,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
 
                                 emailTemplates &&
                                     track(ChangeTemplatePreview, {
-                                        sequence_id: sequenceId ?? '',
+                                        sequence_id: sequenceId,
                                         sequence_name: sequenceName ?? '',
                                         current_template_preview: emailTemplates[currentPage].name,
                                         selected_template_preview: emailTemplates[0].name,
