@@ -183,6 +183,7 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            track(RecommendInfluencers, payload);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -250,7 +251,6 @@ export const Chat: React.FC<ChatProps> = ({
                 });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
