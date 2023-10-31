@@ -16,9 +16,10 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateTemplateVariable } from 'src/utils/analytics/events/outreach/update-template-variable';
 import { randomNumber } from 'src/utils/utils';
 import { SaveTemplateVariableUpdates } from 'src/utils/analytics/events/outreach/save-template-variable-updates';
+import { ChangeTemplatePreview } from 'src/utils/analytics/events';
 
 export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'> {
-    sequenceId?: string;
+    sequenceId: string;
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
     sequenceName?: string;
@@ -170,7 +171,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     const setKey = (key: DefaultTemplateVariableKey, value: string) => {
         if (!variables[key]) return;
         track(UpdateTemplateVariable, {
-            sequence_id: sequenceId || '',
+            sequence_id: sequenceId,
             sequence_name: sequenceName || '',
             template_variable: key,
             variable_value: value,
@@ -302,7 +303,19 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                     <h2 className="text-lg font-semibold text-gray-700">{t('sequences.emailPreview')}</h2>
                     <nav className="flex space-x-2">
                         <button
-                            onClick={() => setPreviewPage(0)}
+                            onClick={() => {
+                                const currentPage = previewPage;
+
+                                setPreviewPage(0);
+
+                                emailTemplates &&
+                                    track(ChangeTemplatePreview, {
+                                        sequence_id: sequenceId,
+                                        sequence_name: sequenceName ?? '',
+                                        current_template_preview: emailTemplates[currentPage].name,
+                                        selected_template_preview: emailTemplates[0].name,
+                                    });
+                            }}
                             type="button"
                             className={`${
                                 previewPage === 0 ? activeTabStyles : ''
@@ -311,7 +324,19 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                             {t('sequences.steps.Outreach')}
                         </button>
                         <button
-                            onClick={() => setPreviewPage(1)}
+                            onClick={() => {
+                                const currentPage = previewPage;
+
+                                setPreviewPage(1);
+
+                                emailTemplates &&
+                                    track(ChangeTemplatePreview, {
+                                        sequence_id: sequenceId ?? '',
+                                        sequence_name: sequenceName ?? '',
+                                        current_template_preview: emailTemplates[currentPage].name,
+                                        selected_template_preview: emailTemplates[1].name,
+                                    });
+                            }}
                             type="button"
                             className={`${
                                 previewPage === 1 ? activeTabStyles : ''
@@ -320,7 +345,19 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                             {t('sequences.steps.1st Follow-up')}
                         </button>
                         <button
-                            onClick={() => setPreviewPage(2)}
+                            onClick={() => {
+                                const currentPage = previewPage;
+
+                                setPreviewPage(2);
+
+                                emailTemplates &&
+                                    track(ChangeTemplatePreview, {
+                                        sequence_id: sequenceId ?? '',
+                                        sequence_name: sequenceName ?? '',
+                                        current_template_preview: emailTemplates[currentPage].name,
+                                        selected_template_preview: emailTemplates[2].name,
+                                    });
+                            }}
                             type="button"
                             className={`${
                                 previewPage === 2 ? activeTabStyles : ''
@@ -329,7 +366,19 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                             {t('sequences.steps.2nd Follow-up')}
                         </button>
                         <button
-                            onClick={() => setPreviewPage(3)}
+                            onClick={() => {
+                                const currentPage = previewPage;
+
+                                setPreviewPage(3);
+
+                                emailTemplates &&
+                                    track(ChangeTemplatePreview, {
+                                        sequence_id: sequenceId ?? '',
+                                        sequence_name: sequenceName ?? '',
+                                        current_template_preview: emailTemplates[currentPage].name,
+                                        selected_template_preview: emailTemplates[3].name,
+                                    });
+                            }}
                             type="button"
                             className={`${
                                 previewPage === 3 ? activeTabStyles : ''
