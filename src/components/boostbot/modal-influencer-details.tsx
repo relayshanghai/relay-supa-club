@@ -14,6 +14,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import StatCard from './stat-card';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -118,11 +119,15 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                             </ResponsiveContainer>
                         </div>
                     </div>
-                    <div className="w-1/2">
+                    <div className="w-1/2 space-y-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Engagement Stats
                         </div>
-                        <div>stat cards</div>
+                        <StatCard title="Engaged Audience" stat="8%" iconColor="yellow" />
+                        <div className="flex space-x-3">
+                            <StatCard title="Engagement Rate" stat="4%" iconColor="yellow" />
+                            <StatCard title="Avg. Views" stat="1.4k" iconColor="yellow" />
+                        </div>
                     </div>
                 </div>
 
@@ -131,15 +136,15 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Gender
                         </div>
-                        <div className="w-full">
-                            <ResponsiveContainer width={320} height={100}>
+                        <div className="p-3">
+                            <ResponsiveContainer width={320} height={140}>
                                 <BarChart
                                     data={dummyBarChartData}
                                     margin={{
-                                        top: 18,
-                                        right: 6,
-                                        left: 6,
-                                        bottom: 6,
+                                        top: 48,
+                                        right: 48,
+                                        left: 0,
+                                        bottom: 0,
                                     }}
                                 >
                                     <CartesianGrid vertical={false} horizontal={false} />
@@ -151,16 +156,19 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                             </ResponsiveContainer>
                         </div>
                     </div>
-                    <div className="w-1/2">
+                    <div className="w-1/2 space-y-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Channel Stats
                         </div>
-                        <div>stat cards</div>
+                        <div className="flex space-x-3">
+                            <StatCard title="Followers Growth" stat="4%" iconColor="yellow" />
+                            <StatCard title="Total Posts" stat="232" iconColor="yellow" />
+                        </div>
                     </div>
                 </div>
 
                 {/* buttons */}
-                <div className="mt-8 box-border flex w-full justify-center space-x-3 px-6 pt-6 font-semibold">
+                <div className="mt-8 box-border flex w-full justify-center space-x-3 px-6 font-semibold">
                     <Button variant="gray" className="w-1/2" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
