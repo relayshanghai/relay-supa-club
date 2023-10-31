@@ -304,15 +304,19 @@ export const SearchPageInner = () => {
                 searchType={searchType}
             />
             <FaqModal
-                title={t(discoveryfaq.discoveryfaqTitle)}
+                title={t('discoveryfaq.discoveryfaqTitle')}
                 description=""
                 visible={filterNeedHelpModalOpen}
                 onClose={() => setShowNeedHelpModal(false)}
-                content={discoveryfaq.discovery.map((content) => ({
-                    title: t(content.title),
-                    detail: t(content.detail),
+                // content={discoveryfaq.discovery.map((content) => ({
+                //     title: t(content.title),
+                //     detail: t(content.detail),
+                // }))}
+                content={discoveryfaq.discovery.map((_, i) => ({
+                    title: t(`discoveryfaq.discovery.${i}.title`),
+                    detail: t(`discoveryfaq.${i}.detail`),
                 }))}
-                getMoreInfoButtonText={t(discoveryfaq.discoveryGetMoreInfo) || ''}
+                getMoreInfoButtonText={t(`discoveryfaq.discoveryGetMoreInfo`) || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
                 source="Discovery"
             />
