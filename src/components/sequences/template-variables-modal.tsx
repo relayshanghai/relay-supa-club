@@ -187,15 +187,13 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
 
     const handleSetPreviewPage = useCallback(
         (pageNum: number) => {
-            const currentPage = previewPage;
-
             setPreviewPage(pageNum);
 
             emailTemplates &&
                 track(ChangeTemplatePreview, {
                     sequence_id: sequenceId ?? '',
                     sequence_name: sequenceName ?? '',
-                    current_template_preview: emailTemplates[currentPage].name,
+                    current_template_preview: emailTemplates[previewPage].name,
                     selected_template_preview: emailTemplates[pageNum]?.name,
                 });
         },
