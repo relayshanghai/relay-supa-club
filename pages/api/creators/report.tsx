@@ -42,7 +42,10 @@ const trackAndSnap = async (
     if (track !== SearchAnalyzeInfluencer.eventName) {
         return;
     }
+
     const result = await createTrack({ req, res })(eventsObject[track]);
+
+    if (result === false) return;
 
     await createReportSnapshot(
         { req, res },
