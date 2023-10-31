@@ -12,6 +12,7 @@ interface DataTableProps<TData, TValue> {
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     meta: TableMeta<TData>;
+    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
 }
 
 declare module '@tanstack/react-table' {
@@ -28,6 +29,7 @@ export function InfluencersTable<TData, TValue>({
     selectedInfluencers,
     setSelectedInfluencers,
     meta,
+    setIsInfluencerDetailsModalOpen,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
@@ -97,7 +99,10 @@ export function InfluencersTable<TData, TValue>({
                                 </TableRow>
                             ))
                         ) : (
-                            <TableRow>
+                            <TableRow
+                                className="border-red border-2 hover:bg-purple-200"
+                                onClick={() => setIsInfluencerDetailsModalOpen(true)}
+                            >
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
                                     {meta.t('boostbot.table.noResults')}
                                 </TableCell>

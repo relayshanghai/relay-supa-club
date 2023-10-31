@@ -53,6 +53,7 @@ const Boostbot = () => {
     const [sequence, setSequence] = useState<Sequence | undefined>(
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
+    const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -275,6 +276,7 @@ const Boostbot = () => {
                         sequence={sequence}
                         sequences={sequences}
                         clearChatHistory={clearChatHistory}
+                        isInfluencerDetailsModalOpen={isInfluencerDetailsModalOpen}
                     />
                 </div>
 
@@ -287,6 +289,7 @@ const Boostbot = () => {
                         selectedInfluencers={selectedInfluencers}
                         setSelectedInfluencers={setSelectedInfluencers}
                         meta={{ t, searchId }}
+                        setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
                     />
                 )}
             </div>

@@ -25,6 +25,7 @@ import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
+import { InfluencerDetailsModal } from './modal-influencer-details';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -50,6 +51,8 @@ interface ChatProps {
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
     clearChatHistory: () => void;
+    isInfluencerDetailsModalOpen: boolean;
+    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -71,6 +74,8 @@ export const Chat: React.FC<ChatProps> = ({
     setSequence,
     sequences,
     clearChatHistory,
+    isInfluencerDetailsModalOpen,
+    setIsInfluencerDetailsModalOpen,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -284,6 +289,8 @@ export const Chat: React.FC<ChatProps> = ({
                 setIsOpen={setIsClearChatHistoryModalOpen}
                 onConfirm={clearChatHistory}
             />
+
+            <InfluencerDetailsModal isOpen={isInfluencerDetailsModalOpen} setIsOpen={setIsInfluencerDetailsModalOpen} />
 
             <ChatContent
                 messages={messages}
