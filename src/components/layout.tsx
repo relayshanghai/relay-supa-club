@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useReport } from 'src/hooks/use-report';
 import type { CreatorPlatform } from 'types';
-import { VisitPage } from 'src/utils/analytics/events';
+import { ToggleNavbarSize, VisitPage } from 'src/utils/analytics/events';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -89,7 +89,12 @@ export const Layout = ({ children }: any) => {
                     <div className="flex items-center">
                         <Button
                             onClick={() => {
+                                const navbarAction = sideBarOpen ? 'Collapse' : 'Expand';
                                 setSideBarOpen(!sideBarOpen);
+                                track(ToggleNavbarSize, {
+                                    navbar_action: navbarAction,
+                                });
+
                                 trackEvent(NAVBAR('Hamburger Menu Clicked'));
                             }}
                             variant="neutral"
