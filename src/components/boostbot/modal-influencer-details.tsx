@@ -15,12 +15,12 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
             <div className="flex flex-col items-center justify-center gap-4">
                 <h3>Details Modal</h3>
 
-                <div className="flex gap-4">
-                    <Button variant="ghost" onClick={() => setIsOpen(false)}>
+                <div className="flex w-full grid-cols-2 gap-4 font-semibold">
+                    <Button variant="secondary" className="text-gray-700" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
 
-                    <Button data-testid="boostbot-confirm-filters">Add to Sequence</Button>
+                    <Button className="boostbot-gradient border-none">Add to Sequence</Button>
                 </div>
             </div>
         </Modal>

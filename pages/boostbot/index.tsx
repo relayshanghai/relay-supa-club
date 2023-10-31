@@ -277,6 +277,7 @@ const Boostbot = () => {
                         sequences={sequences}
                         clearChatHistory={clearChatHistory}
                         isInfluencerDetailsModalOpen={isInfluencerDetailsModalOpen}
+                        setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
                     />
                 </div>
 

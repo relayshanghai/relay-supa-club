@@ -90,7 +90,12 @@ export function InfluencersTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && 'selected'}
+                                    className="cursor-pointer"
+                                    onClick={() => setIsInfluencerDetailsModalOpen(true)}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -99,10 +104,7 @@ export function InfluencersTable<TData, TValue>({
                                 </TableRow>
                             ))
                         ) : (
-                            <TableRow
-                                className="border-red border-2 hover:bg-purple-200"
-                                onClick={() => setIsInfluencerDetailsModalOpen(true)}
-                            >
+                            <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
                                     {meta.t('boostbot.table.noResults')}
                                 </TableCell>
