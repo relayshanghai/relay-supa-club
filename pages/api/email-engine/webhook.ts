@@ -49,6 +49,7 @@ import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
+import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 
 // Identity for webhook events that have no `body.account`
 const EMAIL_ENGINE_TEST_IDENTITY = 'a579b7c282704275a93aaf0e304335f1302babb91496c6ee3174c8bd3c316601';
@@ -496,6 +497,10 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleOtherWebhook(body, res);
         }
     } catch (error: any) {
+        if (isPostgrestError(error)) {
+            error = normalizePostgrestError(error);
+        }
+
         serverLogger(error, (scope) => {
             return scope.setContext('Webhook Payload', req.body);
         });
