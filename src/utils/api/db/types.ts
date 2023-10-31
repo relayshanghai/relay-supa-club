@@ -3,7 +3,7 @@ import type {
     CreatorPlatform,
     DatabaseWithCustomTypes,
     InfluencerOutreachStatus,
-    InfluencerStepType,
+    SequenceEmailStep,
     SubscriptionPlans,
     SubscriptionStatus,
     UsageType,
@@ -91,7 +91,7 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
-    name: InfluencerStepType;
+    name: SequenceEmailStep;
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
