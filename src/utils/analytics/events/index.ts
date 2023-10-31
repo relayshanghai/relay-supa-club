@@ -178,6 +178,8 @@ import type { CompleteSignupStepPayload } from './onboarding/complete-signup-ste
 import { COMPLETE_SIGNUP_STEP, CompleteSignupStep } from './onboarding/complete-signup-step';
 import type { ChangeTemplatePreviewPayload } from './change-template-preview';
 import { CHANGE_TEMPLATE_PREVIEW, ChangeTemplatePreview } from './change-template-preview';
+import type { ToggleNavbarSizePayload } from './toggle-navbar-size';
+import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
 
 export {
     Search,
@@ -232,6 +234,7 @@ export {
     VisitPage,
     CompleteSignupStep,
     ChangeTemplatePreview,
+    ToggleNavbarSize,
 };
 
 export const events = {
@@ -317,6 +320,7 @@ export const events = {
     [VISIT_PAGE]: VisitPage,
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStep,
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
+    [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
 };
 
 export type payloads = {
@@ -402,6 +406,7 @@ export type payloads = {
     [VISIT_PAGE]: VisitPagePayload;
     [COMPLETE_SIGNUP_STEP]: CompleteSignupStepPayload;
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
+    [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -489,6 +494,7 @@ export const eventKeys = z.union([
     z.literal(VISIT_PAGE),
     z.literal(COMPLETE_SIGNUP_STEP),
     z.literal(CHANGE_TEMPLATE_PREVIEW),
+    z.literal(TOGGLE_NAVBAR_SIZE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
