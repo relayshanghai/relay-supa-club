@@ -1,7 +1,19 @@
 // import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts';
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    PolarAngleAxis,
+    PolarGrid,
+    PolarRadiusAxis,
+    Radar,
+    RadarChart,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+} from 'recharts';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -10,7 +22,7 @@ type InfluencerDetailsModalProps = {
 
 export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsModalProps) => {
     // const { t } = useTranslation();
-    const dummyData = [
+    const dummyRadarGraphData = [
         { subject: 'Productivity', A: 90, fullMark: 150 },
         { subject: 'Fitness Routine', A: 60, fullMark: 150 },
         { subject: 'Sports', A: 88, fullMark: 150 },
@@ -18,6 +30,39 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
         { subject: 'Yoga', A: 80, fullMark: 150 },
         { subject: 'Wellness', A: 90, fullMark: 150 },
         { subject: 'Injury Recovery', A: 23, fullMark: 150 },
+    ];
+
+    const dummyBarChartData = [
+        {
+            name: '13-17',
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+        },
+        {
+            name: '18-24',
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+        },
+        {
+            name: '25-40',
+            uv: 2000,
+            pv: 1800,
+            amt: 2290,
+        },
+        {
+            name: '40-65',
+            uv: 2780,
+            pv: 2908,
+            amt: 2000,
+        },
+        {
+            name: '65+',
+            uv: 1890,
+            pv: 3800,
+            amt: 2181,
+        },
     ];
 
     return (
@@ -57,7 +102,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">Top Niches</div>
                         <div className="w-full">
                             <ResponsiveContainer width={320} height={280}>
-                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyData}>
+                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyRadarGraphData}>
                                     <PolarGrid stroke="#e5e7eb" />
                                     <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10 }} />
                                     <PolarRadiusAxis tick={false} axisLine={false} />
@@ -86,7 +131,25 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Gender
                         </div>
-                        <div>radar graph</div>
+                        <div className="w-full">
+                            <ResponsiveContainer width={320} height={100}>
+                                <BarChart
+                                    data={dummyBarChartData}
+                                    margin={{
+                                        top: 18,
+                                        right: 6,
+                                        left: 6,
+                                        bottom: 6,
+                                    }}
+                                >
+                                    <CartesianGrid vertical={false} horizontal={false} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                                    <YAxis tick={false} axisLine={false} />
+                                    <Bar dataKey="pv" fill="#b2ccff" />
+                                    <Bar dataKey="uv" fill="#fcceee" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                     <div className="w-1/2">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
