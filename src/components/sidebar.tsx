@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { OpenAccountModal } from 'src/utils/analytics/events';
+import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
 
@@ -275,13 +275,19 @@ export const Sidebar = ({
     // 768px is 'md' in our tailwind
     const desktop = useAboveScreenWidth(768);
     const { profile } = useUser();
+    const { track } = useRudderstackTrack();
 
     return (
         // mask is the dark overlay that appears when the sidebar is open
         <nav className="z-20 h-full">
             <div
                 className={`pointer-events-none fixed inset-0 opacity-0 transition-all`}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                    track(ToggleNavbarSize, {
+                        navbar_action: 'Collapse',
+                    });
+                    setOpen(false);
+                }}
             />
             <div
                 className={`inset-y-0 left-0 ${
