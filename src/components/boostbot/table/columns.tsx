@@ -1,8 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Influencer } from 'pages/boostbot';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
 
-export const columns: ColumnDef<Influencer>[] = [
+export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'select',
         header: ({ table }) => (

@@ -34,6 +34,18 @@ export const createBoostbotInfluencerPayload = ({
                 last_posted: 30,
                 geo: [{ id: countriesByCode.US.id }, { id: countriesByCode.CA.id }],
                 with_contact: [{ type: 'email' }],
+                followers_growth: {
+                    interval: 'i1month',
+                    operator: 'gte',
+                    value: 0,
+                },
+                posts_count: {
+                    left_number: 0,
+                },
+                audience_gender: {
+                    code: 'MALE',
+                    weight: 0,
+                },
                 ...filters,
             },
             sort: { field: 'relevance', direction: 'desc' },
