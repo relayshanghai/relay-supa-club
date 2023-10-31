@@ -165,13 +165,13 @@ export const InboxPage = () => {
     );
 
     const handleSelectedTabChange = (tab: { value: string; name: string }) => {
-        profile &&
-            track(ChangeInboxFolder, {
-                sequence_email_address: profile.sequence_send_email ?? '',
-                current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
-                selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
-                total_unread_emails: messages.filter((message) => message.unseen).length,
-            });
+        if (!profile || !profile.sequence_send_email) return;
+        track(ChangeInboxFolder, {
+            sequence_email_address: profile.sequence_send_email,
+            current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
+            selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
+            total_unread_emails: messages.filter((message) => message.unseen).length,
+        });
         setSelectedTab(tab.value);
     };
 
