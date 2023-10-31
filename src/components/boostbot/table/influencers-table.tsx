@@ -88,22 +88,6 @@ export function InfluencersTable<TData, TValue>({
                     {/* Scroll to the top of the table when changing pagination pages */}
                     <div ref={tableRef} />
                     <Table>
-                        {/* <TableHeader className='sticky top-0 z-50 bg-slate-300'>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        //edit here to be sticky
-                                        <TableHead className="text-center" key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableHead>
-                                    );  
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader> */}
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map((row) => (
