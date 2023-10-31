@@ -32,6 +32,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const result = await createTrack({ req, res })(trackedEvent, { ..._payload, event_id, event_at });
 
+    if (result === false) {
+        return res.status(204).end();
+    }
+
     // @todo move to copySnapshot
     if (snapshot_id) {
         const _snapshot = await db<typeof getSearchSnapshot>(getSearchSnapshot)(snapshot_id);
