@@ -110,6 +110,10 @@ export const InboxPageDummy = () => {
         setLoadingSelectedMessages(false);
     };
 
+    const handleSelectedTabChange = (tab: { value: string; name: string }) => {
+        setSelectedTab(tab.value);
+    };
+
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
             if (!profile) return;
@@ -182,7 +186,7 @@ export const InboxPageDummy = () => {
                                 <>
                                     <ToolBar
                                         selectedTab={selectedTab}
-                                        setSelectedTab={setSelectedTab}
+                                        setSelectedTab={handleSelectedTabChange}
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
                                     />
