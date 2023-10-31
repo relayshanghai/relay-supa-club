@@ -1,4 +1,4 @@
-import type { NextApiHandler, NextApiResponse } from 'next';
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type {
@@ -16,9 +16,7 @@ import {
 } from 'src/utils/api/db/calls/sequence-emails';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
-
 import { db } from 'src/utils/supabase-client';
-
 import {
     EmailClicked,
     EmailComplaint,
@@ -46,12 +44,17 @@ import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
-import { WebhookError } from 'src/utils/analytics/events/outreach/email-error';
 import type { EmailNewPayload } from 'src/utils/analytics/events/outreach/email-new';
 import { EmailNew } from 'src/utils/analytics/events/outreach/email-new';
 import { serverLogger } from 'src/utils/logger-server';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
+
+// Identity for webhook events that have no `body.account`
+const EMAIL_ENGINE_TEST_IDENTITY = 'a579b7c282704275a93aaf0e304335f1302babb91496c6ee3174c8bd3c316601';
+
+// Identity for webhook events if we cannot determine the identity from the provided `body.account`
+const EMAIL_ENGINE_NO_IDENTITY = 'c35d6aaf3b3885dfc9f36cddf48a65e93a919e13165fbbcfc0f9de5636279559';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -434,40 +437,43 @@ const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) =>
     return res.status(httpCodes.OK).json({});
 };
 
-const identifyWebhook = async (body: WebhookEvent) => {
+const identifyWebhook = async (req: NextApiRequest) => {
+    const body = req.body as WebhookEvent;
+
+    // @note these webhook calls are probably from tests calls in EE dashboard
+    // we will log these calls to Sentry to properly debug in
+    // case this happens in a non-test environment
     if (!body?.account) {
-        return false;
+        serverLogger('Email Engine webhook has no account', (scope) => {
+            return scope.setContext('Webhook Payload', req.body);
+        });
+        return rudderstack.identifyWithAnonymousID(EMAIL_ENGINE_TEST_IDENTITY);
     }
 
     const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
 
     if (profile) {
-        rudderstack.identifyWithProfile(profile.id);
-        return true;
+        return rudderstack.identifyWithProfile(profile.id);
     }
 
     if (!profile) {
-        rudderstack.identifyWithAnonymousID(body.account);
-        return true;
+        return rudderstack.identifyWithAnonymousID(body.account);
     }
 
-    serverLogger(`No account associated with "${body.account}"`);
-    return false;
+    serverLogger(`No account associated with "${body.account}"`, (scope) => {
+        return scope.setContext('Webhook Payload', req.body);
+    });
+
+    return rudderstack.identifyWithAnonymousID(EMAIL_ENGINE_NO_IDENTITY);
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
-    // wrap all unhandled errors so that we return a 200.
-    // If we return a 500, the email client will retry the webhook and we will get duplicate events
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
-    let hasIdentity = false;
-    try {
-        hasIdentity = await identifyWebhook(body);
-    } catch (_e) {
-        // do nothing
-        // all of our webhook calls should be from an account that we have in our database so we don't need to check for identity beyond the wrapper incoming logger and the wrapper error logger. If we don't have an identity for the other calls we want it to fail so we can investigate
-    }
+
+    await identifyWebhook(req);
+
     try {
         switch (body.event) {
             case 'messageNew':
@@ -490,13 +496,12 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleOtherWebhook(body, res);
         }
     } catch (error: any) {
-        if (hasIdentity) {
-            track(rudderstack.getClient(), rudderstack.getIdentity())(WebhookError, { body, error });
-        } else {
-            serverLogger(error); // truly unexpected, so let's send to Sentry
-        }
-        return res.status(httpCodes.OK).json({});
+        serverLogger(error, (scope) => {
+            return scope.setContext('Webhook Payload', req.body);
+        });
     }
+
+    return res.status(httpCodes.OK).json({});
 };
 
 export default ApiHandler({ postHandler });
