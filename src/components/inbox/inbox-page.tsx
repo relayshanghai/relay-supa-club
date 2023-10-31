@@ -30,6 +30,7 @@ import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { mapProfileToFormData } from './helpers';
+import inboxTranslation from 'i18n/en/inbox';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -168,8 +169,8 @@ export const InboxPage = () => {
         if (!profile || !profile.sequence_send_email) return;
         track(ChangeInboxFolder, {
             sequence_email_address: profile.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? 'Unread' : 'All',
-            selected_email_folder: selectedTab === 'new' ? 'All' : 'Unread',
+            current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
+            selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
             total_unread_emails: messages.filter((message) => message.unseen).length,
         });
         setSelectedTab(tab.value);
