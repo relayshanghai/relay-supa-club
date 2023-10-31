@@ -1,3 +1,6 @@
+/**
+ * @see https://postgrest.org/en/stable/references/errors.html
+ */
 export type PostgrestError = {
     hint: string | null;
     details: string | null;
