@@ -14,12 +14,10 @@ import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useAnalytics } from '../analytics/analytics-provider';
-import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { AnalyzeAddToCampaign, AnalyzePageAddToCampaign } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import type { eventKeys } from 'src/utils/analytics/events';
-import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
 import { useSequences } from 'src/hooks/use-sequences';
 import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
@@ -66,8 +64,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     const { t } = useTranslation();
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { trackEvent } = useRudderstack();
-    const { track } = useAnalytics();
+    const { track } = useRudderstackTrack();
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencer | null>(null);
 
     useEffect(() => {
@@ -122,7 +119,11 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
+        // trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
+        track(AnalyzePageAddToCampaign, {
+            platform,
+            user_id: selectedCreatorUserId,
+        });
     };
 
     if (IQDATA_MAINTENANCE) {

@@ -5,11 +5,12 @@ import { numFormatter } from 'src/utils/utils';
 import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenSimilarInfluencerReport } from 'src/utils/analytics/events';
 
 export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     return (
         <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
@@ -37,11 +38,17 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                     className="px-3 py-1"
                     onClick={() => {
                         // @note previous name: Analyze Page, Similar Influencer Section, open report
-                        trackEvent('Open Similar Influencer Report', {
+                        // trackEvent('Open Similar Influencer Report', {
+                        //     platform,
+                        //     user_id: creator.user_id,
+                        //     // @note total_reports is an incrementable property
+                        //     total_reports: 1,
+                        // });
+                        track(OpenSimilarInfluencerReport, {
                             platform,
                             user_id: creator.user_id,
                             // @note total_reports is an incrementable property
-                            total_reports: 1,
+                            $add: { total_reports: 1 },
                         });
                     }}
                 >

@@ -237,6 +237,16 @@ import {
     CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK,
     CampaignInfluencerRowOpenSocialLink,
 } from './campaign-influencer-row-open-social-link';
+import {
+    type OpenSimilarInfluencerReportPayload,
+    OPEN_SIMILAR_INFLUENCER_REPORT,
+    OpenSimilarInfluencerReport,
+} from './open-similar-influencer-report';
+import {
+    type AnalyzePageAddToCampaignPayload,
+    ANALYZE_PAGE_ADD_TO_CAMPAIGN,
+    AnalyzePageAddToCampaign,
+} from './analyze-page-add-to-campaign';
 
 export {
     Search,
@@ -304,6 +314,8 @@ export {
     SignupOpenTermsAndConditions,
     SignupSignOutFromFreeTrialPage,
     CampaignInfluencerRowOpenSocialLink,
+    OpenSimilarInfluencerReport,
+    AnalyzePageAddToCampaign,
 };
 
 export const events = {
@@ -402,6 +414,8 @@ export const events = {
     [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditions,
     [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPage,
     [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLink,
+    [OPEN_SIMILAR_INFLUENCER_REPORT]: OpenSimilarInfluencerReport,
+    [ANALYZE_PAGE_ADD_TO_CAMPAIGN]: AnalyzePageAddToCampaign,
 };
 
 export type payloads = {
@@ -500,6 +514,8 @@ export type payloads = {
     [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditionsPayload;
     [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPagePayload;
     [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLinkPayload;
+    [OPEN_SIMILAR_INFLUENCER_REPORT]: OpenSimilarInfluencerReportPayload;
+    [ANALYZE_PAGE_ADD_TO_CAMPAIGN]: AnalyzePageAddToCampaignPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -600,6 +616,8 @@ export const eventKeys = z.union([
     z.literal(SIGNUP_OPEN_TERMS_AND_CONDITIONS),
     z.literal(SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE),
     z.literal(CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK),
+    z.literal(OPEN_SIMILAR_INFLUENCER_REPORT),
+    z.literal(ANALYZE_PAGE_ADD_TO_CAMPAIGN),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
