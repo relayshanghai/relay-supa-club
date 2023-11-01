@@ -182,6 +182,11 @@ import type { ChangeTemplatePreviewPayload } from './change-template-preview';
 import { CHANGE_TEMPLATE_PREVIEW, ChangeTemplatePreview } from './change-template-preview';
 import type { ToggleNavbarSizePayload } from './toggle-navbar-size';
 import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
+import type { LandingPageStartFreeTrialClickedPayload } from './landing-page-start-free-trial-clicked';
+import {
+    LANDING_PAGE_START_FREE_TRIAL_CLICKED,
+    LandingPageStartFreeTrialClicked,
+} from './landing-page-start-free-trial-clicked';
 
 export {
     Search,
@@ -238,6 +243,7 @@ export {
     ChangeInboxFolder,
     ChangeTemplatePreview,
     ToggleNavbarSize,
+    LandingPageStartFreeTrialClicked,
 };
 
 export const events = {
@@ -325,6 +331,7 @@ export const events = {
     [CHANGE_INBOX_FOLDER]: ChangeInboxFolder,
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
+    [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClicked,
 };
 
 export type payloads = {
@@ -412,6 +419,7 @@ export type payloads = {
     [CHANGE_INBOX_FOLDER]: ChangeInboxFolderPayload;
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
+    [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClickedPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -501,6 +509,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_INBOX_FOLDER),
     z.literal(CHANGE_TEMPLATE_PREVIEW),
     z.literal(TOGGLE_NAVBAR_SIZE),
+    z.literal(LANDING_PAGE_START_FREE_TRIAL_CLICKED),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

@@ -10,8 +10,8 @@ import { Button } from '../button';
 import { useRouter } from 'next/router';
 import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { LandingPageStartFreeTrialClicked } from 'src/utils/analytics/events';
 
 const ImageBackground = () => {
     return (
@@ -31,7 +31,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const landingPage = page === 'landing';
     const { t } = useTranslation();
     const router = useRouter();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
     const [period] = useState<ActiveSubscriptionPeriod>('monthly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
     const { createSubscription } = useSubscription();
@@ -45,7 +45,8 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const options: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
 
     const handleStartFreeTrialClicked = () => {
-        trackEvent(LANDING_PAGE('clicked on start free trial'));
+        track(LandingPageStartFreeTrialClicked);
+        // @note: previously trackEvent(LANDING_PAGE('clicked on start free trial'));
         router.push('/signup');
     };
 
