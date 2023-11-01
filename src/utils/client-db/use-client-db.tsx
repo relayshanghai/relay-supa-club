@@ -16,12 +16,25 @@ import { getSequenceInfluencersBySequenceIdCall } from '../api/db/calls/sequence
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
 import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from '../api/db/calls/sequences';
 import type { DBQuery } from '../types';
+import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
 export const useDB = <T extends DBQuery>(query: T) => {
     const supabase = useSupabase();
-    return query(supabase) as ReturnType<T>;
+
+    const q = async (...args: Parameters<ReturnType<T>>) => {
+        try {
+            return await query(supabase)(...args);
+        } catch (error) {
+            if (isPostgrestError(error)) {
+                error = normalizePostgrestError(error);
+            }
+            throw error;
+        }
+    };
+
+    return q as ReturnType<T>;
 };
 
 /**

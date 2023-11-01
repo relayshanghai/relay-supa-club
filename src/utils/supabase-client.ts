@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
 import type { DBQuery } from './types';
+import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
@@ -22,5 +23,16 @@ export const db = <T extends DBQuery>(query: T) => {
         auth: { persistSession: false },
     });
 
-    return query(supabase) as ReturnType<T>;
+    const q = async (...args: Parameters<ReturnType<T>>) => {
+        try {
+            return await query(supabase)(...args);
+        } catch (error) {
+            if (isPostgrestError(error)) {
+                error = normalizePostgrestError(error);
+            }
+            throw error;
+        }
+    };
+
+    return q as ReturnType<T>;
 };
