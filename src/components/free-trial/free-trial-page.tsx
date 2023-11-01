@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from 'src/hooks/use-user';
 import { useTranslation } from 'react-i18next';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import Link from 'next/link';
@@ -15,13 +14,20 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { nextFetch } from 'src/utils/fetcher';
 import type { SubscriptionCreateTrialResponse } from 'pages/api/subscriptions/create-trial-without-payment-intent';
 import { createSubscriptionErrors } from 'src/errors/subscription';
+import {
+    SignupCheckTermsAndConditions,
+    SignupOpenTermsAndConditions,
+    SignupSignOutFromFreeTrialPage,
+    SignupStartFreeTrialFailed,
+    SignupStartFreeTrialSuccess,
+} from 'src/utils/analytics/events';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
     const { company } = useCompany();
     const router = useRouter();
     const { logout } = useUser();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
     const { createDefaultSequenceSteps } = useSequenceSteps();
     const { createDefaultTemplateVariables } = useTemplateVariables();
 
@@ -61,7 +67,8 @@ const FreeTrialPage = () => {
             );
 
             if (response.status === 'trialing' || response.status === 'active') {
-                await trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
+                track(SignupStartFreeTrialSuccess, { company: company?.id });
+                // @note previously await trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
                 await createDefaultSequence();
                 await router.push('/boostbot');
             } else {
@@ -73,7 +80,8 @@ const FreeTrialPage = () => {
             if (error?.message === createSubscriptionErrors.alreadySubscribed) {
                 await router.push('/boostbot');
             }
-            await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
+            // await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
+            track(SignupStartFreeTrialFailed, { company: company?.id });
         }
         setLoading(false);
     };
@@ -165,7 +173,8 @@ const FreeTrialPage = () => {
                     checked={termsChecked}
                     onChange={() => {
                         setTermsChecked(!termsChecked);
-                        trackEvent(SIGNUP('check Terms and Conditions'), { termsChecked: !termsChecked });
+                        // trackEvent(SIGNUP('check Terms and Conditions'), { termsChecked: !termsChecked });
+                        track(SignupCheckTermsAndConditions, { termsChecked: !termsChecked });
                     }}
                     id="terms"
                 />
@@ -175,7 +184,8 @@ const FreeTrialPage = () => {
                         className="cursor-pointer"
                         onClick={() => {
                             setShowModal(true);
-                            trackEvent(SIGNUP('open Terms and Conditions'));
+                            // trackEvent(SIGNUP('open Terms and Conditions'));
+                            track(SignupOpenTermsAndConditions);
                         }}
                     >
                         {t('signup.freeTrial.termsAndConditionClickableText')}
@@ -197,7 +207,10 @@ const FreeTrialPage = () => {
                     <Link
                         className="text-primary-500"
                         href="/logout"
-                        onClick={() => trackEvent(SIGNUP('Sign out from free trial page'))}
+                        onClick={() => {
+                            // trackEvent(SIGNUP('Sign out from free trial page'));
+                            track(SignupSignOutFromFreeTrialPage);
+                        }}
                     >
                         {t('login.signOut')}
                     </Link>

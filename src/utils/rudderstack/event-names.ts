@@ -29,7 +29,7 @@ const generateEventName =
 // Signup Wizard, Pricing Section, click to select DIY Max
 // Signup Wizard, Pricing Section, click to select DIY
 
-export const SIGNUP = generateEventName('Signup');
+// export const SIGNUP = generateEventName('Signup');
 // Signup, Start free trial success
 // Signup, Start free trial failed
 // Signup, check Terms and Conditions

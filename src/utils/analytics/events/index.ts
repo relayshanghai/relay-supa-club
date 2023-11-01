@@ -207,6 +207,31 @@ import {
     PRICING_SECTION_SELECT_DIY_MAX,
     PricingSectionSelectDiyMax,
 } from './signup wizard/pricing-section-select-diy-max';
+import {
+    type SignupStartFreeTrialSuccessPayload,
+    SIGNUP_START_FREE_TRIAL_SUCCESS,
+    SignupStartFreeTrialSuccess,
+} from './signup/signup-start-free-trial-success';
+import {
+    type SignupStartFreeTrialFailedPayload,
+    SIGNUP_START_FREE_TRIAL_FAILED,
+    SignupStartFreeTrialFailed,
+} from './signup/signup-start-free-trial-failed';
+import {
+    type SignupCheckTermsAndConditionsPayload,
+    SIGNUP_CHECK_TERMS_AND_CONDITIONS,
+    SignupCheckTermsAndConditions,
+} from './signup/signup-check-terms-and-conditions';
+import {
+    type SignupOpenTermsAndConditionsPayload,
+    SIGNUP_OPEN_TERMS_AND_CONDITIONS,
+    SignupOpenTermsAndConditions,
+} from './signup/signup-open-terms-and-conditions';
+import {
+    type SignupSignOutFromFreeTrialPagePayload,
+    SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE,
+    SignupSignOutFromFreeTrialPage,
+} from './signup/signup-sign-out-from-free-trial-page';
 
 export {
     Search,
@@ -268,6 +293,11 @@ export {
     PricingSectionToggleMonthlyOrQuarterly,
     PricingSectionSelectDiy,
     PricingSectionSelectDiyMax,
+    SignupStartFreeTrialSuccess,
+    SignupStartFreeTrialFailed,
+    SignupCheckTermsAndConditions,
+    SignupOpenTermsAndConditions,
+    SignupSignOutFromFreeTrialPage,
 };
 
 export const events = {
@@ -360,6 +390,11 @@ export const events = {
     [PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY]: PricingSectionToggleMonthlyOrQuarterly,
     [PRICING_SECTION_SELECT_DIY]: PricingSectionSelectDiy,
     [PRICING_SECTION_SELECT_DIY_MAX]: PricingSectionSelectDiyMax,
+    [SIGNUP_START_FREE_TRIAL_SUCCESS]: SignupStartFreeTrialSuccess,
+    [SIGNUP_START_FREE_TRIAL_FAILED]: SignupStartFreeTrialFailed,
+    [SIGNUP_CHECK_TERMS_AND_CONDITIONS]: SignupCheckTermsAndConditions,
+    [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditions,
+    [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPage,
 };
 
 export type payloads = {
@@ -452,6 +487,11 @@ export type payloads = {
     [PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY]: PricingSectionToggleMonthlyOrQuarterlyPayload;
     [PRICING_SECTION_SELECT_DIY]: PricingSectionSelectDiyPayload;
     [PRICING_SECTION_SELECT_DIY_MAX]: PricingSectionSelectDiyMaxPayload;
+    [SIGNUP_START_FREE_TRIAL_SUCCESS]: SignupStartFreeTrialSuccessPayload;
+    [SIGNUP_START_FREE_TRIAL_FAILED]: SignupStartFreeTrialFailedPayload;
+    [SIGNUP_CHECK_TERMS_AND_CONDITIONS]: SignupCheckTermsAndConditionsPayload;
+    [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditionsPayload;
+    [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPagePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -546,6 +586,11 @@ export const eventKeys = z.union([
     z.literal(PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY),
     z.literal(PRICING_SECTION_SELECT_DIY),
     z.literal(PRICING_SECTION_SELECT_DIY_MAX),
+    z.literal(SIGNUP_START_FREE_TRIAL_SUCCESS),
+    z.literal(SIGNUP_START_FREE_TRIAL_FAILED),
+    z.literal(SIGNUP_CHECK_TERMS_AND_CONDITIONS),
+    z.literal(SIGNUP_OPEN_TERMS_AND_CONDITIONS),
+    z.literal(SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
