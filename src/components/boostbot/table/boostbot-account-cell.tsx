@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { UsersIcon } from '@heroicons/react/24/solid';
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
-import type { Influencer } from 'pages/boostbot';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSocialProfile, OpenAnalyzeProfile } from 'src/utils/analytics/events';
@@ -11,8 +11,8 @@ import { numberFormatter } from 'src/utils/formatter';
 import { Button } from 'src/components/button';
 
 export type BoostbotAccountCellProps = {
-    row: Row<Influencer>;
-    table: Table<Influencer>;
+    row: Row<BoostbotInfluencer>;
+    table: Table<BoostbotInfluencer>;
 };
 
 export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) => {

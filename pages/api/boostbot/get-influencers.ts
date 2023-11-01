@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import { limiter } from 'src/utils/limiter';
-import type { CreatorAccount } from 'types';
+import type { CreatorAccount, AudienceLikers, UserProfileMatch } from 'types';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
@@ -14,9 +14,9 @@ const GetInfluencersBody = z.object({
     user_id: z.string(),
 });
 
-export type CreatorAccountWithTopics = CreatorAccount & { topics: string[] };
+export type BoostbotInfluencer = CreatorAccount & AudienceLikers & UserProfileMatch & { topics: string[] };
 export type GetInfluencersBody = z.input<typeof GetInfluencersBody>;
-export type GetInfluencersResponse = CreatorAccountWithTopics[];
+export type GetInfluencersResponse = BoostbotInfluencer[];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetInfluencersBody.safeParse(req.body);
@@ -42,7 +42,12 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const flattenedAccounts = influencersResults
         .map((result, index) =>
             // We want to display the topics for each influencer found, so we add them to the account object
-            result.accounts.map((creator) => ({ ...creator.account.user_profile, topics: topics[index] ?? [] })),
+            result.accounts.map((creator) => ({
+                ...creator.account.user_profile,
+                ...creator.match.user_profile,
+                ...creator.match.audience_likers?.data,
+                topics: topics[index] ?? [],
+            })),
         )
         .flat();
     const uniqueInfluencers: GetInfluencersResponse = flattenedAccounts.filter(

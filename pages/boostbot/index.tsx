@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -15,7 +15,6 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { OpenVideoGuideModal, SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -27,14 +26,10 @@ import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 
-export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
-    topics: string[];
-};
-
 const Boostbot = () => {
     const { t } = useTranslation();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, setInfluencers] = usePersistentState<Influencer[]>('boostbot-influencers', []);
+    const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>('boostbot-influencers', []);
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},

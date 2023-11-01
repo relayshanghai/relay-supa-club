@@ -1,5 +1,5 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import type { Influencer } from 'pages/boostbot';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -40,8 +40,8 @@ interface ChatProps {
     isSearchLoading: boolean;
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
-    influencers: Influencer[];
-    setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
+    influencers: BoostbotInfluencer[];
+    setInfluencers: Dispatch<SetStateAction<BoostbotInfluencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handleSelectedInfluencersToOutreach: () => void;
     isSearchDisabled: boolean;
