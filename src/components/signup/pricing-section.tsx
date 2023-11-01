@@ -4,12 +4,16 @@ import { PriceDetailsCard } from '../pricing/price-details-card';
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import {
+    PricingSectionSelectDiy,
+    PricingSectionSelectDiyMax,
+    PricingSectionToggleMonthlyOrQuarterly,
+} from 'src/utils/analytics/events';
 
 export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) => void }) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [priceTier, setPriceTier] = useState<ActiveSubscriptionTier>('diyMax');
@@ -26,7 +30,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                 checked={period === 'quarterly'}
                 onChange={(e) => {
                     setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                    trackEvent(SIGNUP_WIZARD('Pricing Section, click to toggle monthly or quarterly'), {
+                    track(PricingSectionToggleMonthlyOrQuarterly, {
                         selectedPeriod: period,
                     });
                 }}
@@ -39,7 +43,8 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     }`}
                     onClick={() => {
                         setPriceTier('diyMax');
-                        trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY Max'));
+                        // @note previously trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY Max'));
+                        track(PricingSectionSelectDiyMax);
                     }}
                 >
                     DIY Max
@@ -50,7 +55,8 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     }`}
                     onClick={() => {
                         setPriceTier('diy');
-                        trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY'));
+                        // @note previously trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY'));
+                        track(PricingSectionSelectDiy);
                     }}
                 >
                     DIY

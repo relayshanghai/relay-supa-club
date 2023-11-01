@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import type { TriggerEvent } from '../../types';
 
-export const SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL = 'Signup Wizard Step 5, clicked on start free trial';
+export const SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL = 'Signup Wizard, step-5, start free trial';
 
 export type SignupWizardStep5StartFreeTrialPayload = {
     customerId: string;

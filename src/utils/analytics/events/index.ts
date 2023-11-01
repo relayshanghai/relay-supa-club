@@ -191,7 +191,22 @@ import {
     type SignupWizardStep5StartFreeTrialPayload,
     SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL,
     SignupWizardStep5StartFreeTrial,
-} from './pricing section/signup-wizard-step-5-start-free-trial';
+} from './signup wizard/signup-wizard-step-5-start-free-trial';
+import {
+    type PricingSectionToggleMonthlyOrQuarterlyPayload,
+    PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY,
+    PricingSectionToggleMonthlyOrQuarterly,
+} from './signup wizard/pricing-section-toggle-monthly-or-quarterly';
+import {
+    type PricingSectionSelectDiyPayload,
+    PRICING_SECTION_SELECT_DIY,
+    PricingSectionSelectDiy,
+} from './signup wizard/pricing-section-select-diy';
+import {
+    type PricingSectionSelectDiyMaxPayload,
+    PRICING_SECTION_SELECT_DIY_MAX,
+    PricingSectionSelectDiyMax,
+} from './signup wizard/pricing-section-select-diy-max';
 
 export {
     Search,
@@ -250,6 +265,9 @@ export {
     ToggleNavbarSize,
     LandingPageStartFreeTrialClicked,
     SignupWizardStep5StartFreeTrial,
+    PricingSectionToggleMonthlyOrQuarterly,
+    PricingSectionSelectDiy,
+    PricingSectionSelectDiyMax,
 };
 
 export const events = {
@@ -339,6 +357,9 @@ export const events = {
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
     [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClicked,
     [SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL]: SignupWizardStep5StartFreeTrial,
+    [PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY]: PricingSectionToggleMonthlyOrQuarterly,
+    [PRICING_SECTION_SELECT_DIY]: PricingSectionSelectDiy,
+    [PRICING_SECTION_SELECT_DIY_MAX]: PricingSectionSelectDiyMax,
 };
 
 export type payloads = {
@@ -428,6 +449,9 @@ export type payloads = {
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
     [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClickedPayload;
     [SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL]: SignupWizardStep5StartFreeTrialPayload;
+    [PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY]: PricingSectionToggleMonthlyOrQuarterlyPayload;
+    [PRICING_SECTION_SELECT_DIY]: PricingSectionSelectDiyPayload;
+    [PRICING_SECTION_SELECT_DIY_MAX]: PricingSectionSelectDiyMaxPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -519,6 +543,9 @@ export const eventKeys = z.union([
     z.literal(TOGGLE_NAVBAR_SIZE),
     z.literal(LANDING_PAGE_START_FREE_TRIAL_CLICKED),
     z.literal(SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL),
+    z.literal(PRICING_SECTION_TOGGLE_MONTHLY_OR_QUARTERLY),
+    z.literal(PRICING_SECTION_SELECT_DIY),
+    z.literal(PRICING_SECTION_SELECT_DIY_MAX),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

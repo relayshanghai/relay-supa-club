@@ -23,7 +23,7 @@ const generateEventName =
 // Landing Page, clicked on switch
 // Landing Page, go to Login Page
 
-export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
+// export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 // Signup Wizard, step-5, start free trial
 // Signup Wizard, Pricing Section, click to toggle monthly or quarterly
 // Signup Wizard, Pricing Section, click to select DIY Max
