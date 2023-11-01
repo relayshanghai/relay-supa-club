@@ -232,6 +232,11 @@ import {
     SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE,
     SignupSignOutFromFreeTrialPage,
 } from './signup/signup-sign-out-from-free-trial-page';
+import {
+    type CampaignInfluencerRowOpenSocialLinkPayload,
+    CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK,
+    CampaignInfluencerRowOpenSocialLink,
+} from './campaign-influencer-row-open-social-link';
 
 export {
     Search,
@@ -298,6 +303,7 @@ export {
     SignupCheckTermsAndConditions,
     SignupOpenTermsAndConditions,
     SignupSignOutFromFreeTrialPage,
+    CampaignInfluencerRowOpenSocialLink,
 };
 
 export const events = {
@@ -395,6 +401,7 @@ export const events = {
     [SIGNUP_CHECK_TERMS_AND_CONDITIONS]: SignupCheckTermsAndConditions,
     [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditions,
     [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPage,
+    [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLink,
 };
 
 export type payloads = {
@@ -492,6 +499,7 @@ export type payloads = {
     [SIGNUP_CHECK_TERMS_AND_CONDITIONS]: SignupCheckTermsAndConditionsPayload;
     [SIGNUP_OPEN_TERMS_AND_CONDITIONS]: SignupOpenTermsAndConditionsPayload;
     [SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE]: SignupSignOutFromFreeTrialPagePayload;
+    [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLinkPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -591,6 +599,7 @@ export const eventKeys = z.union([
     z.literal(SIGNUP_CHECK_TERMS_AND_CONDITIONS),
     z.literal(SIGNUP_OPEN_TERMS_AND_CONDITIONS),
     z.literal(SIGNUP_SIGN_OUT_FROM_FREE_TRIAL_PAGE),
+    z.literal(CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

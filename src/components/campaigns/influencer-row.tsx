@@ -11,10 +11,10 @@ import { CreatorContacts } from './creator-contacts';
 import TableInput from './campaign-table-input';
 import { ArrowRightOnRectangle, SquarePlus, Trashcan } from '../icons';
 import { Button } from '../button';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import type { TableColumns } from './campaign-influencers-table';
 import { Tooltip } from '../library';
-import { CAMPAIGN_INFLUENCER_ROW } from 'src/utils/rudderstack/event-names';
+import { CampaignInfluencerRowOpenSocialLink } from 'src/utils/analytics/events';
 
 export interface InfluencerRowProps {
     index: number;
@@ -58,7 +58,7 @@ const InfluencerRow = ({
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
     const [showContactInfo, setShowContactInfo] = useState(false);
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
     const inputRef = useRef(null);
 
     return (
@@ -85,12 +85,16 @@ const InfluencerRow = ({
                             <Link href={creator.link_url || ''} target="_blank" rel="noopener noreferrer">
                                 <div
                                     className="ml-4"
-                                    onClick={() =>
-                                        trackEvent(CAMPAIGN_INFLUENCER_ROW('open social link'), {
+                                    onClick={() => {
+                                        // @note previously trackEvent(CAMPAIGN_INFLUENCER_ROW('open social link'), {
+                                        //     platform: creator.platform,
+                                        //     user_id: creator.creator_id,
+                                        // });
+                                        track(CampaignInfluencerRowOpenSocialLink, {
                                             platform: creator.platform,
                                             user_id: creator.creator_id,
-                                        })
-                                    }
+                                        });
+                                    }}
                                 >
                                     <div className="truncate text-xs font-medium text-gray-900">{creator.fullname}</div>
                                     <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>

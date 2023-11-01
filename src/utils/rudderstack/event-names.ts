@@ -37,7 +37,7 @@ const generateEventName =
 // Signup, Sign out from free trial page
 
 // Discovery
-export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Row');
+// export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Row');
 // Campaign Influencer Row, open social link
 
 export const ANALYZE_PAGE = generateEventName('Analyze Page');
