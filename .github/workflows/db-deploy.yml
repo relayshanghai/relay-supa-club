@@ -42,6 +42,36 @@ jobs:
             - run: npm run lint
             - run: npm run test
 
+    staging:
+        runs-on: ubuntu-22.04
+        environment: staging
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - uses: supabase/setup-cli@v1
+              with:
+                  version: latest
+
+            - name: Verify supabase cli version
+              run: supabase -v
+
+            - name: Create supabase config file
+              run: cp supabase/config.toml.example supabase/config.toml
+
+            - name: Prep db script
+              run: chmod +x ./supabase/db.sh
+
+            - name: Link project
+              run: |
+                  supabase link --project-ref=$SUPABASE_PROJECT_ID
+
+            - name: Check linked project
+              run: ./supabase/db.sh get_proj
+
+            - name: Deploy migrations and seed
+              run: supabase db push --include-all --include-seed
+
     deploy:
         runs-on: ubuntu-22.04
         environment: production
@@ -67,3 +97,6 @@ jobs:
 
             - name: Check linked project
               run: ./supabase/db.sh get_proj
+
+            - name: Deploy migrations and seed
+              run: supabase db push --include-all
