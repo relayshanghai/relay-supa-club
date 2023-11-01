@@ -44,6 +44,8 @@ export const transformStripeStatus = (stripeStatus: Stripe.Subscription.Status):
             return 'active';
         case 'canceled':
             return 'canceled';
+        case 'paused':
+            return 'paused';
         case 'incomplete':
         case 'incomplete_expired':
             return 'awaiting_payment_method';

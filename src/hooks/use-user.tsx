@@ -14,9 +14,6 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { useSession } from './use-session';
-import { useTranslation } from 'react-i18next';
-import { useSubscription } from './use-subscription';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
 
@@ -86,10 +83,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
-    const { trackEvent, identifyFromProfile } = useRudderstack();
-    const { user, company } = useSession();
-    const { i18n } = useTranslation();
-    const { subscription } = useSubscription();
+    const { trackEvent } = useRudderstack();
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     useEffect(() => {
@@ -125,12 +119,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         return fetchedProfile;
     });
 
-    useEffect(() => {
-        if (profile && identifyFromProfile && user && company && i18n && subscription) {
-            identifyFromProfile(profile, user, company, i18n.language, subscription);
-        }
-    }, [identifyFromProfile, profile, user, company, i18n, subscription]);
-
     const login = async (email: string, password: string) => {
         setLoading(true);
         try {
@@ -140,8 +128,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
-            // @note `total_sessions` is an incrementable property
-            trackEvent('Log In, undefined', { email, total_sessions: 1 });
+            trackEvent('Log In', { email: email, total_sessions: 1 });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');

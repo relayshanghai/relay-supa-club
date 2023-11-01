@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -12,13 +12,14 @@ import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PasswordReset } from 'src/utils/analytics/events';
 import { SignupStarted } from 'src/utils/analytics/events';
+import { clientLogger } from 'src/utils/logger-client';
 
 const LoginPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { email: emailQuery } = router.query;
-    const { login, supabaseClient, profile, refreshProfile } = useUser();
+    const { login, supabaseClient } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
     const {
@@ -30,29 +31,32 @@ const LoginPage = () => {
     });
 
     useEffect(() => {
-        if (profile) {
-            toast.success(t('login.loginSuccess'));
-            router.push('/boostbot');
-        }
-    }, [profile, router, t]);
-
-    useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
         if (emailQuery) {
             setFieldValue('email', emailQuery.toString());
         }
     }, [emailQuery, setFieldValue, router.isReady]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
         try {
             setLoggingIn(true);
-            await login(email, password);
-            await refreshProfile();
+            await login(email, password).then((data) => {
+                const { user } = data;
+
+                // @note if for some reason we cannot get the user after logging in
+                if (!user) {
+                    clientLogger(`Cannot alias ${email}. User not loaded after login`, 'error', true);
+                    return;
+                }
+
+                toast.success(t('login.loginSuccess'));
+                router.push('/boostbot');
+            });
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
             setLoggingIn(false);
         }
-    };
+    }, [email, password, login, t, router]);
 
     const handleResetPassword = async () => {
         setGeneratingResetEmail(true);
