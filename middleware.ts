@@ -71,7 +71,12 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('signup')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
+    } else if (
+        subscriptionStatus === 'active' ||
+        subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'canceled' ||
+        subscriptionStatus === 'paused'
+    ) {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
