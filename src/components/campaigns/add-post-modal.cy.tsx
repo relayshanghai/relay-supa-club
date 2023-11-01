@@ -115,7 +115,7 @@ describe('AddPostModal', () => {
         cy.get('button').contains('Submit').should('be.disabled');
         cy.contains('Duplicate URL').should('exist');
     });
-    it.skip('Should display a list of posts that have been added. Each item should be a clickable link to that post in a new window', () => {
+    it('Should display a list of posts that have been added. Each item should be a clickable link to that post in a new window', () => {
         const mockPostData: PostInfo = {
             title: 'test post title',
             postedDate: new Date('2021-09-01').toISOString(),
