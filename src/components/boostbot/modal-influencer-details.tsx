@@ -41,13 +41,14 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         engagement_rate: engagementRateDecimal,
         posts_count: totalPosts,
         followers,
-        followers_growth: followersGrowth,
+        followers_growth: followersGrowthRaw,
     } = influencer;
 
     const engagementRatePercentage = `${Math.round(engagementRateDecimal * 100)}%`;
     const avgViews = numberFormatter(avgViewsRaw, 0);
     //engagement rate = (avg views / followers) * 100
-    const engagedAudience = `${Math.round(((avgViewsRaw ? avgViewsRaw : 0) / followers) * 100)}%`;
+    const engagedAudience = `${Math.round(((avgViewsRaw ?? 0) / followers) * 100)}%`;
+    const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
 
     // TODO: replace with real data
     const dummyRadarGraphData = [
@@ -156,7 +157,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <StatCard title="Engaged Audience" stat={engagedAudience} iconColor="yellow" />
                         <div className="grid grid-cols-2 space-x-3">
                             <StatCard title="Engagement Rate" stat={engagementRatePercentage} iconColor="green" />
-                            <StatCard title="Average Views" stat={avgViews ? avgViews : '-'} iconColor="green" />
+                            <StatCard title="Average Views" stat={avgViews ?? '-'} iconColor="green" />
                         </div>
                     </div>
                 </div>
