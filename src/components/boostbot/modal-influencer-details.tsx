@@ -97,8 +97,8 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                     </div>
                 </div>
 
-                {/* stats info */}
-                <div className="flex w-full gap-6">
+                {/* stats - top niches and audience engagement */}
+                <div className="mb-6 flex w-full gap-6">
                     <div className="w-1/2 px-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">Top Niches</div>
                         <div className="w-full">
@@ -124,45 +124,45 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                             Audience Engagement Stats
                         </div>
                         <StatCard title="Engaged Audience" stat="8%" iconColor="yellow" />
-                        <div className="flex space-x-3">
-                            <StatCard title="Engagement Rate" stat="4%" iconColor="yellow" />
-                            <StatCard title="Avg. Views" stat="1.4k" iconColor="yellow" />
+                        <div className="grid grid-cols-2 space-x-3">
+                            <StatCard title="Engagement Rate" stat="4%" iconColor="green" />
+                            <StatCard title="Average Views" stat="1.4k" iconColor="green" />
                         </div>
                     </div>
                 </div>
 
+                {/* stats - audience gender and channel stats */}
                 <div className="flex w-full gap-6">
                     <div className="w-1/2 px-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Gender
                         </div>
-                        <div className="p-3">
-                            <ResponsiveContainer width={320} height={140}>
-                                <BarChart
-                                    data={dummyBarChartData}
-                                    margin={{
-                                        top: 48,
-                                        right: 48,
-                                        left: 0,
-                                        bottom: 0,
-                                    }}
-                                >
-                                    <CartesianGrid vertical={false} horizontal={false} />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                    <YAxis tick={false} axisLine={false} />
-                                    <Bar dataKey="pv" fill="#b2ccff" />
-                                    <Bar dataKey="uv" fill="#fcceee" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+
+                        <ResponsiveContainer width={320} height={140}>
+                            <BarChart
+                                data={dummyBarChartData}
+                                margin={{
+                                    top: 48,
+                                    right: 48,
+                                    left: 0,
+                                    bottom: 0,
+                                }}
+                            >
+                                <CartesianGrid vertical={false} horizontal={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                                <YAxis tick={false} axisLine={false} />
+                                <Bar dataKey="pv" fill="#b2ccff" />
+                                <Bar dataKey="uv" fill="#fcceee" />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                     <div className="w-1/2 space-y-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Channel Stats
                         </div>
-                        <div className="flex space-x-3">
-                            <StatCard title="Followers Growth" stat="4%" iconColor="yellow" />
-                            <StatCard title="Total Posts" stat="232" iconColor="yellow" />
+                        <div className="grid grid-cols-2 space-x-3">
+                            <StatCard title="Followers Growth" stat="4%" iconColor="green" />
+                            <StatCard title="Total Posts" stat="232" iconColor="green" />
                         </div>
                     </div>
                 </div>
