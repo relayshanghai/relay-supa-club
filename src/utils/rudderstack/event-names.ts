@@ -18,7 +18,7 @@ const generateEventName =
         `${prefix}, ${details}`;
 
 // Onboarding
-export const LANDING_PAGE = generateEventName('Landing Page');
+// export const LANDING_PAGE = generateEventName('Landing Page');
 // Landing Page, clicked on start free trial
 // Landing Page, clicked on switch
 // Landing Page, go to Login Page

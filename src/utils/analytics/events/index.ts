@@ -187,6 +187,11 @@ import {
     LANDING_PAGE_START_FREE_TRIAL_CLICKED,
     LandingPageStartFreeTrialClicked,
 } from './landing-page-start-free-trial-clicked';
+import {
+    type SignupWizardStep5StartFreeTrialPayload,
+    SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL,
+    SignupWizardStep5StartFreeTrial,
+} from './pricing section/signup-wizard-step-5-start-free-trial';
 
 export {
     Search,
@@ -244,6 +249,7 @@ export {
     ChangeTemplatePreview,
     ToggleNavbarSize,
     LandingPageStartFreeTrialClicked,
+    SignupWizardStep5StartFreeTrial,
 };
 
 export const events = {
@@ -332,6 +338,7 @@ export const events = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
     [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClicked,
+    [SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL]: SignupWizardStep5StartFreeTrial,
 };
 
 export type payloads = {
@@ -420,6 +427,7 @@ export type payloads = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
     [LANDING_PAGE_START_FREE_TRIAL_CLICKED]: LandingPageStartFreeTrialClickedPayload;
+    [SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL]: SignupWizardStep5StartFreeTrialPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -510,6 +518,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_TEMPLATE_PREVIEW),
     z.literal(TOGGLE_NAVBAR_SIZE),
     z.literal(LANDING_PAGE_START_FREE_TRIAL_CLICKED),
+    z.literal(SIGNUP_WIZARD_STEP_5_START_FREE_TRIAL),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

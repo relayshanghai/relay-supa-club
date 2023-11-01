@@ -18,8 +18,8 @@ import type {
     SubscriptionCreateTrialPostResponse,
 } from 'pages/api/subscriptions/create-trial';
 import { clientLogger } from 'src/utils/logger-client';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { SignupWizardStep5StartFreeTrial } from 'src/utils/analytics/events';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -28,7 +28,7 @@ export interface OnboardPaymentSectionProps {
 }
 const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => {
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
 
     const router = useRouter();
     const { company } = useCompany();
@@ -115,7 +115,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             if (subscription?.status !== 'trialing') {
                 return handleError('Something went wrong activating your subscription');
             }
-            trackEvent(SIGNUP_WIZARD('step-5, start free trial'), {
+            track(SignupWizardStep5StartFreeTrial, {
                 customerId: company.cus_id,
                 companyId: company.id,
                 status: subscription?.status,
