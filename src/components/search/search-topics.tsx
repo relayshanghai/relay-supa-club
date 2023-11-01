@@ -4,9 +4,13 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
-import { SEARCH_OPTIONS, SEARCH_TOPICS_INPUT } from 'src/utils/rudderstack/event-names';
+import {
+    SearchOptionsSearchTopics,
+    SearchTopicsInputAddTag,
+    SearchTopicsInputRemoveTag,
+} from 'src/utils/analytics/events';
 
 type SearchTopicsProps = {
     path: string;
@@ -28,7 +32,7 @@ export const SearchTopics = ({
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
-    const { trackEvent } = useRudderstack();
+    const { track } = useRudderstackTrack();
     const ref = useRef<any>();
 
     useOnOutsideClick(inputRef, () => {
@@ -107,12 +111,15 @@ export const SearchTopics = ({
             }}
             onRemoveTag={(item) => {
                 removeTag(item);
-                trackEvent(SEARCH_TOPICS_INPUT('remove a tag'), { tag: item });
+                // trackEvent(SEARCH_TOPICS_INPUT('remove a tag'), { tag: item });
+                track(SearchTopicsInputRemoveTag, { tag: item });
             }}
             onAddTag={(item) => {
                 addTag(item);
-                trackEvent(SEARCH_TOPICS_INPUT('add a tag'), { tag: item });
-                trackEvent(SEARCH_OPTIONS('search topics'), { topic: item });
+                // trackEvent(SEARCH_TOPICS_INPUT('add a tag'), { tag: item });
+                track(SearchTopicsInputAddTag, { tag: item });
+                // trackEvent(SEARCH_OPTIONS('search topics'), { topic: item });
+                track(SearchOptionsSearchTopics, { topic: item });
             }}
             spinnerLoading={loading}
         />

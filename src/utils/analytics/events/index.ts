@@ -247,6 +247,61 @@ import {
     ANALYZE_PAGE_ADD_TO_CAMPAIGN,
     AnalyzePageAddToCampaign,
 } from './analyze-page-add-to-campaign';
+import {
+    type CloseSearchFilterModalPayload,
+    CLOSE_SEARCH_FILTER_MODAL,
+    CloseSearchFilterModal,
+} from './close-search-filter-modal';
+import {
+    type SearchOptionsSetHashtagPayload,
+    SEARCH_OPTIONS_SET_HASHTAG,
+    SearchOptionsSetHashtag,
+} from './search options/search-options-set-hashtag';
+import {
+    type SearchOptionsSetKeywordPayload,
+    SEARCH_OPTIONS_SET_KEYWORD,
+    SearchOptionsSetKeyword,
+} from './search options/search-options-set-keyword';
+import {
+    type SearchOptionsSetTopicsPayload,
+    SEARCH_OPTIONS_SET_TOPICS,
+    SearchOptionsSetTopics,
+} from './search options/search-options-set-topics';
+import {
+    type SearchOptionsSearchTopicsPayload,
+    SEARCH_OPTIONS_SEARCH_TOPICS,
+    SearchOptionsSearchTopics,
+} from './search options/search-options-search-topics';
+import {
+    type SearchOptionsChangePlatformPayload,
+    SEARCH_OPTIONS_CHANGE_PLATFORM,
+    SearchOptionsChangePlatform,
+} from './search options/search-options-change-platform';
+import {
+    type SearchTopicsInputAddTagPayload,
+    SEARCH_TOPICS_INPUT_ADD_TAG,
+    SearchTopicsInputAddTag,
+} from './search topics input/search-topics-input-add-tag';
+import {
+    type SearchTopicsInputRemoveTagPayload,
+    SEARCH_TOPICS_INPUT_REMOVE_TAG,
+    SearchTopicsInputRemoveTag,
+} from './search topics input/search-topics-input-remove-tag';
+import {
+    type WorldCloudComponentAddTagPayload,
+    WORLD_CLOUD_COMPONENT_ADD_TAG,
+    WorldCloudComponentAddTag,
+} from './word cloud component/world-cloud-component-add-tag';
+import {
+    type WorldCloudComponentRemoveTagPayload,
+    WORLD_CLOUD_COMPONENT_REMOVE_TAG,
+    WorldCloudComponentRemoveTag,
+} from './word cloud component/world-cloud-component-remove-tag';
+import {
+    type SearchForInfluencersPayload,
+    SEARCH_FOR_INFLUENCERS,
+    SearchForInfluencers,
+} from './search-for-influencers';
 
 export {
     Search,
@@ -316,6 +371,17 @@ export {
     CampaignInfluencerRowOpenSocialLink,
     OpenSimilarInfluencerReport,
     AnalyzePageAddToCampaign,
+    CloseSearchFilterModal,
+    SearchOptionsSetHashtag,
+    SearchOptionsSetKeyword,
+    SearchOptionsSetTopics,
+    SearchOptionsSearchTopics,
+    SearchOptionsChangePlatform,
+    SearchTopicsInputAddTag,
+    SearchTopicsInputRemoveTag,
+    WorldCloudComponentAddTag,
+    WorldCloudComponentRemoveTag,
+    SearchForInfluencers,
 };
 
 export const events = {
@@ -416,6 +482,17 @@ export const events = {
     [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLink,
     [OPEN_SIMILAR_INFLUENCER_REPORT]: OpenSimilarInfluencerReport,
     [ANALYZE_PAGE_ADD_TO_CAMPAIGN]: AnalyzePageAddToCampaign,
+    [CLOSE_SEARCH_FILTER_MODAL]: CloseSearchFilterModal,
+    [SEARCH_OPTIONS_SET_HASHTAG]: SearchOptionsSetHashtag,
+    [SEARCH_OPTIONS_SET_KEYWORD]: SearchOptionsSetKeyword,
+    [SEARCH_OPTIONS_SET_TOPICS]: SearchOptionsSetTopics,
+    [SEARCH_OPTIONS_SEARCH_TOPICS]: SearchOptionsSearchTopics,
+    [SEARCH_OPTIONS_CHANGE_PLATFORM]: SearchOptionsChangePlatform,
+    [SEARCH_TOPICS_INPUT_ADD_TAG]: SearchTopicsInputAddTag,
+    [SEARCH_TOPICS_INPUT_REMOVE_TAG]: SearchTopicsInputRemoveTag,
+    [WORLD_CLOUD_COMPONENT_ADD_TAG]: WorldCloudComponentAddTag,
+    [WORLD_CLOUD_COMPONENT_REMOVE_TAG]: WorldCloudComponentRemoveTag,
+    [SEARCH_FOR_INFLUENCERS]: SearchForInfluencers,
 };
 
 export type payloads = {
@@ -516,6 +593,17 @@ export type payloads = {
     [CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK]: CampaignInfluencerRowOpenSocialLinkPayload;
     [OPEN_SIMILAR_INFLUENCER_REPORT]: OpenSimilarInfluencerReportPayload;
     [ANALYZE_PAGE_ADD_TO_CAMPAIGN]: AnalyzePageAddToCampaignPayload;
+    [CLOSE_SEARCH_FILTER_MODAL]: CloseSearchFilterModalPayload;
+    [SEARCH_OPTIONS_SET_HASHTAG]: SearchOptionsSetHashtagPayload;
+    [SEARCH_OPTIONS_SET_KEYWORD]: SearchOptionsSetKeywordPayload;
+    [SEARCH_OPTIONS_SET_TOPICS]: SearchOptionsSetTopicsPayload;
+    [SEARCH_OPTIONS_SEARCH_TOPICS]: SearchOptionsSearchTopicsPayload;
+    [SEARCH_OPTIONS_CHANGE_PLATFORM]: SearchOptionsChangePlatformPayload;
+    [SEARCH_TOPICS_INPUT_ADD_TAG]: SearchTopicsInputAddTagPayload;
+    [SEARCH_TOPICS_INPUT_REMOVE_TAG]: SearchTopicsInputRemoveTagPayload;
+    [WORLD_CLOUD_COMPONENT_ADD_TAG]: WorldCloudComponentAddTagPayload;
+    [WORLD_CLOUD_COMPONENT_REMOVE_TAG]: WorldCloudComponentRemoveTagPayload;
+    [SEARCH_FOR_INFLUENCERS]: SearchForInfluencersPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -618,6 +706,17 @@ export const eventKeys = z.union([
     z.literal(CAMPAIGN_INFLUENCER_ROW_OPEN_SOCIAL_LINK),
     z.literal(OPEN_SIMILAR_INFLUENCER_REPORT),
     z.literal(ANALYZE_PAGE_ADD_TO_CAMPAIGN),
+    z.literal(CLOSE_SEARCH_FILTER_MODAL),
+    z.literal(SEARCH_OPTIONS_SET_HASHTAG),
+    z.literal(SEARCH_OPTIONS_SET_KEYWORD),
+    z.literal(SEARCH_OPTIONS_SET_TOPICS),
+    z.literal(SEARCH_OPTIONS_SEARCH_TOPICS),
+    z.literal(SEARCH_OPTIONS_CHANGE_PLATFORM),
+    z.literal(SEARCH_TOPICS_INPUT_ADD_TAG),
+    z.literal(SEARCH_TOPICS_INPUT_REMOVE_TAG),
+    z.literal(WORLD_CLOUD_COMPONENT_ADD_TAG),
+    z.literal(WORLD_CLOUD_COMPONENT_REMOVE_TAG),
+    z.literal(SEARCH_FOR_INFLUENCERS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

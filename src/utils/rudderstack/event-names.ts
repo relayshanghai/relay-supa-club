@@ -44,7 +44,7 @@ const generateEventName =
 // Analyze Page, Similar Influencer Section, open report
 // Analyze Page, add to campaign
 
-export const SEARCH_FILTER_MODAL = generateEventName('Search Filter Modal');
+// export const SEARCH_FILTER_MODAL = generateEventName('Search Filter Modal');
 // Search Filter Modal, Clear search filters
 // Search Filter Modal, Open search filter modal
 // Search Filter Modal, Close search filter modal
@@ -66,7 +66,7 @@ export const SEARCH_FILTER_MODAL = generateEventName('Search Filter Modal');
 // Search Filter Modal, Set influencer views filter upper limit
 // Search Filter Modal, Set influencer last post filter
 
-export const SEARCH_OPTIONS = generateEventName('Search Options');
+// export const SEARCH_OPTIONS = generateEventName('Search Options');
 // Search Options, Set keyword
 // Search Options, Set hashtag
 // Search Options, Set topics
@@ -81,11 +81,11 @@ export const SEARCH_RESULT_ROW = generateEventName('Search Result Row');
 // Search Result Row, open report
 // Search Result Row, open social link
 
-export const SEARCH_TOPICS_INPUT = generateEventName('Search Topics Input');
+// export const SEARCH_TOPICS_INPUT = generateEventName('Search Topics Input');
 // Search Topics Input, remove a tag
 // Search Topics Input, add a tag
 
-export const WORD_CLOUD_COMPONENT = generateEventName('Word Cloud Component');
+// export const WORD_CLOUD_COMPONENT = generateEventName('Word Cloud Component');
 // Word Cloud Component, Added tag from wordcloud
 // Word Cloud Component, Removed tag from wordcloud
 
