@@ -15,14 +15,41 @@ import {
     YAxis,
 } from 'recharts';
 import StatCard from './stat-card';
+import type { Row } from '@tanstack/react-table';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import { numberFormatter } from 'src/utils/formatter';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
+    selectedRow?: Row<BoostbotInfluencer>;
 };
 
-export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsModalProps) => {
+export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
     // const { t } = useTranslation();
+    if (!selectedRow) {
+        return null;
+    }
+
+    const influencer = selectedRow && selectedRow.original;
+
+    const {
+        fullname,
+        picture,
+        handle,
+        avg_views: avgViewsRaw,
+        engagement_rate: engagementRateDecimal,
+        posts_count: totalPosts,
+        followers,
+        followers_growth: followersGrowth,
+    } = influencer;
+
+    const engagementRatePercentage = `${Math.round(engagementRateDecimal * 100)}%`;
+    const avgViews = numberFormatter(avgViewsRaw, 0);
+    //engagement rate = (avg views / followers) * 100
+    const engagedAudience = `${Math.round(((avgViewsRaw ? avgViewsRaw : 0) / followers) * 100)}%`;
+
+    // TODO: replace with real data
     const dummyRadarGraphData = [
         { subject: 'Productivity', A: 90, fullMark: 150 },
         { subject: 'Fitness Routine', A: 60, fullMark: 150 },
@@ -33,6 +60,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
         { subject: 'Injury Recovery', A: 23, fullMark: 150 },
     ];
 
+    // TODO: replace with real data
     const dummyBarChartData = [
         {
             name: '13-17',
@@ -76,16 +104,18 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                         <div className="h-16 w-16 align-middle">
                             <img
                                 className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
-                                src=""
-                                alt="@tomorrowTech"
+                                src={picture}
+                                alt={handle}
                             />
                         </div>
                         <div>
-                            <div className="text-base font-semibold text-gray-700">Adrianne Smalls</div>
-                            <div className="flex">
-                                <div className="text-sm text-primary-500 ">@</div>
-                                <span className="text-sm text-gray-600">tomorrowTech</span>
-                            </div>
+                            <div className="text-base font-semibold text-gray-700">{fullname}</div>
+                            {handle && (
+                                <div className="flex">
+                                    <div className="text-sm text-primary-500 ">@</div>
+                                    <span className="text-sm text-gray-600">{handle}</span>
+                                </div>
+                            )}
                         </div>
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
                             <div>86</div>
@@ -123,10 +153,10 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Engagement Stats
                         </div>
-                        <StatCard title="Engaged Audience" stat="8%" iconColor="yellow" />
+                        <StatCard title="Engaged Audience" stat={engagedAudience} iconColor="yellow" />
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard title="Engagement Rate" stat="4%" iconColor="green" />
-                            <StatCard title="Average Views" stat="1.4k" iconColor="green" />
+                            <StatCard title="Engagement Rate" stat={engagementRatePercentage} iconColor="green" />
+                            <StatCard title="Average Views" stat={avgViews ? avgViews : '-'} iconColor="green" />
                         </div>
                     </div>
                 </div>
@@ -161,8 +191,16 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen }: InfluencerDetailsM
                             Channel Stats
                         </div>
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard title="Followers Growth" stat="4%" iconColor="green" />
-                            <StatCard title="Total Posts" stat="232" iconColor="green" />
+                            <StatCard
+                                title="Followers Growth"
+                                stat={followersGrowth ? followersGrowth.toString() : '-'}
+                                iconColor="green"
+                            />
+                            <StatCard
+                                title="Total Posts"
+                                stat={totalPosts ? totalPosts.toString() : '-'}
+                                iconColor="green"
+                            />
                         </div>
                     </div>
                 </div>

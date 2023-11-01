@@ -25,6 +25,7 @@ import type { Sequence } from 'src/utils/api/db';
 import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import type { Row } from '@tanstack/react-table';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -49,6 +50,7 @@ const Boostbot = () => {
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
+    const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -273,6 +275,7 @@ const Boostbot = () => {
                         clearChatHistory={clearChatHistory}
                         isInfluencerDetailsModalOpen={isInfluencerDetailsModalOpen}
                         setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
+                        selectedRow={selectedRow}
                     />
                 </div>
 
@@ -286,6 +289,7 @@ const Boostbot = () => {
                         setSelectedInfluencers={setSelectedInfluencers}
                         meta={{ t, searchId }}
                         setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
+                        setSelectedRow={setSelectedRow}
                     />
                 )}
             </div>

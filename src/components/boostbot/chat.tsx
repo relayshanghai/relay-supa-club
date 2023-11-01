@@ -26,6 +26,7 @@ import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-histor
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 import { InfluencerDetailsModal } from './modal-influencer-details';
+import type { Row } from '@tanstack/react-table';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -53,6 +54,7 @@ interface ChatProps {
     clearChatHistory: () => void;
     isInfluencerDetailsModalOpen: boolean;
     setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+    selectedRow?: Row<BoostbotInfluencer>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -76,6 +78,7 @@ export const Chat: React.FC<ChatProps> = ({
     clearChatHistory,
     isInfluencerDetailsModalOpen,
     setIsInfluencerDetailsModalOpen,
+    selectedRow,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -290,7 +293,11 @@ export const Chat: React.FC<ChatProps> = ({
                 onConfirm={clearChatHistory}
             />
 
-            <InfluencerDetailsModal isOpen={isInfluencerDetailsModalOpen} setIsOpen={setIsInfluencerDetailsModalOpen} />
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isInfluencerDetailsModalOpen}
+                setIsOpen={setIsInfluencerDetailsModalOpen}
+            />
 
             <ChatContent
                 messages={messages}

@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
 import type { TFunction } from 'i18next';
-import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -13,6 +14,7 @@ interface DataTableProps<TData, TValue> {
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     meta: TableMeta<TData>;
     setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+    setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 }
 
 declare module '@tanstack/react-table' {
@@ -30,6 +32,7 @@ export function InfluencersTable<TData, TValue>({
     setSelectedInfluencers,
     meta,
     setIsInfluencerDetailsModalOpen,
+    setSelectedRow,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
@@ -42,6 +45,13 @@ export function InfluencersTable<TData, TValue>({
         autoResetPageIndex: false,
         state: { rowSelection: selectedInfluencers },
     });
+
+    //handle row click to open influencer detail modal
+    const handleInfluencerRowClick = (row: Row<BoostbotInfluencer>) => {
+        setIsInfluencerDetailsModalOpen(true);
+        setSelectedRow(row);
+    };
+
     const page = table.getState().pagination.pageIndex;
 
     // Handle table pagination reset when for example new influencers are loaded. But not when individual influencers are removed.
@@ -94,7 +104,7 @@ export function InfluencersTable<TData, TValue>({
                                     key={row.id}
                                     data-state={row.getIsSelected() && 'selected'}
                                     className="cursor-pointer"
-                                    onClick={() => setIsInfluencerDetailsModalOpen(true)}
+                                    onClick={() => handleInfluencerRowClick(row as Row<BoostbotInfluencer>)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
