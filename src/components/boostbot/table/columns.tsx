@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
+import { BoostbotScoreCell } from './boostbot-score-cell';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -32,7 +33,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'boostbotScore',
         header: ({ table }) => table.options.meta?.t('boostbot.table.score'),
-        cell: 'score here',
+        cell: BoostbotScoreCell,
     },
     {
         id: 'followers',

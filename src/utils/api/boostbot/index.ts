@@ -20,6 +20,7 @@ export const createBoostbotInfluencerPayload = ({
     const defaultFollowers = { left_number: 50000, right_number: 500000 };
     const youtubeFollowers = { left_number: 5000, right_number: 300000 };
     const followersParam = platform === 'youtube' ? youtubeFollowers : defaultFollowers;
+    const reelsPlaysParam = platform === 'instagram' ? { left_number: 0 } : undefined;
 
     return {
         query: { auto_unhide: isDev() ? 0 : 1, platform },
@@ -46,6 +47,7 @@ export const createBoostbotInfluencerPayload = ({
                     code: 'MALE',
                     weight: 0,
                 },
+                reels_plays: reelsPlaysParam,
                 ...filters,
             },
             sort: { field: 'relevance', direction: 'desc' },

@@ -99,17 +99,24 @@ interface Gender {
 
 interface GenderPerAge {
     code: string;
-    male: number;
-    female: number;
+    male?: number;
+    female?: number;
 }
 
 interface AudienceGeo {
-    countries: Country[];
-    states: State[];
-    cities: City[];
+    countries: AudienceCountry[];
+    states?: State[];
+    cities?: City[];
 }
 
 interface Country {
+    id: number;
+    name: string;
+    code: string;
+    coords: Coords;
+}
+
+interface AudienceCountry {
     id: number;
     name: string;
     code: string;
@@ -144,11 +151,10 @@ interface Interest {
 interface Language {
     code: string;
     name: string;
-    weight: number;
 }
 
 interface UserProfileGeo {
-    city: City;
-    state: State;
+    city?: City;
+    state?: State;
     country: Country;
 }
