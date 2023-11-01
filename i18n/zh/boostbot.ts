@@ -44,8 +44,8 @@ const boostbot = {
         hasUsedUnlock: '真棒！你刚刚解锁了新的红人 {{count}}。',
         and: '和',
         clearChatModal: {
-            open: '删除对话记录',
-            title: '你确定要删除和BoostBot的对话记录和红人搜索结果吗?',
+            open: '清除聊天记录和筛选条件',
+            title: '确定删除您的BoostBot聊天记录、筛选条件和红人搜索结果吗？',
             confirm: '是',
             cancel: '返回',
         },
