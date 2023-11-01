@@ -6,6 +6,11 @@ import type { SubscriptionGetResponse } from 'pages/api/subscriptions/index.js';
 declare global {
     interface Window {
         rudder: Omit<typeof rudderSDK, 'RESIDENCY_SERVER'>;
+        /**
+         * Mixpanel
+         * @see https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/mixpanel-browser/index.d.ts#L141
+         */
+        mixpanel: any;
         session?: {
             user: any;
             profile: ProfileDB;
