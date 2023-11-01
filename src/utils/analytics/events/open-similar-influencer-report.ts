@@ -1,7 +1,7 @@
 import type { CreatorPlatform } from 'types';
 import type { TriggerEvent } from '../types';
 
-export const OPEN_SIMILAR_INFLUENCER_REPORT = 'Analyze Page, Similar Influencer Section, open report';
+export const OPEN_SIMILAR_INFLUENCER_REPORT = 'Open Similar Influencer Report';
 
 export type OpenSimilarInfluencerReportPayload = {
     platform: CreatorPlatform;
