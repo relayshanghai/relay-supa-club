@@ -54,9 +54,6 @@ import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-
 // Identity for webhook events that have no `body.account`
 const EMAIL_ENGINE_TEST_IDENTITY = 'a579b7c282704275a93aaf0e304335f1302babb91496c6ee3174c8bd3c316601';
 
-// Identity for webhook events if we cannot determine the identity from the provided `body.account`
-const EMAIL_ENGINE_NO_IDENTITY = 'c35d6aaf3b3885dfc9f36cddf48a65e93a919e13165fbbcfc0f9de5636279559';
-
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
 };
@@ -451,21 +448,21 @@ const identifyWebhook = async (req: NextApiRequest) => {
         return rudderstack.identifyWithAnonymousID(EMAIL_ENGINE_TEST_IDENTITY);
     }
 
-    const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
+    let profile = null;
+
+    try {
+        profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext('Webhook Payload', req.body);
+        });
+    }
 
     if (profile) {
         return rudderstack.identifyWithProfile(profile.id);
     }
 
-    if (!profile) {
-        return rudderstack.identifyWithAnonymousID(body.account);
-    }
-
-    serverLogger(`No account associated with "${body.account}"`, (scope) => {
-        return scope.setContext('Webhook Payload', req.body);
-    });
-
-    return rudderstack.identifyWithAnonymousID(EMAIL_ENGINE_NO_IDENTITY);
+    return rudderstack.identifyWithAnonymousID(body.account);
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
