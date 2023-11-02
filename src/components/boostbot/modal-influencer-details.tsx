@@ -48,7 +48,6 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         posts_count: totalPosts,
         followers,
         followers_growth: followersGrowthRaw,
-        audience_genders_per_age: audienceGendersPerAge,
         url,
         user_id,
     } = influencer;
@@ -57,15 +56,18 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
-    console.log('influencer gender', audienceGendersPerAge);
-
     const engagementRatePercentage = `${Math.round(engagementRateDecimal * 100)}%`;
     const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlays, 0);
     //engagement rate = (avg views / followers) * 100
     const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlays ?? 0) / followers) * 100)}%`;
     const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
 
-    // TODO: replace with real data
+    const handleAddToSequence = () => {
+        setIsOpen(false);
+        //TODO: add to sequence function in V2-1029
+    };
+
+    // TODO: replace placeholder in V2-1018
     const dummyRadarGraphData = [
         { subject: 'Productivity', A: 90, fullMark: 150 },
         { subject: 'Fitness Routine', A: 60, fullMark: 150 },
@@ -76,7 +78,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         { subject: 'Injury Recovery', A: 23, fullMark: 150 },
     ];
 
-    // TODO: replace with real data
+    // TODO: replace placeholder in V2-1075
     const dummyBarChartData = [
         {
             name: '13-17',
@@ -228,7 +230,9 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                     <Button variant="gray" className="w-1/2" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
-                    <Button className="boostbot-gradient w-1/2 border-none">Add to Sequence</Button>
+                    <Button className="boostbot-gradient w-1/2 border-none" onClick={handleAddToSequence}>
+                        Add to Sequence
+                    </Button>
                 </div>
             </div>
         </Modal>
