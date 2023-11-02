@@ -6,6 +6,7 @@ import { apiFetch as apiFetchOriginal } from '../api-fetch';
 import { forensicTrack } from '../forensicTrack';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
 import type { ApiPayload } from '../types';
+import { serverLogger } from 'src/utils/logger-server';
 
 /**
  * For fetching IQData API
@@ -23,7 +24,15 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
 
     if (context) {
         await rudderstack.identify(context);
-        await rudderstack.send(content);
+        try {
+            await rudderstack.send(content);
+        } catch (error: unknown) {
+            serverLogger(error, (scope) => {
+                return scope
+                    .setContext('Server Context', { context })
+                    .setContext('Event Payload', { payload: content });
+            });
+        }
     }
 
     // @note refactor. content should return the Response object itself

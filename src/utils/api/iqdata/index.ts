@@ -9,6 +9,7 @@ import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import { logIqdataLimits } from '../forensicTrack';
+import { serverLogger } from 'src/utils/logger-server';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -56,7 +57,13 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
 
     if (context) {
         await rudderstack.identify(context);
-        await rudderstack.send(json);
+        try {
+            await rudderstack.send(json);
+        } catch (error: unknown) {
+            serverLogger(error, (scope) => {
+                return scope.setContext('Server Context', { context }).setContext('Event Payload', { payload: json });
+            });
+        }
     }
 
     return json as T;
