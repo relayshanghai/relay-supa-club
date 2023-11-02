@@ -1,5 +1,6 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import type { SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmail, SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
@@ -121,6 +122,11 @@ const sendAndInsertEmail = async ({
 // eslint-disable-next-line complexity
 const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody) => {
     const results: SendResult[] = [];
+    const trackData: SequenceSendPayload = {
+        extra_info: { results },
+        account,
+        sequence_influencer_ids: sequenceInfluencers.map((influencer) => influencer.id),
+    };
     if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
         throw new Error('Missing required parameters');
     }
@@ -130,8 +136,11 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     if (!sequenceSteps || sequenceSteps.length === 0) {
         throw new Error('No sequence steps found');
     }
+    trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
     const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
     const sequenceEmails = await db(getSequenceEmailsBySequenceCall)(sequenceId);
+    trackData.extra_info.sequence_emails = sequenceEmails.map((email) => email.id);
 
     // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
     const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
@@ -150,7 +159,15 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
             sequence_id,
         }),
     );
-    await db(updateSequenceInfluencersCall)(optimisticUpdates);
+    trackData.extra_info.optimistic_updates = optimisticUpdates.map(
+        (update) => `${update.id} ==> ${update.funnel_status}`,
+    );
+    try {
+        const optimisticUpdateResult = await db(updateSequenceInfluencersCall)(optimisticUpdates);
+        trackData.extra_info.optimistic_update_result = optimisticUpdateResult;
+    } catch (error: any) {
+        trackData.extra_info.optimistic_update_error = `error: ${error?.message}\n stack ${error?.stack}`;
+    }
 
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
@@ -172,7 +189,9 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     serverLogger(error);
                     results.push({
                         sequenceInfluencerId: sequenceInfluencer.id,
-                        error: error?.message ?? 'Something went wrong sending the email',
+                        error:
+                            `error: ${error?.message}\n stack ${error?.stack}` ??
+                            'Something went wrong sending the email',
                     });
                 }
             }
@@ -188,7 +207,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
             serverLogger(error);
             results.push({
                 sequenceInfluencerId: sequenceInfluencer.id,
-                error: error?.message ?? '',
+                error: `error: ${error?.message}\n stack ${error?.stack}` ?? '',
             });
         }
     }
