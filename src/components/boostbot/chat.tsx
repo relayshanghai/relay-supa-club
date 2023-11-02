@@ -25,6 +25,7 @@ import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
+import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -50,6 +51,10 @@ interface ChatProps {
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
     clearChatHistory: () => void;
+    isLoading: boolean;
+    isDisabled: boolean;
+    // openFiltersModal: () => void;
+    // openClearChatHistoryModal: () => void;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -71,6 +76,8 @@ export const Chat: React.FC<ChatProps> = ({
     setSequence,
     sequences,
     clearChatHistory,
+    isLoading,
+    isDisabled,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -271,6 +278,25 @@ export const Chat: React.FC<ChatProps> = ({
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
+            <div className="flex justify-between px-2">
+                <button
+                    data-testid="boostbot-open-filters"
+                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    onClick={() => setIsFiltersModalOpen(true)}
+                    disabled={isLoading || isDisabled}
+                >
+                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-500 group-disabled:stroke-primary-200" />{' '}
+                    {t('boostbot.filters.openModalButton')}
+                </button>
+                <button
+                    data-testid="boostbot-open-clear-chat-history"
+                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-slate-400 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    onClick={() => setIsClearChatHistoryModalOpen(true)}
+                    disabled={isLoading || isDisabled}
+                >
+                    {t('boostbot.chat.clearChatModal.open')}
+                </button>
+            </div>
 
             <SearchFiltersModal
                 isOpen={isFiltersModalOpen}
@@ -303,8 +329,6 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
-                    openFiltersModal={() => setIsFiltersModalOpen(true)}
-                    openClearChatHistoryModal={() => setIsClearChatHistoryModalOpen(true)}
                 />
             </div>
         </div>

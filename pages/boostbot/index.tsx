@@ -270,6 +270,8 @@ const Boostbot = () => {
                         sequence={sequence}
                         sequences={sequences}
                         clearChatHistory={clearChatHistory}
+                        isLoading={isSearchLoading}
+                        isDisabled={areChatActionsDisabled}
                     />
                 </div>
 
