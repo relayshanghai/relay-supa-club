@@ -214,6 +214,10 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     sequenceInfluencerId: sequenceInfluencer.id,
                     error: `error: ${error?.message}\n stack ${error?.stack}` ?? '',
                 });
+                await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
+                    id: sequenceInfluencer.id,
+                    funnel_status: 'To Contact',
+                });
             }
         }
     } catch (error) {
