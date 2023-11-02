@@ -96,6 +96,8 @@ const handleOtherWebhook = async (body: BrevoEvent, res: NextApiResponse) => {
 const postHandler: NextApiHandler = async (req, res) => {
     const body = req.body as BrevoEvent;
 
+    // NOTE: Check brevo docs for more info on the different types of events
+    // https://developers.brevo.com/docs/transactional-webhooks
     try {
         switch (body.event) {
             case 'deferred':
