@@ -167,5 +167,8 @@ const sequences = {
     missingEmail: '缺少邮箱',
     missingEmailTooltipDescription: '您必须为此KOL添加电子邮件，以便开始此序列。',
     warningDuplicateInfluencer: '警告：重复的KOL可能会导致问题',
+    missingRecentPostTitle: '缺少最新发布内容',
+    missingRecentPostTitleTooltipDescription:
+        '您必须为此KOL添加最新发布内容，以便开始此序列。没有最新发布内容的KOL将不会收到任何邮件。',
 };
 export default sequences;
