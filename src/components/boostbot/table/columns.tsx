@@ -2,6 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
 import { BoostbotScoreCell } from './boostbot-score-cell';
+import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -53,6 +54,6 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'openDetail',
         header: '',
-        cell: 'icon',
+        cell: (cell) => <OpenInfluencerModalCell row={cell.row} />,
     },
 ];
