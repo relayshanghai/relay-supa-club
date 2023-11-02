@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { RelayError } from 'src/errors/relay-error';
 import type { ApiRequest, ApiResponse } from 'src/utils/api-handler';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getUserSessionFromServerContext } from 'src/utils/api/analytics';
 import { saveNotesBySequenceInfluencer } from 'src/utils/api/db/calls/sequence-influencer-notes';
 import { db } from 'src/utils/supabase-client';

@@ -116,15 +116,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');
         }
-
-        // only set Sentry user if it is the first time we are fetching the profile
-        if (fetchedProfile?.email && !profile?.email) {
-            Sentry.setUser({
-                email: fetchedProfile.email,
-                id: fetchedProfile.id,
-                name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
-            });
-        }
         return fetchedProfile;
     });
 

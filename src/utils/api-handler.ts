@@ -1,14 +1,14 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import type { ApiError } from 'src/errors/api-error';
 import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
 import { setUser } from '@sentry/nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-
-export type ApiError = { error: any };
+import { RelayError } from 'src/errors/relay-error';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -45,36 +45,6 @@ export type ApiHandlerParams = {
     deleteHandler?: NextApiHandler;
     putHandler?: NextApiHandler;
 };
-
-export type RelayErrorOptions = {
-    shouldLog?: boolean;
-    sendToSentry?: boolean;
-};
-
-export class RelayError extends Error {
-    readonly _httpCode: number;
-    readonly _shouldLog: boolean;
-    readonly _sendToSentry: boolean;
-
-    constructor(msg: string, httpCode = httpCodes.INTERNAL_SERVER_ERROR, options?: RelayErrorOptions) {
-        super(msg);
-        this._httpCode = httpCode;
-        this._shouldLog = options?.shouldLog || true; // log to server by default
-        this._sendToSentry = !!options?.sendToSentry && process.env.NODE_ENV !== 'development'; // Don’t send to sentry unless explicitly set in options, and only in production
-    }
-
-    get httpCode() {
-        return this._httpCode;
-    }
-
-    get shouldLog() {
-        return this._shouldLog;
-    }
-
-    get sendToSentry() {
-        return this._sendToSentry;
-    }
-}
 
 const isJsonable = (error: any) => {
     return (

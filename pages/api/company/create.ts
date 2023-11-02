@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
-import { RelayError, ApiHandler } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB } from 'src/utils/api/db';
 import { deleteUserById, findCompaniesByNames } from 'src/utils/api/db';
 import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src/utils/api/db';
@@ -12,6 +12,7 @@ import { db } from 'src/utils/supabase-client';
 import { CompanySize } from 'types';
 import { z } from 'zod';
 import { addCompanyCategory } from 'src/utils/api/db/calls/company-categories';
+import { RelayError } from 'src/errors/relay-error';
 
 const CompanyCreatePostBody = z.object({
     user_id: z.string(),
