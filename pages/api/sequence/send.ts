@@ -201,8 +201,14 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     }
                 }
                 // revert the optimistic update if not sent successfully
-                const outreachResult = results.find((result) => result.stepNumber === 0);
-                if (!outreachResult || outreachResult.error) {
+                const outreachResults = results.filter(
+                    (result) => result.sequenceInfluencerId === sequenceInfluencer.id,
+                );
+                if (
+                    !outreachResults ||
+                    outreachResults.length === 0 ||
+                    outreachResults.every((result) => result.error)
+                ) {
                     await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
                         id: sequenceInfluencer.id,
                         funnel_status: 'To Contact',
@@ -221,6 +227,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
             }
         }
     } catch (error) {
+        serverLogger(error); // truly unexpected error
         track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
         return results;
     }
