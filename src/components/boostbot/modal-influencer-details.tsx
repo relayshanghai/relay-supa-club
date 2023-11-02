@@ -18,6 +18,10 @@ import StatCard from './stat-card';
 import type { Row } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { numberFormatter } from 'src/utils/formatter';
+import Link from 'next/link';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -27,27 +31,38 @@ type InfluencerDetailsModalProps = {
 
 export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
     // const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
+
     if (!selectedRow) {
         return null;
     }
 
     const influencer = selectedRow && selectedRow.original;
-
     const {
         fullname,
         picture,
         handle,
         avg_views: avgViewsRaw,
+        avg_reels_plays: avgReelsPlays, // this is avg views for instagram
         engagement_rate: engagementRateDecimal,
         posts_count: totalPosts,
         followers,
         followers_growth: followersGrowthRaw,
+        audience_genders_per_age: audienceGendersPerAge,
+        url,
+        user_id,
     } = influencer;
 
+    // @note get platform from url for now
+    //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
+    const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
+
+    console.log('influencer gender', audienceGendersPerAge);
+
     const engagementRatePercentage = `${Math.round(engagementRateDecimal * 100)}%`;
-    const avgViews = numberFormatter(avgViewsRaw, 0);
+    const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlays, 0);
     //engagement rate = (avg views / followers) * 100
-    const engagedAudience = `${Math.round(((avgViewsRaw ?? 0) / followers) * 100)}%`;
+    const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlays ?? 0) / followers) * 100)}%`;
     const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
 
     // TODO: replace with real data
@@ -65,33 +80,28 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const dummyBarChartData = [
         {
             name: '13-17',
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
+            male: 4000,
+            female: 2400,
         },
         {
             name: '18-24',
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
+            male: 3000,
+            female: 1398,
         },
         {
             name: '25-40',
-            uv: 2000,
-            pv: 1800,
-            amt: 2290,
+            male: 2000,
+            female: 1800,
         },
         {
             name: '40-65',
-            uv: 2780,
-            pv: 2908,
-            amt: 2000,
+            male: 2780,
+            female: 2908,
         },
         {
             name: '65+',
-            uv: 1890,
-            pv: 3800,
-            amt: 2181,
+            male: 1890,
+            female: 3800,
         },
     ];
 
@@ -122,10 +132,17 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             <div>86</div>
                         </div>
                     </div>
-
-                    <div className="text-xs font-semibold text-gray-400 hover:cursor-pointer hover:text-primary-500">
+                    <Link
+                        href={`/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(user_id)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-semibold text-gray-400 hover:cursor-pointer hover:text-primary-500"
+                        onClick={() =>
+                            track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })
+                        }
+                    >
                         Unlock Detailed Analysis Report
-                    </div>
+                    </Link>
                 </div>
 
                 {/* stats - top niches and audience engagement */}
@@ -182,8 +199,8 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                                 <CartesianGrid vertical={false} horizontal={false} />
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                                 <YAxis tick={false} axisLine={false} />
-                                <Bar dataKey="pv" fill="#b2ccff" />
-                                <Bar dataKey="uv" fill="#fcceee" />
+                                <Bar dataKey="female" fill="#fcceee" />
+                                <Bar dataKey="male" fill="#b2ccff" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

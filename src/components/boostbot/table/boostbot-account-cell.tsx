@@ -23,7 +23,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
     const Icon = url.includes('youtube') ? Youtube : url.includes('tiktok') ? Tiktok : Instagram;
     const { track } = useRudderstackTrack();
     // @note get platform from url for now
-    //       `influencer` was supposed to be `UserAccount` type which contains `type` for platform but it's not there on runtime
+    //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
     return (
