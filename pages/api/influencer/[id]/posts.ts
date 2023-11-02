@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getCampaignCreator, updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { getInfluencerPostsBySocialProfile } from 'src/utils/api/db/calls/influencer-post';
 import { db } from 'src/utils/supabase-client';
@@ -12,6 +12,7 @@ import { getProfileById, recordReportUsage } from 'src/utils/api/db';
 import type { ServerContext } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { RelayError } from 'src/errors/relay-error';
 
 export type InfluencerPostResponse = PostInfo[] | { error: string };
 
