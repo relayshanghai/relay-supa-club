@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers, StopBoostbot, OpenVideoGuideModal } from 'src/utils/analytics/events';
+import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
@@ -193,24 +193,24 @@ export const Chat: React.FC<ChatProps> = ({
                             geolocations: filters.audience_geo,
                         },
                     });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'video',
-                        videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                        eventToTrack: OpenVideoGuideModal.eventName,
-                    });
+                    // addMessage({
+                    //     sender: 'Bot',
+                    //     type: 'video',
+                    //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    //     eventToTrack: OpenVideoGuideModal.eventName,
+                    // });
                     addMessage({
                         sender: 'Bot',
                         type: 'translation',
                         translationKey: 'boostbot.chat.influencersFoundAddToSequence',
                         translationLink: '/sequences',
                     });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'video',
-                        videoUrl: '/assets/videos/sequence-guide.mp4',
-                        eventToTrack: OpenVideoGuideModal.eventName,
-                    });
+                    // addMessage({
+                    //     sender: 'Bot',
+                    //     type: 'video',
+                    //     videoUrl: '/assets/videos/sequence-guide.mp4',
+                    //     eventToTrack: OpenVideoGuideModal.eventName,
+                    // });
                     addMessage({
                         sender: 'Bot',
                         type: 'translation',
@@ -230,12 +230,12 @@ export const Chat: React.FC<ChatProps> = ({
                     type: 'translation',
                     translationKey: 'boostbot.chat.noInfluencersFound',
                 });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
+                // addMessage({
+                //     sender: 'Bot',
+                //     type: 'video',
+                //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                //     eventToTrack: OpenVideoGuideModal.eventName,
+                // });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
             track(RecommendInfluencers, payload);
