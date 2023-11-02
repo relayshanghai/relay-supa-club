@@ -19,6 +19,7 @@ import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succe
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
 import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
 import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-subscriptions';
+import { ApiHandler } from 'src/utils/api-handler';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -75,11 +76,7 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
     }
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-    }
-
+async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     let trackData: StripeWebhookIncomingPayload = {
         type: 'unknown',
         extra_info: { event: null, error: null },
@@ -162,3 +159,7 @@ const buffer = (req: NextApiRequest) => {
         req.on('error', reject);
     });
 };
+
+export default ApiHandler({
+    postHandler,
+});
