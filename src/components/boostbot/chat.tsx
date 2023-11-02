@@ -82,16 +82,17 @@ export const Chat: React.FC<ChatProps> = ({
     sequences,
     clearChatHistory,
 }) => {
-    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
-    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
-    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+    const defaultFilters: Filters = {
         platforms: ['youtube', 'tiktok', 'instagram'],
         audience_geo: [
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
-    });
+    };
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -268,6 +269,11 @@ export const Chat: React.FC<ChatProps> = ({
         }
     };
 
+    const clearChatHistoryAndFilters = () => {
+        clearChatHistory();
+        setFilters(defaultFilters);
+    };
+
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
             <ModalSequenceSelector
@@ -294,7 +300,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ClearChatHistoryModal
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
-                onConfirm={clearChatHistory}
+                onConfirm={clearChatHistoryAndFilters}
             />
 
             <ChatContent

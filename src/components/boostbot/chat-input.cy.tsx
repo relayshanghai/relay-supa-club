@@ -123,7 +123,7 @@ describe('<ChatInput />', () => {
 
         cy.getByTestId('boostbot-open-options').click();
         cy.contains('Filter influencers');
-        cy.contains('Clear chat history');
+        cy.contains('Clear chat and filters');
     });
 
     it('Calls openFiltersModal function when the filters button is clicked', () => {

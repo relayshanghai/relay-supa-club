@@ -2,9 +2,11 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
+import { profileToIdentifiable, useRudder } from './use-rudderstack';
 
 type useSessionParams = {
     onClear?: () => void;
@@ -206,4 +208,29 @@ export const useSession = (params?: useSessionParams) => {
     }, [supabaseSession, session, profile, getProfile, getCompany, getSubscription, params]);
 
     return { session, user, profile, company, subscription, refreshSession };
+};
+
+export const useIdentifySession = () => {
+    const { profile, user, company, subscription } = useSession();
+    const { i18n } = useTranslation();
+    const rudderstack = useRudder();
+
+    const identifySession = useCallback(
+        (cb?: () => void) => {
+            const noopfn = function () {
+                // return void
+            };
+
+            if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
+                const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
+                rudderstack.identify(id, traits, cb ?? noopfn);
+                return true;
+            }
+
+            return false;
+        },
+        [rudderstack, profile, user, company, i18n, subscription],
+    );
+
+    return { identifySession };
 };

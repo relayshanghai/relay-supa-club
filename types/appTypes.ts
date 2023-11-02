@@ -87,7 +87,7 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
-export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
+export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled' | 'paused';
 //the subscription plan are from Stripe Product, some of the old plans should be archived when all user data is migrated to the new plans
 export type SubscriptionPlans =
     | 'Discovery'
