@@ -22,5 +22,5 @@ export const normalizePostgrestError = (value: PostgrestError) => {
     const multi = [value.message, value.hint, value.details].filter((v) => v);
     const message = `${value.code}: ${multi.join(' | ')}`;
 
-    return new Error(message);
+    return new Error(message, { cause: value });
 };
