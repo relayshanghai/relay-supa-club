@@ -56,7 +56,7 @@ export const SearchPageInner = () => {
         setAudienceLocation,
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
-    const [filterNeedHelpModalOpen, setShowNeedHelpModal] = useState(false);
+    const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
@@ -305,7 +305,7 @@ export const SearchPageInner = () => {
             <FaqModal
                 title={t('discoveryfaq.discoveryfaqTitle')}
                 description=""
-                visible={filterNeedHelpModalOpen}
+                visible={needHelpModalOpen}
                 onClose={() => setShowNeedHelpModal(false)}
                 content={discoveryfaq.discovery.map((_, i) => ({
                     title: t(`discoveryfaq.discovery.${i}.title`),
