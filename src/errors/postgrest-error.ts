@@ -15,6 +15,9 @@ export const isPostgrestError = (value: any): value is PostgrestError => {
     return false;
 };
 
+/**
+ * Normalize Postgrest Errors from Supabase API to Error objects
+ */
 export const normalizePostgrestError = (value: PostgrestError) => {
     const multi = [value.message, value.hint, value.details].filter((v) => v);
     const message = `${value.code}: ${multi.join(' | ')}`;

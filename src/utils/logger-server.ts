@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { isUnknownError } from './is-api-error';
+import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 
 export type LogLevel = Sentry.SeverityLevel;
 
@@ -118,6 +119,11 @@ export const log = (message: unknown) => {
  */
 export const serverLogger = (message: unknown, captureContext?: LogLevel | CaptureContext) => {
     const messageRaw = message;
+
+    if (isPostgrestError(message)) {
+        message = normalizePostgrestError(message);
+    }
+
     const isUnknown = isUnknownError(message);
 
     if (isUnknown) {
