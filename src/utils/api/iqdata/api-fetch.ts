@@ -24,13 +24,12 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
 
     if (context) {
         await rudderstack.identify(context);
+        const identity = rudderstack.getIdentity();
         try {
             await rudderstack.send(content);
         } catch (error: unknown) {
             serverLogger(error, (scope) => {
-                return scope
-                    .setContext('Server Context', { context })
-                    .setContext('Event Payload', { payload: content });
+                return scope.setContext('Rudderstack Identity', identity);
             });
         }
     }

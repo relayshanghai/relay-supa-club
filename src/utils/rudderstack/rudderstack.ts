@@ -221,6 +221,18 @@ export class Rudderstack {
             return;
         }
 
+        if (this.session.user_id) {
+            this.getClient().identify({
+                userId: this.session.user_id,
+            });
+        }
+
+        if (!this.session.user_id && this.session.anonymous_id) {
+            this.getClient().identify({
+                anonymousId: this.session.anonymous_id,
+            });
+        }
+
         this.getClient().track(
             {
                 userId: this.session.user_id,
