@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { RelayError } from 'src/errors/relay-error';
 import { createTrack } from 'src/utils/analytics/api/analytics';
 import events, { eventKeys, isTrackedEvent } from 'src/utils/analytics/events';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { now } from 'src/utils/datetime';

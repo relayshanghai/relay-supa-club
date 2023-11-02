@@ -82,7 +82,7 @@ export const checkStripeAndDatabaseMatch = (company?: CompanyDB, subscription?: 
         ) {
             clientLogger(
                 `Company subscription this month period start/end does not match subscription this month period start/end. companyPeriodStart ${companyThisMonthStartDate.toISOString()} periodStart ${thisMonthStartDate.toISOString()}companyPeriodEnd ${companyThisMonthEndDate.toISOString()} periodEnd ${thisMonthEndDate.toISOString()}`,
-                'warn',
+                'warning',
             );
         }
     }

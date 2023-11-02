@@ -1,8 +1,8 @@
-import { RelayError } from 'src/utils/api-handler';
 import { limiter } from 'src/utils/limiter';
 import type { CreatorPlatform } from 'types';
 import type { ServerContext } from '..';
 import { apiFetch } from '../api-fetch';
+import { RelayError } from 'src/errors/relay-error';
 
 export type GetRelevantTopicTagsParams = {
     limit?: number;
@@ -47,10 +47,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
     if (response.content.success === true) {
         sortByDistance(response.content.data);
     } else {
-        throw new RelayError('Error fetching relevant topic tags', 400, {
-            shouldLog: true,
-            sendToSentry: true,
-        });
+        throw new RelayError('Error fetching relevant topic tags', 400);
     }
 
     return response.content;
