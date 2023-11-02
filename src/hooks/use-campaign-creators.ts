@@ -7,7 +7,6 @@ import type { CampaignCreatorDBUpdate, CampaignDB } from 'src/utils/api/db/types
 import { clientLogger } from 'src/utils/logger-client';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CampaignCreatorInsert } from 'src/utils/api/db/calls/campaignCreators';
-import { nextFetch } from 'src/utils/fetcher';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
@@ -58,18 +57,9 @@ export const useCampaignCreators = ({
                     throw new Error('No profile.id found');
                 }
 
-                let influencer = null;
-
-                // @note: wrap in try..catch to observe which influencers will cause problems
-                try {
-                    influencer = await nextFetch<{ data: { id: string }; error?: string }>(
-                        `influencer/scrape?platform_id=${input.creator_id}&platform=${input.platform}`,
-                    );
-                } catch (error) {}
-
                 const body: CampaignCreatorInsert = {
                     ...input,
-                    influencer_social_profiles_id: influencer ? influencer.data.id : null,
+                    influencer_social_profiles_id: null,
                     added_by_id: profile?.id,
                     id: undefined, // force undefined so that the backend can generate a new id
                     campaign_id: input.campaign_id,

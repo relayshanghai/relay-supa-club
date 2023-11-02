@@ -1,11 +1,10 @@
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { usePrices, PRICE_IDS } from 'src/hooks/use-prices';
+import { usePrices } from 'src/hooks/use-prices';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useTranslation } from 'react-i18next';
-import { featNewPricing } from 'src/constants/feature-flags';
 import { useRouter } from 'next/router';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useCompany } from 'src/hooks/use-company';
@@ -43,7 +42,6 @@ const disableButton = (
 export const PriceCard = ({
     period,
     priceTier,
-    openConfirmModal,
     landingPage,
 }: {
     period: ActiveSubscriptionPeriod;
@@ -61,13 +59,9 @@ export const PriceCard = ({
     const router = useRouter();
 
     const handleUpgradeClicked = () => {
-        if (featNewPricing()) {
-            // @note previous name: Pricing Page, clicked on upgrade
-            trackEvent('Select Upgrade Plan', { plan: priceTier });
-            router.push(`/payments?plan=${priceTier}`);
-        } else {
-            openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier]);
-        }
+        // @note previous name: Pricing Page, clicked on upgrade
+        trackEvent('Select Upgrade Plan', { plan: priceTier });
+        router.push(`/payments?plan=${priceTier}`);
     };
     return (
         <div className="w-full  p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
@@ -87,9 +81,7 @@ export const PriceCard = ({
                     {prices[period][priceTier]}
 
                     {!freeTier && (
-                        <span className="ml-1 text-sm font-semibold text-gray-500">
-                            {featNewPricing() ? t('pricing.rmbPerMonth') : t('pricing.usdPerMonth')}
-                        </span>
+                        <span className="ml-1 text-sm font-semibold text-gray-500">{t('pricing.rmbPerMonth')}</span>
                     )}
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />

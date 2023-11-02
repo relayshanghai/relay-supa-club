@@ -30,13 +30,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6717537028785439750',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
 
     {
@@ -68,13 +61,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6817517248770327557',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
 
     {
@@ -106,13 +92,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6768673036776604678',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1b59dd06-b31e-4543-98a5-52a89f340268',
@@ -143,13 +122,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6913192129851524101',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2e8f18c5-0811-4bae-a5fc-d66245ff29d1',
@@ -180,13 +152,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6871070560211223557',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1e740dd8-b51e-40d3-b5b1-1d700c8b4447',
@@ -217,13 +182,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6790576702356767750',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '22cd6b56-d36c-4957-b2be-3932b85c11e6',
@@ -254,13 +212,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6942232915154764806',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '40846a82-ff4a-4138-a81c-7a1a98ad364e',
@@ -291,13 +242,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6982676356158112773',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '81eb1ecf-6cdd-461f-9ae5-0a03132ee86d',
@@ -328,13 +272,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6612747919941353477',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ebdb0ba3-7600-4401-b7ce-dbf6f8f3677e',
@@ -365,13 +302,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/justinsmash',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c59469fc-4de2-474f-be29-94a20f629be6',
@@ -402,13 +332,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/marissa_wil',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c589b9b6-2af3-4e5d-8207-97c9c8d9bc7d',
@@ -439,13 +362,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/elevated.angles',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '53693a67-6dfc-4c64-bc05-132bae234a54',
@@ -476,13 +392,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/yourdailynaturefix',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a802360d-de99-4414-9566-dd2d74a1edc4',
@@ -513,13 +422,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@75572533164445696',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '98c60cb8-af65-4ac0-891c-f5e38de521b1',
@@ -550,13 +452,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/shanehurlbutasc',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3c86d4ea-b9c0-4368-99cf-bb966fea2799',
@@ -587,13 +482,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6773417873828332550',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3d49c4f7-5675-443f-b253-9dbc165f9ae9',
@@ -624,13 +512,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6719160178917557254',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '90c5243c-c330-4079-8b66-6367ccc5fcb3',
@@ -661,13 +542,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6809389975500555269',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd01c6055-6473-44cd-b165-71c4ef8780a6',
@@ -698,13 +572,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6774583318672933893',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ea4a6271-8e7b-472c-a006-42b0065efa86',
@@ -735,13 +602,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7010597172840825862',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'df76f3dc-e8dd-4fe6-a9f8-1a0c75f7669c',
@@ -772,13 +632,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6720688411508884485',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'af312d16-6628-48e3-a9f3-e59a657407a1',
@@ -809,13 +662,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6923785797457052677',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '638c8545-d74b-4b23-91c7-9bbaea1d5f0d',
@@ -846,13 +692,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCYqyl0eWh9Hwvk231s65vCg',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd8dd6fdc-1234-458e-8080-bc2e4d5f819d',
@@ -883,13 +722,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6707358521324766213',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'dcee5516-1547-4a58-a6a1-7f080f951ca7',
@@ -920,13 +752,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6932563321704350726',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c3b07604-ad1b-4292-b47a-418acf722cd1',
@@ -957,13 +782,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/meshna',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '5db72583-6bfb-4111-a794-58cc773b1ce2',
@@ -994,13 +812,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/ycimaging',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'da266461-9b9a-4bc3-9e8d-f7446ac79632',
@@ -1031,13 +842,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6728963027956220934',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '17659aad-be97-403d-b168-d35fe8889118',
@@ -1068,13 +872,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6788360491473388550',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd82dc58b-4207-44ea-9189-4d3dbaf82ec2',
@@ -1105,13 +902,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6717549135832663045',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e57c4b8e-bed7-4487-b8c3-6ebc688d33d2',
@@ -1141,13 +931,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6796761298807849989',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '34842d18-80ea-4587-a419-1438cee8a2fd',
@@ -1178,13 +961,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@137467264630501376',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e439f3f2-ee8f-413b-8deb-d4acf8483ff1',
@@ -1215,13 +991,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6741780317318775814',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b71b6256-74a6-4e9d-8d0e-8be7100a5ae3',
@@ -1252,13 +1021,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6865027832163664901',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3246680c-50c1-452f-bc5a-34f761126f51',
@@ -1289,13 +1051,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/piersonx',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9e6fb30e-7fe0-4a32-868b-a307aef734cd',
@@ -1326,13 +1081,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/william.h.baker',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9b73a564-f8cd-4e3c-ac54-d05a6d5507dc',
@@ -1363,13 +1111,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/austen_paul',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2e9585c6-c491-4b46-a052-941ded4363b6',
@@ -1400,13 +1141,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/justinjonesdp',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '877de3b8-7413-45dd-b1a5-3e0732eec49c',
@@ -1437,13 +1171,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6823422975010784261',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9b61f8c4-35a1-4390-adb3-4118a6147bf7',
@@ -1474,13 +1201,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7164494559841961006',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '8ef893e5-82f0-4e23-b5a0-f0398e6dcb4e',
@@ -1511,13 +1231,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7074024477491463210',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'cf1276aa-0493-43f3-b4cc-eb22196562dd',
@@ -1548,13 +1261,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6911751743898584070',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd8931447-210d-4c51-9d2b-a52e6757d0f7',
@@ -1585,13 +1291,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6983488103683982342',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c0bf14b4-9b42-4bd8-b092-cefa262e604d',
@@ -1622,13 +1321,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@71571426100588544',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3e2f2e9d-c531-4d2a-b2be-10aa39a995ff',
@@ -1659,13 +1351,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6766121659511686149',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c93d8a5a-1d6e-4eee-ac77-ed21d1917004',
@@ -1696,13 +1381,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6771946358314271750',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b61d81f5-942c-433c-a0b8-ed08b9a98321',
@@ -1733,13 +1411,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/joshpeterman10',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1c2ca0f3-02a2-41db-8351-66568f56c243',
@@ -1770,13 +1441,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6550468729783025666',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'fb14a0c4-7e87-4eab-a6e7-fe33ff27d098',
@@ -1807,13 +1471,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6585389831227785221',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '056b6ee6-c115-4ce8-8f59-3b5664a0b232',
@@ -1844,13 +1501,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/filmanatix',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c7a8e332-eb3f-47b2-90f2-b2c1db01ca5b',
@@ -1881,13 +1531,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6627245836831784966',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3168ea68-405f-40a1-9548-174685ae8f30',
@@ -1918,13 +1561,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6711831932920005638',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '68405249-f1b6-4660-9028-beebeb15e9be',
@@ -1955,13 +1591,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7006060057444205574',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c733a599-7eec-4e24-a7c0-b023a39c6c91',
@@ -1992,13 +1621,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6755220922490438662',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'f535e839-6046-4b62-8dca-bd03b2e51ad2',
@@ -2029,13 +1651,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6753342898862294022',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c7bcbc83-5490-4f93-adc2-d95f1ec95237',
@@ -2066,13 +1681,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6741539156159611910',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a68d7add-5db6-4acf-ac0d-de866e1e7016',
@@ -2103,13 +1711,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCyN5G-j-6Dpg49YJM8wyh1g',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0e5bab18-4417-4bec-ac26-31c5fb4d0c3d',
@@ -2140,13 +1741,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6769787360097846277',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '47caf7c5-0fd3-48d2-b22b-2aa38bb0faae',
@@ -2177,13 +1771,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6729335341944538117',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '733e03ff-8a0e-4911-a873-53e58c05e8ac',
@@ -2214,13 +1801,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/d.rr___7',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3a8c3ca5-22b3-4e25-8d89-bc7f40fb4b00',
@@ -2251,13 +1831,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7076401039469626411',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'f225ca79-7083-42da-9614-f7eb1de7e089',
@@ -2288,13 +1861,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6706980059175519238',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e52855ce-641c-404f-b6ad-8a48136add68',
@@ -2325,13 +1891,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6910677975076635653',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '67c6b6fd-abb6-4ca8-ae64-86866efe222a',
@@ -2362,13 +1921,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7063686968996922414',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e0cba45c-eb1d-4582-900e-84df74a64785',
@@ -2399,13 +1951,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/mcgee',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '64f9c14a-d73a-4dc5-8904-68bd773f7b66',
@@ -2435,13 +1980,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6556247753788249088',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'daac34e4-9a1a-491c-bec5-f25b62921cb1',
@@ -2472,13 +2010,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6905454724117709829',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '760719fe-1b49-40d6-be85-7b1929e429ba',
@@ -2509,13 +2040,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6759460088073536518',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2128b747-3193-4efe-854e-f40fcca75124',
@@ -2546,13 +2070,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/willstrath',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a071c4db-a34d-4a91-b846-93416de831c6',
@@ -2583,13 +2100,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6803056931847668741',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e8e776e6-122f-4a2c-954a-86f05fb788be',
@@ -2620,13 +2130,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6815340043571463173',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b3eb2bdc-bbce-4b8f-a8bd-5cc07e649774',
@@ -2657,13 +2160,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6765331588747150342',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'f548637e-14c1-4317-92f2-e61a13f80d01',
@@ -2694,13 +2190,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7179469111957013546',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '31f58ca1-bd13-4da6-9d47-0842086fb782',
@@ -2731,13 +2220,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/czechmyfpv',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '6475f8a4-7965-4746-9879-396f9439eee3',
@@ -2768,13 +2250,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6742904044844909574',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '64199fa4-33ed-4afa-b8dd-340fff7b0110',
@@ -2805,13 +2280,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCizB5yDLNSOQ_AL-L2oC6Gg',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c2ac5800-ab92-43c9-969f-620d73127b6c',
@@ -2842,13 +2310,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/nathanmcbride',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c8f140b6-d308-4fb1-b5cf-3935c3a92827',
@@ -2879,13 +2340,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/k2larosa',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b1176b61-9740-4394-a24e-6c85c9c62d45',
@@ -2916,13 +2370,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6837641200893199365',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e505d35c-d326-4fcb-a587-4cbe303d0ead',
@@ -2953,13 +2400,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/kockygenius',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9439df34-a4d8-438c-af61-0cc5154eed53',
@@ -2990,13 +2430,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7086154247424017450',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd4a0367f-3fe4-430b-bace-db28c8621843',
@@ -3027,13 +2460,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6736349085203350533',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1538e0aa-3521-4c5d-830e-52e0e75df385',
@@ -3064,13 +2490,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6833792091287766022',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '47b84a6c-e1c3-4efb-8fdd-a3a8c76c3728',
@@ -3101,13 +2520,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/woodkell',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '4c80f031-b254-439e-b8f0-6ad4e4b18a8a',
@@ -3138,13 +2550,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6965943851506156550',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd7c56b63-f35a-4c98-a8ab-39289e373c3a',
@@ -3175,13 +2580,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/mullahmugzie',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '06788084-3bfd-49bc-ac52-34f635eed8b9',
@@ -3212,13 +2610,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6808653809347331077',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '52949e65-a6d4-4a0c-b42b-709f09a9f48c',
@@ -3249,13 +2640,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6813813626081903622',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9a418bba-85fa-4af7-b6ae-e4ef0e1b520c',
@@ -3285,13 +2669,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6792927830626092038',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '118abb44-e03c-44b1-a3d2-4624afef9233',
@@ -3321,13 +2698,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6970514580741587974',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a4946d0a-b639-42a9-94c2-2d77dabe7763',
@@ -3358,13 +2728,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6763757422424359941',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3945002a-d835-49ef-b803-21f84d5e0504',
@@ -3395,13 +2758,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6742194952316503045',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3934f19e-4d9b-489c-9671-b5894b61d821',
@@ -3432,13 +2788,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6793097398500754437',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0ecfbdc1-0e85-4ad1-b4cc-eca3e4f51666',
@@ -3469,13 +2818,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6681609825174832134',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0fa86875-d321-4a38-aa85-1424d9d55d95',
@@ -3506,13 +2848,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/henbu_',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '4f5737b9-4a53-414e-a4e1-db2799517368',
@@ -3542,13 +2877,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6626173539186884614',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '5cd3b747-524b-4df1-9fb9-2cbd0607cafa',
@@ -3579,13 +2907,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6806749696171017222',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a75907f2-552e-4d49-8ce2-4465c9905913',
@@ -3616,13 +2937,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/dronedudes',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '90149a65-36fe-469e-8e66-9f0f49d11125',
@@ -3653,13 +2967,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/robworling14',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '4e7b0100-6935-41c7-b2b0-89fe08736454',
@@ -3690,13 +2997,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/littlesunnydoodles',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a5459ad3-3326-43dd-8dff-63dca8b166c1',
@@ -3727,13 +3027,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/tanner.price_',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'cb42da51-52b5-4696-a5b6-ae4447f91ec8',
@@ -3764,13 +3057,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6630626203550416901',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b2782886-968a-4763-bf01-52dc9a42221e',
@@ -3801,13 +3087,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6816885950930879493',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '4da7dce4-d6b6-4888-8ae7-5be3a2ddd333',
@@ -3838,13 +3117,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6783767985448535046',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '22798747-c449-49e2-b777-cfc11cc27ec4',
@@ -3875,13 +3147,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/julienajarry',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1cf57179-0bde-449b-baee-8741f955c1ec',
@@ -3912,13 +3177,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6730783177047573509',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1c93e40b-97c0-420f-97f0-0a0a3d241abf',
@@ -3949,13 +3207,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6732956996381639685',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ab01405e-7705-4593-80c7-16a12f0364a9',
@@ -3986,13 +3237,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6774033270616359942',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b6742955-5cc4-470b-8219-d50d761f2984',
@@ -4023,13 +3267,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/beverlyhillsaerials',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c4f37398-67d9-4a21-8a09-9b76ccc1ceb6',
@@ -4060,13 +3297,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/colinringas',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0b593031-0690-4651-ba2f-628a84710201',
@@ -4097,13 +3327,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCaywCorfTQ6Pe7xF9iyLqsw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '6e74b9b8-5227-4a7e-aef2-f6e37c020d32',
@@ -4134,13 +3357,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/ashhasacamera',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '540e2b80-84d4-4d77-90d6-eb40dbed19ab',
@@ -4171,13 +3387,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6748823833061131270',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '7fc1bd16-4ebe-44b8-9fcf-53e0a545f760',
@@ -4208,13 +3417,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/leamotion',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '06fc4762-8e0b-47c7-bd14-366563f5a248',
@@ -4245,13 +3447,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCoLOzrRmjuhKDwYFB_BiK1A',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '93033670-a0fd-47bf-81d1-a94dc2d90ff0',
@@ -4282,13 +3477,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCvFer9Lybac1e4fAmtF1XSA',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'cce3ba44-f88f-4a98-9832-c7c9c75ef519',
@@ -4319,13 +3507,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCDSUFfZ6JLPrBsmZugfSqvQ',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e2eeb413-a11d-4443-9a7c-3f97a71d2c56',
@@ -4356,13 +3537,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/holamikoo',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '6a5ac017-3c36-4dd8-9a4e-b6aa2361b791',
@@ -4393,13 +3567,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6921130071449879558',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '588e8c0a-8f44-4b20-a519-d9badf980f3e',
@@ -4430,13 +3597,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/northpeakadventures',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'af7ea642-63ff-43ec-a7ab-56634ff8e4d6',
@@ -4467,13 +3627,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6756624383005082629',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '7ef784b9-a8c1-4d74-b18f-484a47094fd4',
@@ -4504,13 +3657,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6742995353194480646',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '6541eb2c-7942-47d4-a744-708fbbd9fea5',
@@ -4541,13 +3687,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6902233418713826305',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ab9f1562-4b06-4569-916e-d8360c7cd187',
@@ -4578,13 +3717,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6783682554907411462',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '558f3c6b-1387-47d5-b311-a9282986eeb4',
@@ -4614,13 +3746,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6747132892206187526',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd84563b7-11d9-41c7-8b51-e32b22435bd4',
@@ -4651,13 +3776,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6806840059736966149',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '28a5f4a8-0853-433b-9de9-2d5c65485e34',
@@ -4688,13 +3806,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/dragon.circuits',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0c01d88c-9ca5-45b0-bb97-1ef751d0a88f',
@@ -4725,13 +3836,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/nikofilmz',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd46b8bea-71df-49ef-8adc-b5e54e9efcb2',
@@ -4762,13 +3866,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6639014492691267590',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'aa5d9cd6-6dfb-48e1-8f06-44a6ef207561',
@@ -4799,13 +3896,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6725680975119221766',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '4829aa6c-2723-46a6-8921-666cdd8aa1cb',
@@ -4836,13 +3926,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/ryanspurvis',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0390b803-b2b2-4c21-8e9a-8a434ef5d76b',
@@ -4873,13 +3956,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@3676251',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '827b9e3d-6db3-475c-9337-02b80d6a0c6d',
@@ -4910,13 +3986,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6675772676856579078',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '34dc4318-95eb-4270-8e63-3d8cfdf1ed20',
@@ -4947,13 +4016,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/samnewton',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c346639b-500a-4828-8410-90f7aa01ee75',
@@ -4984,13 +4046,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7094976367993340934',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c389f8b5-8c51-4a43-996c-738940765d89',
@@ -5021,13 +4076,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6701793442706916357',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b69b38c3-1dbf-4e73-8983-71f3c6961902',
@@ -5058,13 +4106,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/creativeryan',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '644579e9-edfa-42e6-92e2-2cd959abe574',
@@ -5095,13 +4136,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/filmsupplyclub',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd1506c87-6860-4910-beb7-3a1c3ee6edd0',
@@ -5132,13 +4166,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7125126047906169898',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '273cdb4c-72eb-40c5-8b94-e24f5fe5fa36',
@@ -5169,13 +4196,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6935095172612031493',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '31d0322e-c4a7-4f85-9fa5-2f9a13d9cd8f',
@@ -5206,13 +4226,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6813399668783236102',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '62a5e150-e427-4821-9df5-f29740495b1e',
@@ -5243,13 +4256,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6827841673448784902',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '698d3a03-87e0-4cfd-930c-e4d39612fc8a',
@@ -5280,13 +4286,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6802316833783530502',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '38448850-07bc-4704-8045-861a2641deb4',
@@ -5317,13 +4316,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/the.provideo',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9d811181-e997-4afa-bb9a-b9321216ef2a',
@@ -5354,13 +4346,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/oltjp',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '8eb45c07-ed1c-4ef5-bcea-07e99b888b47',
@@ -5391,13 +4376,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6785899856369026054',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'be64d964-6838-4949-9c5a-fbb54923ceca',
@@ -5428,13 +4406,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6760844805934400517',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'cfbb123d-8995-499d-a393-2c192f191e64',
@@ -5465,13 +4436,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/zachypines',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0a2e1441-a410-4e4e-946e-bed0c2013297',
@@ -5502,13 +4466,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6803831894779429894',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '61423a6e-29d0-4c83-a14d-d6d08a03c338',
@@ -5539,13 +4496,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/lbcrphotography',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'dfb2a7da-a6cb-4846-9a6c-9d53d51d97da',
@@ -5576,13 +4526,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/yoomeehealing',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ce832d4d-f362-4884-8936-be72042b8936',
@@ -5613,13 +4556,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/californian.views',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e2eab7f4-137a-45cd-b951-4c1e3f67150f',
@@ -5650,13 +4586,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6901374161970840582',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '715f5be6-9ded-4577-a565-a1dc1b8477d0',
@@ -5687,13 +4616,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6643896331411636230',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0e10794e-663a-442e-ac64-1980439877c4',
@@ -5724,13 +4646,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6756622409355805701',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '3efb3a7c-1f70-44f7-b7f2-9eae55cc7a3c',
@@ -5761,13 +4676,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6753053216508707846',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '477cace7-35fb-41a7-9522-1be26de18dc4',
@@ -5798,13 +4706,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/directedxcarlos',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '7487e63e-14ae-4499-86c0-247ffe76bc34',
@@ -5835,13 +4736,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6865675498971694086',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9a6cc00e-72a8-497d-bd92-8c4d3b8416c3',
@@ -5871,13 +4765,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@315064046133792768',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '7ffee6bf-e8ac-4785-8c42-fa79fa0c299f',
@@ -5908,13 +4795,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCEye2nTTPZ13TYX1axHtSYw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '11cfef17-f8a8-4ec6-80ba-1cc1a19a7369',
@@ -5945,13 +4825,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6909604736912884742',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e23d0e7e-0c5f-48d2-931e-4cdd59d9ac0b',
@@ -5982,13 +4855,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/rico.incarnati',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '7b647104-6dd9-4b62-bed2-5d4f13be60f3',
@@ -6019,13 +4885,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6934374408930214918',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2510d238-31fa-4c68-8b7f-52407d6b233d',
@@ -6056,13 +4915,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6780034481874453509',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd73511a1-d320-4af6-8c7f-65b47a0f0e45',
@@ -6093,13 +4945,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6668061065446391813',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '59ad4f13-c989-493b-a428-c09d1cce60a6',
@@ -6130,13 +4975,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/outofthewoods',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '15aced74-eecf-4a4d-8b91-ef22662693e5',
@@ -6167,13 +5005,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6851660034411234310',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '51d204a6-618d-4037-8f4b-f22c86534cfb',
@@ -6204,13 +5035,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6734483394506736645',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '8cec10a8-78e8-47aa-b25f-ebb10fa6ad28',
@@ -6241,13 +5065,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6995939609382568966',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'da615f03-f725-4735-9002-ce964026d328',
@@ -6278,13 +5095,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/jonnyroams',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '026b66b9-3c15-4fa1-9cfc-38e3e577aaef',
@@ -6315,13 +5125,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCU4saoW6gypD_ErRWYzOUEA',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
 
     {
@@ -6353,13 +5156,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6908588937808954373',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '23711030-6922-4a89-adb2-506435c00197',
@@ -6390,13 +5186,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6849209540362175494',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2ca66afc-c997-4e4e-883b-83cf2025f7bc',
@@ -6427,13 +5216,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/paulinejansart',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '019ef1a2-8c5f-4741-b289-42094b14d0da',
@@ -6464,13 +5246,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7082919539416466475',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ca874dbc-1e13-480c-8fce-afb5e9ee8c17',
@@ -6501,13 +5276,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6757790857447539718',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '533f275f-cfd8-4f7e-9ad4-bad12cd8400f',
@@ -6538,13 +5306,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6774829738286711813',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b3a06e50-ec46-4fe8-aa77-11d2a64b4dc0',
@@ -6575,13 +5336,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6804640689230464006',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2b82a045-22ad-471e-9995-0c18aab7add7',
@@ -6612,13 +5366,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6751486898974589958',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd4a6db44-4938-4ba9-9919-1c576d8f5c0b',
@@ -6649,13 +5396,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/lobo__films',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '00ba9ffd-9e9f-4077-b097-1b538e9f6fc1',
@@ -6686,13 +5426,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6749770317939786757',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '476b3f92-9e41-4e51-b817-9a8e585508d1',
@@ -6723,13 +5456,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCJI_nTi0SvoeA7-_x1UQfMw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '33838138-871f-4c7d-803e-9635f4a8ebdf',
@@ -6760,13 +5486,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UCCKzWLUKD7QAFZ5toPINj8Q',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '2facdae8-5473-4377-b94f-70e660efcb22',
@@ -6797,13 +5516,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6810917526958130182',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '76fc5c1f-5025-4421-8235-6f733ecb0884',
@@ -6834,13 +5546,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6716157340238021637',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b2182c1f-f646-459c-bd17-7bfe7b493275',
@@ -6871,13 +5576,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6631647392771948550',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '080841b7-d6e8-4b7e-bdc6-0c7712a5ef0e',
@@ -6908,13 +5606,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/extremejibs',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c85506a8-3c63-4ae1-a4c9-c38ac5da4dd8',
@@ -6945,13 +5636,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6756598694935544837',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '549609e2-b598-4e8e-800a-60a90defde15',
@@ -6982,13 +5666,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/kylekotajarvi',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0901e33d-b6cf-4d5b-9742-a06a53a3e073',
@@ -7019,13 +5696,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/racheladolezal',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '62ea9507-5a69-4996-a0fc-cb9e59648ebc',
@@ -7056,13 +5726,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6874756287114036229',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '5c728b02-9c34-4fcd-95c4-e4285b51853f',
@@ -7093,13 +5756,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/adelfamarr',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1b3d7bf3-845a-4f49-a7ea-bf3d091d7ba6',
@@ -7130,13 +5786,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6722197418899014662',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'eb1fb74e-b2c1-49ac-9b57-e9602f054c59',
@@ -7167,13 +5816,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6773351844464952326',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '6e5f282a-bd57-4130-9ae3-a5e163b93ade',
@@ -7204,13 +5846,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7033461264792470575',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a10f717d-bf24-4a38-873b-607a2806a520',
@@ -7241,13 +5876,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/ianjesr',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '5fd65701-4e3c-49f2-bf00-f23455d18bac',
@@ -7278,13 +5906,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@7119249007808922629',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'b189e758-34c4-49c0-9886-37c9e1d63b50',
@@ -7315,13 +5936,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6756817740538037253',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '64b619cd-fc54-4c57-b9d8-20dd3733e8ac',
@@ -7352,13 +5966,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/dannybatista',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '56055732-7ee0-43df-9a7e-501f98b44e33',
@@ -7389,13 +5996,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6945864982228141062',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c300cc9c-1f38-46c8-a863-aa4d35fccd85',
@@ -7426,13 +6026,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6778614557628777478',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'bbad0257-7438-4044-b7fb-01f2a562f838',
@@ -7463,13 +6056,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6814990391865197574',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '77732aca-442a-42f3-995b-9ec6073afb52',
@@ -7500,13 +6086,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/sweetcinematix',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9fbf7813-7c43-4aaf-ad60-4461117dbc2f',
@@ -7537,13 +6116,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6746049579220157446',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e37ef732-dd89-4446-9870-b720c8dbaee5',
@@ -7574,13 +6146,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6767836980899628038',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'fd92af8f-0a2e-4375-a773-3d121e5be621',
@@ -7611,13 +6176,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6832015198347166725',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '64917111-d07d-448c-abfd-c68bd9cb5a19',
@@ -7648,13 +6206,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6805389061915362310',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'a187a4a8-9af7-47c7-a71c-87f2f7814fde',
@@ -7685,13 +6236,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6757960677829051397',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '0f8a4f1c-a990-452b-bdc1-0e2b8efb4279',
@@ -7722,13 +6266,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6772601625640616966',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd67db229-e3b2-46c9-abd4-de5f84a8a144',
@@ -7759,13 +6296,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6950987353016697862',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1029fec6-b305-452a-9373-0703dfdf0065',
@@ -7796,13 +6326,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.instagram.com/jaybyrdfilms',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e2a4bfc5-9130-4ee6-bcf8-9ac59fdeea60',
@@ -7833,13 +6356,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6711752830485103621',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd5119000-3e20-45bc-81c9-fac96528f9fd',
@@ -7870,13 +6386,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6744339694962361349',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ca9531ee-935e-49b7-b107-c0977cb655a2',
@@ -7907,13 +6416,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6825456557012091910',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd66d7433-24eb-47ef-a768-ed4150eab341',
@@ -7944,13 +6446,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6845420261119493126',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c4fc7757-6090-4055-91b2-7254f35c466e',
@@ -7981,13 +6476,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6805706774693250054',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1243559c-eaf8-4fd9-be51-4b036ee16fff',
@@ -8018,13 +6506,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6739934561612940293',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '348dc6a9-4f45-4628-9ad2-22fb2db29d58',
@@ -8055,13 +6536,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6707056437506704389',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '9c514fb5-2907-46c6-bb8f-be3c2a2244d4',
@@ -8092,13 +6566,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6821690366749557766',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'c20b4f5f-df72-4adc-acbc-1e46799b0c13',
@@ -8129,13 +6596,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.youtube.com/channel/UC2SG3ZrixWAbXRnRcErBRAw',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '85926c52-c876-4bd6-b097-a4a4b3cd649f',
@@ -8166,13 +6626,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6773055459534423046',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '1c75e3b7-06f4-407b-81c6-6f2bca66ac13',
@@ -8203,13 +6656,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6901760159631541250',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '012bf6fd-1720-4a8f-98fe-953d8db82234',
@@ -8240,13 +6686,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6884354772209107973',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '8394bbd5-71bc-4b93-926a-2ae63ecce792',
@@ -8277,13 +6716,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6942254693235409925',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: '309d43f4-4bb1-42d6-bfec-9d18c6ada610',
@@ -8314,13 +6746,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6927382683878261766',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'ffa13530-5243-4078-958a-6083dc5dd5b2',
@@ -8351,13 +6776,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6816873125177082886',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'd0a10e0f-45ef-4467-b8b3-2254c9ae2558',
@@ -8388,13 +6806,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6934134667377394693',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
     {
         id: 'e6d3bee6-22a2-448a-8da7-9ee261c1183e',
@@ -8425,13 +6836,6 @@ export const dummySequenceInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'https://www.tiktok.com/@6836843642197607430',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Brendan',
-            last_name: 'Mcbride',
-        },
     },
 ].map((influencer) => {
     return {

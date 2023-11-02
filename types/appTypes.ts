@@ -87,7 +87,16 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
-export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
+export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled' | 'paused';
+//the subscription plan are from Stripe Product, some of the old plans should be archived when all user data is migrated to the new plans
+export type SubscriptionPlans =
+    | 'Discovery'
+    | 'Outreach'
+    | 'Company Demo'
+    | 'DIY'
+    | 'DIY Max'
+    | 'VIP'
+    | 'Discovery(deprecated)';
 /** "profile" for creator report, "search" for creator search, "ai_email" for usage of the ai email generator */
 export type UsageType = 'profile' | 'search' | 'ai_email';
 
@@ -103,7 +112,7 @@ export type InfluencerOutreachStatus =
     | 'rejected'
     | 'ignored';
 
-export type InfluencerStepTypes = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
+export type SequenceEmailStep = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
 
 /**
  * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.

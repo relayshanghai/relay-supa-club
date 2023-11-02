@@ -29,13 +29,6 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
     },
     {
@@ -66,13 +59,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
     },
     {
@@ -103,13 +90,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
     },
     {
@@ -140,13 +121,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'instagram',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -177,13 +152,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -214,13 +183,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'youtube',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
     {
@@ -251,13 +214,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         url: 'example.com',
         platform: 'tiktok',
         address: null,
-        manager: {
-            id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
-            avatar_url: null,
-            company_id: 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-            first_name: 'Jim',
-            last_name: 'Fields',
-        },
+
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
     },
 ];

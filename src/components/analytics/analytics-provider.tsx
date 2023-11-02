@@ -4,13 +4,10 @@ import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { profileToIdentifiable, useRudder } from 'src/hooks/use-rudderstack';
-import { useSession } from 'src/hooks/use-session';
+import { useIdentifySession, useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
-import { useAppcues } from 'src/hooks/useAppcues';
-import { useTranslation } from 'react-i18next';
 
 export const AnalyticsContext = createContext<
     | {
@@ -42,26 +39,15 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const rudderstack = useRudder();
-    const appcues = useAppcues();
-    const { session, profile, user, company, subscription } = useSession();
-    const { i18n } = useTranslation();
+    const { session } = useSession();
+    const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
 
+    // identify the session if the user is logged in
     useEffect(() => {
-        if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
-            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
-            rudderstack.identify(id, traits);
-        }
-    }, [rudderstack, profile, user, company, i18n, subscription]);
-
-    useEffect(() => {
-        if (profile !== null && user !== null && company !== null && subscription && appcues) {
-            const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
-            appcues.identify(id, traits);
-        }
-    }, [appcues, profile, user, company, i18n, subscription]);
+        identifySession();
+    }, [identifySession]);
 
     // set analytics identity
     useEffect(() => {

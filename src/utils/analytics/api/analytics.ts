@@ -15,6 +15,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { v4 } from 'uuid';
 import { ANALYTICS_HEADER_NAME } from '../constants';
 import type { ServerContext, TrackedEvent } from '../types';
+import { serverLogger } from 'src/utils/logger-server';
 
 export const getAnonId = (ctx: ServerContext) => {
     if (ANALYTICS_HEADER_NAME in ctx.req.headers) {
@@ -79,7 +80,16 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
             company_id: sessionIds.company_id,
         };
 
-        return await event<typeof trigger>(trigger, eventPayload);
+        try {
+            return await event<typeof trigger>(trigger, eventPayload);
+        } catch (error) {
+            // capture errors when inserting new events since we cannot reliably check if the event_id
+            // generated from frontend is still valid
+            serverLogger(error, (scope) => {
+                return scope.setContext('Event Payload', { event_id, ...eventPayload });
+            });
+            return false;
+        }
     };
 };
 

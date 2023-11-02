@@ -21,7 +21,7 @@ import type { ProgressType } from 'src/components/boostbot/chat-progress';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { createBoostbotInfluencerPayload } from 'src/utils/api/boostbot';
 import type { AudienceGeo } from 'types/iqdata/influencer-search-request-body';
-import { countries, countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
@@ -82,16 +82,17 @@ export const Chat: React.FC<ChatProps> = ({
     sequences,
     clearChatHistory,
 }) => {
-    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
-    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
-    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+    const defaultFilters: Filters = {
         platforms: ['youtube', 'tiktok', 'instagram'],
         audience_geo: [
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
-    });
+    };
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -103,23 +104,6 @@ export const Chat: React.FC<ChatProps> = ({
     const { track } = useRudderstackTrack();
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
-
-    const geolocationsToString = (geolocations: AudienceGeo[]) => {
-        const and = t('boostbot.chat.and');
-
-        const getTranslatedCountryName = (id: number) => {
-            const countryCode = countries.find((country) => country.id === id)?.country.code;
-            if (!countryCode) return 'Invalid country code';
-            return t(`geolocations.countries.${countryCode}`);
-        };
-        const translatedCountries = geolocations.map((geolocation) => getTranslatedCountryName(geolocation.id));
-
-        if (translatedCountries.length === 2) {
-            return translatedCountries.join(` ${and} `);
-        } else {
-            return translatedCountries.join(', ');
-        }
-    };
 
     const stopBoostbot = () => {
         abortController.abort();
@@ -200,6 +184,7 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            track(RecommendInfluencers, payload);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -217,7 +202,9 @@ export const Chat: React.FC<ChatProps> = ({
                         translationKey: 'boostbot.chat.influencersFoundFirstTime',
                         translationValues: {
                             count: influencers.length,
-                            geolocations: geolocationsToString(filters.audience_geo),
+                        },
+                        translationValuesToTranslate: {
+                            geolocations: filters.audience_geo,
                         },
                     });
                     addMessage({
@@ -265,7 +252,6 @@ export const Chat: React.FC<ChatProps> = ({
                 });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
@@ -281,6 +267,11 @@ export const Chat: React.FC<ChatProps> = ({
         } finally {
             setIsSearchLoading(false);
         }
+    };
+
+    const clearChatHistoryAndFilters = () => {
+        clearChatHistory();
+        setFilters(defaultFilters);
     };
 
     return (
@@ -309,7 +300,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ClearChatHistoryModal
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
-                onConfirm={clearChatHistory}
+                onConfirm={clearChatHistoryAndFilters}
             />
 
             <ChatContent
