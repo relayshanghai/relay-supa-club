@@ -1,11 +1,14 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
+import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceEmail, SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
-import { getSequenceEmailsBySequenceCall, insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
+import {
+    getSequenceEmailByInfluencerAndSequenceStep,
+    insertSequenceEmailCall,
+} from 'src/utils/api/db/calls/sequence-emails';
 import {
     updateSequenceInfluencerCall,
     updateSequenceInfluencersCall,
@@ -16,6 +19,7 @@ import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
 import { serverLogger } from 'src/utils/logger-server';
+import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
 
 export type SequenceSendPostBody = {
@@ -32,7 +36,6 @@ const sendAndInsertEmail = async ({
     account,
     sequenceInfluencer,
     templateVariables,
-    sequenceEmails,
     messageId,
     references,
 }: {
@@ -40,7 +43,6 @@ const sendAndInsertEmail = async ({
     sequenceInfluencer: SequenceInfluencer;
     account: string;
     templateVariables: TemplateVariable[];
-    sequenceEmails: SequenceEmail[];
     messageId: string;
     references: string;
 }): Promise<SendResult> => {
@@ -65,10 +67,9 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent post url');
     }
     // make sure there is not an existing sequence email for this influencer for this step:
-    const existingSequenceEmail = sequenceEmails.find(
-        (sequenceEmail) =>
-            sequenceEmail.sequence_influencer_id === sequenceInfluencer.id &&
-            sequenceEmail.sequence_step_id === step.id,
+    const { data: existingSequenceEmail } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
+        sequenceInfluencer.id,
+        step.id,
     );
     if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
         // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
@@ -126,92 +127,101 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
         extra_info: { results },
         account,
         sequence_influencer_ids: sequenceInfluencers.map((influencer) => influencer.id),
+        is_success: false,
     };
-    if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
-        throw new Error('Missing required parameters');
-    }
-
-    const sequenceId = sequenceInfluencers[0].sequence_id;
-    const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
-    if (!sequenceSteps || sequenceSteps.length === 0) {
-        throw new Error('No sequence steps found');
-    }
-    trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
-    const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
-    trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
-    const sequenceEmails = await db(getSequenceEmailsBySequenceCall)(sequenceId);
-    trackData.extra_info.sequence_emails = sequenceEmails.map((email) => email.id);
-
-    // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
-    const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
-        ({ id, name, username, avatar_url, url, added_by, platform, company_id, iqdata_id, sequence_id }) => ({
-            id,
-            funnel_status: 'In Sequence',
-            // some typescript required values for the bulk update that have a mismatch with SequenceInfluencer row type.
-            name: name ?? '',
-            username: username ?? '',
-            avatar_url: avatar_url ?? '',
-            url: url ?? '',
-            platform,
-            added_by,
-            company_id,
-            iqdata_id,
-            sequence_id,
-        }),
-    );
-    trackData.extra_info.optimistic_updates = optimisticUpdates.map(
-        (update) => `${update.id} ==> ${update.funnel_status}`,
-    );
     try {
-        const optimisticUpdateResult = await db(updateSequenceInfluencersCall)(optimisticUpdates);
-        trackData.extra_info.optimistic_update_result = optimisticUpdateResult;
-    } catch (error: any) {
-        trackData.extra_info.optimistic_update_error = `error: ${error?.message}\n stack ${error?.stack}`;
-    }
+        if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
+            throw new Error('Missing required parameters');
+        }
 
-    for (const sequenceInfluencer of sequenceInfluencers) {
+        const sequenceId = sequenceInfluencers[0].sequence_id;
+        const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
+        if (!sequenceSteps || sequenceSteps.length === 0) {
+            throw new Error('No sequence steps found');
+        }
+        trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
+
+        const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+        trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
+        if (!templateVariables || templateVariables.length === 0) {
+            throw new Error('No template variables found');
+        }
+
+        // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
+        const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
+            ({ id, name, username, avatar_url, url, added_by, platform, company_id, iqdata_id, sequence_id }) => ({
+                id,
+                funnel_status: 'In Sequence',
+                // some typescript required values for the bulk update that have a mismatch with SequenceInfluencer row type.
+                name: name ?? '',
+                username: username ?? '',
+                avatar_url: avatar_url ?? '',
+                url: url ?? '',
+                platform,
+                added_by,
+                company_id,
+                iqdata_id,
+                sequence_id,
+            }),
+        );
+        trackData.extra_info.optimistic_updates = optimisticUpdates.map(
+            (update) => `${update.id} ==> ${update.funnel_status}`,
+        );
         try {
-            const messageIds = gatherMessageIds(sequenceInfluencer.email ?? '', sequenceSteps);
-            for (const step of sequenceSteps) {
-                try {
-                    const references = generateReferences(messageIds, step.step_number);
-                    const result = await sendAndInsertEmail({
-                        step,
-                        account,
-                        sequenceInfluencer,
-                        templateVariables,
-                        sequenceEmails,
-                        references,
-                        messageId: messageIds[step.step_number],
-                    });
-                    results.push(result);
-                } catch (error: any) {
-                    serverLogger(error);
-                    results.push({
-                        sequenceInfluencerId: sequenceInfluencer.id,
-                        error:
-                            `error: ${error?.message}\n stack ${error?.stack}` ??
-                            'Something went wrong sending the email',
+            // allow to continue if optimistic update failed
+            const optimisticUpdateResult = await db(updateSequenceInfluencersCall)(optimisticUpdates);
+            trackData.extra_info.optimistic_update_result = optimisticUpdateResult;
+        } catch (error: any) {
+            trackData.extra_info.optimistic_update_error = `error: ${error?.message}\n stack ${error?.stack}`;
+        }
+
+        for (const sequenceInfluencer of sequenceInfluencers) {
+            try {
+                const messageIds = gatherMessageIds(sequenceInfluencer.email ?? '', sequenceSteps);
+                for (const step of sequenceSteps) {
+                    try {
+                        const references = generateReferences(messageIds, step.step_number);
+                        const result = await sendAndInsertEmail({
+                            step,
+                            account,
+                            sequenceInfluencer,
+                            templateVariables,
+                            references,
+                            messageId: messageIds[step.step_number],
+                        });
+                        results.push(result);
+                    } catch (error: any) {
+                        serverLogger(error);
+                        results.push({
+                            sequenceInfluencerId: sequenceInfluencer.id,
+                            error:
+                                `error: ${error?.message}\n stack ${error?.stack}` ??
+                                'Something went wrong sending the email',
+                        });
+                    }
+                }
+                // revert the optimistic update if not sent successfully
+                const outreachResult = results.find((result) => result.stepNumber === 0);
+                if (!outreachResult || outreachResult.error) {
+                    await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
+                        id: sequenceInfluencer.id,
+                        funnel_status: 'To Contact',
                     });
                 }
-            }
-            // revert the optimistic update if not sent successfully
-            const outreachResult = results.find((result) => result.stepNumber === 0);
-            if (!outreachResult || outreachResult.error) {
-                await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
-                    id: sequenceInfluencer.id,
-                    funnel_status: 'To Contact',
+            } catch (error: any) {
+                serverLogger(error);
+                results.push({
+                    sequenceInfluencerId: sequenceInfluencer.id,
+                    error: `error: ${error?.message}\n stack ${error?.stack}` ?? '',
                 });
             }
-        } catch (error: any) {
-            serverLogger(error);
-            results.push({
-                sequenceInfluencerId: sequenceInfluencer.id,
-                error: `error: ${error?.message}\n stack ${error?.stack}` ?? '',
-            });
         }
+    } catch (error) {
+        track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
+        return results;
     }
-
+    trackData.is_success = true;
+    track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
     return results;
 };
 
