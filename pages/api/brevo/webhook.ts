@@ -16,7 +16,7 @@ export type BrevoEvent = {
 const deferred = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Deferred', body);
     serverLogger('Brevo Email Deferred', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email deferred',
@@ -26,7 +26,7 @@ const deferred = async (body: BrevoEvent, res: NextApiResponse) => {
 const softBounce = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Soft Bounce', body);
     serverLogger('Brevo Email Soft Bounced', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email soft_bounce',
@@ -36,7 +36,7 @@ const softBounce = async (body: BrevoEvent, res: NextApiResponse) => {
 const hardBounce = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Hard Bounce', body);
     serverLogger('Brevo Email Hard Bounced', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email hard_bounce',
@@ -46,7 +46,7 @@ const hardBounce = async (body: BrevoEvent, res: NextApiResponse) => {
 const complaint = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Complaint', body);
     serverLogger('Brevo Email Complaint', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email complaint',
@@ -56,7 +56,7 @@ const complaint = async (body: BrevoEvent, res: NextApiResponse) => {
 const invalidEmail = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Invalid_email', body);
     serverLogger('Brevo Email Invalid', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email invalid_email',
@@ -66,7 +66,7 @@ const invalidEmail = async (body: BrevoEvent, res: NextApiResponse) => {
 const blocked = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Blocked', body);
     serverLogger('Brevo Email Blocked', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email blocked',
@@ -76,7 +76,7 @@ const blocked = async (body: BrevoEvent, res: NextApiResponse) => {
 const error = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors('Error', body);
     serverLogger('Brevo Email Error', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email error',
@@ -86,7 +86,7 @@ const error = async (body: BrevoEvent, res: NextApiResponse) => {
 const handleOtherWebhook = async (body: BrevoEvent, res: NextApiResponse) => {
     logBrevoErrors(body.event, body);
     serverLogger('Brevo Email Other Webhook', (scope) => {
-        return scope.setContext('Webhook Payload', body);
+        return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
     });
     return res.status(httpCodes.OK).json({
         message: 'email other_webhook',
@@ -117,7 +117,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         }
     } catch (error: any) {
         serverLogger('Brevo Webhook Processing Error', (scope) => {
-            return scope.setContext('Webhook Payload', body);
+            return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
         });
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
