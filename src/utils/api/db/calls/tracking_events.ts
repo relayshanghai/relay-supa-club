@@ -18,20 +18,25 @@ export const insertTrackingEvent = (db: RelayDatabase) => async (data: TrackingE
     } = data;
     const result = await db
         .from('tracking_events')
-        .insert({
-            id,
-            created_at,
-            user_id,
-            profile_id,
-            company_id,
-            anonymous_id,
-            session_id,
-            journey_id,
-            journey_type,
-            event,
-            data: _data,
-            event_at,
-        })
+        .upsert(
+            {
+                id,
+                created_at,
+                user_id,
+                profile_id,
+                company_id,
+                anonymous_id,
+                session_id,
+                journey_id,
+                journey_type,
+                event,
+                data: _data,
+                event_at,
+            },
+            {
+                ignoreDuplicates: true,
+            },
+        )
         .select()
         .single();
 
