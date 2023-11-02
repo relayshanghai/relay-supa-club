@@ -123,55 +123,57 @@ const createErrorObject = (error: any, tag: string) => {
     return e;
 };
 
-export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
-    return async (req: NextApiRequest, res: NextApiResponse<T | ApiError>) => {
-        try {
-            await fn(req, res);
-        } catch (error) {
-            const tag = nanoid(6);
-            const e = createErrorObject(error, tag);
+const determineHandler = (req: NextApiRequest, params: ApiHandlerParams) => {
+    if (req.method === 'GET' && params.getHandler !== undefined) {
+        return params.getHandler;
+    }
 
-            serverLogger(error, (scope) => {
-                return scope.setTag('error_code_tag', e.tag);
-            });
+    if (req.method === 'POST' && params.postHandler !== undefined) {
+        return params.postHandler;
+    }
 
-            return res.status(e.httpCode).json({ error: e.message });
-        }
-    };
+    if (req.method === 'PUT' && params.putHandler !== undefined) {
+        return params.putHandler;
+    }
+
+    if (req.method === 'DELETE' && params.deleteHandler !== undefined) {
+        return params.deleteHandler;
+    }
+
+    return false;
 };
 
-export const ApiHandler =
-    <T = any>(params: ApiHandlerParams) =>
-    async (req: NextApiRequest, res: NextApiResponse) => {
-        const supabase = createServerSupabaseClient({ req, res });
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
+export const ApiHandler = (params: ApiHandlerParams) => async (req: NextApiRequest, res: NextApiResponse) => {
+    const supabase = createServerSupabaseClient({ req, res });
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
 
-        if (session) {
-            setUser({
-                id: session.user.id,
-                email: session.user.email,
-            });
-        }
+    if (session) {
+        setUser({
+            id: session.user.id,
+            email: session.user.email,
+        });
+    }
 
-        if (req.method === 'GET' && params.getHandler !== undefined) {
-            return await exceptionHandler<T>(params.getHandler)(req, res);
-        }
+    const handler = determineHandler(req, params);
 
-        if (req.method === 'POST' && params.postHandler !== undefined) {
-            return await exceptionHandler<T>(params.postHandler)(req, res);
-        }
-
-        if (req.method === 'PUT' && params.putHandler !== undefined) {
-            return await exceptionHandler<T>(params.putHandler)(req, res);
-        }
-
-        if (req.method === 'DELETE' && params.deleteHandler !== undefined) {
-            return await exceptionHandler<T>(params.deleteHandler)(req, res);
-        }
-
+    if (handler === false) {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
             error: 'Method not allowed',
         });
-    };
+    }
+
+    try {
+        return await handler(req, res);
+    } catch (error) {
+        const tag = nanoid(6);
+        const e = createErrorObject(error, tag);
+
+        serverLogger(error, (scope) => {
+            return scope.setTag('error_code_tag', e.tag);
+        });
+
+        return res.status(e.httpCode).json({ error: e.message });
+    }
+};
