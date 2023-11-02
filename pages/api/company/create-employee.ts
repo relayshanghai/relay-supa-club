@@ -3,6 +3,7 @@ import { RELAY_DOMAIN } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
 import {
     createCompany,
@@ -81,45 +82,41 @@ const getOrCreateRelayCompany = async () => {
     }
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        try {
-            const { email } = req.body as CreateEmployeePostBody;
-            if (!EMPLOYEE_EMAILS.includes(email)) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: createEmployeeError.isNotEmployee });
-            }
-            const { data: company, error: getOrcreateCompanyError } = await getOrCreateRelayCompany();
-
-            if (!company?.id || getOrcreateCompanyError) {
-                serverLogger(getOrcreateCompanyError);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const { data: profile, error: getProfileError } = await getProfileByEmail(email);
-            if (getProfileError) {
-                serverLogger(getProfileError);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-            const { error: makeAdminError } = await updateUserRole(profile.id, 'relay_employee');
-            if (makeAdminError) {
-                serverLogger(makeAdminError);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-            const { error: updateProfileError, data: updateProfileData } = await updateProfile({
-                id: profile.id,
-                company_id: company.id,
-            });
-            if (!updateProfileData || updateProfileError) {
-                serverLogger(updateProfileError);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-            const response: CreateEmployeePostResponse = updateProfileData;
-
-            return res.status(httpCodes.OK).json(response);
-        } catch (error) {
-            serverLogger(error);
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
+async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+    const { email } = req.body as CreateEmployeePostBody;
+    if (!EMPLOYEE_EMAILS.includes(email)) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createEmployeeError.isNotEmployee });
     }
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    const { data: company, error: getOrcreateCompanyError } = await getOrCreateRelayCompany();
+
+    if (!company?.id || getOrcreateCompanyError) {
+        serverLogger(getOrcreateCompanyError);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+
+    const { data: profile, error: getProfileError } = await getProfileByEmail(email);
+    if (getProfileError) {
+        serverLogger(getProfileError);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+    const { error: makeAdminError } = await updateUserRole(profile.id, 'relay_employee');
+    if (makeAdminError) {
+        serverLogger(makeAdminError);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+    const { error: updateProfileError, data: updateProfileData } = await updateProfile({
+        id: profile.id,
+        company_id: company.id,
+    });
+    if (!updateProfileData || updateProfileError) {
+        serverLogger(updateProfileError);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+    const response: CreateEmployeePostResponse = updateProfileData;
+
+    return res.status(httpCodes.OK).json(response);
 }
+
+export default ApiHandler({
+    postHandler,
+});

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { CampaignDB, CompanyDB, ProfileDB } from 'src/utils/api/db';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -10,10 +11,7 @@ export interface ClientInfo extends CompanyDB {
 
 export type AdminClientsGetResponse = ClientInfo[];
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'GET') {
-        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-    }
+async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     const { data: companies, error: companyError } = await supabase.from('companies').select();
     const { data: campaigns, error: campaignError } = await supabase.from('campaigns').select();
     const { data: profiles, error: profileError } = await supabase.from('profiles').select();
@@ -32,3 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     return res.status(httpCodes.OK).json(result);
 }
+
+export default ApiHandler({
+    getHandler,
+});

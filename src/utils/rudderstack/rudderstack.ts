@@ -224,6 +224,7 @@ export class Rudderstack {
         this.getClient().track(
             {
                 userId: this.session.user_id,
+                anonymousId: this.session.anonymous_id,
                 event: context.event,
                 properties: { ...(context.payload ?? {}), ...extra },
             },
