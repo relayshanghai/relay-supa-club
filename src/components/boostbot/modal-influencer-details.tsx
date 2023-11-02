@@ -42,6 +42,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         fullname,
         picture,
         handle,
+        username, // this is handle for instagram and tiktok
         avg_views: avgViewsRaw,
         avg_reels_plays: avgReelsPlays, // this is avg views for instagram
         engagement_rate: engagementRateDecimal,
@@ -51,7 +52,6 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         url,
         user_id,
     } = influencer;
-
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
@@ -118,18 +118,18 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             <img
                                 className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
                                 src={picture}
-                                alt={handle}
+                                alt={handle ?? username}
                             />
                         </div>
                         <div>
                             <div className="text-base font-semibold text-gray-700">{fullname}</div>
-                            {handle && (
-                                <div className="flex">
-                                    <div className="text-sm text-primary-500 ">@</div>
-                                    <span className="text-sm text-gray-600">{handle}</span>
-                                </div>
-                            )}
+
+                            <div className="flex">
+                                <div className="text-sm text-primary-500 ">@</div>
+                                <span className="text-sm text-gray-600">{handle ?? username}</span>
+                            </div>
                         </div>
+                        {/* TODO: connect with the score formulation in V2-1063  */}
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
                             <div>86</div>
                         </div>
@@ -138,10 +138,11 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         href={`/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(user_id)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-semibold text-gray-400 hover:cursor-pointer hover:text-primary-500"
+                        className="text-xs font-semibold text-gray-400 outline-none hover:cursor-pointer hover:text-primary-500"
                         onClick={() =>
                             track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })
                         }
+                        data-testid="boostbot-modal-open-report-link"
                     >
                         Unlock Detailed Analysis Report
                     </Link>
