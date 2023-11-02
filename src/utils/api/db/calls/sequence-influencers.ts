@@ -26,7 +26,7 @@ export const getSequenceInfluencersBySequenceIdsCall =
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .select(
-                '*, socialProfile: influencer_social_profiles (name, username, avatar_url, url, platform), address: addresses (*)',
+                '*, socialProfile: influencer_social_profiles (name, username, avatar_url, url, platform, recent_post_title), address: addresses (*)',
             )
             .in('sequence_id', sequenceIds);
 

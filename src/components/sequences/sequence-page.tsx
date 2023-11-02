@@ -322,6 +322,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         ? t('sequences.invalidSocialProfileTooltip')
         : selectedInfluencers.some((i) => !i.email)
         ? t('sequences.missingEmail')
+        : selectedInfluencers.some((i) => !i.recent_post_title)
+        ? t('sequences.missingRecentPostTitle')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
         : isMissingVariables
@@ -331,6 +333,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         ? t('sequences.invalidSocialProfileTooltipDescription')
         : selectedInfluencers.some((i) => !i.email)
         ? t('sequences.missingEmailTooltipDescription')
+        : selectedInfluencers.some((i) => !i.recent_post_title)
+        ? t('sequences.missingRecentPostTitleTooltipDescription')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
         : isMissingVariables
@@ -479,7 +483,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                         disabled={
                                             isMissingSequenceSendEmail ||
                                             selectedInfluencers.some((i) => !i?.email) ||
-                                            selectedInfluencers.some((i) => !i?.influencer_social_profile_id)
+                                            selectedInfluencers.some((i) => !i?.influencer_social_profile_id) ||
+                                            selectedInfluencers.some((i) => !i?.recent_post_title)
                                         }
                                         className={
                                             isMissingVariables

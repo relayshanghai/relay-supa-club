@@ -29,19 +29,10 @@ export const getSequenceInfluencers =
                 const { socialProfile, ...rest } = influencer;
                 results.push({
                     ...rest,
-                    name: socialProfile?.name ?? '',
-                    manager_first_name: '',
-                    username: socialProfile?.username ?? '',
-                    avatar_url: socialProfile?.avatar_url ?? '',
-                    url: socialProfile?.url ?? '',
+                    manager_first_name:
+                        managers.find((manager) => manager.id === influencer.added_by)?.first_name ?? '',
+                    recent_post_title: socialProfile?.recent_post_title ?? '',
                 });
-            });
-            // add the manager first name to each influencer if their added_by id matches a manager id:
-            results.forEach((influencer) => {
-                const manager = managers.find((manager) => manager.id === influencer.added_by);
-                if (manager) {
-                    influencer.manager_first_name = manager.first_name;
-                }
             });
         }
 

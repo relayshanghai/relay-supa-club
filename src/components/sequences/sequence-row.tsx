@@ -226,6 +226,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+    const isMissingRecentPostTitle = !sequenceInfluencer?.recent_post_title;
 
     const sequenceSendTooltipTitle = !sequenceInfluencer.influencer_social_profile_id
         ? t('sequences.invalidSocialProfileTooltip')
@@ -233,6 +234,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.missingEmail')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingRecentPostTitle
+        ? t('sequences.missingRecentPostTitle')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
@@ -242,6 +245,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.missingEmailTooltipDescription')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingRecentPostTitle
+        ? t('sequences.missingRecentPostTitleTooltipDescription')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables_variables', {
               variables: missingVariables,
@@ -356,6 +361,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             >
                                 <Button
                                     disabled={
+                                        isMissingRecentPostTitle ||
                                         isMissingSequenceSendEmail ||
                                         !sequenceInfluencer?.email ||
                                         sendingEmail ||
