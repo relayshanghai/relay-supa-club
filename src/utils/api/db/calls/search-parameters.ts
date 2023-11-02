@@ -5,7 +5,13 @@ import type { SearchParameters } from '../types';
 export const insertSearchParameters =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: SearchParameters['Insert']): Promise<SearchParameters['Row']> => {
-        const result = await db.from('search_parameters').insert(data).select().single();
+        const result = await db
+            .from('search_parameters')
+            .upsert(data, {
+                onConflict: 'hash',
+            })
+            .select()
+            .single();
 
         if (result.error) {
             throw result.error;
