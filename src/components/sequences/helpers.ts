@@ -65,6 +65,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     // for now, what we need from the social profile is the id, email, tags
     const updatedValues: SequenceInfluencerUpdate = {
         id: sequenceInfluencer.id,
+        company_id,
     };
 
     if (!sequenceInfluencer.influencer_social_profile_id) {
