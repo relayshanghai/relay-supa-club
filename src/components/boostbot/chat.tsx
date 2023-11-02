@@ -82,16 +82,17 @@ export const Chat: React.FC<ChatProps> = ({
     sequences,
     clearChatHistory,
 }) => {
-    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
-    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
-    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+    const defaultFilters: Filters = {
         platforms: ['youtube', 'tiktok', 'instagram'],
         audience_geo: [
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
-    });
+    };
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -183,6 +184,7 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            track(RecommendInfluencers, payload);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -250,7 +252,6 @@ export const Chat: React.FC<ChatProps> = ({
                 });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
@@ -266,6 +267,11 @@ export const Chat: React.FC<ChatProps> = ({
         } finally {
             setIsSearchLoading(false);
         }
+    };
+
+    const clearChatHistoryAndFilters = () => {
+        clearChatHistory();
+        setFilters(defaultFilters);
     };
 
     return (
@@ -294,7 +300,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ClearChatHistoryModal
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
-                onConfirm={clearChatHistory}
+                onConfirm={clearChatHistoryAndFilters}
             />
 
             <ChatContent

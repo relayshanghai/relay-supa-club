@@ -40,6 +40,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const influencersResults = await Promise.all(influencersPromises);
     const topics = searchPayloads.map((p) => p.body.filter?.relevance?.value.split(',').map((topic) => topic.trim()));
     const flattenedAccounts = influencersResults
+        .filter((result) => result?.accounts)
         .map((result, index) =>
             // We want to display the topics for each influencer found, so we add them to the account object
             result.accounts.map((creator) => ({ ...creator.account.user_profile, topics: topics[index] ?? [] })),
