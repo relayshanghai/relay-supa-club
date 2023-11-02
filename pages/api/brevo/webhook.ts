@@ -116,7 +116,7 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleOtherWebhook(body, res);
         }
     } catch (error: any) {
-        serverLogger('Brevo Webhook Processing Error', (scope) => {
+        serverLogger(error, (scope) => {
             return scope.setContext('Webhook Payload', { payload: JSON.stringify(body) });
         });
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
