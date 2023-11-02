@@ -8,7 +8,7 @@ export const ToolBar = ({
     setSearchTerm,
 }: {
     selectedTab: string;
-    setSelectedTab: Dispatch<SetStateAction<string>>;
+    setSelectedTab: (tab: { value: string; name: string }) => void;
     searchTerm: string;
     setSearchTerm: Dispatch<SetStateAction<string>>;
 }) => {
@@ -16,7 +16,8 @@ export const ToolBar = ({
 
     const handleTabChange = (tab: { value: string; name: string }) => {
         if (tab.value === selectedTab) return;
-        setSelectedTab(tab.value);
+
+        setSelectedTab(tab);
     };
 
     const handleInputChange = debounce((e: ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +41,9 @@ export const ToolBar = ({
                 {tabs.map((tab) => (
                     <div
                         key={tab.value}
-                        onClick={() => handleTabChange(tab)}
+                        onClick={() => {
+                            handleTabChange(tab);
+                        }}
                         className={`flex flex-1 cursor-pointer items-center justify-center border-b-4 pb-3 text-gray-400 hover:text-primary-500 ${
                             selectedTab === tab.value && 'border-b-4 border-primary-500 text-primary-500 '
                         }`}

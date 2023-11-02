@@ -71,7 +71,12 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('signup')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
+    } else if (
+        subscriptionStatus === 'active' ||
+        subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'canceled' ||
+        subscriptionStatus === 'paused'
+    ) {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
@@ -234,6 +239,6 @@ export const config = {
          * - Stripe webhook (instead use signing key to protect)
          * - /api/webhooks/* (webhook routes)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook).*)',
     ],
 };

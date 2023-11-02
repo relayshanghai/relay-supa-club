@@ -8,14 +8,26 @@ import type { RelayDatabase, UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
-    const subscription = await getSubscription(companyId);
+    let subscription = null;
+
+    try {
+        subscription = await getSubscription(companyId);
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext('Company ID', { companyId });
+        });
+    }
+
     if (!subscription) {
         return { error: usageErrors.noSubscription };
     }
+
     const { current_period_end, current_period_start } = subscription;
+
     if (!current_period_end || !current_period_start) {
         return { error: usageErrors.noSubscriptionStartEndDate };
     }
+
     const subscription_status =
         subscription.status === 'active'
             ? 'active'
@@ -24,11 +36,13 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
             : subscription.status === 'canceled'
             ? 'canceled'
             : null;
+
     if (!subscription_status) {
         // as per how `updateCompanySubscriptionStatus` is used, our app should only be using the above statuses, so if we get something else, we should log it as suspicious
         serverLogger('Invalid subscription status: ' + subscription_status);
         return { error: usageErrors.invalidStatus };
     }
+
     const subscription_current_period_start = unixEpochToISOString(current_period_start);
     const subscription_current_period_end = unixEpochToISOString(current_period_end);
 
@@ -38,6 +52,7 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
         subscription_current_period_start,
         subscription_current_period_end,
     });
+
     return { subscription_current_period_start, subscription_current_period_end };
 };
 
@@ -96,6 +111,8 @@ const recordUsage = async ({
         }
     }
 
+    if (usagesError) serverLogger(usagesError);
+
     if (usagesError || (usagesData?.length && usagesData.length >= limit)) {
         return { error: usageErrors.limitExceeded };
     }
@@ -110,6 +127,7 @@ const recordUsage = async ({
     const usageToRecord = Array(count).fill(usage);
     const { error: insertError } = await supabase.from('usages').insert(usageToRecord);
     if (insertError) {
+        serverLogger(insertError);
         return { error: usageErrors.errorRecordingUsage };
     }
 
@@ -124,6 +142,9 @@ export const recordReportUsage = async (company_id: string, user_id: string, cre
         )
         .eq('id', company_id)
         .single();
+
+    if (companyError) serverLogger(companyError);
+
     if (!company || companyError) {
         return { error: usageErrors.noCompany };
     }
@@ -160,6 +181,9 @@ export const recordSearchUsage = async (company_id: string, user_id: string, cou
         )
         .eq('id', company_id)
         .single();
+
+    if (companyError) serverLogger(companyError);
+
     if (!company || companyError) {
         return { error: usageErrors.noCompany };
     }
@@ -173,8 +197,10 @@ export const recordSearchUsage = async (company_id: string, user_id: string, cou
     if (!company.subscription_current_period_start || !company.subscription_current_period_end) {
         return { error: usageErrors.noSubscriptionStartEndDate };
     }
+
     const startDate = new Date(company.subscription_current_period_start);
     const endDate = new Date(company.subscription_current_period_end);
+
     return recordUsage({
         type: 'search',
         startDate,
@@ -194,6 +220,9 @@ export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: s
         )
         .eq('id', company_id)
         .single();
+
+    if (companyError) serverLogger(companyError);
+
     if (!company || companyError) {
         return { error: usageErrors.noCompany };
     }
