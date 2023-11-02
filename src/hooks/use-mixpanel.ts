@@ -6,13 +6,7 @@ export const useMixpanel = () => {
     const [mixpanel, setMixpanel] = useState(() => (typeof window !== 'undefined' ? window.mixpanel : null));
 
     useEffect(() => {
-        const loader = () => {
-            if (window.mixpanel) {
-                setMixpanel((s: any) => (s !== window.mixpanel ? window.mixpanel : s));
-            }
-        };
-        window.addEventListener('load', loader);
-        return () => window.removeEventListener('load', loader);
+        setMixpanel((s: any) => (s !== window.mixpanel && window.mixpanel ? window.mixpanel : s));
     }, [rudder]);
 
     return mixpanel;
