@@ -205,7 +205,6 @@ export const SearchPageInner = () => {
         setTopicTags,
         setViews,
     ]);
-
     return (
         <div className="space-y-4">
             <ClientRoleWarning />
@@ -308,13 +307,9 @@ export const SearchPageInner = () => {
                 description=""
                 visible={filterNeedHelpModalOpen}
                 onClose={() => setShowNeedHelpModal(false)}
-                // content={discoveryfaq.discovery.map((content) => ({
-                //     title: t(content.title),
-                //     detail: t(content.detail),
-                // }))}
                 content={discoveryfaq.discovery.map((_, i) => ({
                     title: t(`discoveryfaq.discovery.${i}.title`),
-                    detail: t(`discoveryfaq.${i}.detail`),
+                    detail: t(`discoveryfaq.discovery.${i}.detail`),
                 }))}
                 getMoreInfoButtonText={t(`discoveryfaq.discoveryGetMoreInfo`) || ''}
                 getMoreInfoButtonAction={() => push('/guide')}
