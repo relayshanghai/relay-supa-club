@@ -23,7 +23,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const getFromSales = useDB<typeof getSales>(getSales);
     const getCampaignSales = useCallback(async () => {
         if (!company?.id) {
-            throw 'No Company ID';
+            return;
         }
         setTotalSales(await getFromSales(company.id));
     }, [getFromSales, company?.id]);
