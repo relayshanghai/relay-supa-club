@@ -4,6 +4,7 @@ import { BoostbotAccountCell } from './boostbot-account-cell';
 import { BoostbotScoreCell } from './boostbot-score-cell';
 import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 import { BoostbotFollowersCell } from './boostbot-followers-cell';
+import { BoostbotAudienceDemoCell } from './boostbot-audience-demo-cell';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -45,7 +46,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'audienceDemo',
         header: ({ table }) => table.options.meta?.t('boostbot.table.audienceDemo'),
-        cell: 'audience here',
+        cell: BoostbotAudienceDemoCell,
     },
     {
         id: 'audienceGeolocations',
