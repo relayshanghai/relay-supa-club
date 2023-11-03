@@ -182,6 +182,8 @@ import type { ChangeTemplatePreviewPayload } from './change-template-preview';
 import { CHANGE_TEMPLATE_PREVIEW, ChangeTemplatePreview } from './change-template-preview';
 import type { ToggleNavbarSizePayload } from './toggle-navbar-size';
 import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
+import type { SequenceSendPayload } from './outreach/sequence-send';
+import { SEQUENCE_SEND, SequenceSend } from './outreach/sequence-send';
 
 export {
     Search,
@@ -325,6 +327,7 @@ export const events = {
     [CHANGE_INBOX_FOLDER]: ChangeInboxFolder,
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
+    [SEQUENCE_SEND]: SequenceSend,
 };
 
 export type payloads = {
@@ -412,6 +415,7 @@ export type payloads = {
     [CHANGE_INBOX_FOLDER]: ChangeInboxFolderPayload;
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
+    [SEQUENCE_SEND]: SequenceSendPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -501,6 +505,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_INBOX_FOLDER),
     z.literal(CHANGE_TEMPLATE_PREVIEW),
     z.literal(TOGGLE_NAVBAR_SIZE),
+    z.literal(SEQUENCE_SEND),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

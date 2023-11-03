@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
-import type { ApiError } from './api-handler';
-import { RelayError } from './api-handler';
+import type { ApiError } from 'src/errors/api-error';
+import { RelayError } from 'src/errors/relay-error';
 
 export const isApiError = (value: any): value is ApiError => {
     return value?.error !== undefined;

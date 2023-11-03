@@ -195,6 +195,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
 
+    // If there are multiple users at the same company with the same email address, this will get the first one. We only use it to supply a `company_id`, so it doesn't matter which user we get as long as the email is unique per company.
     const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
     if (error) {
         trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;

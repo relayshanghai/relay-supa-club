@@ -1,10 +1,11 @@
 import { getUserSession } from './../analytics';
 import { sendSlackMessage } from '.';
 import type { SlackMessage } from '.';
-import { ALTERT_INCOMING_WEBHOOK_URL } from './constants';
+import { ALERT_BREVO_WEBHOOK_URL, ALERT_INCOMING_WEBHOOK_URL } from './constants';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 import type { ServerContext } from '../iqdata';
+import type { BrevoEvent } from 'pages/api/brevo/webhook';
 
 const time = new Date().toISOString();
 
@@ -62,7 +63,7 @@ export const logRateLimitError = async (action: string, context: ServerContext) 
         });
     }
 
-    ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
+    ALERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
 export const logDailyTokensError = async (action: string, context: ServerContext) => {
@@ -120,5 +121,51 @@ export const logDailyTokensError = async (action: string, context: ServerContext
         });
     }
 
-    ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
+    ALERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALERT_INCOMING_WEBHOOK_URL, reqBody));
+};
+
+export const logBrevoErrors = async (action: string, context: BrevoEvent) => {
+    const reqBody: SlackMessage = {
+        blocks: [
+            {
+                type: 'header',
+                text: {
+                    type: 'plain_text',
+                    text: `:octagonal_sign: Brevo Alert ${action}`,
+                    emoji: true,
+                },
+            },
+            {
+                type: 'section',
+                fields: [
+                    {
+                        type: 'mrkdwn',
+                        text: `*ID*: \`${context.id}\``,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Recipient*: \`${context.email}\``,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Subject*: \`${context.subject}\``,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Event*: \`${context.event}\``,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Time*: \`${context.date}\``,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Tags*: \`${context.tags && context.tags.join(', ')}\``,
+                    },
+                ],
+            },
+        ],
+    };
+
+    ALERT_BREVO_WEBHOOK_URL && (await sendSlackMessage(ALERT_BREVO_WEBHOOK_URL, reqBody));
 };
