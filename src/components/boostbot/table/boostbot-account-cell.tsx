@@ -25,16 +25,16 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
 
     return (
         <div className="flex items-center gap-6">
-            <div className="relative h-16 w-16">
+            <div className="relative h-12 w-12">
                 <img
                     className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
                     src={picture}
                     alt={handle ?? username}
                 />
-                <Icon className="absolute -right-2 bottom-1 h-6 w-6" />
+                <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
             </div>
             <div>
-                <div className="text-base font-semibold text-gray-700">{fullname}</div>
+                <div className="text-sm font-medium text-gray-700">{fullname}</div>
                 <Link
                     href={url}
                     target="_blank"

@@ -3,6 +3,7 @@ import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
 import { BoostbotScoreCell } from './boostbot-score-cell';
 import { OpenInfluencerModalCell } from './boostbot-icon-cell';
+import { BoostbotFollowersCell } from './boostbot-followers-cell';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -39,7 +40,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'followers',
         header: ({ table }) => table.options.meta?.t('boostbot.table.followers'),
-        cell: 'followers here',
+        cell: BoostbotFollowersCell,
     },
     {
         id: 'audienceDemo',
