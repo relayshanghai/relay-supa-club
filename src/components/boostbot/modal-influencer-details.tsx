@@ -174,10 +174,10 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             Audience Engagement Stats
                         </div>
-                        <StatCard title="Engaged Audience" stat={engagedAudience} iconColor="yellow" />
+                        <StatCard title="Engaged Audience" stat={engagedAudience} iconName="alert" />
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard title="Engagement Rate" stat={engagementRatePercentage} iconColor="green" />
-                            <StatCard title="Average Views" stat={avgViews ?? '-'} iconColor="green" />
+                            <StatCard title="Engagement Rate" stat={engagementRatePercentage} iconName="good" />
+                            <StatCard title="Average Views" stat={avgViews ?? '-'} iconName="good" />
                         </div>
                     </div>
                 </div>
@@ -215,23 +215,20 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             <StatCard
                                 title="Followers Growth"
                                 stat={followersGrowth ? followersGrowth.toString() : '-'}
-                                iconColor="green"
+                                iconName="good"
                             />
                             <StatCard
                                 title="Total Posts"
                                 stat={totalPosts ? totalPosts.toString() : '-'}
-                                iconColor="green"
+                                iconName="good"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* buttons */}
-                <div className="mt-8 box-border flex w-full justify-center space-x-3 px-6 font-semibold">
-                    <Button variant="gray" className="w-1/2" onClick={() => setIsOpen(false)}>
-                        Cancel
-                    </Button>
-                    <Button className="boostbot-gradient w-1/2 border-none" onClick={handleAddToSequence}>
+                <div className="mt-8 box-border flex w-full justify-end font-semibold">
+                    <Button className="boostbot-gradient rounded-lg border-none px-4" onClick={handleAddToSequence}>
                         Add to Sequence
                     </Button>
                 </div>
