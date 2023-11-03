@@ -129,10 +129,14 @@ export const serverLogger = (message: unknown, captureContext?: LogLevel | Captu
         message = normalizePostgrestError(message);
     }
 
+    if (typeof message === 'string') {
+        message = new Error(message);
+    }
+
     const isUnknown = isUnknownError(message);
 
     if (isUnknown) {
-        message = JSON.stringify(message);
+        message = new Error('Unknown Error', { cause: message });
     }
 
     let level: LogLevel = 'error';
