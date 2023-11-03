@@ -28,5 +28,5 @@ export default function useCacheProvider<Data = any, Error = any>({
         };
     }, [dbName, storeName, storageHandler, version, onError]);
 
-    return cacheProvider;
+    return typeof window === 'undefined' ? () => new Map() : cacheProvider;
 }

@@ -126,6 +126,21 @@ export const profileToIdentifiable = (
 };
 
 export const useRudderstack = () => {
+    const rudderstackClientSide = useRudderstackClientSide();
+
+    if (typeof window === 'undefined') {
+        return {
+            identifyFromProfile: () => undefined,
+            identifyUser: () => undefined,
+            pageView: () => undefined,
+            trackEvent: () => undefined,
+            group: () => undefined,
+        };
+    } else {
+        return rudderstackClientSide;
+    }
+};
+export const useRudderstackClientSide = () => {
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
         const rudder = await rudderInitialized();
 
