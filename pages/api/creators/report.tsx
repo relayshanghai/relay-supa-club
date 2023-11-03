@@ -88,6 +88,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             event: IQDATA_LIST_REPORTS,
             onTrack: (data) => {
                 if (!data.results) return false;
+                if (Array.isArray(data.results) && data.results.length <= 0) return false;
 
                 return {
                     platform,
