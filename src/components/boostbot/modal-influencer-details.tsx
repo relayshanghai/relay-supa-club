@@ -122,7 +122,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             />
                         </div>
                         <div>
-                            <div className="text-base font-semibold text-gray-700">{fullname}</div>
+                            <div className="text-lg font-semibold text-gray-700">{fullname}</div>
 
                             <div className="flex">
                                 <div className="text-sm text-primary-500 ">@</div>
@@ -138,7 +138,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         href={`/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(user_id)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-semibold text-gray-400 outline-none hover:cursor-pointer hover:text-primary-500"
+                        className="text-xs text-gray-400 outline-none hover:cursor-pointer hover:text-primary-500"
                         onClick={() =>
                             track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })
                         }

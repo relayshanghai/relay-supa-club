@@ -34,12 +34,12 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                 <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
             </div>
             <div>
-                <div className="text-sm font-medium text-gray-700">{fullname}</div>
+                <div className="text-sm font-semibold text-gray-700">{fullname}</div>
                 <Link
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group "
+                    className="group"
                     data-testid="boostbot-social-profile-link"
                     onClick={() => {
                         track(OpenSocialProfile, {
@@ -53,7 +53,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                         });
                     }}
                 >
-                    <span className="text-sm text-gray-600 group-hover:text-primary-600">@{handle ?? username}</span>
+                    <span className="text-xs text-primary-600 group-hover:text-primary-800">@{handle ?? username}</span>
                 </Link>
             </div>
         </div>

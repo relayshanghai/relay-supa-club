@@ -48,11 +48,11 @@ export const BoostbotScoreCell = ({ row }: BoostbotScoreCellProps) => {
 
     const bgColorClass =
         indexScore >= 70
-            ? 'bg-green-50 text-green-700 border-green-300'
-            : 'bg-yellow-50 text-orange-700 border-yellow-300';
+            ? 'bg-green-50 text-green-700 border-green-200'
+            : 'bg-yellow-50 text-orange-700 border-yellow-200';
 
     return (
-        <div className={`inline-block rounded-3xl border px-3 py-1 text-center text-lg font-semibold ${bgColorClass}`}>
+        <div className={`inline-block rounded-3xl border px-3 py-1 text-center text-sm font-semibold ${bgColorClass}`}>
             {indexScore}
         </div>
     );

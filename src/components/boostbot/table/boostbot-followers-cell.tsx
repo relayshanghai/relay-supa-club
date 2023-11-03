@@ -7,5 +7,5 @@ export type BoostbotFollowersProps = {
 };
 
 export const BoostbotFollowersCell = ({ row }: BoostbotFollowersProps) => {
-    return <div>{numberFormatter(row.original.followers, 1)}</div>;
+    return <div className="text-xs font-medium text-gray-600">{numberFormatter(row.original.followers, 1)}</div>;
 };
