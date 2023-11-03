@@ -11,6 +11,8 @@ export type ProfilePutResponse = ProfileDB;
 export type ProfileInsertBody = ProfileDBInsert;
 
 const Handler: NextApiHandler = async (req, res) => {
+    // eslint-disable-next-line no-console
+    console.log('bruh');
     if (req.method === 'PUT') {
         const profile = req.body as ProfilePutBody;
         try {
@@ -32,6 +34,8 @@ const Handler: NextApiHandler = async (req, res) => {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } else if (req.method === 'POST') {
+        // eslint-disable-next-line no-console
+        console.log(req.body);
         const profile = req.body as ProfileInsertBody;
         if (!profile.id || !profile.first_name || !profile.last_name) {
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'Missing required profile fields' });
