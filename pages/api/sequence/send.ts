@@ -58,10 +58,8 @@ const sendAndInsertEmail = async ({
     if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
     }
-    const recentPostTitle = influencerSocialProfile.recent_post_title;
-    if (!recentPostTitle) {
-        throw new Error('No recent video title');
-    }
+    const recentPostTitle = influencerSocialProfile.recent_post_title ?? 'recent';
+
     const recentPostURL = influencerSocialProfile.recent_post_url;
     if (!recentPostURL) {
         throw new Error('No recent post url');
