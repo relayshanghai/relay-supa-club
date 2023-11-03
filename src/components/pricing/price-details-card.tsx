@@ -13,7 +13,7 @@ export const PriceDetailsCard = ({
     const { t } = useTranslation();
     return (
         <div>
-            {priceDetails[priceTier].map(({ title, icon, info, amount, subtitle }, index) => {
+            {priceDetails[priceTier]?.map(({ title, icon, info, amount, subtitle }, index) => {
                 return (
                     <div
                         key={index}
