@@ -4,20 +4,20 @@ import type { Row } from '@tanstack/react-table';
 
 export type BoostbotAccountCellProps = {
     row: Row<BoostbotInfluencer>;
-    // setIsInfluencerDetailsModalOpen: (open: boolean) => void;
-    // setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+    setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 };
 
 export const OpenInfluencerModalCell = ({
     row,
-}: // setIsInfluencerDetailsModalOpen,
-// setSelectedRow,
-BoostbotAccountCellProps) => {
+    setIsInfluencerDetailsModalOpen,
+    setSelectedRow,
+}: BoostbotAccountCellProps) => {
     const handleIconClick = () => {
         //eslint-disable-next-line
         console.log(row);
-        // setIsInfluencerDetailsModalOpen(true);
-        // setSelectedRow(row);
+        setIsInfluencerDetailsModalOpen(true);
+        setSelectedRow(row);
     };
 
     return (

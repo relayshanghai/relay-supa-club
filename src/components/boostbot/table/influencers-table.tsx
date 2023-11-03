@@ -46,12 +46,6 @@ export function InfluencersTable<TData, TValue>({
         state: { rowSelection: selectedInfluencers },
     });
 
-    //handle row click to open influencer detail modal
-    const handleInfluencerRowClick = (row: Row<BoostbotInfluencer>) => {
-        setIsInfluencerDetailsModalOpen(true);
-        setSelectedRow(row);
-    };
-
     const page = table.getState().pagination.pageIndex;
 
     // Handle table pagination reset when for example new influencers are loaded. But not when individual influencers are removed.
@@ -103,7 +97,11 @@ export function InfluencersTable<TData, TValue>({
                                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(cell.column.columnDef.cell, {
+                                                ...cell.getContext(),
+                                                setSelectedRow,
+                                                setIsInfluencerDetailsModalOpen,
+                                            })}
                                         </TableCell>
                                     ))}
                                 </TableRow>
