@@ -53,7 +53,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         score: 'BoostBot Score',
         followers: 'Followers',
         audienceDemo: 'Audience Demo',
-        audienceGeolocations: 'Audience in U.S., Canada',
+        audienceGeolocations: 'Audience Geolocations',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
