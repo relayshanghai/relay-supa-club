@@ -36,8 +36,9 @@ export const usePersistentState = <T>(
 
             setState(value);
         };
-
-        setup();
+        if (typeof window !== 'undefined') {
+            setup();
+        }
 
         return initialValue;
     });
