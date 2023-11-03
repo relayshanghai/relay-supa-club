@@ -18,7 +18,7 @@ import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-web
 import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
 import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
-import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-subscriptions';
+import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-customer-subscription-paused';
 import { ApiHandler } from 'src/utils/api-handler';
 
 const handledWebhooks = {
