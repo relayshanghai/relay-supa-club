@@ -24,7 +24,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
     return (
-        <div className="flex items-center gap-6">
+        <div className="flex max-w-[240px] items-center gap-6">
             <div className="relative h-12 w-12">
                 <img
                     className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
