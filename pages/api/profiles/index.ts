@@ -12,7 +12,7 @@ export type ProfileInsertBody = ProfileDBInsert;
 
 const Handler: NextApiHandler = async (req, res) => {
     // eslint-disable-next-line no-console
-    console.log('bruh');
+    console.log('bruh', req.method);
     if (req.method === 'PUT') {
         const profile = req.body as ProfilePutBody;
         try {
