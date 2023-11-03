@@ -5,6 +5,7 @@ import { BoostbotScoreCell } from './boostbot-score-cell';
 import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 import { BoostbotFollowersCell } from './boostbot-followers-cell';
 import { BoostbotAudienceDemoCell } from './boostbot-audience-demo-cell';
+import { BoostbotAudienceLocationCell } from './boostbot-audience-location-cell';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -51,7 +52,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'audienceGeolocations',
         header: ({ table }) => table.options.meta?.t('boostbot.table.audienceGeolocations'),
-        cell: 'geolocations here',
+        cell: BoostbotAudienceLocationCell,
     },
     {
         id: 'openDetail',
