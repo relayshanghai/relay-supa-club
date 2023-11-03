@@ -51,8 +51,8 @@ export const BoostbotAudienceDemoCell = ({ row }: BoostbotAudienceDemoCellProps)
                 <CartesianGrid vertical={false} horizontal={false} />
                 <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 8 }} />
                 <YAxis width={0} tick={false} axisLine={false} tickLine={false} />
-                <Bar dataKey="female" fill="#fcceee" />
-                <Bar dataKey="male" fill="#b2ccff" />
+                <Bar dataKey="female" fill="#fcceee" radius={2} />
+                <Bar dataKey="male" fill="#b2ccff" radius={2} />
             </BarChart>
         </ResponsiveContainer>
     );

@@ -193,17 +193,15 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             <BarChart
                                 data={dummyBarChartData}
                                 margin={{
-                                    top: 48,
-                                    right: 48,
-                                    left: 0,
-                                    bottom: 0,
+                                    top: 32,
+                                    right: 16,
                                 }}
                             >
                                 <CartesianGrid vertical={false} horizontal={false} />
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                <YAxis tick={false} axisLine={false} />
-                                <Bar dataKey="female" fill="#fcceee" />
-                                <Bar dataKey="male" fill="#b2ccff" />
+                                <YAxis width={16} tick={false} axisLine={false} />
+                                <Bar dataKey="female" fill="#fcceee" radius={2} />
+                                <Bar dataKey="male" fill="#b8ccff" radius={2} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
