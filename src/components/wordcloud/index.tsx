@@ -176,26 +176,28 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                     <Question className="stroke-gray-400" />
                 </Tooltip>
             </div>
-            <WordCloud
-                data={words}
-                font="Poppins"
-                padding={0.1}
-                width={500}
-                height={170}
-                rotate={0}
-                spiral={'rectangular'}
-                random={() => {
-                    return 0;
-                }}
-                fontSize={(word: Word) => normalizeFontSize(words, word.value)}
-                fill={(word: Word, _index: number) => colorWord(word.text)}
-                onWordClick={(_event: any, word: Word) => {
-                    handleWord(word.text);
-                }}
-                onWordMouseOver={(event: any, _word: Word) => {
-                    event.target.style.cursor = 'pointer';
-                }}
-            />
+            {typeof window !== 'undefined' && (
+                <WordCloud
+                    data={words}
+                    font="Poppins"
+                    padding={0.1}
+                    width={500}
+                    height={170}
+                    rotate={0}
+                    spiral={'rectangular'}
+                    random={() => {
+                        return 0;
+                    }}
+                    fontSize={(word: Word) => normalizeFontSize(words, word.value)}
+                    fill={(word: Word, _index: number) => colorWord(word.text)}
+                    onWordClick={(_event: any, word: Word) => {
+                        handleWord(word.text);
+                    }}
+                    onWordMouseOver={(event: any, _word: Word) => {
+                        event.target.style.cursor = 'pointer';
+                    }}
+                />
+            )}
         </div>
     );
 };
