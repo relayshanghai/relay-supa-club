@@ -16,6 +16,9 @@ export default function useCacheProvider<Data = any, Error = any>({
     const [cacheProvider, setCacheProvider] = useState<CacheProvider>();
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
         // False on mount or on dependency change
         let isSetup = true;
 
@@ -28,5 +31,5 @@ export default function useCacheProvider<Data = any, Error = any>({
         };
     }, [dbName, storeName, storageHandler, version, onError]);
 
-    return typeof window === 'undefined' ? () => new Map() : cacheProvider;
+    return cacheProvider;
 }
