@@ -7,7 +7,8 @@ const handler: NextApiHandler = async (req, res) => {
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('*')
-        .eq('funnel_status', 'In Sequence');
+        .eq('funnel_status', 'In Sequence')
+        .eq('company_id', '504528ad-8f57-45e2-b82c-59ceb4bc9c54');
     // console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
     const updated = [];
