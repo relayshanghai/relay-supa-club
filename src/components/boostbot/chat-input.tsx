@@ -43,7 +43,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
                 className="relative z-10"
                 onClick={() => setIsOptionsMenuOpen(!isOptionsMenuOpen)}
                 ref={optionsMenuRef}
-             />
+            />
 
             <textarea
                 ref={textareaRef}
