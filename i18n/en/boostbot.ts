@@ -70,6 +70,19 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
     },
+    modal: {
+        unlockDetailedReport: 'Unlock Detailed Analysis Report',
+        topNiches: 'Top Niches',
+        audienceEngagementStats: 'Audience Engagement Stats',
+        audienceGender: 'Audience Gender',
+        engagedAudience: 'Engaged Audience',
+        engagementRate: 'Engagement Rate',
+        averageViews: 'Average Views',
+        channelStats: 'Channel Stats',
+        followersGrowth: 'Followers Growth',
+        totalPosts: 'Total Posts',
+        addToSequence: 'Add to Sequence',
+    },
 };
 
 export default boostbot;

@@ -68,6 +68,19 @@ const boostbot = {
         expiredAccount:
             '哦，看起来你的帐户已经过期了。你可在升级帐户<customLink>后继续使用雷宝所提供的服务</customLink>。',
     },
+    modal: {
+        unlockDetailedReport: '解锁详细报告',
+        topNiches: '热门细分领域',
+        audienceEngagementStats: '粉丝互动数据',
+        audienceGender: '粉丝性别比例',
+        engagedAudience: '互动粉丝',
+        engagementRate: '互动率',
+        averageViews: '平均观看次数',
+        channelStats: '频道数据',
+        followersGrowth: '粉丝增长',
+        totalPosts: '总帖子数',
+        addToSequence: '添加至邮件进程管理',
+    },
 };
 
 export default boostbot;

@@ -1,4 +1,4 @@
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
 import {
@@ -30,7 +30,7 @@ type InfluencerDetailsModalProps = {
 };
 
 export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     const { track } = useRudderstackTrack();
 
     if (!selectedRow) {
@@ -144,14 +144,16 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         }
                         data-testid="boostbot-modal-open-report-link"
                     >
-                        Unlock Detailed Analysis Report
+                        {t('boostbot.modal.unlockDetailedReport')}
                     </Link>
                 </div>
 
                 {/* stats - top niches and audience engagement */}
                 <div className="mb-6 flex w-full gap-6">
                     <div className="w-1/2 px-3">
-                        <div className="border-b border-gray-200 text-base font-semibold text-gray-700">Top Niches</div>
+                        <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
+                            {t('boostbot.modal.topNiches')}
+                        </div>
                         <div className="w-full">
                             <ResponsiveContainer width={320} height={280}>
                                 <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyRadarGraphData}>
@@ -172,12 +174,16 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                     </div>
                     <div className="w-1/2 space-y-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
-                            Audience Engagement Stats
+                            {t('boostbot.modal.audienceEngagementStats')}
                         </div>
-                        <StatCard title="Engaged Audience" stat={engagedAudience} iconName="alert" />
+                        <StatCard title={t('boostbot.modal.engagedAudience')} stat={engagedAudience} iconName="alert" />
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard title="Engagement Rate" stat={engagementRatePercentage} iconName="good" />
-                            <StatCard title="Average Views" stat={avgViews ?? '-'} iconName="good" />
+                            <StatCard
+                                title={t('boostbot.modal.engagementRate')}
+                                stat={engagementRatePercentage}
+                                iconName="good"
+                            />
+                            <StatCard title={t('boostbot.modal.averageViews')} stat={avgViews ?? '-'} iconName="good" />
                         </div>
                     </div>
                 </div>
@@ -186,7 +192,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                 <div className="flex w-full gap-6">
                     <div className="w-1/2 px-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
-                            Audience Gender
+                            {t('boostbot.modal.audienceGender')}
                         </div>
 
                         <ResponsiveContainer width={320} height={140}>
@@ -207,16 +213,16 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                     </div>
                     <div className="w-1/2 space-y-3">
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
-                            Channel Stats
+                            {t('boostbot.modal.channelStats')}
                         </div>
                         <div className="grid grid-cols-2 space-x-3">
                             <StatCard
-                                title="Followers Growth"
+                                title={t('boostbot.modal.followersGrowth')}
                                 stat={followersGrowth ? followersGrowth.toString() : '-'}
                                 iconName="good"
                             />
                             <StatCard
-                                title="Total Posts"
+                                title={t('boostbot.modal.totalPosts')}
                                 stat={totalPosts ? totalPosts.toString() : '-'}
                                 iconName="good"
                             />
@@ -224,10 +230,10 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                     </div>
                 </div>
 
-                {/* buttons */}
+                {/* button */}
                 <div className="mt-8 box-border flex w-full justify-end font-semibold">
                     <Button className="boostbot-gradient rounded-lg border-none px-4" onClick={handleAddToSequence}>
-                        Add to Sequence
+                        {t('boostbot.modal.addToSequence')}
                     </Button>
                 </div>
             </div>
