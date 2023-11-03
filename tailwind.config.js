@@ -49,7 +49,7 @@ module.exports = {
                 float: 'float 2s ease-in-out infinite',
                 'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
                 'fade-in-from-left': 'fade-in-from-left 0.7s ease-in-out',
-                'fade-in-from-top': 'fade-  in-from-top 0.7s ease-in-out',
+                'fade-in-from-top': 'fade-in-from-top 0.7s ease-in-out',
             },
             keyframes: {
                 float: {
