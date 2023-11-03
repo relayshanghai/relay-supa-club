@@ -8,16 +8,16 @@ describe('InfluencerDetailsModal', () => {
     const influencer = boostbotGetInfluencers[0];
     const selectedRow = { original: influencer, index: 0 } as Row<BoostbotInfluencer>;
     const isOpen = true;
-    const setIsOpen = cy.stub();
     it('renders influencer basic info', () => {
+        const setIsOpen = cy.stub();
         testMount(<InfluencerDetailsModal selectedRow={selectedRow} isOpen={isOpen} setIsOpen={setIsOpen} />);
-
         cy.get('img').should('have.attr', 'src', influencer.picture);
         cy.contains(influencer.fullname);
         cy.contains(influencer.handle ?? influencer.username);
     });
 
     it('have a correct link to the analyze page', () => {
+        const setIsOpen = cy.stub();
         const url = selectedRow.original.url;
         const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
