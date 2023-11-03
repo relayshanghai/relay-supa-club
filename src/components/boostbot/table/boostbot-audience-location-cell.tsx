@@ -16,9 +16,12 @@ export const renderAudienceGeo = (audienceGeo: any) => {
     const top1CountryPercentage = countries[0] ? decimalToPercent(countries[0].weight, 0) : null;
     const top2CountryPercentage = countries[1] ? decimalToPercent(countries[1].weight, 0) : null;
 
+    const top2CountryWidth =
+        countries[0] && countries[1] ? decimalToPercent(countries[0].weight + countries[1].weight, 0) : 0;
+
     return (
-        <div className="relative">
-            <div className=" -z-10 h-2 w-[100px] rounded-lg bg-gray-200" />
+        <div className="relative w-[120px]">
+            <div className=" h-2 rounded-lg bg-gray-200" />
             {countries.length > 0 && (
                 <Tooltip
                     content={`${countries[0].name} ${top1CountryPercentage}`}
@@ -26,7 +29,7 @@ export const renderAudienceGeo = (audienceGeo: any) => {
                     position="bottom-left"
                 >
                     <div
-                        className="absolute left-0 top-0 z-0 h-2 rounded-lg bg-primary-300"
+                        className="absolute left-0 top-0 z-10 h-2 rounded-lg bg-primary-600"
                         style={{ width: top1CountryPercentage || '0%' }}
                     />
                 </Tooltip>
@@ -38,8 +41,8 @@ export const renderAudienceGeo = (audienceGeo: any) => {
                     position="bottom-left"
                 >
                     <div
-                        className="absolute left-0 top-0 z-10 h-2 w-12 rounded-lg bg-primary-600"
-                        style={{ width: top2CountryPercentage || '0%' }}
+                        className="absolute left-0 top-0 z-0 h-2 rounded-lg bg-primary-300"
+                        style={{ width: top2CountryWidth || '0%' }}
                     />
                 </Tooltip>
             )}
