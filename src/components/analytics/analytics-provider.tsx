@@ -8,6 +8,7 @@ import { useIdentifySession, useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
+import * as Sentry from '@sentry/nextjs';
 
 export const AnalyticsContext = createContext<
     | {
@@ -39,7 +40,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const { session } = useSession();
+    const { session, profile } = useSession();
     const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
@@ -61,6 +62,20 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             // analytics.reset();
         }
     }, [session, analytics]);
+
+    // set Sentry identity
+    useEffect(() => {
+        if (!profile) return;
+        const user: Sentry.User = {
+            id: profile.id,
+            username: `${profile.first_name} ${profile.last_name}`,
+        };
+        // @note for some reason profile.email is nullable
+        if (profile.email) {
+            user.email = profile.email;
+        }
+        Sentry.setUser(user);
+    }, [profile]);
 
     return (
         <BaseAnalyticsProvider instance={analytics}>
