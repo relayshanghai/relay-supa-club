@@ -28,6 +28,16 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             profiles: companyProfiles,
         };
     });
+    // put the active subscriptions at the top, trials second and the rest at the bottom
+    result.sort((a, b) => {
+        if (a.subscription_status === 'active' && b.subscription_status === 'active') return 0;
+        if (a.subscription_status === 'active') return -1;
+        if (b.subscription_status === 'active') return 1;
+        if (a.subscription_status === 'trial' && b.subscription_status === 'trial') return 0;
+        if (a.subscription_status === 'trial') return -1;
+        if (b.subscription_status === 'trial') return 1;
+        return 0;
+    });
     return res.status(httpCodes.OK).json(result);
 }
 
