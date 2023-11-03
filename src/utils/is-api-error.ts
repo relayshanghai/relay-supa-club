@@ -7,6 +7,7 @@ export const isApiError = (value: any): value is ApiError => {
 };
 
 export const isUnknownError = (value: any): value is unknown => {
+    if (typeof value !== 'object') return false;
     if (value instanceof RelayError) return false;
     if (value instanceof ZodError) return false;
     if (value instanceof Error) return false;
