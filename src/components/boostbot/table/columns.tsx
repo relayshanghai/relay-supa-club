@@ -57,6 +57,12 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'openDetail',
         header: '',
-        cell: (cell) => <OpenInfluencerModalCell row={cell.row} />,
+        cell: (cell) => (
+            <OpenInfluencerModalCell
+                row={cell.row}
+                setSelectedRow={cell.setSelectedRow}
+                setIsInfluencerDetailsModalOpen={cell.setIsInfluencerDetailsModalOpen}
+            />
+        ),
     },
 ];
