@@ -41,6 +41,10 @@ module.exports = {
                 },
                 'relay-purple': '#6B65AD',
             },
+            backgroundImage: {
+                boostbotbackground:
+                    'var(--boostbot-gradient, linear-gradient(135deg, #EE46BC 0%, #7839EE 50%, #43CBFF 100%));',
+            },
             animation: {
                 float: 'float 2s ease-in-out infinite',
                 'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
