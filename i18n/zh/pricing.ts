@@ -65,6 +65,7 @@ const pricing = {
     },
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
+    backToAccount: '回到账号',
 };
 
 export default pricing;

@@ -24,4 +24,8 @@ describe('PricingPage', () => {
         cy.contains('299');
         cy.contains('$--').should('not.exist');
     });
+    it('allows user to go back to account page', () => {
+        testMount(<PricingPage page="upgrade" />);
+        cy.contains('a', 'Back to account').should('have.attr', 'href', '/account');
+    });
 });
