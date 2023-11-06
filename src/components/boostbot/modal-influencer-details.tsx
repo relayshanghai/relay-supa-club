@@ -118,7 +118,6 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                 {/* influencers thumbnail and info */}
                 <div className="flex w-full justify-between">
                     <div className="mb-5 flex gap-3">
-                        {/* TODO: make the influencer thumbnail reusable component */}
                         <div className="h-16 w-16 align-middle">
                             <img
                                 className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
@@ -134,7 +133,6 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                                 <span className="text-sm text-gray-600">{handle ?? username}</span>
                             </div>
                         </div>
-                        {/* TODO: connect with the score formulation in V2-1063  */}
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
                             <div>{indexScore}</div>
                         </div>
