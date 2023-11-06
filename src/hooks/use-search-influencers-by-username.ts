@@ -7,14 +7,12 @@ const useSearchInfluencersByUsername = () => {
         platform: CreatorPlatform,
     ): Promise<CreatorSearchResult> => {
         if (!username) throw new Error('Username is required');
-        const res = await nextFetch<CreatorSearchResult>(
-            `influencer-search/username?username=${username}&platform=${platform}`,
+        return await nextFetch<CreatorSearchResult>(
+            `influencer-search/username?${new URLSearchParams({ username, platform })}`,
             {
                 method: 'GET',
             },
         );
-
-        return res;
     };
     return {
         getInfluencerByUsername,

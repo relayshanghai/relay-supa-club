@@ -48,13 +48,13 @@ export const SearchCreators = () => {
             }
 
             window.open(
-                `/influencer/${searchPlatform}/${searchResult.accounts[0].account.user_profile.user_id}`,
+                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(
+                    searchResult.accounts[0].account.user_profile.user_id,
+                )}`,
                 '_blank',
             );
         } catch (error) {
-            if (error instanceof Error) {
-                clientLogger(error.message);
-            }
+            clientLogger(error);
             return;
         }
 
