@@ -287,9 +287,7 @@ const Boostbot = () => {
                         data={influencers}
                         selectedInfluencers={selectedInfluencers}
                         setSelectedInfluencers={setSelectedInfluencers}
-                        meta={{ t, searchId }}
-                        setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
-                        setSelectedRow={setSelectedRow}
+                        meta={{ t, searchId, setIsInfluencerDetailsModalOpen, setSelectedRow }}
                     />
                 )}
             </div>

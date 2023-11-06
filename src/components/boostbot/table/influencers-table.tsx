@@ -2,19 +2,16 @@ import { useEffect, useRef } from 'react';
 import type { TFunction } from 'i18next';
 import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     meta: TableMeta<TData>;
-    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
-    setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 }
 
 declare module '@tanstack/react-table' {
@@ -22,6 +19,8 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
+        setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+        setIsInfluencerDetailsModalOpen: (open: boolean) => void;
     }
 }
 
@@ -31,8 +30,6 @@ export function InfluencersTable<TData, TValue>({
     selectedInfluencers,
     setSelectedInfluencers,
     meta,
-    setIsInfluencerDetailsModalOpen,
-    setSelectedRow,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
@@ -97,11 +94,7 @@ export function InfluencersTable<TData, TValue>({
                                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, {
-                                                ...cell.getContext(),
-                                                setSelectedRow,
-                                                setIsInfluencerDetailsModalOpen,
-                                            })}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

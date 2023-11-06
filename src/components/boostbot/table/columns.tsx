@@ -6,6 +6,7 @@ import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 import { BoostbotFollowersCell } from './boostbot-followers-cell';
 import { BoostbotAudienceDemoCell } from './boostbot-audience-demo-cell';
 import { BoostbotAudienceLocationCell } from './boostbot-audience-location-cell';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -57,12 +58,18 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'openDetail',
         header: '',
-        cell: (cell) => (
-            <OpenInfluencerModalCell
-                row={cell.row}
-                setSelectedRow={cell.setSelectedRow}
-                setIsInfluencerDetailsModalOpen={cell.setIsInfluencerDetailsModalOpen}
-            />
-        ),
+        cell: ({ row, table }) => {
+            if (table.options.meta === undefined) {
+                clientLogger('table meta is undefined');
+                return;
+            }
+            return (
+                <OpenInfluencerModalCell
+                    row={row}
+                    setSelectedRow={table.options.meta.setSelectedRow}
+                    setIsInfluencerDetailsModalOpen={table.options.meta.setIsInfluencerDetailsModalOpen}
+                />
+            );
+        },
     },
 ];

@@ -14,8 +14,6 @@ export const OpenInfluencerModalCell = ({
     setSelectedRow,
 }: BoostbotAccountCellProps) => {
     const handleIconClick = () => {
-        //eslint-disable-next-line
-        console.log(row);
         setIsInfluencerDetailsModalOpen(true);
         setSelectedRow(row);
     };
