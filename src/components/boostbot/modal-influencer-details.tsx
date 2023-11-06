@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import { evaluateStat } from 'src/utils/api/boostbot/helper';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -44,8 +45,8 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         handle,
         username, // this is handle for instagram and tiktok
         avg_views: avgViewsRaw,
-        avg_reels_plays: avgReelsPlays, // this is avg views for instagram
-        engagement_rate: engagementRateDecimal,
+        avg_reels_plays: avgReelsPlaysRaw, // this is avg views for instagram
+        engagement_rate: engagementRateRaw,
         posts_count: totalPosts,
         followers,
         followers_growth: followersGrowthRaw,
@@ -56,11 +57,13 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
-    const engagementRatePercentage = `${Math.round(engagementRateDecimal * 100)}%`;
-    const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlays, 0);
-    //engagement rate = (avg views / followers) * 100
-    const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlays ?? 0) / followers) * 100)}%`;
+    //convert raw decimal numbers to string percentage
+    const engagementRate = `${Math.round(engagementRateRaw * 100)}%`;
+    const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
     const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
+
+    //engaged audience = (avg views / followers) * 100
+    const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlaysRaw ?? 0) / followers) * 100)}%`;
 
     const handleAddToSequence = () => {
         setIsOpen(false);
@@ -176,14 +179,27 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.audienceEngagementStats')}
                         </div>
-                        <StatCard title={t('boostbot.modal.engagedAudience')} stat={engagedAudience} iconName="alert" />
+                        <StatCard title={t('boostbot.modal.engagedAudience')} stat={engagedAudience} />
                         <div className="grid grid-cols-2 space-x-3">
                             <StatCard
                                 title={t('boostbot.modal.engagementRate')}
-                                stat={engagementRatePercentage}
-                                iconName="good"
+                                stat={engagementRate}
+                                iconName={evaluateStat({ engagementRateRaw })}
                             />
-                            <StatCard title={t('boostbot.modal.averageViews')} stat={avgViews ?? '-'} iconName="good" />
+                            {avgViewsRaw && (
+                                <StatCard
+                                    title={t('boostbot.modal.averageViews')}
+                                    stat={avgViews ?? '-'}
+                                    iconName={evaluateStat({ avgViewsRaw })}
+                                />
+                            )}
+                            {avgReelsPlaysRaw && (
+                                <StatCard
+                                    title={t('boostbot.modal.averageViews')}
+                                    stat={avgViews ?? '-'}
+                                    iconName={evaluateStat({ avgReelsPlaysRaw })}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -216,16 +232,20 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             {t('boostbot.modal.channelStats')}
                         </div>
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard
-                                title={t('boostbot.modal.followersGrowth')}
-                                stat={followersGrowth ? followersGrowth.toString() : '-'}
-                                iconName="good"
-                            />
-                            <StatCard
-                                title={t('boostbot.modal.totalPosts')}
-                                stat={totalPosts ? totalPosts.toString() : '-'}
-                                iconName="good"
-                            />
+                            {followersGrowthRaw && (
+                                <StatCard
+                                    title={t('boostbot.modal.followersGrowth')}
+                                    stat={followersGrowth.toString()}
+                                    iconName={evaluateStat({ followersGrowthRaw })}
+                                />
+                            )}
+                            {totalPosts && (
+                                <StatCard
+                                    title={t('boostbot.modal.totalPosts')}
+                                    stat={totalPosts.toString()}
+                                    iconName={evaluateStat({ totalPosts })}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName }) => {
 
     return (
         <div className="stat-card space-y-2 rounded-xl border border-gray-200 p-6 text-gray-600">
-            <div className="text-sm font-medium">{title}</div>
+            <div className="text-sm font-medium tracking-tight">{title}</div>
             <div className="flex w-full items-center justify-between">
                 <div className="text-3xl font-medium">{stat}</div>
                 <div className={`flex h-8 w-8 items-center justify-center rounded-full border-4 ${statBgColor}`}>
