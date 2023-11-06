@@ -1,4 +1,4 @@
-import { addHours, getHours, isWeekend, isSameDay } from 'src/utils/time-zone-helpers';
+import { addHours, getHours, isWeekend, isSameDay, weekDayAsNumber, getWeekday } from 'src/utils/time-zone-helpers';
 import { getOutbox } from '.';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 
@@ -12,8 +12,7 @@ export const calculateSendAt = async (
     maxDailySend = MAX_DAILY_SEND,
     now = new Date(),
 ): Promise<Date> => {
-    const sendAt = new Date(now);
-    sendAt.setTime(sendAt.getTime() + waitTimeHours * 60 * 60 * 1000);
+    const sendAt = addHours(now, waitTimeHours);
     const targetDate = findNextBusinessDayTime(sendAt); // Get initial targetDate
 
     const outbox = await getOutbox();
@@ -66,7 +65,6 @@ export const findNextAvailableDateIfMaxEmailsPerDayMet = (
 export const findNextBusinessDayTime = (currentDate: Date, timeZone = TARGET_TIMEZONE): Date => {
     let targetDate = currentDate;
     let maxTries = 0;
-
     while (
         isWeekend(targetDate, timeZone) ||
         getHours(targetDate, timeZone) < 9 ||
@@ -81,9 +79,9 @@ export const findNextBusinessDayTime = (currentDate: Date, timeZone = TARGET_TIM
         if (isWeekend(targetDate, timeZone)) {
             // If the day of the week is Saturday or Sunday
             // Find the difference from Monday and add one day (to reach Monday)
-            // Then multiply by 24 to convert days to hours, and add 9 to target 9 AM
-            const daysUntilMonday = (7 - targetDate.getDay()) % 7;
-            hoursToAdd = daysUntilMonday * 24 + 9;
+            // Then multiply by 24 to convert days to hours
+            const daysUntilMonday = (7 - weekDayAsNumber(getWeekday(targetDate, timeZone))) % 7;
+            hoursToAdd = daysUntilMonday * 24;
         } else if (getHours(targetDate, timeZone) < 9) {
             // If the current time is before 9 AM
             // Find the difference from 9 AM
@@ -94,8 +92,8 @@ export const findNextBusinessDayTime = (currentDate: Date, timeZone = TARGET_TIM
             hoursToAdd = 24 - getHours(targetDate, timeZone) + 9;
         }
         // the randomBusinessHour is to prevent all emails from being sent at the same time
-        // if emails can be sent earliest at 9, latest 5(17) then there are 8 possible hours
-        const randomBusinessHour = Math.floor(Math.random() * 8);
+        // if emails can be sent earliest at 9, latest 5(17) then there are 8 possible hours but rarely will we start at 0, so 7
+        const randomBusinessHour = Math.floor(Math.random() * 7);
         targetDate = addHours(targetDate, randomBusinessHour + hoursToAdd);
 
         maxTries++;
