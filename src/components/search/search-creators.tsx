@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChangeEvent } from 'react';
-import { ChevronDown, Instagram, Tiktok, YoutubeNoBg } from '../icons';
+import { ChevronDown } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SearchInfluencerByName } from 'src/utils/analytics/events/discover/search-influencer-by-name';
@@ -9,12 +9,7 @@ import useSearchInfluencersByUsername from 'src/hooks/use-search-influencers-by-
 import type { CreatorPlatform } from 'types';
 import { clientLogger } from 'src/utils/logger-client';
 import toast from 'react-hot-toast';
-
-const platformIcons = {
-    youtube: <YoutubeNoBg data-testid="youtube-platform" className="h-6 w-6" />,
-    tiktok: <Tiktok data-testid="tiktok-platform" className="h-6 w-6" />,
-    instagram: <Instagram data-testid="instagram-platform" className="h-6 w-6" />,
-};
+import { platforms } from './search-select-platform';
 
 export const SearchCreators = () => {
     const [searchUsername, setSearchUsername] = useState('');
@@ -106,29 +101,25 @@ const PlatformDropdown = ({
                 data-testid="platform-dropdown"
                 className={`flex h-full cursor-pointer flex-row items-center gap-3 border-r border-r-gray-200 pl-4`}
             >
-                {platformIcons[platform]}
+                <img
+                    height={28}
+                    width={28}
+                    src={platforms.filter((p) => p.id === platform)[0].icon}
+                    alt={`selected platform ${platform}`}
+                />
                 <ChevronDown className="h-4 w-4 stroke-gray-300 stroke-2" />
             </div>
             {expanded && (
-                <div className="absolute top-full z-50 flex h-fit w-full flex-col items-center rounded-b-md border border-gray-300 bg-white shadow-md">
-                    <div
-                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
-                        onClick={() => handlePlatorm('tiktok')}
-                    >
-                        <Tiktok data-testid="tiktok-option" className="h-6 w-6" />
-                    </div>
-                    <div
-                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
-                        onClick={() => handlePlatorm('instagram')}
-                    >
-                        <Instagram data-testid="instagram-option" className="h-6 w-6" />
-                    </div>
-                    <div
-                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
-                        onClick={() => handlePlatorm('youtube')}
-                    >
-                        <YoutubeNoBg data-testid="youtube-option" className="h-6 w-6" />
-                    </div>
+                <div className="absolute top-full z-50 flex h-fit w-full flex-col items-center rounded-lg border border-gray-300 bg-white px-1 py-2 shadow-lg">
+                    {platforms.map(({ id, label, icon }) => (
+                        <div
+                            key={id}
+                            className="flex w-full cursor-pointer justify-center rounded-md py-3 hover:bg-primary-100"
+                            onClick={() => handlePlatorm(id as CreatorPlatform)}
+                        >
+                            <img data-testid={`${id}-option`} src={icon} height={28} width={28} alt={label} />
+                        </div>
+                    ))}
                 </div>
             )}
         </div>
