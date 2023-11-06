@@ -42,7 +42,7 @@ const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRol
 
                 const dataPoints = [
                     client.name,
-                    client.campaigns.length,
+                    client.hasOutreach,
                     client.profiles.length,
                     contactEmailString,
                     client.subscription_status,
@@ -67,7 +67,7 @@ const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRol
                                         <Button onClick={() => onManageClick(client)}>{dataPoint}</Button>
                                     </Link>
                                 ) : (
-                                    dataPoint
+                                    dataPoint?.toString()
                                 )}
                             </td>
                         ))}

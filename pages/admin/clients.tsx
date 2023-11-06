@@ -8,7 +8,7 @@ import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { nextFetch } from 'src/utils/fetcher';
 
-const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status', 'Manage'];
+const columnHeaders = ['Account', 'Outreach', 'Staff', 'Contact', 'Subscription Status', 'Manage'];
 
 const Clients = () => {
     const [data, setData] = useState<AdminClientsGetResponse>([]);
