@@ -169,15 +169,6 @@ const NavBarInner = ({
                                 </div>
                             )}
                         </div>
-                        <div className={`flex flex-col whitespace-nowrap text-xs `}>
-                            {/* <p className="font-semibold text-gray-800">{profileFirstName}</p> */}
-                            {/*TODO {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                                <p className="font-light">
-                                    Discover beta!
-                                    <span className="p-1 align-super text-[8px] text-primary-500">Upgrade</span>
-                                </p>
-                            )} */}
-                        </div>
                     </div>
                 )}
             </div>
