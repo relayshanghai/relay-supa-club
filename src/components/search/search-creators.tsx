@@ -11,9 +11,9 @@ import { clientLogger } from 'src/utils/logger-client';
 import toast from 'react-hot-toast';
 
 const platformIcons = {
-    youtube: <YoutubeNoBg className="h-6 w-6" />,
-    tiktok: <Tiktok className="h-6 w-6" />,
-    instagram: <Instagram className="h-6 w-6" />,
+    youtube: <YoutubeNoBg data-testid="youtube-platform" className="h-6 w-6" />,
+    tiktok: <Tiktok data-testid="tiktok-platform" className="h-6 w-6" />,
+    instagram: <Instagram data-testid="instagram-platform" className="h-6 w-6" />,
 };
 
 export const SearchCreators = () => {
@@ -70,10 +70,10 @@ export const SearchCreators = () => {
             <PlatformDropdown
                 platform={searchPlatform}
                 setSearchPlatform={setSearchPlatform}
-                className="absolute left-0 top-0 h-full w-16"
+                className="absolute left-0 top-0 h-full w-20"
             />
             <input
-                className="mr-24 block w-full appearance-none rounded-md border border-gray-200 bg-white py-2 pl-20 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="mr-24 block w-full appearance-none rounded-md border border-gray-200 bg-white py-2 pl-24 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
@@ -103,16 +103,32 @@ const PlatformDropdown = ({
         <div className={`h-full ${className} gap-2`}>
             <div
                 onClick={() => setExpanded(!expanded)}
-                className={`flex h-full cursor-pointer flex-row items-center gap-1 border-r border-r-gray-300 pl-4 pr-2`}
+                data-testid="platform-dropdown"
+                className={`flex h-full cursor-pointer flex-row items-center gap-3 border-r border-r-gray-200 pl-4`}
             >
                 {platformIcons[platform]}
                 <ChevronDown className="h-4 w-4 stroke-gray-300 stroke-2" />
             </div>
             {expanded && (
-                <div className="absolute top-full flex h-full w-full flex-row">
-                    <Tiktok onClick={() => handlePlatorm('tiktok')} className="h-6 w-6 cursor-pointer" />
-                    <Instagram onClick={() => handlePlatorm('instagram')} className="h-6 w-6 cursor-pointer" />
-                    <YoutubeNoBg onClick={() => handlePlatorm('youtube')} className="h-6 w-6 cursor-pointer" />
+                <div className="absolute top-full z-50 flex h-fit w-full flex-col items-center rounded-b-md border border-gray-300 bg-white shadow-md">
+                    <div
+                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
+                        onClick={() => handlePlatorm('tiktok')}
+                    >
+                        <Tiktok data-testid="tiktok-option" className="h-6 w-6" />
+                    </div>
+                    <div
+                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
+                        onClick={() => handlePlatorm('instagram')}
+                    >
+                        <Instagram data-testid="instagram-option" className="h-6 w-6" />
+                    </div>
+                    <div
+                        className="flex w-full cursor-pointer justify-center py-3 hover:bg-primary-200"
+                        onClick={() => handlePlatorm('youtube')}
+                    >
+                        <YoutubeNoBg data-testid="youtube-option" className="h-6 w-6" />
+                    </div>
                 </div>
             )}
         </div>
