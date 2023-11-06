@@ -32,7 +32,7 @@ describe('Expired User Experience', () => {
     it('r button leads to boostbot', () => {
         cy.loginExpired();
         cy.visit('/account');
-        cy.contains('span', 'r').click();
+        cy.getByTestId('home-icon').click();
         cy.url().should('include', '/boostbot');
     });
     it('Can see banners on boostbot and discover', () => {
