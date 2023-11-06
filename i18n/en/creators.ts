@@ -88,6 +88,8 @@ const creators = {
         lastUpdate: 'The report was last updated on',
         searchInfluencerPlaceholder: 'Search for an influencer',
         noSearchResults: 'No results found, please try another keyword',
+        noTopicResults:
+            'Sorry, no relevant topic found. Try deleting the last few letters of your current search, or typing only the first few letters of a new search and selecting one of the suggested topics',
         pressEnterToSearch: 'Press enter to search',
         editProfile: 'Edit Profile',
         description: 'Description',

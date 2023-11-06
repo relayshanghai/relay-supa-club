@@ -115,6 +115,7 @@ export const SearchTopics = ({
                 trackEvent(SEARCH_OPTIONS('search topics'), { topic: item });
             }}
             spinnerLoading={loading}
+            topicSearch={true}
         />
     );
 };

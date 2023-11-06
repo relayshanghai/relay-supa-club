@@ -85,6 +85,8 @@ const creators = {
         lastUpdate: '报告更新于',
         searchInfluencerPlaceholder: '搜索KOL',
         noSearchResults: '没有搜索结果, 请尝试其他关键词',
+        noTopicResults:
+            '抱歉，我们未能找到相关主题。请尝试将当前所搜索词条的最后几个字母删除，或键入新搜索词条的首几个字母，并从建议的主题中选择一个',
         pressEnterToSearch: '按回车键搜索',
         editProfile: '编辑信息',
         description: '描述',
