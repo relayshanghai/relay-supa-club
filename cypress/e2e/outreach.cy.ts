@@ -68,7 +68,7 @@ describe('outreach', () => {
         cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
     it('displays sequence page stats and influencers table', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
 
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
@@ -288,7 +288,7 @@ describe('outreach', () => {
 
         // influencer has been moved to the manage influencers page
         // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('tr', 'Bob-Recommended Brown', { timeout: 100000 }).within(() => {
             cy.contains('Negotiating', { timeout: 10000 });
         });
@@ -322,7 +322,7 @@ describe('non-outreach user', () => {
         cy.contains('CRM').click();
         cy.contains('Outreach Plan Exclusive Feature');
         cy.contains('Sending sequence emails is only available for Outreach Plan accounts.');
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('Outreach Plan Exclusive Feature');
         cy.contains('Influencer Manager is only available for Outreach Plan accounts.');
         cy.contains('tr', 'Influencer Name');
@@ -339,7 +339,7 @@ describe('non-outreach user', () => {
         cy.loginTestUser();
         cy.contains('CRM').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
         cy.contains('Inbox').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
