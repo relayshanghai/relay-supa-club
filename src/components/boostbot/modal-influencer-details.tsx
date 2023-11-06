@@ -23,6 +23,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat } from 'src/utils/api/boostbot/helper';
+import { calculateIndexScore } from './table/boostbot-score-cell';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -56,6 +57,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
+    const indexScore = calculateIndexScore(influencer);
 
     //convert raw decimal numbers to string percentage
     const engagementRate = `${Math.round(engagementRateRaw * 100)}%`;
@@ -134,7 +136,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         </div>
                         {/* TODO: connect with the score formulation in V2-1063  */}
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
-                            <div>86</div>
+                            <div>{indexScore}</div>
                         </div>
                     </div>
                     <Link
