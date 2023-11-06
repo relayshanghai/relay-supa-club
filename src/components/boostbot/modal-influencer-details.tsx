@@ -24,6 +24,7 @@ import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
+import { processedAudienceDemoData } from './table/boostbot-audience-demo-cell';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -83,34 +84,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         { subject: 'Injury Recovery', A: 23, fullMark: 150 },
     ];
 
-    // TODO: replace placeholder in V2-1075
-    const dummyBarChartData = [
-        {
-            name: '13-17',
-            male: 4000,
-            female: 2400,
-        },
-        {
-            name: '18-24',
-            male: 3000,
-            female: 1398,
-        },
-        {
-            name: '25-40',
-            male: 2000,
-            female: 1800,
-        },
-        {
-            name: '40-65',
-            male: 2780,
-            female: 2908,
-        },
-        {
-            name: '65+',
-            male: 1890,
-            female: 3800,
-        },
-    ];
+    const processedDemoData = processedAudienceDemoData(influencer);
 
     return (
         <Modal maxWidth="max-w-3xl" visible={isOpen} onClose={() => setIsOpen(false)}>
@@ -213,14 +187,14 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
 
                         <ResponsiveContainer width={320} height={140}>
                             <BarChart
-                                data={dummyBarChartData}
+                                data={processedDemoData}
                                 margin={{
                                     top: 32,
                                     right: 16,
                                 }}
                             >
                                 <CartesianGrid vertical={false} horizontal={false} />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                                <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                                 <YAxis width={16} tick={false} axisLine={false} />
                                 <Bar dataKey="female" fill="#fcceee" radius={2} />
                                 <Bar dataKey="male" fill="#b8ccff" radius={2} />
