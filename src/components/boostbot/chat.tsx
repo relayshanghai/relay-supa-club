@@ -276,7 +276,8 @@ export const Chat: React.FC<ChatProps> = ({
             />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
-                    BoostBot <SparklesIcon className="inline h-4 w-4" />
+                    BoostBot AI Search
+                    <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
 
