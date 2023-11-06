@@ -232,7 +232,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             {t('boostbot.modal.channelStats')}
                         </div>
                         <div className="grid grid-cols-2 space-x-3">
-                            {followersGrowthRaw && (
+                            {followersGrowthRaw !== undefined && (
                                 <StatCard
                                     title={t('boostbot.modal.followersGrowth')}
                                     stat={followersGrowth.toString()}
