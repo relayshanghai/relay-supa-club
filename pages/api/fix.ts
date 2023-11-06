@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 import type { NextApiHandler } from 'next';
+import { getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 
-const handler: NextApiHandler = async (req, res) => {
-    // eslint-disable-next-line no-console
+const fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     console.log('fixing');
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
@@ -20,7 +21,6 @@ const handler: NextApiHandler = async (req, res) => {
         // console.log('emails', count, '   error: ', error);
 
         if (count !== null && count === 0) {
-            // eslint-disable-next-line no-console
             console.log('updating, ', influencer.name);
             await supabase.from('sequence_influencers').update({ funnel_status: 'To Contact' }).eq('id', influencer.id);
             updated.push(influencer.name + ' ' + influencer.id);
@@ -30,4 +30,12 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(200).json({ message: updated });
 };
 
-export default handler;
+const _fixMisSentEmails: NextApiHandler = async (_req, res) => {
+    console.log('fixing emails');
+    const outbox = await getOutbox();
+    const fromJacob = outbox.filter((email) => email.account === 'egtljwhuz89pfkmj');
+    console.log('fromJacob', fromJacob.length);
+    return res.status(200).json({ message: 'updated' });
+};
+
+export default fixStuckInSequenceWithNoEmail;
