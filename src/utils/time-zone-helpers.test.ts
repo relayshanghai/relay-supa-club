@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getWeekday, isWeekend, getHours, addHours, isSameDay } from './time-zone-helpers';
+import { getWeekday, isWeekend, getHours, addHours, isSameDay, weekDayAsNumber } from './time-zone-helpers';
 
 describe('getWeekday', () => {
     it('gets the weekday based on the passed in timezone', () => {
@@ -11,6 +11,23 @@ describe('getWeekday', () => {
         const saturday_1_am_chicago_time = new Date('2023-09-30T01:00:00-05:00');
         const weekday2 = getWeekday(saturday_1_am_chicago_time, 'America/Chicago');
         expect(weekday2).toEqual('Saturday');
+    });
+});
+
+describe('weekDayAsNumber', () => {
+    it('gets the weekday as a number', () => {
+        const saturday_11_thirty_pm_chicago_time = new Date('2023-09-30T23:30:00-05:00');
+        const weekday = getWeekday(saturday_11_thirty_pm_chicago_time, 'America/Chicago');
+        const weekdayAsNumber = weekDayAsNumber(weekday);
+        expect(weekdayAsNumber).toEqual(6);
+
+        const monday_11_thirty_pm_chicago_time = new Date('2023-10-02T23:30:00-05:00');
+        const weekday2 = getWeekday(monday_11_thirty_pm_chicago_time, 'America/Chicago');
+        const weekdayAsNumber2 = weekDayAsNumber(weekday2);
+        expect(weekdayAsNumber2).toEqual(1);
+
+        const errored = () => weekDayAsNumber('asdf');
+        expect(errored).toThrowError('Could not find day asdf');
     });
 });
 
