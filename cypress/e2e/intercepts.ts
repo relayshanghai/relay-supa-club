@@ -263,6 +263,33 @@ export const searchIntercepts = () => {
             });
         }
     });
+    cy.intercept('GET', '/api/influencer-search/username*', (req) => {
+        const body = req.query as { username: string; platform: string };
+        if (body.username === 'GRTR') {
+            req.reply({
+                accounts: [
+                    {
+                        account: {
+                            user_profile: {
+                                user_id: 'GRTR',
+                            },
+                        },
+                        match: {},
+                    },
+                ],
+                total: 1,
+                shown_accounts: [0],
+                cost: 0,
+            });
+        } else {
+            req.reply({
+                accounts: [{}],
+                total: 0,
+                shown_accounts: [0],
+                cost: 0,
+            });
+        }
+    });
     cy.intercept('/api/influencer-search/topics*', (req) => {
         const body = req.body;
         if (body.term === 'alligators') {
