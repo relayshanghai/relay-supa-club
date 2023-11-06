@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
-import { HamburgerMenu } from 'src/components/icons';
 import { Sidebar } from 'src/components/sidebar';
 
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import ClientRoleWarning from './search/client-role-warning';
-import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { NAVBAR } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +13,7 @@ import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useReport } from 'src/hooks/use-report';
 import type { CreatorPlatform } from 'types';
-import { ToggleNavbarSize, VisitPage } from 'src/utils/analytics/events';
+import { VisitPage } from 'src/utils/analytics/events';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -68,8 +65,6 @@ export const Layout = ({ children }: any) => {
     const accountMenuRef = useRef(null);
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
-    const { trackEvent } = useRudderstack();
-    const [sideBarOpen, setSideBarOpen] = useState(false);
 
     return (
         <div className="fixed flex h-screen w-screen">
@@ -81,29 +76,11 @@ export const Layout = ({ children }: any) => {
                 logout={logout}
                 loggedIn={!!profile?.id && !loading}
                 profileFirstName={profile?.first_name}
-                open={sideBarOpen}
-                setOpen={setSideBarOpen}
             />
             <div className="flex w-full max-w-full flex-col overflow-hidden">
                 <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
                     <div className="flex items-center">
-                        <Button
-                            onClick={() => {
-                                const navbarAction = sideBarOpen ? 'Collapse' : 'Expand';
-                                setSideBarOpen(!sideBarOpen);
-                                track(ToggleNavbarSize, {
-                                    navbar_action: navbarAction,
-                                });
-
-                                trackEvent(NAVBAR('Hamburger Menu Clicked'));
-                            }}
-                            variant="neutral"
-                            className="flex items-center p-4 hover:text-primary-500"
-                        >
-                            <HamburgerMenu className="h-5 w-5 stroke-gray-400" />
-                        </Button>
-
-                        <p className="flex flex-row items-center gap-2">
+                        <p className="flex flex-row items-center gap-2 pl-4">
                             {routerPath.includes('influencer') ? (
                                 <p className="text-sm font-semibold text-gray-600">
                                     {influencer && t('navbar.report', { influencerName: influencer.name })}

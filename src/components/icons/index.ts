@@ -82,3 +82,7 @@ export { default as BoostbotSelected } from './Boostbot_selected';
 export { default as Payment } from './Payment';
 export { default as Alipay } from './Alipay';
 export { default as LanguageToggleIcon } from './LanguageToggleIcon';
+export { default as ThunderSearch } from './ThunderSearch';
+export { default as OldSearch } from './OldSearch';
+export { default as ThunderMail } from './ThunderMail';
+export { default as Inbox } from './Inbox';
