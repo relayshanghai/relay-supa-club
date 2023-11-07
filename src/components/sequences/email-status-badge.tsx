@@ -1,6 +1,31 @@
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '../icons';
-import { EMAIL_STATUS_ICONS, EMAIL_STATUS_STYLES, type EmailStatus } from './constants';
+import {
+    Spinner,
+    CalendarCheck,
+    CalendarSearch,
+    ChatBubbleText,
+    Drag,
+    EmailCheck,
+    EmailOpenOutline,
+    ReturnArrowX,
+    Send,
+    SendX,
+} from '../icons';
+import { EMAIL_STATUS_STYLES, type EmailStatus } from './constants';
+
+export const EMAIL_STATUS_ICONS: {
+    [key in EmailStatus]: JSX.Element;
+} = {
+    Scheduling: <CalendarSearch className="h-4 w-4 stroke-yellow-500" />,
+    Scheduled: <CalendarCheck className="h-4 w-4 stroke-primary-500" />,
+    Delivered: <EmailCheck className="h-4 w-4 stroke-blue-500" />,
+    Opened: <EmailOpenOutline className="h-4 w-4 stroke-pink-500" />,
+    'Link Clicked': <Drag className="h-4 w-4 stroke-cyan-500" />,
+    Bounced: <ReturnArrowX className="h-4 w-4 stroke-red-500" />,
+    Failed: <SendX className="h-4 w-4 stroke-orange-500" />,
+    Replied: <ChatBubbleText className="h-4 w-4 stroke-green-500" />,
+    Ignored: <Send className="h-4 w-4 stroke-gray-500" />,
+};
 
 export const EmailStatusBadge = ({ loading, status }: { loading: boolean; status: EmailStatus }) => {
     const { t } = useTranslation();

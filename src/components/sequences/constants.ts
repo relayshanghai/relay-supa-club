@@ -1,15 +1,5 @@
 import type sequences from 'i18n/en/sequences';
-import {
-    CalendarCheck,
-    CalendarSearch,
-    ChatBubbleText,
-    Drag,
-    EmailCheck,
-    EmailOpenOutline,
-    ReturnArrowX,
-    Send,
-    SendX,
-} from '../icons';
+
 import type { EmailDeliveryStatus, EmailTrackingStatus, SequenceInfluencer } from 'src/utils/api/db';
 
 export type SequenceColumn = keyof (typeof sequences)['columns'];
@@ -55,20 +45,6 @@ export const EMAIL_STATUS_STYLES: {
     Failed: { style: 'bg-orange-100 text-orange-500' },
     Replied: { style: 'bg-green-100 text-green-500' },
     Ignored: { style: 'bg-gray-100 text-gray-500' },
-};
-
-export const EMAIL_STATUS_ICONS: {
-    [key in EmailStatus]: JSX.Element;
-} = {
-    Scheduling: <CalendarSearch className="h-4 w-4 stroke-yellow-500" />,
-    Scheduled: <CalendarCheck className="h-4 w-4 stroke-primary-500" />,
-    Delivered: <EmailCheck className="h-4 w-4 stroke-blue-500" />,
-    Opened: <EmailOpenOutline className="h-4 w-4 stroke-pink-500" />,
-    'Link Clicked': <Drag className="h-4 w-4 stroke-cyan-500" />,
-    Bounced: <ReturnArrowX className="h-4 w-4 stroke-red-500" />,
-    Failed: <SendX className="h-4 w-4 stroke-orange-500" />,
-    Replied: <ChatBubbleText className="h-4 w-4 stroke-green-500" />,
-    Ignored: <Send className="h-4 w-4 stroke-gray-500" />,
 };
 
 export const EMAIL_STEPS = {
