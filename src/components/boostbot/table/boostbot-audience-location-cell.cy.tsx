@@ -19,6 +19,6 @@ describe('<BoostbotAudienceLocationCell />', () => {
 
     it('should has the correct width of the country percentage', () => {
         testMount(<BoostbotAudienceLocationCell row={row} />);
-        cy.get('[data-testid="country1Bar"]').should('have.attr', 'style', `width: ${geoPercentage};`);
+        cy.getByTestId('boostbot-location-cell-country-1').should('have.attr', 'style', `width: ${geoPercentage};`);
     });
 });

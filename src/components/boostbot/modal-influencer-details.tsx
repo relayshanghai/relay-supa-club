@@ -113,7 +113,12 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     ];
 
     return (
-        <Modal maxWidth="max-w-3xl" visible={isOpen} onClose={() => setIsOpen(false)}>
+        <Modal
+            maxWidth="max-w-3xl"
+            visible={isOpen}
+            onClose={() => setIsOpen(false)}
+            data-testid="boostbot-influencer-detail-modal"
+        >
             <div className="flex flex-col items-center justify-center">
                 {/* influencers thumbnail and info */}
                 <div className="flex w-full justify-between">
