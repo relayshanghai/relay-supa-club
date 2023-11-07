@@ -20,7 +20,11 @@ export const OpenInfluencerModalCell = ({
 
     return (
         <div className="cursor-pointer">
-            <ReportOutline className="stroke-gray-400 stroke-2" onClick={handleIconClick} />
+            <ReportOutline
+                data-testid="boostbot-open-modal-icon"
+                className="stroke-gray-400 stroke-2"
+                onClick={handleIconClick}
+            />
         </div>
     );
 };
