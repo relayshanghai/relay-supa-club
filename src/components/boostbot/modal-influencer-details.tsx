@@ -59,17 +59,17 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
     const indexScore = calculateIndexScore(influencer);
 
-    //convert raw decimal numbers to string percentage
+    // convert raw decimal numbers to string percentage
     const engagementRate = `${Math.round(engagementRateRaw * 100)}%`;
     const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
     const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
 
-    //engaged audience = (avg views / followers) * 100
+    // engaged audience = (avg views / followers) * 100
     const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlaysRaw ?? 0) / followers) * 100)}%`;
 
     const handleAddToSequence = () => {
         setIsOpen(false);
-        //TODO: add to sequence function in V2-1029
+        // TODO: add to sequence function in V2-1029
     };
 
     // TODO: replace placeholder in V2-1018

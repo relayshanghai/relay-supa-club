@@ -4,8 +4,7 @@ interface InfluencerEvaluatedStats {
 export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
     const statName = Object.keys(stat)[0];
     const statValue = stat[statName];
-    // console.log('statName', statName);
-    // console.log('statValue', statValue);
+
     //the cutoff standard can be find in KiteMaker ticket V2-1063
     switch (statName) {
         case 'engagementRateRaw':

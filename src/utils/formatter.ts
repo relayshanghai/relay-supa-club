@@ -44,13 +44,5 @@ export const numberFormatter = (num?: number | string, decimals = 2) => {
         decimals = 0;
     }
 
-    // if (number >= 1e5) {
-    //     return formatNumber(Math.floor(number / 1e4) * 1e4) + '+';
-    // }
-
-    // if (number >= 1e4) {
-    //     return formatNumber(Math.floor(number / 1e4) * 1e4) + '+';
-    // }
-
     return formatNumber(number);
 };
