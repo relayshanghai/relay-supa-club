@@ -48,7 +48,6 @@ export const SearchTopics = ({
             ref.current = controller;
 
             try {
-                setLoading(true);
                 const res = await nextFetch(path, {
                     method: 'post',
                     signal,
@@ -102,6 +101,7 @@ export const SearchTopics = ({
             tags={topics}
             suggestions={suggestions}
             onChange={(item) => {
+                setLoading(true);
                 setTopicSearch(item);
                 onChangeTopics();
             }}
