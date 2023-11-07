@@ -10,6 +10,7 @@ interface SequenceTableProps {
     sequence?: Sequence;
     sequenceInfluencers: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
+    loadingEmails: boolean;
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencerManagerPage['funnel_status'];
     missingVariables: string[];
@@ -51,6 +52,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     sequence,
     sequenceInfluencers,
     sequenceEmails,
+    loadingEmails,
     sequenceSteps,
     currentTab,
     missingVariables,
@@ -115,14 +117,13 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                     const lastStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
                     const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step + 1);
                     const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
-                    const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
                     return (
                         <SequenceRow
                             key={influencer.id}
                             sequence={sequence}
                             sequenceInfluencer={influencer}
+                            loadingEmails={loadingEmails}
                             lastEmail={lastEmail}
-                            nextEmail={nextEmail}
                             lastStep={lastStep}
                             nextStep={nextStep}
                             sequenceSteps={sequenceSteps}

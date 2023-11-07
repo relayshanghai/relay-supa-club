@@ -1,0 +1,80 @@
+import type sequences from 'i18n/en/sequences';
+import {
+    CalendarCheck,
+    CalendarSearch,
+    ChatBubbleText,
+    Drag,
+    EmailCheck,
+    EmailOpenOutline,
+    ReturnArrowX,
+    Send,
+    SendX,
+} from '../icons';
+import type { EmailDeliveryStatus, EmailTrackingStatus, SequenceInfluencer } from 'src/utils/api/db';
+
+export type SequenceColumn = keyof (typeof sequences)['columns'];
+export const columnsNeedsAttention: SequenceColumn[] = [
+    'name',
+    'email',
+    'influencerTopics',
+    'dateAdded',
+    'sequenceActions',
+];
+export const columnsInSequence: SequenceColumn[] = ['name', 'lastEmailSent', 'status', 'sendTime', 'nextEmailPreview'];
+export const columnsIgnored: SequenceColumn[] = ['name', 'currentStep', 'status', 'restartSequence'];
+export const sequenceColumns = (currentTab: SequenceInfluencer['funnel_status']) =>
+    currentTab === 'To Contact'
+        ? columnsNeedsAttention
+        : currentTab === 'In Sequence'
+        ? columnsInSequence
+        : currentTab === 'Ignored'
+        ? columnsIgnored
+        : [];
+
+export type SequenceIndexColumn = keyof (typeof sequences)['indexColumns'];
+export const sequencesIndexColumns: SequenceIndexColumn[] = [
+    'sequence',
+    'influencers',
+    'openRate',
+    'manager',
+    'product',
+    'sequenceActions',
+];
+
+export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Scheduling' | 'Ignored';
+
+export const EMAIL_STATUS_STYLES: {
+    [key in EmailStatus]: { style: string };
+} = {
+    Scheduling: { style: 'bg-yellow-100 text-yellow-500' },
+    Scheduled: { style: 'bg-primary-100 text-primary-500' },
+    Delivered: { style: 'bg-blue-100 text-blue-500' },
+    Opened: { style: 'bg-pink-100 text-pink-500' },
+    'Link Clicked': { style: 'bg-cyan-100 text-cyan-500' },
+    Bounced: { style: 'bg-red-100 text-red-500' },
+    Failed: { style: 'bg-orange-100 text-orange-500' },
+    Replied: { style: 'bg-green-100 text-green-500' },
+    Ignored: { style: 'bg-gray-100 text-gray-500' },
+};
+
+export const EMAIL_STATUS_ICONS: {
+    [key in EmailStatus]: JSX.Element;
+} = {
+    Scheduling: <CalendarSearch className="h-4 w-4 stroke-yellow-500" />,
+    Scheduled: <CalendarCheck className="h-4 w-4 stroke-primary-500" />,
+    Delivered: <EmailCheck className="h-4 w-4 stroke-blue-500" />,
+    Opened: <EmailOpenOutline className="h-4 w-4 stroke-pink-500" />,
+    'Link Clicked': <Drag className="h-4 w-4 stroke-cyan-500" />,
+    Bounced: <ReturnArrowX className="h-4 w-4 stroke-red-500" />,
+    Failed: <SendX className="h-4 w-4 stroke-orange-500" />,
+    Replied: <ChatBubbleText className="h-4 w-4 stroke-green-500" />,
+    Ignored: <Send className="h-4 w-4 stroke-gray-500" />,
+};
+
+export const EMAIL_STEPS = {
+    Outreach: {},
+    '1st Follow-up': {},
+    '2nd Follow-up': {},
+    '3rd Follow-up': {},
+    '4th Follow-up': {},
+};
