@@ -53,7 +53,9 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         followers_growth: followersGrowthRaw,
         url,
         user_id,
+        // topics,
     } = influencer;
+
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
@@ -74,17 +76,16 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
 
     // TODO: replace placeholder in V2-1018
     const dummyRadarGraphData = [
-        { subject: 'Productivity', A: 90, fullMark: 150 },
-        { subject: 'Fitness Routine', A: 60, fullMark: 150 },
-        { subject: 'Sports', A: 88, fullMark: 150 },
-        { subject: 'Theraputics', A: 66, fullMark: 150 },
-        { subject: 'Yoga', A: 80, fullMark: 150 },
-        { subject: 'Wellness', A: 90, fullMark: 150 },
-        { subject: 'Injury Recovery', A: 23, fullMark: 150 },
+        { topic: 'Productivity', relevance: 90 },
+        { topic: 'Fitness Routine', relevance: 60 },
+        { topic: 'Sports', relevance: 88 },
+        { topic: 'Theraputics', relevance: 66 },
+        { topic: 'Yoga', relevance: 80 },
+        { topic: 'Wellness', relevance: 90 },
+        { topic: 'Injury Recovery', relevance: 23 },
     ];
 
     const processedDemoData = processedAudienceDemoData(influencer);
-
     return (
         <Modal
             maxWidth="max-w-3xl"
@@ -139,11 +140,11 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             <ResponsiveContainer width={320} height={280}>
                                 <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyRadarGraphData}>
                                     <PolarGrid stroke="#e5e7eb" />
-                                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10 }} />
+                                    <PolarAngleAxis dataKey="topic" tick={{ fontSize: 10 }} />
                                     <PolarRadiusAxis tick={false} axisLine={false} />
                                     <Radar
                                         name="top_niches"
-                                        dataKey="A"
+                                        dataKey="relevance"
                                         strokeWidth={2}
                                         stroke="#7C3AED" //text-primary-600
                                         fill="#DDD6FE" //text-primary-200
