@@ -86,7 +86,8 @@ const creators = {
     },
     show: {
         lastUpdate: 'The report was last updated on',
-        searchInfluencerPlaceholder: 'Search for an influencer',
+        searchInfluencerPlaceholder: 'Search for influencer username eg. @mrbeast',
+        noInfluencerSearchResults: `Sorry, we don't have a report for {{ username }} on {{ platform }}`,
         noSearchResults: 'No results found, please try another keyword',
         noTopicResults: {
             title: 'Sorry, no relevant topic found.',
