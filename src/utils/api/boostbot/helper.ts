@@ -26,6 +26,7 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
 export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
     const { audience_genders_per_age: audienceDemoData, audience_genders } = influencer;
     const maleAudienceWeight = audience_genders && audience_genders[0].weight;
+    const WEIGHT_TO_PERCENTAGE = 10000;
 
     if (!audienceDemoData || !maleAudienceWeight) {
         return [];
@@ -37,7 +38,7 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
 
         return rawData.map((item) => ({
             category: item.code,
-            male: (item.male ?? 0) * maleAudienceWeight * 10000,
+            male: (item.male ?? 0) * maleAudienceWeight * WEIGHT_TO_PERCENTAGE,
             female:
                 totalMale === 0 || item.male === undefined ? 0 : (item.male / totalMale) * femaleAudienceWeight * 10000,
         }));
