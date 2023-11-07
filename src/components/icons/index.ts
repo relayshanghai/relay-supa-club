@@ -92,3 +92,4 @@ export { default as EmailCheck } from './EmailCheck';
 export { default as Drag } from './Drag';
 export { default as ReturnArrowX } from './ReturnArrowX';
 export { default as ChatBubbleText } from './ChatBubbleText';
+export { default as SendX } from './SendX';
