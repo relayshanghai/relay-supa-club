@@ -30,6 +30,7 @@ export const renderAudienceGeo = (audienceGeo: any) => {
                 >
                     <div
                         className="absolute left-0 top-0 z-10 h-2 rounded-lg bg-primary-600"
+                        data-testid="country1Bar"
                         style={{ width: top1CountryPercentage || '0%' }}
                     />
                 </Tooltip>
