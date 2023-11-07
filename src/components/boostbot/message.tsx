@@ -96,7 +96,13 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Bot: `${defaultMessageClasses} bg-primary-50 text-primary-700 border border-primary-500 rounded-bl-none`,
         Neutral: 'my-2',
     };
+    const user = {
+        User: 'You',
+        Bot: 'BoostBot',
+        Neutral: '',
+    };
     const messageClass = messageClasses[sender];
+    const userType = user[sender];
 
     let Content: React.ReactNode = null;
     if (type === 'translation') {
@@ -109,7 +115,12 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Content = <Text {...message} />;
     }
 
-    return <div className={messageClass}>{Content}</div>;
+    return (
+        <div>
+            <div className={messageClass}>{Content}</div>
+            <p>{userType}</p>
+        </div>
+    );
 };
 
 export default Message;

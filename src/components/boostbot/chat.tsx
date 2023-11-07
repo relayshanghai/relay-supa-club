@@ -28,6 +28,7 @@ import type { Sequence } from 'src/utils/api/db';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
+import Logo from 'src/components/icons/Boostbot_selected';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -279,13 +280,17 @@ export const Chat: React.FC<ChatProps> = ({
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="boostbot-gradient z-10 shadow">
+            <div className="boostbot-gradient z-10 flex justify-center p-2 shadow">
+                <div className="rounded-full bg-slate-100 p-2">
+                    <Logo height={16} width={16} className="m-0.5 stroke-none " />
+                </div>
+
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot AI Search
                     <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
-            <div className="flex justify-between px-2">
+            <div className="flex justify-between px-2 ">
                 <button
                     data-testid="boostbot-open-filters"
                     className="group flex items-center gap-1 p-2 text-xs font-semibold text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
@@ -335,7 +340,7 @@ export const Chat: React.FC<ChatProps> = ({
                 isOutreachButtonDisabled={isOutreachButtonDisabled}
             />
 
-            <div className="relative">
+            <div className="relative ">
                 {/* Below is a gradient that hides the bottom of the chat */}
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
                 <ChatInput
