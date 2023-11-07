@@ -1,4 +1,3 @@
-// import { useTranslation } from 'react-i18next';
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
@@ -13,7 +12,6 @@ export type BoostbotAccountCellProps = {
 };
 
 export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) => {
-    // const { t } = useTranslation();
     const influencer = row.original;
     const { username, custom_name, fullname, url = '', picture, user_id } = influencer;
     const handle = username || custom_name || fullname || '';
