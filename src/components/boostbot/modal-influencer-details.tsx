@@ -22,9 +22,8 @@ import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import { evaluateStat } from 'src/utils/api/boostbot/helper';
+import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
-import { processedAudienceDemoData } from './table/boostbot-audience-demo-cell';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
