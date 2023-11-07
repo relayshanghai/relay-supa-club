@@ -28,7 +28,7 @@ describe('Admin mode and search usages', () => {
             cy.contains('td', '0');
         });
 
-        cy.contains('Discover').click();
+        cy.contains('Classic').click();
         cy.contains('button', 'Search', { timeout: 10000 });
 
         // rack up 2 searches
@@ -70,7 +70,7 @@ describe('Admin mode and search usages', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
         // can see client's sequences
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('button', 'New sequence');
         cy.contains('General collaboration', { timeout: 30000 }); // wait for campaigns to load
         cy.contains('William Edward'); // manager of the sequence
@@ -86,7 +86,7 @@ describe('Admin mode and search usages', () => {
         });
 
         // rack up 1 search
-        cy.contains('Discover').click();
+        cy.contains('Classic').click();
         cy.contains('button', 'Search');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.getByTestId('search-topics').within(() => {

@@ -11,14 +11,18 @@ const simpleStorageHandler: StorageHandler<Data, StoreObject> = {
      * @inheritdoc
      */
     initialize(database, storeName) {
-        database.createObjectStore(storeName);
+        if (!database.objectStoreNames.contains(storeName)) {
+            database.createObjectStore(storeName);
+        }
     },
 
     /**
      * @inheritdoc
      */
     upgrade(database, storeName) {
-        database.deleteObjectStore(storeName);
+        if (database.objectStoreNames.contains(storeName)) {
+            database.deleteObjectStore(storeName);
+        }
 
         this.initialize(database, storeName);
     },

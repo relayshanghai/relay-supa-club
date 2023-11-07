@@ -12,6 +12,7 @@ import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
+import Link from 'next/link';
 
 const ImageBackground = () => {
     return (
@@ -52,7 +53,12 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     return (
         <>
             <ImageBackground />
-            <main className="flex flex-grow flex-col">
+            {!landingPage && (
+                <Link className="absolute right-0 top-0 p-5 text-right font-semibold text-gray-400" href="/account">
+                    {t('pricing.backToAccount')}
+                </Link>
+            )}
+            <main className={`flex flex-grow flex-col`}>
                 <SubscriptionConfirmModal
                     confirmModalData={confirmModalData}
                     setConfirmModalData={setConfirmModalData}
@@ -60,7 +66,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                 />
 
                 <div className="container mx-auto flex flex-col items-center">
-                    <div className="mx-auto mb-14 max-w-3xl text-center">
+                    <div className="mx-auto mb-8 max-w-3xl text-center">
                         <h2 className="font-heading mb-6 text-3xl font-semibold text-gray-800 md:text-4xl">
                             {t('pricing.justGettingStartedOrScalingUp')}
                         </h2>
@@ -71,7 +77,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
 
                     <div
                         className={`container m-auto flex ${
-                            landingPage ? 'min-h-[30rem]' : 'min-h-[32rem]'
+                            landingPage ? 'min-h-[20rem] 2xl:min-h-[30rem]' : 'min-h-[32rem]'
                         } w-full max-w-screen-xl flex-wrap justify-center`}
                     >
                         {options.map((option) => (
@@ -86,7 +92,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                     </div>
 
                     {landingPage && (
-                        <Button onClick={handleStartFreeTrialClicked} className="mb-20 mt-2 !text-xl">
+                        <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-xl">
                             {t('pricing.startFreeTrial')}
                         </Button>
                     )}

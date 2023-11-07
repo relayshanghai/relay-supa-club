@@ -8,24 +8,6 @@ describe('Dashboard/Search page', () => {
         searchIntercepts();
     });
 
-    it('can search for an influencer', () => {
-        cy.loginTestUser();
-        cy.visit('/dashboard');
-        cy.contains('Search by Topics', { timeout: 10000 });
-        // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
-        // wait for search results
-        cy.contains('T-Series'); // the first influencer search result
-
-        // search for an influencer
-        // ensure GRTR is not in the search results
-        cy.contains('GRTR').should('not.exist');
-
-        cy.getByTestId('creator-search').type('GRTR{enter}');
-        cy.wait(2000); // due to some funky rerendering, so button click doesn't work immediately
-
-        cy.contains('button', 'Search').click(); // click twice
-        cy.contains('GRTR');
-    });
     it('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');

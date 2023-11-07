@@ -83,7 +83,8 @@ const creators = {
     },
     show: {
         lastUpdate: '报告更新于',
-        searchInfluencerPlaceholder: '搜索KOL',
+        searchInfluencerPlaceholder: '请搜索达人的用户名，例如：@mrbeast',
+        noInfluencerSearchResults: `很抱歉，我们暂时没有 {{ username }}上{{ platform }}的报告`,
         noSearchResults: '没有搜索结果, 请尝试其他关键词',
         pressEnterToSearch: '按回车键搜索',
         editProfile: '编辑信息',

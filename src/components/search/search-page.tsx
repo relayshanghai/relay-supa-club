@@ -211,7 +211,7 @@ export const SearchPageInner = () => {
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators onSearch={handleSearch} />
+                    <SearchCreators />
                 </div>
             </div>
             <SearchOptions
