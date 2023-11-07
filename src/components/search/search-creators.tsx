@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChangeEvent } from 'react';
 import { ChevronDown } from '../icons';
@@ -10,6 +10,7 @@ import type { CreatorPlatform } from 'types';
 import { clientLogger } from 'src/utils/logger-client';
 import toast from 'react-hot-toast';
 import { platforms } from './search-select-platform';
+import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
 export const SearchCreators = () => {
     const [searchUsername, setSearchUsername] = useState('');
@@ -98,8 +99,10 @@ const PlatformDropdown = ({
         setSearchPlatform(platform);
         setExpanded(false);
     };
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    useOnOutsideClick(dropdownRef, () => setExpanded(false));
     return (
-        <div className={`h-full ${className} gap-2`}>
+        <div ref={dropdownRef} className={`h-full ${className} gap-2`}>
             <div
                 onClick={() => setExpanded(!expanded)}
                 data-testid="platform-dropdown"
