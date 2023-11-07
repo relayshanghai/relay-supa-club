@@ -49,7 +49,7 @@ const boostbot = {
         account: '账号',
         score: '雷宝搜索的评分',
         followers: '粉丝数',
-        audienceDemo: '受众分布',
+        audienceDemo: '受众年龄分布',
         audienceGeolocations: '受众位于',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
