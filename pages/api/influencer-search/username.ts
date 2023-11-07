@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
@@ -9,6 +10,10 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
         username: string;
         platform: CreatorPlatform;
     };
+
+    if (!username || !platform) {
+        return res.status(httpCodes.BAD_REQUEST).json({ message: 'Username and platform are required' });
+    }
 
     const parameters: SearchInfluencersPayload = {
         query: { platform, auto_unhide: true },
@@ -24,7 +29,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const result = await searchInfluencers(parameters, { req, res });
 
-    return res.status(200).json(result);
+    return res.status(httpCodes.OK).json(result);
 }
 
 export default ApiHandler({

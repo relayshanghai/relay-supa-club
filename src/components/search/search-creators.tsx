@@ -32,7 +32,11 @@ export const SearchCreators = () => {
     const handleSubmit = useCallback(async () => {
         try {
             const searchResult = await getInfluencerByUsername(searchUsername, searchPlatform);
-            if (searchResult.total === 0) {
+            if (
+                searchResult.total === 0 ||
+                searchResult.accounts.length === 0 ||
+                !searchResult.accounts[0].account.user_profile.user_id
+            ) {
                 toast.error(
                     t('creators.show.noInfluencerSearchResults', {
                         username: searchUsername,
@@ -116,7 +120,7 @@ const PlatformDropdown = ({
                         <div
                             key={id}
                             className="flex w-full cursor-pointer justify-center rounded-md py-3 hover:bg-primary-100"
-                            onClick={() => handlePlatorm(id as CreatorPlatform)}
+                            onClick={() => handlePlatorm(id)}
                         >
                             <img data-testid={`${id}-option`} src={icon} height={28} width={28} alt={label} />
                         </div>
