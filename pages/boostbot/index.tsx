@@ -249,6 +249,8 @@ const Boostbot = () => {
         setSelectedInfluencers({});
     };
 
+    const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
+
     return (
         <Layout>
             {isExpired && (
@@ -295,8 +297,10 @@ const Boostbot = () => {
                             <Button
                                 data-testid="boostbot-button-outreach"
                                 onClick={handleAddToSequenceButton}
-                                disabled={isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled}
-                                className=" border-none bg-gradient-to-tl from-[#43CBFF] via-[#7839EE] to-[#EE46BC] text-sm font-semibold disabled:text-white disabled:opacity-60"
+                                disabled={outReachDisabled}
+                                className={`${
+                                    !outReachDisabled && 'bg-gradient-to-tl from-[#43CBFF] via-[#7839EE] to-[#EE46BC]'
+                                } border-none text-sm font-semibold transition-all`}
                             >
                                 {t('boostbot.chat.outreachSelected')}
                             </Button>
