@@ -55,6 +55,8 @@ interface ChatProps {
     isInfluencerDetailsModalOpen: boolean;
     setIsInfluencerDetailsModalOpen: (open: boolean) => void;
     selectedRow?: Row<BoostbotInfluencer>;
+    showSequenceSelector: boolean;
+    setShowSequenceSelector: (show: boolean) => void;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -79,6 +81,8 @@ export const Chat: React.FC<ChatProps> = ({
     isInfluencerDetailsModalOpen,
     setIsInfluencerDetailsModalOpen,
     selectedRow,
+    showSequenceSelector,
+    setShowSequenceSelector,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -96,7 +100,6 @@ export const Chat: React.FC<ChatProps> = ({
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
     const { track } = useRudderstackTrack();
 
