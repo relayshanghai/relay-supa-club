@@ -26,6 +26,8 @@ import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-histor
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
+import { InfluencerDetailsModal } from './modal-influencer-details';
+import type { Row } from '@tanstack/react-table';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -53,8 +55,9 @@ interface ChatProps {
     clearChatHistory: () => void;
     isLoading: boolean;
     isDisabled: boolean;
-    // openFiltersModal: () => void;
-    // openClearChatHistoryModal: () => void;
+    isInfluencerDetailsModalOpen: boolean;
+    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+    selectedRow?: Row<BoostbotInfluencer>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -78,6 +81,9 @@ export const Chat: React.FC<ChatProps> = ({
     clearChatHistory,
     isLoading,
     isDisabled,
+    isInfluencerDetailsModalOpen,
+    setIsInfluencerDetailsModalOpen,
+    selectedRow,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -275,7 +281,8 @@ export const Chat: React.FC<ChatProps> = ({
             />
             <div className="boostbot-gradient z-10 shadow">
                 <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
-                    BoostBot <SparklesIcon className="inline h-4 w-4" />
+                    BoostBot AI Search
+                    <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
             <div className="flex justify-between px-2">
@@ -309,6 +316,12 @@ export const Chat: React.FC<ChatProps> = ({
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
                 onConfirm={clearChatHistory}
+            />
+
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isInfluencerDetailsModalOpen}
+                setIsOpen={setIsInfluencerDetailsModalOpen}
             />
 
             <ChatContent

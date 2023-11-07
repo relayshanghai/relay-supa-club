@@ -97,7 +97,7 @@ interface Gender {
     weight: number;
 }
 
-interface GenderPerAge {
+export interface GenderPerAge {
     code: string;
     male?: number;
     female?: number;

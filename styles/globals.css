@@ -99,11 +99,5 @@ body,
 }
 
 .boostbot-gradient {
-    background: linear-gradient(
-        120deg,
-        rgba(255, 105, 105, 0.85),
-        rgba(152, 0, 250, 0.85),
-        rgba(0, 0, 255, 0.85),
-        rgba(27, 20, 100, 0.85)
-    );
+    background: var(--boostbot-gradient, linear-gradient(135deg, #ee46bc 0%, #7839ee 50%, #43cbff 100%));
 }
