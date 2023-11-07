@@ -138,7 +138,8 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
         const expectedDate = new Date(`2023-10-03T14:00:00${chicagoOffset}`);
         expect(isSameDay(result, expectedDate, timeZone)).toEqual(true);
     });
-
+    // This test serves as a guard in case a similar scenario happens
+    // This test should be updated if `findNextAvailableDateIfMaxEmailsPerDayMet` gets updated
     it('Find available slot but skip one day', async () => {
         const fridayDate = new Date(`2028-12-29T14:00:00${chicagoOffset}`).toISOString();
         expect(getWeekday(new Date(fridayDate), timeZone)).toEqual('Friday');
