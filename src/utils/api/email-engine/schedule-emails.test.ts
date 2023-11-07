@@ -69,6 +69,25 @@ describe('findNextBusinessDayTime', () => {
         const expectedDate = new Date(`2023-09-29T14:00:00${chicagoOffset}`);
         expect(isSameDay(businessDay, expectedDate, timeZone)).toEqual(true);
     });
+    // This test serves as a guard in case a similar scenario happens
+    // This test should be updated if `findNextBusinessDayTime` gets updated
+    // While `findNextBusinessDayTime` properly returns a timestamp at a random hour within the day,
+    // an initial outreach email "sent" before 9AM can be possibly be sent on 3PM of the same day instead
+    it('Find next available schedule on Monday before 9 am', async () => {
+        const friday_september_29th_2pm_chicago_time = new Date(`2023-09-25T02:59:59${chicagoOffset}`);
+
+        const dayOfWeek = getWeekday(friday_september_29th_2pm_chicago_time, timeZone);
+        expect(dayOfWeek).toEqual('Monday');
+
+        const businessDay = findNextBusinessDayTime(friday_september_29th_2pm_chicago_time);
+        expect(getWeekday(businessDay, timeZone)).toEqual('Monday');
+        const hour = getHours(businessDay, timeZone);
+        expect(hour).toBeGreaterThanOrEqual(9);
+        expect(hour).toBeLessThan(17);
+
+        const expectedDate = new Date(`2023-09-25T14:00:00${chicagoOffset}`);
+        expect(isSameDay(businessDay, expectedDate, timeZone)).toEqual(true);
+    });
 });
 
 describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
@@ -140,6 +159,8 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
     });
     // This test serves as a guard in case a similar scenario happens
     // This test should be updated if `findNextAvailableDateIfMaxEmailsPerDayMet` gets updated
+    // While we expect `findNextAvailableDateIfMaxEmailsPerDayMet` to get the next valid day
+    // this schedules the email on the next day of the supposedly valid day
     it('Find available slot but skip one day', async () => {
         const fridayDate = new Date(`2028-12-29T14:00:00${chicagoOffset}`).toISOString();
         expect(getWeekday(new Date(fridayDate), timeZone)).toEqual('Friday');
