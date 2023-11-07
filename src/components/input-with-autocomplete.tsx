@@ -79,19 +79,23 @@ const InputWithAutocomplete = ({
                 onKeyDown={tagKeyboardInputHandler}
                 TagComponent={TagComponent}
                 spinnerLoading={spinnerLoading}
+                topicSearch={topicSearch}
             />
             <div className="relative">
                 {!!value.length && (
                     <div className="absolute left-0 top-1 z-10 w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
                         {!suggestions.length && topicSearch ? (
-                            <div className="p-2">
+                            <div className="p-4">
                                 {spinnerLoading ? (
                                     <Spinner
                                         data-testid="search-spinner"
                                         className="h-5 w-5 fill-primary-600 text-white"
                                     />
                                 ) : (
-                                    <p>{t('creators.show.noTopicResults')}</p>
+                                    <>
+                                        <p className="font-semibold">{t('creators.show.noTopicResults.title')}</p>
+                                        <p className="mt-2">{t('creators.show.noTopicResults.description')}</p>
+                                    </>
                                 )}
                             </div>
                         ) : (
@@ -111,7 +115,7 @@ const InputWithAutocomplete = ({
 
                                 return (
                                     <div
-                                        className="cursor-pointer p-2 hover:bg-gray-100"
+                                        className="cursor-pointer px-3 py-2 hover:bg-gray-100"
                                         key={i}
                                         id={`tag-search-result-${
                                             (item as LocationWeighted).title || (item as CreatorSearchTag).value
