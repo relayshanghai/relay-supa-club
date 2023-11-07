@@ -9,6 +9,15 @@ export const getWeekday = (date: Date, timeZone: string) => {
     });
 };
 
+export const weekDayAsNumber = (day: string) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const found = days.indexOf(day);
+    if (found === -1) {
+        throw new Error(`Could not find day ${day}`);
+    }
+    return found;
+};
+
 /**
  * @param timeZone passed to Date().toLocalestring() timeZone option, which is an IANA location. See `timeZone` at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
  */
@@ -31,9 +40,6 @@ export const getHours = (date: Date, timeZone: string) => {
     );
 };
 
-/**
- * @param timeZone passed to Date().toLocalestring() timeZone option, which is an IANA location. See `timeZone` at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
- */
 export const addHours = (date: Date, hours: number) => {
     const newDate = new Date(date);
     newDate.setTime(newDate.getTime() + hours * 60 * 60 * 1000);

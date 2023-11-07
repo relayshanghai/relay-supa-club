@@ -24,7 +24,6 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
-import { useCompany } from 'src/hooks/use-company';
 import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
 import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
@@ -93,7 +92,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
     });
-    const { company } = useCompany();
 
     useEffect(() => {
         const update = async () => {
@@ -104,14 +102,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     socialProfile,
                     report,
                     updateSequenceInfluencer,
-                    company_id: company?.id ?? '',
+                    company_id: sequenceInfluencer.company_id,
                 });
             if (result?.email) {
                 setEmail(result.email);
             }
         };
+
         update();
-    }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+    }, [report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     useEffect(() => {
         checkForIgnoredEmails({
