@@ -4,13 +4,13 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 
 const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
-    const company_id = '504528ad-8f57-45e2-b82c-59ceb4bc9c54';
+    const _company_id = '12513ff1-c7d9-417c-9e38-7e9d8de459bd';
     console.log('fixing');
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('*')
-        .eq('funnel_status', 'In Sequence')
-        .eq('company_id', company_id);
+        .eq('funnel_status', 'In Sequence');
+    // .eq('company_id', company_id);
     // console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
     const updated = [];
@@ -22,17 +22,18 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
         // console.log('emails', count, '   error: ', error);
 
         if (count !== null && count === 0) {
-            console.log('updating, ', influencer.name);
+            console.log('updating, ', influencer.name, influencer.company_id);
             await supabase.from('sequence_influencers').update({ funnel_status: 'To Contact' }).eq('id', influencer.id);
             updated.push(influencer.name + ' ' + influencer.id);
         }
     }
+    console.log('updated', updated.length);
 
     return res.status(200).json({ message: updated });
 };
 
 // resets all the influencers/emails mistakenly sent from our account
-const fixMisSentEmails: NextApiHandler = async (_req, res) => {
+const _fixMisSentEmails: NextApiHandler = async (_req, res) => {
     const accountId = 'egtljwhuz89pfkmj';
     console.log('fixing emails');
     const outbox = await getOutbox();
@@ -82,4 +83,4 @@ const fixMisSentEmails: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: 'updated' });
 };
 
-export default fixMisSentEmails;
+export default _fixStuckInSequenceWithNoEmail;
