@@ -102,6 +102,7 @@ const PlatformDropdown = ({
                 className={`flex h-full cursor-pointer flex-row items-center gap-3 border-r border-r-gray-200 pl-4`}
             >
                 <img
+                    data-testid={`${platform}-platform`}
                     height={28}
                     width={28}
                     src={platforms.filter((p) => p.id === platform)[0].icon}
