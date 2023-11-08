@@ -273,6 +273,8 @@ const Boostbot = () => {
                         sequence={sequence}
                         sequences={sequences}
                         clearChatHistory={clearChatHistory}
+                        isLoading={isSearchLoading}
+                        isDisabled={areChatActionsDisabled}
                         isInfluencerDetailsModalOpen={isInfluencerDetailsModalOpen}
                         setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
                         selectedRow={selectedRow}

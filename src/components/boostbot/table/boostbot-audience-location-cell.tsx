@@ -2,22 +2,29 @@ import type { Row } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Tooltip } from 'src/components/library';
 import { decimalToPercent } from 'src/utils/formatter';
+import type { Countries } from 'types/iqdata/influencer-search-request-body';
 
 export type BoostbotAudienceLocationCellProps = {
     row: Row<BoostbotInfluencer>;
 };
 
-export const renderAudienceGeo = (audienceGeo: any) => {
-    if (!audienceGeo) {
-        return null;
-    }
+export type BoostbotAudienceGeoType = {
+    countries: Countries[];
+};
 
+export const renderAudienceGeo = (audienceGeo: BoostbotAudienceGeoType) => {
     const countries = audienceGeo.countries;
-    const top1CountryPercentage = countries[0] ? decimalToPercent(countries[0].weight, 0) : null;
-    const top2CountryPercentage = countries[1] ? decimalToPercent(countries[1].weight, 0) : null;
+    // the audienceGeo only returns 2 countries back at most
+    const top1CountryWeight = countries[0] ? countries[0].weight : 0;
+    const top2CountryWeight = countries[1] ? countries[1].weight : 0;
 
+    // convert the weight to a percentage for the two countries
+    const top1CountryPercentage = decimalToPercent(top1CountryWeight, 0);
+    const top2CountryPercentage = decimalToPercent(top2CountryWeight, 0);
+
+    // the second country width is the sum of the first and second country so it shows up in the right place
     const top2CountryWidth =
-        countries[0] && countries[1] ? decimalToPercent(countries[0].weight + countries[1].weight, 0) : 0;
+        top1CountryWeight && countries[1] ? decimalToPercent(top1CountryWeight + top2CountryWeight, 0) : 0;
 
     return (
         <div className="relative w-[120px]">
@@ -54,6 +61,8 @@ export const renderAudienceGeo = (audienceGeo: any) => {
 export const BoostbotAudienceLocationCell = ({ row }: BoostbotAudienceLocationCellProps) => {
     const influencer = row.original;
     const audienceGeo = influencer.audience_geo;
-
+    if (!audienceGeo) {
+        return null;
+    }
     return <div>{renderAudienceGeo(audienceGeo)}</div>;
 };
