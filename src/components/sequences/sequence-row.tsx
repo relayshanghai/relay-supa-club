@@ -96,6 +96,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     report,
                     updateSequenceInfluencer,
                     company_id: sequenceInfluencer.company_id,
+                }).catch((error) => {
+                    clientLogger(error);
+                    return null;
                 });
             if (result?.email) {
                 setEmail(result.email);
