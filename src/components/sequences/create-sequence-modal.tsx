@@ -85,7 +85,7 @@ export const CreateSequenceModal = ({
                         required
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         placeholder={t('sequences.sequenceNamePlaceholder') as string}
-                        onChange={(e) => setSequenceName(e.target.value)}
+                        onChange={(e) => setSequenceName(e.target.value.trim())}
                     />
                 </div>
                 <div className="flex justify-end space-x-3 pt-6">
