@@ -99,16 +99,19 @@ const InputWithAutocomplete = ({
                                 )}
                             </div>
                         ) : (
-                            suggestions.map((item, i) => {
+                            suggestions.map((suggestion: LocationWeighted | CreatorSearchTag, i) => {
                                 if (SuggestionComponent) {
                                     return (
                                         <SuggestionComponent
-                                            key={i}
+                                            key={
+                                                (suggestion as LocationWeighted).id ||
+                                                (suggestion as CreatorSearchTag).tag
+                                            }
                                             onClick={(data: any) => {
-                                                onAddTag({ ...item, ...data });
+                                                onAddTag({ ...suggestion, ...data });
                                                 setValue('');
                                             }}
-                                            {...item}
+                                            {...suggestion}
                                         />
                                     );
                                 }
@@ -118,14 +121,16 @@ const InputWithAutocomplete = ({
                                         className="cursor-pointer px-3 py-2 hover:bg-gray-100"
                                         key={i}
                                         id={`tag-search-result-${
-                                            (item as LocationWeighted).title || (item as CreatorSearchTag).value
+                                            (suggestion as LocationWeighted).title ||
+                                            (suggestion as CreatorSearchTag).value
                                         }`}
                                         onClick={() => {
-                                            onAddTag(item);
+                                            onAddTag(suggestion);
                                             setValue('');
                                         }}
                                     >
-                                        {(item as LocationWeighted).title || (item as CreatorSearchTag).value}
+                                        {(suggestion as LocationWeighted).title ||
+                                            (suggestion as CreatorSearchTag).value}
                                     </div>
                                 );
                             })
