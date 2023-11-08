@@ -7,86 +7,106 @@ import { ChangePage } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import PageLink from './pagelink';
 
-export function getPaginationItems(currentPage: number, lastPage: number, maxLength: number) {
-    const res: Array<number> = [];
+function getPaginationItems(
+    currentPageIndex: number,
+    lastPageIndex: number,
+    noOfPageLinks: number,
+  ) {
+    const pages = [];
+    const divisionPerPageLink = 3;
+    const deductednoOfPageLinks = noOfPageLinks - divisionPerPageLink;
+    const innerNumberCount = deductednoOfPageLinks / 2;
+  
+    const isLinkVisible = (
+      currentPageIndex: number,
+      rangeDelimiter: number,
+      rangeLinkLimit: number,
+    ) => {
+      return currentPageIndex - rangeDelimiter < rangeLinkLimit;
+    };
+    const isLinkDisabled = (
+      currentPageIndex: number,
+      rangeDelimiter: number,
+      rangeLinkLimit: number,
+    ) => {
+      return currentPageIndex - rangeDelimiter >= rangeLinkLimit;
+    };
 
-    // handle lastPage less than maxLength
-    if (lastPage <= maxLength) {
-        for (let i = 1; i <= lastPage; i++) {
-            res.push(i);
-        }
+    const isPageCountWithinRange=()=>{
+        return (lastPageIndex <= noOfPageLinks)
     }
 
-    // handle ellipsis logics
-    else {
-        const firstPage = 1;
-        const confirmedPagesCount = 3;
-        const deductedMaxLength = maxLength - confirmedPagesCount;
-        const sideLength = deductedMaxLength / 2;
-
-        // handle ellipsis in the middle
-        if (currentPage - firstPage < sideLength || lastPage - currentPage < sideLength) {
-            for (let j = 1; j <= sideLength + firstPage; j++) {
-                res.push(j);
-            }
-
-            res.push(NaN);
-
-            for (let k = lastPage - sideLength; k <= lastPage; k++) {
-                res.push(k);
-            }
+    if (isPageCountWithinRange()) {
+      for (let i = 1; i <= lastPageIndex; i++) {
+        pages.push(i);
+      }
+    } else if (
+      isLinkVisible(currentPageIndex, 1, innerNumberCount) ||
+      isLinkVisible(lastPageIndex, currentPageIndex, innerNumberCount)
+    ) {
+      Array.from({ length: innerNumberCount + 1 }, (_, j) => {
+        pages.push(j + 1);
+      });
+      pages.push(NaN);
+      Array.from({ length: innerNumberCount + 1 }, (_, index) => {
+        pages.push(lastPageIndex - innerNumberCount + index);
+      });
+  
+    } else if (
+      isLinkDisabled(currentPageIndex, 1, deductednoOfPageLinks) &&
+      isLinkDisabled(lastPageIndex, currentPageIndex, deductednoOfPageLinks)
+    ) {
+      const deductedinnerNumberCount = innerNumberCount - 1;
+      pages.push(1, NaN);
+      Array.from({ length: deductedinnerNumberCount * 2 + 1 }, (_, index) => {
+        pages.push(currentPageIndex - deductedinnerNumberCount + index);
+      });
+      pages.push(NaN, lastPageIndex);
+    } else {
+      const isNearStart = currentPageIndex - 1 < lastPageIndex - currentPageIndex;
+      let remainingLength = noOfPageLinks;
+  
+      if (isNearStart) {
+        Array.from({ length: currentPageIndex + 2 }, (_, index) => {
+          pages.push(index + 1);
+          remainingLength -= 1;
+        });
+  
+        pages.push(NaN);
+        remainingLength -= 1;
+  
+        Array.from(
+          {
+            length:
+              lastPageIndex -
+              (remainingLength - 1) -
+              (lastPageIndex - currentPageIndex) +
+              1,
+          },
+          (_, index) => {
+            const page = lastPageIndex - (remainingLength - 1) + index;
+            pages.push(page);
+          },
+        );
+      } else {
+        for (let o = lastPageIndex; o >= currentPageIndex - 1; o--) {
+          pages.unshift(o);
+          remainingLength -= 1;
         }
-
-        // handle two ellipsis
-        else if (currentPage - firstPage >= deductedMaxLength && lastPage - currentPage >= deductedMaxLength) {
-            const deductedSideLength = sideLength - 1;
-
-            res.push(1);
-            res.push(NaN);
-
-            for (let l = currentPage - deductedSideLength; l <= currentPage + deductedSideLength; l++) {
-                res.push(l);
-            }
-
-            res.push(NaN);
-            res.push(lastPage);
+        pages.unshift(NaN);
+        remainingLength -= 1;
+        for (let p = remainingLength; p >= 1; p--) {
+          pages.unshift(p);
         }
-
-        // handle ellipsis not in the middle
-        else {
-            const isNearFirstPage = currentPage - firstPage < lastPage - currentPage;
-            let remainingLength = maxLength;
-
-            if (isNearFirstPage) {
-                for (let m = 1; m <= currentPage + 1; m++) {
-                    res.push(m);
-                    remainingLength -= 1;
-                }
-
-                res.push(NaN);
-                remainingLength -= 1;
-
-                for (let n = lastPage - (remainingLength - 1); n <= lastPage; n++) {
-                    res.push(n);
-                }
-            } else {
-                for (let o = lastPage; o >= currentPage - 1; o--) {
-                    res.unshift(o);
-                    remainingLength -= 1;
-                }
-
-                res.unshift(NaN);
-                remainingLength -= 1;
-
-                for (let p = remainingLength; p >= 1; p--) {
-                    res.unshift(p);
-                }
-            }
-        }
+      }
     }
+  
+    return pages;
+  }
+  
 
-    return res;
-}
+
+
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
 }
@@ -99,12 +119,6 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 
     return (
         <div className="flex w-full justify-between px-0">
-            {/* <div className="text-muted-foreground ml-2 flex-1 text-sm">
-                  {t('boostbot.table.selectedAmount', {
-                      selectedCount: table.getFilteredSelectedRowModel().rows.length,
-                      total: table.getFilteredRowModel().rows.length,
-                  })}
-              </div> */}
             <div>
                 <Button
                     variant="neutral"

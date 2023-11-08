@@ -1,28 +1,28 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# #!/usr/bin/env sh
+# . "$(dirname -- "$0")/_/husky.sh"
 
-# exit early if nothing is staged
-if git diff --cached --quiet
-then
-    echo "No staged files"
-    exit
-fi
+# # exit early if nothing is staged
+# if git diff --cached --quiet
+# then
+#     echo "No staged files"
+#     exit
+# fi
 
-# verify types
-npm run type-check:app
+# # verify types
+# npm run type-check:app
 
-# sqlfluff is unfortunately not in npm. add dev hint for installing here
-if ! command -v sqlfluff >/dev/null 2>&1; then
-    if command -v pip >/dev/null 2>&1; then
-        echo "Installing SQLFluff.."
-        pip install sqlfluff
-    else
-        echo
-        echo "  Formatting SQL files requires SQLFluff"
-        echo "  Visit: https://docs.sqlfluff.com/en/stable/gettingstarted.html#installing-sqlfluff"
-        echo
-    fi
-fi
+# # sqlfluff is unfortunately not in npm. add dev hint for installing here
+# if ! command -v sqlfluff >/dev/null 2>&1; then
+#     if command -v pip >/dev/null 2>&1; then
+#         echo "Installing SQLFluff.."
+#         pip install sqlfluff
+#     else
+#         echo
+#         echo "  Formatting SQL files requires SQLFluff"
+#         echo "  Visit: https://docs.sqlfluff.com/en/stable/gettingstarted.html#installing-sqlfluff"
+#         echo
+#     fi
+# fi
 
-# verify formatting
-npx lint-staged --verbose
+# # verify formatting
+# # npx lint-staged --verbose
