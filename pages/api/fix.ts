@@ -6,25 +6,46 @@ import { supabase } from 'src/utils/supabase-client';
 const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const _company_id = '12513ff1-c7d9-417c-9e38-7e9d8de459bd';
     console.log('fixing');
+    const outbox = await getOutbox();
+
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('*')
         .eq('funnel_status', 'In Sequence')
         .eq('company_id', _company_id);
-    // console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+    console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
-    const updated = [];
+    const updated: any = [];
     for (const influencer of allSequenceInfluencers) {
-        const { count, error: _error } = await supabase
+        const {
+            data: email,
+            count,
+            error: _error,
+        } = await supabase
             .from('sequence_emails')
-            .select('id', { count: 'exact' })
+            .select('id, email_message_id', { count: 'exact' })
             .eq('sequence_influencer_id', influencer.id);
-        // console.log('emails', count, '   error: ', error);
+        console.log('emails', count, '   error: ', _error);
 
-        if (count !== null && count === 0) {
+        if (email && count !== null && count < 4) {
+            const messageIds = email.map((e) => e.email_message_id);
             console.log('updating, ', influencer.name, influencer.company_id);
             await supabase.from('sequence_influencers').update({ funnel_status: 'To Contact' }).eq('id', influencer.id);
             updated.push(influencer.name + ' ' + influencer.id);
+            const outboxToDelete = outbox.filter((e) => messageIds.includes(e.messageId)).map((e) => e.queueId);
+            for (const email of outboxToDelete) {
+                const canceledConfirm = await deleteEmailFromOutbox(email);
+                console.log(`canceled ${email} ${canceledConfirm.deleted}`);
+            }
+
+            console.log('deleting', email);
+            const { data: deleteConfirm } = await supabase
+                .from('sequence_emails')
+                .delete()
+                .eq('sequence_influencer_id', influencer.id)
+                .select('id');
+
+            console.log('deleteConfirmed', deleteConfirm?.length);
         }
     }
     console.log('updated', updated.length);
