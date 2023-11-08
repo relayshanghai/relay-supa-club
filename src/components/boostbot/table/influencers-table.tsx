@@ -2,19 +2,16 @@ import { useEffect, useRef } from 'react';
 import type { TFunction } from 'i18next';
 import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     meta: TableMeta<TData>;
-    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
-    setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 }
 
 declare module '@tanstack/react-table' {
@@ -22,6 +19,8 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
+        setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+        setIsInfluencerDetailsModalOpen: (open: boolean) => void;
     }
 }
 
@@ -31,8 +30,6 @@ export function InfluencersTable<TData, TValue>({
     selectedInfluencers,
     setSelectedInfluencers,
     meta,
-    setIsInfluencerDetailsModalOpen,
-    setSelectedRow,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
@@ -45,12 +42,6 @@ export function InfluencersTable<TData, TValue>({
         autoResetPageIndex: false,
         state: { rowSelection: selectedInfluencers },
     });
-
-    //handle row click to open influencer detail modal
-    const handleInfluencerRowClick = (row: Row<BoostbotInfluencer>) => {
-        setIsInfluencerDetailsModalOpen(true);
-        setSelectedRow(row);
-    };
 
     const page = table.getState().pagination.pageIndex;
 
@@ -77,7 +68,7 @@ export function InfluencersTable<TData, TValue>({
 
     return (
         <div className="relative h-full w-full flex-shrink-0 overflow-scroll md:flex-shrink">
-            <div className="h-full w-full overflow-scroll rounded-md border pb-10">
+            <div className="h-full w-full overflow-scroll rounded-md border">
                 {/* Scroll to the top of the table when changing pagination pages */}
                 <div ref={tableRef} />
 
@@ -87,7 +78,7 @@ export function InfluencersTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead className="text-center" key={header.id}>
+                                        <TableHead className="text-xs" key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(header.column.columnDef.header, header.getContext())}
@@ -100,12 +91,7 @@ export function InfluencersTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                    className="cursor-pointer"
-                                    onClick={() => handleInfluencerRowClick(row as Row<BoostbotInfluencer>)}
-                                >
+                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -123,7 +109,7 @@ export function InfluencersTable<TData, TValue>({
                     </TableBody>
                 </Table>
 
-                <div className="absolute bottom-0 left-0 right-0 w-full border bg-white p-2">
+                <div className="absolute bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
                     <DataTablePagination table={table} />
                 </div>
             </div>
