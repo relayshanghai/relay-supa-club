@@ -39,7 +39,7 @@ const boostbot = {
         outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
         and: '和',
         clearChatModal: {
-            open: '删除对话记录',
+            open: '清除聊天记录和筛选条件',
             title: '你确定要删除和BoostBot的对话记录和红人搜索结果吗?',
             confirm: '是',
             cancel: '返回',
