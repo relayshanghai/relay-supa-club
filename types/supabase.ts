@@ -706,6 +706,52 @@ export interface Database {
           }
         ]
       }
+      jobs: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner: string
+          payload: Json | null
+          queue: string | null
+          result: Json | null
+          retry_count: number | null
+          run_at: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner: string
+          payload?: Json | null
+          queue?: string | null
+          result?: Json | null
+          retry_count?: number | null
+          run_at: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner?: string
+          payload?: Json | null
+          queue?: string | null
+          result?: Json | null
+          retry_count?: number | null
+          run_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       logs: {
         Row: {
           created_at: string | null
