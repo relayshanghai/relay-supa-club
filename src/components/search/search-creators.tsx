@@ -67,7 +67,7 @@ export const SearchCreators = () => {
                 className="absolute left-0 top-0 h-full w-20"
             />
             <input
-                className="mr-24 block w-full appearance-none rounded-md border border-gray-200 bg-white py-2 pl-24 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="mr-4 block w-[450px] appearance-none rounded-md border border-gray-200 bg-white py-2 pl-24 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
