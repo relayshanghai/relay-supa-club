@@ -17,7 +17,7 @@ import {
 import StatCard from './stat-card';
 import type { Row } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
-import { numberFormatter } from 'src/utils/formatter';
+import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
@@ -49,8 +49,9 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         avg_reels_plays: avgReelsPlaysRaw, // this is avg views for instagram
         engagement_rate: engagementRateRaw,
         posts_count: totalPosts,
-        followers,
+        followers: followersRaw,
         followers_growth: followersGrowthRaw,
+        engagements,
         url,
         user_id,
     } = influencer;
@@ -60,12 +61,14 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const indexScore = calculateIndexScore(influencer);
 
     // convert raw decimal numbers to string percentage
-    const engagementRate = `${Math.round(engagementRateRaw * 100)}%`;
+    const followers = numberFormatter(followersRaw, 0);
     const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
-    const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
-
-    // engaged audience = (avg views / followers) * 100
-    const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlaysRaw ?? 0) / followers) * 100)}%`;
+    const followersGrowth = decimalToPercent(followersGrowthRaw, 0);
+    // audience engagement rate for Youtube = (Engagements + Avg Views) / Followers see V2-1063
+    const audienceEngagementRateYTInt = ((engagements + (avgViewsRaw ?? 0)) / followersRaw) as number;
+    const audienceEngagementRateYT = decimalToPercent(audienceEngagementRateYTInt, 0);
+    // audience engagement rate for Instagram and Tiktok is just engagmentRate see V2-1063
+    const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
 
     const handleAddToSequence = () => {
         setIsOpen(false);
@@ -157,13 +160,20 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.audienceEngagementStats')}
                         </div>
-                        <StatCard title={t('boostbot.modal.engagedAudience')} stat={engagedAudience} />
+                        <StatCard
+                            title={t('boostbot.modal.engagedAudience')}
+                            stat={
+                                (platform === 'youtube' ? audienceEngagementRateYT : audienceEngagementRateIGandTT) ??
+                                '-'
+                            }
+                            iconName={
+                                platform === 'youtube'
+                                    ? evaluateStat({ audienceEngagementRateYTInt })
+                                    : evaluateStat({ engagementRateRaw })
+                            }
+                        />
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard
-                                title={t('boostbot.modal.engagementRate')}
-                                stat={engagementRate}
-                                iconName={evaluateStat({ engagementRateRaw })}
-                            />
+                            <StatCard title={t('boostbot.modal.followers')} stat={followers ?? '-'} />
                             {avgViewsRaw && (
                                 <StatCard
                                     title={t('boostbot.modal.averageViews')}
@@ -213,7 +223,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             {followersGrowthRaw !== undefined && (
                                 <StatCard
                                     title={t('boostbot.modal.followersGrowth')}
-                                    stat={followersGrowth.toString()}
+                                    stat={followersGrowth ?? '-'}
                                     iconName={evaluateStat({ followersGrowthRaw })}
                                 />
                             )}

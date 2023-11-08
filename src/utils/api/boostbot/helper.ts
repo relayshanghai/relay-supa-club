@@ -9,6 +9,7 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
     const statValue = stat[statName];
     //the cutoff standard can be find in KiteMaker ticket V2-1063
     switch (statName) {
+        case 'audienceEngagementRateYTInt':
         case 'engagementRateRaw':
             return statValue <= 0.005 ? 'alert' : 'good';
         case 'avgViewsRaw':
