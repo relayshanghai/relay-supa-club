@@ -1,5 +1,6 @@
 import type sequences from 'i18n/en/sequences';
-import type { SequenceInfluencer } from 'src/utils/api/db';
+
+import type { EmailDeliveryStatus, EmailTrackingStatus, SequenceInfluencer } from 'src/utils/api/db';
 
 export type SequenceColumn = keyof (typeof sequences)['columns'];
 export const columnsNeedsAttention: SequenceColumn[] = [
@@ -30,15 +31,20 @@ export const sequencesIndexColumns: SequenceIndexColumn[] = [
     'sequenceActions',
 ];
 
-export const EMAIL_STATUS_STYLES = {
-    Scheduled: { style: 'bg-yellow-100 text-yellow-500' },
-    Delivered: { style: 'bg-green-100 text-green-500' },
+export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Scheduling' | 'Ignored';
+
+export const EMAIL_STATUS_STYLES: {
+    [key in EmailStatus]: { style: string };
+} = {
+    Scheduling: { style: 'bg-yellow-100 text-yellow-500' },
+    Scheduled: { style: 'bg-primary-100 text-primary-500' },
+    Delivered: { style: 'bg-blue-100 text-blue-500' },
+    Opened: { style: 'bg-pink-100 text-pink-500' },
+    'Link Clicked': { style: 'bg-cyan-100 text-cyan-500' },
     Bounced: { style: 'bg-red-100 text-red-500' },
-    Failed: { style: 'bg-red-100 text-red-500' },
-    Replied: { style: 'bg-yellow-100 text-red-500' },
-    'Link Clicked': { style: 'bg-gray-100 text-blue-500' },
-    Opened: { style: 'bg-blue-100 text-blue-500' },
-    Default: { style: 'bg-gray-100 text-gray-500' },
+    Failed: { style: 'bg-orange-100 text-orange-500' },
+    Replied: { style: 'bg-green-100 text-green-500' },
+    Ignored: { style: 'bg-gray-100 text-gray-500' },
 };
 
 export const EMAIL_STEPS = {
