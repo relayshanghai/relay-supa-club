@@ -33,11 +33,7 @@ export const SearchCreators = () => {
     const handleSubmit = useCallback(async () => {
         try {
             const searchResult = await getInfluencerByUsername(searchUsername, searchPlatform);
-            if (
-                searchResult.total === 0 ||
-                searchResult.accounts.length === 0 ||
-                !searchResult.accounts[0].account.user_profile.user_id
-            ) {
+            if (!searchResult.success || searchResult.data.length === 0 || !searchResult.data[0].user_id) {
                 toast.error(
                     t('creators.show.noInfluencerSearchResults', {
                         username: searchUsername,
@@ -48,9 +44,7 @@ export const SearchCreators = () => {
             }
 
             window.open(
-                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(
-                    searchResult.accounts[0].account.user_profile.user_id,
-                )}`,
+                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(searchResult.data[0].user_id)}`,
                 '_blank',
             );
         } catch (error) {

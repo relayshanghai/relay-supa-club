@@ -5,6 +5,21 @@ export interface CreatorSearchResult {
     shown_accounts: any[];
 }
 
+export interface CreatorSearchByUsernameObject {
+    followers: number;
+    fullname: string;
+    handle: string;
+    is_verified: boolean;
+    picture: string;
+    user_id: string;
+    username: string;
+}
+
+export interface CreatorSearchByUsernameResult {
+    data: CreatorSearchByUsernameObject[];
+    success: boolean;
+}
+
 export interface CreatorSearchAccountObject {
     account: CreatorSearchAccount;
     // TODO: get match type
