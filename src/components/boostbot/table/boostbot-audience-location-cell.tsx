@@ -19,12 +19,12 @@ export const renderAudienceGeo = (audienceGeo: BoostbotAudienceGeoType) => {
     const top2CountryWeight = countries[1] ? countries[1].weight : 0;
 
     // convert the weight to a percentage for the two countries
-    const top1CountryPercentage = decimalToPercent(top1CountryWeight);
-    const top2CountryPercentage = decimalToPercent(top2CountryWeight);
+    const top1CountryPercentage = decimalToPercent(top1CountryWeight, 0);
+    const top2CountryPercentage = decimalToPercent(top2CountryWeight, 0);
 
     // the second country width is the sum of the first and second country so it shows up in the right place
     const top2CountryWidth =
-        top1CountryWeight && countries[1] ? decimalToPercent(top1CountryWeight + top2CountryWeight) : 0;
+        top1CountryWeight && countries[1] ? decimalToPercent(top1CountryWeight + top2CountryWeight, 0) : 0;
 
     return (
         <div className="relative w-[120px]">
