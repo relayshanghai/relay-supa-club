@@ -28,6 +28,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useCompany } from 'src/hooks/use-company';
 import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { sequences } = useSequences();
@@ -77,6 +78,8 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
             report,
             updateSequenceInfluencer,
             company_id: company?.id ?? '',
+        }).catch((error) => {
+            clientLogger(error);
         });
     }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
 
