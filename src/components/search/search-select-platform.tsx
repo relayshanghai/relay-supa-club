@@ -3,7 +3,7 @@ import type { CreatorPlatform } from 'types';
 import { Spinner } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
-const platforms: {
+export const platforms: {
     icon: string;
     label: string;
     id: CreatorPlatform;
