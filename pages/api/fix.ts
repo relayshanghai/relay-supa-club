@@ -9,8 +9,8 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('*')
-        .eq('funnel_status', 'In Sequence');
-    // .eq('company_id', company_id);
+        .eq('funnel_status', 'In Sequence')
+        .eq('company_id', _company_id);
     // console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
     const updated = [];
@@ -81,6 +81,24 @@ const _fixMisSentEmails: NextApiHandler = async (_req, res) => {
     console.log('canceled', canceled.length);
 
     return res.status(200).json({ message: 'updated' });
+};
+
+const _fixHalfSentSequence: NextApiHandler = async (_req, res) => {
+    const influencerId = '9c0ec006-a152-4cf9-83d7-7b024a7fa556';
+    const { data: emails } = await supabase
+        .from('sequence_emails')
+        .select('*')
+        .eq('sequence_influencer_id', influencerId);
+    console.log(emails);
+    const messageIds = emails?.map((e) => e.email_message_id);
+    const outbox = await getOutbox();
+    const toDelete = outbox.filter((email) => messageIds?.includes(email.messageId)).map((email) => email.queueId);
+    console.log({ toDelete });
+    toDelete.forEach(async (email) => {
+        await deleteEmailFromOutbox(email);
+    });
+    await supabase.from('sequence_emails').delete().eq('sequence_influencer_id', influencerId);
+    return res.status(200).json({ message: toDelete });
 };
 
 export default _fixStuckInSequenceWithNoEmail;
