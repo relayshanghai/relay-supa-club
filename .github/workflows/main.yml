@@ -1,10 +1,6 @@
 run-name: Run main workflow by @${{ github.actor }}
 
 on:
-    # only run on all pushes if it is to `main` branch
-    push:
-        branches:
-            - main
     # allow manual trigger of the workflow
     workflow_dispatch:
     # Only pushes to active PRs will trigger the workflow, pushes to other branches will not trigger run
