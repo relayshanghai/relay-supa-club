@@ -21,6 +21,7 @@ const postHandler: ActionHandler = async (req, res) => {
         name: body.name,
         run_at: body.run_at,
         payload: body.payload,
+        queue: body.queue,
         owner: req.session.user.id,
     });
 
