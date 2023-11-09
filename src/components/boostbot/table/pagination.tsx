@@ -7,102 +7,69 @@ import { ChangePage } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import PageLink from './pagelink';
 
-function getPaginationItems(
-    currentPageIndex: number,
-    lastPageIndex: number,
-    noOfPageLinks: number,
-  ) {
-    const pages = [];
-    const divisionPerPageLink = 3;
-    const deductednoOfPageLinks = noOfPageLinks - divisionPerPageLink;
-    const innerNumberCount = deductednoOfPageLinks / 2;
-  
-    const isLinkVisible = (
-      currentPageIndex: number,
-      rangeDelimiter: number,
-      rangeLinkLimit: number,
-    ) => {
-      return currentPageIndex - rangeDelimiter < rangeLinkLimit;
-    };
-    const isLinkDisabled = (
-      currentPageIndex: number,
-      rangeDelimiter: number,
-      rangeLinkLimit: number,
-    ) => {
-      return currentPageIndex - rangeDelimiter >= rangeLinkLimit;
-    };
+function getPaginationItems(currentPage:number, lastPage:number, maxLength:number) {
+  const res = [];
+  const firstPage = 1;
+  const confirmedPagesCount = 3;
+  const deductedMaxLength = maxLength - confirmedPagesCount;
+  const sideLength = deductedMaxLength / 2;
 
-    const isPageCountWithinRange=()=>{
-        return (lastPageIndex <= noOfPageLinks)
+  const addPagesInRange = (start:number, end:number) => {
+    for (let i = start; i <= end; i++) {
+        res.push(i);
     }
+};
+  if (lastPage <= maxLength) {
+      addPagesInRange(1, lastPage);
+  } 
+  else if (currentPage - firstPage < sideLength || lastPage - currentPage < sideLength) {
+      addPagesInRange(1, sideLength + firstPage);
+      res.push(NaN);
+      addPagesInRange(lastPage - sideLength, lastPage);
+  } else if (currentPage - firstPage >= deductedMaxLength && lastPage - currentPage >= deductedMaxLength) {
+      const deductedSideLength = sideLength - 1;
+      res.push(1, NaN);
+      addPagesInRange(currentPage - deductedSideLength, currentPage + deductedSideLength);
+      res.push(NaN, lastPage);
+  } else {
+      const isNearFirstPage = currentPage - firstPage < lastPage - currentPage;
+      let remainingLength = maxLength;
 
-    if (isPageCountWithinRange()) {
-      for (let i = 1; i <= lastPageIndex; i++) {
-        pages.push(i);
+      const addPagesCount = (start:number, count:number,isEnd:boolean) => {
+        for (let i = start; i <= count; i++) {
+            res.push(i);
+            if(!isEnd){
+              remainingLength -= 1;
+            }
+       
+        }
+    };
+    
+    const addPagesCountReverse = (start:number, end:number,isEnd:boolean) => {
+      for (let p = end; p >= start; p--) {
+          res.unshift(p);
+          if(!isEnd){
+            remainingLength -= 1;
+          }
       }
-    } else if (
-      isLinkVisible(currentPageIndex, 1, innerNumberCount) ||
-      isLinkVisible(lastPageIndex, currentPageIndex, innerNumberCount)
-    ) {
-      Array.from({ length: innerNumberCount + 1 }, (_, j) => {
-        pages.push(j + 1);
-      });
-      pages.push(NaN);
-      Array.from({ length: innerNumberCount + 1 }, (_, index) => {
-        pages.push(lastPageIndex - innerNumberCount + index);
-      });
-  
-    } else if (
-      isLinkDisabled(currentPageIndex, 1, deductednoOfPageLinks) &&
-      isLinkDisabled(lastPageIndex, currentPageIndex, deductednoOfPageLinks)
-    ) {
-      const deductedinnerNumberCount = innerNumberCount - 1;
-      pages.push(1, NaN);
-      Array.from({ length: deductedinnerNumberCount * 2 + 1 }, (_, index) => {
-        pages.push(currentPageIndex - deductedinnerNumberCount + index);
-      });
-      pages.push(NaN, lastPageIndex);
-    } else {
-      const isNearStart = currentPageIndex - 1 < lastPageIndex - currentPageIndex;
-      let remainingLength = noOfPageLinks;
-  
-      if (isNearStart) {
-        Array.from({ length: currentPageIndex + 2 }, (_, index) => {
-          pages.push(index + 1);
+  };
+      if (isNearFirstPage) {
+          addPagesCount(1,(currentPage + 1),false);
+          res.push(NaN);
           remainingLength -= 1;
-        });
-  
-        pages.push(NaN);
-        remainingLength -= 1;
-  
-        Array.from(
-          {
-            length:
-              lastPageIndex -
-              (remainingLength - 1) -
-              (lastPageIndex - currentPageIndex) +
-              1,
-          },
-          (_, index) => {
-            const page = lastPageIndex - (remainingLength - 1) + index;
-            pages.push(page);
-          },
-        );
+          addPagesInRange(lastPage - (remainingLength - 1), lastPage,true);
       } else {
-        for (let o = lastPageIndex; o >= currentPageIndex - 1; o--) {
-          pages.unshift(o);
+          addPagesCountReverse(lastPage,currentPage-1,false)
+          res.unshift(NaN);
           remainingLength -= 1;
-        }
-        pages.unshift(NaN);
-        remainingLength -= 1;
-        for (let p = remainingLength; p >= 1; p--) {
-          pages.unshift(p);
-        }
+          addPagesCountReverse(remainingLength,1,true)
       }
-    }
-  
-    return pages;
   }
+
+  return res;
+}
+
+
   
 
 
