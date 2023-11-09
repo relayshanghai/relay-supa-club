@@ -295,7 +295,7 @@ const Boostbot = () => {
                     <InitialLogoScreen />
                 ) : (
                     <div className="flex w-full flex-col items-end">
-                        <div className="w-fit pb-4">
+                        <div className="w-fit pb-3">
                             <Button
                                 data-testid="boostbot-button-outreach"
                                 onClick={handleAddToSequenceButton}

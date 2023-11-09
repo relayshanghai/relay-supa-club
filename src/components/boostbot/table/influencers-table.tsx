@@ -109,7 +109,7 @@ export function InfluencersTable<TData, TValue>({
                     </TableBody>
                 </Table>
 
-                <div className="absolute bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
+                <div className="sticky bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
                     <DataTablePagination table={table} />
                 </div>
             </div>
