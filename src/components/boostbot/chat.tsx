@@ -1,4 +1,3 @@
-import { SparklesIcon } from '@heroicons/react/24/solid';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
@@ -282,18 +281,15 @@ export const Chat: React.FC<ChatProps> = ({
             />
             <div className="boostbot-gradient z-10 flex justify-center p-2 shadow">
                 <div className="rounded-full bg-slate-100 p-2">
-                    <Logo height={16} width={16} className="m-0.5 stroke-none " />
+                    <Logo height={16} width={16} className="m-1 stroke-none " />
                 </div>
 
-                <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
-                    BoostBot AI Search
-                    <SparklesIcon className="inline h-4 w-4" />
-                </h1>
+                <h1 className="text-md px-2 py-2 font-semibold text-white drop-shadow-md">BoostBot AI Search</h1>
             </div>
-            <div className="flex justify-between px-2 ">
+            <div className="flex justify-between border-b-2 border-slate-100 px-2">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 p-2 text-xs font-normal text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
@@ -302,7 +298,7 @@ export const Chat: React.FC<ChatProps> = ({
                 </button>
                 <button
                     data-testid="boostbot-open-clear-chat-history"
-                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-slate-400 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 p-2 text-xs font-normal text-slate-400 transition-all hover:bg-primary-100 disabled:bg-transparent"
                     onClick={() => setIsClearChatHistoryModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >

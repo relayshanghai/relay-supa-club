@@ -90,10 +90,10 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message }) => {
     const { type, sender } = message;
     const defaultMessageClasses =
-        'mb-4 inline-block max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-4 py-2 text-sm shadow-md';
+        'inline-block  whitespace-pre-wrap break-words rounded-lg px-2 py-2 text-sm shadow-md text-sm font-semibold';
     const messageClasses = {
-        User: `${defaultMessageClasses} ml-auto border border-slate-300 text-slate-600 bg-slate-50 rounded-br-none`,
-        Bot: `${defaultMessageClasses} bg-primary-50 text-primary-700 border border-primary-500 rounded-bl-none`,
+        User: `${defaultMessageClasses} border border-primary-500 text-white-600 bg-primary-500 `,
+        Bot: `${defaultMessageClasses} border border-primary-500  text-primary-700  `,
         Neutral: 'my-2',
     };
     const user = {
@@ -101,8 +101,20 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Bot: 'BoostBot',
         Neutral: '',
     };
+    const userClasses = {
+        User: 'text-right text-primary-500 mt-2',
+        Bot: 'text-left text-primary-500 mt-2',
+        Neutral: '',
+    };
+    const alignmentClass = {
+        User: 'ml-auto p-0 mb-4 text-white mr-0 max-w-[85%]',
+        Bot: ' p-0 mb-4 inline-block max-w-[85%]',
+        Neutral: '',
+    };
     const messageClass = messageClasses[sender];
     const userType = user[sender];
+    const userClass = userClasses[sender];
+    const alignment = alignmentClass[sender];
 
     let Content: React.ReactNode = null;
     if (type === 'translation') {
@@ -116,9 +128,11 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     }
 
     return (
-        <div>
+        <div className={alignment}>
             <div className={messageClass}>{Content}</div>
-            <p>{userType}</p>
+            <div className={userClass}>
+                <p className="text-xs font-semibold">{userType}</p>
+            </div>
         </div>
     );
 };
