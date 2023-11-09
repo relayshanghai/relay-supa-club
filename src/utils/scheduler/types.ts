@@ -1,3 +1,5 @@
+import type { JobNames } from './jobs';
+
 export enum JOB_QUEUE {
     default = 'default',
     failed = 'failed',
@@ -16,15 +18,15 @@ export type JobInterface<T> = {
      * The logic for running the job. Must throw an error to fail
      * @throws Error
      */
-    run: (...args: any[]) => Promise<any>;
+    run: (payload?: Record<string, any>) => Promise<any>;
 };
 
 // @note we really should standardize this
 export type CreateJobRequest = {
     body: {
-        name: string;
+        name: JobNames;
         run_at: string;
-        payload: Record<string, any>;
+        payload?: Record<string, any>;
         queue?: JOB_QUEUE;
     };
 };

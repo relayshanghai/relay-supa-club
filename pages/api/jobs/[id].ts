@@ -1,6 +1,6 @@
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { getJob } from 'src/utils/scheduler/jobs';
+import { getJob } from 'src/utils/scheduler/db';
 import type { RunJobRequest } from 'src/utils/scheduler/types';
 import { db } from 'src/utils/supabase-client';
 

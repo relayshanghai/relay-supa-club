@@ -1,11 +1,13 @@
 import { Foo } from './foo';
 
-const jobs = {
+export const jobs = {
     [Foo.name]: Foo,
 };
 
-export const isValidJob = (name: string): name is keyof typeof jobs => {
-    return name in Object.keys(jobs);
+export type JobNames = keyof typeof jobs;
+
+export const isValidJob = (name: string): name is JobNames => {
+    return name in jobs;
 };
 
 export const runJob = (name: string, payload?: any) => {
@@ -15,5 +17,3 @@ export const runJob = (name: string, payload?: any) => {
 
     throw new Error(`Invalid Job: ${name}`);
 };
-
-export default jobs;

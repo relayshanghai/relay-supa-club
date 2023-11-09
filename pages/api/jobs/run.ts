@@ -2,7 +2,7 @@ import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { Jobs } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
-import { finishJob, getJobs } from 'src/utils/scheduler/jobs';
+import { finishJob, getJobs } from 'src/utils/scheduler/db';
 import { runJob } from 'src/utils/scheduler/jobs/index';
 import type { RunJobRequest } from 'src/utils/scheduler/types';
 import { JOB_QUEUE } from 'src/utils/scheduler/types';

@@ -1,8 +1,6 @@
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { DateInterval } from 'src/utils/datetime';
-import { addTime, now } from 'src/utils/datetime';
-import { createJob } from 'src/utils/scheduler/jobs';
+import { createJob } from 'src/utils/scheduler/db';
 import type { CreateJobRequest } from 'src/utils/scheduler/types';
 import { JOB_QUEUE } from 'src/utils/scheduler/types';
 import { db } from 'src/utils/supabase-client';
@@ -19,19 +17,16 @@ const postHandler: ActionHandler = async (req, res) => {
         body.queue = JOB_QUEUE.default;
     }
 
-    // @note temporary
-    const interval: [number, DateInterval] = [1, 'minutes'];
-    body.run_at = addTime(now(), interval[0], interval[1]).toISOString();
-
     const job = await db(createJob)(v4(), {
         name: body.name,
-        owner: req.session.user.id,
         run_at: body.run_at,
+        payload: body.payload,
+        owner: req.session.user.id,
     });
 
     return res.status(200).json(job);
 };
 
 export default ApiHandler({
-    getHandler: postHandler,
+    postHandler,
 });
