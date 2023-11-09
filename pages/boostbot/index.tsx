@@ -26,6 +26,7 @@ import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { Row } from '@tanstack/react-table';
+import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-button';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -51,6 +52,7 @@ const Boostbot = () => {
     );
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -133,6 +135,10 @@ const Boostbot = () => {
     );
 
     const isOutreachButtonDisabled = influencersToOutreach.length === 0;
+
+    const handleAddToSequenceButton = () => {
+        setShowSequenceSelector(true);
+    };
 
     const handleSelectedInfluencersToOutreach = async () => {
         setIsOutreachLoading(true);
@@ -243,6 +249,8 @@ const Boostbot = () => {
         setSelectedInfluencers({});
     };
 
+    const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
+
     return (
         <Layout>
             {isExpired && (
@@ -257,6 +265,7 @@ const Boostbot = () => {
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
+                        allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         isOutreachLoading={isOutreachLoading}
@@ -278,19 +287,31 @@ const Boostbot = () => {
                         isInfluencerDetailsModalOpen={isInfluencerDetailsModalOpen}
                         setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
                         selectedRow={selectedRow}
+                        showSequenceSelector={showSequenceSelector}
+                        setShowSequenceSelector={setShowSequenceSelector}
+                        setSelectedInfluencers={setSelectedInfluencers}
                     />
                 </div>
 
                 {isInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
-                    <InfluencersTable
-                        columns={columns}
-                        data={influencers}
-                        selectedInfluencers={selectedInfluencers}
-                        setSelectedInfluencers={setSelectedInfluencers}
-                        meta={{ t, searchId, setIsInfluencerDetailsModalOpen, setSelectedRow }}
-                    />
+                    <div className="flex w-full flex-col items-end">
+                        <div className="w-fit pb-3">
+                            <AddToSequenceButton
+                                buttonText={t('boostbot.chat.outreachSelected')}
+                                outReachDisabled={outReachDisabled}
+                                handleAddToSequenceButton={handleAddToSequenceButton}
+                            />
+                        </div>
+                        <InfluencersTable
+                            columns={columns}
+                            data={influencers}
+                            selectedInfluencers={selectedInfluencers}
+                            setSelectedInfluencers={setSelectedInfluencers}
+                            meta={{ t, searchId, setIsInfluencerDetailsModalOpen, setSelectedRow }}
+                        />
+                    </div>
                 )}
             </div>
         </Layout>

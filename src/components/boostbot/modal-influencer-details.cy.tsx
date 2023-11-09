@@ -10,7 +10,16 @@ describe('InfluencerDetailsModal', () => {
     const isOpen = true;
     it('renders influencer basic info', () => {
         const setIsOpen = cy.stub();
-        testMount(<InfluencerDetailsModal selectedRow={selectedRow} isOpen={isOpen} setIsOpen={setIsOpen} />);
+        testMount(
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                outReachDisabled={false}
+                setSelectedInfluencers={cy.stub()}
+                setShowSequenceSelector={cy.stub()}
+            />,
+        );
         cy.get('img').should('have.attr', 'src', influencer.picture);
         cy.contains(influencer.fullname);
         cy.contains(influencer.handle ?? influencer.username);
@@ -21,7 +30,16 @@ describe('InfluencerDetailsModal', () => {
         const url = selectedRow.original.url;
         const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
 
-        testMount(<InfluencerDetailsModal selectedRow={selectedRow} isOpen={isOpen} setIsOpen={setIsOpen} />);
+        testMount(
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                outReachDisabled={false}
+                setSelectedInfluencers={cy.stub()}
+                setShowSequenceSelector={cy.stub()}
+            />,
+        );
         cy.getByTestId('boostbot-modal-open-report-link').should('have.attr', 'target', '_blank');
         cy.getByTestId('boostbot-modal-open-report-link').should('have.attr', 'rel', 'noopener noreferrer');
         cy.getByTestId('boostbot-modal-open-report-link').should(
