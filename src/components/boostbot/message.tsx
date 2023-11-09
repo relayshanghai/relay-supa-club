@@ -92,11 +92,11 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message }) => {
     const { type, sender } = message;
     const defaultMessageClasses =
-        'inline-block  whitespace-pre-wrap break-words rounded-lg px-2 py-2 text-sm shadow-md text-sm font-semibold';
+        'inline-block  whitespace-pre-wrap break-words rounded-[6px] px-3 py-3 text-sm shadow-md text-sm font-semibold';
     const messageClasses = {
         User: `${defaultMessageClasses} border border-primary-600 text-white-600 bg-primary-600 `,
-        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-md text-primary-600 `,
-        Neutral: 'my-2 font-semibold text-primary-600 ',
+        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-[4px] text-primary-600 `,
+        Neutral: 'my-2.5 font-semibold text-primary-600 ',
     };
     const user = {
         User: 'You',
@@ -104,18 +104,18 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Neutral: '',
     };
     const userClasses = {
-        User: 'text-right text-primary-600 mt-2',
-        Bot: 'text-left text-transparent bg-clip-text bg-boostbotbackground mt-2',
+        User: 'text-right text-primary-600 mt-2.5',
+        Bot: 'text-left text-primary-400 mt-2.5',
         Neutral: '',
     };
     const alignmentClass = {
-        User: 'ml-auto p-0 mb-4 text-white mr-0 max-w-[85%]',
+        User: 'ml-auto p-0 mb-2.5 text-white mr-0 max-w-[85%]',
         Bot: ' p-0 mb-4 inline-block max-w-[85%]',
         Neutral: '',
     };
     const borderClass = {
         User: '',
-        Bot: 'bg-boostbotbackground p-0.5 rounded-lg',
+        Bot: 'bg-boostbotbackground p-[1px] rounded-[6px]',
         Neutral: '',
     };
     const messageClass = messageClasses[sender];

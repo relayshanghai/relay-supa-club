@@ -42,7 +42,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
             "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         and: 'and',
         clearChatModal: {
-            open: 'Clear chat history and filters',
+            open: 'Clear chat and filters',
             title: 'Are you sure you want to delete your BoostBot chat history and influencer results?',
             confirm: 'Yes',
             cancel: 'Back',

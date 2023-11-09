@@ -270,7 +270,7 @@ export const Chat: React.FC<ChatProps> = ({
     };
 
     return (
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-500 bg-white shadow-lg">
             <ModalSequenceSelector
                 show={showSequenceSelector}
                 setShow={setShowSequenceSelector}
@@ -279,26 +279,28 @@ export const Chat: React.FC<ChatProps> = ({
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="boostbot-gradient z-10 flex justify-center p-2 shadow">
-                <div className="rounded-full bg-slate-100 p-2">
-                    <Logo height={16} width={16} className="m-1 stroke-none " />
+            <div className="boostbot-gradient z-10 m-0 flex px-4 py-2 py-3.5 shadow">
+                <div className="flex h-[32px] w-[32px] justify-center rounded-full bg-white">
+                    <Logo height={16} width={19} className="m-1 self-center stroke-none" />
                 </div>
 
-                <h1 className="text-md px-2 py-2 font-semibold text-white drop-shadow-md">BoostBot AI Search</h1>
+                <h1 className="text-md self-center px-[10px] font-semibold text-white drop-shadow-md">
+                    BoostBot AI Search
+                </h1>
             </div>
-            <div className="flex justify-between border-b-2 border-slate-100 px-2">
+            <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-2">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 p-2 text-xs font-normal text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:bg-primary-100 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
-                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-500 group-disabled:stroke-primary-200" />{' '}
+                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
                     {t('boostbot.filters.openModalButton')}
                 </button>
                 <button
                     data-testid="boostbot-open-clear-chat-history"
-                    className="group flex items-center gap-1 p-2 text-xs font-normal text-slate-400 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-tertiary-400 transition-all hover:bg-primary-100 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsClearChatHistoryModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
