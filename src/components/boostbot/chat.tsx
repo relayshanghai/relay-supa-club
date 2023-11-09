@@ -28,6 +28,7 @@ import type { Sequence } from 'src/utils/api/db';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -60,6 +61,8 @@ interface ChatProps {
     selectedRow?: Row<BoostbotInfluencer>;
     showSequenceSelector: boolean;
     setShowSequenceSelector: (show: boolean) => void;
+    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -88,6 +91,8 @@ export const Chat: React.FC<ChatProps> = ({
     selectedRow,
     showSequenceSelector,
     setShowSequenceSelector,
+    allSequenceInfluencers,
+    setSelectedInfluencers,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -325,6 +330,14 @@ export const Chat: React.FC<ChatProps> = ({
                 selectedRow={selectedRow}
                 isOpen={isInfluencerDetailsModalOpen}
                 setIsOpen={setIsInfluencerDetailsModalOpen}
+                setShowSequenceSelector={setShowSequenceSelector}
+                outReachDisabled={
+                    (isOutreachLoading ||
+                        areChatActionsDisabled ||
+                        allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
+                    false
+                }
+                setSelectedInfluencers={setSelectedInfluencers}
             />
 
             <ChatContent

@@ -265,6 +265,7 @@ const Boostbot = () => {
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
+                        allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         isOutreachLoading={isOutreachLoading}
@@ -288,6 +289,7 @@ const Boostbot = () => {
                         selectedRow={selectedRow}
                         showSequenceSelector={showSequenceSelector}
                         setShowSequenceSelector={setShowSequenceSelector}
+                        setSelectedInfluencers={setSelectedInfluencers}
                     />
                 </div>
 
@@ -301,7 +303,7 @@ const Boostbot = () => {
                                 onClick={handleAddToSequenceButton}
                                 disabled={outReachDisabled}
                                 className={`${
-                                    !outReachDisabled && 'bg-gradient-to-tl from-[#43CBFF] via-[#7839EE] to-[#EE46BC]'
+                                    !outReachDisabled && 'boostbot-gradient'
                                 } border-none text-sm font-semibold transition-all`}
                             >
                                 {t('boostbot.chat.outreachSelected')}

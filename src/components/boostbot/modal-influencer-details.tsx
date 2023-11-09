@@ -24,14 +24,25 @@ import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
+import type { Dispatch, SetStateAction } from 'react';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
     selectedRow?: Row<BoostbotInfluencer>;
+    setShowSequenceSelector: (open: boolean) => void;
+    outReachDisabled: boolean;
+    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 };
 
-export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
+export const InfluencerDetailsModal = ({
+    isOpen,
+    setIsOpen,
+    selectedRow,
+    setShowSequenceSelector,
+    outReachDisabled,
+    setSelectedInfluencers,
+}: InfluencerDetailsModalProps) => {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
 
@@ -68,7 +79,8 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlaysRaw ?? 0) / followers) * 100)}%`;
 
     const handleAddToSequence = () => {
-        setIsOpen(false);
+        setSelectedInfluencers({ [selectedRow.id]: true });
+        setShowSequenceSelector(true);
         // TODO: add to sequence function in V2-1029
     };
 
@@ -230,7 +242,11 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
 
                 {/* button */}
                 <div className="mt-8 box-border flex w-full justify-end font-semibold">
-                    <Button className="boostbot-gradient rounded-lg border-none px-4" onClick={handleAddToSequence}>
+                    <Button
+                        disabled={outReachDisabled}
+                        className={`${!outReachDisabled && 'boostbot-gradient'} rounded-lg border-none px-4`}
+                        onClick={handleAddToSequence}
+                    >
                         {t('boostbot.modal.addToSequence')}
                     </Button>
                 </div>
