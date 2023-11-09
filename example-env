@@ -90,3 +90,5 @@ EMAIL_ENGINE_API_KEY=asdfasdf
 # Enable rudderstack
 NEXT_PUBLIC_ENABLE_RUDDERSTACK=true
 
+# Supabase workers token
+SCHEDULER_WORKER_KEY=
