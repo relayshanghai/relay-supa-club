@@ -111,6 +111,7 @@ export const SearchLocations = ({
                 addTag(item);
             }}
             spinnerLoading={loading}
+            topicSearch={false}
         />
     );
 };
