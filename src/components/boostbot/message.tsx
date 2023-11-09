@@ -67,7 +67,9 @@ const Translation = ({
             i18nKey={translationKey}
             components={
                 translationLink
-                    ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
+                    ? {
+                          customLink: <Link target="_blank" className="font-medium underline" href={translationLink} />,
+                      }
                     : undefined
             }
             values={translatedValues}
@@ -92,9 +94,9 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     const defaultMessageClasses =
         'inline-block  whitespace-pre-wrap break-words rounded-lg px-2 py-2 text-sm shadow-md text-sm font-semibold';
     const messageClasses = {
-        User: `${defaultMessageClasses} border border-primary-500 text-white-600 bg-primary-500 `,
-        Bot: `${defaultMessageClasses} border border-primary-500  text-primary-700  `,
-        Neutral: 'my-2',
+        User: `${defaultMessageClasses} border border-primary-600 text-white-600 bg-primary-600 `,
+        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-md text-primary-600 `,
+        Neutral: 'my-2 font-semibold text-primary-600 ',
     };
     const user = {
         User: 'You',
@@ -102,8 +104,8 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Neutral: '',
     };
     const userClasses = {
-        User: 'text-right text-primary-500 mt-2',
-        Bot: 'text-left text-primary-500 mt-2',
+        User: 'text-right text-primary-600 mt-2',
+        Bot: 'text-left text-transparent bg-clip-text bg-boostbotbackground mt-2',
         Neutral: '',
     };
     const alignmentClass = {
@@ -111,10 +113,16 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Bot: ' p-0 mb-4 inline-block max-w-[85%]',
         Neutral: '',
     };
+    const borderClass = {
+        User: '',
+        Bot: 'bg-boostbotbackground p-0.5 rounded-lg',
+        Neutral: '',
+    };
     const messageClass = messageClasses[sender];
     const userType = user[sender];
     const userClass = userClasses[sender];
     const alignment = alignmentClass[sender];
+    const border = borderClass[sender];
 
     let Content: React.ReactNode = null;
     if (type === 'translation') {
@@ -129,7 +137,9 @@ const Message: React.FC<MessageProps> = ({ message }) => {
 
     return (
         <div className={alignment}>
-            <div className={messageClass}>{Content}</div>
+            <div className={border}>
+                <div className={messageClass}>{Content}</div>
+            </div>
             <div className={userClass}>
                 <p className="text-xs font-semibold">{userType}</p>
             </div>
