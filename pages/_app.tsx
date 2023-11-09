@@ -39,6 +39,20 @@ function MyApp({
     }, []);
 
     useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const setLang = urlParams.get('set_lang');
+            if (typeof setLang === 'string') {
+                if (setLang.includes('en')) {
+                    i18n.changeLanguage('en-US');
+                } else if (setLang.includes('zh')) {
+                    i18n.changeLanguage('zh-CN');
+                }
+            }
+        }
+    }, []);
+
+    useEffect(() => {
         _i18n.on('languageChanged', (l) => {
             setLang(l);
         });
