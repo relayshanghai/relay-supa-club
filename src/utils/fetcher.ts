@@ -1,6 +1,8 @@
 import { getItem } from '@analytics/storage-utils';
 import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
 import { ANALYTICS_HEADER_NAME } from './analytics/constants';
+import { clientLogger } from './logger-client';
+import { serverLogger } from './logger-server';
 
 interface ResponseWithError extends Response {
     success?: boolean;
@@ -9,6 +11,7 @@ interface ResponseWithError extends Response {
 }
 
 export const handleResError = async (res: ResponseWithError) => {
+    const logger = typeof window === 'undefined' ? serverLogger : clientLogger;
     if (!res.status.toString().startsWith('2')) {
         try {
             const contentType = res.headers.get('content-type') || '';
@@ -21,14 +24,16 @@ export const handleResError = async (res: ResponseWithError) => {
                     throw new Error(typeof json.message === 'string' ? json.message : JSON.stringify(json.message));
 
                 if (res.statusText) throw new Error(res.statusText);
-                else throw new Error('Something went wrong with the request.');
+                logger(res);
+                throw new Error('Something went wrong with the request.');
             } else {
                 const text = await res.text();
                 throw new Error(text);
             }
         } catch (error) {
             if (error instanceof Error) throw error;
-            else throw new Error('Something went wrong with the request.');
+            logger(error);
+            throw new Error('Something went wrong with the request.');
         }
     }
 };
