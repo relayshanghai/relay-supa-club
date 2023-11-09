@@ -26,7 +26,7 @@ import { Banner } from 'src/components/library/banner';
 import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { Row } from '@tanstack/react-table';
-import { Button } from 'src/components/button';
+import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-button';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -298,16 +298,11 @@ const Boostbot = () => {
                 ) : (
                     <div className="flex w-full flex-col items-end">
                         <div className="w-fit pb-3">
-                            <Button
-                                data-testid="boostbot-button-outreach"
-                                onClick={handleAddToSequenceButton}
-                                disabled={outReachDisabled}
-                                className={`${
-                                    !outReachDisabled && 'boostbot-gradient'
-                                } border-none text-sm font-semibold transition-all`}
-                            >
-                                {t('boostbot.chat.outreachSelected')}
-                            </Button>
+                            <AddToSequenceButton
+                                buttonText={t('boostbot.chat.outreachSelected')}
+                                outReachDisabled={outReachDisabled}
+                                handleAddToSequenceButton={handleAddToSequenceButton}
+                            />
                         </div>
                         <InfluencersTable
                             columns={columns}

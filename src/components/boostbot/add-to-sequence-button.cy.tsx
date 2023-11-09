@@ -1,8 +1,8 @@
 import { testMount } from 'src/utils/cypress-app-wrapper';
 import type { ChatContentProps } from './chat-content';
 import type { MessageType } from './message';
-import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
+import { AddToSequenceButton } from './add-to-sequence-button';
 
 const MockComponent = ({
     handleSelectedInfluencersToOutreach,
@@ -19,16 +19,11 @@ const MockComponent = ({
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
     return (
         <>
-            <Button
-                data-testid="boostbot-button-outreach"
-                onClick={handleSelectedInfluencersToOutreach}
-                disabled={outReachDisabled}
-                className={`${
-                    !outReachDisabled && 'bg-gradient-to-tl from-[#43CBFF] via-[#7839EE] to-[#EE46BC]'
-                } border-none text-sm font-semibold transition-all`}
-            >
-                {t('boostbot.chat.outreachSelected')}
-            </Button>
+            <AddToSequenceButton
+                buttonText={t('boostbot.chat.outreachSelected')}
+                handleAddToSequenceButton={handleSelectedInfluencersToOutreach}
+                outReachDisabled={outReachDisabled}
+            />
         </>
     );
 };

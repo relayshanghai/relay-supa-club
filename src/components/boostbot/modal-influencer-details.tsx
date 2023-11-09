@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
-import { Button } from 'src/components/button';
 import {
     Bar,
     BarChart,
@@ -25,6 +24,7 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
 import type { Dispatch, SetStateAction } from 'react';
+import { AddToSequenceButton } from './add-to-sequence-button';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -252,13 +252,11 @@ export const InfluencerDetailsModal = ({
 
                 {/* button */}
                 <div className="mt-8 box-border flex w-full justify-end font-semibold">
-                    <Button
-                        disabled={outReachDisabled}
-                        className={`${!outReachDisabled && 'boostbot-gradient'} rounded-lg border-none px-4`}
-                        onClick={handleAddToSequence}
-                    >
-                        {t('boostbot.modal.addToSequence')}
-                    </Button>
+                    <AddToSequenceButton
+                        buttonText={t('boostbot.modal.addToSequence')}
+                        outReachDisabled={outReachDisabled}
+                        handleAddToSequenceButton={handleAddToSequence}
+                    />
                 </div>
             </div>
         </Modal>
