@@ -12,7 +12,7 @@ BEGIN
             'POST', url,
             ARRAY[
                 http_header('x-scheduler-token', token),
-                http_header('x-scheduler-worker-id',worker_name)
+                http_header('x-scheduler-worker-id', worker_name)
             ],
             '', ''
         )::http_request);

@@ -6,7 +6,7 @@ import { db } from 'src/utils/supabase-client';
 
 const getHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
-        // return res.status(401).end();
+        return res.status(401).end();
     }
 
     const query = req.query as RunJobRequest['query'] & { id?: string };
