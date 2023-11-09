@@ -1,21 +1,19 @@
 import { addHours, getHours, isWeekend, isSameDay, weekDayAsNumber, getWeekday } from 'src/utils/time-zone-helpers';
-import { getOutbox } from '.';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 
-const MAX_DAILY_SEND = 75;
+const MAX_DAILY_SEND = 70;
 const TARGET_TIMEZONE = 'America/Chicago';
 
 /** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 75 emails scheduled for that day, it will find the next available day with less than the max scheduled. Email send times will always be a random hour within Monday-Friday, 9am - 12am US Central Time */
 export const calculateSendAt = async (
     account: string,
     waitTimeHours: number,
+    outbox: OutboxGetMessage[],
     maxDailySend = MAX_DAILY_SEND,
     now = new Date(),
 ): Promise<Date> => {
     const sendAt = addHours(now, waitTimeHours);
     const targetDate = findNextBusinessDayTime(sendAt); // Get initial targetDate
-
-    const outbox = await getOutbox();
 
     // Get all emails scheduled for the day for the account
     const outboxEmails = outbox.filter((email) => email.account === account);
