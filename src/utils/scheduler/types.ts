@@ -1,7 +1,7 @@
 import type { JobNames } from './jobs';
 
 export const SCHEDULER_TOKEN_HEADER = 'x-scheduler-token';
-export const SCHEDULER_TOKEN_KEY = 'SCHEDULER_WORKER_KEY';
+export const SCHEDULER_TOKEN_KEY = 'SCHEDULER_WORKER_TOKEN';
 
 export enum JOB_QUEUE {
     default = 'default',
