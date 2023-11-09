@@ -50,11 +50,9 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
 
     return (
         <div className="w-80 lg:w-[28rem]">
-            <div className="flex items-start space-x-3">
-                <Input label="" type="text" placeholder="Enter a promo code" />
-                <Button variant="ghost" className="m-2 text-xs">
-                    APPLY
-                </Button>
+            <div className="flex items-center space-x-3">
+                <Input label="Promo Code" type="text" placeholder="Enter a promo code" />
+                <Button className="h-9 text-xs">APPLY</Button>
             </div>
             <div className="rounded shadow ">
                 <div className="flex w-full space-x-3 px-6 pt-6 text-xs text-gray-500">
