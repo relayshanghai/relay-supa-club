@@ -132,6 +132,11 @@ export const serverLogger = (message: unknown, captureContext?: LogLevel | Captu
     if (typeof message === 'string') {
         message = new Error(message);
     }
+    if (
+        (typeof message === 'string' && message.includes('user aborted')) ||
+        (message instanceof Error && message.message.includes('user aborted'))
+    )
+        return;
 
     const isUnknown = isUnknownError(message);
 

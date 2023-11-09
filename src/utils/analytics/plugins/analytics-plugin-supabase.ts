@@ -21,9 +21,9 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
             // eslint-disable-next-line no-console
             // console.log('ready', args.instance.user());
         },
-        identifyStart: (args: AnalyticsEventParam) => {
+        identifyStart: (_args: AnalyticsEventParam) => {
             // eslint-disable-next-line no-console
-            console.log('identifyStart', args.payload);
+            // console.log('identifyStart', args.payload);
         },
         resetStart: (args: AnalyticsEventParam) => {
             // eslint-disable-next-line no-console
