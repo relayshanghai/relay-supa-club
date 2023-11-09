@@ -13,10 +13,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName }) => {
             ? 'bg-green-100 border-green-50'
             : iconName === 'alert'
             ? 'bg-yellow-100 border-yellow-50'
-            : 'bg-gray-100 border-gray-50';
+            : 'border-none';
 
-    const statIconColor =
-        iconName === 'good' ? 'text-green-600' : iconName === 'alert' ? 'text-orange-600' : 'text-gray-600';
+    const statIconColor = iconName === 'good' ? 'text-green-600' : iconName === 'alert' ? 'text-orange-600' : '';
 
     return (
         <div className="stat-card space-y-2 rounded-xl border border-gray-200 p-6 text-gray-600">

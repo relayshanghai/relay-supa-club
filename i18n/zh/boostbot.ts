@@ -80,6 +80,7 @@ const boostbot = {
         followersGrowth: '粉丝增长率',
         totalPosts: '发布内容数',
         addToSequence: '添加至邮件进程管理',
+        followers: '粉丝数',
     },
 };
 

@@ -75,13 +75,14 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         topNiches: 'Top Niches',
         audienceEngagementStats: 'Audience Engagement Stats',
         audienceGender: 'Audience Gender',
-        engagedAudience: 'Engaged Audience',
+        engagedAudience: 'Audience Engagement Rate',
         engagementRate: 'Engagement Rate',
         averageViews: 'Average Views',
         channelStats: 'Channel Stats',
         followersGrowth: 'Followers Growth',
         totalPosts: 'Total Posts',
         addToSequence: 'Add to Sequence',
+        followers: 'Followers',
     },
 };
 
