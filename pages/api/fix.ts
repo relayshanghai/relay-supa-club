@@ -23,51 +23,62 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
     const updated: any = [];
+    // const sentMalformed = [];
     for (const influencer of allSequenceInfluencers) {
-        const {
-            data: emails,
-            count,
-            error: _error,
-        } = await supabase
-            .from('sequence_emails')
-            .select('email_message_id, email_delivery_status, email_tracking_status', { count: 'exact' })
-            .eq('sequence_influencer_id', influencer.id);
-        // console.log('emails', count, '   error: ', _error);
+        try {
+            const {
+                data: emails,
+                count,
+                error: _error,
+            } = await supabase
+                .from('sequence_emails')
+                .select('email_message_id', { count: 'exact' })
+                .eq('sequence_influencer_id', influencer.id);
+            // console.log('emails', count, '   error: ', _error);
 
-        if (emails && count !== null && count < 4) {
-            const hasAlreadyDelivered = emails.some(
-                (e) =>
-                    e.email_delivery_status === 'Delivered' ||
-                    e.email_tracking_status === 'Link Clicked' ||
-                    e.email_tracking_status === 'Opened',
-            );
-            if (hasAlreadyDelivered) {
-                console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
-                continue;
-            }
-            const messageIds = emails.map((e) => e.email_message_id);
-            console.log('updating, ', influencer.name, influencer.company_id);
-            await supabase.from('sequence_influencers').update({ funnel_status: 'To Contact' }).eq('id', influencer.id);
-            updated.push(influencer.name + ' ' + influencer.id);
-            const outboxToDelete = outbox.filter((e) => messageIds.includes(e.messageId)).map((e) => e.queueId);
-            for (const email of outboxToDelete) {
-                const canceledConfirm = await deleteEmailFromOutbox(email);
-                console.log(`canceled ${email} ${canceledConfirm.deleted}`);
-            }
+            if (emails && count !== null && count < 4) {
+                // const hasAlreadyDelivered = emails.some(
+                //     (e) =>
+                //         e.email_delivery_status === 'Delivered' ||
+                //         e.email_tracking_status === 'Link Clicked' ||
+                //         e.email_tracking_status === 'Opened',
+                // );
+                // if (hasAlreadyDelivered) {
+                //     console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
+                //     sentMalformed.push(`${influencer.name} ${influencer.id} ${influencer.company_id}`);
+                //     continue;
+                // }
+                const messageIds = emails.map((e) => e.email_message_id);
+                console.log('updating, ', influencer.name, influencer.company_id);
+                await supabase
+                    .from('sequence_influencers')
+                    .update({ funnel_status: 'To Contact' })
+                    .eq('id', influencer.id);
+                updated.push(influencer.name + ' ' + influencer.id);
+                const outboxToDelete = outbox.filter((e) => messageIds.includes(e.messageId)).map((e) => e.queueId);
+                for (const email of outboxToDelete) {
+                    const canceledConfirm = await deleteEmailFromOutbox(email);
+                    console.log(`canceled ${email} ${canceledConfirm.deleted}`);
+                }
 
-            // console.log('deleting', emails);
-            if (emails.length > 0) {
-                const { data: deleteConfirm } = await supabase
-                    .from('sequence_emails')
-                    .delete()
-                    .eq('sequence_influencer_id', influencer.id)
-                    .select('id');
+                // console.log('deleting', emails);
+                if (emails.length > 0) {
+                    const { data: deleteConfirm } = await supabase
+                        .from('sequence_emails')
+                        .delete()
+                        .eq('sequence_influencer_id', influencer.id)
+                        .select('id');
 
-                console.log('deleteConfirmed', deleteConfirm?.length);
+                    console.log('deleteConfirmed', deleteConfirm?.length);
+                }
             }
+        } catch (error) {
+            console.log('error with influencer', influencer.name, influencer.id);
+            console.error(error);
         }
     }
     console.log('updated', updated.length);
+    // console.log('sentMalformed', sentMalformed.length, sentMalformed);
 
     return res.status(200).json({ message: updated });
 };
