@@ -5,6 +5,31 @@ export interface CreatorSearchResult {
     shown_accounts: any[];
 }
 
+/**
+ * Represents a creator search result object by username.
+ *
+ * @see {@link https://iqdata.social/docs/api#tag/Dictionaries/operation/list-users}
+ */
+export interface CreatorSearchByUsernameObject {
+    followers: number;
+    fullname: string;
+    handle: string;
+    is_verified: boolean;
+    picture: string;
+    user_id: string;
+    username: string;
+}
+
+/**
+ * Represents a creator search result by username.
+ *
+ * @see {@link https://iqdata.social/docs/api#tag/Dictionaries/operation/list-users}
+ */
+export interface CreatorSearchByUsernameResult {
+    data: CreatorSearchByUsernameObject[];
+    success: boolean;
+}
+
 export interface CreatorSearchAccountObject {
     account: CreatorSearchAccount;
     // TODO: get match type
