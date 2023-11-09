@@ -95,7 +95,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         'inline-block  whitespace-pre-wrap break-words rounded-[6px] px-3 py-3 text-sm shadow-md text-sm font-semibold';
     const messageClasses = {
         User: `${defaultMessageClasses} border border-primary-600 text-white-600 bg-primary-600 `,
-        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-[4px] text-primary-600 `,
+        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-[4px] text-primary-600 w-full `,
         Neutral: 'my-2.5 font-semibold text-primary-600 ',
     };
     const user = {
