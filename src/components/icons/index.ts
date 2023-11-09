@@ -83,3 +83,4 @@ export { default as Payment } from './Payment';
 export { default as Alipay } from './Alipay';
 export { default as LanguageToggleIcon } from './LanguageToggleIcon';
 export { default as SendLightning } from './SendLightning';
+export { default as ReportOutline } from './ReportOutline';

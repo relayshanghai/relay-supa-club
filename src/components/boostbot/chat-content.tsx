@@ -16,16 +16,7 @@ export interface ChatContentProps {
     isOutreachButtonDisabled: boolean;
 }
 
-export const ChatContent: React.FC<ChatContentProps> = ({
-    messages,
-    isSearchLoading,
-    isOutreachLoading,
-    shouldShowButtons,
-    handleSelectedInfluencersToOutreach,
-    stopBoostbot,
-    areChatActionsDisabled,
-    isOutreachButtonDisabled,
-}) => {
+export const ChatContent: React.FC<ChatContentProps> = ({ messages, isSearchLoading, stopBoostbot }) => {
     // Temporarily disable the stop button until we design a better flow for the chat actions, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
     const temporarilyDisableStopButton = true;
     const { t } = useTranslation();
@@ -42,18 +33,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
             {messages.map((message, index) => (
                 <Message key={index} message={message} />
             ))}
-            {shouldShowButtons && (
-                <div className="z-10 flex flex-wrap gap-2">
-                    <Button
-                        data-testid="boostbot-button-outreach"
-                        onClick={handleSelectedInfluencersToOutreach}
-                        disabled={isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled}
-                        className="text-xs"
-                    >
-                        {t('boostbot.chat.outreachSelected')}
-                    </Button>
-                </div>
-            )}
             {/* Temporarily disable the stop button until we design a better flow for the chat actions, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007 */}
             {isSearchLoading && !temporarilyDisableStopButton && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">

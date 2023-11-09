@@ -53,7 +53,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         score: 'BoostBot Score',
         followers: 'Followers',
         audienceDemo: 'Audience Demo',
-        audienceGeolocations: 'Audience in U.S., Canada',
+        audienceGeolocations: 'Audience Geolocations',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
@@ -69,6 +69,20 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
+    },
+    modal: {
+        unlockDetailedReport: 'Unlock Detailed Analysis Report',
+        topNiches: 'Top Niches',
+        audienceEngagementStats: 'Audience Engagement Stats',
+        audienceGender: 'Audience Gender',
+        engagedAudience: 'Audience Engagement Rate',
+        engagementRate: 'Engagement Rate',
+        averageViews: 'Average Views',
+        channelStats: 'Channel Stats',
+        followersGrowth: 'Followers Growth',
+        totalPosts: 'Total Posts',
+        addToSequence: 'Add to Sequence',
+        followers: 'Followers',
     },
 };
 

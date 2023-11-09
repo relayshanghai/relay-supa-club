@@ -47,10 +47,10 @@ const boostbot = {
     },
     table: {
         account: '账号',
-        score: 'TODO',
-        followers: 'TODO',
-        audienceDemo: 'TODO',
-        audienceGeolocations: 'TODO',
+        score: '雷宝搜索的评分',
+        followers: '粉丝数',
+        audienceDemo: '受众年龄分布',
+        audienceGeolocations: '受众位于',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
         selectAll: '选定全部达人',
@@ -67,6 +67,20 @@ const boostbot = {
             '很抱歉，你已达到解锁红人报告的限额，请<customLink>升级方案</customLink>，以便继续搜索更多内容。',
         expiredAccount:
             '哦，看起来你的帐户已经过期了。你可在升级帐户<customLink>后继续使用雷宝所提供的服务</customLink>。',
+    },
+    modal: {
+        unlockDetailedReport: '解锁分析报告细节',
+        topNiches: '红人擅长话题领域分析',
+        audienceEngagementStats: '粉丝互动数据',
+        audienceGender: '受众性别分布',
+        engagedAudience: '活跃的粉丝占比',
+        engagementRate: '互动率',
+        averageViews: '平均观看次数',
+        channelStats: '频道情况',
+        followersGrowth: '粉丝增长率',
+        totalPosts: '发布内容数',
+        addToSequence: '添加至邮件进程管理',
+        followers: '粉丝数',
     },
 };
 
