@@ -8,7 +8,7 @@ describe('sucessGetPages', () => {
     });
     it('handle 1 ellipsis in the middle', () => {
         const result = getPaginationItems(1, 10, 7);
-        expect(result).toEqual([1, 2, 3, NaN, 8, 7, 9]);
+        expect(result).toEqual([1, 2, 3, NaN, 8, 9, 10]);
     });
     it('handle 2 ellipses', () => {
         const result = getPaginationItems(5, 10, 7);
