@@ -1,8 +1,8 @@
 import type { JobInterface } from '../types';
 
-export const Foo: JobInterface = {
-    name: 'test',
+export const Foo: JobInterface<'Foo'> = {
+    name: 'Foo',
     run: async () => {
-        return true;
+        return { result: true };
     },
 };

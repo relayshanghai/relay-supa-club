@@ -50,3 +50,22 @@ export const createJob =
         if (error) throw error;
         return data;
     };
+
+export const finishJob =
+    (supabase: RelayDatabase) =>
+    async (
+        job: Jobs['Row'],
+        status: JOB_STATUS.success | JOB_STATUS.failed = JOB_STATUS.success,
+        result: any = null,
+    ) => {
+        const retry_count = status === JOB_STATUS.failed ? (job.retry_count ?? 0) + 1 : job.retry_count;
+
+        const { data, error } = await supabase
+            .from('jobs')
+            .update({ status, result, retry_count })
+            .eq('id', job.id)
+            .select();
+
+        if (error) throw error;
+        return data;
+    };

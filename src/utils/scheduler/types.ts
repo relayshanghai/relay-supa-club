@@ -10,9 +10,13 @@ export enum JOB_STATUS {
     running = 'running',
 }
 
-export type JobInterface = {
-    name: string;
-    run: (...args: any[]) => Promise<boolean>;
+export type JobInterface<T> = {
+    name: T;
+    /**
+     * The logic for running the job. Must throw an error to fail
+     * @throws Error
+     */
+    run: (...args: any[]) => Promise<any>;
 };
 
 // @note we really should standardize this

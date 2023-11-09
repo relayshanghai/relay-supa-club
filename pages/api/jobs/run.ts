@@ -1,10 +1,25 @@
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { getJobs } from 'src/utils/scheduler/jobs';
+import type { Jobs } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger-server';
+import { finishJob, getJobs } from 'src/utils/scheduler/jobs';
+import { runJob } from 'src/utils/scheduler/jobs/index';
 import type { RunJobRequest } from 'src/utils/scheduler/types';
 import { JOB_QUEUE } from 'src/utils/scheduler/types';
 import { JOB_STATUS } from 'src/utils/scheduler/types';
 import { db } from 'src/utils/supabase-client';
+
+const handler = async (job: Jobs['Row']) => {
+    try {
+        const result = await runJob(job.name, job.payload);
+        db(finishJob)(job, JOB_STATUS.success, result);
+        return { job: job.id, result: true };
+    } catch (e) {
+        serverLogger(e);
+        db(finishJob)(job, JOB_STATUS.failed, { error: new Error(String(e)).message });
+        return { job: job.id, result: false };
+    }
+};
 
 const postHandler: ActionHandler = async (req, res) => {
     const query = req.query as RunJobRequest['query'];
@@ -17,9 +32,15 @@ const postHandler: ActionHandler = async (req, res) => {
         limit: limit ?? 1,
     });
 
-    return res.status(200).json(jobs);
+    const runningJobs = jobs.map((job) => handler(job));
+    const finishedJobs = await Promise.allSettled(runningJobs);
+    const results: { job: string; result: boolean }[] = finishedJobs.map((result) =>
+        result.status === 'fulfilled' ? result.value : result.reason,
+    );
+
+    return res.status(200).json(results);
 };
 
 export default ApiHandler({
-    getHandler: postHandler,
+    postHandler,
 });
