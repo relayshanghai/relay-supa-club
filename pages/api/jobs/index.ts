@@ -11,7 +11,7 @@ const postHandler: ActionHandler = async (req, res) => {
         return res.status(401).end();
     }
 
-    const body = req.body as CreateJobRequest['body'];
+    const body = req.body ?? ({} as CreateJobRequest['body']);
 
     if (!body.queue) {
         body.queue = JOB_QUEUE.default;
