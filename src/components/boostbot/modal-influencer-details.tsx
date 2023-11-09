@@ -65,7 +65,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
     const followersGrowth = decimalToPercent(followersGrowthRaw, 0);
     // audience engagement rate for Youtube = (Engagements + Avg Views) / Followers see V2-1063
-    const audienceEngagementRateYTInt = ((engagements + (avgViewsRaw ?? 0)) / followersRaw) as number;
+    const audienceEngagementRateYTInt = Number((engagements + (avgViewsRaw ?? 0)) / followersRaw);
     const audienceEngagementRateYT = decimalToPercent(audienceEngagementRateYTInt, 0);
     // audience engagement rate for Instagram and Tiktok is just engagmentRate see V2-1063
     const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
