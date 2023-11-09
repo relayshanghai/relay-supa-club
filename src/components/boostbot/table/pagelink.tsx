@@ -1,20 +1,19 @@
 import type { HTMLProps } from 'react';
-import cn from 'classnames';
 
 export type Props = HTMLProps<HTMLAnchorElement> & { active?: boolean };
 
 export default function PageLink({ className, active, disabled, children, ...otherProps }: Props) {
-    const customClassName = cn('page-link', className, {
-        active,
-        disabled,
-    });
+    let customClassName = `${className} font-medium text-primary-300 mx-2`;
+    if (active) {
+        customClassName = 'font-bold text-primary-500 mx-2';
+    }
 
     if (disabled) {
-        return <span className={customClassName}>{children}</span>;
+        return <span className="mx-3 font-medium text-tertiary-200">{children}</span>;
     }
 
     return (
-        <a className={customClassName} aria-current={active ? 'page' : undefined} {...otherProps}>
+        <a className={customClassName} {...otherProps}>
             {children}
         </a>
     );
