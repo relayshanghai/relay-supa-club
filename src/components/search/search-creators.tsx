@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChangeEvent } from 'react';
-import { ChevronDown } from '../icons';
+import { ChevronDown, Spinner } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SearchInfluencerByName } from 'src/utils/analytics/events/discover/search-influencer-by-name';
@@ -13,6 +13,7 @@ import { platforms } from './search-select-platform';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
 export const SearchCreators = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [searchUsername, setSearchUsername] = useState('');
     const [searchPlatform, setSearchPlatform] = useState<CreatorPlatform>('youtube');
     const { t } = useTranslation();
@@ -31,13 +32,10 @@ export const SearchCreators = () => {
     };
 
     const handleSubmit = useCallback(async () => {
+        setIsLoading(true);
         try {
             const searchResult = await getInfluencerByUsername(searchUsername, searchPlatform);
-            if (
-                searchResult.total === 0 ||
-                searchResult.accounts.length === 0 ||
-                !searchResult.accounts[0].account.user_profile.user_id
-            ) {
+            if (!searchResult.success || searchResult.data.length === 0 || !searchResult.data[0].user_id) {
                 toast.error(
                     t('creators.show.noInfluencerSearchResults', {
                         username: searchUsername,
@@ -47,10 +45,10 @@ export const SearchCreators = () => {
                 return;
             }
 
+            setIsLoading(false);
+
             window.open(
-                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(
-                    searchResult.accounts[0].account.user_profile.user_id,
-                )}`,
+                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(searchResult.data[0].user_id)}`,
                 '_blank',
             );
         } catch (error) {
@@ -73,7 +71,7 @@ export const SearchCreators = () => {
                 className="absolute left-0 top-0 h-full w-20"
             />
             <input
-                className="mr-24 block w-full appearance-none rounded-md border border-gray-200 bg-white py-2 pl-24 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="block w-[450px] appearance-none rounded-md border border-gray-200 bg-white py-2 pl-24 pr-4 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
@@ -81,6 +79,7 @@ export const SearchCreators = () => {
                 onChange={handleChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
+            {isLoading && <Spinner className="absolute right-2 top-2 h-6 w-6 fill-primary-600 text-white" />}
         </div>
     );
 };

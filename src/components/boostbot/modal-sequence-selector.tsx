@@ -1,7 +1,9 @@
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { Info } from 'src/components/icons';
 import { Modal } from 'src/components/modal';
+import { useSequences } from 'src/hooks/use-sequences';
 import type { Sequence } from 'src/utils/api/db';
 
 export const ModalSequenceSelector = ({
@@ -19,14 +21,24 @@ export const ModalSequenceSelector = ({
     sequences: Sequence[];
     handleAddToSequence: () => void;
 }) => {
-    const { t } = useTranslation();
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (!sequences) {
-            return;
+    const { refreshSequences } = useSequences();
+    useEffect(() => {
+        if (show) {
+            refreshSequences();
         }
-        const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value);
-        setSequence(selectedSequenceObject);
-    };
+    }, [show, refreshSequences]);
+
+    const { t } = useTranslation();
+    const handleSelectChange = useCallback(
+        (e: React.ChangeEvent<HTMLSelectElement>) => {
+            if (!sequences) {
+                return;
+            }
+            const selectedSequenceObject = sequences.find((sequence) => sequence.name.trim() === e.target.value.trim());
+            setSequence(selectedSequenceObject);
+        },
+        [sequences, setSequence],
+    );
     return (
         <Modal
             title={t('creators.addToSequence') || ''}
