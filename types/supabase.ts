@@ -1522,6 +1522,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      create_queue_worker: {
+        Args: {
+          worker_name: string
+          url: string
+          token: string
+          schedule: string
+        }
+        Returns: undefined
+      }
       is_activated_account: {
         Args: Record<PropertyKey, never>
         Returns: boolean
