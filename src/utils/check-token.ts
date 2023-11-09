@@ -13,12 +13,12 @@ export const checkToken = (token: string | undefined | null, envKey: string) => 
         serverLogger(`${envKey} is not properly set`);
     }
 
-    if (sToken.length != sToken.length) {
+    if (sToken.length != sEnvToken.length) {
         return false;
     }
 
-    const bufferA = Buffer.from(sToken, 'utf-8');
-    const bufferB = Buffer.from(sEnvToken, 'utf-8');
+    const bufferA = Buffer.from(sEnvToken, 'utf-8');
+    const bufferB = Buffer.from(sToken, 'utf-8');
 
     try {
         return timingSafeEqual(bufferA, bufferB);
