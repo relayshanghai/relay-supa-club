@@ -18,7 +18,7 @@ const login = {
     lastName: '姓氏',
     lastNamePlaceholder: '输入您的姓氏',
     confirmPassword: '确认密码',
-    someoneInvitedYouToJoinRelayClub: '有人邀请您加入relay.club。通过以下设置接受邀请。',
+    someoneInvitedYouToJoinRelayClub: '有人邀请您加入boostbot.ai。通过以下设置接受邀请。',
     inviteAccepted: '邀请已接受',
     checkingInviteStatus: '正在查看邀请状态',
     back: '返回',
@@ -46,7 +46,7 @@ const login = {
     activateTrial: '激活试用',
     userAlreadyRegistered: '用户已注册',
     signupTerms:
-        '为了激活此30天免费试用，您必须使用您的付款详细信息注册并同意relay.club条款和服务。如果您在试用期结束前未停用付款，您将在30天后被收取每月DIY订阅费。',
+        '为了激活此30天免费试用，您必须使用您的付款详细信息注册并同意boostbot.ai条款和服务。如果您在试用期结束前未停用付款，您将在30天后被收取每月DIY订阅费。',
     accountActivated: '帐户已激活',
     noLoggedInUserFound: '找不到登录用户',
     noCompanyNameFound: '找不到公司名称',
@@ -69,7 +69,7 @@ const login = {
     phoneNumberInvalid: '电话号码无效',
     phoneNumber: '电话号码',
     disclaimer:
-        '* 在relay.club，我们非常注重保护您的数据隐私。我们承诺不会向任何第三方透露或出售您的邮箱和手机号码。我们可能会使用您的邮箱和手机号码联系您，以便安排产品演示，为您提供更好的使用体验。',
+        '* 在boostbot.ai，我们非常注重保护您的数据隐私。我们承诺不会向任何第三方透露或出售您的邮箱和手机号码。我们可能会使用您的邮箱和手机号码联系您，以便安排产品演示，为您提供更好的使用体验。',
     noSpacesAllowed: '不许包含空格',
     activateSuccess: '激活成功',
     companyNameRequired: '公司名称是必填字段',

@@ -45,7 +45,7 @@ const signup = {
             title: 'RELAY.CLUB 使用条款和隐私政策',
             point1Title: '1. 简介',
             point1Description:
-                '欢迎来到 relay.club ("我们", "我们的" 或 "我们")。通过注册免费试用或付费订阅 ("服务")，您同意受以下服务条款和条件的约束。',
+                '欢迎来到 boostbot.ai ("我们", "我们的" 或 "我们")。通过注册免费试用或付费订阅 ("服务")，您同意受以下服务条款和条件的约束。',
             point2Title: '2. 免费试用',
             point2Description:
                 '如果您注册免费试用，我们将免费为您提供服务，直到以下日期为止：(a) 免费试用期结束或 (b) 您订购的任何购买服务的开始日期。',
@@ -53,13 +53,13 @@ const signup = {
             point3Description:
                 '订阅我们的付费服务的品牌可以在YouTube、TikTok和Instagram上搜索影响者。订阅费按月计费，且不予退款。',
             point4Title: '4. 升级服务',
-            point4Description: '升级服务的订阅者可以访问 relay.club 提供的影响者的电子邮件地址进行通信。',
+            point4Description: '升级服务的订阅者可以访问 boostbot.ai 提供的影响者的电子邮件地址进行通信。',
             point5Title: '5. 使用限制',
             point5Description:
                 '品牌和用户禁止从我们的平台上抓取、复制或重新分发获得的信息。任何数据的误用都将导致服务终止。',
             point6Title: '6. 内容责任',
             point6Description:
-                'relay.club 不对用户通过 relay.club 平台聘请或雇佣的社交媒体影响者发布、分享或传播的任何内容负责。用户应独自负责审核和确保与他们联系的影响者相关的内容的适当性。',
+                'boostbot.ai 不对用户通过 boostbot.ai 平台聘请或雇佣的社交媒体影响者发布、分享或传播的任何内容负责。用户应独自负责审核和确保与他们联系的影响者相关的内容的适当性。',
             point7Title: '7. 管辖法律',
             point7Description:
                 '本条款和条件应受新加坡法律的约束。由这些条款产生的任何争议应在新加坡共和国的管辖范围内解决。',
