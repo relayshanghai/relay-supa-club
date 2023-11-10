@@ -35,8 +35,8 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
     const renderStep = (isDone: boolean, heading: string, content: string) => (
         <div className="flex animate-fade-in-from-left flex-row gap-2 pr-8">
             <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                    <div className="mr-4 bg-boostbotbackground bg-clip-text pt-6 text-sm font-bold text-transparent 2xl:text-base">
+                <div className="flex items-start justify-between pt-6">
+                    <div className="mr-4 bg-boostbotbackground bg-clip-text text-sm font-bold text-transparent 2xl:text-base">
                         {heading}
                     </div>
                     {renderIcon(isDone)}
