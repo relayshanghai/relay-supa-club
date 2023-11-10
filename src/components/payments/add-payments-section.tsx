@@ -30,6 +30,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     const { trackEvent } = useRudderstack();
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
+    const [promoCode, setPromoCode] = useState<string>('');
     const selectedPrice = newPrices[priceTier];
 
     const batchId = useMemo(() => randomNumber(), []);
@@ -48,11 +49,32 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         payment_method_types: ['card'],
     };
 
+    const handlePromoCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPromoCode(e.target.value);
+    };
+
+    const handleSubmit = async (promoCode: string) => {
+        console.log(promoCode);
+
+        //retrieve promo code from intput
+        //call api to check if promo code is valid
+        //if valid, apply promo code to subscription
+        //if invalid, show error message
+    };
+
     return (
         <div className="w-80 lg:w-[28rem]">
             <div className="flex items-center space-x-3">
-                <Input label="Promo Code" type="text" placeholder="Enter a promo code" />
-                <Button className="h-9 text-xs">APPLY</Button>
+                <Input
+                    label="Promo Code"
+                    type="text"
+                    placeholder="Enter a promo code"
+                    value={promoCode}
+                    onChange={handlePromoCodeChange}
+                />
+                <Button className="h-9 text-xs" type="submit" onClick={() => handleSubmit(promoCode)}>
+                    APPLY
+                </Button>
             </div>
             <div className="rounded shadow ">
                 <div className="flex w-full space-x-3 px-6 pt-6 text-xs text-gray-500">

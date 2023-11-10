@@ -51,6 +51,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         items: [{ price: priceId }],
         payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
+        coupon: 'oUeyBQjU',
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;
