@@ -11,9 +11,10 @@ export const checkToken = (token: string | undefined | null, envKey: string) => 
     // Notify sentry if env variable is not properly set
     if (sEnvToken === '') {
         serverLogger(`${envKey} is not properly set`);
+        return false;
     }
 
-    if (sToken.length != sEnvToken.length) {
+    if (sToken.length !== sEnvToken.length) {
         return false;
     }
 
