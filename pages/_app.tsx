@@ -98,7 +98,7 @@ function MyApp({
                     property="og:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
-                <meta property="og:url" content="https://relay.club/" />
+                <meta property="og:url" content="https://boostbot.ai/" />
                 <meta property="og:site_name" content="relay.club: Influencer Management Software" />
                 <meta name="twitter:title" content="relay.club: A complete influencer management software solution" />
                 <meta

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { APP_URL, emailRegex } from 'src/constants';
+import { emailRegex } from 'src/constants';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
@@ -12,6 +12,7 @@ import { Input } from '../input';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
 import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
+import { useHostname } from 'src/utils/get-host';
 
 export const PersonalDetails = () => {
     const {
@@ -27,10 +28,10 @@ export const PersonalDetails = () => {
     const { loading: userDataLoading, profile, user, supabaseClient, updateProfile, refreshProfile } = useUser();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
+    const { appUrl } = useHostname();
 
     const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
-
     const handleResetPassword = async () => {
         setGeneratingResetEmail(true);
         try {
@@ -41,7 +42,7 @@ export const PersonalDetails = () => {
                 throw new Error('Please enter your email');
             }
             const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: `${APP_URL}/login/reset-password/${email}`,
+                redirectTo: `${appUrl}/login/reset-password/${email}`,
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
@@ -106,7 +107,9 @@ export const PersonalDetails = () => {
             }
             const { error } = await supabaseClient.auth.updateUser(
                 { email },
-                { emailRedirectTo: `${APP_URL}/login?${new URLSearchParams({ email })}` },
+                {
+                    emailRedirectTo: `${appUrl}/login?${new URLSearchParams({ email })}`,
+                },
             );
             if (error) throw error;
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));

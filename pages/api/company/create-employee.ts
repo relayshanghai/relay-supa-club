@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { RELAY_DOMAIN } from 'src/constants';
+import { LEGACY_RELAY_DOMAIN } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
@@ -24,7 +24,7 @@ export type CreateEmployeePostBody = {
 export type CreateEmployeePostResponse = ProfileDB;
 
 const relayCompanyConfig = {
-    name: RELAY_DOMAIN,
+    name: LEGACY_RELAY_DOMAIN,
     website: 'https://relay.club',
     email: 'tech@relay.club',
 };
