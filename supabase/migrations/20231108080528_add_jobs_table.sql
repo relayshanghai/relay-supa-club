@@ -17,3 +17,5 @@ ALTER TABLE "public"."jobs" ADD CONSTRAINT "jobs_pkey" PRIMARY KEY USING INDEX "
 ALTER TABLE "public"."jobs" ADD CONSTRAINT "jobs_owner_fkey" FOREIGN KEY (owner) REFERENCES profiles (id) ON DELETE SET NULL NOT VALID;
 
 ALTER TABLE "public"."jobs" VALIDATE CONSTRAINT "jobs_owner_fkey";
+
+ALTER TABLE "public"."jobs" ENABLE ROW LEVEL SECURITY;
