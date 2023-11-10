@@ -261,7 +261,7 @@ const Boostbot = () => {
                 />
             )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
-                <div className="w-full flex-shrink-0 md:w-80">
+                <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
@@ -296,7 +296,7 @@ const Boostbot = () => {
                 {isInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
-                    <div className="flex w-full flex-col items-end">
+                    <div className="flex w-full basis-3/4 flex-col items-end">
                         <div className="w-fit pb-3">
                             <AddToSequenceButton
                                 buttonText={t('boostbot.chat.outreachSelected')}

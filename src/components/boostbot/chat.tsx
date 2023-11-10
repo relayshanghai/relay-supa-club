@@ -287,7 +287,7 @@ export const Chat: React.FC<ChatProps> = ({
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="boostbot-gradient z-10 m-0 flex px-4 py-2 py-3.5 shadow">
+            <div className="boostbot-gradient z-10 m-0 flex px-4 py-3.5 shadow">
                 <div className="flex h-[32px] w-[32px] justify-center rounded-full bg-white">
                     <Logo height={16} width={19} className="m-1 self-center stroke-none" />
                 </div>
