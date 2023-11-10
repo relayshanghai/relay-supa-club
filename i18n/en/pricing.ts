@@ -41,7 +41,7 @@ const pricing = {
     noChargeToday: 'No charge today!',
     getStartedWithYourFreeTrial: 'Get started with your free trial',
     justGettingStartedOrScalingUp: 'Just getting started, or scaling up.',
-    relayClubCanHelp: 'BoostBot can help.',
+    relayClubCanHelp: 'relay.club can help.',
     freePrice: 'Free',
     diy: {
         title: 'DIY',

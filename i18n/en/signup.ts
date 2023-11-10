@@ -45,7 +45,7 @@ const signup = {
             title: 'RELAY.CLUB TERMS AND CONDITIONS',
             point1Title: '1. Introduction',
             point1Description:
-                'Welcome to boostbot.ai ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',
+                'Welcome to relay.club ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',
             point2Title: '2. Free Trial',
             point2Description:
                 'If you register for a free trial, we will make the service available to you on a trial basis free of charge until the earlier of (a) the end of the free trial period or (b) the start date of any purchased services ordered by you.',
@@ -54,13 +54,13 @@ const signup = {
                 'Brands that subscribe to our paid services have access to search for influencers on YouTube, TikTok, and Instagram. The subscription fee is billed monthly and is non-refundable.',
             point4Title: '4. Upgrade Services',
             point4Description:
-                "Subscribers who upgrade their service can access influencers' email addresses provided by boostbot.ai for communication purposes.",
+                "Subscribers who upgrade their service can access influencers' email addresses provided by relay.club for communication purposes.",
             point5Title: '5. Usage Limits',
             point5Description:
                 'Brands and users are prohibited from scraping, copying, or redistributing the information obtained from our platform. Any misuse of the data will result in termination of services.',
             point6Title: '6. Content Responsibility',
             point6Description:
-                'boostbot.ai is not responsible for any content posted, shared, or disseminated by social media influencers that users engage or employ through the boostbot.ai platform. Users are solely responsible for vetting and ensuring the appropriateness of content associated with influencers they connect with.',
+                'relay.club is not responsible for any content posted, shared, or disseminated by social media influencers that users engage or employ through the relay.club platform. Users are solely responsible for vetting and ensuring the appropriateness of content associated with influencers they connect with.',
             point7Title: '7. Governing Law',
             point7Description:
                 'These terms and conditions shall be governed by the laws of Singapore. Any disputes arising from these terms shall be resolved in the jurisdiction of the Republic of Singapore.',

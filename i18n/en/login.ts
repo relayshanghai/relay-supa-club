@@ -19,7 +19,7 @@ const login = {
     lastNamePlaceholder: 'Enter your last name',
     confirmPassword: 'Confirm password',
     someoneInvitedYouToJoinRelayClub:
-        'Someone invited you to join boostbot.ai. Accept the invitation by setting up an account below.',
+        'Someone invited you to join relay.club. Accept the invitation by setting up an account below.',
     inviteAccepted: 'Invite accepted',
     checkingInviteStatus: 'Checking invite status',
     back: 'Back',
@@ -47,7 +47,7 @@ const login = {
     activateTrial: 'Start Free Trial',
     userAlreadyRegistered: 'User already registered',
     signupTerms:
-        'In order to activate this 30-day free trial, you must sign up with your payment details and agree to boostbot.ai terms and services. You will be charged for a monthly DIY subscription after 30 days unless you deactivate payment before the end of the trial period.',
+        'In order to activate this 30-day free trial, you must sign up with your payment details and agree to relay.club terms and services. You will be charged for a monthly DIY subscription after 30 days unless you deactivate payment before the end of the trial period.',
     accountActivated: 'Account activated',
     noLoggedInUserFound: 'No logged in user found',
     noCompanyNameFound: 'No company name found',
@@ -72,7 +72,7 @@ const login = {
     phoneNumberInvalid: 'Invalid phone number',
     phoneNumber: 'Phone number',
     disclaimer:
-        '* At boostbot.ai, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
+        '* At relay.club, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
     noSpacesAllowed: 'Must not include spaces',
     activateSuccess: 'Success',
     companyNameRequired: 'Company name is required',

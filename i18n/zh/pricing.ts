@@ -41,7 +41,7 @@ const pricing = {
     noChargeToday: '今天不收费！',
     getStartedWithYourFreeTrial: '开始免费试用',
     justGettingStartedOrScalingUp: '刚开始或正在扩展业务',
-    relayClubCanHelp: 'boostbot.ai可以帮助',
+    relayClubCanHelp: 'relay.club可以帮助',
     freePrice: '免费',
     diy: {
         title: 'DIY',
