@@ -1,10 +1,11 @@
 import type { NextApiHandler } from 'next';
-import { BOOSTBOT_DOMAIN, emailRegex } from 'src/constants';
+import { emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createInviteErrors } from 'src/errors/company';
 import { getProfileByEmail, getExistingInvite, insertInvite } from 'src/utils/api/db';
 import type { InvitesDB } from 'src/utils/api/db/types';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
+import { getHostnameFromRequest } from 'src/utils/get-host';
 import { serverLogger } from 'src/utils/logger-server';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 
@@ -16,8 +17,8 @@ export interface CompanyCreateInvitePostBody {
 }
 export type CompanyCreateInvitePostResponse = InvitesDB;
 
-const formatEmail = (name: string, token: string) => {
-    const link = `https//app.${BOOSTBOT_DOMAIN}/signup/invite?${new URLSearchParams({
+const formatEmail = (name: string, token: string, appUrl: string) => {
+    const link = `${appUrl}/signup/invite?${new URLSearchParams({
         token,
     })}`;
     return `
@@ -66,12 +67,14 @@ const handler: NextApiHandler = async (req, res) => {
 
     const insertData = await insertInvite({ email, company_id, company_owner: companyOwner });
 
+    const { appUrl } = getHostnameFromRequest(req);
+
     try {
         await sendEmail({
             email,
             name,
             subject: 'You have been invited to join a company on relay.club',
-            html: formatEmail(name, insertData.id),
+            html: formatEmail(name, insertData.id, appUrl),
         });
     } catch (error) {
         serverLogger(error);
