@@ -187,9 +187,9 @@ const checkPathWhitelist = (req: NextRequest) => {
     return PATH_WHITELIST.includes(req.nextUrl.pathname);
 }
 
-/** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
+/**
+ * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
- *
  */
 // eslint-disable-next-line complexity
 export async function middleware(req: NextRequest) {
