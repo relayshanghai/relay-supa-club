@@ -1,7 +1,7 @@
 import httpCodes from 'src/constants/httpCodes';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { createJob } from 'src/utils/scheduler/jobs';
+import { createJob } from 'src/utils/scheduler/utils';
 import type { CreateJobRequest } from 'src/utils/scheduler/types';
 import { JOB_QUEUE } from 'src/utils/scheduler/types';
 

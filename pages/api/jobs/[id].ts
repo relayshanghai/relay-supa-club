@@ -1,7 +1,7 @@
 import httpCodes from 'src/constants/httpCodes';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { getJob } from 'src/utils/scheduler/db';
+import { getJob } from 'src/utils/scheduler/db-queries';
 import type { RunJobRequest } from 'src/utils/scheduler/types';
 import { db } from 'src/utils/supabase-client';
 
