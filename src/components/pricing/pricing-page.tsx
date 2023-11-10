@@ -66,11 +66,11 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                 />
 
                 <div className="container mx-auto flex flex-col items-center">
-                    <div className="mx-auto mb-8 max-w-3xl text-center">
+                    <div className="mx-auto max-w-3xl pb-10 text-center">
                         <h2 className="font-heading mb-6 text-3xl font-semibold text-gray-800 md:text-4xl">
                             {t('pricing.justGettingStartedOrScalingUp')}
                         </h2>
-                        <h4 className="-mt-2 text-3xl font-semibold text-primary-500 md:text-4xl">
+                        <h4 className="-mt-2 text-3xl font-semibold text-primary-600 md:text-4xl">
                             {t('pricing.relayClubCanHelp')}
                         </h4>
                     </div>
