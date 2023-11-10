@@ -184,7 +184,7 @@ const isSessionClean = async (supabase: SupabaseClient) => {
  * Checks if the pathname of the provided request is whitelisted
  */
 const checkPathWhitelist = (req: NextRequest) => {
-    return PATH_WHITELIST.includes(req.nextUrl.pathname)
+    return PATH_WHITELIST.includes(req.nextUrl.pathname);
 }
 
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
@@ -207,7 +207,7 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'forbiddden' }, { status: httpCodes.FORBIDDEN })
+            return NextResponse.json({ error: 'forbiddden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';
@@ -228,7 +228,7 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
-        return NextResponse.json({ error: 'forbiddden' }, { status: httpCodes.FORBIDDEN })
+        return NextResponse.json({ error: 'forbiddden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();
