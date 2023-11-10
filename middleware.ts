@@ -11,7 +11,7 @@ const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.clu
 
 /**
  * Paths found here are allowed to access without authentication
- * These paths should have inherent checks in their respective lambda functions
+ * These paths should have inherent checks in their respective serverless functions
  */
 const PATH_WHITELIST = [
     '/api/ping',

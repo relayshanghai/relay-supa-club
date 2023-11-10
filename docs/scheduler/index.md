@@ -22,7 +22,11 @@ It currently supports the following filters:
 - limit: The number of jobs to pick up. Defaults to *1*.
 
 ### What is a Queue?
-Queues are groups of jobs that are run by a dedicated worker. By default, all jobs are created at the `default` queue.
+Queues are groups of jobs that are run by a dedicated worker.
+
+Currently, we have the following queues:
+- Default queue (`default`) - where jobs are created by default
+- Failed queue (`failed`) - where jobs are sent when it failed
 
 To create a worker dedicated to a queue:
 ```sql
