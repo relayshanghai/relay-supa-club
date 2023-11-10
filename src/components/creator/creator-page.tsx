@@ -9,7 +9,7 @@ import CreatorSkeleton from './creator-skeleton';
 import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
-import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
+import { BOOSTBOT_DOMAIN, IQDATA_MAINTENANCE } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
@@ -179,7 +179,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 allCampaignCreators={allCampaignCreators}
             />
             <Head>
-                <title>{report?.user_profile.fullname || RELAY_DOMAIN}</title>
+                <title>{report?.user_profile.fullname || BOOSTBOT_DOMAIN}</title>
             </Head>
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (

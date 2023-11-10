@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { APP_URL } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
+import { getHostnameFromRequest } from 'src/utils/get-host';
 import { supabase } from 'src/utils/supabase-client';
 
 export type SubscriptionPortalGetQueries = {
@@ -12,6 +12,7 @@ export type SubscriptionPortalGetQueries = {
 };
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+    const { appUrl } = getHostnameFromRequest(req);
     const { id, returnUrl } = req.query as SubscriptionPortalGetQueries;
     if (!id) return res.status(httpCodes.BAD_REQUEST).send({ message: 'No company id provided' });
     if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
@@ -25,7 +26,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const portal = await stripeClient.billingPortal.sessions.create({
         customer: company.cus_id,
-        return_url: returnUrl ?? `${APP_URL}/account`,
+        return_url: returnUrl ?? `${appUrl}/account`,
     });
     return res.redirect(307, portal.url);
 }

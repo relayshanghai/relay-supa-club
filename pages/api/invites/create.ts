@@ -1,5 +1,5 @@
 import type { NextApiHandler } from 'next';
-import { APP_URL, emailRegex } from 'src/constants';
+import { BOOSTBOT_DOMAIN, emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createInviteErrors } from 'src/errors/company';
 import { getProfileByEmail, getExistingInvite, insertInvite } from 'src/utils/api/db';
@@ -17,7 +17,7 @@ export interface CompanyCreateInvitePostBody {
 export type CompanyCreateInvitePostResponse = InvitesDB;
 
 const formatEmail = (name: string, token: string) => {
-    const link = `${APP_URL}/signup/invite?${new URLSearchParams({
+    const link = `https//app.${BOOSTBOT_DOMAIN}/signup/invite?${new URLSearchParams({
         token,
     })}`;
     return `
