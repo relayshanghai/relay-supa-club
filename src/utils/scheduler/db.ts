@@ -2,16 +2,20 @@ import type { RelayDatabase, Jobs } from '../api/db';
 import { now } from '../datetime';
 import { JOB_QUEUE, JOB_STATUS } from './types';
 
-type GetJobFilters = {
+type GetJobsFilters = {
     queue: JOB_QUEUE;
     status: JOB_STATUS;
     limit: number;
     owner?: string;
 };
 
+type GetJobFilters = {
+    owner?: string;
+};
+
 export const getJobs =
     (supabase: RelayDatabase) =>
-    async (filters: GetJobFilters = { queue: JOB_QUEUE.default, status: JOB_STATUS.pending, limit: 1 }) => {
+    async (filters: GetJobsFilters = { queue: JOB_QUEUE.default, status: JOB_STATUS.pending, limit: 1 }) => {
         const ts = now();
 
         let dbquery = supabase
@@ -33,12 +37,20 @@ export const getJobs =
         return data;
     };
 
-export const getJob = (supabase: RelayDatabase) => async (id: string) => {
-    const { data, error } = await supabase.from('jobs').select().eq('id', id).maybeSingle();
+export const getJob =
+    (supabase: RelayDatabase) =>
+    async (id: string, filters: GetJobFilters = {}) => {
+        const dbquery = supabase.from('jobs').select().eq('id', id);
 
-    if (error) throw error;
-    return data;
-};
+        if (filters.owner) {
+            dbquery.eq('owner', filters.owner);
+        }
+
+        const { data, error } = await dbquery.maybeSingle();
+
+        if (error) throw error;
+        return data;
+    };
 
 export const createJob =
     (supabase: RelayDatabase) => async (id: string, job: Omit<Jobs['Insert'], 'id' | 'status'>) => {

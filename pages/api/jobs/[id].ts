@@ -15,7 +15,7 @@ const getHandler: ActionHandler = async (req, res) => {
         return res.status(404).end();
     }
 
-    const job = await db(getJob)(query.id);
+    const job = await db(getJob)(query.id, { owner: req.session.user.id });
 
     if (!job) {
         return res.status(404).end();
