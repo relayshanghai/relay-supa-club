@@ -122,7 +122,7 @@ export const SubscriptionDetails = () => {
                         <Button onClick={handleCancelSubscription} variant="secondary">
                             {t('account.subscription.cancelSubscription')}
                         </Button>
-                        <Link href="/pricing">
+                        <Link href="/upgrade">
                             <Button
                                 onClick={() =>
                                     // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page

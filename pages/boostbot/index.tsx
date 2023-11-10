@@ -105,7 +105,7 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.error.outOfSearchCredits',
-                translationLink: '/pricing',
+                translationLink: '/upgrade',
             });
             setIsSearchDisabled(true);
         }
@@ -114,7 +114,7 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.error.outOfProfileCredits',
-                translationLink: '/pricing',
+                translationLink: '/upgrade',
             });
             setAreChatActionsDisabled(true);
         }
@@ -123,7 +123,7 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.error.expiredAccount',
-                translationLink: '/pricing',
+                translationLink: '/upgrade',
             });
             setIsSearchDisabled(true);
             setAreChatActionsDisabled(true);
@@ -233,7 +233,7 @@ const Boostbot = () => {
             sender: 'Bot',
             type: 'translation',
             translationKey: `boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`,
-            translationLink: '/pricing',
+            translationLink: '/upgrade',
             translationValues: { count: unlockedInfluencers?.length ?? 0 },
         });
         setHasUsedUnlock(true);
