@@ -13,44 +13,6 @@ export const now = () => new Date().toISOString();
  */
 export const toISO = (timestamp: number | string) => new Date(+timestamp).toISOString();
 
-export type DateInterval = 'seconds' | 'minutes' | 'hours' | 'days';
-
-export const getTotalDays = (date?: Date) => {
-    const _date = date ?? new Date();
-    const _clone = new Date(_date);
-    _clone.setDate(0);
-    return _clone.getDate();
-};
-
-export const addTime = (date: Date | string, value: number, interval?: DateInterval) => {
-    if (typeof date === 'string') {
-        date = new Date(date);
-    }
-
-    const secToMs = (v: number) => v * 1000;
-    const minToMs = (v: number) => v * 60000;
-    const hourToMs = (v: number) => v * 3600000;
-    const dayToMs = (v: number) => v * 86400000;
-
-    if (interval === 'minutes') {
-        const ts = date.getTime();
-        return new Date(ts + minToMs(value));
-    }
-
-    if (interval === 'hours') {
-        const ts = date.getTime();
-        return new Date(ts + hourToMs(value));
-    }
-
-    if (interval === 'days') {
-        const ts = date.getTime();
-        return new Date(ts + dayToMs(value));
-    }
-
-    const ts = date.getTime();
-    return new Date(ts + secToMs(value));
-};
-
 const weekDays = [
     { value: 'Sunday', short: 'Sun', number: '01' },
     { value: 'Monday', short: 'Mon', number: '02' },
