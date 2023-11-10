@@ -25,6 +25,11 @@ type SearchFiltersModalProps = {
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
     const { t } = useTranslation();
     const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
+    const platformSub: any = {
+        youtube: 'Devoted audiences',
+        instagram: 'Great for brand building',
+        tiktok: 'High content virality',
+    };
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
     const [localFilters, setLocalFilters] = useState(filters);
 
@@ -145,28 +150,39 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             <div className="mx-auto flex h-full select-none flex-col items-center justify-center space-y-4 pt-2 text-gray-500">
                 <p>{t('boostbot.filters.fromPlatform')}</p>
 
-                <div className="flex w-full flex-row justify-center gap-4 md:max-w-[320px]">
+                <div className="flex w-full flex-col justify-center gap-2 md:max-w-[335px]">
+                    <p className="text-md font-semibold text-tertiary-600">Social Media Platforms</p>
                     {platforms.map((platform) => {
                         const isSelected = localFilters.platforms.includes(platform);
                         return (
                             <div
                                 key={platform}
-                                className={`bg-white-500 flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 bg-opacity-70 p-2 text-gray-500 shadow-md outline outline-1 transition-all hover:bg-primary-100 sm:px-2 sm:py-6 ${
-                                    isSelected ? 'bg-primary-200 outline-primary-500' : 'outline-transparent'
+                                className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row flex-row justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 sm:px-2 sm:py-6 ${
+                                    isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
                                 }`}
                                 onClick={() => togglePlatform(platform)}
                                 data-testid={`boostbot-filter-${platform}`}
                             >
-                                {platform === 'youtube' ? (
-                                    <Youtube className="h-6 w-6 sm:h-10 sm:w-10" />
-                                ) : platform === 'tiktok' ? (
-                                    <Tiktok className="h-6 w-6 sm:h-10 sm:w-10" />
-                                ) : (
-                                    <Instagram className="h-6 w-6 sm:h-10 sm:w-10" />
-                                )}
-                                <div className="text-center text-xs font-medium text-gray-700 sm:text-sm">
-                                    {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                <div className="flex space-x-4">
+                                    <div className=" flex h-10 w-10 items-center  justify-center rounded-lg border border-tertiary-200 bg-white">
+                                        {platform === 'youtube' ? (
+                                            <Youtube className="h-[14.09px] w-5" />
+                                        ) : platform === 'tiktok' ? (
+                                            <Tiktok className="h-[18.4px] w-[15.71px] " />
+                                        ) : (
+                                            <Instagram className="h-[17.5px] w-[17.5px]" />
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                            {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                        </div>
+                                        <div className="pl-2 text-xs font-normal text-tertiary-400">
+                                            {platformSub[platform]}
+                                        </div>
+                                    </div>
                                 </div>
+                                <input type="checkbox" className="checkbox mr-0" />
                             </div>
                         );
                     })}
