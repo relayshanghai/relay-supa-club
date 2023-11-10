@@ -1,3 +1,4 @@
+import httpCodes from 'src/constants/httpCodes';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { createJob } from 'src/utils/scheduler/jobs';
@@ -6,7 +7,7 @@ import { JOB_QUEUE } from 'src/utils/scheduler/types';
 
 const postHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
-        return res.status(401).end();
+        return res.status(httpCodes.UNAUTHORIZED).end();
     }
 
     const body = req.body ?? ({} as CreateJobRequest['body']);
@@ -23,7 +24,7 @@ const postHandler: ActionHandler = async (req, res) => {
         owner: req.session.user.id,
     });
 
-    return res.status(200).json(job);
+    return res.status(httpCodes.OK).json(job);
 };
 
 export default ApiHandler({
