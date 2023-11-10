@@ -3,7 +3,7 @@ import type { HTMLProps } from 'react';
 export type Props = HTMLProps<HTMLAnchorElement> & { active?: boolean };
 
 export default function PageLink({ className, active, disabled, children, ...otherProps }: Props) {
-    let customClassName = `${className} font-medium text-primary-300 mx-2`;
+    let customClassName = `${className} font-medium text-primary-300 mx-2 transition-all cursor-pointer`;
     if (active) {
         customClassName = 'font-bold text-primary-500 mx-2';
     }

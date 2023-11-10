@@ -16,7 +16,9 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
 
-    const pageNums = getPaginationItems(table.getState().pagination.pageIndex + 1, table.getPageCount(), 11);
+    //adjust to control the number of links in the pagination section
+    const noOfLinks = 11;
+    const pageNums = getPaginationItems(table.getState().pagination.pageIndex + 1, table.getPageCount(), noOfLinks);
 
     return (
         <div className="flex w-full justify-between px-0">

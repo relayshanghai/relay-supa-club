@@ -1,7 +1,7 @@
 export const getPaginationItems = (currentPage: number, lastPage: number, noOfLinks: number) => {
     const res = [];
     const firstPage = 1;
-    const divisionOfLinks = 3;
+    const divisionOfLinks = 3; // represents first page  , .... , lastpage that will always be visible
     const deductednoOfLinks = noOfLinks - divisionOfLinks;
     const noLeftPages = deductednoOfLinks / 2;
 
