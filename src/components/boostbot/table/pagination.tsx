@@ -25,7 +25,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             <div>
                 <Button
                     variant="neutral"
-                    className="flex h-8 w-32 items-center justify-center !px-0 !py-0 px-2 text-sm font-medium text-primary-500"
+                    className="flex h-8 w-32 items-center justify-center !py-0 px-2 text-sm font-medium text-primary-500"
                     onClick={() => {
                         table.previousPage();
                         track(ChangePage, {
@@ -58,7 +58,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             <div className="flex items-center ">
                 <Button
                     variant="neutral"
-                    className="flex h-8 w-32 items-center justify-center border-transparent !px-0 !py-0 px-2 text-sm font-medium text-primary-500"
+                    className="flex h-8 w-32 items-center justify-center border-transparent !py-0 px-2 text-sm font-medium text-primary-500"
                     onClick={() => {
                         table.nextPage();
                         track(ChangePage, {
