@@ -47,7 +47,7 @@ const Boostbot = () => {
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
-    const [sequence, setSequence] = useState<Sequence | undefined>(
+    const [sequence, setSequence] = useState<Sequence | undefined>(() =>
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);

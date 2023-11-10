@@ -3,7 +3,8 @@ import type {
     CreatorPlatform,
     DatabaseWithCustomTypes,
     InfluencerOutreachStatus,
-    InfluencerStepTypes,
+    SequenceEmailStep,
+    SubscriptionPlans,
     SubscriptionStatus,
     UsageType,
 } from 'types';
@@ -30,12 +31,15 @@ export type ProfileDBInsert = ProfilesTable['Insert'];
 export type CompanyTable = Database['public']['Tables']['companies'] & {
     Row: Database['public']['Tables']['companies']['Row'] & {
         subscription_status: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
     Insert: Database['public']['Tables']['companies']['Insert'] & {
         subscription_status?: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
     Update: Database['public']['Tables']['companies']['Update'] & {
         subscription_status?: SubscriptionStatus;
+        subscription_plan?: SubscriptionPlans;
     };
 };
 
@@ -87,7 +91,7 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
-    name: InfluencerStepTypes;
+    name: SequenceEmailStep;
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {

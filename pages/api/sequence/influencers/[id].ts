@@ -1,7 +1,8 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { RelayError } from 'src/errors/relay-error';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getAddressByInfluencer, saveAddressByInfluencer } from 'src/utils/api/db/calls/addresses';
 import { getProfileByIdCall } from 'src/utils/api/db/calls/profiles';
 import {

@@ -43,7 +43,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         sequence && [sequenceId],
     );
 
-    const { sequenceEmails } = useSequenceEmails(sequenceId);
+    const { sequenceEmails, isLoading: loadingEmails } = useSequenceEmails(sequenceId);
     const { templateVariables, refreshTemplateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
@@ -505,6 +505,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                 sequence={sequence}
                                 sequenceInfluencers={currentTabInfluencers}
                                 sequenceEmails={sequenceEmails}
+                                loadingEmails={loadingEmails}
                                 sequenceSteps={sequenceSteps}
                                 currentTab={currentTab}
                                 missingVariables={missingVariables}

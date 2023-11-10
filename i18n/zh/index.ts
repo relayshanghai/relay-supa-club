@@ -18,6 +18,7 @@ import boostbot from './boostbot';
 import manager from './manager';
 import profile from './profile';
 import faq from './faq';
+import discoveryfaq from './discovery-faq';
 import banner from './banner';
 import geolocations from './geolocations';
 
@@ -43,6 +44,7 @@ const translations = {
         manager,
         profile,
         faq,
+        discoveryfaq,
         banner,
         geolocations,
     },

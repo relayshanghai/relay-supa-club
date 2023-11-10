@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { ApiHandler } from 'src/utils/api-handler';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -9,10 +10,7 @@ export type CampaignNotesDeleteBody = {
     profileId: string;
 };
 export type CampaignNotesDeleteResponse = null;
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'DELETE') {
-        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-    }
+async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
     const { profileId, id } = req.body as CampaignNotesDeleteBody;
 
     if (!id || !profileId) return res.status(httpCodes.BAD_REQUEST).json({});
@@ -30,3 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(httpCodes.OK).json(result);
 }
+
+export default ApiHandler({
+    deleteHandler,
+});

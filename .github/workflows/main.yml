@@ -1,10 +1,6 @@
 run-name: Run main workflow by @${{ github.actor }}
 
 on:
-    # only run on all pushes if it is to `main` branch
-    push:
-        branches:
-            - main
     # allow manual trigger of the workflow
     workflow_dispatch:
     # Only pushes to active PRs will trigger the workflow, pushes to other branches will not trigger run
@@ -55,33 +51,6 @@ env:
     NEXT_PUBLIC_DISABLE_CHATWOOT: true
 
 jobs:
-    component-test:
-        runs-on:
-            group: large-runner
-        environment: preview
-        env:
-            # unit tests don't need the real keys, but they load some functions that check for them on init.
-            SUPABASE_SERVICE_KEY: dummy key
-            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-        steps:
-            - uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
-
-            - run: npm ci
-            - run: npm run lint
-            - run: npx prettier . --check
-            - run: npm run build
-            - run: npm run test-cypress-unit
-
     e2e-test:
         environment: preview
 
@@ -148,3 +117,31 @@ jobs:
                   # http://localhost:54323/ is the supabase dashboard
                   wait-on: http://localhost:3000, http://localhost:54323
                   wait-on-timeout: 180
+
+    component-test:
+        needs: e2e-test
+        runs-on:
+            group: large-runner
+        environment: preview
+        env:
+            # unit tests don't need the real keys, but they load some functions that check for them on init.
+            SUPABASE_SERVICE_KEY: dummy key
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - run: npm ci
+            - run: npm run lint
+            - run: npx prettier . --check
+            - run: npm run build
+            - run: npm run test-cypress-unit
