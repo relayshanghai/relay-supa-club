@@ -21,7 +21,7 @@ export type JobInterface<T> = {
      * The logic for running the job. Must throw an error to fail
      * @throws Error
      */
-    run: (payload?: Record<string, any>) => Promise<any>;
+    run: (payload?: any) => Promise<any>;
 };
 
 // @note we really should standardize this

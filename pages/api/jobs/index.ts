@@ -1,10 +1,8 @@
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { createJob } from 'src/utils/scheduler/db';
+import { createJob } from 'src/utils/scheduler/jobs';
 import type { CreateJobRequest } from 'src/utils/scheduler/types';
 import { JOB_QUEUE } from 'src/utils/scheduler/types';
-import { db } from 'src/utils/supabase-client';
-import { v4 } from 'uuid';
 
 const postHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
@@ -17,7 +15,7 @@ const postHandler: ActionHandler = async (req, res) => {
         body.queue = JOB_QUEUE.default;
     }
 
-    const job = await db(createJob)(v4(), {
+    const job = await createJob({
         name: body.name,
         run_at: body.run_at,
         payload: body.payload,
