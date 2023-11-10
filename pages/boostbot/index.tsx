@@ -12,7 +12,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { OpenVideoGuideModal, SendInfluencersToOutreach } from 'src/utils/analytics/events';
+import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
@@ -206,12 +206,12 @@ const Boostbot = () => {
                 type: 'translation',
                 translationKey: 'boostbot.chat.outreachDone',
             });
-            addMessage({
-                sender: 'Bot',
-                type: 'video',
-                videoUrl: '/assets/videos/sequence-guide.mp4',
-                eventToTrack: OpenVideoGuideModal.eventName,
-            });
+            // addMessage({
+            //     sender: 'Bot',
+            //     type: 'video',
+            //     videoUrl: '/assets/videos/sequence-guide.mp4',
+            //     eventToTrack: OpenVideoGuideModal.eventName,
+            // });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
