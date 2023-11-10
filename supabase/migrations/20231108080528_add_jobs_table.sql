@@ -12,6 +12,8 @@ CREATE TABLE "public"."jobs" (
 );
 CREATE UNIQUE INDEX jobs_pkey ON public.jobs USING btree (id);
 
+CREATE INDEX idx_runat_status_queue_createdat ON "public"."jobs" USING btree (created_at, run_at, status, queue);
+
 ALTER TABLE "public"."jobs" ADD CONSTRAINT "jobs_pkey" PRIMARY KEY USING INDEX "jobs_pkey";
 
 ALTER TABLE "public"."jobs" ADD CONSTRAINT "jobs_owner_fkey" FOREIGN KEY (owner) REFERENCES profiles (id) ON DELETE SET NULL NOT VALID;
