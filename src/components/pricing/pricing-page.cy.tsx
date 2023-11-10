@@ -12,7 +12,7 @@ describe('PricingPage', () => {
     it('shows title, subtitle, etc.', () => {
         testMount(<PricingPage />);
         cy.findAllByText('Just getting started, or scaling up.');
-        cy.findByText('BoostBot can help.');
+        cy.findByText('relay.club can help.');
         // has price details formatted
         cy.contains('900 Influencer Searches');
         cy.contains('Full Customer Service');

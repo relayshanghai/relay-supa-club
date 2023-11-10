@@ -8,7 +8,7 @@ const account = {
         lastName: 'Last name',
         lastNamePLaceholder: 'Enter your last name',
         email: 'Email',
-        emailPlaceholder: 'hello@boostbot.ai',
+        emailPlaceholder: 'hello@relay.club',
         profileUpdated: 'Profile updated',
         oopsWentWrong: 'Oops, something went wrong',
         updateEmail: 'Update email',
