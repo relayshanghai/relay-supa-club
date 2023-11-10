@@ -31,7 +31,7 @@
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@rudderstack/rudder-sdk-node": "^2.0.2",
-    "@sentry/nextjs": "^7.77.0",
+    "@sentry/nextjs": "^7.48.0",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.54.0",
     "@supabase/auth-helpers-nextjs": "^0.6.1",
@@ -129,8 +129,8 @@
     "(pages|src|styles|types|i18n|docs|cypress)/**/*.{js,jsx,ts,tsx}": [
       "eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 --fix"
     ],
-    "middleware.ts": [
-      "eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 --fix"
+    "middleware.{js,ts}": [
+      "prettier --no-error-on-unmatched-pattern --write --editorconfig"
     ]
   },
   "engines": {

@@ -185,7 +185,7 @@ const isSessionClean = async (supabase: SupabaseClient) => {
  */
 const checkPathWhitelist = (req: NextRequest) => {
     return PATH_WHITELIST.includes(req.nextUrl.pathname);
-}
+};
 
 /**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
