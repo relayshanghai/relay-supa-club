@@ -44,12 +44,9 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
                             labelStyle={{
                                 color: '#ffffff',
                             }}
-                            formatter={
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                (value: any, name: any) => {
-                                    return [`${parseFloat(value).toFixed(2)}`, name];
-                                }
-                            }
+                            formatter={(value: string, name: string) => {
+                                return [`${parseFloat(value).toFixed(2)}`, name];
+                            }}
                         />
                         <XAxis
                             dataKey="category"
