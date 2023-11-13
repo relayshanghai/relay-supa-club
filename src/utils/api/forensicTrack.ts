@@ -6,8 +6,9 @@ import { getUserSession } from './analytics';
 import type { ServerContext } from './iqdata';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
+import { nanoid } from 'nanoid';
 
-export const forensicTrack = async (context: ServerContext, error: string) => {
+export const forensicTrack = async (context: ServerContext, error: string, uuid: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {
@@ -24,6 +25,7 @@ export const forensicTrack = async (context: ServerContext, error: string) => {
             isEval: call.isEval(),
             isNative: call.isNative(),
             isToplevel: call.isToplevel(),
+            eventId: uuid,
         };
     });
     const { metadata, ...strippedContext } = context;
@@ -45,15 +47,19 @@ export const logIqdataLimits = async (
     }
 
     if (res.status === 429) {
-        await logRateLimitError(action, context);
-        forensicTrack(context, 'rate_limit_error');
+        const uuid = nanoid();
+
+        await logRateLimitError(action, context, uuid);
+        forensicTrack(context, 'rate_limit_error', uuid);
     }
 
     const clone = res.clone();
     const json = await clone.json();
 
     if (json.error === 'daily_tokens_limit_exceeded') {
-        await logDailyTokensError(action, context);
-        forensicTrack(context, 'daily_tokens_limit_exceeded');
+        const uuid = nanoid();
+
+        await logDailyTokensError(action, context, uuid);
+        forensicTrack(context, 'daily_tokens_limit_exceeded', uuid);
     }
 };
