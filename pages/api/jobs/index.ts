@@ -3,17 +3,16 @@ import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { createJob } from 'src/utils/scheduler/utils';
 import type { CreateJobRequest } from 'src/utils/scheduler/types';
-import { JOB_QUEUE } from 'src/utils/scheduler/types';
 
 const postHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
         return res.status(httpCodes.UNAUTHORIZED).end();
     }
 
-    const body = req.body ?? ({} as CreateJobRequest['body']);
+    const body = (req.body ?? {}) as CreateJobRequest['body'];
 
     if (!body.queue) {
-        body.queue = JOB_QUEUE.default;
+        body.queue = 'default';
     }
 
     const job = await createJob({

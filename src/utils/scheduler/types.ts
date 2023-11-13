@@ -1,12 +1,8 @@
 import type { JobNames } from './jobs';
+import type { JOB_QUEUE } from './queues';
 
 export const SCHEDULER_TOKEN_HEADER = 'x-scheduler-token';
 export const SCHEDULER_TOKEN_KEY = 'SCHEDULER_WORKER_TOKEN';
-
-export enum JOB_QUEUE {
-    default = 'default',
-    failed = 'failed',
-}
 
 export enum JOB_STATUS {
     pending = 'pending',
@@ -15,6 +11,8 @@ export enum JOB_STATUS {
     running = 'running',
 }
 
+type JobQueueResult = { job: string; result: boolean };
+
 export type JobInterface<T> = {
     name: T;
     /**
@@ -22,6 +20,20 @@ export type JobInterface<T> = {
      * @throws Error
      */
     run: (payload?: any) => Promise<any>;
+};
+
+export type JobQueueRunPayload = {
+    queue?: JOB_QUEUE;
+    status?: JOB_STATUS;
+    limit?: number;
+};
+
+export type JobQueue<T> = {
+    name: T;
+    /**
+     * Logic for processing a queue
+     */
+    run: (payload?: JobQueueRunPayload) => Promise<JobQueueResult[]>;
 };
 
 // @note we really should standardize this

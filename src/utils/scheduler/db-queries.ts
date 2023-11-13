@@ -1,6 +1,7 @@
 import type { RelayDatabase, Jobs } from '../api/db';
 import { now } from '../datetime';
-import { JOB_QUEUE, JOB_STATUS } from './types';
+import { JOB_STATUS } from './types';
+import type { JOB_QUEUE } from './queues';
 
 type GetJobsFilters = {
     queue: JOB_QUEUE;
@@ -15,7 +16,7 @@ type GetJobFilters = {
 
 export const getJobs =
     (supabase: RelayDatabase) =>
-    async (filters: GetJobsFilters = { queue: JOB_QUEUE.default, status: JOB_STATUS.pending, limit: 1 }) => {
+    async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 1 }) => {
         const ts = now();
 
         let dbquery = supabase
@@ -65,16 +66,13 @@ export const createJob =
 
 export const finishJob =
     (supabase: RelayDatabase) =>
-    async (
-        job: Jobs['Row'],
-        status: JOB_STATUS.success | JOB_STATUS.failed = JOB_STATUS.success,
-        result: any = null,
-    ) => {
-        const retry_count = status === JOB_STATUS.failed ? (job.retry_count ?? 0) + 1 : job.retry_count;
+    async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'> = JOB_STATUS.success, result: any = null) => {
+        const retry_count = status !== JOB_STATUS.success ? (job.retry_count ?? 0) + 1 : job.retry_count;
+        const _status = status as string;
 
         const { data, error } = await supabase
             .from('jobs')
-            .update({ status, result, retry_count })
+            .update({ status: _status, result, retry_count })
             .eq('id', job.id)
             .select();
 

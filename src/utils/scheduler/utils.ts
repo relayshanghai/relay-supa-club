@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import type { Jobs } from '../api/db';
 import { serverLogger } from '../logger-server';
 import { db } from '../supabase-client';
-import { createJob as createJobDb, finishJob } from './db-queries';
+import { createJob as createJobDb, finishJob as finishJobDb } from './db-queries';
 import { isValidJob, jobs } from './jobs';
 import { JOB_STATUS } from './types';
 
@@ -15,7 +15,6 @@ export const initJob = (name: string) => {
 };
 
 export const runJob = async (job: Jobs['Row']) => {
-    const ret = { job: job.id, result: true };
     let result = null;
     let status = JOB_STATUS.success;
 
@@ -24,15 +23,19 @@ export const runJob = async (job: Jobs['Row']) => {
         result = await jobInstance.run(job.payload);
         status = JOB_STATUS.success;
     } catch (e) {
-        ret.result = false;
         status = JOB_STATUS.failed;
 
         serverLogger(e);
         result = { error: new Error(String(e)).message };
     }
 
+    return { result, status };
+};
+
+export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'>, result: any) => {
     try {
-        db(finishJob)(job, status, result);
+        db(finishJobDb)(job, status, result);
+        return true;
     } catch (e) {
         // In case the call to Supabase fails for some reason,
         // suppress the error and notify Sentry instead
@@ -43,7 +46,7 @@ export const runJob = async (job: Jobs['Row']) => {
         });
     }
 
-    return ret;
+    return false;
 };
 
 type CreateJobInsert = Pick<Jobs['Insert'], 'name' | 'run_at' | 'payload' | 'queue' | 'owner'>;
