@@ -1,4 +1,4 @@
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type {
@@ -27,7 +27,6 @@ import {
 } from 'src/utils/analytics/events';
 import type { EmailReplyPayload } from 'src/utils/analytics/events/outreach/email-reply';
 import type { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
-import { getProfileByEmailEngineAccountQuery } from 'src/utils/api/db/calls/profiles';
 import {
     getSequenceInfluencerByEmailAndCompanyCall,
     getSequenceInfluencerByIdCall,
@@ -50,9 +49,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
 import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
-
-// Identity for webhook events that have no `body.account`
-const EMAIL_ENGINE_TEST_IDENTITY = 'a579b7c282704275a93aaf0e304335f1302babb91496c6ee3174c8bd3c316601';
+import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -436,42 +433,12 @@ const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) =>
     return res.status(httpCodes.OK).json({});
 };
 
-const identifyWebhook = async (req: NextApiRequest) => {
-    const body = req.body as WebhookEvent;
-
-    // @note these webhook calls are probably from tests calls in EE dashboard
-    // we will log these calls to Sentry to properly debug in
-    // case this happens in a non-test environment
-    if (!body?.account) {
-        serverLogger('Email Engine webhook has no account', (scope) => {
-            return scope.setContext('Webhook Payload', req.body);
-        });
-        return rudderstack.identifyWithAnonymousID(EMAIL_ENGINE_TEST_IDENTITY);
-    }
-
-    let profile = null;
-
-    try {
-        profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
-    } catch (error) {
-        serverLogger(error, (scope) => {
-            return scope.setContext('Webhook Payload', req.body);
-        });
-    }
-
-    if (profile) {
-        return rudderstack.identifyWithProfile(profile.id);
-    }
-
-    return rudderstack.identifyWithAnonymousID(body.account);
-};
-
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
 
-    await identifyWebhook(req);
+    await identifyAccount(body?.account);
 
     try {
         switch (body.event) {
