@@ -128,7 +128,7 @@ const sendAndInsertEmail = async ({
 };
 
 // eslint-disable-next-line complexity
-const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody) => {
+const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody, tries: number) => {
     const results: SendResult[] = [];
     const trackData: SequenceSendPayload = {
         extra_info: { results },
@@ -236,16 +236,16 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
             }
         });
 
-        // send the promises in batches of 5, with a 1 second timeout between to not overload the server.
+        // send the promises in batches of 3, with a 5 second timeout between to not overload the server.
         // fetch the outbox only once every batch to cut down on that expensive call.
         const promisesBatches = [];
-        for (let i = 0; i < promises.length; i += 5) {
-            promisesBatches.push(promises.slice(i, i + 5));
+        for (let i = 0; i < promises.length; i += 3) {
+            promisesBatches.push(promises.slice(i, i + 3));
         }
         for (const batch of promisesBatches) {
             const outbox = await getOutbox();
             await Promise.all(batch.map((p) => p(outbox)));
-            await wait(1000);
+            await wait(5000);
         }
     } catch (error) {
         serverLogger(error); // truly unexpected error
@@ -253,21 +253,35 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
         return results;
     }
 
-    await handleResults(results, sequenceInfluencers);
+    await handleResults(account, results, sequenceInfluencers, tries);
     trackData.is_success = true;
     track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
     return results;
 };
 
-const handleResults = async (results: SendResult[], sequenceInfluencers: SequenceInfluencer[]) => {
+const handleResults = async (
+    account: string,
+    results: SendResult[],
+    sequenceInfluencers: SequenceInfluencer[],
+    tries: number,
+) => {
     try {
         const outbox = await getOutbox();
+        const retryList: SequenceInfluencer[] = [];
 
         for (const influencer of sequenceInfluencers) {
             const outreachResults = results.filter((result) => result.sequenceInfluencerId === influencer.id);
             if (!outreachResults || outreachResults.length === 0 || outreachResults.some((result) => result.error)) {
-                await handleSendFailed(influencer, outbox);
+                if (tries < 3) {
+                    retryList.push(influencer);
+                } else {
+                    await handleSendFailed(influencer, outbox);
+                }
             }
+        }
+        if (retryList.length > 0) {
+            await wait(3000);
+            await sendSequence({ account, sequenceInfluencers: retryList }, tries + 1);
         }
     } catch (error) {
         serverLogger(error);
@@ -296,7 +310,7 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencer, outbox: 
 
 const postHandler: NextApiHandler = async (req, res) => {
     const body = req.body as SequenceSendPostBody;
-    const results: SequenceSendPostResponse = await sendSequence(body);
+    const results: SequenceSendPostResponse = await sendSequence(body, 0);
     return res.status(httpCodes.OK).json(results);
 };
 
