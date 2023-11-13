@@ -18,6 +18,7 @@ export const PromoCodeSection = ({
     const [promoCode, setPromoCode] = useState<string>('');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
+    const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleSubmit = async (promoCode: string) => {
@@ -38,6 +39,7 @@ export const PromoCodeSection = ({
             const validMonths = validCode.coupon.duration_in_months;
             const validDurationText = t('account.payments.validDuration', { validMonths });
             setPromoCodeMessageCls('text-green-600');
+            setPromoCodeInputCls('focus:border-green-600');
             setPromoCodeMessage(
                 ` ${percentageOff?.toString()}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
@@ -47,6 +49,7 @@ export const PromoCodeSection = ({
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');
+            setPromoCodeInputCls('focus:border-red-500');
         }
         setLoading(false);
     };
@@ -69,7 +72,7 @@ export const PromoCodeSection = ({
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e)}
-                        className="focus:ring-primary h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none focus:border-primary-500  focus:outline-none focus:ring-0 "
+                        className={`${promoCodeInputCls} h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none  focus:outline-none focus:ring-0 `}
                     />
                     <Button className="h-full" type="submit" onClick={() => handleSubmit(promoCode)}>
                         {loading ? (
