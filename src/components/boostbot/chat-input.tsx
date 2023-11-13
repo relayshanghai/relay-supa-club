@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useRef, useState } from 'react';
 import { SendLightning, Spinner } from 'src/components/icons';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
@@ -7,9 +7,15 @@ interface ChatInputProps {
     onSendMessage: (message: string) => void;
     isLoading: boolean;
     isDisabled: boolean;
+    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, isDisabled }) => {
+export const ChatInput: React.FC<ChatInputProps> = ({
+    onSendMessage,
+    isLoading,
+    isDisabled,
+    setSelectedInfluencers,
+}) => {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null);
     const optionsMenuRef = useRef<null | HTMLDivElement>(null);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
@@ -22,6 +28,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
 
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
+
+        // setInfluencers(Array.from({ length: 20 }));
+        setSelectedInfluencers({});
 
         onSendMessage(message.trim());
         setMessage('');

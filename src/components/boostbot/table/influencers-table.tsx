@@ -5,6 +5,7 @@ import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } fro
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -21,6 +22,9 @@ declare module '@tanstack/react-table' {
         searchId: string | number | null;
         setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
         setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+        allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+        setSelectedCount: (count: number) => void;
+        isLoading: boolean;
     }
 }
 
@@ -41,6 +45,11 @@ export function InfluencersTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
         state: { rowSelection: selectedInfluencers },
+        initialState: {
+            pagination: {
+                pageSize: 20,
+            },
+        },
     });
 
     const page = table.getState().pagination.pageIndex;
@@ -87,13 +96,16 @@ export function InfluencersTable<TData, TValue>({
                             </TableRow>
                         ))}
                     </TableHeader>
+                    {/* allSequenceInfluencers?.some((x) => x.iqdata_id === row.original.user_id) */}
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                    className={`${parseInt(row.id) % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                                    data-state={false}
+                                    className={`${
+                                        parseInt(row.id) % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                                    } justify-center`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

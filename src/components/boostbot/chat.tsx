@@ -305,7 +305,7 @@ export const Chat: React.FC<ChatProps> = ({
             <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:bg-primary-100 disabled:bg-transparent disabled:text-primary-200"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
@@ -314,7 +314,7 @@ export const Chat: React.FC<ChatProps> = ({
                 </button>
                 <button
                     data-testid="boostbot-open-clear-chat-history"
-                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-tertiary-400 transition-all hover:bg-primary-100 disabled:bg-transparent disabled:text-primary-200"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-tertiary-400 transition-all hover:text-tertiary-600 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsClearChatHistoryModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
@@ -367,6 +367,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
+                    setSelectedInfluencers={setSelectedInfluencers}
                 />
             </div>
         </div>

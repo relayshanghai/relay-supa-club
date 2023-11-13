@@ -7,6 +7,7 @@ import { BoostbotFollowersCell } from './boostbot-followers-cell';
 import { BoostbotAudienceDemoCell } from './boostbot-audience-demo-cell';
 import { BoostbotAudienceLocationCell } from './boostbot-audience-location-cell';
 import { clientLogger } from 'src/utils/logger-client';
+import { Tooltip } from 'src/components/library';
 
 export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
@@ -17,18 +18,31 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
                 className="checkbox mr-0"
                 checked={table.getIsAllPageRowsSelected()}
                 aria-label={table.options.meta?.t('boostbot.table.selectAll')}
-                onChange={(e) => table.toggleAllPageRowsSelected(!!e.target.checked)}
+                disabled={table.options.meta?.isLoading}
+                onChange={(e) => {
+                    table.toggleAllPageRowsSelected(!!e.target.checked);
+                }}
             />
         ),
-        cell: ({ row, table }) => (
-            <input
-                type="checkbox"
-                className="checkbox mr-0"
-                checked={row.getIsSelected()}
-                aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
-                onChange={(e) => row.toggleSelected(!!e.target.checked)}
-            />
-        ),
+        cell: ({ row, table }) => {
+            if (table.options.meta?.allSequenceInfluencers?.some((x) => x.iqdata_id === row.original.user_id)) {
+                return (
+                    <Tooltip content="Already added to sequence" position="right">
+                        <input type="checkbox" checked={true} className="checkbox-add-success mr-0" disabled={true} />
+                    </Tooltip>
+                );
+            }
+            return (
+                <input
+                    type="checkbox"
+                    disabled={table.options.meta?.isLoading}
+                    className="checkbox mr-0"
+                    checked={row.getIsSelected()}
+                    aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
+                    onChange={(e) => row.toggleSelected(!!e.target.checked)}
+                />
+            );
+        },
     },
     {
         id: 'account',
@@ -66,6 +80,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
             return (
                 <OpenInfluencerModalCell
                     row={row}
+                    table={table}
                     setSelectedRow={table.options.meta.setSelectedRow}
                     setIsInfluencerDetailsModalOpen={table.options.meta.setIsInfluencerDetailsModalOpen}
                 />

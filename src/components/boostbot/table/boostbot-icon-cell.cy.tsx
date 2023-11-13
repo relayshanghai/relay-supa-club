@@ -16,10 +16,15 @@ describe('<OpenInfluencerModalCell />', () => {
     it('Should call setIsInfluencerDetailsModalOpen when the icon is clicked', () => {
         const influencer = boostbotGetInfluencers[0];
         const row = { original: influencer, index: 0 } as Row<BoostbotInfluencer>;
+        const table = {
+            options: { meta: { searchId: 1, t: () => null } },
+            getState: () => ({ pagination: { pageIndex: 1 } }),
+        } as any;
 
         testMount(
             <OpenInfluencerModalCell
                 row={row}
+                table={table}
                 setIsInfluencerDetailsModalOpen={setIsInfluencerDetailsModalOpen}
                 setSelectedRow={setSelectedRow}
             />,

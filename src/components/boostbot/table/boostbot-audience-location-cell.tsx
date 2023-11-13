@@ -1,4 +1,4 @@
-import type { Row } from '@tanstack/react-table';
+import type { Row, Table } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Tooltip } from 'src/components/library';
 import { decimalToPercent } from 'src/utils/formatter';
@@ -6,6 +6,7 @@ import type { Countries } from 'types/iqdata/influencer-search-request-body';
 
 export type BoostbotAudienceLocationCellProps = {
     row: Row<BoostbotInfluencer>;
+    table: Table<BoostbotInfluencer>;
 };
 
 export type BoostbotAudienceGeoType = {
@@ -27,7 +28,7 @@ export const renderAudienceGeo = (audienceGeo: BoostbotAudienceGeoType) => {
         top1CountryWeight && countries[1] ? decimalToPercent(top1CountryWeight + top2CountryWeight, 0) : 0;
 
     return (
-        <div className="relative w-[120px]">
+        <div className="relative w-full">
             <div className=" h-2 rounded-lg bg-gray-200" />
             {countries.length > 0 && (
                 <Tooltip
@@ -58,11 +59,22 @@ export const renderAudienceGeo = (audienceGeo: BoostbotAudienceGeoType) => {
     );
 };
 
-export const BoostbotAudienceLocationCell = ({ row }: BoostbotAudienceLocationCellProps) => {
+export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLocationCellProps) => {
     const influencer = row.original;
     const audienceGeo = influencer.audience_geo;
+
+    const isLoading = table.options.meta?.isLoading;
+
     if (!audienceGeo) {
         return null;
     }
-    return <div>{renderAudienceGeo(audienceGeo)}</div>;
+    return (
+        <>
+            {isLoading ? (
+                <div className="h-2 w-48 animate-pulse bg-gray-300" />
+            ) : (
+                <div>{renderAudienceGeo(audienceGeo)}</div>
+            )}
+        </>
+    );
 };
