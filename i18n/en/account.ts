@@ -115,7 +115,9 @@ const account = {
         enterPromoCode: 'Enter a Promo Code',
         invalidPromoCode: 'Invalid Promo Code',
         promoCodeAdded: 'Promo Code added',
-        validDuration: 'Valid for {{validMonths}} months',
+        validDuration: ' For next {{validMonths}} months',
+        offEn: 'Off',
+        offCn: '',
     },
 };
 

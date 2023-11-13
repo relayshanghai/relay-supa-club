@@ -114,7 +114,9 @@ const account = {
         enterPromoCode: '输入折扣码',
         invalidPromoCode: '无效的折扣码',
         promoCodeAdded: '折扣码已添加',
-        validDuration: '有效期{{validMonths}}个月',
+        validDuration: ' 前{{validMonths}}个月有效',
+        offEn: '',
+        offCn: '节省',
     },
 };
 
