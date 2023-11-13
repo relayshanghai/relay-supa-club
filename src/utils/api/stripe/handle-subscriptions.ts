@@ -6,6 +6,7 @@ import type {
     SubscriptionUpgradePostRequestBody,
     SubscriptionUpgradePostResponse,
 } from 'pages/api/subscriptions/create-subscription-with-payment-intent';
+import type { PromotionCodesListResponse } from 'pages/api/subscriptions/promo-codes';
 import { nextFetch } from 'src/utils/fetcher';
 
 export const upgradeSubscriptionWithPaymentIntent = async (
@@ -37,6 +38,13 @@ export const cancelSubscriptionWithSubscriptionId = async (subscriptionId: strin
     const res = await nextFetch<SubscriptionCancelPostResponseBody>('subscriptions/cancel-with-subscription-id', {
         method: 'post',
         body: JSON.stringify(body),
+    });
+    return res;
+};
+
+export const getAllPromoCodes = async () => {
+    const res = await nextFetch<PromotionCodesListResponse>('subscriptions/promo-codes', {
+        method: 'get',
     });
     return res;
 };
