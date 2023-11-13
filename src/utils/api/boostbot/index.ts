@@ -4,8 +4,7 @@ import type {
 } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { CreatorPlatform } from 'types';
 import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations';
-
-const isDev = () => process.env.NODE_ENV === 'development';
+import { isDev } from 'src/constants';
 
 export const createBoostbotInfluencerPayload = ({
     platform,

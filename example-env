@@ -28,10 +28,6 @@ NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
 
 SIB_API_KEY=asdf
 
-# The app url. https://relay.club for production
-
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
 # Open API Stuff
 
 OPENAI_API_ORG="relay.club"

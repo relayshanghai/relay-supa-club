@@ -36,6 +36,7 @@ const Boostbot = () => {
         'boostbot-selected-influencers',
         {},
     );
+
     const selectedInfluencersData =
         // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
         influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];

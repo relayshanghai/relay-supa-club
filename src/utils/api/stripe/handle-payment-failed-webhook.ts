@@ -4,7 +4,7 @@ import { serverLogger } from 'src/utils/logger-server';
 
 import type { NextApiResponse } from 'next';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
-import { RELAY_DOMAIN } from 'src/constants';
+import { LEGACY_RELAY_DOMAIN } from 'src/constants';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import type { StripeWebhookPaymentFailedPayload } from 'src/utils/analytics/events/stripe/stripe-webhook-payment-failed';
 import { StripeWebhookPaymentFailed } from 'src/utils/analytics/events/stripe/stripe-webhook-payment-failed';
@@ -33,7 +33,7 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
     }
 
     // no need to cancel the subscription for our internal employees company
-    if (company.name === RELAY_DOMAIN) {
+    if (company.name === LEGACY_RELAY_DOMAIN) {
         trackingData.extra_info.error = 'No need to cancel the subscription for our internal employees company';
         tracker(StripeWebhookPaymentFailed, trackingData);
         return res.status(httpCodes.NO_CONTENT);
