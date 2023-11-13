@@ -108,6 +108,14 @@ const account = {
     alipay: '支付宝',
     choosePaymentMethod: '请选择付款方式',
     contactUs: '如果需要支付宝支付，请联系我们客服。',
+    payments: {
+        promoCode: '折扣码',
+        apply: '应用',
+        enterPromoCode: '输入折扣码',
+        invalidPromoCode: '无效的折扣码',
+        promoCodeAdded: '折扣码已添加',
+        validDuration: '有效期{{validMonths}}个月',
+    },
 };
 
 export default account;

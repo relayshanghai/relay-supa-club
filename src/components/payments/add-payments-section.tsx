@@ -39,7 +39,6 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
 
     const batchId = useMemo(() => randomNumber(), []);
-
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',
         amount: parseInt(selectedPrice.prices.monthly) * 100, //amount in cents
@@ -59,6 +58,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         const allPromoCodes = res.data;
         // check if promoCode is an valid active promo code
         const validCode: Stripe.PromotionCode | undefined = allPromoCodes.find((code) => code.code === promoCode);
+        // calculate the amount deducted from the original price to show in the success message
         const calcAmountDeducted = (amount: number, percentageOff: number) => {
             return numberFormatter(amount * (percentageOff / 100));
         };
@@ -66,16 +66,16 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
             setCouponId(validCode.coupon.id);
             const percentageOff = validCode.coupon.percent_off;
             const validMonths = validCode.coupon.duration_in_months;
-            const validDurationText = `for the first ${validMonths} months`;
+            const validDurationText = t('account.payments.validDuration', { validMonths });
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeMessage(
-                `Promo code Added  -¥${calcAmountDeducted(
+                `${t('account.payments.promoCodeAdded')}  -¥${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
                 )} (${percentageOff?.toString()}% off) ${validDurationText}`,
             );
         } else {
-            setPromoCodeMessage('Invalid promo code');
+            setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');
         }
     };
@@ -91,18 +91,20 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
             {/* promo code input section */}
             <div className="mb-3">
                 <div className="flex flex-col ">
-                    <label className="mb-2 text-sm font-semibold text-gray-600">Promo Code</label>
+                    <label className="mb-2 text-sm font-semibold text-gray-600">
+                        {t('account.payments.promoCode')}
+                    </label>
                     <div className="flex h-10 items-end space-x-3">
                         <input
                             type="text"
-                            placeholder="Enter a promo code"
+                            placeholder={t('account.payments.enterPromoCode') || ''}
                             value={promoCode}
                             onChange={(e) => setPromoCode(e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e)}
                             className="focus:ring-primary h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none focus:border-primary-500  focus:outline-none focus:ring-0 "
                         />
                         <Button className="h-full" type="submit" onClick={() => handleSubmit(promoCode)}>
-                            APPLY
+                            {t('account.payments.apply')}
                         </Button>
                     </div>
                 </div>
