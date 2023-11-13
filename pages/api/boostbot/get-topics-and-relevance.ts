@@ -10,7 +10,8 @@ const GetTopicsAndRelevanceBody = z.object({
 
 export type GetTopicsAndRelevanceBody = z.input<typeof GetTopicsAndRelevanceBody>;
 export type GetTopicsAndRelevanceResponse = {
-    topic: string;
+    topic_en: string;
+    topic_zh: string;
     relevance: number;
 }[];
 

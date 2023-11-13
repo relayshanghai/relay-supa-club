@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
@@ -24,6 +25,8 @@ import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
+import { useBoostbot } from 'src/hooks/use-boostbot';
+import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topics-and-relevance';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -32,8 +35,37 @@ type InfluencerDetailsModalProps = {
 };
 
 export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { track } = useRudderstackTrack();
+    const [areTopicsAndRelevanceLoading, setAreTopicsAndRelevanceLoading] = useState(true);
+    const { getTopicsAndRelevance } = useBoostbot({});
+    const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
+    const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
+        ? Array(7).fill({ topic: '-', relevance: 0.5 })
+        : topicsAndRelevance.map((topic) => ({
+              ...topic,
+              topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
+          }));
+
+    useEffect(() => {
+        const handleTopicsAndRelevance = async (topics: string[]) => {
+            const topicsAndRelevance = await getTopicsAndRelevance(topics);
+
+            setAreTopicsAndRelevanceLoading(false);
+            setTopicsAndRelevance(topicsAndRelevance);
+        };
+
+        if (selectedRow && isOpen) {
+            handleTopicsAndRelevance(selectedRow.original.topics);
+        }
+    }, [getTopicsAndRelevance, selectedRow, isOpen]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setAreTopicsAndRelevanceLoading(true);
+            setTopicsAndRelevance([]);
+        }
+    }, [isOpen]);
 
     if (!selectedRow) {
         return null;
@@ -53,7 +85,6 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         followers_growth: followersGrowthRaw,
         url,
         user_id,
-        // topics,
     } = influencer;
 
     // @note get platform from url for now
@@ -74,16 +105,18 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         // TODO: add to sequence function in V2-1029
     };
 
-    // TODO: replace placeholder in V2-1018
-    const dummyRadarGraphData = [
-        { topic: 'Productivity', relevance: 90 },
-        { topic: 'Fitness Routine', relevance: 60 },
-        { topic: 'Sports', relevance: 88 },
-        { topic: 'Theraputics', relevance: 66 },
-        { topic: 'Yoga', relevance: 80 },
-        { topic: 'Wellness', relevance: 90 },
-        { topic: 'Injury Recovery', relevance: 23 },
-    ];
+    // Used to break multiline labels into multiple tspans to prevent text overflow
+    function CustomizedTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
+        return (
+            <text x={x} y={y} dy={-4} fill="black" fontSize={10} textAnchor="middle">
+                {payload.value.split(' ').map((word: string, index: number) => (
+                    <tspan key={index} x={x} dy={index ? '1.2em' : 0}>
+                        {word}
+                    </tspan>
+                ))}
+            </text>
+        );
+    }
 
     const processedDemoData = processedAudienceDemoData(influencer);
     return (
@@ -136,11 +169,11 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.topNiches')}
                         </div>
-                        <div className="w-full">
+                        <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse' : ''}`}>
                             <ResponsiveContainer width={320} height={280}>
-                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyRadarGraphData}>
+                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={translatedTopicsAndRelevance}>
                                     <PolarGrid stroke="#e5e7eb" />
-                                    <PolarAngleAxis dataKey="topic" tick={{ fontSize: 10 }} />
+                                    <PolarAngleAxis dataKey="topic" tick={CustomizedTick} />
                                     <PolarRadiusAxis tick={false} axisLine={false} />
                                     <Radar
                                         name="top_niches"
