@@ -10,8 +10,10 @@ import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { randomNumber } from 'src/utils/utils';
-import { Input } from '../input';
 import { Button } from '../button';
+import { getAllPromoCodes } from 'src/utils/api/stripe/handle-subscriptions';
+import type Stripe from 'stripe';
+import { numberFormatter } from 'src/utils/formatter';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -30,8 +32,11 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     const { trackEvent } = useRudderstack();
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
-    const [promoCode, setPromoCode] = useState<string>('');
     const selectedPrice = newPrices[priceTier];
+    const [promoCode, setPromoCode] = useState<string>('');
+    const [couponId, setCouponId] = useState<string | undefined>(undefined);
+    const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
+    const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
 
     const batchId = useMemo(() => randomNumber(), []);
 
@@ -49,33 +54,61 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         payment_method_types: ['card'],
     };
 
-    const handlePromoCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPromoCode(e.target.value);
-    };
-
     const handleSubmit = async (promoCode: string) => {
-        console.log(promoCode);
-
-        //retrieve promo code from intput
-        //call api to check if promo code is valid
-        //if valid, apply promo code to subscription
-        //if invalid, show error message
+        const res = await getAllPromoCodes();
+        const allPromoCodes = res.data;
+        // check if promoCode is an valid active promo code
+        const validCode: Stripe.PromotionCode | undefined = allPromoCodes.find((code) => code.code === promoCode);
+        const calcAmountDeducted = (amount: number, percentageOff: number) => {
+            return numberFormatter(amount * (percentageOff / 100));
+        };
+        if (validCode) {
+            setCouponId(validCode.coupon.id);
+            const percentageOff = validCode.coupon.percent_off;
+            const validMonths = validCode.coupon.duration_in_months;
+            const validDurationText = `for the first ${validMonths} months`;
+            setPromoCodeMessageCls('text-green-600');
+            setPromoCodeMessage(
+                `Promo code Added  -¥${calcAmountDeducted(
+                    parseInt(selectedPrice.prices.monthly),
+                    percentageOff ?? 0,
+                )} (${percentageOff?.toString()}% off) ${validDurationText}`,
+            );
+        } else {
+            setPromoCodeMessage('Invalid promo code');
+            setPromoCodeMessageCls('text-red-500');
+        }
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit(promoCode);
+        }
+    };
     return (
         <div className="w-80 lg:w-[28rem]">
-            <div className="flex items-center space-x-3">
-                <Input
-                    label="Promo Code"
-                    type="text"
-                    placeholder="Enter a promo code"
-                    value={promoCode}
-                    onChange={handlePromoCodeChange}
-                />
-                <Button className="h-9 text-xs" type="submit" onClick={() => handleSubmit(promoCode)}>
-                    APPLY
-                </Button>
+            {/* promo code input section */}
+            <div className="mb-3">
+                <div className="flex flex-col ">
+                    <label className="mb-2 text-sm font-semibold text-gray-600">Promo Code</label>
+                    <div className="flex h-10 items-end space-x-3">
+                        <input
+                            type="text"
+                            placeholder="Enter a promo code"
+                            value={promoCode}
+                            onChange={(e) => setPromoCode(e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e)}
+                            className="focus:ring-primary h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none focus:border-primary-500  focus:outline-none focus:ring-0 "
+                        />
+                        <Button className="h-full" type="submit" onClick={() => handleSubmit(promoCode)}>
+                            APPLY
+                        </Button>
+                    </div>
+                </div>
+                <p className={`px-3 py-2 text-xs font-semibold ${promoCodeMessageCls}`}>{promoCodeMessage}</p>
             </div>
+            {/* payment method selection section */}
             <div className="rounded shadow ">
                 <div className="flex w-full space-x-3 px-6 pt-6 text-xs text-gray-500">
                     <div
@@ -119,7 +152,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     <>
                         {selectedPaymentMethod === 'card' && (
                             <StripeElementsProvider stripe={stripePromise} options={cardOptions}>
-                                <CheckoutForm selectedPrice={selectedPrice} batchId={batchId} />
+                                <CheckoutForm selectedPrice={selectedPrice} batchId={batchId} couponId={couponId} />
                             </StripeElementsProvider>
                         )}
 
