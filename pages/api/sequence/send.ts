@@ -128,14 +128,27 @@ const sendAndInsertEmail = async ({
 };
 
 // eslint-disable-next-line complexity
-const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody, tries: number) => {
+const sendSequence = async (
+    { account, sequenceInfluencers: sequenceInfluencersPassed }: SequenceSendPostBody,
+    tries: number,
+) => {
     const results: SendResult[] = [];
+    const uniqueInfluencerIds = Array.from(new Set(sequenceInfluencersPassed.map((influencer) => influencer.id)));
     const trackData: SequenceSendPayload = {
         extra_info: { results },
         account,
-        sequence_influencer_ids: sequenceInfluencers.map((influencer) => influencer.id),
+        sequence_influencer_ids: uniqueInfluencerIds,
         is_success: false,
     };
+
+    const isInfluencer = (influencer: any): influencer is SequenceInfluencer => {
+        return influencer && influencer.id && influencer.sequence_id;
+    };
+
+    const sequenceInfluencers = uniqueInfluencerIds
+        .map((id) => sequenceInfluencersPassed.find((i) => i.id === id) ?? null)
+        .filter(isInfluencer);
+
     try {
         if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
             throw new Error('Missing required parameters');
@@ -279,6 +292,7 @@ const handleResults = async (
                 }
             }
         }
+
         if (retryList.length > 0) {
             await wait(3000);
             await sendSequence({ account, sequenceInfluencers: retryList }, tries + 1);
