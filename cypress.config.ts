@@ -20,7 +20,7 @@ export default defineConfig({
         },
         viewportWidth: 1536,
         viewportHeight: 960,
-        baseUrl: process.env.NEXT_PUBLIC_APP_URL,
+        baseUrl: 'http://localhost:3000',
         chromeWebSecurity: false,
     },
 
