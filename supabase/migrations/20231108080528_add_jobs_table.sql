@@ -6,7 +6,7 @@ CREATE TABLE "public"."jobs" (
   "payload" json DEFAULT '{}'::json,
   "status" text DEFAULT 'pending'::text,
   "result" json,
-  "owner" uuid NOT NULL,
+  "owner" uuid,
   "retry_count" bigint DEFAULT '0'::bigint,
   "created_at" timestamp with time zone DEFAULT now()
 );
