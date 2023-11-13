@@ -71,9 +71,8 @@ export function InfluencersTable<TData, TValue>({
             <div className="h-full w-full overflow-scroll rounded-md border">
                 {/* Scroll to the top of the table when changing pagination pages */}
                 <div ref={tableRef} />
-
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-white">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -91,7 +90,11 @@ export function InfluencersTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && 'selected'}
+                                    className={`${parseInt(row.id) % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -109,7 +112,7 @@ export function InfluencersTable<TData, TValue>({
                     </TableBody>
                 </Table>
 
-                <div className="absolute bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
+                <div className="sticky bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
                     <DataTablePagination table={table} />
                 </div>
             </div>

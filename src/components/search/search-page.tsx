@@ -32,6 +32,10 @@ import { useCompany } from 'src/hooks/use-company';
 import { randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
+import { FaqModal } from '../library';
+import discoveryfaq from 'i18n/en/discovery-faq';
+import { useRouter } from 'next/router';
+
 export const SearchPageInner = () => {
     const { t } = useTranslation();
 
@@ -52,6 +56,7 @@ export const SearchPageInner = () => {
         setAudienceLocation,
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
+    const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
@@ -86,6 +91,8 @@ export const SearchPageInner = () => {
         },
         [setSearchType],
     );
+
+    const { push } = useRouter();
 
     /**
      * Handle the SearchOptions.onSearch event
@@ -198,14 +205,13 @@ export const SearchPageInner = () => {
         setTopicTags,
         setViews,
     ]);
-
     return (
         <div className="space-y-4">
             <ClientRoleWarning />
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators onSearch={handleSearch} />
+                    <SearchCreators />
                 </div>
             </div>
             <SearchOptions
@@ -214,7 +220,9 @@ export const SearchPageInner = () => {
                 onSearch={handleSearch}
                 searchType={searchType}
                 onSearchTypeChange={handleSearchTypeChange}
+                setShowNeedHelpModal={setShowNeedHelpModal}
             />
+
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
@@ -293,6 +301,19 @@ export const SearchPageInner = () => {
                 setShow={setShowFiltersModal}
                 onSearch={handleSearch}
                 searchType={searchType}
+            />
+            <FaqModal
+                title={t('discoveryfaq.discoveryfaqTitle')}
+                description=""
+                visible={needHelpModalOpen}
+                onClose={() => setShowNeedHelpModal(false)}
+                content={discoveryfaq.discovery.map((_, i) => ({
+                    title: t(`discoveryfaq.discovery.${i}.title`),
+                    detail: t(`discoveryfaq.discovery.${i}.detail`),
+                }))}
+                getMoreInfoButtonText={t(`discoveryfaq.discoveryGetMoreInfo`) || ''}
+                getMoreInfoButtonAction={() => push('/guide')}
+                source="Discovery"
             />
         </div>
     );

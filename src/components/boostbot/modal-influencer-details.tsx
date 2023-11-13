@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
-import { Button } from 'src/components/button';
 import {
     Bar,
     BarChart,
@@ -18,7 +17,7 @@ import {
 import StatCard from './stat-card';
 import type { Row } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
-import { numberFormatter } from 'src/utils/formatter';
+import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
@@ -26,15 +25,27 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
 import { useBoostbot } from 'src/hooks/use-boostbot';
+import { AddToSequenceButton } from './add-to-sequence-button';
 import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topics-and-relevance';
+import type { Dispatch, SetStateAction } from 'react';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
     selectedRow?: Row<BoostbotInfluencer>;
+    setShowSequenceSelector: (open: boolean) => void;
+    outReachDisabled: boolean;
+    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 };
 
-export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: InfluencerDetailsModalProps) => {
+export const InfluencerDetailsModal = ({
+    isOpen,
+    setIsOpen,
+    selectedRow,
+    setShowSequenceSelector,
+    outReachDisabled,
+    setSelectedInfluencers,
+}: InfluencerDetailsModalProps) => {
     const { t, i18n } = useTranslation();
     const { track } = useRudderstackTrack();
     const [areTopicsAndRelevanceLoading, setAreTopicsAndRelevanceLoading] = useState(true);
@@ -81,8 +92,9 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
         avg_reels_plays: avgReelsPlaysRaw, // this is avg views for instagram
         engagement_rate: engagementRateRaw,
         posts_count: totalPosts,
-        followers,
+        followers: followersRaw,
         followers_growth: followersGrowthRaw,
+        engagements,
         url,
         user_id,
     } = influencer;
@@ -93,15 +105,18 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
     const indexScore = calculateIndexScore(influencer);
 
     // convert raw decimal numbers to string percentage
-    const engagementRate = `${Math.round(engagementRateRaw * 100)}%`;
+    const followers = numberFormatter(followersRaw, 0);
     const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
-    const followersGrowth = `${Math.round((followersGrowthRaw ?? 0) * 100)}%`;
-
-    // engaged audience = (avg views / followers) * 100
-    const engagedAudience = `${Math.round(((avgViewsRaw ?? avgReelsPlaysRaw ?? 0) / followers) * 100)}%`;
+    const followersGrowth = decimalToPercent(followersGrowthRaw, 0);
+    // audience engagement rate for Youtube = (Engagements + Avg Views) / Followers see V2-1063
+    const audienceEngagementRateYTInt = Number((engagements + (avgViewsRaw ?? 0)) / followersRaw);
+    const audienceEngagementRateYT = decimalToPercent(audienceEngagementRateYTInt, 0);
+    // audience engagement rate for Instagram and Tiktok is just engagmentRate see V2-1063
+    const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
 
     const handleAddToSequence = () => {
-        setIsOpen(false);
+        setSelectedInfluencers({ [selectedRow.id]: true });
+        setShowSequenceSelector(true);
         // TODO: add to sequence function in V2-1029
     };
 
@@ -191,13 +206,20 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.audienceEngagementStats')}
                         </div>
-                        <StatCard title={t('boostbot.modal.engagedAudience')} stat={engagedAudience} />
+                        <StatCard
+                            title={t('boostbot.modal.engagedAudience')}
+                            stat={
+                                (platform === 'youtube' ? audienceEngagementRateYT : audienceEngagementRateIGandTT) ??
+                                '-'
+                            }
+                            iconName={
+                                platform === 'youtube'
+                                    ? evaluateStat({ audienceEngagementRateYTInt })
+                                    : evaluateStat({ engagementRateRaw })
+                            }
+                        />
                         <div className="grid grid-cols-2 space-x-3">
-                            <StatCard
-                                title={t('boostbot.modal.engagementRate')}
-                                stat={engagementRate}
-                                iconName={evaluateStat({ engagementRateRaw })}
-                            />
+                            <StatCard title={t('boostbot.modal.followers')} stat={followers ?? '-'} />
                             {avgViewsRaw && (
                                 <StatCard
                                     title={t('boostbot.modal.averageViews')}
@@ -234,8 +256,8 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                                 <CartesianGrid vertical={false} horizontal={false} />
                                 <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                                 <YAxis width={16} tick={false} axisLine={false} />
-                                <Bar dataKey="female" fill="#fcceee" radius={2} />
-                                <Bar dataKey="male" fill="#b8ccff" radius={2} />
+                                <Bar dataKey="female" fill="#FAA7E0" radius={2} />
+                                <Bar dataKey="male" fill="#84CAFF" radius={2} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -247,7 +269,7 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
                             {followersGrowthRaw !== undefined && (
                                 <StatCard
                                     title={t('boostbot.modal.followersGrowth')}
-                                    stat={followersGrowth.toString()}
+                                    stat={followersGrowth ?? '-'}
                                     iconName={evaluateStat({ followersGrowthRaw })}
                                 />
                             )}
@@ -264,9 +286,11 @@ export const InfluencerDetailsModal = ({ isOpen, setIsOpen, selectedRow }: Influ
 
                 {/* button */}
                 <div className="mt-8 box-border flex w-full justify-end font-semibold">
-                    <Button className="boostbot-gradient rounded-lg border-none px-4" onClick={handleAddToSequence}>
-                        {t('boostbot.modal.addToSequence')}
-                    </Button>
+                    <AddToSequenceButton
+                        buttonText={t('boostbot.modal.addToSequence')}
+                        outReachDisabled={outReachDisabled}
+                        handleAddToSequenceButton={handleAddToSequence}
+                    />
                 </div>
             </div>
         </Modal>

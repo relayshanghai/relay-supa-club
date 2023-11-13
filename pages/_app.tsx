@@ -39,6 +39,22 @@ function MyApp({
     }, []);
 
     useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const setLang = urlParams.get('set_lang');
+            if (typeof setLang === 'string') {
+                if (setLang.includes('en')) {
+                    i18n.changeLanguage('en-US');
+                    localStorage.setItem('language', 'en-US');
+                } else if (setLang.includes('zh')) {
+                    i18n.changeLanguage('zh-CN');
+                    localStorage.setItem('language', 'zh-CN');
+                }
+            }
+        }
+    }, []);
+
+    useEffect(() => {
         _i18n.on('languageChanged', (l) => {
             setLang(l);
         });
@@ -82,7 +98,7 @@ function MyApp({
                     property="og:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
-                <meta property="og:url" content="https://relay.club/" />
+                <meta property="og:url" content="https://boostbot.ai/" />
                 <meta property="og:site_name" content="relay.club: Influencer Management Software" />
                 <meta name="twitter:title" content="relay.club: A complete influencer management software solution" />
                 <meta

@@ -42,8 +42,8 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
             "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
         and: 'and',
         clearChatModal: {
-            open: 'Clear chat history and filters',
-            title: 'Are you sure you want to delete your BoostBot chat history and influencer results?',
+            open: 'Clear chat and filters',
+            title: 'Are you sure you want to delete your BoostBot chat history, filters, and influencer results?',
             confirm: 'Yes',
             cancel: 'Back',
         },
@@ -75,13 +75,14 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         topNiches: 'Top Niches',
         audienceEngagementStats: 'Audience Engagement Stats',
         audienceGender: 'Audience Gender',
-        engagedAudience: 'Engaged Audience',
+        engagedAudience: 'Audience Engagement Rate',
         engagementRate: 'Engagement Rate',
         averageViews: 'Average Views',
         channelStats: 'Channel Stats',
         followersGrowth: 'Followers Growth',
         totalPosts: 'Total Posts',
         addToSequence: 'Add to Sequence',
+        followers: 'Followers',
     },
 };
 

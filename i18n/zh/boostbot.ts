@@ -40,7 +40,7 @@ const boostbot = {
         and: '和',
         clearChatModal: {
             open: '清除聊天记录和筛选条件',
-            title: '你确定要删除和BoostBot的对话记录和红人搜索结果吗?',
+            title: '确定删除您的BoostBot聊天记录、筛选条件和红人搜索结果吗？',
             confirm: '是',
             cancel: '返回',
         },
@@ -80,6 +80,7 @@ const boostbot = {
         followersGrowth: '粉丝增长率',
         totalPosts: '发布内容数',
         addToSequence: '添加至邮件进程管理',
+        followers: '粉丝数',
     },
 };
 

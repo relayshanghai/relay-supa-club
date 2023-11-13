@@ -2,10 +2,10 @@ import type { SequenceStepInsert } from 'src/utils/api/db';
 import { insertSequenceStepsCall } from 'src/utils/api/db/calls/sequence-steps';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import useSWR from 'swr';
-import type { InfluencerStepTypes } from 'types';
+import type { SequenceEmailStep } from 'types';
 
 type DefaultTemplateType = {
-    name: InfluencerStepTypes;
+    name: SequenceEmailStep;
     id: string;
     waitTimeHours: number;
     stepNumber: number;

@@ -9,8 +9,8 @@ export const LandingPage = () => {
     const { trackEvent } = useRudderstack();
 
     return (
-        <div className="flex flex-grow flex-col">
-            <div className="flex self-end p-5 align-baseline">
+        <div className="flex flex-col">
+            <div className="absolute right-0 top-0 flex self-end p-5 align-baseline">
                 <LanguageToggle />
                 <p className="ml-3 font-medium text-gray-500">
                     {t('signup.alreadySignedUp')}
@@ -24,7 +24,9 @@ export const LandingPage = () => {
                     </Link>
                 </p>
             </div>
-            <PricingPage page="landing" />;
+            <div className="pt-10">
+                <PricingPage page="landing" />
+            </div>
         </div>
     );
 };

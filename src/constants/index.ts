@@ -1,8 +1,7 @@
-/** no trailing slash e.g. https://app.relay.club or http://localhost:3000 */
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || '';
-if (!APP_URL) throw new Error('APP_URL not found');
-
-export const RELAY_DOMAIN = 'relay.club';
+/** Even though our main domain has changed to boostbot.ai, our employee use `company` table row was created with this name, and that's what this is used to check for*/
+export const LEGACY_RELAY_DOMAIN = 'relay.club';
+/** boostbot.ai */
+export const BOOSTBOT_DOMAIN = 'boostbot.ai';
 
 // https://www.emailregex.com/
 export const emailRegex =
@@ -14,3 +13,5 @@ export const IQDATA_MAINTENANCE = process.env.NEXT_PUBLIC_IQDATA_MAINTENANCE ===
 
 export const appCacheDBKey = 'app-cache';
 export const appCacheStoreKey = 'app-cache-store';
+
+export const isDev = () => process.env.NODE_ENV === 'development';

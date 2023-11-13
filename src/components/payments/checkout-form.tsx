@@ -13,8 +13,8 @@ import {
     cancelSubscriptionWithSubscriptionId,
 } from 'src/utils/api/stripe/handle-subscriptions';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
-import { APP_URL } from 'src/constants';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
+import { useHostname } from 'src/utils/get-host';
 
 export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice: NewRelayPlan; batchId: number }) {
     const stripe = useStripe();
@@ -26,6 +26,7 @@ export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
+    const { appUrl } = useHostname();
 
     const handleError = (error: any) => {
         setIsLoading(false);
@@ -66,7 +67,7 @@ export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: `${APP_URL}/payments/success?${returnUrlParams}`,
+                    return_url: `${appUrl}/payments/success?${returnUrlParams}`,
                 },
             });
             // if has error, handle error

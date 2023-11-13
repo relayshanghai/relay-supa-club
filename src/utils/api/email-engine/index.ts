@@ -17,6 +17,7 @@ import type {
     UpdateMessagePutResponseBody,
 } from 'types/email-engine/account-account-message-put';
 import type { TemplatesTemplateGetResponse } from 'types/email-engine/templates-template-get';
+import { wait } from 'src/utils/utils';
 
 // PATHS
 
@@ -64,14 +65,13 @@ export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     return res.url;
 };
 
-export const outboxPath = (page = 0, pageSize = 100) =>
+export const outboxPath = (page = 0, pageSize = 1000) =>
     `outbox?${new URLSearchParams({
         page: String(page),
         pageSize: String(pageSize),
     })}`;
 
-export const outboxDeletePath = (queueId: string) => `outbox/${encodeURIComponent(queueId)}
-    `;
+export const outboxDeletePath = (queueId: string) => `outbox/${encodeURIComponent(queueId)}`;
 
 // CALLS
 
@@ -122,6 +122,7 @@ export const getOutbox = async () => {
     const pagesLeft = firstRes.pages - 1;
     const rest = [...firstRes.messages];
     for (let i = 1; i <= pagesLeft; i++) {
+        await wait(1000); // wait 1 second in order to not overload the server
         const res = await emailEngineApiFetch<OutboxGet>(outboxPath(i));
         rest.push(...res.messages);
     }
