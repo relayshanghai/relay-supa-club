@@ -110,7 +110,7 @@ const account = {
     choosePaymentMethod: 'Please choose a payment method.',
     contactUs: 'Please Contact our support team if you prefer to pay with Alipay.',
     payments: {
-        promoCode: 'Promo code',
+        promoCode: 'Promo Code',
         apply: 'Apply',
         enterPromoCode: 'Enter a Promo Code',
         invalidPromoCode: 'Invalid Promo Code',

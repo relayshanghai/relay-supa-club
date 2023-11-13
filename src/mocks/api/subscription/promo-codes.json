@@ -1,0 +1,42 @@
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "promo_1OABBRF5PN4woVWofWsQSF14",
+      "object": "promotion_code",
+      "active": true,
+      "code": "PH2023",
+      "coupon": {
+        "id": "oUeyBQjU",
+        "object": "coupon",
+        "amount_off": null,
+        "created": 1699447716,
+        "currency": null,
+        "duration": "repeating",
+        "duration_in_months": 3,
+        "livemode": false,
+        "max_redemptions": null,
+        "metadata": {},
+        "name": "20% OFF",
+        "percent_off": 20,
+        "redeem_by": null,
+        "times_redeemed": 2,
+        "valid": true
+      },
+      "created": 1699447717,
+      "customer": null,
+      "expires_at": 1702915140,
+      "livemode": false,
+      "max_redemptions": null,
+      "metadata": {},
+      "restrictions": {
+        "first_time_transaction": false,
+        "minimum_amount": null,
+        "minimum_amount_currency": null
+      },
+      "times_redeemed": 0
+    }
+  ],
+  "has_more": false,
+  "url": "/v1/promotion_codes"
+}

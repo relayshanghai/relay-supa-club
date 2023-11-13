@@ -12,6 +12,7 @@ import archivedCampaign from './supabase/campaigns/archivedCampaign.json';
 import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJimCampaign.json';
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 import prices from './api/subscription/prices/prices.json';
+import promoCodes from './api/subscription/promo-codes.json';
 
 import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1';
 import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
@@ -84,6 +85,9 @@ const frontendHandlers = [
     }),
     rest.get(`${APP_URL_CYPRESS}/api/subscriptions/prices`, (_req, res, ctx) => {
         return res(ctx.json(prices));
+    }),
+    rest.get(`${APP_URL_CYPRESS}/api/subscriptions/promo-codes`, (_req, res, ctx) => {
+        return res(ctx.json(promoCodes));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
         return res(ctx.json(sequenceInfluencers));

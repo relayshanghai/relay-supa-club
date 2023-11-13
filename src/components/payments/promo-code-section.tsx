@@ -5,6 +5,7 @@ import { numberFormatter } from 'src/utils/formatter';
 import type Stripe from 'stripe';
 import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
+import { Spinner } from '../icons';
 
 export const PromoCodeSection = ({
     selectedPrice,
@@ -17,10 +18,13 @@ export const PromoCodeSection = ({
     const [promoCode, setPromoCode] = useState<string>('');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleSubmit = async (promoCode: string) => {
+        setLoading(true);
         const res = await getAllPromoCodes();
         const allPromoCodes = res.data;
+
         // check if promoCode is an valid active promo code
         const validCode: Stripe.PromotionCode | undefined = allPromoCodes.find((code) => code.code === promoCode);
         // calculate the amount deducted from the original price to show in the success message
@@ -38,12 +42,13 @@ export const PromoCodeSection = ({
                 ` ${percentageOff?.toString()}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
-                )}) ${t('account.payments.offEn')} ${validDurationText}`,
+                )}) ${t('account.payments.offEn')}${validDurationText}`,
             );
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');
         }
+        setLoading(false);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -67,7 +72,11 @@ export const PromoCodeSection = ({
                         className="focus:ring-primary h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none focus:border-primary-500  focus:outline-none focus:ring-0 "
                     />
                     <Button className="h-full" type="submit" onClick={() => handleSubmit(promoCode)}>
-                        {t('account.payments.apply')}
+                        {loading ? (
+                            <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                        ) : (
+                            t('account.payments.apply')
+                        )}
                     </Button>
                 </div>
             </div>
