@@ -39,7 +39,7 @@ export const PromoCodeSection = ({
             const validMonths = validCode.coupon.duration_in_months;
             const validDurationText = t('account.payments.validDuration', { validMonths });
             setPromoCodeMessageCls('text-green-600');
-            setPromoCodeInputCls('focus:border-green-600');
+            setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
                 ` ${percentageOff?.toString()}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
@@ -49,7 +49,7 @@ export const PromoCodeSection = ({
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');
-            setPromoCodeInputCls('focus:border-red-500');
+            setPromoCodeInputCls('focus:border-red-500 border-red-500');
         }
         setLoading(false);
     };
