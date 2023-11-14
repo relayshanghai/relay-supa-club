@@ -11,7 +11,7 @@ describe('Signup and start trial', () => {
         cy.contains('BoostBot雷宝可以帮助');
         cy.getByTestId('language-toggle').click();
         cy.contains('BoostBot雷宝可以帮助').should('not.exist');
-        cy.contains('BoostBot雷宝 can help.');
+        cy.contains('BoostBot can help.');
         cy.contains('Already signed up? Log in');
         cy.contains('button', 'Start Your Free Trial').click();
         cy.url().should('include', '/signup');
