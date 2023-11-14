@@ -48,7 +48,15 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
 
     return (
         <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 transition-transform duration-500 ease-in-out lg:max-w-lg xl:max-w-xl 2xl:max-w-3xl">
-            <h2 className="text-3xl font-semibold lg:text-5xl">{slides[currIndex].title}</h2>
+            {slides[currIndex].title?.includes('BoostBot') ? (
+                <div className="flex space-x-2">
+                    <h2 className="text-6xl font-light lg:text-5xl">{slides[currIndex].title?.split(' ')[0]}</h2>
+                    <h2 className="text-6xl font-bold lg:text-5xl">{slides[currIndex].title?.split(' ')[1]}</h2>
+                </div>
+            ) : (
+                <h2 className="text-3xl font-bold lg:text-5xl">{slides[currIndex].title}</h2>
+            )}
+
             <div className="group relative overflow-hidden">
                 <div>
                     <Image
@@ -76,7 +84,9 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                     </button>
                 </div>
             </div>
-            <p className="text-wrap text-md font-medium lg:text-xl">{slides[currIndex].description}</p>
+            <p className="text-wrap text-md font-regular  w-5/6 text-center lg:text-xl">
+                {slides[currIndex].description}
+            </p>
 
             <div className="flex space-x-2">
                 <div className="flex items-center justify-center gap-2">
