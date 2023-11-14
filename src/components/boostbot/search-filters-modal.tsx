@@ -6,7 +6,7 @@ import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
 import { Sparkles } from 'src/components/icons';
-import { countries } from 'src/utils/api/iqdata/dictionaries/geolocations';
+import { countries, countriesByFlag } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { randomNumber } from 'src/utils/utils';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -43,6 +43,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
     };
     const [localFilters, setLocalFilters] = useState(filters);
+    const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
 
     // isOpen is used to force a re-calc of the batchId when the modal is opened
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,6 +61,14 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
     const getTranslatedCountryName = (id: number) => {
         const countryCode = countries.find((country) => country.id === id)?.country.code;
         return t(`geolocations.countries.${countryCode}`);
+    };
+
+    const getFlagCountry = (id: number) => {
+        const countryCode = countries.find((country) => country.id === id)?.country.code;
+        const flag = countriesByFlag.filter(function (country) {
+            return country.code === countryCode;
+        });
+        return flag;
     };
 
     const togglePlatform = (platform: CreatorPlatform) => {
@@ -107,6 +116,11 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             key: getCountryName(Number(geoId)),
             value: 'add',
         });
+        if (localFilters['audience_geo'].length >= 1) {
+            setShouldShowGeoInput(false);
+        } else if (localFilters['audience_geo'].length < 1) {
+            setShouldShowGeoInput(true);
+        }
     };
 
     const removeGeo = (id: number) => {
@@ -121,20 +135,23 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             key: getCountryName(id),
             value: 'remove',
         });
+        setShouldShowGeoInput(true);
     };
+
     const confirmModal = () => {
         setIsOpen(false);
+        setShouldShowGeoInput(false);
         setFilters(localFilters);
     };
 
     const cancelModal = () => {
         setIsOpen(false);
+        setShouldShowGeoInput(false);
         setLocalFilters(filters);
     };
 
     return (
         <Modal maxWidth="max-w-2xl" visible={isOpen} onClose={cancelModal} title="">
-            {/* Title part */}
             <div className="mb-6 flex flex-1 space-x-3 border-b border-tertiary-200 p-6">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
@@ -151,10 +168,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             </div>
 
             <div className=" mb-12 flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
-                {/* <p>{t('boostbot.filters.fromPlatform')}</p> */}
-
                 <div className="flex w-full space-x-10 ">
-                    {/* Geos end here */}
                     <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Social Media Platforms
@@ -197,7 +211,6 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             );
                         })}
                     </div>
-                    {/* platform ends here  */}
                     <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Influencer Size
@@ -233,6 +246,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
+                                    {/* TO DO Select influencer size */}
                                     <input
                                         type="checkbox"
                                         className="checkbox mr-0"
@@ -245,28 +259,34 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                         })}
                     </div>
                 </div>
-                <div className="h-full w-full px-6">
-                    <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                        Audience Location
-                    </div>
-
-                    <div className="flex h-full w-full flex-row rounded-md border-none bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                        <div className="flex max-w-[600px] flex-wrap justify-center gap-1">
-                            {localFilters['audience_geo'].map((geo) => (
-                                <button
-                                    key={geo.id}
-                                    data-testid={`boostbot-filter-geo-${geo.id}`}
-                                    className="bg-white-50 flex items-center gap-1 rounded-md border border-tertiary-300 px-2 text-tertiary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
-                                    onClick={() => removeGeo(geo.id)}
-                                >
-                                    {getTranslatedCountryName(geo.id)}
-                                    <XMarkIcon className="h-3 w-3" />
-                                </button>
-                            ))}
+                <div className="flex h-full w-full flex-row-reverse">
+                    <div className="w-1/2 pl-4">
+                        <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
+                            Audience Location
                         </div>
-                        <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
+                        <div className="flex w-full flex-row rounded-md border-none bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            <div className="flex flex-row justify-center gap-1">
+                                {localFilters['audience_geo'].map((geo) => (
+                                    <button
+                                        key={geo.id}
+                                        data-testid={`boostbot-filter-geo-${geo.id}`}
+                                        className="bg-white-50 flex items-center gap-1 rounded-md border border-tertiary-300 px-2 text-tertiary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
+                                        onClick={() => removeGeo(geo.id)}
+                                    >
+                                        <p>{getFlagCountry(geo.id)[0].emoji}</p>
+                                        {getTranslatedCountryName(geo.id)}
+                                        <XMarkIcon className="h-3 w-3" />
+                                    </button>
+                                ))}
+                            </div>
+                            {shouldShowGeoInput && (
+                                <div className="w-fit">
+                                    <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
+                                </div>
+                            )}
+                        </div>
+                        <p className="font-regular mt-1 text-xs text-tertiary-400">Add up to 2 locations to target</p>
                     </div>
-                    <p className="font-regular mt-1 text-xs text-tertiary-400">Add up to 2 locations to target</p>
                 </div>
 
                 <div className="flex w-full flex-row-reverse">
