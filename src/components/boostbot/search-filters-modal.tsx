@@ -56,6 +56,10 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         }
     }, [batchId, isOpen, track]);
 
+    useEffect(() => {
+        setLocalFilters(filters);
+    }, [filters]);
+
     const getCountryName = (id: number) => countries.find((country) => country.id === id)?.name ?? 'Invalid country id';
 
     const getTranslatedCountryName = (id: number) => {

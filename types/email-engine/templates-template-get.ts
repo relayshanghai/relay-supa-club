@@ -1,7 +1,9 @@
+import type { SequenceEmailStep } from 'types/appTypes';
+
 export interface TemplatesTemplateGetResponse {
     account: null;
     id: string;
-    name: string;
+    name: SequenceEmailStep;
     description: string;
     format: string;
     created: string;

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'src/components/modal';
 import {
@@ -23,8 +24,10 @@ import { OpenAnalyzeProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 import { calculateIndexScore } from './table/boostbot-score-cell';
-import type { Dispatch, SetStateAction } from 'react';
+import { useBoostbot } from 'src/hooks/use-boostbot';
 import { AddToSequenceButton } from './add-to-sequence-button';
+import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topics-and-relevance';
+import type { Dispatch, SetStateAction } from 'react';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -43,8 +46,37 @@ export const InfluencerDetailsModal = ({
     outReachDisabled,
     setSelectedInfluencers,
 }: InfluencerDetailsModalProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { track } = useRudderstackTrack();
+    const [areTopicsAndRelevanceLoading, setAreTopicsAndRelevanceLoading] = useState(true);
+    const { getTopicsAndRelevance } = useBoostbot({});
+    const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
+    const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
+        ? Array(7).fill({ topic: '-', relevance: 0.5 })
+        : topicsAndRelevance.map((topic) => ({
+              ...topic,
+              topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
+          }));
+
+    useEffect(() => {
+        const handleTopicsAndRelevance = async (topics: string[]) => {
+            const topicsAndRelevance = await getTopicsAndRelevance(topics);
+
+            setAreTopicsAndRelevanceLoading(false);
+            setTopicsAndRelevance(topicsAndRelevance);
+        };
+
+        if (selectedRow && isOpen) {
+            handleTopicsAndRelevance(selectedRow.original.topics);
+        }
+    }, [getTopicsAndRelevance, selectedRow, isOpen]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setAreTopicsAndRelevanceLoading(true);
+            setTopicsAndRelevance([]);
+        }
+    }, [isOpen]);
 
     if (!selectedRow) {
         return null;
@@ -66,6 +98,7 @@ export const InfluencerDetailsModal = ({
         url,
         user_id,
     } = influencer;
+
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
     const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
@@ -87,19 +120,20 @@ export const InfluencerDetailsModal = ({
         // TODO: add to sequence function in V2-1029
     };
 
-    // TODO: replace placeholder in V2-1018
-    const dummyRadarGraphData = [
-        { subject: 'Productivity', A: 90, fullMark: 150 },
-        { subject: 'Fitness Routine', A: 60, fullMark: 150 },
-        { subject: 'Sports', A: 88, fullMark: 150 },
-        { subject: 'Theraputics', A: 66, fullMark: 150 },
-        { subject: 'Yoga', A: 80, fullMark: 150 },
-        { subject: 'Wellness', A: 90, fullMark: 150 },
-        { subject: 'Injury Recovery', A: 23, fullMark: 150 },
-    ];
+    // Used to break multiline labels into multiple tspans to prevent text overflow
+    function CustomizedTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
+        return (
+            <text x={x} y={y} dy={-4} fill="black" fontSize={10} textAnchor="middle">
+                {payload.value.split(' ').map((word: string, index: number) => (
+                    <tspan key={index} x={x} dy={index ? '1.2em' : 0}>
+                        {word}
+                    </tspan>
+                ))}
+            </text>
+        );
+    }
 
     const processedDemoData = processedAudienceDemoData(influencer);
-
     return (
         <Modal
             maxWidth="max-w-3xl"
@@ -150,15 +184,15 @@ export const InfluencerDetailsModal = ({
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.topNiches')}
                         </div>
-                        <div className="w-full">
+                        <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse' : ''}`}>
                             <ResponsiveContainer width={320} height={280}>
-                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={dummyRadarGraphData}>
+                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={translatedTopicsAndRelevance}>
                                     <PolarGrid stroke="#e5e7eb" />
-                                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10 }} />
+                                    <PolarAngleAxis dataKey="topic" tick={CustomizedTick} />
                                     <PolarRadiusAxis tick={false} axisLine={false} />
                                     <Radar
                                         name="top_niches"
-                                        dataKey="A"
+                                        dataKey="relevance"
                                         strokeWidth={2}
                                         stroke="#7C3AED" //text-primary-600
                                         fill="#DDD6FE" //text-primary-200
@@ -222,8 +256,8 @@ export const InfluencerDetailsModal = ({
                                 <CartesianGrid vertical={false} horizontal={false} />
                                 <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                                 <YAxis width={16} tick={false} axisLine={false} />
-                                <Bar dataKey="female" fill="#fcceee" radius={2} />
-                                <Bar dataKey="male" fill="#b8ccff" radius={2} />
+                                <Bar dataKey="female" fill="#FAA7E0" radius={2} />
+                                <Bar dataKey="male" fill="#84CAFF" radius={2} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

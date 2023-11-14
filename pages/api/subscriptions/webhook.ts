@@ -17,16 +17,26 @@ import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
 import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
+import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
+import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-customer-subscription-paused';
+import { ApiHandler } from 'src/utils/api-handler';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
     invoicePaymentSucceeded: 'invoice.payment_succeeded',
+    customerSubscriptionPaused: 'customer.subscription.paused',
 };
 
-export type HandledEvent = CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded;
+export type HandledEvent =
+    | CustomerSubscriptionCreated
+    | InvoicePaymentFailed
+    | InvoicePaymentSucceeded
+    | CustomerSubscriptionPaused;
 
-const identifyWebhook = async (event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded) => {
+const identifyWebhook = async (
+    event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded | CustomerSubscriptionPaused,
+) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
@@ -59,16 +69,14 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
             }
         case handledWebhooks.invoicePaymentFailed:
             return await handleInvoicePaymentFailed(res, event as InvoicePaymentFailed);
+        case handledWebhooks.customerSubscriptionPaused:
+            return await handleCustomerSubscriptionPaused(res, event as CustomerSubscriptionPaused);
         default:
             throw new Error('Unhandled event type');
     }
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-    }
-
+async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     let trackData: StripeWebhookIncomingPayload = {
         type: 'unknown',
         extra_info: { event: null, error: null },
@@ -151,3 +159,7 @@ const buffer = (req: NextApiRequest) => {
         req.on('error', reject);
     });
 };
+
+export default ApiHandler({
+    postHandler,
+});

@@ -9,6 +9,10 @@ import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 import type { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
+import type {
+    GetTopicsAndRelevanceBody,
+    GetTopicsAndRelevanceResponse,
+} from 'pages/api/boostbot/get-topics-and-relevance';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -76,10 +80,23 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
         [performFetch, company, profile],
     );
 
+    const getTopicsAndRelevance = useCallback(
+        async (topics: string[]) => {
+            const topicsAndRelevance = await performFetch<GetTopicsAndRelevanceResponse, GetTopicsAndRelevanceBody>(
+                'get-topics-and-relevance',
+                { topics },
+            );
+
+            return topicsAndRelevance;
+        },
+        [performFetch],
+    );
+
     return {
         getTopics,
         getRelevantTopics,
         getTopicClusters,
         getInfluencers,
+        getTopicsAndRelevance,
     };
 };

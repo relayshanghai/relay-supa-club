@@ -15,6 +15,8 @@ import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { clientLogger } from 'src/utils/logger-client';
 import { useCompany } from 'src/hooks/use-company';
+import { ClickNeedHelp } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SearchOptions = ({
     setPage,
@@ -22,12 +24,14 @@ export const SearchOptions = ({
     onSearch,
     searchType,
     onSearchTypeChange,
+    setShowNeedHelpModal,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
     searchType: string | null;
     onSearchTypeChange: (searchType: string) => void;
+    setShowNeedHelpModal: (show: boolean) => void;
 }) => {
     const { isExpired } = useCompany();
     const {
@@ -46,6 +50,7 @@ export const SearchOptions = ({
 
     const { t } = useTranslation();
     const { trackSearch, trackKeyword, trackHashtags, trackTopics } = useSearchTrackers();
+    const { track } = useRudderstackTrack();
 
     const handleSearch = useCallback(
         (e: any) => {
@@ -116,21 +121,34 @@ export const SearchOptions = ({
             <div className="flex h-full  flex-row">
                 <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
-                        <div className="flex gap-1">
-                            <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
-                            <Tooltip
-                                content={t('tooltips.searchTopics.title')}
-                                detail={t('tooltips.searchTopics.description')}
-                                highlight={
-                                    platform === 'youtube'
-                                        ? t('tooltips.searchTopics.highlight')
-                                        : t('tooltips.searchHashTags.highlight')
-                                }
-                                position="bottom-right"
-                                className="w-fit"
+                        <div className="flex place-items-center justify-between gap-1">
+                            <div className="flex gap-1">
+                                <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
+                                <Tooltip
+                                    content={t('tooltips.searchTopics.title')}
+                                    detail={t('tooltips.searchTopics.description')}
+                                    highlight={
+                                        platform === 'youtube'
+                                            ? t('tooltips.searchTopics.highlight')
+                                            : t('tooltips.searchHashTags.highlight')
+                                    }
+                                    position="bottom-right"
+                                    className="w-fit"
+                                >
+                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                </Tooltip>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                onClick={() => {
+                                    setShowNeedHelpModal(true);
+                                    track(ClickNeedHelp);
+                                }}
+                                className="mb-2 flex items-center"
                             >
-                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
-                            </Tooltip>
+                                {t('website.needHelp')}
+                                <Question className="ml-2 h-6 w-6" />
+                            </Button>
                         </div>
                         <div>
                             <SearchTopics

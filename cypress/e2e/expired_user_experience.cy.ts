@@ -29,10 +29,10 @@ describe('Expired User Experience', () => {
             'Oh no, it looks like your account has expired. Please upgrade your account to continue using BoostBot',
         );
     });
-    it('r button leads to boostbot', () => {
+    it('boostbot home button leads to boostbot', () => {
         cy.loginExpired();
         cy.visit('/account');
-        cy.contains('span', 'r').click();
+        cy.getByTestId('home-icon').click();
         cy.url().should('include', '/boostbot');
     });
     it('Can see banners on boostbot and discover', () => {

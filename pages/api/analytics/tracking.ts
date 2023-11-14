@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { RelayError } from 'src/errors/relay-error';
 import { createTrack } from 'src/utils/analytics/api/analytics';
 import events, { eventKeys, isTrackedEvent } from 'src/utils/analytics/events';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { now } from 'src/utils/datetime';
@@ -31,6 +32,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const result = await createTrack({ req, res })(trackedEvent, { ..._payload, event_id, event_at });
+
+    if (result === false) {
+        return res.status(204).end();
+    }
 
     // @todo move to copySnapshot
     if (snapshot_id) {

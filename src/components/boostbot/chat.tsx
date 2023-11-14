@@ -1,4 +1,3 @@
-import { SparklesIcon } from '@heroicons/react/24/solid';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
@@ -28,6 +27,7 @@ import type { Sequence } from 'src/utils/api/db';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
+import Logo from 'src/components/icons/Boostbot_selected';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export type Filters = {
@@ -95,17 +95,18 @@ export const Chat: React.FC<ChatProps> = ({
     allSequenceInfluencers,
     setSelectedInfluencers,
 }) => {
-    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
-    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
-    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+    const defaultFilters: Filters = {
         platforms: ['youtube', 'tiktok', 'instagram'],
         audience_geo: [
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
         size: ['microinfluencer', 'nicheinfluencer', 'megainfluencer'],
-    });
+    };
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -197,6 +198,7 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            track(RecommendInfluencers, payload);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             setInfluencers(influencers);
@@ -261,7 +263,6 @@ export const Chat: React.FC<ChatProps> = ({
                 // });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
@@ -279,8 +280,13 @@ export const Chat: React.FC<ChatProps> = ({
         }
     };
 
+    const clearChatHistoryAndFilters = () => {
+        clearChatHistory();
+        setFilters(defaultFilters);
+    };
+
     return (
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-500 bg-white shadow-lg">
             <ModalSequenceSelector
                 show={showSequenceSelector}
                 setShow={setShowSequenceSelector}
@@ -289,25 +295,28 @@ export const Chat: React.FC<ChatProps> = ({
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="boostbot-gradient z-10 shadow">
-                <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
+            <div className="boostbot-gradient z-10 m-0 flex px-4 py-3.5 shadow">
+                <div className="flex h-[32px] w-[32px] justify-center rounded-full bg-white">
+                    <Logo height={16} width={19} className="m-1 self-center stroke-none" />
+                </div>
+
+                <h1 className="text-md self-center px-[10px] font-semibold text-white drop-shadow-md">
                     BoostBot AI Search
-                    <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
-            <div className="flex justify-between px-2">
+            <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-primary-500 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
-                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-500 group-disabled:stroke-primary-200" />{' '}
+                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
                     {t('boostbot.filters.openModalButton')}
                 </button>
                 <button
                     data-testid="boostbot-open-clear-chat-history"
-                    className="group flex items-center gap-1 p-2 text-xs font-semibold text-slate-400 transition-all hover:bg-primary-100 disabled:bg-transparent"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-tertiary-400 transition-all hover:text-tertiary-600 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsClearChatHistoryModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
@@ -325,7 +334,7 @@ export const Chat: React.FC<ChatProps> = ({
             <ClearChatHistoryModal
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
-                onConfirm={clearChatHistory}
+                onConfirm={clearChatHistoryAndFilters}
             />
 
             <InfluencerDetailsModal
@@ -353,13 +362,14 @@ export const Chat: React.FC<ChatProps> = ({
                 isOutreachButtonDisabled={isOutreachButtonDisabled}
             />
 
-            <div className="relative">
+            <div className="relative ">
                 {/* Below is a gradient that hides the bottom of the chat */}
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
                 <ChatInput
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
+                    setSelectedInfluencers={setSelectedInfluencers}
                 />
             </div>
         </div>

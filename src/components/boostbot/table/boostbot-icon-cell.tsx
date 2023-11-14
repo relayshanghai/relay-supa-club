@@ -1,15 +1,17 @@
 import { ReportOutline } from 'src/components/icons';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
-import type { Row } from '@tanstack/react-table';
+import type { Row, Table } from '@tanstack/react-table';
 
 export type BoostbotAccountCellProps = {
     row: Row<BoostbotInfluencer>;
+    table: Table<BoostbotInfluencer>;
     setIsInfluencerDetailsModalOpen: (open: boolean) => void;
     setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 };
 
 export const OpenInfluencerModalCell = ({
     row,
+    table,
     setIsInfluencerDetailsModalOpen,
     setSelectedRow,
 }: BoostbotAccountCellProps) => {
@@ -17,6 +19,8 @@ export const OpenInfluencerModalCell = ({
         setIsInfluencerDetailsModalOpen(true);
         setSelectedRow(row);
     };
+
+    if (table.options.meta?.isLoading) return <></>;
 
     return (
         <div className="cursor-pointer">

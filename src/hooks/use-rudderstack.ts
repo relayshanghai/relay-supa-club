@@ -6,7 +6,7 @@ import type { CompanyDB, ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { useGetCurrentPage } from './use-get-current-page';
 import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import type { MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
+import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
 
@@ -28,6 +28,8 @@ export interface IdentityTraits extends apiObject {
     products?: string;
     subscriptionStatus?: string;
 }
+
+type identTraits = { [k in Exclude<MixpanelPeopleProps, MixpanelPeoplePropsInc>]?: any };
 
 export interface PageProperties extends apiObject {
     path?: string;
@@ -99,11 +101,11 @@ export const profileToIdentifiable = (
     user?: any,
     lang?: string,
     subscription?: SubscriptionGetResponse,
-) => {
+): { id: string; traits: identTraits } => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const subscriptionStatus = subscription?.status ?? '';
 
-    const traits: apiObject = {
+    const traits: identTraits = {
         email: email || '',
         firstName: first_name,
         lastName: last_name,

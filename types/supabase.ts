@@ -348,6 +348,7 @@ export interface Database {
           subscription_current_period_end: string | null
           subscription_current_period_start: string | null
           subscription_end_date: string | null
+          subscription_plan: string | null
           subscription_start_date: string | null
           subscription_status: string
           terms_accepted: boolean | null
@@ -370,6 +371,7 @@ export interface Database {
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
+          subscription_plan?: string | null
           subscription_start_date?: string | null
           subscription_status?: string
           terms_accepted?: boolean | null
@@ -392,6 +394,7 @@ export interface Database {
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
+          subscription_plan?: string | null
           subscription_start_date?: string | null
           subscription_status?: string
           terms_accepted?: boolean | null

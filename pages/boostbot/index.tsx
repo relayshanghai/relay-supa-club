@@ -12,7 +12,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { OpenVideoGuideModal, SendInfluencersToOutreach } from 'src/utils/analytics/events';
+import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
@@ -36,6 +36,7 @@ const Boostbot = () => {
         'boostbot-selected-influencers',
         {},
     );
+
     const selectedInfluencersData =
         // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
         influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
@@ -47,12 +48,13 @@ const Boostbot = () => {
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
-    const [sequence, setSequence] = useState<Sequence | undefined>(
+    const [sequence, setSequence] = useState<Sequence | undefined>(() =>
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
     const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+    const [selectedCount, setSelectedCount] = useState(0);
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -206,12 +208,12 @@ const Boostbot = () => {
                 type: 'translation',
                 translationKey: 'boostbot.chat.outreachDone',
             });
-            addMessage({
-                sender: 'Bot',
-                type: 'video',
-                videoUrl: '/assets/videos/sequence-guide.mp4',
-                eventToTrack: OpenVideoGuideModal.eventName,
-            });
+            // addMessage({
+            //     sender: 'Bot',
+            //     type: 'video',
+            //     videoUrl: '/assets/videos/sequence-guide.mp4',
+            //     eventToTrack: OpenVideoGuideModal.eventName,
+            // });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
@@ -261,7 +263,7 @@ const Boostbot = () => {
                 />
             )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
-                <div className="w-full flex-shrink-0 md:w-80">
+                <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
@@ -296,20 +298,35 @@ const Boostbot = () => {
                 {isInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
-                    <div className="flex w-full flex-col items-end">
-                        <div className="w-fit pb-3">
-                            <AddToSequenceButton
-                                buttonText={t('boostbot.chat.outreachSelected')}
-                                outReachDisabled={outReachDisabled}
-                                handleAddToSequenceButton={handleAddToSequenceButton}
-                            />
+                    <div className="flex w-full basis-3/4 flex-col">
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="ml-4 text-gray-400">
+                                {t('boostbot.table.selectedAmount', {
+                                    selectedCount,
+                                })}
+                            </div>
+                            <div className="w-fit pb-3">
+                                <AddToSequenceButton
+                                    buttonText={t('boostbot.chat.outreachSelected')}
+                                    outReachDisabled={outReachDisabled}
+                                    handleAddToSequenceButton={handleAddToSequenceButton}
+                                />
+                            </div>
                         </div>
                         <InfluencersTable
                             columns={columns}
                             data={influencers}
                             selectedInfluencers={selectedInfluencers}
                             setSelectedInfluencers={setSelectedInfluencers}
-                            meta={{ t, searchId, setIsInfluencerDetailsModalOpen, setSelectedRow }}
+                            meta={{
+                                t,
+                                searchId,
+                                setIsInfluencerDetailsModalOpen,
+                                setSelectedRow,
+                                allSequenceInfluencers,
+                                setSelectedCount,
+                                isLoading: isSearchLoading,
+                            }}
                         />
                     </div>
                 )}

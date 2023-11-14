@@ -65,6 +65,7 @@ const pricing = {
     },
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',
+    backToAccount: 'Back to account',
 };
 
 export default pricing;

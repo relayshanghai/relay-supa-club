@@ -34,7 +34,6 @@ export const getSequenceInfluencers =
                     username: socialProfile?.username ?? '',
                     avatar_url: socialProfile?.avatar_url ?? '',
                     url: socialProfile?.url ?? '',
-                    platform: (socialProfile?.platform as CreatorPlatform) ?? 'youtube',
                 });
             });
             // add the manager first name to each influencer if their added_by id matches a manager id:
