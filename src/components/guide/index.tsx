@@ -78,9 +78,7 @@ export const GuideComponent = () => {
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
             <div className="flex flex-col gap-2 text-center">
-                <p className="text-4xl font-bold text-gray-800">
-                    {t('guidePage.welcome')} relay<span className="text-[#6B65AD]">.</span>club
-                </p>
+                <p className="text-4xl font-bold text-gray-800">{t('guidePage.welcome')} BoostBot</p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
             {featVideo ? (
