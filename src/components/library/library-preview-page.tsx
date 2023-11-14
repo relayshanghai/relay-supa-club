@@ -144,7 +144,7 @@ const Inputs = () => {
                         error="required with error message"
                         label="Email"
                         type="email"
-                        placeholder="hello@relay.club"
+                        placeholder="hello@boostbot.ai"
                         value=""
                         required
                     />
