@@ -432,9 +432,9 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
     await createJob({
-        name: 'analytics_tracking_event',
+        name: 'track_analytics_event',
         payload: { account: _event?.account, eventName: _event.event, payload: { data: 'this is a test' } },
-        queue: 'blocking',
+        queue: 'analytics',
     });
 
     return res.status(httpCodes.OK).json({});
