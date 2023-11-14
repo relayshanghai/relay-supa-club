@@ -23,7 +23,7 @@ export const runJob = async (job: Jobs['Row']) => {
 
     try {
         const jobInstance = initJob(job.name);
-        result = await jobInstance.run(job.payload);
+        result = await jobInstance.run(job.payload ?? {});
         status = JOB_STATUS.success;
     } catch (e) {
         status = JOB_STATUS.failed;
