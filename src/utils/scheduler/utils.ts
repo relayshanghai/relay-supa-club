@@ -35,15 +35,22 @@ export const runJob = async (job: Jobs['Row']) => {
     return { result, status };
 };
 
+/**
+ * Mark a job as processed
+ * In case of failure in calling supabase, do it's best to log what happened
+ */
 export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'>, result: any) => {
     try {
-        db(finishJobDb)(job, status, result);
+        await db(finishJobDb)(job, status, result);
         return true;
     } catch (e) {
         // In case the call to Supabase fails for some reason,
         // suppress the error and notify Sentry instead
-        serverLogger('Failed database call', (scope) => {
-            return scope.setContext('Error', {
+        serverLogger('Job stuck on running', (scope) => {
+            return scope.setContext('Job', {
+                job: job.id,
+                status,
+                result: JSON.stringify(result),
                 error: e,
             });
         });

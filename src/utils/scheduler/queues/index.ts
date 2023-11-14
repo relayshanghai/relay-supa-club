@@ -14,7 +14,7 @@ export const isValidJobQueue = (name: string | number): name is JOB_QUEUE => {
     return name in queues;
 };
 
-export const runQueue = (name: string) => {
+export const initQueue = (name: string) => {
     if (isValidJobQueue(name)) {
         return queues[name];
     }

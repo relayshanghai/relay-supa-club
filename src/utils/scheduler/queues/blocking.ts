@@ -1,17 +1,37 @@
 import { db } from 'src/utils/supabase-client';
-import { fetchJobs } from '../db-queries';
+import { getJobs, fetchJobs } from '../db-queries';
 import type { JobQueue } from '../types';
 import { JOB_STATUS } from '../types';
 import { finishJob, runJob } from '../utils';
+import { serverLogger } from 'src/utils/logger-server';
+
+const QUEUE_NAME = 'blocking';
 
 /**
  * Blocking queue - A failing job will be retried until it becomes successful
  */
-export const Blocking: JobQueue<'blocking'> = {
-    name: 'blocking',
+export const Blocking: JobQueue<typeof QUEUE_NAME> = {
+    name: QUEUE_NAME,
     run: async (payload) => {
+        const running = await db(getJobs)({
+            queue: QUEUE_NAME,
+            status: JOB_STATUS.running,
+            limit: 1,
+        });
+
+        // Prevent blocking queues from running if a job is stuck
+        if (running.length > 0) {
+            const runningJob = running[0];
+            serverLogger(`Cannot process ${QUEUE_NAME} queue. A job is stuck in running`, (scope) => {
+                return scope.setContext('Job', {
+                    job: runningJob.id,
+                });
+            });
+            throw new Error(`Cannot process ${QUEUE_NAME} queue. A job is stuck in running`);
+        }
+
         const jobs = await db(fetchJobs)({
-            queue: 'blocking',
+            queue: QUEUE_NAME,
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
         });

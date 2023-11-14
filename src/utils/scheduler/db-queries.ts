@@ -82,3 +82,22 @@ export const finishJob =
         if (error) throw error;
         return data;
     };
+
+export const getJobs =
+    (supabase: RelayDatabase) =>
+    async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 0 }) => {
+        const dbquery = supabase.from('jobs').select('*').eq('status', filters.status).eq('queue', filters.queue);
+
+        if (filters.limit > 0) {
+            dbquery.limit(filters.limit);
+        }
+
+        if (filters.owner) {
+            dbquery.eq('owner', filters.owner);
+        }
+
+        const { data, error } = await dbquery;
+
+        if (error) throw error;
+        return data;
+    };
