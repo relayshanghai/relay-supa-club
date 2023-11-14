@@ -6,8 +6,6 @@ import {
     STRIPE_PRICE_MONTHLY_DIY,
     STRIPE_PRICE_MONTHLY_DIY_MAX,
     STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_QUARTERLY_DIY,
-    STRIPE_PRICE_QUARTERLY_DIY_MAX,
 } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
@@ -15,7 +13,7 @@ import useSWR from 'swr';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP'> | 'free';
-export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually' | 'quarterly'>;
 export type PriceTiers = {
     [key in ActiveSubscriptionTier]: string;
 };
@@ -30,13 +28,6 @@ export const PRICE_IDS: Prices = {
         free: '',
         discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
         outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
-    quarterly: {
-        diy: STRIPE_PRICE_QUARTERLY_DIY,
-        diyMax: STRIPE_PRICE_QUARTERLY_DIY_MAX,
-        free: '',
-        discovery: '',
-        outreach: '',
     },
 };
 export type PriceDetails = {
@@ -101,7 +92,6 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
 export const usePrices = () => {
     const pricesBlank: Prices = {
         monthly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '299', outreach: '799' },
-        quarterly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '', outreach: '' },
     };
     const { data: prices } = useSWR('prices', async () => {
         try {
@@ -114,16 +104,9 @@ export const usePrices = () => {
                 discovery: '299',
                 outreach: '799',
             };
-            const quarterly = {
-                diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
-                diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
-                free: '$0',
-                discovery: '',
-                outreach: '',
-            };
+
             const result: Prices = {
                 monthly,
-                quarterly,
             };
             return result;
         } catch (error) {
