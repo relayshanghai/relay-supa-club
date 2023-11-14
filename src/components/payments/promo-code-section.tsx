@@ -41,7 +41,7 @@ export const PromoCodeSection = ({
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
-                ` ${percentageOff?.toString()}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
+                ` ${percentageOff}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
                 )}) ${t('account.payments.offEn')}${validDurationText}`,
