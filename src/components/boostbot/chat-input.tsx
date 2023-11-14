@@ -29,7 +29,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
 
-        // setInfluencers(Array.from({ length: 20 }));
         setSelectedInfluencers({});
 
         onSendMessage(message.trim());
