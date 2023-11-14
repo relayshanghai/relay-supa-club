@@ -77,7 +77,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         updatedValues.email = socialProfile.email;
         updatedValues.social_profile_last_fetched = new Date().toISOString();
     }
-    if (!sequenceInfluencer.tags) {
+    if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
         updatedValues.tags = getRelevantTags(report);
         updatedValues.social_profile_last_fetched = new Date().toISOString();
     }

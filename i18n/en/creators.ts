@@ -2,7 +2,7 @@ const creators = {
     recommended: 'Recommended',
     recommendedTooltip: 'Recommended Influencers',
     recommendedTooltipDetail:
-        'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+        'Are those which have worked with boostbot.ai brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
     resultsPrefix: 'We found',
     resultsPostfixKeywords:

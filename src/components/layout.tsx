@@ -43,7 +43,10 @@ export const Layout = ({ children }: any) => {
 
     const router = useRouter();
 
-    const routerPath = router.asPath.split('/').slice(1);
+    const routerPath = router.asPath
+        .split('/')
+        .slice(1)
+        .map((p) => p.split('?')[0]);
 
     const { sequence } = useSequence(routerPath.length > 1 && routerPath.includes('sequences') ? routerPath[1] : '');
     const { campaign } = useCampaigns({
