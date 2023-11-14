@@ -21,7 +21,7 @@ const sequences = {
     outreachPlanUpgradeTooltip: '仅限拓展方案用户使用',
     outreachPlanUpgradeTooltipDescription: `此功能仅适用于当前使用拓展方案的付费用户。
 
-    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至 amy.hu@relay.club咨询拓展方案。`,
+    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至amy@boostbot.ai咨询拓展方案。`,
     openRateTooltip: '邮件打开率',
     openRateTooltipDescription:
         '已发送的邮件中被打开查看邮件占比。由于某些电子邮件客户端禁用外部跟踪，这个数字可能不是百分之百的准确。',
