@@ -3,8 +3,11 @@ import type { Jobs } from '../api/db';
 import { serverLogger } from '../logger-server';
 import { db } from '../supabase-client';
 import { createJob as createJobDb, finishJob as finishJobDb } from './db-queries';
+import type { JobNames } from './jobs';
 import { isValidJob, jobs } from './jobs';
 import { JOB_STATUS } from './types';
+import { now } from '../datetime';
+import type { JOB_QUEUE } from './queues';
 
 export const initJob = (name: string) => {
     if (isValidJob(name)) {
@@ -49,14 +52,20 @@ export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'runn
     return false;
 };
 
-type CreateJobInsert = Pick<Jobs['Insert'], 'name' | 'run_at' | 'payload' | 'queue' | 'owner'>;
+type CreateJobInsert = Pick<Jobs['Insert'], 'payload' | 'owner'> & {
+    name: JobNames;
+    queue?: JOB_QUEUE;
+    run_at?: string;
+};
 
 export const createJob = async (job: CreateJobInsert) => {
+    const { run_at, queue } = job;
+
     return await db(createJobDb)(v4(), {
         name: job.name,
-        run_at: job.run_at,
+        run_at: run_at ?? now(),
         payload: job.payload,
-        queue: job.queue,
+        queue: queue ?? 'default',
         owner: job.owner,
     });
 };
