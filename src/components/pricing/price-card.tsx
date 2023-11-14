@@ -1,5 +1,5 @@
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { useNewPrices } from 'src/hooks/use-prices';
+import { usePrices } from 'src/hooks/use-prices';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
@@ -15,7 +15,7 @@ const isCurrentPlan = (
     period: ActiveSubscriptionPeriod,
     subscription?: SubscriptionGetResponse,
 ) => {
-    const tierName = tier === 'diyMax' ? 'DIY Max' : 'DIY';
+    const tierName = tier === 'discovery' ? 'Discovery' : 'Outreach';
     return subscription?.name === tierName && subscription.interval === period && subscription.status === 'active';
 };
 
@@ -51,10 +51,9 @@ export const PriceCard = ({
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
-    const prices = useNewPrices();
+    const prices = usePrices();
     const { subscription } = useSubscription();
     const { company } = useCompany();
-    const freeTier = priceTier === 'free';
     const router = useRouter();
     type PriceKey = keyof typeof prices;
     const key: PriceKey = priceTier;
@@ -79,11 +78,9 @@ export const PriceCard = ({
                 <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
                     {price.prices[period]}
 
-                    {!freeTier && (
-                        <span className="ml-1 text-sm font-semibold text-gray-500">
-                            {currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth')}
-                        </span>
-                    )}
+                    <span className="ml-1 text-sm font-semibold text-gray-500">
+                        {currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth')}
+                    </span>
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />
 

@@ -2,7 +2,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
 import CheckoutForm from './checkout-form';
-import { useNewPrices } from 'src/hooks/use-prices';
+import { usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
 import { useMemo, useState } from 'react';
@@ -25,7 +25,7 @@ export type CreatePaymentIntentResponse = {
 
 export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
-    const prices = useNewPrices();
+    const prices = usePrices();
     const { trackEvent } = useRudderstack();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];

@@ -1,18 +1,12 @@
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
-import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useTranslation } from 'react-i18next';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_DIY,
-    STRIPE_PRICE_MONTHLY_DIY_MAX,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-} from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRICE_MONTHLY_OUTREACH } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
 
-export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP'> | 'free';
+export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
 export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually' | 'quarterly'>;
 export type PriceTiers = {
     [key in ActiveSubscriptionTier]: string;
@@ -23,9 +17,6 @@ export type Prices = {
 
 export const PRICE_IDS: Prices = {
     monthly: {
-        diy: STRIPE_PRICE_MONTHLY_DIY,
-        diyMax: STRIPE_PRICE_MONTHLY_DIY_MAX,
-        free: '',
         discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
         outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
     },
@@ -41,26 +32,6 @@ export type PriceDetails = {
 };
 
 export const priceDetails: PriceDetails = {
-    free: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 1000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 30 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 50 },
-    ],
-    diyMax: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 50000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 450 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 2000 },
-        { title: 'fullCustomerService', icon: 'check' },
-    ],
-    diy: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 25000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 1000 },
-        { title: 'fullCustomerService', icon: 'check' },
-    ],
     discovery: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 900, subtitle: 'boostBotSearchAndNormalSearch' },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
@@ -89,36 +60,9 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
     // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
-export const usePrices = () => {
-    const pricesBlank: Prices = {
-        monthly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '299', outreach: '799' },
-    };
-    const { data: prices } = useSWR('prices', async () => {
-        try {
-            const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
-            const { diy, diyMax } = res;
-            const monthly = {
-                diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
-                diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
-                free: '$0',
-                discovery: '299',
-                outreach: '799',
-            };
-
-            const result: Prices = {
-                monthly,
-            };
-            return result;
-        } catch (error) {
-            clientLogger(error, 'error', true); // send to sentry cause there's something wrong with the pricing endpoint
-            return pricesBlank;
-        }
-    });
-    return prices ? prices : pricesBlank;
-};
 
 //current create a new use hook for new prices as the old one are not found in the test mode of our Stripe account, they were in another Stripe account which was a legacy issue
-export const useNewPrices = () => {
+export const usePrices = () => {
     const { i18n } = useTranslation();
     const en = i18n.language.toLowerCase().includes('en');
     const pricesBlank = {
