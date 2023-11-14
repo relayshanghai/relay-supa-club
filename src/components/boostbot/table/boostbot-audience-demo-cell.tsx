@@ -1,7 +1,7 @@
 import type { Row, Table } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import { processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
+import { convertAudienceDataToPercentage, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 
 export type BoostbotAudienceDemoCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -10,7 +10,7 @@ export type BoostbotAudienceDemoCellProps = {
 
 export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCellProps) => {
     const influencer = row.original;
-    const processedData = processedAudienceDemoData(influencer);
+    const processedData = convertAudienceDataToPercentage(processedAudienceDemoData(influencer));
 
     const isLoading = table.options.meta?.isLoading;
 

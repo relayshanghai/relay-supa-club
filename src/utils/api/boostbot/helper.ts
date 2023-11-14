@@ -69,20 +69,20 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
         });
     };
 
-    const convertToPercentage = (
-        data: {
-            category: string;
-            male: number;
-            female: number;
-        }[],
-    ) => {
-        const totalAudience = data.reduce((sum, item) => sum + item.male + item.female, 0);
-        return data.map((item) => ({
-            ...item,
-            male: (item.male / totalAudience) * 100,
-            female: (item.female / totalAudience) * 100,
-        }));
-    };
+    return processRawData(transformAndMergeData(audienceDemoData), maleAudienceWeight);
+};
 
-    return convertToPercentage(processRawData(transformAndMergeData(audienceDemoData), maleAudienceWeight));
+export const convertAudienceDataToPercentage = (
+    data: {
+        category: string;
+        male: number;
+        female: number;
+    }[],
+) => {
+    const totalAudience = data.reduce((sum, item) => sum + item.male + item.female, 0);
+    return data.map((item) => ({
+        ...item,
+        male: (item.male / totalAudience) * 100,
+        female: (item.female / totalAudience) * 100,
+    }));
 };
