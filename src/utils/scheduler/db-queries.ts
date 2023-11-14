@@ -14,7 +14,10 @@ type GetJobFilters = {
     owner?: string;
 };
 
-export const getJobs =
+/**
+ * Fetch jobs matching the filter marking them `running`
+ */
+export const fetchJobs =
     (supabase: RelayDatabase) =>
     async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 1 }) => {
         const ts = now();

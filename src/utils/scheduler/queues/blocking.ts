@@ -1,5 +1,5 @@
 import { db } from 'src/utils/supabase-client';
-import { getJobs } from '../db-queries';
+import { fetchJobs } from '../db-queries';
 import type { JobQueue } from '../types';
 import { JOB_STATUS } from '../types';
 import { finishJob, runJob } from '../utils';
@@ -10,7 +10,7 @@ import { finishJob, runJob } from '../utils';
 export const Blocking: JobQueue<'blocking'> = {
     name: 'blocking',
     run: async (payload) => {
-        const jobs = await db(getJobs)({
+        const jobs = await db(fetchJobs)({
             queue: 'blocking',
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
