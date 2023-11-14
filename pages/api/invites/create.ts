@@ -24,7 +24,7 @@ const formatEmail = (name: string, token: string, appUrl: string) => {
     return `
     <div style="padding: 5px; line-height: 2.5rem">
         <h1>Hi ${name},</h1>
-        <p>You have been invited to join a company on relay.club.</p>
+        <p>You have been invited to join a company on BoostBot雷宝</p>
         <p>Click the button below to accept the invite.</p>
         <a href="${link}" style="background-color: #8B5CF6; color: white; margin: 5px; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Accept Invite</a>
         <p>If you did not request this invite, you can safely ignore this email.</p>
@@ -73,7 +73,7 @@ const handler: NextApiHandler = async (req, res) => {
         await sendEmail({
             email,
             name,
-            subject: 'You have been invited to join a company on relay.club',
+            subject: 'You have been invited to join a company on boostbot.ai',
             html: formatEmail(name, insertData.id, appUrl),
         });
     } catch (error) {
