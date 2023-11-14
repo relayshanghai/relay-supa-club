@@ -19,7 +19,7 @@ export default function PaymentPage() {
 
     return (
         <LoginSignupLayout
-            leftBgColor="bg-white"
+            leftBgColor="bg-primary-500"
             left={<PlanDetails priceTier={plan as newActiveSubscriptionTier} />}
             right={<AddPaymentsSection priceTier={plan as newActiveSubscriptionTier} />}
         />

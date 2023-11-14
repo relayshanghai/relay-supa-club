@@ -16,7 +16,15 @@ import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-pa
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
 
-export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice: NewRelayPlan; batchId: number }) {
+export default function CheckoutForm({
+    selectedPrice,
+    batchId,
+    couponId,
+}: {
+    selectedPrice: NewRelayPlan;
+    batchId: number;
+    couponId?: string;
+}) {
     const stripe = useStripe();
     const elements = useElements();
     const { t } = useTranslation();
@@ -52,6 +60,7 @@ export default function CheckoutForm({ selectedPrice, batchId }: { selectedPrice
                 company.id,
                 company.cus_id,
                 priceId,
+                couponId,
             );
             if (!clientSecret) {
                 throw new Error('No client secret found');
