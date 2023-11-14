@@ -208,6 +208,13 @@ const Boostbot = () => {
                 type: 'translation',
                 translationKey: 'boostbot.chat.outreachDone',
             });
+
+            addMessage({
+                sender: 'Neutral',
+                type: 'textlink',
+                text: sequence?.name,
+                link: `/sequences/${sequence?.id}`,
+            });
             // addMessage({
             //     sender: 'Bot',
             //     type: 'video',
