@@ -19,7 +19,7 @@ const login = {
     lastNamePlaceholder: 'Enter your last name',
     confirmPassword: 'Confirm password',
     someoneInvitedYouToJoinRelayClub:
-        'Someone invited you to join boostbot.ai. Accept the invitation by setting up an account below.',
+        'Someone invited you to join BoostBot. Accept the invitation by setting up an account below.',
     inviteAccepted: 'Invite accepted',
     checkingInviteStatus: 'Checking invite status',
     back: 'Back',
@@ -72,7 +72,7 @@ const login = {
     phoneNumberInvalid: 'Invalid phone number',
     phoneNumber: 'Phone number',
     disclaimer:
-        '* At boostbot.ai, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
+        '* At BoostBot, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
     noSpacesAllowed: 'Must not include spaces',
     activateSuccess: 'Success',
     companyNameRequired: 'Company name is required',

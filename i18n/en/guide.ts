@@ -225,7 +225,7 @@ const guidePage = {
                 {
                     title: 'Engagement Rate',
                     description:
-                        'The formula for calculating engagement rate may vary across the industry as there isn’t one recognized way to calculate it. At boostbot.ai we divide Average Likes for the last 30 posts by the total number of followers.',
+                        'The formula for calculating engagement rate may vary across the industry as there isn’t one recognized way to calculate it. At BoostBot we divide Average Likes for the last 30 posts by the total number of followers.',
                 },
                 {
                     title: 'Contact Info',
