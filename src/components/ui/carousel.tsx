@@ -50,8 +50,8 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
         <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 transition-transform duration-500 ease-in-out lg:max-w-lg xl:max-w-xl 2xl:max-w-3xl">
             {slides[currIndex].title?.includes('BoostBot') ? (
                 <div className="flex space-x-2">
-                    <h2 className="text-6xl font-light lg:text-5xl">{slides[currIndex].title?.split(' ')[0]}</h2>
-                    <h2 className="text-6xl font-bold lg:text-5xl">{slides[currIndex].title?.split(' ')[1]}</h2>
+                    <h2 className="text-6xl font-light lg:text-5xl">{slides[currIndex].title?.split('B')[0]}</h2>
+                    <h2 className="text-6xl font-bold lg:text-5xl">B{slides[currIndex].title?.split('B')[1]}Bot</h2>
                 </div>
             ) : (
                 <h2 className="text-3xl font-bold lg:text-5xl">{slides[currIndex].title}</h2>
