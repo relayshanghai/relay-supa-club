@@ -58,7 +58,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
         selectInfluencer: 'Select influencer',
-        selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
+        selectedAmount: '{{selectedCount}} selected.',
         alreadyAddedToSequence: 'Already added to sequence',
     },
     success: {

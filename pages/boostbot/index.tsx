@@ -300,7 +300,11 @@ const Boostbot = () => {
                 ) : (
                     <div className="flex w-full basis-3/4 flex-col">
                         <div className="flex flex-row items-center justify-between">
-                            <div className="ml-4 text-gray-400">{selectedCount} selected</div>
+                            <div className="ml-4 text-gray-400">
+                                {t('boostbot.table.selectedAmount', {
+                                    selectedCount,
+                                })}
+                            </div>
                             <div className="w-fit pb-3">
                                 <AddToSequenceButton
                                     buttonText={t('boostbot.chat.outreachSelected')}
