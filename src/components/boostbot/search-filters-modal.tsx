@@ -172,7 +172,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             </div>
 
             <div className=" mb-12 flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
-                <div className="flex w-full space-x-10 ">
+                <div className="flex w-full space-x-10">
                     <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Social Media Platforms
@@ -182,9 +182,11 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             return (
                                 <div
                                     key={platform}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row flex-row items-center justify-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
+                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
                                         isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
                                     }`}
+                                    onClick={() => togglePlatform(platform)}
+                                    data-testid={`boostbot-filter-${platform}`}
                                 >
                                     <div className="flex space-x-4">
                                         <div className=" flex h-10 w-10 items-center  justify-center rounded-lg border border-tertiary-200 bg-white">
@@ -204,13 +206,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox mr-0"
-                                        checked={isSelected}
-                                        onClick={() => togglePlatform(platform)}
-                                        data-testid={`boostbot-filter-${platform}`}
-                                    />
+                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
                                 </div>
                             );
                         })}
@@ -220,13 +216,16 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             Influencer Size
                         </div>
                         {influencers.map((influencer) => {
-                            const isSelected = localFilters.size.includes(influencer);
+                            const isSelected = localFilters.size?.includes(influencer);
                             return (
+                                // TO DO Select influencer size
                                 <div
                                     key={influencer}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row flex-row items-center justify-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
+                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
                                         isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
                                     }`}
+                                    // onClick={() => togglePlatform(influencer)}
+                                    // data-testid={`boostbot-filter-${influencer}`}
                                 >
                                     <div className="flex space-x-4">
                                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
@@ -250,14 +249,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    {/* TO DO Select influencer size */}
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox mr-0"
-                                        checked={isSelected}
-                                        // onClick={() => togglePlatform(influencer)}
-                                        // data-testid={`boostbot-filter-${influencer}`}
-                                    />
+                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
                                 </div>
                             );
                         })}
