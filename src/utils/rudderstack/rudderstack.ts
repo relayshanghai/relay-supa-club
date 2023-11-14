@@ -33,15 +33,21 @@ export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['sessio
     (rudder, session) => (event, payload) => {
         if (disabled) return;
 
-        const trigger: TriggerEvent = (eventName, payload) => {
+        const trigger: TriggerEvent = (eventName, eventPayload) => {
             if (!session) {
                 throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
             }
+
+            const { __timestamp, ...payload } = eventPayload;
 
             const trackPayload: Parameters<typeof rudder.track>[0] = {
                 event: eventName,
                 properties: payload,
             };
+
+            if (__timestamp) {
+                trackPayload.timestamp = __timestamp;
+            }
 
             if (session.user_id) {
                 trackPayload.userId = session.user_id;

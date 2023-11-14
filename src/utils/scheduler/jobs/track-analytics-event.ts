@@ -12,6 +12,7 @@ type TrackAnalyticsEventPayload = {
      * Too deep to improve dx. Double check payload type in analytics index for now
      */
     eventPayload: any;
+    eventTimestamp: string;
 };
 
 type TrackAnalyticsEventRun = (payload: TrackAnalyticsEventPayload) => Promise<any>;
@@ -19,13 +20,16 @@ type TrackAnalyticsEventRun = (payload: TrackAnalyticsEventPayload) => Promise<a
 export const TrackAnalyticsEvent: JobInterface<'track_analytics_event', TrackAnalyticsEventRun> = {
     name: 'track_analytics_event',
     run: async (payload) => {
-        const { account, eventName, eventPayload } = payload;
+        const { account, eventName, eventPayload, eventTimestamp } = payload;
 
         identifyAccount(account);
 
         const event = initEvent(eventName);
 
-        track(rudderstack.getClient(), rudderstack.getIdentity())(event, eventPayload);
+        track(rudderstack.getClient(), rudderstack.getIdentity())(event, {
+            ...eventPayload,
+            __timestamp: eventTimestamp,
+        });
 
         return payload;
     },

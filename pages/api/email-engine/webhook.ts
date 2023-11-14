@@ -50,6 +50,7 @@ import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/ema
 import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import { createJob } from 'src/utils/scheduler/utils';
+import { now } from 'src/utils/datetime';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -179,6 +180,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
                 account: event.account,
                 eventName: EmailReply.eventName,
                 eventPayload: trackData,
+                eventTimestamp: now(),
             },
         });
     }
@@ -211,6 +213,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
                     ...trackData,
                     is_success: false, // an incoming email that isn't associated with any user account is strange
                 },
+                eventTimestamp: now(),
             },
         });
 
@@ -253,6 +256,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
                 sequence_email_id: sequenceEmail.id,
                 extra_info: { event_data: event.data, update },
             },
+            eventTimestamp: now(),
         },
     });
 
@@ -277,6 +281,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
                 sequence_email_id: sequenceEmail.id,
                 extra_info: { event_data: event.data, update },
             },
+            eventTimestamp: now(),
         },
     });
 
@@ -319,6 +324,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
                 account: event.account,
                 eventName: EmailFailed.eventName,
                 eventPayload: trackData,
+                eventTimestamp: now(),
             },
         });
     }
@@ -334,6 +340,7 @@ const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiRespo
             eventPayload: {
                 extra_info: { event_data: event.data },
             },
+            eventTimestamp: now(),
         },
     });
 
@@ -360,6 +367,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
                 error_type: 'failed',
                 extra_info: { event_data: event.data, update },
             },
+            eventTimestamp: now(),
         },
     });
 
@@ -386,6 +394,7 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
                 error_type: 'quit',
                 extra_info: { event_data: event.data, update },
             },
+            eventTimestamp: now(),
         },
     });
 
@@ -481,6 +490,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                     account: event.account,
                     eventName: EmailSent.eventName,
                     eventPayload: trackData,
+                    eventTimestamp: now(),
                 },
             });
         }
