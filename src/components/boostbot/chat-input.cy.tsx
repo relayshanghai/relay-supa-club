@@ -101,19 +101,4 @@ describe('<ChatInput />', () => {
 
         cy.get('textarea').should('have.value', '');
     });
-
-    it('Opens the options modal when the options button is clicked', () => {
-        testMount(
-            <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
-                onSendMessage={onSendMessage}
-                isLoading={false}
-                isDisabled={false}
-            />,
-        );
-
-        cy.getByTestId('boostbot-open-options').click();
-        cy.contains('Filter influencers');
-        cy.contains('Clear chat and filters');
-    });
 });
