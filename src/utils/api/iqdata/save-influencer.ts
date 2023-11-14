@@ -38,7 +38,7 @@ export const saveInfluencer =
     (db: RelayDatabase) =>
     async (data: CreatorReport): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
         const referenceId = extractInfluencerReferenceId(data['user_profile']);
-        const existingSocialProfile = await getInfluencerSocialProfileByReferenceId(db)(referenceId);
+        const { data: existingSocialProfile } = await getInfluencerSocialProfileByReferenceId(db)(referenceId);
         let existingInfluencer = null;
 
         if (existingSocialProfile) {
