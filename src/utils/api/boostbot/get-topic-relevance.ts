@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from 'openai';
-import { RelayError } from 'src/utils/api-handler';
+import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
 const configuration = new Configuration({

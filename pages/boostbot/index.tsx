@@ -54,6 +54,7 @@ const Boostbot = () => {
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
     const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+    const [selectedCount, setSelectedCount] = useState(0);
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -297,20 +298,35 @@ const Boostbot = () => {
                 {isInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
-                    <div className="flex w-full basis-3/4 flex-col items-end">
-                        <div className="w-fit pb-3">
-                            <AddToSequenceButton
-                                buttonText={t('boostbot.chat.outreachSelected')}
-                                outReachDisabled={outReachDisabled}
-                                handleAddToSequenceButton={handleAddToSequenceButton}
-                            />
+                    <div className="flex w-full basis-3/4 flex-col">
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="ml-4 text-gray-400">
+                                {t('boostbot.table.selectedAmount', {
+                                    selectedCount,
+                                })}
+                            </div>
+                            <div className="w-fit pb-3">
+                                <AddToSequenceButton
+                                    buttonText={t('boostbot.chat.outreachSelected')}
+                                    outReachDisabled={outReachDisabled}
+                                    handleAddToSequenceButton={handleAddToSequenceButton}
+                                />
+                            </div>
                         </div>
                         <InfluencersTable
                             columns={columns}
                             data={influencers}
                             selectedInfluencers={selectedInfluencers}
                             setSelectedInfluencers={setSelectedInfluencers}
-                            meta={{ t, searchId, setIsInfluencerDetailsModalOpen, setSelectedRow }}
+                            meta={{
+                                t,
+                                searchId,
+                                setIsInfluencerDetailsModalOpen,
+                                setSelectedRow,
+                                allSequenceInfluencers,
+                                setSelectedCount,
+                                isLoading: isSearchLoading,
+                            }}
                         />
                     </div>
                 )}
