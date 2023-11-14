@@ -67,12 +67,29 @@ type CreateJobInsert = Pick<Jobs['Insert'], 'payload' | 'owner'> & {
 
 export const createJob = async (job: CreateJobInsert) => {
     const { run_at, queue } = job;
+    const id = v4();
+    const schedule = run_at ?? now();
 
-    return await db(createJobDb)(v4(), {
-        name: job.name,
-        run_at: run_at ?? now(),
-        payload: job.payload,
-        queue: queue ?? 'default',
-        owner: job.owner,
-    });
+    try {
+        return await db(createJobDb)(id, {
+            name: job.name,
+            run_at: schedule,
+            payload: job.payload,
+            queue: queue ?? 'default',
+            owner: job.owner,
+        });
+    } catch (error) {
+        serverLogger('Cannot create job', (scope) => {
+            return scope.setContext('Job', {
+                job: job.name,
+                queue,
+                payload: JSON.stringify(job.payload ?? {}),
+                owner: job.owner,
+                run_at: schedule,
+                error,
+            });
+        });
+    }
+
+    return false;
 };

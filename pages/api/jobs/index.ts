@@ -23,6 +23,12 @@ const postHandler: ActionHandler = async (req, res) => {
         owner: req.session.user.id,
     });
 
+    if (!job) {
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+            error: 'Failed creating the job',
+        });
+    }
+
     return res.status(httpCodes.OK).json(job);
 };
 
