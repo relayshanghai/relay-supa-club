@@ -8,7 +8,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, InfluencerType } from 'types';
+import type { CreatorPlatform, InfluencerSize } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import { limiter } from 'src/utils/limiter';
@@ -33,7 +33,7 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 export type Filters = {
     platforms: CreatorPlatform[];
     audience_geo: AudienceGeo[];
-    size: InfluencerType[];
+    influencerSizes: InfluencerSize[];
 };
 
 interface ChatProps {
@@ -101,7 +101,7 @@ export const Chat: React.FC<ChatProps> = ({
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
-        size: ['microinfluencer', 'nicheinfluencer', 'megainfluencer'],
+        influencerSizes: ['microinfluencer', 'nicheinfluencer', 'megainfluencer'],
     };
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);

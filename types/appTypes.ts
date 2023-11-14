@@ -102,7 +102,7 @@ export type UsageType = 'profile' | 'search' | 'ai_email';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
-export type InfluencerType = 'microinfluencer' | 'megainfluencer' | 'nicheinfluencer';
+export type InfluencerSize = 'microinfluencer' | 'nicheinfluencer' | 'megainfluencer';
 
 export type InfluencerOutreachStatus =
     | 'to contact'
