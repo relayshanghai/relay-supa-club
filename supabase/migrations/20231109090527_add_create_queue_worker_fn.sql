@@ -7,16 +7,14 @@ BEGIN
     PERFORM cron.schedule(
       worker_name,
       schedule,
-      $BD$
-        SELECT content FROM http((
-            'POST', url,
+      format($cmd$SELECT content FROM http((
+            'POST', %L,
             ARRAY[
-                http_header('x-scheduler-token', token),
-                http_header('x-scheduler-worker-id', worker_name)
+                http_header('x-scheduler-token', %L),
+                http_header('x-scheduler-worker-id', %L)
             ],
             '', ''
-        )::http_request);
-      $BD$
+        )::http_request)$cmd$, url, token, worker_name)
     );
 END;
 $function$;
