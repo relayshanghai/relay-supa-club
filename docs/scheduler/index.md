@@ -24,15 +24,16 @@ It currently supports the following filters:
 ### What is a Queue?
 Queues are groups of jobs that are run by a dedicated worker.
 
-Currently, we have the following queues:
+Currently, we have the following *base** queues:
 - Default queue (`default`) - where jobs are created by default
-- Failed queue (`failed`) - where jobs are sent when it failed
+- Failed queue (`failed`) - where jobs with failed `status` are rerun, defaults to `default` queue
+- Blocking queue (`blocking`) - where incoming jobs won't be processed unless the previous job is finished
 
-To create a worker dedicated to a queue:
+You can extend these **base** queues or create your own. After that, you need to create a worker dedicated to your custom queue:
 ```sql
 SELECT create_queue_worker('worker-outreach-1', 'https://app.relay.club/api/jobs/run?queue=outreach', '123ABC', '* * * * *')
 
--- Make sure you retry those failed jobs too
+-- Make sure you to create a worker for the failed jobs in your custom query too
 SELECT create_queue_worker('worker-outreach-failed-1', 'https://app.relay.club/api/jobs/run?queue=outreach&status=failed', '123ABC', '* * * * *')
 ```
 
@@ -46,14 +47,14 @@ SELECT create_queue_worker('worker-default-1', 'https://app.relay.club/api/jobs/
 ```
 
 ### Scheduling a job
-To schedule a job, you will need to send a job to `POST /api/jobs` endpoint
+To schedule a job, you can send a job to `POST /api/jobs` endpoint
 
 ```ts
 {
     // The name of the Job. Lookup `JobNames` symbol
     name: JobNames,
     // The schedule when to run the job (in UTC). Must be ISO format
-    run_at: Date,
+    run_at: string<ISODate>,
     // The json payload to send to the job. Must be serializable
     payload: Record<string, any>,
     // The queue the job belongs to. Defaults to `default`
@@ -61,8 +62,14 @@ To schedule a job, you will need to send a job to `POST /api/jobs` endpoint
 }
 ```
 
+or, call `createJob()`
+
+```ts
+createJob(jobName: JobNames, data: { run_at: string<ISODate>, queue: JOB_QUEUE, payload: Record<string, any> });
+```
+
 ### Checking the job status
-To check the status of a job, you will need to get the info from `GET /api/jobs/[id]` endpoint
+To check the status of a job, you will need to get the info from `GET /api/jobs/[id]` endpoint or use `getJob()`
 
 ### Setting up
 Run this on the database
@@ -74,6 +81,9 @@ SELECT create_queue_worker('worker-default-2', 'https://app.relay.club/api/jobs/
 
 -- Create workers for failed jobs (for retrying)
 SELECT create_queue_worker('worker-failed-1', 'https://app.relay.club/api/jobs/run?status=failed', '123ABC', '* * * * *');
+
+-- or create workers for your custom queues
+-- SELECT create_queue_worker('worker-myqueue-1', 'https://app.relay.club/api/jobs/run?status=myqueue', '123ABC', '* * * * *');
 
 -- Cleanup job details
 SELECT cron.schedule('cleanup-cron-details', '0 0 * * *', $$ DELETE FROM cron.job_run_details WHERE end_time < now() - interval '7 days' $$);
