@@ -711,7 +711,7 @@ export interface Database {
           created_at: string | null
           id: string
           name: string
-          owner: string
+          owner: string | null
           payload: Json | null
           queue: string | null
           result: Json | null
@@ -723,7 +723,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           name: string
-          owner: string
+          owner?: string | null
           payload?: Json | null
           queue?: string | null
           result?: Json | null
@@ -735,7 +735,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           name?: string
-          owner?: string
+          owner?: string | null
           payload?: Json | null
           queue?: string | null
           result?: Json | null
