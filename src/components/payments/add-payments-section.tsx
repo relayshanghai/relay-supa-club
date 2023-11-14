@@ -25,11 +25,10 @@ export type CreatePaymentIntentResponse = {
 
 export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
-    const newPrices = useNewPrices();
+    const prices = useNewPrices();
     const { trackEvent } = useRudderstack();
-
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
-    const selectedPrice = newPrices[priceTier];
+    const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
 
     const batchId = useMemo(() => randomNumber(), []);

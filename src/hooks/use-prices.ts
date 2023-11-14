@@ -1,5 +1,6 @@
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
 import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
+import { useTranslation } from 'react-i18next';
 import {
     STRIPE_PRICE_MONTHLY_DISCOVERY,
     STRIPE_PRICE_MONTHLY_DIY,
@@ -135,17 +136,19 @@ export const usePrices = () => {
 
 //current create a new use hook for new prices as the old one are not found in the test mode of our Stripe account, they were in another Stripe account which was a legacy issue
 export const useNewPrices = () => {
+    const { i18n } = useTranslation();
+    const en = i18n.language.toLowerCase().includes('en');
     const pricesBlank = {
         discovery: {
-            currency: 'cny',
-            prices: { monthly: '299' },
+            currency: en ? 'usd' : 'cny',
+            prices: { monthly: en ? '41' : '299' },
             profiles: '',
             searches: '',
             priceIds: { monthly: STRIPE_PRICE_MONTHLY_DISCOVERY },
         },
         outreach: {
-            currency: 'cny',
-            prices: { monthly: '799' },
+            currency: en ? 'usd' : 'cny',
+            prices: { monthly: en ? '110' : '799' },
             profiles: '',
             searches: '',
             priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
@@ -154,7 +157,14 @@ export const useNewPrices = () => {
 
     const { data: newPrices } = useSWR('new-prices', async () => {
         try {
-            const newPrices = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
+            const prices = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
+            //return newPrices.discovery and newPrices.outreach arrays with the object with currency match the language
+            const currencyToMatch = en ? 'usd' : 'cny';
+            const newPrices = {
+                discovery: prices.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
+                outreach: prices.outreach.find((plan) => plan.currency === currencyToMatch) || pricesBlank.outreach,
+            };
+
             return newPrices;
         } catch (error) {
             clientLogger(error, 'error');

@@ -1,5 +1,5 @@
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { usePrices } from 'src/hooks/use-prices';
+import { useNewPrices } from 'src/hooks/use-prices';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
@@ -46,17 +46,20 @@ export const PriceCard = ({
 }: {
     period: ActiveSubscriptionPeriod;
     priceTier: ActiveSubscriptionTier;
-    openConfirmModal: (plan: ActiveSubscriptionTier, period: ActiveSubscriptionPeriod, priceId: string) => void;
     landingPage: boolean;
 }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
-    const prices = usePrices();
+    const prices = useNewPrices();
     const { subscription } = useSubscription();
     const { company } = useCompany();
     const freeTier = priceTier === 'free';
     const router = useRouter();
+    type PriceKey = keyof typeof prices;
+    const key: PriceKey = priceTier;
+    const price = prices[key];
+    const currency = price.currency;
 
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
@@ -65,11 +68,7 @@ export const PriceCard = ({
     };
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
-            <div
-                className={`relative flex min-h-full flex-col overflow-hidden rounded-lg border-2 bg-white ${
-                    priceTier === 'diyMax' ? 'border-primary-500' : 'border-gray-300'
-                } p-6`}
-            >
+            <div className="relative flex min-h-full flex-col overflow-hidden rounded-lg border-2 bg-white  p-6">
                 <h1 className="relative w-fit text-4xl font-semibold text-gray-800">
                     {t(`pricing.${priceTier}.title`)}
                     <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">
@@ -78,10 +77,12 @@ export const PriceCard = ({
                 </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
                 <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
-                    {prices[period][priceTier]}
+                    {price.prices[period]}
 
                     {!freeTier && (
-                        <span className="ml-1 text-sm font-semibold text-gray-500">{t('pricing.rmbPerMonth')}</span>
+                        <span className="ml-1 text-sm font-semibold text-gray-500">
+                            {currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth')}
+                        </span>
                     )}
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />
