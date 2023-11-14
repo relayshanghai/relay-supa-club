@@ -55,7 +55,7 @@ export const logRateLimitError = async (action: string, context: ServerContext, 
                     },
                     {
                         type: 'mrkdwn',
-                        text: `[Sentry Link](https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d)`,
+                        text: `<https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d|Sentry Link>`,
                     },
                 ],
             },
@@ -121,7 +121,7 @@ export const logDailyTokensError = async (action: string, context: ServerContext
                     },
                     {
                         type: 'mrkdwn',
-                        text: `[Sentry Link](https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d)`,
+                        text: `<https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d|Sentry Link>`,
                     },
                 ],
             },
