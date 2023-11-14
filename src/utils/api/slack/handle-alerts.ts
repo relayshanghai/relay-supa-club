@@ -9,7 +9,7 @@ import type { BrevoEvent } from 'pages/api/brevo/webhook';
 
 const time = new Date().toISOString();
 
-export const logRateLimitError = async (action: string, context: ServerContext, uuid: string) => {
+export const logRateLimitError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
     const reqBody: SlackMessage = {
@@ -51,7 +51,11 @@ export const logRateLimitError = async (action: string, context: ServerContext, 
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*event UUID:*\n${uuid}`,
+                        text: `*Error Tag:*\n${errorTag}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Sentry Link:*\nhttps://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d`,
                     },
                 ],
             },
@@ -70,7 +74,7 @@ export const logRateLimitError = async (action: string, context: ServerContext, 
     ALERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
-export const logDailyTokensError = async (action: string, context: ServerContext, uuid: string) => {
+export const logDailyTokensError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
@@ -113,7 +117,11 @@ export const logDailyTokensError = async (action: string, context: ServerContext
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*event UUID:*\n${uuid}`,
+                        text: `*Error Tag:*\n${errorTag}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Sentry Link:*\nhttps://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d`,
                     },
                 ],
             },

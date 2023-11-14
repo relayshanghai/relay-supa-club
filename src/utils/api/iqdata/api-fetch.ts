@@ -38,16 +38,16 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
     // @note refactor. content should return the Response object itself
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
-            const uuid = nanoid();
+            const errorTag = nanoid();
 
-            logRateLimitError(url, context, uuid);
-            forensicTrack(context, 'rate_limit_error', uuid);
+            logRateLimitError(url, context, errorTag);
+            forensicTrack(context, 'rate_limit_error', errorTag);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
-            const uuid = nanoid();
+            const errorTag = nanoid();
 
-            logDailyTokensError(url, context, uuid);
-            forensicTrack(context, 'daily_tokens_limit_exceeded', uuid);
+            logDailyTokensError(url, context, errorTag);
+            forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
         }
     }
     return content;

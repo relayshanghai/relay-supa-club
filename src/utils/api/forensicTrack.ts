@@ -8,7 +8,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
 import { nanoid } from 'nanoid';
 
-export const forensicTrack = async (context: ServerContext, error: string, uuid: string) => {
+export const forensicTrack = async (context: ServerContext, error: string, errorTag: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {
@@ -25,7 +25,6 @@ export const forensicTrack = async (context: ServerContext, error: string, uuid:
             isEval: call.isEval(),
             isNative: call.isNative(),
             isToplevel: call.isToplevel(),
-            eventId: uuid,
         };
     });
     const { metadata, ...strippedContext } = context;
@@ -33,6 +32,7 @@ export const forensicTrack = async (context: ServerContext, error: string, uuid:
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
     serverLogger(new Error(error), (scope) => {
+        scope.setTag('error_code_tag', errorTag);
         return scope.setContext('forensic_track', { user_id, company_id, fullname, email, metadata, ...sentryPayload });
     });
 };
@@ -47,19 +47,19 @@ export const logIqdataLimits = async (
     }
 
     if (res.status === 429) {
-        const uuid = nanoid();
+        const errorTag = nanoid();
 
-        await logRateLimitError(action, context, uuid);
-        forensicTrack(context, 'rate_limit_error', uuid);
+        await logRateLimitError(action, context, errorTag);
+        forensicTrack(context, 'rate_limit_error', errorTag);
     }
 
     const clone = res.clone();
     const json = await clone.json();
 
     if (json.error === 'daily_tokens_limit_exceeded') {
-        const uuid = nanoid();
+        const errorTag = nanoid();
 
-        await logDailyTokensError(action, context, uuid);
-        forensicTrack(context, 'daily_tokens_limit_exceeded', uuid);
+        await logDailyTokensError(action, context, errorTag);
+        forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
     }
 };
