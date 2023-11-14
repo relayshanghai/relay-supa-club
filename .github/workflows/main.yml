@@ -28,7 +28,6 @@ env:
     DATA_KEY: ${{ secrets.DATA_KEY }}
     NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
     SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
-    NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     NEXT_PUBLIC_FEAT_EMAIL: true

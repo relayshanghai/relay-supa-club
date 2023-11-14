@@ -12,8 +12,7 @@ import {
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import { db } from 'src/utils/supabase-client';
-import type { CreatorPlatform, CreatorReport } from 'types';
-import { usageErrors } from 'src/errors/usages';
+import type { CreatorPlatform, CreatorReport, CreatorReportsMetadata } from 'types';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import {
     IQDATA_CREATE_NEW_REPORT,
@@ -65,7 +64,7 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & 
 // Disabling complexity linting error as fixing this will require a large refactor
 // eslint-disable-next-line complexity
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-    const catchInfluencer = async (data: CreatorReport) => {
+    const tryToSaveInfluencer = async (data: CreatorReport) => {
         try {
             const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
             return { influencer, socialProfile };
@@ -77,16 +76,16 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     };
 
     await rudderstack.identify({ req, res });
-    const { source = 'default' } = req.query as CreatorsReportGetQueries;
 
     const { platform, creator_id, company_id, user_id, track } = req.query as CreatorsReportGetQueries;
     if (!platform || !creator_id || !company_id || !user_id)
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
-    try {
+    const trackListReports = () => {
         rudderstack.track({
             event: IQDATA_LIST_REPORTS,
-            onTrack: (data) => {
+            onTrack: (_data) => {
+                const data = _data as unknown as CreatorReportsMetadata;
                 if (!data.results) return false;
                 if (Array.isArray(data.results) && data.results.length <= 0) return false;
 
@@ -97,16 +96,8 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
                 };
             },
         });
-
-        const reportMetadata = await fetchReportsMetadata({
-            req,
-            res,
-        })(platform, creator_id);
-        if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
-        const report_id = reportMetadata.results[0].id;
-        if (!report_id) throw new Error('No report ID found');
-        const createdAt = reportMetadata.results[0].created_at;
-
+    };
+    const trackFetchReportOnFile = () => {
         rudderstack.track({
             event: IQDATA_FETCH_REPORT_FILE,
             onTrack: () => {
@@ -117,25 +108,8 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
                 };
             },
         });
-
-        const data: CreatorReport = await fetchReport({ req, res })(report_id);
-
-        if (!data.success) throw new Error('Failed to find report');
-
-        if (source === 'default') {
-            const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
-            if (recordError) {
-                serverLogger(recordError, 'error');
-                return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
-            }
-        }
-
-        const { influencer, socialProfile } = await catchInfluencer(data);
-
-        await trackAndSnap(track, req, res, events, data);
-
-        return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
-    } catch (error) {
+    };
+    const trackFetchNewReport = () => {
         rudderstack.track({
             event: IQDATA_CREATE_NEW_REPORT,
             onTrack: (data) => {
@@ -150,28 +124,40 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
                 };
             },
         });
+    };
 
-        const data = await requestNewReport({ req, res })(platform, creator_id);
-
-        if (!data.success) throw new Error('Failed to request new report');
-
-        if (source === 'default') {
-            const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
-            if (recordError) {
-                if (Object.values(usageErrors).includes(recordError)) {
-                    return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
-                }
-                serverLogger(recordError, 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-        }
-
-        const { influencer, socialProfile } = await catchInfluencer(data);
-
-        await trackAndSnap(track, req, res, events, data);
-
-        return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
+    const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
+    if (recordError) {
+        serverLogger(recordError, 'error');
+        return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
     }
+
+    let report_id = '';
+    let createdAt = '';
+
+    trackListReports();
+    const reportMetadata: CreatorReportsMetadata = await fetchReportsMetadata({ req, res })(platform, creator_id);
+
+    report_id = reportMetadata?.results[0]?.id ?? '';
+    createdAt = reportMetadata?.results[0]?.created_at ?? '';
+
+    let data: CreatorReport | null = null;
+
+    if (report_id) {
+        trackFetchReportOnFile();
+        data = await fetchReport({ req, res })(report_id);
+    } else {
+        trackFetchNewReport();
+        data = await requestNewReport({ req, res })(platform, creator_id);
+    }
+
+    if (!data?.success) throw new Error('Failed to find report');
+
+    const { influencer, socialProfile } = await tryToSaveInfluencer(data);
+
+    await trackAndSnap(track, req, res, events, data);
+
+    return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
 }
 
 export default ApiHandler({

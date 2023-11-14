@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { RELAY_DOMAIN } from 'src/constants';
+import { LEGACY_RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { ApiHandler } from 'src/utils/api-handler';
@@ -38,7 +38,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const name = untrimmedName.trim();
 
     // Do not allow users to create a company with our reserved name for internal employees
-    if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
+    if (name.toLowerCase() === LEGACY_RELAY_DOMAIN.toLowerCase()) {
         await deleteUserById(user_id);
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
