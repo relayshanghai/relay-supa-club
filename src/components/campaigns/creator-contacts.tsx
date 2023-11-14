@@ -34,7 +34,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                 </div>
             ) : usageExceeded ? (
                 <div>
-                    <Link href="/pricing">
+                    <Link href="/upgrade">
                         <Button>{t('account.subscription.upgradeSubscription')}</Button>
                     </Link>
                 </div>

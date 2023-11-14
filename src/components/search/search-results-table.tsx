@@ -76,7 +76,7 @@ export const SearchResultsTable = ({
                         <tr>
                             <td className="space-y-4 py-4 text-center" colSpan={5}>
                                 <p className="mb-4">{t('creators.usageExceeded')}</p>
-                                <Link href="/pricing">
+                                <Link href="/upgrade">
                                     <Button>{t('account.subscription.upgradeSubscription')}</Button>
                                 </Link>
                             </td>
@@ -86,7 +86,7 @@ export const SearchResultsTable = ({
                         <tr className="w-full">
                             <td className="space-y-4 py-4 text-center" colSpan={6}>
                                 <p className="mb-4">{t('creators.accountExpired')}</p>
-                                <Link href="/pricing">
+                                <Link href="/upgrade">
                                     <Button>{t('account.subscription.upgradeSubscription')}</Button>
                                 </Link>
                             </td>
