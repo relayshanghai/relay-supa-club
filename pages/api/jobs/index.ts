@@ -15,8 +15,7 @@ const postHandler: ActionHandler = async (req, res) => {
         body.queue = 'default';
     }
 
-    const job = await createJob({
-        name: body.name,
+    const job = await createJob(body.name, {
         run_at: body.run_at,
         payload: body.payload,
         queue: body.queue,
