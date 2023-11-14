@@ -259,8 +259,8 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                         })}
                     </div>
                 </div>
-                <div className="flex h-full w-full flex-row-reverse">
-                    <div className="w-1/2 pl-4">
+                <div className="flex h-full w-full flex-row">
+                    <div className="w-1/2">
                         <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Audience Location
                         </div>
