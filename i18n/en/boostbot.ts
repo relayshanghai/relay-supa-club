@@ -59,6 +59,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         selectAll: 'Select all',
         selectInfluencer: 'Select influencer',
         selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
+        alreadyAddedToSequence: 'Already added to sequence',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',

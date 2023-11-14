@@ -56,6 +56,7 @@ const boostbot = {
         selectAll: '选定全部达人',
         selectInfluencer: '选定达人',
         selectedAmount: '从{{total}}位达人中选定{{selectedCount}}位',
+        alreadyAddedToSequence: '已添加至邮件进程管理',
     },
     success: {
         influencersToOutreach: '该红人已成功添加至联络列表’',
