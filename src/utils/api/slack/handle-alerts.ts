@@ -12,6 +12,12 @@ const time = new Date().toISOString();
 export const logRateLimitError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
+    const queryParams = new URLSearchParams({
+        project: '4504887346855936',
+        query: `is:unresolved error_code_tag:${errorTag}`,
+        referrer: 'issue-list',
+        statsPeriod: '14d',
+    });
     const reqBody: SlackMessage = {
         blocks: [
             {
@@ -55,7 +61,7 @@ export const logRateLimitError = async (action: string, context: ServerContext, 
                     },
                     {
                         type: 'mrkdwn',
-                        text: `<https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d|Sentry Link>`,
+                        text: `<https://relayclub-wn.sentry.io/issues/?${queryParams}|Sentry Link>`,
                     },
                 ],
             },
@@ -77,7 +83,12 @@ export const logRateLimitError = async (action: string, context: ServerContext, 
 export const logDailyTokensError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
-
+    const queryParams = new URLSearchParams({
+        project: '4504887346855936',
+        query: `is:unresolved error_code_tag:${errorTag}`,
+        referrer: 'issue-list',
+        statsPeriod: '14d',
+    });
     const reqBody: SlackMessage = {
         blocks: [
             {
@@ -121,7 +132,7 @@ export const logDailyTokensError = async (action: string, context: ServerContext
                     },
                     {
                         type: 'mrkdwn',
-                        text: `<https://relayclub-wn.sentry.io/issues/?project=4504887346855936&query=is%3Aunresolved+error_code_tag%3A${errorTag}&referrer=issue-list&statsPeriod=14d|Sentry Link>`,
+                        text: `<https://relayclub-wn.sentry.io/issues/?${queryParams}|Sentry Link>`,
                     },
                 ],
             },
