@@ -71,9 +71,9 @@ export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLoc
     return (
         <>
             {isLoading ? (
-                <div className="h-2 w-48 animate-pulse bg-gray-300" />
+                <div className="h-2 w-40 animate-pulse bg-gray-300" />
             ) : (
-                <div>{renderAudienceGeo(audienceGeo)}</div>
+                <div className="w-40">{renderAudienceGeo(audienceGeo)}</div>
             )}
         </>
     );
