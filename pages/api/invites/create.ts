@@ -1,10 +1,11 @@
 import type { NextApiHandler } from 'next';
-import { APP_URL, emailRegex } from 'src/constants';
+import { emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createInviteErrors } from 'src/errors/company';
 import { getProfileByEmail, getExistingInvite, insertInvite } from 'src/utils/api/db';
 import type { InvitesDB } from 'src/utils/api/db/types';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
+import { getHostnameFromRequest } from 'src/utils/get-host';
 import { serverLogger } from 'src/utils/logger-server';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 
@@ -16,14 +17,14 @@ export interface CompanyCreateInvitePostBody {
 }
 export type CompanyCreateInvitePostResponse = InvitesDB;
 
-const formatEmail = (name: string, token: string) => {
-    const link = `${APP_URL}/signup/invite?${new URLSearchParams({
+const formatEmail = (name: string, token: string, appUrl: string) => {
+    const link = `${appUrl}/signup/invite?${new URLSearchParams({
         token,
     })}`;
     return `
     <div style="padding: 5px; line-height: 2.5rem">
         <h1>Hi ${name},</h1>
-        <p>You have been invited to join a company on relay.club.</p>
+        <p>You have been invited to join a company on BoostBot雷宝</p>
         <p>Click the button below to accept the invite.</p>
         <a href="${link}" style="background-color: #8B5CF6; color: white; margin: 5px; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Accept Invite</a>
         <p>If you did not request this invite, you can safely ignore this email.</p>
@@ -66,12 +67,14 @@ const handler: NextApiHandler = async (req, res) => {
 
     const insertData = await insertInvite({ email, company_id, company_owner: companyOwner });
 
+    const { appUrl } = getHostnameFromRequest(req);
+
     try {
         await sendEmail({
             email,
             name,
-            subject: 'You have been invited to join a company on relay.club',
-            html: formatEmail(name, insertData.id),
+            subject: 'You have been invited to join a company on boostbot.ai',
+            html: formatEmail(name, insertData.id, appUrl),
         });
     } catch (error) {
         serverLogger(error);
