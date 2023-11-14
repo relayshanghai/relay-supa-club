@@ -1,9 +1,9 @@
-import { AnalyticsTrackingEvent } from './analytics-tracking-event';
+import { TrackAnalyticsEvent } from './track-analytics-event';
 import { Foo } from './foo';
 
 export const jobs = {
     [Foo.name]: Foo,
-    [AnalyticsTrackingEvent.name]: AnalyticsTrackingEvent,
+    [TrackAnalyticsEvent.name]: TrackAnalyticsEvent,
 };
 
 export type JobNames = keyof typeof jobs;

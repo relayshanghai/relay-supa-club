@@ -4,8 +4,8 @@ import { rudderstack } from 'src/utils/rudderstack';
 import { initEvent } from 'src/utils/analytics/events';
 import { track } from 'src/utils/rudderstack/rudderstack';
 
-export const AnalyticsTrackingEvent: JobInterface<'analytics_tracking_event'> = {
-    name: 'analytics_tracking_event',
+export const TrackAnalyticsEvent: JobInterface<'track_analytics_event'> = {
+    name: 'track_analytics_event',
     run: async (_payload) => {
         const { account, eventName, payload } = _payload;
 
