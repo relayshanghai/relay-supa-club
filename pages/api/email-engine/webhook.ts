@@ -32,7 +32,6 @@ import {
     getSequenceInfluencerByIdCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
-import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { WebhookMessageBounce } from 'types/email-engine/webhook-message-bounce';
 import type { WebhookMessageComplaint } from 'types/email-engine/webhook-message-complaint';
@@ -93,9 +92,9 @@ export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmai
 };
 /** Deletes all outgoing, scheduled emails from the outbox for a given influencer */
 const deleteScheduledEmails = async (
-    trackData: Omit<EmailReplyPayload, 'is_success'>,
+    trackData: EmailReplyPayload,
     sequenceInfluencer: SequenceInfluencer,
-): Promise<Omit<EmailReplyPayload, 'is_success'>> => {
+): Promise<EmailReplyPayload> => {
     try {
         // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
@@ -130,7 +129,7 @@ const deleteScheduledEmails = async (
 };
 
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
-    let trackData: Omit<EmailReplyPayload, 'is_success'> = {
+    let trackData: EmailReplyPayload = {
         account_id: event.account,
         sequence_influencer_id: sequenceInfluencer.id,
         sequence_emails_pre_delete: [],
@@ -139,7 +138,9 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         deleted_emails: [],
         email_updates: [],
         extra_info: { event_data: event.data },
+        is_success: false,
     };
+
     try {
         trackData = await deleteScheduledEmails(trackData, sequenceInfluencer);
         // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
@@ -167,15 +168,18 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 
         const update = await updateSequenceInfluencer(influencerUpdate);
         trackData.extra_info.influencer_update = update;
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
-            ...trackData,
-            is_success: true,
-        });
+        trackData.is_success = true;
     } catch (error: any) {
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
-            ...trackData,
-            is_success: false,
+        trackData.is_success = false;
+    } finally {
+        await createJob('track_analytics_event', {
+            queue: 'analytics',
+            payload: {
+                account: event.account,
+                eventName: EmailReply.eventName,
+                eventPayload: trackData,
+            },
         });
     }
 };
@@ -198,9 +202,16 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     if (error) {
         trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;
 
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
-            ...trackData,
-            is_success: false, // an incoming email that isn't associated with any user account is strange
+        await createJob('track_analytics_event', {
+            queue: 'analytics',
+            payload: {
+                account: event.account,
+                eventName: EmailNew.eventName,
+                eventPayload: {
+                    ...trackData,
+                    is_success: false, // an incoming email that isn't associated with any user account is strange
+                },
+            },
         });
 
         return res.status(httpCodes.OK).json({});
@@ -232,10 +243,17 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     const update: SequenceEmailUpdate = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
     await updateSequenceEmail(update);
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailClicked, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        extra_info: { event_data: event.data, update },
+    await createJob('track_analytics_event', {
+        queue: 'analytics',
+        payload: {
+            account: event.account,
+            eventName: EmailClicked.eventName,
+            eventPayload: {
+                account_id: event.account,
+                sequence_email_id: sequenceEmail.id,
+                extra_info: { event_data: event.data, update },
+            },
+        },
     });
 
     return res.status(httpCodes.OK).json({});
@@ -249,10 +267,17 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
     };
     await updateSequenceEmail(update);
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailOpened, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        extra_info: { event_data: event.data, update },
+    await createJob('track_analytics_event', {
+        queue: 'analytics',
+        payload: {
+            account: event.account,
+            eventName: EmailOpened.eventName,
+            eventPayload: {
+                account_id: event.account,
+                sequence_email_id: sequenceEmail.id,
+                extra_info: { event_data: event.data, update },
+            },
+        },
     });
 
     return res.status(httpCodes.OK).json({});
@@ -288,14 +313,28 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
     } catch (error: any) {
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
     } finally {
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
+        await createJob('track_analytics_event', {
+            queue: 'analytics',
+            payload: {
+                account: event.account,
+                eventName: EmailFailed.eventName,
+                eventPayload: trackData,
+            },
+        });
     }
     return res.status(httpCodes.OK).json({});
 };
 
 const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiResponse) => {
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailComplaint, {
-        extra_info: { event_data: event.data },
+    await createJob('track_analytics_event', {
+        queue: 'analytics',
+        payload: {
+            account: event.account,
+            eventName: EmailComplaint.eventName,
+            eventPayload: {
+                extra_info: { event_data: event.data },
+            },
+        },
     });
 
     return res.status(httpCodes.OK).json({});
@@ -310,11 +349,18 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
 
     await updateSequenceEmail(update);
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        error_type: 'failed',
-        extra_info: { event_data: event.data, update },
+    await createJob('track_analytics_event', {
+        queue: 'analytics',
+        payload: {
+            account: event.account,
+            eventName: EmailFailed.eventName,
+            eventPayload: {
+                account_id: event.account,
+                sequence_email_id: sequenceEmail.id,
+                error_type: 'failed',
+                extra_info: { event_data: event.data, update },
+            },
+        },
     });
 
     return res.status(httpCodes.OK).json({});
@@ -329,18 +375,25 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
 
     await updateSequenceEmail(update);
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        error_type: 'quit',
-        extra_info: { event_data: event.data, update },
+    await createJob('track_analytics_event', {
+        queue: 'analytics',
+        payload: {
+            account: event.account,
+            eventName: EmailFailed.eventName,
+            eventPayload: {
+                account_id: event.account,
+                sequence_email_id: sequenceEmail.id,
+                error_type: 'quit',
+                extra_info: { event_data: event.data, update },
+            },
+        },
     });
 
     return res.status(httpCodes.OK).json({});
 };
 
 const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
-    const trackData: Omit<EmailSentPayload, 'is_success'> = {
+    const trackData: EmailSentPayload = {
         account_id: event.account,
         sequence_email_id: null,
         sequence_id: null,
@@ -356,6 +409,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             sequenceSteps: null,
             currentStep: null,
         },
+        is_success: false,
     };
 
     try {
@@ -412,17 +466,22 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
 
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
-            ...trackData,
-            is_success: true,
-        });
+        trackData.is_success = true;
     } catch (error: any) {
         if (trackData.sequence_email_id) {
             // If we don't have a sequence_email_id, this is a regular email, not a sequenced email and we don't want to track it
             trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
-            track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
-                ...trackData,
-                is_success: false,
+            trackData.is_success = false;
+        }
+    } finally {
+        if (trackData.sequence_email_id) {
+            await createJob('track_analytics_event', {
+                queue: 'analytics',
+                payload: {
+                    account: event.account,
+                    eventName: EmailSent.eventName,
+                    eventPayload: trackData,
+                },
             });
         }
     }
@@ -431,12 +490,6 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 };
 
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
-    await createJob({
-        name: 'track_analytics_event',
-        payload: { account: _event?.account, eventName: _event.event, payload: { data: 'this is a test' } },
-        queue: 'analytics',
-    });
-
     return res.status(httpCodes.OK).json({});
 };
 
