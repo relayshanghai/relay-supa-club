@@ -27,8 +27,17 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
         cell: ({ row, table }) => {
             if (table.options.meta?.allSequenceInfluencers?.some((x) => x.iqdata_id === row.original.user_id)) {
                 return (
-                    <Tooltip content={table.options.meta?.t('boostbot.table.alreadyAddedToSequence')} position="right">
-                        <input type="checkbox" checked={true} className="checkbox-add-success mr-0" disabled={true} />
+                    <Tooltip
+                        content={table.options.meta?.t('boostbot.table.alreadyAddedToSequence')}
+                        position="right"
+                        enabled={!table.options.meta?.isLoading}
+                    >
+                        <input
+                            type="checkbox"
+                            checked={!table.options.meta?.isLoading}
+                            className="checkbox-add-success mr-0"
+                            disabled={true}
+                        />
                     </Tooltip>
                 );
             }
