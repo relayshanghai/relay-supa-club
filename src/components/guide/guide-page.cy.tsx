@@ -13,7 +13,7 @@ describe('GuideComponent', () => {
 
         it('should render', () => {
             testMount(<GuideComponent />);
-            cy.contains(guidePage.welcome + ' boostbot.ai');
+            cy.contains(guidePage.welcome + ' BoostBot');
             cy.contains(guidePage.welcomeDescription);
         });
         it('should show section title and description', () => {
