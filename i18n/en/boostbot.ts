@@ -8,7 +8,7 @@ const boostbot = {
         selectGeo: 'Select a location',
         advancedFilters: 'Advanced Filters',
         advancedFiltersTooltip: 'This feature is not yet available',
-        updateFilters: 'Update',
+        updateFilters: 'Save and close',
         atLeast: 'at least',
         inLocation: 'of their followers must be in {{location}}',
     },

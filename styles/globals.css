@@ -99,5 +99,6 @@ body,
 }
 
 .boostbot-gradient {
-    background: var(--boostbot-gradient, linear-gradient(135deg, #ee46bc 0%, #7839ee 50%, #43cbff 100%));
+    @apply bg-gradient-to-br from-[#EE46BC] via-[#7839EE];
+    @apply bg-gradient-to-br from-[#EE46BC] via-[#7839EE] to-[#43CBFF];
 }
