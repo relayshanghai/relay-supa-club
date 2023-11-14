@@ -19,17 +19,18 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
             {isLoading ? (
                 <div className="h-14 w-[200px] animate-pulse bg-gray-300" />
             ) : (
-                <ResponsiveContainer width={200} height={80}>
+                <ResponsiveContainer className="-mr-20" width={240} height={80}>
                     <BarChart
                         data={processedData}
                         margin={{
                             top: 25,
                             bottom: -15,
                         }}
-                        className="-mt-6"
+                        className="-ml-16 -mr-4 -mt-6"
                     >
                         <CartesianGrid vertical={false} horizontal={false} />
                         <Tooltip
+                            cursor={false}
                             offset={10}
                             allowEscapeViewBox={{ x: true, y: false }}
                             contentStyle={{
@@ -54,9 +55,9 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
                             tickLine={false}
                             tick={{ fontSize: 8, fill: '#4b5563' }}
                         />
-                        <YAxis domain={['dataMin', 1000]} tick={false} axisLine={false} tickLine={false} />
-                        <Bar dataKey="female" fill="#FAA7E0" radius={2} />
-                        <Bar dataKey="male" fill="#84CAFF" radius={2} />
+                        <YAxis tick={false} axisLine={false} tickLine={false} />
+                        <Bar dataKey="female" minPointSize={10} fill="#FAA7E0" radius={2} />
+                        <Bar dataKey="male" minPointSize={10} fill="#84CAFF" radius={2} />
                     </BarChart>
                 </ResponsiveContainer>
             )}
