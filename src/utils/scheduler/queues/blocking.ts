@@ -13,8 +13,10 @@ const QUEUE_NAME = 'blocking';
 export const Blocking: JobQueue<typeof QUEUE_NAME> = {
     name: QUEUE_NAME,
     run: async (payload) => {
+        const queueName = payload?.queue ?? QUEUE_NAME;
+
         const running = await db(getJobs)({
-            queue: QUEUE_NAME,
+            queue: queueName,
             status: JOB_STATUS.running,
             limit: 1,
         });
@@ -22,16 +24,16 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
         // Prevent blocking queues from running if a job is stuck
         if (running.length > 0) {
             const runningJob = running[0];
-            serverLogger(`Cannot process ${QUEUE_NAME} queue. A job is stuck in running`, (scope) => {
+            serverLogger(`Cannot process ${queueName} queue. A job is stuck in running`, (scope) => {
                 return scope.setContext('Job', {
                     job: runningJob.id,
                 });
             });
-            throw new Error(`Cannot process ${QUEUE_NAME} queue. A job is stuck in running`);
+            throw new Error(`Cannot process ${queueName} queue. A job is stuck in running`);
         }
 
         const jobs = await db(fetchJobs)({
-            queue: QUEUE_NAME,
+            queue: queueName,
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
         });

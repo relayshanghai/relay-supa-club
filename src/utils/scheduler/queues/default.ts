@@ -4,14 +4,18 @@ import type { JobQueue } from '../types';
 import { JOB_STATUS } from '../types';
 import { finishJob, runJob } from '../utils';
 
+const QUEUE_NAME = 'default';
+
 /**
  * Default queue - Basic queue; first-in, first-out
  */
-export const Default: JobQueue<'default'> = {
-    name: 'default',
+export const Default: JobQueue<typeof QUEUE_NAME> = {
+    name: QUEUE_NAME,
     run: async (payload) => {
+        const queueName = payload?.queue ?? QUEUE_NAME;
+
         const jobs = await db(fetchJobs)({
-            queue: 'default',
+            queue: queueName,
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
         });
