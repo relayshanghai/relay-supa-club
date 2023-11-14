@@ -69,11 +69,11 @@ Run this on the database
 
 ```sql
 -- Workers for pending jobs
-SELECT create_queue_worker('worker-default-1', 'https://app.relay.club/api/jobs/run', '123ABC', '* * * * *')
-SELECT create_queue_worker('worker-default-2', 'https://app.relay.club/api/jobs/run', '123ABC', '* * * * *')
+SELECT create_queue_worker('worker-default-1', 'https://app.relay.club/api/jobs/run', '123ABC', '* * * * *');
+SELECT create_queue_worker('worker-default-2', 'https://app.relay.club/api/jobs/run', '123ABC', '* * * * *');
 
 -- Create workers for failed jobs (for retrying)
-SELECT create_queue_worker('worker-failed-1', 'https://app.relay.club/api/jobs/run?status=failed', '123ABC', '* * * * *')
+SELECT create_queue_worker('worker-failed-1', 'https://app.relay.club/api/jobs/run?status=failed', '123ABC', '* * * * *');
 
 -- Cleanup job details
 SELECT cron.schedule('cleanup-cron-details', '0 0 * * *', $$ DELETE FROM cron.job_run_details WHERE end_time < now() - interval '7 days' $$);
