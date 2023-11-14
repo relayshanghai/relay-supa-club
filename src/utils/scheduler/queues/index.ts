@@ -1,7 +1,7 @@
 import { Default } from './default';
 import { Failed } from './failed';
 import { Blocking } from './blocking';
-import { Analytics } from './Analytics';
+import { Analytics } from './analytics';
 
 export const queues = {
     [Default.name]: Default,
