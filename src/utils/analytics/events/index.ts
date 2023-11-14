@@ -514,6 +514,18 @@ export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEv
     return result.success;
 };
 
+export const isValidEvent = (name: string): name is keyof typeof events => {
+    return name in events;
+};
+
+export const initEvent = <N extends keyof typeof events>(name: N) => {
+    if (isValidEvent(name)) {
+        return events[name];
+    }
+
+    throw new Error(`Invalid Event: ${name}`);
+};
+
 export type eventKeys = z.infer<typeof eventKeys>;
 
 export default events;

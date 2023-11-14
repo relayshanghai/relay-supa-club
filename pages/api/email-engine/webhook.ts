@@ -50,6 +50,7 @@ import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { EmailFailedPayload } from 'src/utils/analytics/events/outreach/email-failed';
 import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
+import { createJob } from 'src/utils/scheduler/utils';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -430,6 +431,12 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 };
 
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
+    await createJob({
+        name: 'analytics_tracking_event',
+        payload: { account: _event?.account, eventName: _event.event, payload: { data: 'this is a test' } },
+        queue: 'blocking',
+    });
+
     return res.status(httpCodes.OK).json({});
 };
 
