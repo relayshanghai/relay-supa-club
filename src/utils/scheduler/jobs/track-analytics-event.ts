@@ -9,8 +9,6 @@ export const TrackAnalyticsEvent: JobInterface<'track_analytics_event'> = {
     run: async (_payload) => {
         const { account, eventName, payload } = _payload;
 
-        throw new Error('No account');
-
         identifyAccount(account);
         const event = initEvent(eventName);
 
