@@ -43,8 +43,8 @@ export const cancelSubscriptionWithSubscriptionId = async (subscriptionId: strin
 };
 
 export const getAllPromoCodes = async () => {
-    const res = await nextFetch<PromotionCodesListResponse>('subscriptions/promo-codes', {
+    const { data: promoCodes } = await nextFetch<PromotionCodesListResponse>('subscriptions/promo-codes', {
         method: 'get',
     });
-    return res;
+    return promoCodes;
 };

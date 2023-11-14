@@ -23,9 +23,7 @@ export const PromoCodeSection = ({
 
     const handleSubmit = async (promoCode: string) => {
         setLoading(true);
-        const res = await getAllPromoCodes();
-        const allPromoCodes = res.data;
-
+        const allPromoCodes = await getAllPromoCodes();
         // check if promoCode is an valid active promo code
         const validCode: Stripe.PromotionCode | undefined = allPromoCodes.find((code) => code.code === promoCode);
         // calculate the amount deducted from the original price to show in the success message
