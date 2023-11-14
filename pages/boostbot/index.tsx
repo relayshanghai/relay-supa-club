@@ -213,7 +213,7 @@ const Boostbot = () => {
                 sender: 'Neutral',
                 type: 'textlink',
                 text: sequence?.name,
-                link: `/sequences/${sequence?.id}`,
+                link: `/sequences/${encodeURIComponent(sequence.id)}`,
             });
             // addMessage({
             //     sender: 'Bot',
