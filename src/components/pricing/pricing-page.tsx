@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 import Link from 'next/link';
+import { LanguageToggle } from '../common/language-toggle';
 
 const ImageBackground = () => {
     return (
@@ -41,18 +42,35 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     return (
         <>
             <ImageBackground />
-            {!landingPage && (
-                <Link className="absolute right-0 top-0 p-5 text-right font-semibold text-gray-400" href="/account">
-                    {t('pricing.backToAccount')}
-                </Link>
-            )}
+
             <main className={`flex flex-grow flex-col`}>
+                <div className="flex w-full justify-between p-4">
+                    {landingPage ? (
+                        <p className="ml-3 font-medium text-gray-500">
+                            {t('signup.alreadySignedUp')}
+                            <Link
+                                href="/login"
+                                className="text-primary-600"
+                                // @note previous name: Landing Page, go to Login Page
+                                onClick={() => trackEvent('Go To Login')}
+                            >
+                                &nbsp; {t('login.logIn')}
+                            </Link>
+                        </p>
+                    ) : (
+                        <Link className=" font-semibold text-gray-400" href="/account">
+                            {t('pricing.backToAccount')}
+                        </Link>
+                    )}
+                    <LanguageToggle />
+                </div>
+
                 <div className="container mx-auto flex flex-col items-center">
-                    <div className="mx-auto mb-8 max-w-3xl text-center">
+                    <div className="mx-auto max-w-3xl pb-10 text-center">
                         <h2 className="font-heading mb-6 text-3xl font-semibold text-gray-800 md:text-4xl">
                             {t('pricing.justGettingStartedOrScalingUp')}
                         </h2>
-                        <h4 className="-mt-2 text-3xl font-semibold text-primary-500 md:text-4xl">
+                        <h4 className="-mt-2 text-3xl font-semibold text-primary-600 md:text-4xl">
                             {t('pricing.relayClubCanHelp')}
                         </h4>
                     </div>
