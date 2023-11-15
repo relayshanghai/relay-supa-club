@@ -3,17 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { getAllPromoCodes } from 'src/utils/api/stripe/handle-subscriptions';
 import { numberFormatter } from 'src/utils/formatter';
 import type Stripe from 'stripe';
-import type { NewRelayPlan } from 'types';
+import type { NewRelayPlan, newActiveSubscriptionTier } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ApplyPromoCode } from 'src/utils/analytics/events';
 
 export const PromoCodeSection = ({
     selectedPrice,
     setCouponId,
+    priceTier,
 }: {
     selectedPrice: NewRelayPlan;
     setCouponId: (value: string) => void;
+    priceTier: newActiveSubscriptionTier;
 }) => {
     const { t } = useTranslation();
     const [promoCode, setPromoCode] = useState<string>('');
@@ -46,6 +49,7 @@ export const PromoCodeSection = ({
                     percentageOff ?? 0,
                 )}) ${t('account.payments.offEn')}${validDurationText}`,
             );
+            track(ApplyPromoCode, { selected_plan: priceTier, promo_code: promoCode });
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');

@@ -49,7 +49,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
 
     return (
         <div className="w-80 lg:w-[28rem]">
-            <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} />
+            <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />
             <div className="rounded shadow ">
                 <div className="flex w-full space-x-3 px-6 pt-6 text-xs text-gray-500">
                     <div
