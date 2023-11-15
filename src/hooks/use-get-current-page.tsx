@@ -37,6 +37,10 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.pricing;
     }
 
+    if (/^\/upgrade\/?/.test(pathname)) {
+        return CurrentPageEvent.upgrade;
+    }
+
     if (/^\/login\/?/.test(pathname)) {
         return CurrentPageEvent.login;
     }

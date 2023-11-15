@@ -14,14 +14,12 @@ Previews use the TEST_MODE stripe keys, and the production database by default
 
 # Staging
 
-Staging has the same settings as previews, but it has a dedicated URL set with `NEXT_PUBLIC_APP_URL`
-Staging is connected to production database.
+Staging has the same settings as previews. Staging is connected to production database.
 To use the staging site https://staging-app.relay.club, merge your work to the `staging` branch and push it.
 
 # Testing
 
 Testing has its own database. It is called 'testing', under the relayclub projects in supabase. This is set with the `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `NEXT_PUBLIC_SUPABASE_URL` environment variables in vercel. These variables can be found in the supabase dashboard under the relayclub testing project > settings > API > Project url and Project API keys.
-Testing has a dedicated URL set with `NEXT_PUBLIC_APP_URL`
 To use the testing site https://testing-app.relay.club, merge your work to the `testing` branch and push it.
 
 Note that when we migrate the database (see supabase.md), we are not able to migrate the auth data, so all the users will be lost. We will need to create new users for testing.

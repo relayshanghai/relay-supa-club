@@ -77,7 +77,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
     const missingSocialProfileInfo =
-        !sequenceInfluencer.social_profile_last_fetched || !sequenceInfluencer.influencer_social_profile_id;
+        !sequenceInfluencer.social_profile_last_fetched ||
+        !sequenceInfluencer.influencer_social_profile_id ||
+        !sequenceInfluencer.tags ||
+        sequenceInfluencer.tags.length === 0;
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
 
     const { report, socialProfile } = useReport({
@@ -222,7 +225,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const sequenceSendTooltipTitle = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipTitle = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltip')
         : !sequenceInfluencer?.email
         ? t('sequences.missingEmail')
@@ -231,7 +234,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipDescription = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipDescription')
         : !sequenceInfluencer?.email
         ? t('sequences.missingEmailTooltipDescription')
@@ -243,7 +246,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
           })
         : t('sequences.sequenceSendTooltipDescription');
 
-    const sequenceSendTooltipHighlight = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipHighlight = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
@@ -312,7 +315,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {isDuplicateInfluencer ? (
                                 <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
-                            ) : sequenceInfluencer.influencer_social_profile_id ? (
+                            ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
                                     onSubmit={handleEmailUpdate}
@@ -324,7 +327,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.influencer_social_profile_id ? (
+                            {!missingSocialProfileInfo ? (
                                 sequenceInfluencer.tags?.map((tag) => (
                                     <span
                                         key={tag}
@@ -357,7 +360,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         isMissingSequenceSendEmail ||
                                         !sequenceInfluencer?.email ||
                                         sendingEmail ||
-                                        !sequenceInfluencer.influencer_social_profile_id
+                                        missingSocialProfileInfo
                                     }
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={

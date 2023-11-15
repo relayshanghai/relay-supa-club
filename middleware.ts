@@ -7,7 +7,7 @@ import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 
-const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
+const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
 /**
  * Paths found here are allowed to access without authentication
@@ -19,6 +19,7 @@ const PATH_WHITELIST = [
     '/api/subscriptions/webhook',
     '/api/company/exists',
     '/api/jobs/run',
+    '/pricing',
 ];
 
 /**
