@@ -36,7 +36,8 @@ const boostbot = {
             step3: '正在根据粉丝数、互动率、地域等维度精选最佳KOL',
             step3B: '已选定 {{count}} 名KOL',
         },
-        outreachDone: '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：',
+        outreachDone:
+            '好的！我现在将选中的网红达人添加至你的邮件进程管理项目中。你可以在此处查看状态：<customLink>{{sequenceName}}</customLink>',
         and: '和',
         clearChatModal: {
             open: '清除聊天记录和筛选条件',

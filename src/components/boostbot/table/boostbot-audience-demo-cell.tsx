@@ -1,7 +1,7 @@
 import type { Row, Table } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import { processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
+import { convertAudienceDataToPercentage, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
 
 export type BoostbotAudienceDemoCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -10,7 +10,7 @@ export type BoostbotAudienceDemoCellProps = {
 
 export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCellProps) => {
     const influencer = row.original;
-    const processedData = processedAudienceDemoData(influencer);
+    const processedData = convertAudienceDataToPercentage(processedAudienceDemoData(influencer));
 
     const isLoading = table.options.meta?.isLoading;
 
@@ -46,7 +46,7 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
                                 color: '#ffffff',
                             }}
                             formatter={(value: string, name: string) => {
-                                return [`${parseFloat(value).toFixed(2)}`, name];
+                                return [`${parseFloat(value).toFixed(2)}%`, name];
                             }}
                         />
                         <XAxis
@@ -56,8 +56,8 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
                             tick={{ fontSize: 8, fill: '#4b5563' }}
                         />
                         <YAxis tick={false} axisLine={false} tickLine={false} />
-                        <Bar dataKey="female" minPointSize={10} fill="#FAA7E0" radius={2} />
-                        <Bar dataKey="male" minPointSize={10} fill="#84CAFF" radius={2} />
+                        <Bar dataKey="female" minPointSize={5} fill="#FAA7E0" radius={2} />
+                        <Bar dataKey="male" minPointSize={5} fill="#84CAFF" radius={2} />
                     </BarChart>
                 </ResponsiveContainer>
             )}

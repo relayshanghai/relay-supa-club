@@ -39,7 +39,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
             step3B: '{{count}} influencers selected',
         },
         outreachDone:
-            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
+            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here: <customLink>{{sequenceName}}</customLink>",
         and: 'and',
         clearChatModal: {
             open: 'Clear chat and filters',
@@ -53,7 +53,7 @@ For example: â€œA lightweight and foldable mini camera drone with 4K HDR videoâ€
         score: 'BoostBot Score',
         followers: 'Followers',
         audienceDemo: 'Audience Demographics',
-        audienceGeolocations: 'Audience Geolocations',
+        audienceGeolocations: 'Audience Locations',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
