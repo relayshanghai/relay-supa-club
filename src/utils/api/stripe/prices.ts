@@ -10,7 +10,7 @@ import {
 } from './constants';
 import { stripeClient } from './stripe-client';
 
-/** Stripe prices come in cents,  divide by 1 hundred, and return a string with 2 decimal places */
+/** Stripe prices come in cents,  divide by 1 hundred */
 export const formatStripePrice = (price: number) => (price / 100).toFixed(0);
 
 export const getNewStripePlanPrices = async () => {
