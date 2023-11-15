@@ -14,12 +14,13 @@ export const PromoCodeSection = ({
     selectedPrice: NewRelayPlan;
     setCouponId: (value: string) => void;
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [promoCode, setPromoCode] = useState<string>('');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
+    const en = i18n.language.toLowerCase().includes('en');
 
     const handleSubmit = async (promoCode: string) => {
         setLoading(true);
@@ -39,7 +40,7 @@ export const PromoCodeSection = ({
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
-                ` ${percentageOff}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
+                ` ${percentageOff}% ${t('account.payments.offCn')} (${en ? '$' : '¥'}${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
                 )}) ${t('account.payments.offEn')}${validDurationText}`,
