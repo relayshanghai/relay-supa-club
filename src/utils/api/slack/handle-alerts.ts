@@ -9,9 +9,15 @@ import type { BrevoEvent } from 'pages/api/brevo/webhook';
 
 const time = new Date().toISOString();
 
-export const logRateLimitError = async (action: string, context: ServerContext) => {
+export const logRateLimitError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
+    const queryParams = new URLSearchParams({
+        project: '4504887346855936',
+        query: `is:unresolved error_code_tag:${errorTag}`,
+        referrer: 'issue-list',
+        statsPeriod: '14d',
+    });
     const reqBody: SlackMessage = {
         blocks: [
             {
@@ -49,6 +55,14 @@ export const logRateLimitError = async (action: string, context: ServerContext) 
                         type: 'mrkdwn',
                         text: `*Time:*\n${time}`,
                     },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Error Tag:*\n${errorTag}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `<https://relayclub-wn.sentry.io/issues/?${queryParams}|Sentry Link>`,
+                    },
                 ],
             },
         ],
@@ -66,10 +80,15 @@ export const logRateLimitError = async (action: string, context: ServerContext) 
     ALERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
-export const logDailyTokensError = async (action: string, context: ServerContext) => {
+export const logDailyTokensError = async (action: string, context: ServerContext, errorTag: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
-
+    const queryParams = new URLSearchParams({
+        project: '4504887346855936',
+        query: `is:unresolved error_code_tag:${errorTag}`,
+        referrer: 'issue-list',
+        statsPeriod: '14d',
+    });
     const reqBody: SlackMessage = {
         blocks: [
             {
@@ -106,6 +125,14 @@ export const logDailyTokensError = async (action: string, context: ServerContext
                     {
                         type: 'mrkdwn',
                         text: `*Time:*\n${time}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Error Tag:*\n${errorTag}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `<https://relayclub-wn.sentry.io/issues/?${queryParams}|Sentry Link>`,
                     },
                 ],
             },

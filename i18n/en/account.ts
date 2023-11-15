@@ -8,7 +8,7 @@ const account = {
         lastName: 'Last name',
         lastNamePLaceholder: 'Enter your last name',
         email: 'Email',
-        emailPlaceholder: 'hello@relay.club',
+        emailPlaceholder: 'hello@boostbot.ai',
         profileUpdated: 'Profile updated',
         oopsWentWrong: 'Oops, something went wrong',
         updateEmail: 'Update email',
@@ -109,6 +109,16 @@ const account = {
     alipay: 'Alipay',
     choosePaymentMethod: 'Please choose a payment method.',
     contactUs: 'Please Contact our support team if you prefer to pay with Alipay.',
+    payments: {
+        promoCode: 'Promo Code',
+        apply: 'Apply',
+        enterPromoCode: 'Enter a Promo Code',
+        invalidPromoCode: 'Invalid Promo Code',
+        promoCodeAdded: 'Promo Code added',
+        validDuration: ' For next {{validMonths}} months',
+        offEn: 'Off',
+        offCn: '',
+    },
 };
 
 export default account;

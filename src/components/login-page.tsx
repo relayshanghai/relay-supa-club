@@ -92,7 +92,7 @@ const LoginPage = () => {
                 <Input
                     label={t('login.email')}
                     type="email"
-                    placeholder="hello@relay.club"
+                    placeholder="hello@boostbot.ai"
                     value={email}
                     onChange={(e) => setFieldValue('email', e.target.value)}
                 />

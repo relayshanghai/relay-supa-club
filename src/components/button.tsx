@@ -8,10 +8,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const defaultClasses =
     'text-sm px-4 py-[.75em] rounded-md flex-shrink-0 font-medium disabled:bg-gray-300  border disabled:cursor-default disabled:border-gray-300 disabled:text-gray-500';
-const primaryClasses = 'border-primary-500 text-white bg-primary-500 hover:bg-primary-700';
-const secondaryClasses = 'text-primary-500 bg-white border-primary-500 border hover:bg-primary-100';
+const primaryClasses = 'border-primary-600 text-white bg-primary-600 hover:bg-primary-700';
+const secondaryClasses = 'text-primary-600 bg-white border-primary-600 border hover:bg-primary-100';
 const ghostClasses =
-    'text-primary-500 bg-primary-50 border-primary-50 hover:bg-primary-100 border-primary-50 hover:border-primary-100';
+    'text-primary-600 bg-primary-50 border-primary-50 hover:bg-primary-100 border-primary-50 hover:border-primary-100';
 /** override default browser styles */
 const neutralClasses = 'text-left';
 const grayClasses = 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50';

@@ -21,14 +21,12 @@ const signup = {
     confirmPasswordPlaceholder: 'Confirm your password',
     companyPlaceholder: 'Enter your company name',
     carousel: {
-        title1: 'Discover',
-        description1: 'Find the perfect influencer without all the hassle',
-        title2: 'Discover',
-        description2: 'Our filters let you target your niche audience',
-        title3: 'Project Management',
-        description3: 'Finally! No more spreadsheets',
-        title4: 'Data Center',
-        description4: 'See the impact of your campaigns',
+        title1: 'Meet BoostBot',
+        description1: 'Your personal AI Powered Influencer Marketing Assistant',
+        title2: 'Automated Outreach',
+        description2: 'Smart templates and full email automation save you hours each week.',
+        title3: 'Integrated Inbox',
+        description3: 'Communicate with full confidence in our custom built, creator profile empowered inbox',
     },
     alreadySignedUp: 'Already signed up?',
     noProfileId: 'Could not find profile id',
@@ -45,7 +43,7 @@ const signup = {
             title: 'RELAY.CLUB TERMS AND CONDITIONS',
             point1Title: '1. Introduction',
             point1Description:
-                'Welcome to relay.club ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',
+                'Welcome to BoostBot ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',
             point2Title: '2. Free Trial',
             point2Description:
                 'If you register for a free trial, we will make the service available to you on a trial basis free of charge until the earlier of (a) the end of the free trial period or (b) the start date of any purchased services ordered by you.',
@@ -54,13 +52,13 @@ const signup = {
                 'Brands that subscribe to our paid services have access to search for influencers on YouTube, TikTok, and Instagram. The subscription fee is billed monthly and is non-refundable.',
             point4Title: '4. Upgrade Services',
             point4Description:
-                "Subscribers who upgrade their service can access influencers' email addresses provided by relay.club for communication purposes.",
+                "Subscribers who upgrade their service can access influencers' email addresses provided by BoostBot for communication purposes.",
             point5Title: '5. Usage Limits',
             point5Description:
                 'Brands and users are prohibited from scraping, copying, or redistributing the information obtained from our platform. Any misuse of the data will result in termination of services.',
             point6Title: '6. Content Responsibility',
             point6Description:
-                'relay.club is not responsible for any content posted, shared, or disseminated by social media influencers that users engage or employ through the relay.club platform. Users are solely responsible for vetting and ensuring the appropriateness of content associated with influencers they connect with.',
+                'BoostBot is not responsible for any content posted, shared, or disseminated by social media influencers that users engage or employ through the boostbot.ai platform. Users are solely responsible for vetting and ensuring the appropriateness of content associated with influencers they connect with.',
             point7Title: '7. Governing Law',
             point7Description:
                 'These terms and conditions shall be governed by the laws of Singapore. Any disputes arising from these terms shall be resolved in the jurisdiction of the Republic of Singapore.',
