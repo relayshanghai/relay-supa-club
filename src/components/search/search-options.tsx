@@ -241,7 +241,6 @@ export const SearchOptions = ({
                         <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
                             <Button
                                 variant="secondary"
-                                className="col-span-1 h-full"
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
