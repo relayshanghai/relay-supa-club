@@ -9,7 +9,7 @@ import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
-const BANNED_USERS = ['d389caae-dc95-40b4-a2f9-f783672c6b79'];
+const BANNED_USERS: string[] = [];
 
 /**
  *
