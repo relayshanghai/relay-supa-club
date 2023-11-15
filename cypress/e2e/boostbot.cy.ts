@@ -112,8 +112,8 @@ describe('Boostbot', () => {
         cy.intercept('POST', '/api/boostbot/get-influencers', (req) => {
             const { audience_geo } = req.body.searchPayloads[0].body.filter;
 
-            const expectedCountryInclusion = { id: countriesByCode.FR.id }; // Added France geo
-            const unexpectedCountryInclusion = { id: countriesByCode.US.id }; // Removed default US geo
+            const expectedCountryInclusion = { id: countriesByCode.FR.id, weight: 0.02 }; // Added France geo
+            const unexpectedCountryInclusion = { id: countriesByCode.US.id, weight: 0.2 }; // Removed default US geo
 
             expect(audience_geo).to.deep.include(expectedCountryInclusion);
             expect(audience_geo).to.not.deep.include(unexpectedCountryInclusion);
