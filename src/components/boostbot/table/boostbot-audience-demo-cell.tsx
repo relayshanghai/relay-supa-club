@@ -37,8 +37,9 @@ export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCel
                             index_position: row.index,
                         });
                     }}
+                    className="-mr-20 h-20 w-60"
                 >
-                    <ResponsiveContainer className="-mr-20" width={240} height={80}>
+                    <ResponsiveContainer>
                         <BarChart
                             data={processedData}
                             margin={{
