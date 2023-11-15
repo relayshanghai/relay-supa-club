@@ -36,7 +36,7 @@ export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCar
                     )}
                 </div>
                 <div className="flex">
-                    <h2 className="mr-3 text-4xl text-primary-800">{value}</h2>
+                    <h2 className="mr-3 text-4xl text-primary-600">{value}</h2>
                     {smallIcon}
                 </div>
             </div>
