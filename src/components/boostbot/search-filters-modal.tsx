@@ -162,7 +162,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
     const addNewGeo = (geoId: string) => {
         setLocalFilters((prevFilters) => ({
             ...prevFilters,
-            audience_geo: [...prevFilters.audience_geo, { id: Number(geoId), weight: 0.15 }],
+            audience_geo: [...prevFilters.audience_geo, { id: Number(geoId) }],
         }));
         track(SetBoostbotFilter, {
             batch_id: batchId,

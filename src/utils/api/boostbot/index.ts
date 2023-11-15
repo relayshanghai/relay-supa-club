@@ -18,22 +18,22 @@ export const createBoostbotInfluencerPayload = ({
     const reelsPlaysParam = platform === 'instagram' ? { left_number: 0 } : undefined;
     const followerLimits = {
         youtube: {
-            microinfluencer: { left_number: 1000, right_number: 75000 },
-            nicheinfluencer: { left_number: 75000, right_number: 350000 },
-            megainfluencer: { left_number: 350000, right_number: undefined },
+            microinfluencer: { left_number: 1_000, right_number: 75_000 },
+            nicheinfluencer: { left_number: 75_000, right_number: 350_000 },
+            megainfluencer: { left_number: 350_000, right_number: undefined },
         },
         instagram: {
-            microinfluencer: { left_number: 5000, right_number: 50000 },
-            nicheinfluencer: { left_number: 50000, right_number: 500000 },
-            megainfluencer: { left_number: 500000, right_number: undefined },
+            microinfluencer: { left_number: 5_000, right_number: 50_000 },
+            nicheinfluencer: { left_number: 50_000, right_number: 500_000 },
+            megainfluencer: { left_number: 500_000, right_number: undefined },
         },
         tiktok: {
-            microinfluencer: { left_number: 5000, right_number: 50000 },
-            nicheinfluencer: { left_number: 50000, right_number: 750000 },
-            megainfluencer: { left_number: 750000, right_number: undefined },
+            microinfluencer: { left_number: 5_000, right_number: 50_000 },
+            nicheinfluencer: { left_number: 50_000, right_number: 750_000 },
+            megainfluencer: { left_number: 750_000, right_number: undefined },
         },
     };
-    const { influencerSizes, ...restOfFilters } = filters;
+    const { influencerSizes, audience_geo, ...restOfFilters } = filters;
 
     const getFollowerParams = (
         platform: CreatorPlatform,
@@ -56,6 +56,16 @@ export const createBoostbotInfluencerPayload = ({
         };
     };
 
+    const normalizedAudienceGeo = audience_geo?.map((geo) => {
+        const country = Object.values(countriesByCode).find((country) => country.id === Number(geo.id));
+        const countryWeight = country?.locationDistributions[platform] ?? 0.005;
+
+        return {
+            id: geo.id,
+            weight: countryWeight,
+        };
+    });
+
     return {
         query: { auto_unhide: isDev() ? 0 : 1, platform },
         body: {
@@ -67,7 +77,6 @@ export const createBoostbotInfluencerPayload = ({
                 engagement_rate: { value: 0.01, operator: 'gt' },
                 followers: getFollowerParams(platform, influencerSizes),
                 last_posted: 30,
-                geo: [{ id: countriesByCode.US.id }, { id: countriesByCode.CA.id }],
                 with_contact: [{ type: 'email' }],
                 followers_growth: {
                     interval: 'i1month',
@@ -82,6 +91,7 @@ export const createBoostbotInfluencerPayload = ({
                     weight: 0,
                 },
                 reels_plays: reelsPlaysParam,
+                audience_geo: normalizedAudienceGeo,
                 ...restOfFilters,
             },
             sort: { field: 'relevance', direction: 'desc' },
