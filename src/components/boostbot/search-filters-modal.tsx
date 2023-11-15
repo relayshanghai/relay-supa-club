@@ -2,6 +2,7 @@ import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from
 import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, InfluencerSize } from 'types';
+import { influencerSizes } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
@@ -36,7 +37,6 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
         tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
     };
-    const influencerSizes: InfluencerSize[] = ['microinfluencer', 'nicheinfluencer', 'megainfluencer'];
     const influencerSub: any = {
         microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
         nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
@@ -326,7 +326,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 ))}
                             </div>
                             {shouldShowGeoInput && (
-                                <div className="w-fit">
+                                <div className="w-fit" data-testid="boostbot-geo-container">
                                     <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
                                 </div>
                             )}

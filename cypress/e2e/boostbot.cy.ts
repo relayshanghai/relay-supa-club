@@ -97,16 +97,14 @@ describe('Boostbot', () => {
 
         cy.getByTestId('boostbot-open-filters').click();
 
-        cy.contains('Basic Filters');
-
-        cy.getByTestId('boostbot-add-more-geos-button').click();
-        cy.get('input').focus().type('Fra'); // Type into a suggestion input
-        cy.contains('France').click(); // Add France geo by clicking a suggestion box item
+        cy.contains('Search Filters');
 
         cy.getByTestId('boostbot-filter-instagram').click(); // By default, all platforms are enabled. We uncheck instagram and tiktok.
         cy.getByTestId('boostbot-filter-tiktok').click();
 
         cy.getByTestId(`boostbot-filter-geo-${countriesByCode.US.id}`).click(); // Remove default United States geo
+        cy.getByTestId('boostbot-geo-container').find('input').focus().type('Fra');
+        cy.contains('France').click();
         cy.getByTestId('boostbot-confirm-filters').click();
 
         cy.get('textarea').type('LED beauty mask{enter}'); // Do a search
@@ -114,8 +112,8 @@ describe('Boostbot', () => {
         cy.intercept('POST', '/api/boostbot/get-influencers', (req) => {
             const { audience_geo } = req.body.searchPayloads[0].body.filter;
 
-            const expectedCountryInclusion = { id: countriesByCode.FR.id, weight: 0.15 }; // Added France geo
-            const unexpectedCountryInclusion = { id: countriesByCode.US.id, weight: 0.15 }; // Removed default US geo
+            const expectedCountryInclusion = { id: countriesByCode.FR.id }; // Added France geo
+            const unexpectedCountryInclusion = { id: countriesByCode.US.id }; // Removed default US geo
 
             expect(audience_geo).to.deep.include(expectedCountryInclusion);
             expect(audience_geo).to.not.deep.include(unexpectedCountryInclusion);
