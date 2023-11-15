@@ -32,33 +32,36 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
 export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
     (rudder, session) => (event, payload) => {
         if (disabled) return;
+        try {
+            const trigger: TriggerEvent = (eventName, payload) => {
+                if (!session) {
+                    throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+                }
 
-        const trigger: TriggerEvent = (eventName, payload) => {
-            if (!session) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-            }
+                const trackPayload: Parameters<typeof rudder.track>[0] = {
+                    event: eventName,
+                    properties: payload,
+                };
 
-            const trackPayload: Parameters<typeof rudder.track>[0] = {
-                event: eventName,
-                properties: payload,
+                if (session.user_id) {
+                    trackPayload.userId = session.user_id;
+                }
+
+                if (!session.user_id && session.anonymous_id) {
+                    trackPayload.anonymousId = session.anonymous_id;
+                }
+
+                if (!trackPayload.userId && !trackPayload.anonymousId) {
+                    throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+                }
+
+                rudder.track(trackPayload);
             };
 
-            if (session.user_id) {
-                trackPayload.userId = session.user_id;
-            }
-
-            if (!session.user_id && session.anonymous_id) {
-                trackPayload.anonymousId = session.anonymous_id;
-            }
-
-            if (!trackPayload.userId && !trackPayload.anonymousId) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-            }
-
-            rudder.track(trackPayload);
-        };
-
-        return event(trigger, payload);
+            return event(trigger, payload);
+        } catch (error) {
+            serverLogger(error);
+        }
     };
 
 const client = Symbol('Rudderstack Client');
@@ -114,17 +117,21 @@ export class Rudderstack {
      * @todo decouple from supabase
      */
     async identify(context: ServerContext) {
-        if (this.session || disabled) return;
+        try {
+            if (this.session || disabled) return;
 
-        const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-        const session = await getUserSession(supabase)();
+            const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+            const session = await getUserSession(supabase)();
 
-        this.getClient().identify({
-            userId: session.user_id,
-        });
+            this.getClient().identify({
+                userId: session.user_id,
+            });
 
-        this.session = session;
-        this.serverContext = context;
+            this.session = session;
+            this.serverContext = context;
+        } catch (error) {
+            serverLogger(error);
+        }
     }
 
     async identifyWithProfile(userId: string) {

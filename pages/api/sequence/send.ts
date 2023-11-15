@@ -262,7 +262,11 @@ const sendSequence = async (
         }
     } catch (error) {
         serverLogger(error); // truly unexpected error
-        track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
+        try {
+            track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
+        } catch (error) {
+            serverLogger(error); // truly unexpected error
+        }
         return results;
     }
 
@@ -323,6 +327,7 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencer, outbox: 
 };
 
 const postHandler: NextApiHandler = async (req, res) => {
+    await rudderstack.identify({ req, res });
     const body = req.body as SequenceSendPostBody;
     const results: SequenceSendPostResponse = await sendSequence(body, 0);
     return res.status(httpCodes.OK).json(results);
