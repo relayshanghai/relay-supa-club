@@ -22,7 +22,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName, tooltip }) =
 
     return (
         <div className="stat-card space-y-2 rounded-xl border border-gray-200 p-6 text-gray-600">
-            <div className="flex space-x-[1px] text-sm font-medium tracking-tight">
+            <div className="flex space-x-1 text-xs font-medium tracking-tight">
                 {title}
                 {tooltip && (
                     <Tooltip
