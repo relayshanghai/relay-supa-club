@@ -194,7 +194,14 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
             // console.log(socialProfile);
             if (socialProfile) {
                 const { url, avatar_url, name, platform, username } = socialProfile;
-                const update = { url, avatar_url, name, platform: platform as CreatorPlatform, username };
+                const update = {
+                    url,
+                    avatar_url,
+                    name,
+                    platform: platform as CreatorPlatform,
+                    username,
+                    social_profile_last_fetched: new Date().toISOString(),
+                };
                 // console.log(update);
                 if (!update.platform) {
                     console.log(update);
@@ -202,7 +209,7 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
                 }
                 const { data: updated } = await supabase
                     .from('sequence_influencers')
-                    .update(update)
+                    .update({ social_profile_last_fetched: new Date().toISOString() })
                     .eq('id', influencer.id)
                     .select()
                     .single();
