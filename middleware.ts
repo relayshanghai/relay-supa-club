@@ -204,7 +204,9 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
 
     if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
-        return NextResponse.redirect('/');
+        const redirect = req.nextUrl.clone();
+        redirect.pathname = '/logout';
+        return NextResponse.redirect(redirect);
     }
 
     if (req.nextUrl.pathname.includes('/admin')) {
