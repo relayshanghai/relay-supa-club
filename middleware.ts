@@ -9,6 +9,8 @@ import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
+const BANNED_USERS = ['d389caae-dc95-40b4-a2f9-f783672c6b79'];
+
 /**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
@@ -200,6 +202,11 @@ export async function middleware(req: NextRequest) {
     }
 
     const { data: authData } = await supabase.auth.getSession();
+
+    if (BANNED_USERS.includes(authData.session.user.id)) {
+        return NextResponse.redirect('/');
+    }
+
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
             return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
