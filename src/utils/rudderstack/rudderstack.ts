@@ -35,7 +35,13 @@ export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['sessio
 
         const trigger: TriggerEvent = (eventName, payload) => {
             if (!session) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+                serverLogger(new Error(`Rudderstack event "${event.eventName}" has no identity`), (scope) => {
+                    return scope.setContext(`Rudderstack event "${event.eventName}" has no identity`, {
+                        event,
+                        payload,
+                    });
+                });
+                return false;
             }
 
             const trackPayload: Parameters<typeof rudder.track>[0] = {
@@ -52,7 +58,13 @@ export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['sessio
             }
 
             if (!trackPayload.userId && !trackPayload.anonymousId) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+                serverLogger(new Error(`Rudderstack event "${event.eventName}" has no identity`), (scope) => {
+                    return scope.setContext(`Rudderstack event "${event.eventName}" has no identity`, {
+                        event,
+                        payload,
+                    });
+                });
+                return false;
             }
 
             rudder.track(trackPayload);
