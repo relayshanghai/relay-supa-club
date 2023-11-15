@@ -203,7 +203,7 @@ export async function middleware(req: NextRequest) {
 
     const { data: authData } = await supabase.auth.getSession();
 
-    if (BANNED_USERS.includes(authData.session.user.id)) {
+    if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
         return NextResponse.redirect('/');
     }
 
