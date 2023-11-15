@@ -1,7 +1,10 @@
 import type { Row, Table } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { Tooltip } from 'src/components/library';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { HoverLocationGraph } from 'src/utils/analytics/events';
 import { decimalToPercent } from 'src/utils/formatter';
+import type { CreatorPlatform } from 'types';
 import type { Countries } from 'types/iqdata/influencer-search-request-body';
 
 export type BoostbotAudienceLocationCellProps = {
@@ -62,8 +65,14 @@ export const renderAudienceGeo = (audienceGeo: BoostbotAudienceGeoType) => {
 export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLocationCellProps) => {
     const influencer = row.original;
     const audienceGeo = influencer.audience_geo;
-
+    const { track } = useRudderstackTrack();
     const isLoading = table.options.meta?.isLoading;
+
+    const platform: CreatorPlatform = influencer.url.includes('youtube')
+        ? 'youtube'
+        : influencer.url.includes('tiktok')
+        ? 'tiktok'
+        : 'instagram';
 
     if (!audienceGeo) {
         return null;
@@ -71,9 +80,20 @@ export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLoc
     return (
         <>
             {isLoading ? (
-                <div className="h-2 w-48 animate-pulse bg-gray-300" />
+                <div className="h-2 w-40 animate-pulse bg-gray-300" />
             ) : (
-                <div>{renderAudienceGeo(audienceGeo)}</div>
+                <div
+                    onMouseEnter={() => {
+                        track(HoverLocationGraph, {
+                            influencer_id: influencer.user_id,
+                            platform,
+                            index_position: row.index,
+                        });
+                    }}
+                    className="w-40"
+                >
+                    {renderAudienceGeo(audienceGeo)}
+                </div>
             )}
         </>
     );

@@ -1,7 +1,8 @@
 import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from 'react';
 import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
-import type { CreatorPlatform, InfluencerType } from 'types';
+import type { CreatorPlatform, InfluencerSize } from 'types';
+import { influencerSizes } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
@@ -36,7 +37,6 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
         tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
     };
-    const influencers: InfluencerType[] = ['microinfluencer', 'nicheinfluencer', 'megainfluencer'];
     const influencerSub: any = {
         microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
         nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
@@ -101,6 +101,57 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         });
     };
 
+    const toggleInfluencerSize = (influencerSize: InfluencerSize) => {
+        const { influencerSizes } = localFilters;
+        const isRemove = influencerSizes.includes(influencerSize) && influencerSizes.length > 1;
+        const isAdd = !isRemove;
+
+        const addInfluencerSize = (influencerSize: InfluencerSize) => {
+            setLocalFilters((prevFilters) => ({
+                ...prevFilters,
+                influencerSizes: [...prevFilters.influencerSizes, influencerSize],
+            }));
+        };
+
+        const removeInfluencerSize = (influencerSize: InfluencerSize) => {
+            setLocalFilters((prevFilters) => ({
+                ...prevFilters,
+                influencerSizes: prevFilters.influencerSizes.filter((p) => p !== influencerSize),
+            }));
+        };
+
+        // These special cases are here to ensure that the user can't select both microinfluencer and megainfluencer at the same time, while leaving out the nicheinfluencer.
+        if (isAdd && influencerSize === 'microinfluencer' && influencerSizes.includes('megainfluencer')) {
+            addInfluencerSize('microinfluencer');
+            addInfluencerSize('nicheinfluencer');
+        } else if (isAdd && influencerSize === 'megainfluencer' && influencerSizes.includes('microinfluencer')) {
+            addInfluencerSize('megainfluencer');
+            addInfluencerSize('nicheinfluencer');
+        } else if (
+            isRemove &&
+            influencerSize === 'nicheinfluencer' &&
+            influencerSizes.includes('microinfluencer') &&
+            influencerSizes.includes('megainfluencer')
+        ) {
+            return;
+        } else if (isRemove) {
+            removeInfluencerSize(influencerSize);
+        } else if (!influencerSizes.includes(influencerSize)) {
+            addInfluencerSize(influencerSize);
+        } else {
+            // This is the case where the user is trying to deselect the last influencer size left, but we don't allow that as there always has to be at least one size selected -> skip tracking.
+            return;
+        }
+
+        track(SetBoostbotFilter, {
+            batch_id: batchId,
+            currentPage: CurrentPageEvent.boostbot,
+            name: 'Influencer size',
+            key: influencerSize,
+            value: isRemove ? 'remove' : 'add',
+        });
+    };
+
     const geoSuggestions = countries
         .map(({ country, id }) => ({
             value: id.toString(),
@@ -111,7 +162,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
     const addNewGeo = (geoId: string) => {
         setLocalFilters((prevFilters) => ({
             ...prevFilters,
-            audience_geo: [...prevFilters.audience_geo, { id: Number(geoId), weight: 0.15 }],
+            audience_geo: [...prevFilters.audience_geo, { id: Number(geoId) }],
         }));
         track(SetBoostbotFilter, {
             batch_id: batchId,
@@ -215,24 +266,23 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Influencer Size
                         </div>
-                        {influencers.map((influencer) => {
-                            const isSelected = localFilters.size?.includes(influencer);
+                        {influencerSizes.map((influencerSize) => {
+                            const isSelected = localFilters.influencerSizes?.includes(influencerSize);
                             return (
-                                // TO DO Select influencer size
                                 <div
-                                    key={influencer}
+                                    key={influencerSize}
                                     className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
                                         isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
                                     }`}
-                                    // onClick={() => togglePlatform(influencer)}
-                                    // data-testid={`boostbot-filter-${influencer}`}
+                                    onClick={() => toggleInfluencerSize(influencerSize)}
+                                    data-testid={`boostbot-filter-${influencerSize}`}
                                 >
                                     <div className="flex space-x-4">
                                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                                             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                                                {influencer === 'microinfluencer' ? (
+                                                {influencerSize === 'microinfluencer' ? (
                                                     <MicroInfluencer className="stroke-2" />
-                                                ) : influencer === 'nicheinfluencer' ? (
+                                                ) : influencerSize === 'nicheinfluencer' ? (
                                                     <NicheInfluencer className="stroke-2" />
                                                 ) : (
                                                     <Sparkles className="h-6 w-6 stroke-primary-600 stroke-2" />
@@ -242,10 +292,10 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
 
                                         <div className="flex flex-col">
                                             <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {influencerSub[influencer].title}
+                                                {influencerSub[influencerSize].title}
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
-                                                {influencerSub[influencer].subtitle}
+                                                {influencerSub[influencerSize].subtitle}
                                             </div>
                                         </div>
                                     </div>
@@ -276,7 +326,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 ))}
                             </div>
                             {shouldShowGeoInput && (
-                                <div className="w-fit">
+                                <div className="w-fit" data-testid="boostbot-geo-container">
                                     <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
                                 </div>
                             )}

@@ -207,7 +207,12 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.chat.outreachDone',
+                translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                translationValues: {
+                    sequenceName: sequence.name,
+                },
             });
+
             // addMessage({
             //     sender: 'Bot',
             //     type: 'video',
