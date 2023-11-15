@@ -1,32 +1,50 @@
 {
-  "diy": {
-    "currency": "usd",
-    "prices": {
-      "monthly": "150.00",
-      "quarterly": "297.00",
-      "annually": "1068.00"
+  "discovery": [
+    {
+      "currency": "cny",
+      "prices": {
+        "monthly": "299"
+      },
+      "profiles": "200",
+      "searches": "900",
+      "priceIds": {
+        "monthly": "price_1Ng1a3F5PN4woVWo9KP4S4oM"
+      }
     },
-    "profiles": "200",
-    "searches": "2500",
-    "priceIds": {
-      "monthly": "price_1MNB61As9LEfZQ298w3oW64k",
-      "quarterly": "price_1MNB5iAs9LEfZQ29sssMyA6m",
-      "annually": "price_1M8yhpAs9LEfZQ29TSiaQVun"
+    {
+      "currency": "usd",
+      "prices": {
+        "monthly": "41"
+      },
+      "profiles": "200",
+      "searches": "900",
+      "priceIds": {
+        "monthly": "price_1OCDriF5PN4woVWoLDuwWWk9"
+      }
     }
-  },
-  "diyMax": {
-    "currency": "usd",
-    "prices": {
-      "monthly": "270.00",
-      "quarterly": "660.00",
-      "annually": "2388.00"
+  ],
+  "outreach": [
+    {
+      "currency": "cny",
+      "prices": {
+        "monthly": "799"
+      },
+      "profiles": "600",
+      "searches": "1200",
+      "priceIds": {
+        "monthly": "price_1NkkR7F5PN4woVWoOODKQpBi"
+      }
     },
-    "profiles": "450",
-    "searches": "5000",
-    "priceIds": {
-      "monthly": "price_1MNAT0As9LEfZQ292rmiX8Cj",
-      "quarterly": "price_1MNBZ8As9LEfZQ294QasjNYv",
-      "annually": "price_1MNBZ8As9LEfZQ29vph62DoE"
+    {
+      "currency": "usd",
+      "prices": {
+        "monthly": "110"
+      },
+      "profiles": "600",
+      "searches": "1200",
+      "priceIds": {
+        "monthly": "price_1OCDrGF5PN4woVWo2oAsIMPM"
+      }
     }
-  }
+  ]
 }
