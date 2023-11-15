@@ -182,6 +182,12 @@ import type { ToggleNavbarSizePayload } from './toggle-navbar-size';
 import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
 import type { SequenceSendPayload } from './outreach/sequence-send';
 import { SEQUENCE_SEND, SequenceSend } from './outreach/sequence-send';
+import type { OpenInfluencerCardPayload } from './boostbot/open-influencer-card';
+import { OPEN_INFLUENCER_CARD, OpenInfluencerCard } from './boostbot/open-influencer-card';
+import type { HoverLocationGraphPayload } from './boostbot/hover-location-graph';
+import { HOVER_LOCATION_GRAPH, HoverLocationGraph } from './boostbot/hover-location-graph';
+import { type HoverGenderGraphPayload } from './boostbot/hover-gender-graph';
+import { HOVER_GENDER_GRAPH, HoverGenderGraph } from './boostbot/hover-gender-graph';
 
 export {
     Search,
@@ -237,6 +243,9 @@ export {
     ChangeInboxFolder,
     ChangeTemplatePreview,
     ToggleNavbarSize,
+    OpenInfluencerCard,
+    HoverLocationGraph,
+    HoverGenderGraph,
 };
 
 export const events = {
@@ -324,6 +333,9 @@ export const events = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
     [SEQUENCE_SEND]: SequenceSend,
+    [OPEN_INFLUENCER_CARD]: OpenInfluencerCard,
+    [HOVER_LOCATION_GRAPH]: HoverLocationGraph,
+    [HOVER_GENDER_GRAPH]: HoverGenderGraph,
 };
 
 export type payloads = {
@@ -411,6 +423,9 @@ export type payloads = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
     [SEQUENCE_SEND]: SequenceSendPayload;
+    [OPEN_INFLUENCER_CARD]: OpenInfluencerCardPayload;
+    [HOVER_LOCATION_GRAPH]: HoverLocationGraphPayload;
+    [HOVER_GENDER_GRAPH]: HoverGenderGraphPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -500,6 +515,9 @@ export const eventKeys = z.union([
     z.literal(CHANGE_TEMPLATE_PREVIEW),
     z.literal(TOGGLE_NAVBAR_SIZE),
     z.literal(SEQUENCE_SEND),
+    z.literal(OPEN_INFLUENCER_CARD),
+    z.literal(HOVER_LOCATION_GRAPH),
+    z.literal(HOVER_GENDER_GRAPH),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
