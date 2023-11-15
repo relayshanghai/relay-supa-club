@@ -4,6 +4,7 @@ import * as extractInfluencer from './api/iqdata/extract-influencer';
 import type { CreatorReport } from '../../types';
 import { saveInfluencer } from './save-influencer';
 import type { SupabaseClient } from '@supabase/supabase-js';
+//@ts-check
 
 vi.mock('./api/db/calls/influencers-insert', () => ({
     getInfluencerSocialProfileByReferenceId: vi.fn(() => async (_: string) => {
