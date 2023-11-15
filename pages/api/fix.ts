@@ -18,11 +18,17 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('id, name, company_id')
-        .eq('funnel_status', 'In Sequence')
-        .in('company_id', _company_ids);
+        .eq('funnel_status', 'In Sequence');
+
     console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
     const updated: any = [];
+    const messedUpCompanies: {
+        [companyId: string]: {
+            name: string;
+            count: number;
+        };
+    } = {};
     // const sentMalformed = [];
     for (const influencer of allSequenceInfluencers) {
         try {
@@ -48,6 +54,14 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
                 //     sentMalformed.push(`${influencer.name} ${influencer.id} ${influencer.company_id}`);
                 //     continue;
                 // }
+                if (!Object.keys(messedUpCompanies).includes(influencer.company_id)) {
+                    messedUpCompanies[influencer.company_id] = {
+                        name: '',
+                        count: 1,
+                    };
+                } else {
+                    messedUpCompanies[influencer.company_id].count++;
+                }
                 const messageIds = emails.map((e) => e.email_message_id);
                 console.log('updating, ', influencer.name, influencer.company_id);
                 await supabase
@@ -77,6 +91,14 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
             console.error(error);
         }
     }
+    const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .in('id', Object.keys(messedUpCompanies));
+    companies?.forEach((c) => {
+        messedUpCompanies[c.id].name = c.name ?? '';
+    });
+    console.log('messedUpCompanies', messedUpCompanies);
     console.log('updated', updated.length);
     // console.log('sentMalformed', sentMalformed.length, sentMalformed);
 
