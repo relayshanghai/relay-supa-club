@@ -2,6 +2,7 @@
 import type { NextApiHandler } from 'next';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
+import type { CreatorPlatform } from 'types';
 
 const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const _company_ids = [
@@ -174,4 +175,42 @@ const _fixHalfSentSequence: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: toDelete });
 };
 
-export default _fixStuckInSequenceWithNoEmail;
+const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
+    console.log('fixing');
+    const { data: allSequenceInfluencers } = await supabase
+        .from('sequence_influencers')
+        .select('id, name, company_id, influencer_social_profile_id')
+        .is('platform', null);
+    const updates: any[] = [];
+    console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+    if (allSequenceInfluencers)
+        for (const influencer of allSequenceInfluencers) {
+            const { data: socialProfile } = await supabase
+                .from('influencer_social_profiles')
+                .select('*')
+                .eq('id', influencer.influencer_social_profile_id)
+                .limit(1)
+                .single();
+            // console.log(socialProfile);
+            if (socialProfile) {
+                const { url, avatar_url, name, platform, username } = socialProfile;
+                const update = { url, avatar_url, name, platform: platform as CreatorPlatform, username };
+                // console.log(update);
+                if (!update.platform) {
+                    console.log(update);
+                    continue;
+                }
+                const { data: updated } = await supabase
+                    .from('sequence_influencers')
+                    .update(update)
+                    .eq('id', influencer.id)
+                    .select()
+                    .single();
+                updates.push(updated?.platform);
+            }
+        }
+    console.log(updates);
+    return res.status(200).json({ message: updates });
+};
+
+export default fixSequenceInfluencerDataIncomplete;
