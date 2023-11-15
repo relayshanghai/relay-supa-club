@@ -207,6 +207,7 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
                     .select()
                     .single();
                 updates.push(updated?.platform);
+                console.log(`${updated?.platform}`);
             }
         }
     console.log(updates);
