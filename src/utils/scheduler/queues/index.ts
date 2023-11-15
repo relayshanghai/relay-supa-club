@@ -1,11 +1,13 @@
 import { Default } from './default';
 import { Failed } from './failed';
 import { Blocking } from './blocking';
+import { Analytics } from './analytics';
 
 export const queues = {
     [Default.name]: Default,
     [Failed.name]: Failed,
     [Blocking.name]: Blocking,
+    [Analytics.name]: Analytics,
 };
 
 export type JOB_QUEUE = keyof typeof queues;

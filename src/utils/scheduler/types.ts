@@ -13,13 +13,13 @@ export enum JOB_STATUS {
 
 type JobQueueResult = { job: string; result: boolean };
 
-export type JobInterface<T> = {
+export type JobInterface<T, TRun = (payload?: any) => Promise<any>> = {
     name: T;
     /**
      * The logic for running the job. Must throw an error to fail
      * @throws Error
      */
-    run: (payload?: any) => Promise<any>;
+    run: TRun;
 };
 
 export type JobQueueRunPayload = {

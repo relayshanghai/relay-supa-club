@@ -3,7 +3,7 @@ import type { Jobs } from '../api/db';
 import { serverLogger } from '../logger-server';
 import { db } from '../supabase-client';
 import { createJob as createJobDb, finishJob as finishJobDb } from './db-queries';
-import type { JobNames } from './jobs';
+import type { JobNames, JobType } from './jobs';
 import { isValidJob, jobs } from './jobs';
 import { JOB_STATUS } from './types';
 import { now } from '../datetime';
@@ -23,7 +23,8 @@ export const runJob = async (job: Jobs['Row']) => {
 
     try {
         const jobInstance = initJob(job.name);
-        result = await jobInstance.run(job.payload);
+        const payload = job.payload;
+        result = await jobInstance.run(payload as any);
         status = JOB_STATUS.success;
     } catch (e) {
         status = JOB_STATUS.failed;
@@ -59,20 +60,20 @@ export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'runn
     return false;
 };
 
-type CreateJobInsert = Pick<Jobs['Insert'], 'payload' | 'owner'> & {
-    name: JobNames;
+type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
     queue?: JOB_QUEUE;
     run_at?: string;
+    payload: Parameters<JobType<T>['run']>[0];
 };
 
-export const createJob = async (job: CreateJobInsert) => {
+export const createJob = async <J extends JobNames>(jobName: J, job: CreateJobInsert<J>) => {
     const { run_at, queue } = job;
     const id = v4();
     const schedule = run_at ?? now();
 
     try {
         return await db(createJobDb)(id, {
-            name: job.name,
+            name: jobName,
             run_at: schedule,
             payload: job.payload,
             queue: queue ?? 'default',
@@ -81,7 +82,7 @@ export const createJob = async (job: CreateJobInsert) => {
     } catch (error) {
         serverLogger('Cannot create job', (scope) => {
             return scope.setContext('Job', {
-                job: job.name,
+                job: jobName,
                 queue,
                 payload: JSON.stringify(job.payload ?? {}),
                 owner: job.owner,
