@@ -239,15 +239,16 @@ export const SearchOptions = ({
                     )}
                     <div className="flex w-full justify-end">
                         <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
-                            <button
+                            <Button
+                                variant="secondary"
+                                className="col-span-1 h-full"
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
                                 }}
-                                className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
                                 <p className="w-full p-1">{t('creators.addFilters')}</p>
-                            </button>
+                            </Button>
                             <Button
                                 data-testid="search-button"
                                 className="col-span-1 h-full"
