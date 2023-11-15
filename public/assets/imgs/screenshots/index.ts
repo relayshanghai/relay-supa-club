@@ -12,4 +12,7 @@ export const screenshots: ImageURLTypes = {
     filtersPageEn: '/assets/imgs/screenshots/filters-en.png',
     performancePageCn: '/assets/imgs/screenshots/performance-cn.png',
     performancePageEn: '/assets/imgs/screenshots/performance-en.png',
+    boostBot:'/assets/imgs/screenshots/boostBotFirstInteraction.png',
+    inbox:'/assets/imgs/screenshots/inboxEmailView.png',
+    sequence:'/assets/imgs/screenshots/sequencePage-KOLSelected.png'
 };

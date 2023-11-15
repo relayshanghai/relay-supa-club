@@ -24,7 +24,7 @@ export default function Register() {
     return (
         <>
             <LoginSignupLayout
-                leftBgColor="bg-primary-500"
+                leftBgColor="boostbot-gradient"
                 left={<ScreenshotsCarousel />}
                 right={
                     <SignUpPage
