@@ -1,4 +1,4 @@
-import { evaluateStat, processedAudienceDemoData } from './helper';
+import { convertAudienceDataToPercentage, evaluateStat, processedAudienceDemoData } from './helper';
 import boostbotGetInfluencers from 'src/mocks/api/boostbot/get-influencers.json';
 import { describe, test, expect } from 'vitest';
 
@@ -55,19 +55,23 @@ describe('evaluateStat function works as intended', () => {
 describe('processedAudienceDemoData function works as intended', () => {
     const influencer = boostbotGetInfluencers[0];
     const result = processedAudienceDemoData(influencer);
+    const correctedResult = convertAudienceDataToPercentage(result);
     test('processedAudienceDemoData returns category correctly from data', () => {
         expect(result.length).to.equal(5);
         expect(result[0].category).to.equal('13-17');
         expect(result[1].category).to.equal('18-24');
         expect(result[2].category).to.equal('25-34');
         expect(result[3].category).to.equal('35-44');
-        expect(result[4].category).to.equal('45-64');
+        expect(result[4].category).to.equal('45+');
     });
 
     test('returns correct male and female bar chart data', () => {
         const malePercentageWeight = influencer.audience_genders[0].weight;
         const femalePercentageWeight = 1 - malePercentageWeight;
         const WEIGHT_TO_PERCENTAGE = 10000;
+
+        const totalAudience = result.reduce((sum, item) => sum + item.male + item.female, 0);
+
         const male13To17 = influencer.audience_genders_per_age[0].male * malePercentageWeight * WEIGHT_TO_PERCENTAGE;
         const female13To17 =
             (influencer.audience_genders_per_age[0].male / malePercentageWeight) *
@@ -75,5 +79,8 @@ describe('processedAudienceDemoData function works as intended', () => {
             WEIGHT_TO_PERCENTAGE;
         expect(result[0].male).to.equal(male13To17);
         expect(result[0].female).to.equal(female13To17);
+
+        expect(correctedResult[0].male).to.equal((male13To17 / totalAudience) * 100);
+        expect(correctedResult[0].female).to.equal((female13To17 / totalAudience) * 100);
     });
 });
