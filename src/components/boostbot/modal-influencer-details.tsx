@@ -52,7 +52,7 @@ export const InfluencerDetailsModal = ({
     const { getTopicsAndRelevance } = useBoostbot({});
     const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
     const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
-        ? Array(7).fill({ topic: '-', relevance: 0.5 })
+        ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0.5 }))
         : topicsAndRelevance.map((topic) => ({
               ...topic,
               topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
@@ -123,7 +123,14 @@ export const InfluencerDetailsModal = ({
     // Used to break multiline labels into multiple tspans to prevent text overflow
     function CustomizedTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
         return (
-            <text x={x} y={y} dy={-4} fill="black" fontSize={10} textAnchor="middle">
+            <text
+                x={x}
+                y={y}
+                dy={-4}
+                fill={areTopicsAndRelevanceLoading ? 'transparent' : 'black'}
+                fontSize={10}
+                textAnchor="middle"
+            >
                 {payload.value.split(' ').map((word: string, index: number) => (
                     <tspan key={index} x={x} dy={index ? '1.2em' : 0}>
                         {word}
