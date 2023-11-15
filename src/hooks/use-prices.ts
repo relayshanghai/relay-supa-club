@@ -82,14 +82,17 @@ export const usePrices = () => {
         },
     };
 
-    const { data: newPrices } = useSWR('new-prices', async () => {
+    const {
+        data: newPrices,
+        isValidating,
+        isLoading,
+    } = useSWR(['new-prices', en], async () => {
         try {
-            const prices = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
-            //return newPrices.discovery and newPrices.outreach arrays with the object with currency match the language
+            const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
             const currencyToMatch = en ? 'usd' : 'cny';
             const newPrices = {
-                discovery: prices.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
-                outreach: prices.outreach.find((plan) => plan.currency === currencyToMatch) || pricesBlank.outreach,
+                discovery: data.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
+                outreach: data.outreach.find((plan) => plan.currency === currencyToMatch) || pricesBlank.outreach,
             };
 
             return newPrices;
@@ -97,5 +100,5 @@ export const usePrices = () => {
             clientLogger(error, 'error');
         }
     });
-    return newPrices ? newPrices : pricesBlank;
+    return !newPrices || isLoading || isValidating ? pricesBlank : newPrices;
 };
