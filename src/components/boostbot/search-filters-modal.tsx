@@ -5,7 +5,7 @@ import type { CreatorPlatform, InfluencerType } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
-import { Sparkles } from 'src/components/icons';
+import { Question, Sparkles } from 'src/components/icons';
 import { countries, countriesByFlag } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { randomNumber } from 'src/utils/utils';
@@ -15,6 +15,7 @@ import { SetBoostbotFilter } from 'src/utils/analytics/events/boostbot/set-filte
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import MicroInfluencer from '../icons/MicroInfluencer';
 import NicheInfluencer from '../icons/NicheInfluencer';
+import { Tooltip } from '../library/tooltip';
 
 type SearchFiltersModalProps = {
     isOpen: boolean;
@@ -241,8 +242,16 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                            <div className="flex flex-row pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
                                                 {influencerSub[influencer].title}
+                                                <Tooltip
+                                                    content={t(`tooltips.boostBotFilter` + influencer + `.title`)}
+                                                    detail={t(`tooltips.boostBotFilter` + influencer + `.description`)}
+                                                    position="bottom-right"
+                                                    className="w-fit"
+                                                >
+                                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                                </Tooltip>
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
                                                 {influencerSub[influencer].subtitle}
@@ -257,9 +266,18 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 </div>
                 <div className="flex h-full w-full flex-row">
                     <div className="w-1/2">
-                        <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
+                        <div className="text-md mb-3 flex w-full flex-row border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             Audience Location
+                            <Tooltip
+                                content={t('tooltips.boostBotAudienceLocation.title')}
+                                detail={t('tooltips.boostBotAudienceLocation.description')}
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
+
                         <div className="flex w-full flex-row rounded-md border-none bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
                             <div className="flex flex-row justify-center gap-1">
                                 {localFilters['audience_geo'].map((geo) => (
