@@ -32,33 +32,40 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
 export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
     (rudder, session) => (event, payload) => {
         if (disabled) return;
+
         try {
-            const trigger: TriggerEvent = (eventName, payload) => {
-                if (!session) {
-                    throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-                }
+          const trigger: TriggerEvent = (eventName, payload) => {
+              if (!session) {
+                  serverLogger(new Error(`Rudderstack event "${eventName}" has no identity`), (scope) => {
+                      return scope.setContext(`Event`, { eventName });
+                  });
+                  return false;
+              }
 
-                const trackPayload: Parameters<typeof rudder.track>[0] = {
-                    event: eventName,
-                    properties: payload,
-                };
+              const trackPayload: Parameters<typeof rudder.track>[0] = {
+                  event: eventName,
+                  properties: payload,
+              };
 
-                if (session.user_id) {
-                    trackPayload.userId = session.user_id;
-                }
+              if (session.user_id) {
+                  trackPayload.userId = session.user_id;
+              }
 
-                if (!session.user_id && session.anonymous_id) {
-                    trackPayload.anonymousId = session.anonymous_id;
-                }
+              if (!session.user_id && session.anonymous_id) {
+                  trackPayload.anonymousId = session.anonymous_id;
+              }
 
-                if (!trackPayload.userId && !trackPayload.anonymousId) {
-                    throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-                }
+              if (!trackPayload.userId && !trackPayload.anonymousId) {
+                  serverLogger(new Error(`Rudderstack event "${eventName}" has no identity`), (scope) => {
+                      return scope.setContext(`Event`, { eventName });
+                  });
+                  return false;
+              }
 
-                rudder.track(trackPayload);
-            };
+              rudder.track(trackPayload);
+          };
 
-            return event(trigger, payload);
+          return event(trigger, payload);
         } catch (error) {
             serverLogger(error);
         }
