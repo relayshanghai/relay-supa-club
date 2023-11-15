@@ -37,15 +37,9 @@ type TextMessage = {
     text: string;
 };
 
-type TextLinkMessage = {
-    type: 'textlink';
-    text: string;
-    link: string;
-};
-
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Neutral';
-} & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage | TextLinkMessage);
+} & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage);
 
 const Translation = ({
     translationKey,
@@ -90,8 +84,6 @@ const Video = ({ videoUrl = '', eventToTrack = '' }: VideoMessage) => (
 const Progress = ({ progressData }: ProgressMessage) => <ChatProgress progress={progressData} />;
 
 const Text = ({ text }: TextMessage) => <>{text}</>;
-
-const TextLink = ({ text, link }: TextLinkMessage) => <Link href={link}>{text}</Link>;
 
 interface MessageProps {
     message: MessageType;
@@ -141,8 +133,6 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Content = <Progress {...message} />;
     } else if (type === 'text') {
         Content = <Text {...message} />;
-    } else if (type === 'textlink') {
-        Content = <TextLink {...message} />;
     }
 
     return (
