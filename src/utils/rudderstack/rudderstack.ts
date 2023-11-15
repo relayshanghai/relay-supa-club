@@ -38,7 +38,6 @@ export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['sessio
                 serverLogger(new Error(`Rudderstack event "${event.eventName}" has no identity`), (scope) => {
                     return scope.setContext(`Rudderstack event "${event.eventName}" has no identity`, {
                         event,
-                        payload,
                     });
                 });
                 return false;
@@ -61,7 +60,6 @@ export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['sessio
                 serverLogger(new Error(`Rudderstack event "${event.eventName}" has no identity`), (scope) => {
                     return scope.setContext(`Rudderstack event "${event.eventName}" has no identity`, {
                         event,
-                        payload,
                     });
                 });
                 return false;
