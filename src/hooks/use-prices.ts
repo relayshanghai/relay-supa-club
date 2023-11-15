@@ -1,4 +1,4 @@
-import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
+import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useTranslation } from 'react-i18next';
 import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRICE_MONTHLY_OUTREACH } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
@@ -86,9 +86,9 @@ export const usePrices = () => {
         data: newPrices,
         isValidating,
         isLoading,
-    } = useSWR(['new-prices', en], async () => {
+    } = useSWR(['prices', en], async () => {
         try {
-            const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
+            const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
             const currencyToMatch = en ? 'usd' : 'cny';
             const newPrices = {
                 discovery: data.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
