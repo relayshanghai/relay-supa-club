@@ -6,6 +6,7 @@ import type Stripe from 'stripe';
 import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const PromoCodeSection = ({
     selectedPrice,
@@ -20,6 +21,7 @@ export const PromoCodeSection = ({
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
+    const { track } = useRudderstackTrack();
 
     const handleSubmit = async (promoCode: string) => {
         setLoading(true);
