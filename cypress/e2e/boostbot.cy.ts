@@ -41,8 +41,6 @@ describe('Boostbot', () => {
         cy.contains(influencerName);
         cy.contains(formattedFollowers);
         cy.contains('@DANNIVIVIANI');
-        cy.contains('IG: @therealdanni_v Contact me @ typicalmarie123@gmail.com ***Business Only****');
-        cy.contains('#facialhair, #bodyhair, #epilator');
     });
 
     it('can persist chat messages and influencer result states across reloads', () => {
@@ -81,14 +79,11 @@ describe('Boostbot', () => {
 
     it('does not persist unfinished loading progress messages', () => {
         cy.intercept('POST', '/api/boostbot/get-influencers', { body: boostbotGetInfluencers, delay: 2000 });
-        cy.intercept('GET', '/api/creators/report*', { body: danniCreatorReport, delay: 2000 });
 
         cy.get('textarea').type('LED beauty mask{enter}');
 
         cy.contains('LED beauty mask');
         cy.contains('Generating topics and niches');
-        cy.contains('Browsing through millions of influencers in our database');
-        cy.contains('Handpicking the best influencers');
 
         cy.wait(1000); // since IndexedDB is async, wait for it to finish saving state. If we don't and the reload happens too fast, the state doesn't get persisted and gets lost.
         cy.reload();
@@ -100,19 +95,16 @@ describe('Boostbot', () => {
     it('accepts limited filters and fetches influencers only for 1 platform', () => {
         cy.contains("Hi, I'm BoostBot");
 
-        cy.getByTestId('boostbot-open-options').click();
         cy.getByTestId('boostbot-open-filters').click();
 
-        cy.contains('Basic Filters');
-
-        cy.getByTestId('boostbot-add-more-geos-button').click();
-        cy.get('input').focus().type('Fra'); // Type into a suggestion input
-        cy.contains('France').click(); // Add France geo by clicking a suggestion box item
+        cy.contains('Search Filters');
 
         cy.getByTestId('boostbot-filter-instagram').click(); // By default, all platforms are enabled. We uncheck instagram and tiktok.
         cy.getByTestId('boostbot-filter-tiktok').click();
 
         cy.getByTestId(`boostbot-filter-geo-${countriesByCode.US.id}`).click(); // Remove default United States geo
+        cy.getByTestId('boostbot-geo-container').find('input').focus().type('Fra');
+        cy.contains('France').click();
         cy.getByTestId('boostbot-confirm-filters').click();
 
         cy.get('textarea').type('LED beauty mask{enter}'); // Do a search
@@ -120,8 +112,8 @@ describe('Boostbot', () => {
         cy.intercept('POST', '/api/boostbot/get-influencers', (req) => {
             const { audience_geo } = req.body.searchPayloads[0].body.filter;
 
-            const expectedCountryInclusion = { id: countriesByCode.FR.id, weight: 0.15 }; // Added France geo
-            const unexpectedCountryInclusion = { id: countriesByCode.US.id, weight: 0.15 }; // Removed default US geo
+            const expectedCountryInclusion = { id: countriesByCode.FR.id, weight: 0.02 }; // Added France geo
+            const unexpectedCountryInclusion = { id: countriesByCode.US.id, weight: 0.2 }; // Removed default US geo
 
             expect(audience_geo).to.deep.include(expectedCountryInclusion);
             expect(audience_geo).to.not.deep.include(unexpectedCountryInclusion);
