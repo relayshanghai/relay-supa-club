@@ -88,21 +88,27 @@ export function InfluencersTable<TData, TValue>({
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead className="text-xs" key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                            {['audienceGender', 'audienceGeolocations', 'boostbotScore'].includes(
-                                                header.id,
-                                            ) && (
-                                                <Tooltip
-                                                    content={t(`tooltips.${header.id}.title`)}
-                                                    detail={t(`tooltips.${header.id}.description`)}
-                                                    position="bottom-left"
-                                                    className="w-10 w-fit"
-                                                >
-                                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
-                                                </Tooltip>
-                                            )}
+                                            <div className="flex flex-row items-center gap-1">
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                                {['audienceGender', 'audienceGeolocations', 'boostbotScore'].includes(
+                                                    header.id,
+                                                ) && (
+                                                    <Tooltip
+                                                        content={t(`tooltips.${header.id}.title`)}
+                                                        detail={t(`tooltips.${header.id}.description`)}
+                                                        position={
+                                                            header.id === 'boostbotScore'
+                                                                ? 'bottom-right'
+                                                                : 'bottom-left'
+                                                        }
+                                                        className="w-8"
+                                                    >
+                                                        <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                                    </Tooltip>
+                                                )}
+                                            </div>
                                         </TableHead>
                                     );
                                 })}
