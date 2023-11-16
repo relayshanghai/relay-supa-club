@@ -3,7 +3,6 @@ import type { TriggerEvent } from '../types';
 export const OPEN_SOCIAL_PROFILE = 'Open Social Profile';
 
 export type OpenSocialProfilePayload = {
-    is_unlocked: boolean;
     results_index: number;
     results_page: number;
     kol_id: string;

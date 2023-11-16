@@ -1,13 +1,16 @@
 import React from 'react';
-import { AlertCircleOutline, CheckCircleOutline } from 'src/components/icons';
+import { AlertCircleOutline, CheckCircleOutline, Question } from 'src/components/icons';
+import { Tooltip } from '../library/tooltip';
+import { t } from 'i18next';
 
 interface StatCardProps {
     title: string;
     stat: string;
     iconName?: 'alert' | 'good';
+    tooltip?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName, tooltip }) => {
     const statBgColor =
         iconName === 'good'
             ? 'bg-green-100 border-green-50'
@@ -19,7 +22,19 @@ const StatCard: React.FC<StatCardProps> = ({ title, stat, iconName }) => {
 
     return (
         <div className="stat-card space-y-2 rounded-xl border border-gray-200 p-6 text-gray-600">
-            <div className="text-sm font-medium tracking-tight">{title}</div>
+            <div className="flex space-x-1 text-xs font-medium tracking-tight">
+                {title}
+                {tooltip && (
+                    <Tooltip
+                        content={t(`tooltips.` + tooltip + `.title`)}
+                        detail={t(`tooltips.` + tooltip + `.description`)}
+                        position="bottom-left"
+                        className="w-fit"
+                    >
+                        <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                    </Tooltip>
+                )}
+            </div>
             <div className="flex w-full items-center justify-between">
                 <div className="text-3xl font-medium">{stat}</div>
                 <div className={`flex h-8 w-8 items-center justify-center rounded-full border-4 ${statBgColor}`}>

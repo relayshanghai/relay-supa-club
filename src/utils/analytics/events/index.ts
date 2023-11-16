@@ -16,8 +16,6 @@ import {
     BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH,
     SendInfluencersToOutreach,
 } from './boostbot/send-influencers-to-outreach';
-import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
-import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { ChangePagePayload } from './change-page';
 import { CHANGE_PAGE, ChangePage } from './change-page';
 import type { OpenSocialProfilePayload } from './open-social-profle';
@@ -185,6 +183,12 @@ import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
 import type { SequenceSendPayload } from './outreach/sequence-send';
 import { SEQUENCE_SEND, SequenceSend } from './outreach/sequence-send';
 import { APPLY_PROMO_CODE, ApplyPromoCode, type ApplyPromoCodePayload } from './apply-promo-code';
+import type { OpenInfluencerCardPayload } from './boostbot/open-influencer-card';
+import { OPEN_INFLUENCER_CARD, OpenInfluencerCard } from './boostbot/open-influencer-card';
+import type { HoverLocationGraphPayload } from './boostbot/hover-location-graph';
+import { HOVER_LOCATION_GRAPH, HoverLocationGraph } from './boostbot/hover-location-graph';
+import { type HoverGenderGraphPayload } from './boostbot/hover-gender-graph';
+import { HOVER_GENDER_GRAPH, HoverGenderGraph } from './boostbot/hover-gender-graph';
 
 export {
     Search,
@@ -205,7 +209,6 @@ export {
     EmailReply,
     BoostbotAnalyzeInfluencer,
     RecommendInfluencers,
-    UnlockInfluencers,
     SendInfluencersToOutreach,
     OpenSocialProfile,
     OpenAnalyzeProfile,
@@ -242,6 +245,9 @@ export {
     ChangeTemplatePreview,
     ToggleNavbarSize,
     ApplyPromoCode,
+    OpenInfluencerCard,
+    HoverLocationGraph,
+    HoverGenderGraph,
 };
 
 export const events = {
@@ -265,7 +271,6 @@ export const events = {
     [OUTREACH_EMAIL_NEW]: EmailNew,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
-    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfile,
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfile,
@@ -331,6 +336,9 @@ export const events = {
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
     [SEQUENCE_SEND]: SequenceSend,
     [APPLY_PROMO_CODE]: ApplyPromoCode,
+    [OPEN_INFLUENCER_CARD]: OpenInfluencerCard,
+    [HOVER_LOCATION_GRAPH]: HoverLocationGraph,
+    [HOVER_GENDER_GRAPH]: HoverGenderGraph,
 };
 
 export type payloads = {
@@ -354,7 +362,6 @@ export type payloads = {
     [OUTREACH_EMAIL_NEW]: EmailNewPayload;
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload;
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload;
-    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload;
     [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload;
     [OPEN_SOCIAL_PROFILE]: OpenSocialProfilePayload;
     [OPEN_ANALYZE_PROFILE]: OpenAnalyzeProfilePayload;
@@ -420,6 +427,9 @@ export type payloads = {
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
     [SEQUENCE_SEND]: SequenceSendPayload;
     [APPLY_PROMO_CODE]: ApplyPromoCodePayload;
+    [OPEN_INFLUENCER_CARD]: OpenInfluencerCardPayload;
+    [HOVER_LOCATION_GRAPH]: HoverLocationGraphPayload;
+    [HOVER_GENDER_GRAPH]: HoverGenderGraphPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -445,7 +455,6 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_NEW),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
-    z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
     z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
     z.literal(OPEN_SOCIAL_PROFILE),
     z.literal(OPEN_ANALYZE_PROFILE),
@@ -511,6 +520,9 @@ export const eventKeys = z.union([
     z.literal(TOGGLE_NAVBAR_SIZE),
     z.literal(SEQUENCE_SEND),
     z.literal(APPLY_PROMO_CODE),
+    z.literal(OPEN_INFLUENCER_CARD),
+    z.literal(HOVER_LOCATION_GRAPH),
+    z.literal(HOVER_GENDER_GRAPH),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

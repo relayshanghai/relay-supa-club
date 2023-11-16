@@ -3,7 +3,6 @@ import { ChatContent, type ChatContentProps } from './chat-content';
 import type { MessageType } from 'src/components/boostbot/message';
 
 describe('<ChatContent />', () => {
-    let handleSelectedInfluencersToUnlock: () => void;
     let handleSelectedInfluencersToOutreach: () => void;
     let stopBoostbot: () => void;
     const messages: MessageType[] = [
@@ -13,7 +12,6 @@ describe('<ChatContent />', () => {
     let props: ChatContentProps;
 
     beforeEach(() => {
-        handleSelectedInfluencersToUnlock = cy.stub();
         handleSelectedInfluencersToOutreach = cy.stub();
         stopBoostbot = cy.stub();
 
@@ -21,12 +19,10 @@ describe('<ChatContent />', () => {
             messages,
             isSearchLoading: false,
             shouldShowButtons: true,
-            handleSelectedInfluencersToUnlock,
             handleSelectedInfluencersToOutreach,
             stopBoostbot,
-            isUnlockOutreachLoading: false,
+            isOutreachLoading: false,
             areChatActionsDisabled: false,
-            isUnlockButtonDisabled: false,
             isOutreachButtonDisabled: false,
         };
     });
@@ -38,49 +34,7 @@ describe('<ChatContent />', () => {
         cy.contains('test message 2').should('exist');
     });
 
-    it('Buttons are disabled while loading', () => {
-        props.isUnlockOutreachLoading = true;
-        testMount(<ChatContent {...props} />);
-
-        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
-        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
-    });
-
-    it('Buttons are disabled when chat actions are disabled', () => {
-        props.areChatActionsDisabled = true;
-        testMount(<ChatContent {...props} />);
-
-        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
-        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
-    });
-
-    it('Unlock button gets correctly disabled', () => {
-        props.isUnlockButtonDisabled = true;
-        testMount(<ChatContent {...props} />);
-
-        cy.get('[data-testid="boostbot-button-unlock"]').should('be.disabled');
-        cy.get('[data-testid="boostbot-button-outreach"]').should('not.be.disabled');
-    });
-
-    it('Outreach button gets correctly disabled', () => {
-        props.isOutreachButtonDisabled = true;
-        testMount(<ChatContent {...props} />);
-
-        cy.get('[data-testid="boostbot-button-unlock"]').should('not.be.disabled');
-        cy.get('[data-testid="boostbot-button-outreach"]').should('be.disabled');
-    });
-
-    it('Calls correct actions when buttons are clicked', () => {
-        testMount(<ChatContent {...props} />);
-
-        cy.get('[data-testid="boostbot-button-unlock"]').click();
-        cy.wrap(handleSelectedInfluencersToUnlock).should('have.been.called');
-
-        cy.get('[data-testid="boostbot-button-outreach"]').click();
-        cy.wrap(handleSelectedInfluencersToOutreach).should('have.been.called');
-    });
-
-    // Temporarily disable the stop button until we design a better flow for the default influencer unlock, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
+    // Temporarily disable the stop button until we design a better flow for the chat actions, related ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1007
     // it('Calls stop action when stop button is clicked', () => {
     //     props.isSearchLoading = true;
     //     props.shouldShowButtons = false;
