@@ -7,6 +7,8 @@ import { serverLogger } from 'src/utils/logger-server';
 
 const QUEUE_NAME = 'blocking';
 
+const RUNNING_JOB_STUCK_THRESHOLD = 10;
+
 /**
  * Blocking queue - A failing job will be retried until it becomes successful
  */
@@ -21,15 +23,26 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
             limit: 1,
         });
 
+        const runningJob = running.length > 0 ? running[0] : null;
+
         // Prevent blocking queues from running if a job is stuck
-        if (running.length > 0) {
-            const runningJob = running[0];
+        if (runningJob && (runningJob.retry_count ?? 0) >= RUNNING_JOB_STUCK_THRESHOLD) {
             serverLogger(`Cannot process ${queueName} queue. A job is stuck in running`, (scope) => {
                 return scope.setContext('Job', {
                     job: runningJob.id,
                 });
             });
             throw new Error(`Cannot process ${queueName} queue. A job is stuck in running`);
+        }
+
+        // Prevent blocking queues from running if a job is already running
+        if (runningJob && (runningJob.retry_count ?? 0) <= 0) {
+            serverLogger(`Cannot process ${queueName} queue. A job is already running`, (scope) => {
+                return scope.setContext('Job', {
+                    job: runningJob.id,
+                });
+            });
+            throw new Error(`Cannot process ${queueName} queue. A job is already running`);
         }
 
         const jobs = await db(fetchJobs)({
