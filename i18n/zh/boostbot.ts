@@ -32,7 +32,7 @@ const boostbot = {
 你可以使用任何语言向我描述你的产品, 我将根据产品描述向你推荐相关的网红达人帮你在YouTube、TikTok和Instagram上推广产品。
 
 例如: “一款重量轻、可折叠的4K HDR迷你相机无人机”`,
-        noInfluencersFound: '看上去好像没有符合目前设定的筛选条件的网红达人诶。你可在此处再次调整筛选条件:',
+        noInfluencersFound: '看上去好像没有符合目前设定的筛选条件的网红达人诶。',
         influencersFound: '我精选了 {{count}} 位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
         influencersFoundFirstTime:
             '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在{{geolocations}}。你也可以在此处更改目标地域：',
