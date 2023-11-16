@@ -101,7 +101,7 @@ export const Chat: React.FC<ChatProps> = ({
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
-        influencerSizes: ['microinfluencer', 'nicheinfluencer', 'megainfluencer'],
+        influencerSizes: ['microinfluencer', 'nicheinfluencer'],
     };
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
