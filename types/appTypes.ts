@@ -32,7 +32,6 @@ export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
 export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach';
-export type newActiveSubscriptionTier = 'discovery' | 'outreach';
 export type RelayPlan = {
     currency: string;
     prices: {
