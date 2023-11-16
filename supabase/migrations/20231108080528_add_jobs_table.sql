@@ -12,7 +12,9 @@ CREATE TABLE "public"."jobs" (
 );
 CREATE UNIQUE INDEX jobs_pkey ON public.jobs USING btree (id);
 
-CREATE INDEX idx_runat_status_queue_createdat ON "public"."jobs" USING btree (created_at, run_at, status, queue);
+CREATE INDEX idx_createdat_runat_status_queue ON "public"."jobs" USING btree (created_at, run_at, status, queue);
+
+CREATE INDEX idx_status_queue_owner ON "public"."jobs" USING btree (status, queue, owner);
 
 ALTER TABLE "public"."jobs" ADD CONSTRAINT "jobs_pkey" PRIMARY KEY USING INDEX "jobs_pkey";
 
