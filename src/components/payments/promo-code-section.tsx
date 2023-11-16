@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { getAllPromoCodes } from 'src/utils/api/stripe/handle-subscriptions';
 import { numberFormatter } from 'src/utils/formatter';
 import type Stripe from 'stripe';
-import type { NewRelayPlan, newActiveSubscriptionTier } from 'types';
+import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ApplyPromoCode } from 'src/utils/analytics/events';
+import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 export const PromoCodeSection = ({
     selectedPrice,
@@ -16,14 +17,15 @@ export const PromoCodeSection = ({
 }: {
     selectedPrice: NewRelayPlan;
     setCouponId: (value: string) => void;
-    priceTier: newActiveSubscriptionTier;
+    priceTier: ActiveSubscriptionTier;
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [promoCode, setPromoCode] = useState<string>('');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
+    const en = i18n.language.toLowerCase().includes('en');
     const { track } = useRudderstackTrack();
 
     const handleSubmit = async (promoCode: string) => {
@@ -44,7 +46,7 @@ export const PromoCodeSection = ({
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
-                ` ${percentageOff}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
+                ` ${percentageOff}% ${t('account.payments.offCn')} (${en ? '$' : '¥'}${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
                 )}) ${t('account.payments.offEn')}${validDurationText}`,
