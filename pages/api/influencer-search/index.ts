@@ -134,7 +134,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(httpCodes.OK).json(results);
 };
+const getHandler = (req: any, res: any) => {
+    return res.status(200).json({ hello: 'yay' });
+};
 
 export default ApiHandler({
     postHandler,
+    getHandler,
 });

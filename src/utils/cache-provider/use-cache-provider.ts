@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import type { CacheProvider, Config } from './types';
 import createCacheProvider from './cache-provider';
+import { clientLogger } from '../logger-client';
 
 /**
  * Cache provider hook
@@ -21,8 +22,8 @@ export default function useCacheProvider<Data = any, Error = any>({
 
         createCacheProvider<Data, Error>({ dbName, storeName, storageHandler, version, onError })
             .then((cp) => isSetup && setCacheProvider(() => cp))
-            .catch((err) => {
-                console.log('123================', err);
+            .catch((error) => {
+                clientLogger(error);
             });
 
         return () => {
