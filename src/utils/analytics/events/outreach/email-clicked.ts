@@ -6,6 +6,7 @@ export type EmailClickedPayload = EventPayload<{
     account_id: string;
     sequence_email_id: string | null;
     extra_info?: any;
+    is_success: boolean;
 }>;
 
 export const EmailClicked = (trigger: TriggerEvent<EmailClickedPayload>, payload?: EmailClickedPayload) =>

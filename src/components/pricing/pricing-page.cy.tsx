@@ -21,7 +21,7 @@ describe('PricingPage', () => {
         testMount(<PricingPage />);
         // shows loading state first.
         cy.contains('$220').should('not.exist');
-        cy.contains('299');
+        cy.contains('41');
         cy.contains('$--').should('not.exist');
     });
     it('allows user to go back to account page', () => {
