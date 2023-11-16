@@ -35,8 +35,10 @@ function MyApp({
 
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
-        storedLanguage !== null ? _i18n.changeLanguage(storedLanguage) : _i18n.changeLanguage(); // triggers the language detector
-    }, [_i18n]);
+        storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
+        // eslint-disable-next-line no-console
+        console.log('storedLanguage set to: ', storedLanguage);
+    }, []);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -57,6 +59,8 @@ function MyApp({
     useEffect(() => {
         _i18n.on('languageChanged', (l) => {
             setLang(l);
+            // eslint-disable-next-line no-console
+            console.log('lang set to: ', l);
         });
 
         return () => _i18n.on('languageChanged', () => null);
