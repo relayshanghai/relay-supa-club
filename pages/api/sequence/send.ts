@@ -2,12 +2,7 @@ import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
 import { ApiHandler } from 'src/utils/api-handler';
-import type {
-    InfluencerSocialProfileRow,
-    SequenceInfluencerInsert,
-    SequenceStep,
-    TemplateVariable,
-} from 'src/utils/api/db';
+import type { InfluencerSocialProfileRow, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { type SequenceInfluencer } from 'src/utils/api/db';
 import { getInfluencerSocialProfilesByIdsCall } from 'src/utils/api/db/calls/influencers';
 import {
@@ -16,10 +11,7 @@ import {
     getSequenceEmailsBySequenceInfluencerCall,
     insertSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
-import {
-    updateSequenceInfluencerCall,
-    updateSequenceInfluencersCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
+import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
@@ -149,6 +141,19 @@ const sendSequence = async (
         .map((id) => sequenceInfluencersPassed.find((i) => i.id === id) ?? null)
         .filter(isInfluencer);
 
+    // optimistic updates
+    for (const i of sequenceInfluencers) {
+        try {
+            await wait(100);
+            await db(updateSequenceInfluencerCall)({
+                id: i.id,
+                funnel_status: 'In Sequence',
+            });
+        } catch (error) {
+            serverLogger(error);
+        }
+    }
+
     try {
         if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
             throw new Error('Missing required parameters');
@@ -165,36 +170,6 @@ const sendSequence = async (
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
         if (!templateVariables || templateVariables.length === 0) {
             throw new Error('No template variables found');
-        }
-
-        // optimistically update all the influencers to 'In Sequence'. Bulk updates do not allow updates to the email column
-        const optimisticUpdates: SequenceInfluencerInsert[] = sequenceInfluencers.map(
-            ({ id, name, username, avatar_url, url, added_by, platform, company_id, iqdata_id, sequence_id }) => ({
-                id,
-                funnel_status: 'In Sequence',
-                // some typescript required values for the bulk update that have a mismatch with SequenceInfluencer row type.
-                name: name ?? '',
-                username: username ?? '',
-                avatar_url: avatar_url ?? '',
-                url: url ?? '',
-                platform,
-                added_by,
-                company_id,
-                iqdata_id,
-                sequence_id,
-            }),
-        );
-        trackData.extra_info.optimistic_updates = optimisticUpdates.map(
-            (update) => `${update.id} ==> ${update.funnel_status}`,
-        );
-        try {
-            // allow to continue if optimistic update failed
-            const optimisticUpdateResult = await db(updateSequenceInfluencersCall)(optimisticUpdates);
-            trackData.extra_info.optimistic_update_result = optimisticUpdateResult.map(
-                (update) => `${update.id} ==> ${update.funnel_status}`,
-            );
-        } catch (error: any) {
-            trackData.extra_info.optimistic_update_error = `error: ${error?.message}\n stack ${error?.stack}`;
         }
 
         const influencerSocialProfiles = await db(getInfluencerSocialProfilesByIdsCall)(
