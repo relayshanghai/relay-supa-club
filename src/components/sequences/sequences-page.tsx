@@ -89,7 +89,7 @@ export const SequencesPage = () => {
                 showCreateSequenceModal={showCreateSequenceModal}
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
-            <div className="flex flex-col space-y-4 p-6">
+            <div className="mx-8 my-4 flex flex-col space-y-4 px-8 py-6">
                 <div className="flex w-full justify-between">
                     <div className="md:w-1/2 xl:w-1/3">
                         <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
