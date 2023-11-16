@@ -2,9 +2,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
 import CheckoutForm from './checkout-form';
-import { useNewPrices } from 'src/hooks/use-prices';
+import { type ActiveSubscriptionTier, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
-import type { newActiveSubscriptionTier } from 'types';
 import { useMemo, useState } from 'react';
 import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
@@ -23,13 +22,12 @@ export type CreatePaymentIntentResponse = {
     clientSecret?: string;
 };
 
-export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscriptionTier }) => {
+export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
-    const newPrices = useNewPrices();
+    const prices = usePrices();
     const { trackEvent } = useRudderstack();
-
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
-    const selectedPrice = newPrices[priceTier];
+    const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
 
     const batchId = useMemo(() => randomNumber(), []);
