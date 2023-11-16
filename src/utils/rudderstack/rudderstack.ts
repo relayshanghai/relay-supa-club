@@ -19,11 +19,26 @@ export type RudderIdentifier = {
     anonymousId?: string;
 };
 
-export const createClient = (writeKey?: string, dataPlane?: string, options?: constructorOptions): RudderBackend =>
-    new Analytics(writeKey ?? process.env.RUDDERSTACK_APP_WRITE_KEY ?? '', {
-        dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
-        ...options,
-    });
+export const createClient = (
+    writeKey?: string,
+    dataPlane?: string,
+    options?: constructorOptions,
+): RudderBackend | null => {
+    try {
+        return new Analytics(writeKey ?? process.env.RUDDERSTACK_APP_WRITE_KEY ?? '', {
+            dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
+            ...options,
+        });
+    } catch (error) {
+        serverLogger('Cannot instantiate Rudderstack', (scope) => {
+            return scope.setContext('Error', {
+                error,
+            });
+        });
+    }
+
+    return null;
+};
 
 /**
  * Track function that supports events in /src/utils/analytic/events
@@ -110,7 +125,7 @@ export class Rudderstack {
 
     context: RudderstackContext | null = null;
 
-    getClient(writeKey?: string, dataPlaneUrl?: string, options?: constructorOptions): RudderBackend {
+    getClient(writeKey?: string, dataPlaneUrl?: string, options?: constructorOptions): RudderBackend | null {
         if (this[client] === null) {
             this[client] = createClient(writeKey, dataPlaneUrl, options);
         }
@@ -127,10 +142,13 @@ export class Rudderstack {
         try {
             if (this.session || disabled) return;
 
+            const client = this.getClient();
+            if (!client) return;
+
             const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
             const session = await getUserSession(supabase)();
 
-            this.getClient().identify({
+            client.identify({
                 userId: session.user_id,
             });
 
@@ -142,7 +160,10 @@ export class Rudderstack {
     }
 
     async identifyWithProfile(userId: string) {
-        this.getClient().identify({
+        const client = this.getClient();
+        if (!client) return;
+
+        client.identify({
             userId,
         });
 
@@ -152,7 +173,10 @@ export class Rudderstack {
     }
 
     async identifyWithAnonymousID(anonymousId: string) {
-        this.getClient().identify({
+        const client = this.getClient();
+        if (!client) return;
+
+        client.identify({
             anonymousId,
         });
 
@@ -198,6 +222,9 @@ export class Rudderstack {
             return;
         }
 
+        const client = this.getClient();
+        if (!client) return;
+
         const context = { ...this.context };
         this.context = null;
 
@@ -235,7 +262,7 @@ export class Rudderstack {
             return;
         }
 
-        this.getClient().track(
+        client.track(
             {
                 userId: this.session.user_id,
                 anonymousId: this.session.anonymous_id,
