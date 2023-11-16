@@ -297,6 +297,7 @@ export const InfluencerDetailsModal = ({
                         buttonText={t('boostbot.modal.addToSequence')}
                         outReachDisabled={outReachDisabled}
                         handleAddToSequenceButton={handleAddToSequence}
+                        textClassName="px-12"
                     />
                 </div>
             </div>
