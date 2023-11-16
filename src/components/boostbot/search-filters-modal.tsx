@@ -213,8 +213,8 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             </div>
 
             <div className="flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
-                <div className="flex w-full space-x-11 ">
-                    <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
+                <div className="flex w-full space-x-12 ">
+                    <div className="flex w-full flex-col justify-center gap-2 space-y-1 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600 ">
                             {t(`boostbot.filters.fromPlatform`)}
                         </div>
@@ -252,7 +252,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             );
                         })}
                     </div>
-                    <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
+                    <div className="flex w-full flex-col justify-center gap-2 space-y-1 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             {t(`boostbot.filters.influencerSize`)}
                         </div>
