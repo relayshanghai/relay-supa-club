@@ -1,20 +1,13 @@
-import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
-import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_DIY,
-    STRIPE_PRICE_MONTHLY_DIY_MAX,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_QUARTERLY_DIY,
-    STRIPE_PRICE_QUARTERLY_DIY_MAX,
-} from 'src/utils/api/stripe/constants';
+import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
+import { useTranslation } from 'react-i18next';
+import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRICE_MONTHLY_OUTREACH } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
 
-export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP'> | 'free';
-export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually'>;
+export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually' | 'quarterly'>;
 export type PriceTiers = {
     [key in ActiveSubscriptionTier]: string;
 };
@@ -24,18 +17,8 @@ export type Prices = {
 
 export const PRICE_IDS: Prices = {
     monthly: {
-        diy: STRIPE_PRICE_MONTHLY_DIY,
-        diyMax: STRIPE_PRICE_MONTHLY_DIY_MAX,
-        free: '',
         discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
         outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
-    quarterly: {
-        diy: STRIPE_PRICE_QUARTERLY_DIY,
-        diyMax: STRIPE_PRICE_QUARTERLY_DIY_MAX,
-        free: '',
-        discovery: '',
-        outreach: '',
     },
 };
 export type PriceDetails = {
@@ -49,26 +32,6 @@ export type PriceDetails = {
 };
 
 export const priceDetails: PriceDetails = {
-    free: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 1000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 30 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 50 },
-    ],
-    diyMax: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 50000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 450 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 2000 },
-        { title: 'fullCustomerService', icon: 'check' },
-    ],
-    diy: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 25000 },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
-        { title: 'campaignManagementTool', icon: 'check' },
-        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 1000 },
-        { title: 'fullCustomerService', icon: 'check' },
-    ],
     discovery: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 900, subtitle: 'boostBotSearchAndNormalSearch' },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
@@ -97,68 +60,45 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
     // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
-export const usePrices = () => {
-    const pricesBlank: Prices = {
-        monthly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '299', outreach: '799' },
-        quarterly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '', outreach: '' },
-    };
-    const { data: prices } = useSWR('prices', async () => {
-        try {
-            const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
-            const { diy, diyMax } = res;
-            const monthly = {
-                diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
-                diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
-                free: '$0',
-                discovery: '299',
-                outreach: '799',
-            };
-            const quarterly = {
-                diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
-                diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
-                free: '$0',
-                discovery: '',
-                outreach: '',
-            };
-            const result: Prices = {
-                monthly,
-                quarterly,
-            };
-            return result;
-        } catch (error) {
-            clientLogger(error, 'error', true); // send to sentry cause there's something wrong with the pricing endpoint
-            return pricesBlank;
-        }
-    });
-    return prices ? prices : pricesBlank;
-};
 
 //current create a new use hook for new prices as the old one are not found in the test mode of our Stripe account, they were in another Stripe account which was a legacy issue
-export const useNewPrices = () => {
+export const usePrices = () => {
+    const { i18n } = useTranslation();
+    const en = i18n.language.toLowerCase().includes('en');
     const pricesBlank = {
         discovery: {
-            currency: 'cny',
-            prices: { monthly: '299' },
+            currency: en ? 'usd' : 'cny',
+            prices: { monthly: en ? '41' : '299' },
             profiles: '',
             searches: '',
             priceIds: { monthly: STRIPE_PRICE_MONTHLY_DISCOVERY },
         },
         outreach: {
-            currency: 'cny',
-            prices: { monthly: '799' },
+            currency: en ? 'usd' : 'cny',
+            prices: { monthly: en ? '110' : '799' },
             profiles: '',
             searches: '',
             priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
         },
     };
 
-    const { data: newPrices } = useSWR('new-prices', async () => {
+    const {
+        data: newPrices,
+        isValidating,
+        isLoading,
+    } = useSWR(['prices', en], async () => {
         try {
-            const newPrices = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
+            const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
+            const currencyToMatch = en ? 'usd' : 'cny';
+            const newPrices = {
+                discovery: data.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
+                outreach: data.outreach.find((plan) => plan.currency === currencyToMatch) || pricesBlank.outreach,
+            };
+
             return newPrices;
         } catch (error) {
             clientLogger(error, 'error');
         }
     });
-    return newPrices ? newPrices : pricesBlank;
+    return !newPrices || isLoading || isValidating ? pricesBlank : newPrices;
 };

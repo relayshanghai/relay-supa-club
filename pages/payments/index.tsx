@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { AddPaymentsSection } from 'src/components/payments/add-payments-section';
 import { PlanDetails } from 'src/components/payments/plan-details';
 import LoginSignupLayout from 'src/components/SignupLayout';
-import type { newActiveSubscriptionTier } from 'types';
+import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 export default function PaymentPage() {
     const router = useRouter();
@@ -20,8 +20,8 @@ export default function PaymentPage() {
     return (
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
-            left={<PlanDetails priceTier={plan as newActiveSubscriptionTier} />}
-            right={<AddPaymentsSection priceTier={plan as newActiveSubscriptionTier} />}
+            left={<PlanDetails priceTier={plan as ActiveSubscriptionTier} />}
+            right={<AddPaymentsSection priceTier={plan as ActiveSubscriptionTier} />}
         />
     );
 }

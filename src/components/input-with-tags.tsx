@@ -20,7 +20,7 @@ export const InputWithTags = ({
     ...rest
 }: Props) => {
     return (
-        <label className="flex w-full flex-col text-xs font-medium text-gray-500">
+        <label className="flex w-full flex-col text-xs font-medium text-gray-500 ">
             <div
                 className={`flex w-full flex-row items-center rounded-md ${
                     tags.length > 0 && 'pl-2'

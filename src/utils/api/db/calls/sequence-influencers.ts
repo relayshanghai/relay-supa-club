@@ -1,3 +1,4 @@
+import { serverLogger } from 'src/utils/logger-server';
 import type { RelayDatabase, SequenceInfluencerInsert, SequenceInfluencerUpdate } from '../types';
 
 export const getSequenceInfluencerByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
@@ -26,7 +27,7 @@ export const getSequenceInfluencersBySequenceIdsCall =
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .select(
-                '*, socialProfile: influencer_social_profiles (name, username, avatar_url, url, platform), address: addresses (*)',
+                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url), address: addresses (*)',
             )
             .in('sequence_id', sequenceIds);
 
@@ -38,7 +39,7 @@ export const getSequenceInfluencersCountByCompanyIdCall =
     (supabaseClient: RelayDatabase) => async (companyId: string) => {
         const { error, count } = await supabaseClient
             .from('sequence_influencers')
-            .select('', { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('company_id', companyId);
         if (error) throw error;
         if (!count) return 0;
@@ -73,6 +74,9 @@ export const getSequenceInfluencerByEmailAndCompanyCall =
  */
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
+        if (Object.keys(update).includes('platform') && !update.platform) {
+            serverLogger(`strange update ${update}`);
+        }
         update.updated_at = new Date().toISOString();
         if (update.email) {
             if (!update.company_id) {
@@ -95,40 +99,6 @@ export const updateSequenceInfluencerCall =
             .select()
             .single();
         if (error) throw error;
-        return data;
-    };
-
-/*
- * @note DO NOT use this for updating emails!!!!!!!
- * Instead use the updateSequenceInfluencerCall which has special logic for updating emails
- */
-export const updateSequenceInfluencersCall =
-    (supabaseClient: RelayDatabase) => async (updates: SequenceInfluencerInsert[]) => {
-        // throw if includes email updates:
-        const emailUpdates = updates.filter((update) => update.email);
-
-        if (emailUpdates.length > 0) {
-            throw new Error('Cannot update emails in batch update');
-        }
-
-        // supabase does not have batch updates so we need to use `upsert` to do a batch update, but we still want to make sure the row exists and throw an error if it doesn't.
-        // we don't want to allow misformed insert
-        const ids = updates.map((update) => update.id);
-
-        const { count, error } = await supabaseClient
-            .from('sequence_influencers')
-            .select('*', { count: 'exact' })
-            .in('id', ids);
-
-        if (error) throw error;
-
-        if (count !== updates.length) {
-            throw new Error('One or more rows do not exist');
-        }
-
-        const { data, error: updateError } = await supabaseClient.from('sequence_influencers').upsert(updates).select();
-
-        if (updateError) throw updateError;
         return data;
     };
 

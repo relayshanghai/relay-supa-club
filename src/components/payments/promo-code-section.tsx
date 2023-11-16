@@ -6,20 +6,27 @@ import type Stripe from 'stripe';
 import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { ApplyPromoCode } from 'src/utils/analytics/events';
+import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 export const PromoCodeSection = ({
     selectedPrice,
     setCouponId,
+    priceTier,
 }: {
     selectedPrice: NewRelayPlan;
     setCouponId: (value: string) => void;
+    priceTier: ActiveSubscriptionTier;
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [promoCode, setPromoCode] = useState<string>('');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
+    const en = i18n.language.toLowerCase().includes('en');
+    const { track } = useRudderstackTrack();
 
     const handleSubmit = async (promoCode: string) => {
         setLoading(true);
@@ -39,11 +46,12 @@ export const PromoCodeSection = ({
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
-                ` ${percentageOff}% ${t('account.payments.offCn')} (¥${calcAmountDeducted(
+                ` ${percentageOff}% ${t('account.payments.offCn')} (${en ? '$' : '¥'}${calcAmountDeducted(
                     parseInt(selectedPrice.prices.monthly),
                     percentageOff ?? 0,
                 )}) ${t('account.payments.offEn')}${validDurationText}`,
             );
+            track(ApplyPromoCode, { selected_plan: priceTier, promo_code: promoCode });
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');

@@ -236,31 +236,51 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
 };
 
 const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
-    await updateSequenceEmail(update);
-
+    let sequenceEmail: SequenceEmail | null = null;
+    let update: SequenceEmailUpdate | null = null;
+    let is_success = false;
+    let errorMessage: string | null = null;
+    try {
+        sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        update = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
+        await updateSequenceEmail(update);
+        is_success = true;
+    } catch (error: any) {
+        errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
+        serverLogger(error);
+    }
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailClicked, {
         account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        extra_info: { event_data: event.data, update },
+        sequence_email_id: sequenceEmail?.id ?? '',
+        is_success,
+        extra_info: { event_data: event.data, update, errorMessage },
     });
 
     return res.status(httpCodes.OK).json({});
 };
 
 const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_tracking_status: 'Opened',
-    };
-    await updateSequenceEmail(update);
-
+    let sequenceEmail: SequenceEmail | null = null;
+    let update: SequenceEmailUpdate | null = null;
+    let is_success = false;
+    let errorMessage: string | null = null;
+    try {
+        sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        update = {
+            id: sequenceEmail.id,
+            email_tracking_status: 'Opened',
+        };
+        await updateSequenceEmail(update);
+        is_success = true;
+    } catch (error: any) {
+        errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
+        serverLogger(error);
+    }
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailOpened, {
         account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        extra_info: { event_data: event.data, update },
+        sequence_email_id: sequenceEmail?.id ?? '',
+        is_success,
+        extra_info: { event_data: event.data, update, errorMessage },
     });
 
     return res.status(httpCodes.OK).json({});
@@ -295,9 +315,9 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         trackData.is_success = true;
     } catch (error: any) {
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
-    } finally {
-        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
     }
+    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, trackData);
+
     return res.status(httpCodes.OK).json({});
 };
 
@@ -310,38 +330,59 @@ const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiRespo
 };
 
 const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Failed',
-    };
+    let sequenceEmail: SequenceEmail | null = null;
+    let update: SequenceEmailUpdate | null = null;
+    let is_success = false;
+    let errorMessage = null;
+    try {
+        sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        update = {
+            id: sequenceEmail.id,
+            email_delivery_status: 'Failed',
+        };
 
-    await updateSequenceEmail(update);
-
+        await updateSequenceEmail(update);
+        is_success = true;
+    } catch (error: any) {
+        errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
+        serverLogger(error);
+    }
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
         account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
+        sequence_email_id: sequenceEmail?.id ?? '',
+        is_success,
         error_type: 'failed',
-        extra_info: { event_data: event.data, update },
+        extra_info: { event_data: event.data, update, errorMessage },
     });
 
     return res.status(httpCodes.OK).json({});
 };
 
 const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Failed',
-    };
+    let sequenceEmail: SequenceEmail | null = null;
+    let update: SequenceEmailUpdate | null = null;
+    let is_success = false;
+    let errorMessage: string | null = null;
+    try {
+        sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        update = {
+            id: sequenceEmail.id,
+            email_delivery_status: 'Failed',
+        };
 
-    await updateSequenceEmail(update);
+        await updateSequenceEmail(update);
+        is_success = true;
+    } catch (error: any) {
+        errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
+        serverLogger(error);
+    }
 
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
         account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
+        sequence_email_id: sequenceEmail?.id ?? '',
+        is_success,
         error_type: 'quit',
-        extra_info: { event_data: event.data, update },
+        extra_info: { event_data: event.data, update, errorMessage },
     });
 
     return res.status(httpCodes.OK).json({});

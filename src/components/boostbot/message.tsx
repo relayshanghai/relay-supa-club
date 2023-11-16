@@ -67,7 +67,9 @@ const Translation = ({
             i18nKey={translationKey}
             components={
                 translationLink
-                    ? { customLink: <Link target="_blank" className="font-medium underline" href={translationLink} /> }
+                    ? {
+                          customLink: <Link target="_blank" className="font-medium underline" href={translationLink} />,
+                      }
                     : undefined
             }
             values={translatedValues}
@@ -90,13 +92,37 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message }) => {
     const { type, sender } = message;
     const defaultMessageClasses =
-        'mb-4 inline-block max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-4 py-2 text-sm shadow-md';
+        'inline-block  whitespace-pre-wrap break-words rounded-[6px] px-3 py-3 text-sm shadow-md text-sm font-semibold';
     const messageClasses = {
-        User: `${defaultMessageClasses} ml-auto border border-slate-300 text-slate-600 bg-slate-50 rounded-br-none`,
-        Bot: `${defaultMessageClasses} bg-primary-50 text-primary-700 border border-primary-500 rounded-bl-none`,
-        Neutral: 'my-2',
+        User: `${defaultMessageClasses} border border-primary-600 text-white-600 bg-primary-600 `,
+        Bot: `${defaultMessageClasses} bg-white font-semibold rounded-[4px] text-primary-600 w-full `,
+        Neutral: 'my-2.5 font-semibold text-primary-600 ',
+    };
+    const user = {
+        User: 'You',
+        Bot: 'BoostBot',
+        Neutral: '',
+    };
+    const userClasses = {
+        User: 'text-right text-primary-600 mt-2.5',
+        Bot: 'text-left text-primary-400 mt-2.5',
+        Neutral: '',
+    };
+    const alignmentClass = {
+        User: 'ml-auto p-0 mb-2.5 text-white mr-0 max-w-[85%]',
+        Bot: ' p-0 mb-4 inline-block max-w-[85%]',
+        Neutral: '',
+    };
+    const borderClass = {
+        User: '',
+        Bot: 'bg-boostbotbackground p-[1px] rounded-[6px]',
+        Neutral: '',
     };
     const messageClass = messageClasses[sender];
+    const userType = user[sender];
+    const userClass = userClasses[sender];
+    const alignment = alignmentClass[sender];
+    const border = borderClass[sender];
 
     let Content: React.ReactNode = null;
     if (type === 'translation') {
@@ -109,7 +135,16 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Content = <Text {...message} />;
     }
 
-    return <div className={messageClass}>{Content}</div>;
+    return (
+        <div className={alignment}>
+            <div className={border}>
+                <div className={messageClass}>{Content}</div>
+            </div>
+            <div className={userClass}>
+                <p className="text-xs font-semibold">{userType}</p>
+            </div>
+        </div>
+    );
 };
 
 export default Message;

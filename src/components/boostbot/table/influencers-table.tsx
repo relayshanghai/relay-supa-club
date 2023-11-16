@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react';
-import type { TFunction } from 'i18next';
-import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import { t, type TFunction } from 'i18next';
+import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
-
-import type { Influencer } from 'pages/boostbot';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import Question from 'src/components/icons/Question';
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     selectedInfluencers: RowSelectionState;
@@ -18,9 +19,13 @@ interface DataTableProps<TData, TValue> {
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
-        handleUnlockInfluencer: (influencer: Influencer) => void;
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
+        setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+        setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+        allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+        setSelectedCount: (count: number) => void;
+        isLoading: boolean;
     }
 }
 
@@ -41,10 +46,16 @@ export function InfluencersTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
         state: { rowSelection: selectedInfluencers },
+        initialState: {
+            pagination: {
+                pageSize: 20,
+            },
+        },
     });
+
     const page = table.getState().pagination.pageIndex;
 
-    // Handle table pagination reset when for example new influencers are loaded. But not when individual ones are unlocked/removed.
+    // Handle table pagination reset when for example new influencers are loaded. But not when individual influencers are removed.
     useEffect(() => {
         const setFirstPage = () => {
             table.setPageIndex(0);
@@ -61,26 +72,56 @@ export function InfluencersTable<TData, TValue>({
         return () => document.removeEventListener('influencerTableLoadInfluencers', setFirstPage);
     }, [table]);
 
+    const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+    useEffect(() => {
+        const allSequenceInfluencersSet = new Set(
+            table.options.meta?.allSequenceInfluencers?.map((influencer) => influencer.iqdata_id),
+        );
+
+        const filteredCount = table
+            .getFilteredSelectedRowModel()
+            .rows.filter((row) => !allSequenceInfluencersSet.has((row.original as BoostbotInfluencer).user_id)).length;
+
+        table.options.meta?.setSelectedCount(filteredCount);
+    }, [table, selectedCount]);
+
     useEffect(() => {
         tableRef.current?.scrollIntoView(true);
     }, [page]);
 
     return (
         <div className="relative h-full w-full flex-shrink-0 overflow-scroll md:flex-shrink">
-            <div className="h-full w-full overflow-scroll rounded-md border pb-10">
+            <div className="h-full w-full overflow-scroll rounded-md border">
                 {/* Scroll to the top of the table when changing pagination pages */}
                 <div ref={tableRef} />
-
                 <Table>
-                    <TableHeader>
+                    <TableHeader className=" sticky top-0 z-20 bg-white shadow">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead className="text-center" key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
+                                        <TableHead className="text-xs" key={header.id}>
+                                            <div className="flex flex-row items-center gap-1">
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                                {['audienceGender', 'audienceGeolocations', 'boostbotScore'].includes(
+                                                    header.id,
+                                                ) && (
+                                                    <Tooltip
+                                                        content={t(`tooltips.${header.id}.title`)}
+                                                        detail={t(`tooltips.${header.id}.description`)}
+                                                        position={
+                                                            header.id === 'boostbotScore'
+                                                                ? 'bottom-right'
+                                                                : 'bottom-left'
+                                                        }
+                                                        className="w-8"
+                                                    >
+                                                        <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                                    </Tooltip>
+                                                )}
+                                            </div>
                                         </TableHead>
                                     );
                                 })}
@@ -90,7 +131,13 @@ export function InfluencersTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                <TableRow
+                                    key={row.id}
+                                    data-state={false}
+                                    className={`${
+                                        parseInt(row.id) % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                                    } justify-center`}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -108,7 +155,7 @@ export function InfluencersTable<TData, TValue>({
                     </TableBody>
                 </Table>
 
-                <div className="absolute bottom-0 left-0 right-0 w-full border bg-white p-2">
+                <div className="sticky bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
                     <DataTablePagination table={table} />
                 </div>
             </div>
