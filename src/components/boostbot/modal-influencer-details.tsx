@@ -28,6 +28,8 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topics-and-relevance';
 import type { Dispatch, SetStateAction } from 'react';
+import { Tooltip } from '../library/tooltip';
+import { Question } from '../icons';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -167,8 +169,18 @@ export const InfluencerDetailsModal = ({
                                 <span className="text-sm text-gray-600">{handle ?? username}</span>
                             </div>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
-                            <div>{indexScore}</div>
+                        <div className="flex flex-row">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-primary-50 bg-primary-100 font-semibold text-primary-600">
+                                <div>{indexScore}</div>
+                            </div>
+                            <Tooltip
+                                content={t(`tooltips.boostBotScore.title`)}
+                                detail={t(`tooltips.boostBotScore.description`)}
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
                     </div>
                     <Link
@@ -188,8 +200,16 @@ export const InfluencerDetailsModal = ({
                 {/* stats - top niches and audience engagement */}
                 <div className="mb-6 flex w-full gap-6">
                     <div className="w-1/2 px-3">
-                        <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
+                        <div className="flex flex-row border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.topNiches')}
+                            <Tooltip
+                                content={t(`tooltips.boostBotNiches.title`)}
+                                detail={t(`tooltips.boostBotNiches.description`)}
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
                         <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse' : ''}`}>
                             <ResponsiveContainer width={320} height={280}>
@@ -210,8 +230,16 @@ export const InfluencerDetailsModal = ({
                         </div>
                     </div>
                     <div className="w-1/2 space-y-3">
-                        <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
+                        <div className="flex flex-row border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.audienceEngagementStats')}
+                            <Tooltip
+                                content={t(`tooltips.boostBotEngagementRate.title`)}
+                                detail={t(`tooltips.boostBotEngagementRate.description`)}
+                                position="bottom-left"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
                         <StatCard
                             title={t('boostbot.modal.engagedAudience')}
@@ -232,6 +260,7 @@ export const InfluencerDetailsModal = ({
                                     title={t('boostbot.modal.averageViews')}
                                     stat={avgViews ?? '-'}
                                     iconName={evaluateStat({ avgViewsRaw })}
+                                    tooltip={'boostBotAvgViews'}
                                 />
                             )}
                             {avgReelsPlaysRaw && (
@@ -248,8 +277,16 @@ export const InfluencerDetailsModal = ({
                 {/* stats - audience gender and channel stats */}
                 <div className="flex w-full gap-6">
                     <div className="w-1/2 px-3">
-                        <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
+                        <div className="flex flex-row border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.audienceGender')}
+                            <Tooltip
+                                content={t(`tooltips.boostBotGender.title`)}
+                                detail={t(`tooltips.boostBotGender.description`)}
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
 
                         <ResponsiveContainer width={320} height={140}>
@@ -278,6 +315,7 @@ export const InfluencerDetailsModal = ({
                                     title={t('boostbot.modal.followersGrowth')}
                                     stat={followersGrowth ?? '-'}
                                     iconName={evaluateStat({ followersGrowthRaw })}
+                                    tooltip={'boostBotFollowerGrowth'}
                                 />
                             )}
                             {totalPosts && (
@@ -297,6 +335,7 @@ export const InfluencerDetailsModal = ({
                         buttonText={t('boostbot.modal.addToSequence')}
                         outReachDisabled={outReachDisabled}
                         handleAddToSequenceButton={handleAddToSequence}
+                        textClassName="px-12"
                     />
                 </div>
             </div>
