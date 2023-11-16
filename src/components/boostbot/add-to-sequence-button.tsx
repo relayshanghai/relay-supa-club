@@ -4,10 +4,12 @@ export const AddToSequenceButton = ({
     outReachDisabled,
     handleAddToSequenceButton,
     buttonText,
+    textClassName,
 }: {
     outReachDisabled: boolean;
     handleAddToSequenceButton: () => void;
     buttonText: string;
+    textClassName?: string;
 }) => {
     return (
         <Button
@@ -16,8 +18,7 @@ export const AddToSequenceButton = ({
             disabled={outReachDisabled}
             className={`${!outReachDisabled && 'boostbot-gradient'} border-none text-sm font-semibold transition-all`}
         >
-            {buttonText}
-            {/* {t('boostbot.chat.outreachSelected')} */}
+            <p className={textClassName}>{buttonText}</p>
         </Button>
     );
 };
