@@ -2,15 +2,29 @@ const boostbot = {
     filters: {
         openModalButton: '筛选红人',
         modalTitle: '基础筛选条件',
+        modalTitleSubtitle: 'Setting these filters will help you focus BoostBot’s recommendations',
         fromPlatform: '我想要看以下平台的红人',
+        audienceLocation: '受众地区',
         fromGeos: '他们的粉丝所在地区位于',
         addMoreGeos: '添加更多',
         selectGeo: '选择一个国家地区',
+        influencerSize: 'Influencer Size',
         advancedFilters: '高级筛选条件',
         advancedFiltersTooltip: '此功能尚不可用',
         updateFilters: '更新筛选条件',
+        addUpLocation: 'Add up to 2 locations to target',
         atLeast: '他们的粉丝中，至少需要有',
         inLocation: '位于 {{location}} 地区',
+        platformSub: {
+            youtube: 'Devoted audiences',
+            instagram: 'Great for brand building',
+            tiktok: 'High content virality',
+        },
+        influencerSub: {
+            microinfluencer: { title: '小型红人', subtitle: 'Devoted audiences' },
+            nicheinfluencer: { title: '垂直领域的红人', subtitle: 'Great for brand building' },
+            megainfluencer: { title: '顶级红人', subtitle: 'High content virality' },
+        },
     },
     chat: {
         introMessage: `你好，我是雷宝 🙂
