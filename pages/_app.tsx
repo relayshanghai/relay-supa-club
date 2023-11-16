@@ -112,11 +112,13 @@ function MyApp({
                     <CacheProvider>
                         <JotaiProvider>
                             <UserProvider>
-                                <ChatwootProvider {...chatwootConfig} locale={lang}>
-                                    <CompanyProvider>
-                                        <Component {...pageProps} />
-                                    </CompanyProvider>
-                                </ChatwootProvider>
+                                <div className="divAboveChatwoot" id={lang}>
+                                    <ChatwootProvider {...chatwootConfig} locale={lang}>
+                                        <CompanyProvider>
+                                            <Component {...pageProps} />
+                                        </CompanyProvider>
+                                    </ChatwootProvider>
+                                </div>
                             </UserProvider>
                         </JotaiProvider>
                     </CacheProvider>
