@@ -263,7 +263,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 <div
                                     key={influencerSize}
                                     className={`bg-white-500 flex cursor-pointer flex-row justify-between rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100  ${
-                                        isSelected ? 'outline-pr imary-600   bg-white' : 'outline-transparent'
+                                        isSelected ? 'bg-white outline-primary-600' : 'outline-transparent'
                                     }`}
                                     onClick={() => toggleInfluencerSize(influencerSize)}
                                     data-testid={`boostbot-filter-${influencerSize}`}
