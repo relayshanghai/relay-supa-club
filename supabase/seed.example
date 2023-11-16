@@ -494,7 +494,7 @@ VALUES (
   _name,
   _email,
   _avatar_url,
-  _recent_post_titlem
+  _recent_post_title,
   _recent_post_url
 )
 RETURNING * INTO _row;
