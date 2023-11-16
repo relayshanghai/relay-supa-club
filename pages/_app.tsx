@@ -24,7 +24,7 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    const [lang, setLang] = useState(i18n.language);
+    const [lang, setLang] = useState('en-US');
 
     useEffect(() => {
         rudderInitialized();
