@@ -1,15 +1,16 @@
 const boostbot = {
     filters: {
         openModalButton: 'Filters',
-        modalTitle: 'Basic Filters',
-        fromPlatform: 'Show me influencers from',
-        fromGeos: 'who have followers in',
+        modalTitle: 'Set BoostBot Search Filters',
+        modalTitleSubtitle: 'Setting these filters will help you focus BoostBot’s recommendations',
+        fromPlatform: 'Social Media Platforms',
+        audienceLocation: 'Audience Locations',
         addMoreGeos: 'Add more',
         selectGeo: 'Select a location',
-        advancedFilters: 'Advanced Filters',
+        influencerSize: 'Influencer Size',
         advancedFiltersTooltip: 'This feature is not yet available',
         updateFilters: 'Save and close',
-        atLeast: 'at least',
+        addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
     },
     chat: {
