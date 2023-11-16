@@ -19,9 +19,11 @@ export default function useCacheProvider<Data = any, Error = any>({
         // False on mount or on dependency change
         let isSetup = true;
 
-        createCacheProvider<Data, Error>({ dbName, storeName, storageHandler, version, onError }).then(
-            (cp) => isSetup && setCacheProvider(() => cp),
-        );
+        createCacheProvider<Data, Error>({ dbName, storeName, storageHandler, version, onError })
+            .then((cp) => isSetup && setCacheProvider(() => cp))
+            .catch((err) => {
+                console.log('123================', err);
+            });
 
         return () => {
             isSetup = false;

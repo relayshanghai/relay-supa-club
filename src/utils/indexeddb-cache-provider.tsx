@@ -14,6 +14,8 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
         storeName: appCacheStoreKey,
     });
 
+    console.log('cacheProvider', cacheProvider);
+
     if (!cacheProvider) {
         return <>Hello from Ellie!</>;
     }

@@ -19,7 +19,7 @@ export default async function createCacheProvider<Data = any, Error = any>({
 }: Config): Promise<CacheProvider> {
     type Cache = SWRCache<Data>;
     type State = SWRState<Data, Error>;
-
+    console.log('456================');
     // Initialize database
     const db = await openDB(dbName, version, {
         upgrade(upgradeDb, oldVersion) {
@@ -30,12 +30,12 @@ export default async function createCacheProvider<Data = any, Error = any>({
             }
         },
     });
-
+    console.log('awaited!!!! =============');
     // Get storage snapshot
     const map = new Map<Key, State>();
 
     let cursor = await db.transaction(storeName, 'readwrite').store.openCursor();
-
+    console.log('cursor ===============');
     while (cursor) {
         const key = cursor.key as Key;
         const value = storageHandler.revive(key, cursor.value);
@@ -50,7 +50,7 @@ export default async function createCacheProvider<Data = any, Error = any>({
 
         cursor = await cursor.continue();
     }
-
+    console.log('789================');
     /**
      * SWR Cache provider API
      */
