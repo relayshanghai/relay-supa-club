@@ -62,7 +62,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                     createSubscription={createSubscription}
                 />
 
-                <div className="flex w-full justify-end p-4">
+                <div className="flex w-full justify-end space-x-3 p-4">
                     <LanguageToggle />
                     {landingPage ? (
                         <p className="ml-3 font-medium text-gray-500">
