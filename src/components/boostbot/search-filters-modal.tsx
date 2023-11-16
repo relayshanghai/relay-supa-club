@@ -27,20 +27,10 @@ type SearchFiltersModalProps = {
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
     const { t } = useTranslation();
     const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-    const platformSub: any = {
-        youtube: 'Devoted audiences',
-        instagram: 'Great for brand building',
-        tiktok: 'High content virality',
-    };
     const platformIcons: any = {
         youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube' },
         instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
         tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
-    };
-    const influencerSub: any = {
-        microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
-        nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
-        megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
     };
     const [localFilters, setLocalFilters] = useState(filters);
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
@@ -223,8 +213,8 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             </div>
 
             <div className="flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
-                <div className="flex w-full space-x-10">
-                    <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px] ">
+                <div className="flex w-full space-x-11 ">
+                    <div className="flex w-full flex-col justify-center gap-2 border md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600 ">
                             {t(`boostbot.filters.fromPlatform`)}
                         </div>
@@ -253,7 +243,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                                 {platform.charAt(0).toUpperCase() + platform.slice(1)}
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
-                                                {platformSub[platform]}
+                                                {t(`boostbot.filters.platformSub.${platform}`)}
                                             </div>
                                         </div>
                                     </div>
@@ -271,31 +261,31 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             return (
                                 <div
                                     key={influencerSize}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
-                                        isSelected ? 'bg-white outline-primary-600' : 'outline-transparent'
+                                    className={`bg-white-500 flex cursor-pointer flex-row justify-between rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100  ${
+                                        isSelected ? 'outline-pr imary-600   bg-white' : 'outline-transparent'
                                     }`}
                                     onClick={() => toggleInfluencerSize(influencerSize)}
                                     data-testid={`boostbot-filter-${influencerSize}`}
                                 >
                                     <div className="flex space-x-4">
-                                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-100">
                                                 {influencerSize === 'microinfluencer' ? (
                                                     <MicroInfluencer className="stroke-2" />
                                                 ) : influencerSize === 'nicheinfluencer' ? (
                                                     <NicheInfluencer className="stroke-2" />
                                                 ) : (
-                                                    <Sparkles className="h-6 w-6 stroke-primary-600 stroke-2" />
+                                                    <Sparkles className="h-4 w-4 stroke-primary-600 stroke-2" />
                                                 )}
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col">
                                             <div className="mb-0.5 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {influencerSub[influencerSize].title}
+                                                {t(`boostbot.filters.influencerSub.${influencerSize}.title`)}
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
-                                                {influencerSub[influencerSize].subtitle}
+                                                {t(`boostbot.filters.influencerSub.${influencerSize}.subtitle`)}
                                             </div>
                                         </div>
                                     </div>

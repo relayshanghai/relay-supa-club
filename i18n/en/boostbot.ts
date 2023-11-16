@@ -12,6 +12,16 @@ const boostbot = {
         updateFilters: 'Save and close',
         addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
+        platformSub: {
+            youtube: 'Devoted audiences',
+            instagram: 'Great for brand building',
+            tiktok: 'High content virality',
+        },
+        influencerSub: {
+            microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
+            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
+            megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
+        },
     },
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
