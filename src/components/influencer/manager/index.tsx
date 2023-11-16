@@ -176,7 +176,7 @@ const Manager = () => {
                 getMoreInfoButtonAction={() => push('/guide')}
                 source="Influencer Manager"
             />
-            <div className="m-8 flex flex-col">
+            <div className="mx-8 my-6 flex flex-col px-8">
                 <section className="flex w-full flex-row justify-between">
                     <div className="my-4 md:w-1/2">
                         <h1 className="text-2xl font-semibold">{t('manager.title')}</h1>

@@ -19,7 +19,7 @@ export interface SubscriptionUpgradePostResponse extends Stripe.Response<Stripe.
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { cusId, priceId } = req.body as SubscriptionUpgradePostRequestBody;
+    const { cusId, priceId, couponId } = req.body as SubscriptionUpgradePostRequestBody;
     if (!cusId || !priceId) {
         serverLogger('Missing cusId, priceId');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing cusId, priceId' });
@@ -51,6 +51,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         items: [{ price: priceId }],
         payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
+        coupon: couponId,
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent;

@@ -57,6 +57,9 @@ export const ProfileValue = z.object({
     shippingDetails: ProfileShippingDetails.optional(),
 });
 
+/**
+ * Note that this will not return the recent post title or url
+ */
 const postHandler: NextApiHandler = async (
     req: NextApiRequest,
     res: NextApiResponse<SequenceInfluencerManagerPage>,
@@ -131,6 +134,8 @@ const postHandler: NextApiHandler = async (
         ...sequenceInfluencer,
         manager_first_name: manager.first_name,
         address,
+        recent_post_title: '',
+        recent_post_url: '',
     });
 };
 
