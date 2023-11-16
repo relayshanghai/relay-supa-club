@@ -175,7 +175,7 @@ const _fixHalfSentSequence: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: toDelete });
 };
 
-const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
+const _fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
     console.log('fixing');
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
@@ -183,6 +183,8 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
         .is('platform', null);
     const updates: any[] = [];
     console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+
+    // next step, find all missing avatar urls and see if we can get them from the
     if (allSequenceInfluencers)
         for (const influencer of allSequenceInfluencers) {
             const { data: socialProfile } = await supabase
@@ -203,8 +205,8 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
                     social_profile_last_fetched: new Date().toISOString(),
                 };
                 console.log(update);
-                if (!update.platform) {
-                    console.log('no update platform', update);
+                if (!update.platform || !update.username || !update.username || !update.avatar_url || !update.url) {
+                    console.log('missing data', update, influencer);
                     continue;
                 }
                 const { data: updated } = await supabase
@@ -222,5 +224,20 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
     console.log(updates);
     return res.status(200).json({ message: updates });
 };
+const fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
+    console.log('fixing');
+    const { data: incompleteSocialProfiles } = await supabase
+        .from('influencer_social_profiles')
+        .select('*')
+        .is('platform', null);
+    console.log('incompleteSocialProfiles', incompleteSocialProfiles?.length);
+    const { data: reportSnapshots } = await supabase.from('report_snapshots').select('*');
+    if (incompleteSocialProfiles)
+        for (const profile of incompleteSocialProfiles) {
+            console.log(profile);
+        }
+    console.log(reportSnapshots);
+    return res.json({ ok: 'asd' });
+};
 
-export default fixSequenceInfluencerDataIncomplete;
+export default fixSocialProfileIncomplete;
