@@ -71,6 +71,19 @@ export function InfluencersTable<TData, TValue>({
         return () => document.removeEventListener('influencerTableLoadInfluencers', setFirstPage);
     }, [table]);
 
+    const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+    useEffect(() => {
+        const allSequenceInfluencersSet = new Set(
+            table.options.meta?.allSequenceInfluencers?.map((influencer) => influencer.iqdata_id),
+        );
+
+        const filteredCount = table
+            .getFilteredSelectedRowModel()
+            .rows.filter((row) => !allSequenceInfluencersSet.has((row.original as BoostbotInfluencer).user_id)).length;
+
+        table.options.meta?.setSelectedCount(filteredCount);
+    }, [table, selectedCount]);
+
     useEffect(() => {
         tableRef.current?.scrollIntoView(true);
     }, [page]);

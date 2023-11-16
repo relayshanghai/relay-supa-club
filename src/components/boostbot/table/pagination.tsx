@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import type { Table } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +7,6 @@ import { ChangePage } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import PageLink from './pagelink';
 import { getPaginationItems } from './helper';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
@@ -17,20 +15,6 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
-
-    const selectedCount = table.getFilteredSelectedRowModel().rows.length;
-    useEffect(() => {
-        table.options.meta?.setSelectedCount(
-            table
-                .getFilteredSelectedRowModel()
-                .rows.filter(
-                    (row) =>
-                        !table.options.meta?.allSequenceInfluencers?.some(
-                            (influencer) => influencer.iqdata_id === (row.original as BoostbotInfluencer).user_id,
-                        ),
-                ).length,
-        );
-    }, [table, selectedCount]);
 
     //adjust to control the number of links in the pagination section
     const noOfLinks = 11;
