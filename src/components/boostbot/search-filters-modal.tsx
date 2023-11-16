@@ -322,7 +322,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 <div className="flex h-full w-full flex-row">
                     <div className="w-1/2">
                         <div className="text-md mb-3 flex w-full flex-row border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                            Audience Location
+                            Audience Locations
                             <Tooltip
                                 content={t('tooltips.boostBotAudienceLocation.title')}
                                 detail={t('tooltips.boostBotAudienceLocation.description')}
