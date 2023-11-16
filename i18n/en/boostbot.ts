@@ -1,16 +1,27 @@
 const boostbot = {
     filters: {
-        openModalButton: 'Filter influencers',
-        modalTitle: 'Basic Filters',
-        fromPlatform: 'Show me influencers from',
-        fromGeos: 'who have followers in',
+        openModalButton: 'Filters',
+        modalTitle: 'Set BoostBot Search Filters',
+        modalTitleSubtitle: 'Setting these filters will help you focus BoostBot’s recommendations',
+        fromPlatform: 'Social Media Platforms',
+        audienceLocation: 'Audience Locations',
         addMoreGeos: 'Add more',
         selectGeo: 'Select a location',
-        advancedFilters: 'Advanced Filters',
+        influencerSize: 'Influencer Size',
         advancedFiltersTooltip: 'This feature is not yet available',
-        updateFilters: 'Update',
-        atLeast: 'at least',
+        updateFilters: 'Save and close',
+        addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
+        platformSub: {
+            youtube: 'Devoted audiences',
+            instagram: 'Great for brand building',
+            tiktok: 'High content virality',
+        },
+        influencerSub: {
+            microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
+            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
+            megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
+        },
     },
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
@@ -30,7 +41,6 @@ For example: “A lightweight and foldable mini camera drone with 4K HDR video�
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        unlockSelected: 'Unlock selected influencers',
         outreachSelected: 'Add selected influencers to Sequence',
         progress: {
             step1: 'Generating topics and niches',
@@ -39,12 +49,8 @@ For example: “A lightweight and foldable mini camera drone with 4K HDR video�
             step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
             step3B: '{{count}} influencers selected',
         },
-        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
-
-Tip: You can also unlock influencers one by one.`,
         outreachDone:
-            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
-        hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
+            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here: <customLink>{{sequenceName}}</customLink>",
         and: 'and',
         clearChatModal: {
             open: 'Clear chat and filters',
@@ -55,26 +61,40 @@ Tip: You can also unlock influencers one by one.`,
     },
     table: {
         account: 'Account',
-        topPosts: 'Top Posts',
-        email: 'Email',
-        unlockInfluencer: 'Unlock influencer',
+        score: 'BoostBot Score',
+        followers: 'Followers',
+        audienceGender: 'Audience Gender',
+        audienceGeolocations: 'Audience Locations',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
         selectInfluencer: 'Select influencer',
-        selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
+        selectedAmount: '{{selectedCount}} selected.',
+        alreadyAddedToSequence: 'Already added to sequence',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',
     },
     error: {
         influencerSearch: 'Error fetching BoostBot influencers',
-        influencerUnlock: 'Unlocking influencer failed',
         influencersToOutreach: 'Adding influencers to outreach failed',
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
-        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
+    },
+    modal: {
+        unlockDetailedReport: 'Unlock Detailed Analysis Report',
+        topNiches: 'Top Niches',
+        audienceEngagementStats: 'Audience Engagement Stats',
+        audienceGender: 'Audience Gender',
+        engagedAudience: 'Audience Engagement Rate',
+        engagementRate: 'Engagement Rate',
+        averageViews: 'Average Views',
+        channelStats: 'Channel Stats',
+        followersGrowth: 'Followers Growth',
+        totalPosts: 'Total Posts',
+        addToSequence: 'Add to Sequence',
+        followers: 'Followers',
     },
 };
 

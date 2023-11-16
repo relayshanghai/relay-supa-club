@@ -205,6 +205,12 @@ interface Paging {
     skip?: number;
 }
 
+export interface Countries {
+    id: number;
+    name: string;
+    code: string;
+    weight: number;
+}
 interface Sort {
     field:
         | 'engagements'

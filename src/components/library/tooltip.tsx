@@ -89,7 +89,7 @@ export const Tooltip = ({
 
     if (!content) return <>{children}</>;
     return (
-        <div className={`${className}`}>
+        <div className={`${className}`} data-cy="tooltip">
             <div className="cursor-pointer" onMouseOver={handleMouseOver} onMouseOut={handleMouseLeave}>
                 {children}
             </div>

@@ -24,19 +24,4 @@ describe('<BoostbotAccountCell />', () => {
         cy.getByTestId('boostbot-social-profile-link').should('have.attr', 'rel', 'noopener noreferrer');
         cy.getByTestId('boostbot-social-profile-link').should('have.attr', 'href', row.original.url);
     });
-
-    it('Should have a correct link to the analyze page', () => {
-        const url = row.original.url;
-        const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
-
-        testMount(<BoostbotAccountCell row={row} table={table} />);
-
-        cy.getByTestId('boostbot-analyze-profile-link').should('have.attr', 'target', '_blank');
-        cy.getByTestId('boostbot-analyze-profile-link').should('have.attr', 'rel', 'noopener noreferrer');
-        cy.getByTestId('boostbot-analyze-profile-link').should(
-            'have.attr',
-            'href',
-            `/influencer/${encodeURIComponent(platform)}/${encodeURIComponent(row.original.user_id)}`,
-        );
-    });
 });
