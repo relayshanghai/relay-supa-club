@@ -184,6 +184,7 @@ import type { ToggleNavbarSizePayload } from './toggle-navbar-size';
 import { TOGGLE_NAVBAR_SIZE, ToggleNavbarSize } from './toggle-navbar-size';
 import type { SequenceSendPayload } from './outreach/sequence-send';
 import { SEQUENCE_SEND, SequenceSend } from './outreach/sequence-send';
+import { APPLY_PROMO_CODE, ApplyPromoCode, type ApplyPromoCodePayload } from './apply-promo-code';
 
 export {
     Search,
@@ -240,6 +241,7 @@ export {
     ChangeInboxFolder,
     ChangeTemplatePreview,
     ToggleNavbarSize,
+    ApplyPromoCode,
 };
 
 export const events = {
@@ -328,6 +330,7 @@ export const events = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreview,
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSize,
     [SEQUENCE_SEND]: SequenceSend,
+    [APPLY_PROMO_CODE]: ApplyPromoCode,
 };
 
 export type payloads = {
@@ -416,6 +419,7 @@ export type payloads = {
     [CHANGE_TEMPLATE_PREVIEW]: ChangeTemplatePreviewPayload;
     [TOGGLE_NAVBAR_SIZE]: ToggleNavbarSizePayload;
     [SEQUENCE_SEND]: SequenceSendPayload;
+    [APPLY_PROMO_CODE]: ApplyPromoCodePayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -506,6 +510,7 @@ export const eventKeys = z.union([
     z.literal(CHANGE_TEMPLATE_PREVIEW),
     z.literal(TOGGLE_NAVBAR_SIZE),
     z.literal(SEQUENCE_SEND),
+    z.literal(APPLY_PROMO_CODE),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

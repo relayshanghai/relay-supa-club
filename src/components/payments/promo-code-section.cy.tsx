@@ -17,6 +17,7 @@ const selectedPrice: NewRelayPlan = {
         monthly: 'price_xxx',
     },
 };
+const priceTier = 'discovery';
 
 describe('<PromoCodeSection />', () => {
     before(async () => {
@@ -25,7 +26,7 @@ describe('<PromoCodeSection />', () => {
 
     it('renders the promo code section correctly', () => {
         const setCouponId = cy.stub();
-        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} />);
+        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
 
         cy.get('label').should('contain', 'Promo Code');
         cy.get('input').should('have.attr', 'placeholder', 'Enter a Promo Code');
@@ -34,7 +35,7 @@ describe('<PromoCodeSection />', () => {
 
     it('show error message when entered invalid promo code', () => {
         const setCouponId = cy.stub();
-        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} />);
+        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
         cy.get('input').type('test');
         cy.get('button').should('contain', 'Apply').click();
         cy.get('p').should('contain', 'Invalid Promo Code');
@@ -42,7 +43,7 @@ describe('<PromoCodeSection />', () => {
 
     it('show show success message when entered valid promo code', () => {
         const setCouponId = cy.stub();
-        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} />);
+        testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
         cy.get('input').type('PH2023');
         cy.get('button').should('contain', 'Apply').click();
         cy.get('p').should('contain', 'Off For next 3 months');
