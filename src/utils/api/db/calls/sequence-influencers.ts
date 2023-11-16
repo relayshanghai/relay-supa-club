@@ -39,7 +39,7 @@ export const getSequenceInfluencersCountByCompanyIdCall =
     (supabaseClient: RelayDatabase) => async (companyId: string) => {
         const { error, count } = await supabaseClient
             .from('sequence_influencers')
-            .select('', { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('company_id', companyId);
         if (error) throw error;
         if (!count) return 0;
