@@ -272,41 +272,36 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             return (
                                 <div
                                     key={influencerSize}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
-                                        isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
+                                    className={`bg-white-500 flex cursor-pointer flex-row justify-between rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100  ${
+                                        isSelected ? 'outline-pr imary-600   bg-white' : 'outline-transparent'
                                     }`}
                                     onClick={() => toggleInfluencerSize(influencerSize)}
                                     data-testid={`boostbot-filter-${influencerSize}`}
                                 >
                                     <div className="flex space-x-4">
-                                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-100">
                                                 {influencerSize === 'microinfluencer' ? (
                                                     <MicroInfluencer className="stroke-2" />
                                                 ) : influencerSize === 'nicheinfluencer' ? (
                                                     <NicheInfluencer className="stroke-2" />
                                                 ) : (
-                                                    <Sparkles className="h-6 w-6 stroke-primary-600 stroke-2" />
+                                                    <Sparkles className="h-4 w-4 stroke-primary-600 stroke-2" />
                                                 )}
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col">
-
-                                            <div className="flex flex-row pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {influencerSub[influencer].title}
+                                            <div className="mb-0.5 flex gap-1 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                                {influencerSub[influencerSize].title}
                                                 <Tooltip
-                                                    content={t(`tooltips.boostBotFilter` + influencer + `.title`)}
-                                                    detail={t(`tooltips.boostBotFilter` + influencer + `.description`)}
+                                                    content={t(`tooltips.boostBotFilter${influencerSize}.title`)}
+                                                    detail={t(`tooltips.boostBotFilter${influencerSize}.description`)}
                                                     position="bottom-right"
                                                     className="w-fit"
                                                 >
                                                     <Question className="h-1/2 w-1/2 stroke-gray-400" />
                                                 </Tooltip>
-
-                                            <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {influencerSub[influencerSize].title}
-
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
                                                 {influencerSub[influencerSize].subtitle}
