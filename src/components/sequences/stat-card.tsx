@@ -18,7 +18,7 @@ export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCar
             data-testid={`stat-card-${name.toLowerCase()}`}
             className="flex flex-auto cursor-default items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white px-6 py-2"
         >
-            <div className="mr-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary-200 p-3 text-primary-700">
+            <div className="mr-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 p-3 text-primary-700">
                 {largeIcon}
             </div>
             <div className="">
@@ -36,7 +36,7 @@ export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCar
                     )}
                 </div>
                 <div className="flex">
-                    <h2 className="mr-3 text-4xl text-primary-800">{value}</h2>
+                    <h2 className="mr-3 text-4xl text-primary-600">{value}</h2>
                     {smallIcon}
                 </div>
             </div>
