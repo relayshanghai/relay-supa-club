@@ -52,7 +52,7 @@ export const InfluencerDetailsModal = ({
     const { getTopicsAndRelevance } = useBoostbot({});
     const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
     const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
-        ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0.5 }))
+        ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0 }))
         : topicsAndRelevance.map((topic) => ({
               ...topic,
               topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
@@ -191,10 +191,10 @@ export const InfluencerDetailsModal = ({
                         <div className="border-b border-gray-200 text-base font-semibold text-gray-700">
                             {t('boostbot.modal.topNiches')}
                         </div>
-                        <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse' : ''}`}>
+                        <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse-prominent' : ''}`}>
                             <ResponsiveContainer width={320} height={280}>
                                 <RadarChart outerRadius={90} cx="50%" cy="50%" data={translatedTopicsAndRelevance}>
-                                    <PolarGrid stroke="#e5e7eb" />
+                                    <PolarGrid stroke={areTopicsAndRelevanceLoading ? '#c1c5cb' : '#e5e7eb'} />
                                     <PolarAngleAxis dataKey="topic" tick={CustomizedTick} />
                                     <PolarRadiusAxis tick={false} axisLine={false} />
                                     <Radar
