@@ -68,6 +68,19 @@ const tooltips = {
         title: ' ',
         description: 'The percentage of the audience that has engaged with the influencers content in the last 30 days',
     },
+    audienceGender: {
+        title: ' ',
+        description:
+            'A breakdown of the influencers audience by age and gender.\nPercentages are of the total audience.\neg.  “13% of the total audience that are 18-24yo males”',
+    },
+    boostbotScore: {
+        title: ' ',
+        description: 'We determine audience location by analyzing their comments, viewing habits and interactions.',
+    },
+    audienceGeolocations: {
+        title: ' ',
+        description: 'We determine audience location by analyzing their comments, viewing habits and interactions.',
+    },
 };
 
 export default tooltips;

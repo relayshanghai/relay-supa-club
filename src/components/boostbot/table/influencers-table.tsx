@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import type { TFunction } from 'i18next';
+import { t, type TFunction } from 'i18next';
 import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import Question from 'src/components/icons/Question';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -87,9 +88,27 @@ export function InfluencersTable<TData, TValue>({
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead className="text-xs" key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
+                                            <div className="flex flex-row items-center gap-1">
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                                {['audienceGender', 'audienceGeolocations', 'boostbotScore'].includes(
+                                                    header.id,
+                                                ) && (
+                                                    <Tooltip
+                                                        content={t(`tooltips.${header.id}.title`)}
+                                                        detail={t(`tooltips.${header.id}.description`)}
+                                                        position={
+                                                            header.id === 'boostbotScore'
+                                                                ? 'bottom-right'
+                                                                : 'bottom-left'
+                                                        }
+                                                        className="w-8"
+                                                    >
+                                                        <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                                    </Tooltip>
+                                                )}
+                                            </div>
                                         </TableHead>
                                     );
                                 })}

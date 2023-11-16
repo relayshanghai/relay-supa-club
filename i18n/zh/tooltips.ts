@@ -63,6 +63,18 @@ const tooltips = {
         title: ' ',
         description: '过去30天内与红人发布内容互动的受众占比',
     },
+    audienceGender: {
+        title: ' ',
+        description: '根据年龄和性别对红人的受众群体进行划分。\n总受众的百分占比\n例如：“受众群体的13%为18-24岁的男性”',
+    },
+    boostbotScore: {
+        title: ' ',
+        description: '该评分根据红人的受众互动、与您搜索的相关性，以及帖子的发布记录进行评定！',
+    },
+    audienceGeolocations: {
+        title: ' ',
+        description: '我们通过分析评论、观看习惯及互动来确定受众所在地区。',
+    },
 };
 
 export default tooltips;
