@@ -75,13 +75,17 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         deleteSequenceInfluencers: deleteSequenceInfluencer,
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
-    const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
+    const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
+
     const missingSocialProfileInfo =
+        !sequenceInfluencer.recent_post_title ||
+        !sequenceInfluencer.recent_post_url ||
+        !sequenceInfluencer.avatar_url ||
         !sequenceInfluencer.social_profile_last_fetched ||
         !sequenceInfluencer.influencer_social_profile_id ||
         !sequenceInfluencer.tags ||
         sequenceInfluencer.tags.length === 0;
-    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
+    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
