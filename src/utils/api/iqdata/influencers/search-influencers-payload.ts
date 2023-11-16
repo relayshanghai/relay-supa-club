@@ -190,6 +190,26 @@ export const actions = z.object({
     action: z.union([z.literal('must'), z.literal('should'), z.literal('not')]).optional(),
 });
 
+export const followers_growth = z.object({
+    interval: z
+        .union([
+            z.literal('i1month'),
+            z.literal('i2months'),
+            z.literal('i3months'),
+            z.literal('i4months'),
+            z.literal('i5months'),
+            z.literal('i6months'),
+        ])
+        .optional(),
+    value: z.number(),
+    operator: z.union([z.literal('lt'), z.literal('lte'), z.literal('gt'), z.literal('gte')]),
+});
+
+const posts_count = z.object({
+    left_number: z.number().optional(),
+    right_number: z.number().optional(),
+});
+
 export const last_posted = z
     .string()
     .or(z.number())
@@ -221,6 +241,8 @@ export const filter = z
         with_contact: with_contact.array().optional(),
         actions: actions.array().optional(),
         lang: lang.optional(),
+        followers_growth: followers_growth.optional(),
+        posts_count: posts_count.optional(),
     });
 
 export type filter = z.infer<typeof filter>;
