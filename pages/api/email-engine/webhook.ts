@@ -192,15 +192,21 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         profile_id: null,
         extra_info: { event_data: event.data },
     };
+    const fromAddress = event.data.from.address;
+    const toAddress = event.data.to[0].address;
 
-    if (event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG) {
-        // For some reason, sent mail also shows up in `messageNew`, so filter them out.
-        // TODO: find a more general, non-hardcoded way to do this that will work for non-gmail providers.
+    // Ignore outgoing emails and drafts
+    if (
+        event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
+        event.data.draft === true ||
+        fromAddress.includes('boostbot.ai') ||
+        fromAddress.includes('noreply')
+    ) {
         return res.status(httpCodes.OK).json({});
     }
 
     // If there are multiple users at the same company with the same email address, this will get the first one. We only use it to supply a `company_id`, so it doesn't matter which user we get as long as the email is unique per company.
-    const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
+    const { data: ourUser, error } = await getProfileBySequenceSendEmail(toAddress);
     if (error) {
         trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;
 
@@ -222,10 +228,10 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     trackData.profile_id = ourUser.id;
 
     try {
-        const sequenceInfluencer = await getSequenceInfluencerByEmailAndCompany(
-            event.data.from.address,
-            ourUser.company_id,
-        );
+        const sequenceInfluencer = await getSequenceInfluencerByEmailAndCompany(fromAddress, ourUser.company_id);
+        // try other ways to find the influencer.
+        // use the threadid and look for emails sent to the same threadid.
+        // use the inReplyTo messageId to look for outgoing emails with the same messageId.
 
         // if there is a sequenceInfluencer, this is a reply to a sequenced email
         await handleReply(sequenceInfluencer, event);
