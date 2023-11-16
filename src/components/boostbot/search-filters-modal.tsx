@@ -282,9 +282,9 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <div className="mb-0.5 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                            <div className="mb-0.5 flex gap-x-1 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
                                                 {t(`boostbot.filters.influencerSub.${influencerSize}.title`)}
-                                            
+
                                                 <Tooltip
                                                     content={t(`tooltips.boostBotFilter${influencerSize}.title`)}
                                                     detail={t(`tooltips.boostBotFilter${influencerSize}.description`)}
@@ -307,8 +307,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 </div>
                 <div className="flex h-full w-full flex-row">
                     <div className="w-1/2">
-
-                        <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
+                        <div className="text-md mb-3 flex w-full gap-x-2 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             {t(`boostbot.filters.audienceLocation`)}
                             <Tooltip
                                 content={t('tooltips.boostBotAudienceLocation.title')}
