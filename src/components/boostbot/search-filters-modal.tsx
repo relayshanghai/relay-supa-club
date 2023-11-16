@@ -28,20 +28,10 @@ type SearchFiltersModalProps = {
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
     const { t } = useTranslation();
     const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-    const platformSub: any = {
-        youtube: 'Devoted audiences',
-        instagram: 'Great for brand building',
-        tiktok: 'High content virality',
-    };
     const platformIcons: any = {
         youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube' },
         instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
         tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
-    };
-    const influencerSub: any = {
-        microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
-        nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
-        megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
     };
     const [localFilters, setLocalFilters] = useState(filters);
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
@@ -207,54 +197,54 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
     };
 
     return (
-        <Modal maxWidth="max-w-2xl" visible={isOpen} onClose={cancelModal} title="">
-            <div className="mb-6 flex flex-1 space-x-3 border-b border-tertiary-200 p-6">
+        <Modal maxWidth="max-w-3xl" visible={isOpen} onClose={cancelModal} title="">
+            <div className="mb-6 flex flex-1 space-x-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                        <AdjustmentsVerticalIcon className="h-6 w-6 fill-none stroke-primary-500 group-disabled:stroke-primary-200" />
+                        <AdjustmentsVerticalIcon className="h-6 w-6 fill-none stroke-primary-600 group-disabled:stroke-primary-200" />
                     </div>
                 </div>
-                {/* TO DO Translations */}
+                {/* TO DO CLose button */}
                 <div>
-                    <div className="text-lg font-semibold text-tertiary-800">Set BoostBot Search Filters</div>
+                    <div className="text-lg font-semibold text-tertiary-800"> {t(`boostbot.filters.modalTitle`)}</div>
                     <div className="font-regular text-sm text-tertiary-500">
-                        Setting these filters will help you focus BoostBot’s recommendations
+                        {t(`boostbot.filters.modalTitleSubtitle`)}
                     </div>
                 </div>
             </div>
 
-            <div className=" mb-12 flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
-                <div className="flex w-full space-x-10">
-                    <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
-                        <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                            Social Media Platforms
+            <div className="flex h-full select-none flex-col items-center justify-center space-y-10 pt-2 text-gray-500">
+                <div className="flex w-full space-x-12 ">
+                    <div className="flex w-full flex-col justify-center gap-2 space-y-1 md:max-w-[400px]">
+                        <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600 ">
+                            {t(`boostbot.filters.fromPlatform`)}
                         </div>
                         {platforms.map((platform) => {
                             const isSelected = localFilters.platforms.includes(platform);
                             return (
                                 <div
                                     key={platform}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
-                                        isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
+                                    className={`bg-white-500 flex flex-1 cursor-pointer flex-row justify-between rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
+                                        isSelected ? 'bg-white outline-primary-600' : 'outline-transparent'
                                     }`}
                                     onClick={() => togglePlatform(platform)}
                                     data-testid={`boostbot-filter-${platform}`}
                                 >
-                                    <div className="flex space-x-4">
-                                        <div className=" flex h-10 w-10 items-center  justify-center rounded-lg border border-tertiary-200 bg-white">
+                                    <div className="flex h-fit items-start space-x-4 ">
+                                        <div className=" flex h-10 w-10 items-center justify-center rounded-lg border border-tertiary-200 bg-white p-2.5">
                                             <img
                                                 src={platformIcons[platform].icon}
-                                                height={32}
-                                                width={32}
+                                                height={20}
+                                                width={20}
                                                 alt={platformIcons[platform].label}
                                             />
                                         </div>
-                                        <div className="flex flex-col">
-                                            <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                        <div className="flex flex-col ">
+                                            <div className="mb-0.5 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
                                                 {platform.charAt(0).toUpperCase() + platform.slice(1)}
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
-                                                {platformSub[platform]}
+                                                {t(`boostbot.filters.platformSub.${platform}`)}
                                             </div>
                                         </div>
                                     </div>
@@ -263,9 +253,9 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             );
                         })}
                     </div>
-                    <div className="flex w-full flex-col justify-center gap-2 md:max-w-[400px]">
+                    <div className="flex w-full flex-col justify-center gap-2 space-y-1 md:max-w-[400px]">
                         <div className="text-md mb-3 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                            Influencer Size
+                            {t(`boostbot.filters.influencerSize`)}
                         </div>
                         {influencerSizes.map((influencerSize) => {
                             const isSelected = localFilters.influencerSizes?.includes(influencerSize);
@@ -292,8 +282,9 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <div className="mb-0.5 flex gap-1 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {influencerSub[influencerSize].title}
+                                            <div className="mb-0.5 flex gap-x-1 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                                {t(`boostbot.filters.influencerSub.${influencerSize}.title`)}
+
                                                 <Tooltip
                                                     content={t(`tooltips.boostBotFilter${influencerSize}.title`)}
                                                     detail={t(`tooltips.boostBotFilter${influencerSize}.description`)}
@@ -304,7 +295,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                                 </Tooltip>
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
-                                                {influencerSub[influencerSize].subtitle}
+                                                {t(`boostbot.filters.influencerSub.${influencerSize}.subtitle`)}
                                             </div>
                                         </div>
                                     </div>
@@ -316,8 +307,8 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 </div>
                 <div className="flex h-full w-full flex-row">
                     <div className="w-1/2">
-                        <div className="text-md mb-3 flex w-full flex-row border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                            Audience Locations
+                        <div className="text-md mb-3 flex w-full gap-x-2 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
+                            {t(`boostbot.filters.audienceLocation`)}
                             <Tooltip
                                 content={t('tooltips.boostBotAudienceLocation.title')}
                                 detail={t('tooltips.boostBotAudienceLocation.description')}
@@ -349,7 +340,10 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 </div>
                             )}
                         </div>
-                        <p className="font-regular mt-1 text-xs text-tertiary-400">Add up to 2 locations to target</p>
+                        <p className="font-regular mt-1 text-xs text-tertiary-400">
+                            {' '}
+                            {t(`boostbot.filters.addUpLocation`)}
+                        </p>
                     </div>
                 </div>
 
