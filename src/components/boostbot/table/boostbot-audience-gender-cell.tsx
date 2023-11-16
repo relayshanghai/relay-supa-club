@@ -11,7 +11,7 @@ export type BoostbotAudienceDemoCellProps = {
     table: Table<BoostbotInfluencer>;
 };
 
-export const BoostbotAudienceDemoCell = ({ row, table }: BoostbotAudienceDemoCellProps) => {
+export const BoostbotAudienceGenderCell = ({ row, table }: BoostbotAudienceDemoCellProps) => {
     const influencer = row.original;
     const processedData = convertAudienceDataToPercentage(processedAudienceDemoData(influencer));
 

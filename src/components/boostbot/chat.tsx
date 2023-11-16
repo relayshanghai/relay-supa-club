@@ -106,7 +106,13 @@ export const Chat: React.FC<ChatProps> = ({
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters, (onLoadFilters) => {
+        // Fallback for users who had the old version of the filters saved in localStorage
+        if (!onLoadFilters.influencerSizes) {
+            onLoadFilters.influencerSizes = ['microinfluencer', 'nicheinfluencer'];
+        }
+        return onLoadFilters;
+    });
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();

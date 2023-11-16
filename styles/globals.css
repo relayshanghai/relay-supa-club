@@ -90,7 +90,7 @@ body,
     }
 
     .checkbox-add-success {
-        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 text-gray-500 duration-300 checked:border-transparent checked:bg-gray-500 hover:bg-gray-200 hover:checked:bg-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-0;
+        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 bg-gray-400 text-gray-500 duration-300 checked:border-transparent checked:bg-gray-500 hover:checked:bg-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-0;
     }
 
     .file-uploader {

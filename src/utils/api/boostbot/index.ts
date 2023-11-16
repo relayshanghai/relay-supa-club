@@ -33,7 +33,7 @@ export const createBoostbotInfluencerPayload = ({
             megainfluencer: { left_number: 750_000, right_number: undefined },
         },
     };
-    const { influencerSizes, audience_geo, ...restOfFilters } = filters;
+    const { influencerSizes = ['microinfluencer', 'nicheinfluencer'], audience_geo, ...restOfFilters } = filters;
 
     const getFollowerParams = (
         platform: CreatorPlatform,
