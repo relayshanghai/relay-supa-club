@@ -1,6 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import type { SequenceInfluencer, TemplateVariable } from '../../utils/api/db';
-
+import { wasFetchedWithinMinutes } from './helpers';
+import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 import { fillInTemplateVariables, getRelevantTags, updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
 const emailText =
     'Hey {{ params.influencerAccountName }},\r\n\r\n{{ params.marketingManagerName }} here from {{ params.brandName }}. I watched your "{{ params.recentPostTitle }}" video, and love your content style!! 🤩\r\n\r\nEver thought about introducing your fans to {{ params.productName }}? I\'ve got a feeling it\'s right up their alley. \r\n\r\n{{  params.productDescription }} is available for just ${{ params.productPrice }}! You can check it out here {{ params.productLink }}\r\n\r\nWe’re looking to partner with 8 or so influencers in the {{ params.influencerNiche }} space to get the word out about the {{ params.productName }} over the next couple weeks, and would love for you to be apart of it!\r\n\r\nWe’d send you a free sample to make some content about and share with your audience, fully compensated of course.\r\n\r\nLet me know what you think! \r\n\r\nBest,  \r\n\r\n{{ params.marketingManagerName }}';
@@ -103,6 +104,7 @@ describe('updateSequenceInfluencerIfSocialProfileAvailable', () => {
             id: 'sequenceInfluencer_id',
             influencer_social_profile_id: '',
             email: '',
+            social_profile_last_fetched: new Date().toISOString(),
         },
         socialProfile: {
             id: 'social_profile_id',
@@ -237,9 +239,6 @@ describe('updateSequenceInfluencerIfSocialProfileAvailable', () => {
         expect(updateSequenceInfluencer).toHaveBeenCalledTimes(3);
     });
 });
-
-import { wasFetchedWithinMinutes } from './helpers';
-import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 
 describe('wasFetchedWithinMinutes', () => {
     const sequenceInfluencer: SequenceInfluencer = {
