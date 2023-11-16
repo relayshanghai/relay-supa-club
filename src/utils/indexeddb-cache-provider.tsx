@@ -13,8 +13,9 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
         dbName: appCacheDBKey,
         storeName: appCacheStoreKey,
     });
+
     if (!cacheProvider) {
-        return <>Loading...</>;
+        return <>Hello from Ellie!</>;
     }
     return <SWRConfig value={{ provider: cacheProvider }}>{children}</SWRConfig>;
 };
