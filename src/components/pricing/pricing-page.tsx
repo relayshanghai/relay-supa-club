@@ -61,7 +61,9 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                     setConfirmModalData={setConfirmModalData}
                     createSubscription={createSubscription}
                 />
-                <div className="flex w-full justify-between p-4">
+
+                <div className="flex w-full justify-end p-4">
+                    <LanguageToggle />
                     {landingPage ? (
                         <p className="ml-3 font-medium text-gray-500">
                             {t('signup.alreadySignedUp')}
@@ -79,7 +81,6 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             {t('pricing.backToAccount')}
                         </Link>
                     )}
-                    <LanguageToggle />
                 </div>
 
                 <div className="container mx-auto flex flex-col items-center">
