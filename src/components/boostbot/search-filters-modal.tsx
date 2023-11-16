@@ -6,7 +6,7 @@ import { influencerSizes } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
-import { Sparkles } from 'src/components/icons';
+import { Question, Sparkles } from 'src/components/icons';
 import { countries, countriesByFlag } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { randomNumber } from 'src/utils/utils';
@@ -16,6 +16,7 @@ import { SetBoostbotFilter } from 'src/utils/analytics/events/boostbot/set-filte
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import MicroInfluencer from '../icons/MicroInfluencer';
 import NicheInfluencer from '../icons/NicheInfluencer';
+import { Tooltip } from '../library/tooltip';
 
 type SearchFiltersModalProps = {
     isOpen: boolean;
@@ -271,28 +272,36 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             return (
                                 <div
                                     key={influencerSize}
-                                    className={`bg-white-500 flex h-[78px] flex-1 cursor-pointer flex-row items-center justify-between gap-2 rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100 ${
-                                        isSelected ? 'bg-white outline-primary-500' : 'outline-transparent'
+                                    className={`bg-white-500 flex cursor-pointer flex-row justify-between rounded-xl border border-gray-200 bg-opacity-70 p-4 text-gray-500 shadow-md outline outline-2 transition-all hover:bg-primary-100  ${
+                                        isSelected ? 'outline-pr imary-600   bg-white' : 'outline-transparent'
                                     }`}
                                     onClick={() => toggleInfluencerSize(influencerSize)}
                                     data-testid={`boostbot-filter-${influencerSize}`}
                                 >
                                     <div className="flex space-x-4">
-                                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-100">
                                                 {influencerSize === 'microinfluencer' ? (
                                                     <MicroInfluencer className="stroke-2" />
                                                 ) : influencerSize === 'nicheinfluencer' ? (
                                                     <NicheInfluencer className="stroke-2" />
                                                 ) : (
-                                                    <Sparkles className="h-6 w-6 stroke-primary-600 stroke-2" />
+                                                    <Sparkles className="h-4 w-4 stroke-primary-600 stroke-2" />
                                                 )}
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <div className="pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
+                                            <div className="mb-0.5 flex gap-1 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
                                                 {influencerSub[influencerSize].title}
+                                                <Tooltip
+                                                    content={t(`tooltips.boostBotFilter${influencerSize}.title`)}
+                                                    detail={t(`tooltips.boostBotFilter${influencerSize}.description`)}
+                                                    position="bottom-right"
+                                                    className="w-fit"
+                                                >
+                                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                                </Tooltip>
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
                                                 {influencerSub[influencerSize].subtitle}
@@ -307,9 +316,18 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                 </div>
                 <div className="flex h-full w-full flex-row">
                     <div className="w-1/2">
-                        <div className="text-md mb-3 w-full border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
-                            Audience Location
+                        <div className="text-md mb-3 flex w-full flex-row border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
+                            Audience Locations
+                            <Tooltip
+                                content={t('tooltips.boostBotAudienceLocation.title')}
+                                detail={t('tooltips.boostBotAudienceLocation.description')}
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                            </Tooltip>
                         </div>
+
                         <div className="flex w-full flex-row rounded-md border-none bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
                             <div className="flex flex-row justify-center gap-1">
                                 {localFilters['audience_geo'].map((geo) => (
