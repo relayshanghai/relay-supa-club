@@ -175,7 +175,7 @@ const _fixHalfSentSequence: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: toDelete });
 };
 
-const _fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
+const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
     console.log('fixing');
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
@@ -205,7 +205,7 @@ const _fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =
                     social_profile_last_fetched: new Date().toISOString(),
                 };
                 console.log(update);
-                if (!update.platform || !update.username || !update.username || !update.avatar_url || !update.url) {
+                if (!update.platform || !update.username || !update.username || !update.url) {
                     console.log('missing data', update, influencer);
                     continue;
                 }
@@ -224,7 +224,7 @@ const _fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =
     console.log(updates);
     return res.status(200).json({ message: updates });
 };
-const fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
+const _fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
     console.log('fixing');
     const { data: incompleteSocialProfiles } = await supabase
         .from('influencer_social_profiles')
@@ -240,4 +240,4 @@ const fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-export default fixSocialProfileIncomplete;
+export default fixSequenceInfluencerDataIncomplete;
