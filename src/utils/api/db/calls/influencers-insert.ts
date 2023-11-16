@@ -45,6 +45,7 @@ export const getInfluencerById =
             .match({
                 id,
             })
+            .limit(1)
             .maybeSingle();
 
         if (influencer.error) {
@@ -55,23 +56,15 @@ export const getInfluencerById =
     };
 
 // @todo remove no-client version
-export const getInfluencerSocialProfileByReferenceId =
-    (db: RelayDatabase) =>
-    async (referenceId: string): Promise<InfluencerSocialProfileRow | null> => {
-        const socialProfile = await db
-            .from('influencer_social_profiles')
-            .select()
-            .match({
-                reference_id: referenceId,
-            })
-            .maybeSingle();
-
-        if (socialProfile.error) {
-            throw socialProfile.error;
-        }
-
-        return socialProfile.data;
-    };
+export const getInfluencerSocialProfileByReferenceId = (db: RelayDatabase) => async (referenceId: string) => {
+    return await db
+        .from('influencer_social_profiles')
+        .select()
+        .match({
+            reference_id: referenceId,
+        })
+        .maybeSingle();
+};
 
 export const updateInfluencerSocialProfile =
     (db: RelayDatabase) =>
