@@ -24,7 +24,7 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    const [lang, setLang] = useState('en-US');
+    const [lang, setLang] = useState(i18n.language);
 
     useEffect(() => {
         rudderInitialized();
@@ -35,8 +35,8 @@ function MyApp({
 
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
-        storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage('en-US'); // triggers the language detector
-    }, []);
+        storedLanguage !== null ? _i18n.changeLanguage(storedLanguage) : _i18n.changeLanguage(); // triggers the language detector
+    }, [_i18n]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
