@@ -38,7 +38,9 @@ function MyApp({
         if (storedLanguage !== null) {
             i18n.changeLanguage(storedLanguage);
             setLang(storedLanguage);
-        } else i18n.changeLanguage(); // triggers the language detector
+        } else {
+            i18n.changeLanguage(); // triggers the language detector
+        }
     }, []);
 
     useEffect(() => {
