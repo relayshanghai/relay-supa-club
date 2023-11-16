@@ -463,7 +463,8 @@ OR REPLACE FUNCTION create_influencer_social_profile(
   _name TEXT,
   _email TEXT,
   _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
-  _recent_post_title TEXT DEFAULT 'Recent Video Title'
+  _recent_post_title TEXT DEFAULT 'Recent Video Title',
+  _recent_post_url TEXT DEFAULT 'https://example.com/recent-video'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -479,7 +480,8 @@ INSERT INTO influencer_social_profiles (
   name,
   email,
   avatar_url,
-  recent_post_title
+  recent_post_title,
+  recent_post_url
 )
 VALUES (
   uuid_generate_v4(),
@@ -492,7 +494,8 @@ VALUES (
   _name,
   _email,
   _avatar_url,
-  _recent_post_title
+  _recent_post_titlem
+  _recent_post_url
 )
 RETURNING * INTO _row;
 RETURN _row;
