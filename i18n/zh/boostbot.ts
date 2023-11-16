@@ -1,18 +1,18 @@
 const boostbot = {
     filters: {
         openModalButton: '筛选红人',
-        modalTitle: '基础筛选条件',
-        modalTitleSubtitle: 'Setting these filters will help you focus BoostBot’s recommendations',
+        modalTitle: '设置筛选的条件',
+        modalTitleSubtitle: '设置的筛选条件有助于让雷宝为您推荐关联度更高的红人',
         fromPlatform: '我想要看以下平台的红人',
         audienceLocation: '受众地区',
         fromGeos: '他们的粉丝所在地区位于',
         addMoreGeos: '添加更多',
         selectGeo: '选择一个国家地区',
-        influencerSize: 'Influencer Size',
+        influencerSize: '红人量级',
         advancedFilters: '高级筛选条件',
         advancedFiltersTooltip: '此功能尚不可用',
         updateFilters: '更新筛选条件',
-        addUpLocation: 'Add up to 2 locations to target',
+        addUpLocation: '添加至多两个目标地区',
         atLeast: '他们的粉丝中，至少需要有',
         inLocation: '位于 {{location}} 地区',
         platformSub: {
