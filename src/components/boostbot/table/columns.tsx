@@ -34,8 +34,8 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
                     >
                         <input
                             type="checkbox"
-                            checked={!table.options.meta?.isLoading}
-                            className="checkbox-add-success mr-0"
+                            checked={false}
+                            className={`${table.options.meta?.isLoading ? 'checkbox' : 'checkbox-add-success'} mr-0`}
                             disabled={true}
                         />
                     </Tooltip>
@@ -69,8 +69,8 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
         cell: BoostbotFollowersCell,
     },
     {
-        id: 'audienceDemo',
-        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceDemo'),
+        id: 'audienceGender',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceGender'),
         cell: BoostbotAudienceDemoCell,
     },
     {
