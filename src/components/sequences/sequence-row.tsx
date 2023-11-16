@@ -9,7 +9,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline } from '../icons';
+import { AvatarDefault, DeleteOutline, SendOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -28,6 +28,7 @@ import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinut
 import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
+import Image from 'next/image';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -69,6 +70,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     onCheckboxChange,
     checked,
 }) => {
+    const [avatarError, setAvatarError] = useState(false);
     const {
         sequenceInfluencers,
         updateSequenceInfluencer,
@@ -295,11 +297,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <img
-                            className="inline-block h-14 w-14 bg-slate-300"
-                            src={imgProxy(sequenceInfluencer.avatar_url ?? '')}
-                            alt={`Influencer avatar ${sequenceInfluencer.name}`}
-                        />
+                        {sequenceInfluencer.avatar_url && !avatarError ? (
+                            <Image
+                                className="inline-block h-14 w-14 bg-slate-300"
+                                onError={() => setAvatarError(true)}
+                                src={imgProxy(sequenceInfluencer.avatar_url) ?? ''}
+                                alt={`Influencer avatar ${sequenceInfluencer.name}`}
+                                height={56}
+                                width={56}
+                            />
+                        ) : (
+                            <AvatarDefault height={56} width={56} />
+                        )}
 
                         <div className="flex flex-col">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
