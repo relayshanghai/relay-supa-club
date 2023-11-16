@@ -60,7 +60,12 @@ function MyApp({
         _i18n.on('languageChanged', (l) => {
             setLang(l);
             // eslint-disable-next-line no-console
-            console.log('lang set to: ', l);
+            console.log('_i18 lang set to: ', l);
+        });
+        i18n.on('languageChanged', (l) => {
+            setLang(l);
+            // eslint-disable-next-line no-console
+            console.log('i18 lang set to: ', l);
         });
 
         return () => _i18n.on('languageChanged', () => null);
