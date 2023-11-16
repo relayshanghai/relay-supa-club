@@ -191,7 +191,7 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
                 .eq('id', influencer.influencer_social_profile_id)
                 .limit(1)
                 .single();
-            // console.log(socialProfile);
+            console.log(socialProfile?.username);
             if (socialProfile) {
                 const { url, avatar_url, name, platform, username } = socialProfile;
                 const update = {
@@ -202,19 +202,21 @@ const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) =>
                     username,
                     social_profile_last_fetched: new Date().toISOString(),
                 };
-                // console.log(update);
+                console.log(update);
                 if (!update.platform) {
-                    console.log(update);
+                    console.log('no update platform', update);
                     continue;
                 }
                 const { data: updated } = await supabase
                     .from('sequence_influencers')
-                    .update({ social_profile_last_fetched: new Date().toISOString() })
+                    .update(update)
                     .eq('id', influencer.id)
                     .select()
                     .single();
                 updates.push(updated?.platform);
                 console.log(`${updated?.platform}`);
+            } else {
+                console.log('social profile not found', influencer);
             }
         }
     console.log(updates);
