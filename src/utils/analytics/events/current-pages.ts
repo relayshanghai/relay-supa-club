@@ -8,6 +8,7 @@ export enum CurrentPageEvent {
     guide = 'guide',
     account = 'account',
     pricing = 'pricing',
+    upgrade = 'upgrade',
     login = 'login',
     signup = 'signup',
     payments = 'payments',

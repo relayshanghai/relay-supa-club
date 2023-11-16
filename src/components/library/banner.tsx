@@ -18,7 +18,7 @@ export const Banner = ({ title, message, buttonText }: { title: string; message:
                     {message}
                 </p>
                 <Link
-                    href="/pricing"
+                    href="/upgrade"
                     className="flex flex-row items-center rounded-full bg-white px-3.5 py-1 text-sm font-semibold text-primary-500 shadow-sm"
                 >
                     <Thunder className="h-5 w-5 stroke-primary-500" /> {buttonText}

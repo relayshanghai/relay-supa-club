@@ -36,6 +36,7 @@ interface Data {
     seemsLikeNew: boolean;
     messageSpecialUse: string;
     summary: Summary;
+    draft?: boolean;
 }
 
 interface From {

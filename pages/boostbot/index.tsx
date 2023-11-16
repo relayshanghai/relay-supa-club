@@ -94,7 +94,7 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.error.outOfSearchCredits',
-                translationLink: '/pricing',
+                translationLink: '/upgrade',
             });
             setIsSearchDisabled(true);
         }
@@ -103,7 +103,7 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.error.expiredAccount',
-                translationLink: '/pricing',
+                translationLink: '/upgrade',
             });
             setIsSearchDisabled(true);
             setAreChatActionsDisabled(true);
