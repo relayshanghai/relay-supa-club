@@ -44,9 +44,9 @@ export const createClient = (
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
+export const track: (r: RudderBackend | null, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
     (rudder, session) => (event, payload) => {
-        if (disabled) return;
+        if (!rudder || disabled) return;
 
         try {
             const trigger: TriggerEvent = (eventName, payload) => {
