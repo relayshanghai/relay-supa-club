@@ -50,6 +50,7 @@ module.exports = {
                 'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
                 'fade-in-from-left': 'fade-in-from-left 0.7s ease-in-out',
                 'fade-in-from-top': 'fade-in-from-top 0.7s ease-in-out',
+                'pulse-prominent': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;',
             },
             keyframes: {
                 float: {
@@ -67,6 +68,10 @@ module.exports = {
                 'fade-in-from-top': {
                     '0%': { transform: 'translateY(-10px)', opacity: '0' },
                     '100%': { transform: 'translateY(0px)', opacity: '1' },
+                },
+                'pulse-prominent': {
+                    '0%, 100%': { opacity: '1' },
+                    '50%': { opacity: '0.2' },
                 },
             },
         },
