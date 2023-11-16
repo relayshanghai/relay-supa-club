@@ -5,7 +5,6 @@ import {
 } from 'src/utils/api/db/calls/sequence-influencers';
 import type { RelayDatabase, SequenceInfluencersTable } from '../types';
 import { serverLogger } from 'src/utils/logger-server';
-import type { CreatorPlatform } from 'types';
 
 /**
  * gets sequence influencers by sequence ids.
@@ -29,11 +28,9 @@ export const getSequenceInfluencers =
                 const { socialProfile, ...rest } = influencer;
                 results.push({
                     ...rest,
-                    name: socialProfile?.name ?? '',
                     manager_first_name: '',
-                    username: socialProfile?.username ?? '',
-                    avatar_url: socialProfile?.avatar_url ?? '',
-                    url: socialProfile?.url ?? '',
+                    recent_post_title: socialProfile?.recent_post_title ?? '',
+                    recent_post_url: socialProfile?.recent_post_url ?? '',
                 });
             });
             // add the manager first name to each influencer if their added_by id matches a manager id:
@@ -48,6 +45,9 @@ export const getSequenceInfluencers =
         return results;
     };
 
+/**
+ * Note that this does not return the manager first name, recent post title, or recent post url
+ */
 export const getSequenceInfluencer =
     (db: RelayDatabase) =>
     async (id: string | SequenceInfluencersTable['Row']): Promise<SequenceInfluencerManagerPage> => {
@@ -55,9 +55,7 @@ export const getSequenceInfluencer =
 
         const { data, error } = await db
             .from('sequence_influencers')
-            .select(
-                '*, socialProfile: influencer_social_profiles (name, username, avatar_url, url, platform), address: addresses (*)',
-            )
+            .select('*, address: addresses (*)')
             .eq('id', sequenceInfluencer.id)
             .single();
 
@@ -68,11 +66,8 @@ export const getSequenceInfluencer =
         return {
             ...data,
             manager_first_name: '',
-            username: data.socialProfile?.username ?? '',
-            avatar_url: data.socialProfile?.avatar_url ?? '',
-            url: data.socialProfile?.url ?? '',
-            platform: (data.socialProfile?.platform as CreatorPlatform) ?? 'youtube',
-            address: data.address,
+            recent_post_title: '',
+            recent_post_url: '',
         };
     };
 

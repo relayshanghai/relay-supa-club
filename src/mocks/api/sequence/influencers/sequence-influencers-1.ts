@@ -31,6 +31,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         platform: 'tiktok',
         address: null,
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '48161d86-ecf8-4576-9d70-78372fd912ac',
@@ -62,6 +64,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'd7aba182-0103-4e0f-af8e-fbb1e74aec71',
@@ -93,6 +97,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '8ce9f24b-0c44-41d8-911d-be449341afa7',
@@ -124,6 +130,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '8ce9f24b-0c44-41d8-911d-be449341afa7',
@@ -155,6 +163,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '901609ec-8d9c-4bb0-b15d-790b2306734d',
@@ -186,6 +196,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '5f48d92e-b8ff-4078-88bd-f0ac6d0dbc5f',
@@ -217,6 +229,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '0279bf97-8334-418d-8556-c15a6a358120',
@@ -248,6 +262,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'e08467d4-0791-43e9-a8e5-0ff0a58e1ce9',
@@ -279,6 +295,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '26370940-eb13-4dc0-b9ce-bc2a9ea4b2e8',
@@ -310,6 +328,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'ba95427d-9fb1-4de0-a6d0-4ded07306d51',
@@ -340,6 +360,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '9903ef28-24a1-4f4c-b909-cc7a72b4ea0a',
@@ -371,6 +393,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '8f6d0eb5-b7df-4073-8e32-5f6f4a4fa9d4',
@@ -402,6 +426,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'cc854512-96fd-4c24-91b1-b8f99de4d8cf',
@@ -433,6 +459,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '4038a5c0-ca5c-439c-9ff5-eb525a845065',
@@ -464,6 +492,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '4036a5c0-ca5c-439c-9ff5-eb525a845065',
@@ -495,6 +525,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '40271e47-800a-411a-97a4-8c729b372662',
@@ -526,6 +558,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '34880ac8-b778-4956-aa8a-89190954aad2',
@@ -557,6 +591,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '5c2d96b7-b69c-4bea-a763-a5700b21a6b9',
@@ -588,6 +624,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '8fd81d38-3fc6-41f1-94b3-1c7f1a87ba61',
@@ -619,6 +657,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '7907a75e-8f83-4d63-8f46-b4528fd5417a',
@@ -650,6 +690,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'c5d0e42f-03a0-4479-89ad-70b66e3181b9',
@@ -681,6 +723,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '66795f77-e85b-4223-a232-6397431131c5',
@@ -712,6 +756,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '2035046c-814d-42b0-909e-92adb3d66223',
@@ -743,6 +789,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'd24b41d3-c616-450a-af15-faf8f1f3d7d5',
@@ -774,6 +822,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '83b4ff02-aa15-4021-8ef2-a1f52744dac6',
@@ -805,6 +855,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '55bc4d57-18d5-42b0-8ada-acdcb7de38a3',
@@ -836,6 +888,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '231c3890-f375-437a-8e21-2486cb77a0f1',
@@ -867,6 +921,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '04ff715d-eec7-4e83-9d6d-698fceae22aa',
@@ -898,6 +954,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '4c059177-03d2-4adf-ad09-396c8e2c7b6c',
@@ -929,6 +987,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '24ae6a9a-ed0c-4bb8-95c7-e160bd1e9c14',
@@ -960,6 +1020,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'aa1caeaf-9b20-4130-abfb-e50a6f1cf882',
@@ -990,6 +1052,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         platform: 'tiktok',
         address: null,
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '5df92780-2329-48df-91b9-fe4ca7c8efe1',
@@ -1021,6 +1085,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '037556dc-c841-482c-bdf7-7f7822beb471',
@@ -1052,6 +1118,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '6223a076-67be-4012-a79f-b81e60645c05',
@@ -1083,6 +1151,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'ff3ac661-161a-47a7-ba25-b30a53eea30a',
@@ -1114,6 +1184,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: 'c441b69c-34e2-4d2b-8fcc-500d04572481',
@@ -1145,6 +1217,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '7ecd0914-f3f4-4346-9096-e59d1325ee86',
@@ -1175,6 +1249,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         platform: 'tiktok',
         address: null,
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '5b3266c6-06e1-4276-aa01-b283b0499c1a',
@@ -1206,6 +1282,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
     {
         id: '43a5b5f1-ed60-42ef-a634-28a44f337e61',
@@ -1237,6 +1315,8 @@ const mockInfluencers: SequenceInfluencerManagerPage[] = [
         address: null,
 
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
+        recent_post_title: 'recent post',
+        recent_post_url: 'https://example.com',
     },
 ];
 
