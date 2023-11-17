@@ -370,8 +370,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
             />
-            <div className="flex flex-col space-y-4 py-6">
-                <div className="flex w-full gap-6">
+            <div className="flex flex-col p-6 ">
+                <div className="mb-4 flex w-full gap-6">
                     <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Button
                         onClick={handleOpenUpdateTemplateVariables}

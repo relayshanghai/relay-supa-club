@@ -178,7 +178,7 @@ const Manager = () => {
             />
             <div className="mx-6 my-6 flex flex-col">
                 <section className="flex w-full flex-row justify-between">
-                    <div className="my-4 md:w-1/2">
+                    <div className="md:w-1/2">
                         <h1 className="text-2xl font-semibold">{t('manager.title')}</h1>
                         <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
                     </div>
