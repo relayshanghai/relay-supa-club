@@ -335,7 +335,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 ))}
                             </div>
                             {shouldShowGeoInput && (
-                                <div className="h-[10px] w-auto" data-testid="boostbot-geo-container">
+                                <div className="h-[20px] grow" data-testid="boostbot-geo-container">
                                     <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
                                 </div>
                             )}
