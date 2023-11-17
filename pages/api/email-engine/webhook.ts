@@ -189,10 +189,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         extra_info: { event_data: event.data },
     };
     const fromAddress = event.data.from.address;
-    const toAddress = event.data.to[0].address;
+    const toAddress = event.data.to ? event.data.to[0]?.address : null;
 
     // Ignore outgoing emails and drafts
     if (
+        !toAddress ||
         event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
         event.data.draft === true ||
         fromAddress.includes('boostbot.ai') ||
