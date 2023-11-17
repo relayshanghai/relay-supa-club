@@ -231,7 +231,7 @@ export const useIdentifySession = () => {
                     user,
                     i18n.language,
                     subscription,
-                    referer || '',
+                    referer === 'producthunt' ? 'producthunt' : undefined,
                 );
                 rudderstack.identify(id, traits, cb ?? noopfn);
                 return true;
