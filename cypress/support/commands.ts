@@ -78,7 +78,7 @@ function loginTestUser(
     cy.contains('button', 'Log in').click();
     cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
     // should get redirected to boostbot page
-    cy.contains("Hi, I'm BoostBot", { timeout: 10000 }); // boostbot page load
+    cy.contains("Hi I'm BoostBot", { timeout: 10000 }); // boostbot page load
 }
 Cypress.Commands.add('loginTestUser', loginTestUser);
 
