@@ -57,7 +57,7 @@ function MyApp({
                 }
             }
             const referer = urlParams.get('ref');
-            localStorage.setItem('referer', referer === 'producthunt' ? referer : '');
+            referer === 'producthunt' && localStorage.setItem('referer', referer);
         }
     }, []);
 
