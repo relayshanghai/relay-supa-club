@@ -193,6 +193,7 @@ const rateLimitMiddleware = async (req: NextRequest, identifier: string) => {
     const ratelimit = new Ratelimit({
         redis: Redis.fromEnv(),
         limiter: Ratelimit.slidingWindow(10, '10 s'),
+        analytics: true,
     });
 
     const { success } = await ratelimit.limit(identifier);
