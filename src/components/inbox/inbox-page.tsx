@@ -230,7 +230,7 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="mx-8 my-6 grid h-full grid-cols-12 px-8">
+            <div className="mx-8 my-6 grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
