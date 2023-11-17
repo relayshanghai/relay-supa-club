@@ -7,8 +7,10 @@ import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
 import { setUser } from '@sentry/nextjs';
+import type { Session, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { RelayError } from 'src/errors/relay-error';
+import type { RelayDatabase } from './api/db';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -39,11 +41,18 @@ export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: 
 
 export type ApiResponse<T> = T | ApiError;
 
+type RelayApiRequest = NextApiRequest & {
+    supabase: SupabaseClient<RelayDatabase>;
+    session?: Session;
+};
+
+export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes>) => void;
+
 export type ApiHandlerParams = {
-    getHandler?: NextApiHandler;
-    postHandler?: NextApiHandler;
-    deleteHandler?: NextApiHandler;
-    putHandler?: NextApiHandler;
+    getHandler?: NextApiHandler | ActionHandler;
+    postHandler?: NextApiHandler | ActionHandler;
+    deleteHandler?: NextApiHandler | ActionHandler;
+    putHandler?: NextApiHandler | ActionHandler;
 };
 
 const isJsonable = (error: any) => {
@@ -113,13 +122,15 @@ const determineHandler = (req: NextApiRequest, params: ApiHandlerParams) => {
     return false;
 };
 
-export const ApiHandler = (params: ApiHandlerParams) => async (req: NextApiRequest, res: NextApiResponse) => {
-    const supabase = createServerSupabaseClient({ req, res });
+export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequest, res: NextApiResponse) => {
+    req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
     const {
         data: { session },
-    } = await supabase.auth.getSession();
+    } = await req.supabase.auth.getSession();
 
     if (session) {
+        req.session = session;
+
         setUser({
             id: session.user.id,
             email: session.user.email,
