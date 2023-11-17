@@ -16,7 +16,6 @@ import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine
 import { serverLogger } from 'src/utils/logger-server';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
-import { wait } from 'src/utils/utils';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
@@ -149,9 +148,6 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
 
         for (const step of sequenceSteps) {
             try {
-                if (step.step_number !== 0) {
-                    await wait(1000);
-                }
                 const references = generateReferences(messageIds, step.step_number);
                 const result = await sendAndInsertEmail({
                     step,
