@@ -172,11 +172,7 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
         // revert the optimistic update if not sent successfully
     } catch (error) {
         serverLogger(error); // truly unexpected error
-        try {
-            track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
-        } catch (error) {
-            serverLogger(error); // truly unexpected error
-        }
+        track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
         return results;
     }
 
