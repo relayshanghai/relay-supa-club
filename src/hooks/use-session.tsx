@@ -221,8 +221,18 @@ export const useIdentifySession = () => {
                 // return void
             };
 
+            const referer =
+                typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('ref') : undefined;
+
             if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
-                const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
+                const { id, traits } = profileToIdentifiable(
+                    profile,
+                    company,
+                    user,
+                    i18n.language,
+                    subscription,
+                    referer || '',
+                );
                 rudderstack.identify(id, traits, cb ?? noopfn);
                 return true;
             }
