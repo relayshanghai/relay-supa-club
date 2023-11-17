@@ -13,44 +13,53 @@ const boostbot = {
         addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
         platformSub: {
-            youtube: 'Devoted audiences',
+            youtube: 'Long-lasting content',
             instagram: 'Great for brand building',
             tiktok: 'High content virality',
         },
         influencerSub: {
-            microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
-            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
-            megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
+            microinfluencer: { title: 'Micro-influencer', subtitle: 'Authentic Engagement' },
+            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Specialized Reach' },
+            megainfluencer: { title: 'Mega-influencer', subtitle: 'Massive Audience' },
         },
     },
     chat: {
-        introMessage: `Hi, I'm BoostBot 🙂
+        introMessage: `Hey {{ username }}, what are we trying to sell today? 😄`,
+        introMessageFirstTimeA: `Hi I'm BoostBot, your AI Influencer Marketing Assistant! 😄`,
+        introMessageFirstTimeB: `Describe your product or brand for me below and I'll work my magic to find you great influencers to collab with.`,
+        introMessageFirstTimeC: `Right now, I'm set up to focus on influencers from YouTube, TikTok, and Instagram with an audience in the US and Canada.
 
-Please send me a description of your product - in any language - and I'll recommend influencers to promote it on YouTube, TikTok, and Instagram.
-
-For example: “A lightweight and foldable mini camera drone with 4K HDR video”`,
-        noInfluencersFound:
-            "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
+You can change that in the 'Filters' section at the top 👆🏻 if you're looking to boost sales elsewhere though!`,
+        noInfluencersFound: "Hmm, I can't seem to find influencers under your selected filters.",
         influencersFound:
-            'I handpicked {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
-        influencersFoundFirstTime:
-            'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
-        influencersFoundAddToSequence:
-            'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
-        influencersFoundNextSteps: 'What would you like to do?',
+            'After you add your favourites to a sequence, let me know if you want to do another search 😄',
+        influencersFoundFirstTimeA:
+            "Select the influencers you you'd like to collab with from the results and add them to a sequence to unlock their full profile and contact info.",
+        influencersFoundFirstTimeB: `BoostBot Pro Tip:
+
+Cast a wide net, then spend your time vetting the responders!
+
+Since most influencers you reach out to probably won't respond to you, you'll save yourself a ton of time if you contact lots of potential influencers, and only spend time carefully considering them if they actually reply!`,
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
         outreachSelected: 'Add selected influencers to Sequence',
         progress: {
-            step1: 'Generating topics and niches',
-            step2: 'Browsing through millions of influencers in our database',
-            step2B: 'Several thousand influencers found',
-            step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
-            step3B: '{{count}} influencers selected',
+            step1: 'Finding niches for your product',
+            step2: 'Searching our database for relevant influencers',
+            step2B: 'Selected influencers with content related to those niches.',
+            step3: 'Narrowing those results down according to your filters',
+            step3B: "Found {{count}} influencers I think you'll be happy with!",
         },
-        outreachDone:
-            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here: <customLink>{{sequenceName}}</customLink>",
+        outreachDoneA: `Done!
+
+You can check them out here <customLink>{{sequenceName}}</customLink>`,
+        outreachDoneB: 'Change up your description to help me think of different influencers to recommend!',
+        outreachDoneFirstTime: `Done!
+
+You can check them out here <customLink>{{sequenceName}}</customLink>
+
+Sequences are our email automation feature. You can set up your email templates, schedule your outreach and follow-up emails to make contacting influencers a breeze!`,
         and: 'and',
         clearChatModal: {
             open: 'Clear chat and filters',
