@@ -42,7 +42,7 @@ export const InputWithSuggestions = ({ suggestions, onSelect, content, disabled 
             )}
 
             {isOpen && (
-                <ul className="absolute z-20 mt-6 max-h-32 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-gray-700 shadow-md">
+                <ul className="absolute z-20 mt-6 max-h-44 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-gray-700 shadow-md">
                     {filteredSuggestions.map((suggestion) => (
                         <li key={suggestion.value}>
                             <button
