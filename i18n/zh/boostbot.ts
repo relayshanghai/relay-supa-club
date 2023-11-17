@@ -30,14 +30,19 @@ const boostbot = {
         introMessage: `哈喽！{{username}}，咱们今天想要推销什么产品呢？😄`,
         introMessageFirstTimeA: `你好！我是雷宝，您私人专享的AI驱动红人营销助理！😄`,
         introMessageFirstTimeB: `请描述您的产品或品牌，我将发挥魔力为您找到匹配的优秀红人。`,
-        introMessageFirstTimeC: `我现在准备好了为您寻找YouTube、TikTok和Instagram平台上，主要粉丝群体位于美国和加拿大的红人。`,
+        introMessageFirstTimeC: `我现在准备好了为您寻找YouTube、TikTok和Instagram平台上，主要粉丝群体位于美国和加拿大的红人。
+
+如果您有其它的目标销售地区，也可以相应调整上方👆的“筛选条件”！
+        `,
         noInfluencersFound:
             '哎呀… 我暂时没能找到符合您当前筛选条件的红人。您可尝试调整上方的筛选条件，或在下一次搜索时添加更具体的描述。',
         influencersFound: `将您最心仪的红人添加至邮件进程管理项目中后，请告诉我您是否想要进行下一次搜索。😄`,
         influencersFoundFirstTimeA:
             '您可从搜索结果中选择有合作意向的红人，将他们添加到邮件进程管理项目中解锁查看红人完整个人资料和联系方式。',
         influencersFoundFirstTimeB: `雷宝为您提供的专业提示：
+
 广撒网，再筛选！
+
 由于您联系的大多数红人可能不会回复您，所以如果你联系的是更具合作潜质的红人，并只在收到他们的回复后再做筛选的考量，能为您节省大量的时间！
         `,
         influencersFoundAddToSequence:
@@ -54,9 +59,14 @@ const boostbot = {
             step3: '根据您的筛选条件缩小筛选范围',
             step3B: `找到了我认为您会满意的{{ count }} 位红人！`,
         },
-        outreachDoneA: `添加成功！您可点击<customLink>{{sequenceName}}</customLink>查看。`,
+        outreachDoneA: `添加成功！
+
+您可点击<customLink>{{sequenceName}}</customLink>查看。`,
         outreachDoneB: `调整您的产品/品牌描述，让我看看还有哪些红人值得推荐！`,
-        outreachDoneFirstTime: `添加成功！您可点击<customLink>{{sequenceName}}</customLink>查看。
+        outreachDoneFirstTime: `添加成功！
+
+您可点击<customLink>{{sequenceName}}</customLink>查看。
+
 邮件进程管理是我们的电子邮件自动化功能。您可以设置属于自己的电子邮件模板，安排您的外联和跟进邮件，与红人的联系沟通将变得轻而易举！
         `,
         and: '和',
