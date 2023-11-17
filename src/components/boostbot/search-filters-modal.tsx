@@ -324,7 +324,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 <InputWithSuggestions
                                     suggestions={geoSuggestions}
                                     onSelect={addNewGeo}
-                                    disabled={shouldShowGeoInput}
+                                    hideInput={!shouldShowGeoInput}
                                     content={
                                         <div className="flex flex-row justify-center gap-1">
                                             {localFilters['audience_geo'].map((geo) => (

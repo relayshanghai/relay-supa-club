@@ -14,7 +14,7 @@ describe('<InputWithSuggestions  />', () => {
     });
 
     it('should show suggestions on focus', () => {
-        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} disabled={true} />);
+        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} />);
 
         cy.get('input').focus();
 
@@ -22,7 +22,7 @@ describe('<InputWithSuggestions  />', () => {
     });
 
     it('should filter suggestions based on the input', () => {
-        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} disabled={true} />);
+        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} />);
 
         cy.get('input').focus();
 
@@ -35,7 +35,7 @@ describe('<InputWithSuggestions  />', () => {
     });
 
     it('should hide suggestions on outside click', () => {
-        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} disabled={true} />);
+        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} />);
 
         cy.get('input').focus();
 
@@ -47,7 +47,7 @@ describe('<InputWithSuggestions  />', () => {
     });
 
     it('should call onSelect with the value of the selected suggestion', () => {
-        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} disabled={true} />);
+        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} />);
 
         cy.get('input').focus();
         cy.contains('Suggestion 1').click();
@@ -57,7 +57,7 @@ describe('<InputWithSuggestions  />', () => {
     });
 
     it('should clear input when a suggestion is selected', () => {
-        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} disabled={true} />);
+        testMount(<InputWithSuggestions onSelect={onSelect} suggestions={suggestions} />);
 
         cy.get('input').focus().type('1');
         cy.contains('Suggestion 1').click();

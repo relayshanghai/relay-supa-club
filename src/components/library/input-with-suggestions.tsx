@@ -10,10 +10,10 @@ type Props = {
     suggestions: Suggestion[];
     onSelect: (value: string) => void;
     content?: any;
-    disabled?: boolean;
+    hideInput?: boolean;
 };
 
-export const InputWithSuggestions = ({ suggestions, onSelect, content, disabled }: Props) => {
+export const InputWithSuggestions = ({ suggestions, onSelect, content, hideInput }: Props) => {
     const inputWithSuggestionsRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -32,7 +32,7 @@ export const InputWithSuggestions = ({ suggestions, onSelect, content, disabled 
     return (
         <div className="relative flex w-full" ref={inputWithSuggestionsRef}>
             <div className="inline">{content}</div>
-            {disabled && (
+            {!hideInput && (
                 <input
                     className="grow rounded-md text-xs focus:outline-none"
                     value={value}
