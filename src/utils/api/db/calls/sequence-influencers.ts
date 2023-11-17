@@ -1,7 +1,38 @@
 import { serverLogger } from 'src/utils/logger-server';
-import type { RelayDatabase, SequenceInfluencerInsert, SequenceInfluencerUpdate } from '../types';
+import type {
+    Addresses,
+    InfluencerSocialProfileRow,
+    RelayDatabase,
+    SequenceInfluencer,
+    SequenceInfluencerInsert,
+    SequenceInfluencerUpdate,
+} from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
+const sequenceInfluencerSocialProfileAndAddressJoinQuery =
+    '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)';
+
+const unpackSocialProfile = (
+    influencer: SequenceInfluencer & {
+        socialProfile: Pick<
+            InfluencerSocialProfileRow,
+            'recent_post_title' | 'recent_post_url' | 'avatar_url' | 'url' | 'username' | 'name'
+        > | null;
+        address: Addresses['Row'] | null;
+    },
+) => {
+    const { socialProfile, ...rest } = influencer;
+    return {
+        ...rest,
+        manager_first_name: '',
+        recent_post_title: socialProfile?.recent_post_title ?? '',
+        recent_post_url: socialProfile?.recent_post_url ?? '',
+        avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
+        url: socialProfile?.url ?? rest.url,
+        username: socialProfile?.username ?? rest.username,
+        name: socialProfile?.name ?? rest.name,
+    };
+};
 /**
  * Note this does not return the manager first name. only getSequenceInfluencers() in `get-sequence-influencers.ts` does that
  */
@@ -13,24 +44,12 @@ export const getSequenceInfluencerByIdCall =
         }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select(
-                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)',
-            )
+            .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
             .eq('id', id)
             .single();
 
         if (error) throw error;
-        const { socialProfile, ...rest } = data;
-        return {
-            ...rest,
-            manager_first_name: '',
-            recent_post_title: socialProfile?.recent_post_title ?? '',
-            recent_post_url: socialProfile?.recent_post_url ?? '',
-            avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
-            url: socialProfile?.url ?? rest.url,
-            username: socialProfile?.username ?? rest.username,
-            name: socialProfile?.name ?? rest.name,
-        };
+        return unpackSocialProfile(data);
     };
 
 export const getSequenceInfluencersBySequenceIdCall =
@@ -41,25 +60,11 @@ export const getSequenceInfluencersBySequenceIdCall =
         }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select(
-                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)',
-            )
+            .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
             .eq('sequence_id', sequenceId);
         if (error) throw error;
 
-        return data?.map((influencer) => {
-            const { socialProfile, ...rest } = influencer;
-            return {
-                ...rest,
-                manager_first_name: '',
-                recent_post_title: socialProfile?.recent_post_title ?? '',
-                recent_post_url: socialProfile?.recent_post_url ?? '',
-                avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
-                url: socialProfile?.url ?? rest.url,
-                username: socialProfile?.username ?? rest.username,
-                name: socialProfile?.name ?? rest.name,
-            };
-        });
+        return data?.map(unpackSocialProfile);
     };
 
 export const getSequenceInfluencersBySequenceIdsCall =
@@ -70,25 +75,11 @@ export const getSequenceInfluencersBySequenceIdsCall =
         }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select(
-                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)',
-            )
+            .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
             .in('sequence_id', sequenceIds);
 
         if (error) throw error;
-        return data?.map((influencer) => {
-            const { socialProfile, ...rest } = influencer;
-            return {
-                ...rest,
-                manager_first_name: '',
-                recent_post_title: socialProfile?.recent_post_title ?? '',
-                recent_post_url: socialProfile?.recent_post_url ?? '',
-                avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
-                url: socialProfile?.url ?? rest.url,
-                username: socialProfile?.username ?? rest.username,
-                name: socialProfile?.name ?? rest.name,
-            };
-        });
+        return data?.map(unpackSocialProfile);
     };
 
 export const getSequenceInfluencersCountByCompanyIdCall =
@@ -118,24 +109,12 @@ export const getSequenceInfluencerByEmailAndCompanyCall =
     async (email: string, companyId?: string | null): Promise<SequenceInfluencerManagerPage> => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select(
-                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)',
-            )
+            .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
             .limit(1)
             .match({ email, company_id: companyId })
             .single();
         if (error) throw error;
-        const { socialProfile, ...rest } = data;
-        return {
-            ...rest,
-            manager_first_name: '',
-            recent_post_title: socialProfile?.recent_post_title ?? '',
-            recent_post_url: socialProfile?.recent_post_url ?? '',
-            avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
-            url: socialProfile?.url ?? rest.url,
-            username: socialProfile?.username ?? rest.username,
-            name: socialProfile?.name ?? rest.name,
-        };
+        return unpackSocialProfile(data);
     };
 
 /**
@@ -166,22 +145,10 @@ export const updateSequenceInfluencerCall =
             .from('sequence_influencers')
             .update(update)
             .eq('id', update.id)
-            .select(
-                '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)',
-            )
+            .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
             .single();
         if (error) throw error;
-        const { socialProfile, ...rest } = data;
-        return {
-            ...rest,
-            manager_first_name: '',
-            recent_post_title: socialProfile?.recent_post_title ?? '',
-            recent_post_url: socialProfile?.recent_post_url ?? '',
-            avatar_url: socialProfile?.avatar_url ?? rest.avatar_url,
-            url: socialProfile?.url ?? rest.url,
-            username: socialProfile?.username ?? rest.username,
-            name: socialProfile?.name ?? rest.name,
-        };
+        return unpackSocialProfile(data);
     };
 
 export const createSequenceInfluencerCall =
