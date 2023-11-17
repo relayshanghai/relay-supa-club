@@ -153,7 +153,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             data = await requestNewReport({ req, res })(platform, creator_id);
         }
     } catch (error) {
-        return res.status(500).json({ error });
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error });
     }
 
     if (!data?.success) throw new Error('Failed to find report');
