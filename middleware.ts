@@ -170,7 +170,11 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
-const rateLimitMiddleware = async (identifier: string) => {
+const rateLimitMiddleware = async (req: NextRequest, identifier: string) => {
+    if (!req.nextUrl.pathname.startsWith('api')) {
+        return null;
+    }
+
     const ratelimit = new Ratelimit({
         redis: Redis.fromEnv(),
         limiter: Ratelimit.slidingWindow(10, '10 s'),
@@ -178,18 +182,11 @@ const rateLimitMiddleware = async (identifier: string) => {
 
     const { success } = await ratelimit.limit(identifier);
 
-    return success;
-};
-
-const forbiddenResponse = (req: NextRequest) => {
-    const clone = req.nextUrl.clone();
-
-    if (req.nextUrl.pathname.startsWith('api')) {
-        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+    if (!success) {
+        return NextResponse.json({ error: 'too many requests' }, { status: httpCodes.TOO_MANY_REQUESTS });
     }
 
-    clone.pathname = '/logout';
-    return NextResponse.redirect(clone);
+    return null;
 };
 
 /**
@@ -228,8 +225,12 @@ export async function middleware(req: NextRequest) {
 
     const { data: authData } = await supabase.auth.getSession();
 
-    if (authData.session && !(await rateLimitMiddleware(authData.session.user.id))) {
-        return forbiddenResponse(req);
+    if (authData.session) {
+        const rateLimitResponse = await rateLimitMiddleware(req, authData.session.user.id);
+
+        if (rateLimitResponse !== null) {
+            return rateLimitResponse;
+        }
     }
 
     if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
