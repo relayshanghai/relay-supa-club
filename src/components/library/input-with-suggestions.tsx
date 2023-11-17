@@ -28,9 +28,9 @@ export const InputWithSuggestions = ({ suggestions, onSelect }: Props) => {
     );
 
     return (
-        <div className="relative flex w-full" ref={inputWithSuggestionsRef}>
+        <div className="relative flex w-3/4" ref={inputWithSuggestionsRef}>
             <input
-                className="w-full rounded-md px-1 py-2 text-xs focus:outline-none"
+                className="w-3/4 rounded-md text-xs focus:outline-none"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onFocus={() => setIsOpen(true)}

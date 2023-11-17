@@ -306,7 +306,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                     </div>
                 </div>
                 <div className="flex h-full w-full flex-row">
-                    <div className="w-auto">
+                    <div className="w-1/2">
                         <div className="text-md mb-3 flex w-full gap-x-2 border-b border-tertiary-200 pb-1 font-medium text-tertiary-600">
                             {t(`boostbot.filters.audienceLocation`)}
                             <Tooltip
@@ -319,7 +319,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             </Tooltip>
                         </div>
 
-                        <div className="flex w-full flex-row rounded-md border bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        <div className="flex w-full flex-row rounded-md border bg-white px-3.5 py-2 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
                             <div className="flex flex-row justify-center gap-1">
                                 {localFilters['audience_geo'].map((geo) => (
                                     <button
@@ -335,7 +335,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                 ))}
                             </div>
                             {shouldShowGeoInput && (
-                                <div className="w-full" data-testid="boostbot-geo-container">
+                                <div className="h-[10px] w-auto" data-testid="boostbot-geo-container">
                                     <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
                                 </div>
                             )}
