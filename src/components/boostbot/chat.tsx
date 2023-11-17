@@ -216,13 +216,12 @@ export const Chat: React.FC<ChatProps> = ({
                     addMessage({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTime',
-                        translationValues: {
-                            count: influencers.length,
-                        },
-                        translationValuesToTranslate: {
-                            geolocations: filters.audience_geo,
-                        },
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
+                    });
+                    addMessage({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
                     });
                     // addMessage({
                     //     sender: 'Bot',
@@ -230,23 +229,12 @@ export const Chat: React.FC<ChatProps> = ({
                     //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
                     //     eventToTrack: OpenVideoGuideModal.eventName,
                     // });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundAddToSequence',
-                        translationLink: '/sequences',
-                    });
                     // addMessage({
                     //     sender: 'Bot',
                     //     type: 'video',
                     //     videoUrl: '/assets/videos/sequence-guide.mp4',
                     //     eventToTrack: OpenVideoGuideModal.eventName,
                     // });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundNextSteps',
-                    });
                 } else {
                     addMessage({
                         sender: 'Bot',
