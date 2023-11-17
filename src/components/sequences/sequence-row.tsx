@@ -307,7 +307,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 width={56}
                             />
                         ) : (
-                            <AvatarDefault height={56} width={56} />
+                            <AvatarDefault className="flex-shrink-0" height={56} width={56} />
                         )}
 
                         <div className="flex flex-col">
