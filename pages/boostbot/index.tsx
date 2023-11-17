@@ -9,7 +9,6 @@ import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
 import { Layout } from 'src/components/layout';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
@@ -66,7 +65,6 @@ const Boostbot = () => {
     const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((s) => s.id),
     );
-    const { sendSequence } = useSequence(sequence?.id);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
@@ -219,11 +217,6 @@ const Boostbot = () => {
             //     videoUrl: '/assets/videos/sequence-guide.mp4',
             //     eventToTrack: OpenVideoGuideModal.eventName,
             // });
-
-            if (sequence?.auto_start) {
-                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-                await Promise.all(sendSequencePromises);
-            }
         } catch (error) {
             clientLogger(error, 'error');
             addMessage({
