@@ -197,7 +197,8 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
         event.data.draft === true ||
         fromAddress.includes('boostbot.ai') ||
-        fromAddress.includes('noreply')
+        fromAddress.includes('noreply') ||
+        fromAddress.includes('no-reply')
     ) {
         if (!toAddress) {
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
