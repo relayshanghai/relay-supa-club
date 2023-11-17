@@ -206,7 +206,7 @@ export const SearchPageInner = () => {
         setViews,
     ]);
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 p-6">
             <ClientRoleWarning />
             <div className="flex justify-between">
                 <SelectPlatform />
@@ -335,7 +335,7 @@ export const SearchPage = () => {
             {IQDATA_MAINTENANCE ? (
                 <MaintenanceMessage />
             ) : (
-                <div className="flex flex-col p-6">
+                <div className="flex flex-col">
                     <SearchProvider>
                         <SearchPageInner />
                     </SearchProvider>
