@@ -38,6 +38,8 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.20.0",
     "@tanstack/react-table": "^8.9.3",
+    "@upstash/ratelimit": "^0.4.4",
+    "@upstash/redis": "^1.25.1",
     "analytics": "^0.8.9",
     "bottleneck": "^2.19.5",
     "callsites": "^4.0.0",
