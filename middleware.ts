@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
@@ -168,7 +170,30 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
-/** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
+const rateLimitMiddleware = async (identifier: string) => {
+    const ratelimit = new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(10, '10 s'),
+    });
+
+    const { success } = await ratelimit.limit(identifier);
+
+    return success;
+};
+
+const forbiddenResponse = (req: NextRequest) => {
+    const clone = req.nextUrl.clone();
+
+    if (req.nextUrl.pathname.includes('api')) {
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+    }
+
+    clone.pathname = '/logout';
+    return NextResponse.redirect(clone);
+};
+
+/**
+ * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
  *
  */
@@ -202,6 +227,10 @@ export async function middleware(req: NextRequest) {
     }
 
     const { data: authData } = await supabase.auth.getSession();
+
+    if (authData.session && !(await rateLimitMiddleware(authData.session.user.id))) {
+        return forbiddenResponse(req);
+    }
 
     if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
         const redirect = req.nextUrl.clone();
