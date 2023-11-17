@@ -184,7 +184,7 @@ const rateLimitMiddleware = async (identifier: string) => {
 const forbiddenResponse = (req: NextRequest) => {
     const clone = req.nextUrl.clone();
 
-    if (req.nextUrl.pathname.includes('api')) {
+    if (req.nextUrl.pathname.startsWith('api')) {
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
