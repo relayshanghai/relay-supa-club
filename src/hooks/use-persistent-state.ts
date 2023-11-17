@@ -13,9 +13,11 @@ export const usePersistentState = <T>(
     const [state, setState] = useState<T>(() => {
         // Setup the database and return the initial value
         const setup = async () => {
-            const db = await openDB('app-store', 1, {
+            const db = await openDB('app-store', 2, {
                 upgrade(db) {
-                    db.createObjectStore('app-data');
+                    if (!db.objectStoreNames.contains('app-data')) {
+                        db.createObjectStore('app-data');
+                    }
                 },
             });
 
@@ -45,7 +47,7 @@ export const usePersistentState = <T>(
     useEffect(() => {
         // Update the value in the database when state changes
         const updateDB = async () => {
-            const db = await openDB('app-store', 1);
+            const db = await openDB('app-store', 2);
             await db.put('app-data', state, userSpecificKey);
         };
 
@@ -54,7 +56,7 @@ export const usePersistentState = <T>(
 
     const removeState = async () => {
         setState(initialValue);
-        const db = await openDB('app-store', 1);
+        const db = await openDB('app-store', 2);
         await db.delete('app-data', userSpecificKey);
     };
 
