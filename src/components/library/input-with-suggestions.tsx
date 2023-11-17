@@ -28,7 +28,7 @@ export const InputWithSuggestions = ({ suggestions, onSelect }: Props) => {
     );
 
     return (
-        <div className="relative flex w-3/4" ref={inputWithSuggestionsRef}>
+        <div className="relative flex w-full" ref={inputWithSuggestionsRef}>
             <input
                 className="w-full rounded-md text-xs focus:outline-none"
                 value={value}
