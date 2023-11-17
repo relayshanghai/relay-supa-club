@@ -13,7 +13,7 @@ const boostbot = {
         addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
         platformSub: {
-            youtube: 'Devoted audiences',
+            youtube: 'Long lasting content',
             instagram: 'Great for brand building',
             tiktok: 'High content virality',
         },

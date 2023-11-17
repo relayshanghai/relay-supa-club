@@ -16,9 +16,9 @@ const boostbot = {
         atLeast: '他们的粉丝中，至少需要有',
         inLocation: '位于 {{location}} 地区',
         platformSub: {
-            youtube: 'Devoted audiences',
-            instagram: 'Great for brand building',
-            tiktok: 'High content virality',
+            youtube: '帖子长期有效',
+            instagram: '有助于品牌建设',
+            tiktok: '适合打造爆款内容',
         },
         influencerSub: {
             microinfluencer: { title: '小型红人', subtitle: '真实互动率高' },
