@@ -31,6 +31,10 @@ import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-but
 const Boostbot = () => {
     const { t } = useTranslation();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
+    const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
+        'boostbot-is-first-time-add-to-sequence',
+        true,
+    );
     const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>('boostbot-influencers', []);
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
@@ -118,7 +122,17 @@ const Boostbot = () => {
             {
                 sender: 'Bot',
                 type: 'translation',
-                translationKey: 'boostbot.chat.introMessage',
+                translationKey: 'boostbot.chat.introMessageFirstTimeA',
+            },
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessageFirstTimeB',
+            },
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessageFirstTimeC',
             },
         ],
         (onLoadMessages) => {
@@ -203,15 +217,34 @@ const Boostbot = () => {
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.outreachDone',
-                translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
-                translationValues: {
-                    sequenceName: sequence.name,
-                },
-            });
+            if (isFirstTimeAddToSequence) {
+                setIsFirstTimeAddToSequence(false);
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneFirstTime',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneA',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneB',
+                    translationValues: { count: influencers.length },
+                });
+            }
 
             // addMessage({
             //     sender: 'Bot',
@@ -249,6 +282,9 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.chat.introMessage',
+                translationValues: {
+                    username: profile?.first_name || '👋',
+                },
             },
         ]);
         setIsInitialLogoScreen(true);

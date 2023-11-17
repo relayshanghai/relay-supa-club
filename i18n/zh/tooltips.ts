@@ -69,7 +69,7 @@ const tooltips = {
     },
     boostbotScore: {
         title: ' ',
-        description: '该评分根据红人的受众互动、与您搜索的相关性，以及帖子的发布记录进行评定！',
+        description: '该评分根据红人的受众互动、与您搜索的相关性，以及帖子的发布记录进行评定',
     },
     audienceGeolocations: {
         title: ' ',

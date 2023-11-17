@@ -3,3 +3,4 @@ public
 .next
 build
 types/supabase.ts
+docs

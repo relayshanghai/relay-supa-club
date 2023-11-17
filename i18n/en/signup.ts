@@ -40,7 +40,7 @@ const signup = {
         termsAndConditionCheckboxLabel: 'I agree with the ',
         termsAndConditionClickableText: 'Terms and Conditions',
         termsAndCondition: {
-            title: 'RELAY.CLUB TERMS AND CONDITIONS',
+            title: 'BOOSTBOT TERMS AND CONDITIONS',
             point1Title: '1. Introduction',
             point1Description:
                 'Welcome to BoostBot ("We", "Our", or "Us"). By signing up for a free trial or a paid subscription ("Service"), you are agreeing to be bound by the following terms and conditions ("Terms of Service").',

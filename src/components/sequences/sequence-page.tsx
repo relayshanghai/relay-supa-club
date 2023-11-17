@@ -370,8 +370,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
             />
-            <div className="flex flex-col space-y-4 py-6">
-                <div className="flex w-full gap-6">
+            <div className="flex flex-col p-6 ">
+                <div className="mb-6 flex w-full gap-6">
                     <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Button
                         onClick={handleOpenUpdateTemplateVariables}
@@ -419,7 +419,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pb-2">
+                <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pt-11">
                     <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
                     {hideAutoStart ? null : (
                         <div
@@ -446,7 +446,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     )}
                 </section>
 
-                <div className="flex w-full flex-col gap-4 overflow-x-auto">
+                <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
                     <div className="sticky left-0 flex w-full flex-row items-center justify-between">
                         <SelectMultipleDropdown
                             text={t('sequences.steps.filter')}
