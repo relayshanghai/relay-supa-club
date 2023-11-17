@@ -21,9 +21,9 @@ const boostbot = {
             tiktok: 'High content virality',
         },
         influencerSub: {
-            microinfluencer: { title: '小型红人', subtitle: 'Devoted audiences' },
-            nicheinfluencer: { title: '垂直领域的红人', subtitle: 'Great for brand building' },
-            megainfluencer: { title: '顶级红人', subtitle: 'High content virality' },
+            microinfluencer: { title: '小型红人', subtitle: '真实互动率高' },
+            nicheinfluencer: { title: '垂直领域的红人', subtitle: '专业领域内的影响力' },
+            megainfluencer: { title: '顶级红人', subtitle: '海量粉丝' },
         },
     },
     chat: {

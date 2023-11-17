@@ -18,9 +18,9 @@ const boostbot = {
             tiktok: 'High content virality',
         },
         influencerSub: {
-            microinfluencer: { title: 'Micro-influencer', subtitle: 'Devoted audiences' },
-            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Great for brand building' },
-            megainfluencer: { title: 'Mega-influencer', subtitle: 'High content virality' },
+            microinfluencer: { title: 'Micro-influencer', subtitle: 'Authentic Engagement' },
+            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Specialized Reach' },
+            megainfluencer: { title: 'Mega-influencer', subtitle: 'Massive Audience' },
         },
     },
     chat: {
