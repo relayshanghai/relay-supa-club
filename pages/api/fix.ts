@@ -4,7 +4,7 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 
-const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
+const fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const _company_ids = [
         '504528ad-8f57-45e2-b82c-59ceb4bc9c54',
         '9ffda880-addd-4d28-b247-92b1884a3cd9',
@@ -20,6 +20,7 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
         .from('sequence_influencers')
         .select('id, name, company_id')
         .eq('funnel_status', 'In Sequence');
+    // .in('company_id', _company_ids);
 
     console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
@@ -175,7 +176,7 @@ const _fixHalfSentSequence: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: toDelete });
 };
 
-const fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
+const _fixSequenceInfluencerDataIncomplete: NextApiHandler = async (_req, res) => {
     console.log('fixing');
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
@@ -240,4 +241,4 @@ const _fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-export default fixSequenceInfluencerDataIncomplete;
+export default fixStuckInSequenceWithNoEmail;
