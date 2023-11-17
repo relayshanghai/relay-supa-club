@@ -193,15 +193,31 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         extra_info: { event_data: event.data },
     };
     const fromAddress = event.data.from.address;
-    const toAddress = event.data.to[0].address;
+    const toAddress = event.data.to ? event.data.to[0]?.address : null;
 
     // Ignore outgoing emails and drafts
     if (
+        !toAddress ||
         event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
         event.data.draft === true ||
         fromAddress.includes('boostbot.ai') ||
-        fromAddress.includes('noreply')
+        fromAddress.includes('noreply') ||
+        fromAddress.includes('no-reply')
     ) {
+        if (!toAddress) {
+            createJob('track_analytics_event', {
+                queue: 'analytics',
+                payload: {
+                    account: event.account,
+                    eventName: EmailNew.eventName,
+                    eventPayload: {
+                        ...trackData,
+                        is_success: false, // an incoming email with no to address is strange
+                    },
+                    eventTimestamp: now(),
+                },
+            });
+        }
         return res.status(httpCodes.OK).json({});
     }
 
