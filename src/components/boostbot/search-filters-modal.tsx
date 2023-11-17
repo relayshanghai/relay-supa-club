@@ -320,6 +320,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                         </div>
 
                         <div className="flex w-full flex-row rounded-md border bg-white px-3.5 py-2 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            {/*                             
                             <div className="flex flex-row justify-center gap-1">
                                 {localFilters['audience_geo'].map((geo) => (
                                     <button
@@ -333,12 +334,32 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         <XMarkIcon className="h-3 w-3" />
                                     </button>
                                 ))}
+                            </div> */}
+                            {/* {shouldShowGeoInput && ( */}
+                            <div className="h-5 w-full" data-testid="boostbot-geo-container">
+                                <InputWithSuggestions
+                                    suggestions={geoSuggestions}
+                                    onSelect={addNewGeo}
+                                    disabled={shouldShowGeoInput}
+                                    content={
+                                        <div className="flex flex-row justify-center gap-1">
+                                            {localFilters['audience_geo'].map((geo) => (
+                                                <button
+                                                    key={geo.id}
+                                                    data-testid={`boostbot-filter-geo-${geo.id}`}
+                                                    className="bg-white-50 flex items-center gap-1 rounded-md border border-tertiary-300 px-2 text-tertiary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
+                                                    onClick={() => removeGeo(geo.id)}
+                                                >
+                                                    <p>{getFlagCountry(geo.id)[0].emoji}</p>
+                                                    {getTranslatedCountryName(geo.id)}
+                                                    <XMarkIcon className="h-3 w-3" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    }
+                                />
                             </div>
-                            {shouldShowGeoInput && (
-                                <div className="h-full grow" data-testid="boostbot-geo-container">
-                                    <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
-                                </div>
-                            )}
+                            {/* )} */}
                         </div>
                         <p className="font-regular mt-1 text-xs text-tertiary-400">
                             {' '}
