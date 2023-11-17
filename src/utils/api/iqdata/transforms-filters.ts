@@ -153,6 +153,8 @@ export const withRudderStack =
     (...args: Parameters<FilterFunctionType>) => {
         const result = filterFunction(...args);
         const rudder = createClient();
+        if (!rudder) return;
+
         rudder.track({
             event: searchEvent,
             ...args,

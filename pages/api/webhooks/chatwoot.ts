@@ -16,6 +16,8 @@ const postHandler = (req: NextApiRequest, res: NextApiResponse) => {
         const payload = body as ChatwootWebwidgetTriggered;
         const rudderstack = createClient();
 
+        if (!rudderstack) return;
+
         WebwidgetTriggeredEvent(rudderstack)({
             account_id: payload.account.id,
         });
@@ -24,6 +26,8 @@ const postHandler = (req: NextApiRequest, res: NextApiResponse) => {
     if (body.event === 'conversation_created') {
         const payload = body as ChatwootConversation;
         const rudderstack = createClient();
+
+        if (!rudderstack) return;
 
         ConversationCreatedEvent(rudderstack)({
             account_id: payload.account_id,
