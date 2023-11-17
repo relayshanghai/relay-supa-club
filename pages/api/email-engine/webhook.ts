@@ -205,9 +205,17 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         fromAddress.includes('no-reply')
     ) {
         if (!toAddress) {
-            track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
-                ...trackData,
-                is_success: false, // an incoming email with no to address is strange
+            createJob('track_analytics_event', {
+                queue: 'analytics',
+                payload: {
+                    account: event.account,
+                    eventName: EmailNew.eventName,
+                    eventPayload: {
+                        ...trackData,
+                        is_success: false, // an incoming email with no to address is strange
+                    },
+                    eventTimestamp: now(),
+                },
             });
         }
         return res.status(httpCodes.OK).json({});
