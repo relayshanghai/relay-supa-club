@@ -221,8 +221,7 @@ export const useIdentifySession = () => {
                 // return void
             };
 
-            const referer =
-                typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('ref') : undefined;
+            const referer = localStorage.getItem('referer');
 
             if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
                 const { id, traits } = profileToIdentifiable(
