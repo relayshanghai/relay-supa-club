@@ -101,6 +101,7 @@ export const profileToIdentifiable = (
     user?: any,
     lang?: string,
     subscription?: SubscriptionGetResponse,
+    referer?: string,
 ): { id: string; traits: identTraits } => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const subscriptionStatus = subscription?.status ?? '';
@@ -120,6 +121,7 @@ export const profileToIdentifiable = (
         paidUserSince: company?.subscription_start_date ?? '',
         subscriptionStatus: subscriptionStatus.toLowerCase(),
         createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : '',
+        referer: referer,
     };
 
     return { id, traits };
