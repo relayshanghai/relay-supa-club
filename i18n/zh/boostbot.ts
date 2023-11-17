@@ -27,15 +27,19 @@ const boostbot = {
         },
     },
     chat: {
-        introMessage: `你好，我是雷宝 🙂
-
-你可以使用任何语言向我描述你的产品, 我将根据产品描述向你推荐相关的网红达人帮你在YouTube、TikTok和Instagram上推广产品。
-
-例如: “一款重量轻、可折叠的4K HDR迷你相机无人机”`,
-        noInfluencersFound: '看上去好像没有符合目前设定的筛选条件的网红达人诶。',
-        influencersFound: '我精选了 {{count}} 位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
-        influencersFoundFirstTime:
-            '我精心挑选了{{count}} 位非常适合你产品描述的网红达人。他们的粉丝主要在{{geolocations}}。你也可以在此处更改目标地域：',
+        introMessage: `哈喽！{{username}}，咱们今天想要推销什么产品呢？😄`,
+        introMessageFirstTimeA: `你好！我是雷宝，您私人专享的AI驱动红人营销助理！😄`,
+        introMessageFirstTimeB: `请描述您的产品或品牌，我将发挥魔力为您找到匹配的优秀红人。`,
+        introMessageFirstTimeC: `我现在准备好了为您寻找YouTube、TikTok和Instagram平台上，主要粉丝群体位于美国和加拿大的红人。`,
+        noInfluencersFound:
+            '哎呀… 我暂时没能找到符合您当前筛选条件的红人。您可尝试调整上方的筛选条件，或在下一次搜索时添加更具体的描述。',
+        influencersFound: `将您最心仪的红人添加至邮件进程管理项目中后，请告诉我您是否想要进行下一次搜索。😄`,
+        influencersFoundFirstTimeA:
+            '您可从搜索结果中选择有合作意向的红人，将他们添加到邮件进程管理项目中解锁查看红人完整个人资料和联系方式。',
+        influencersFoundFirstTimeB: `雷宝为您提供的专业提示：
+广撒网，再筛选！
+由于您联系的大多数红人可能不会回复您，所以如果你联系的是更具合作潜质的红人，并只在收到他们的回复后再做筛选的考量，能为您节省大量的时间！
+        `,
         influencersFoundAddToSequence:
             '你可以将这些网红达人添加到名为<customLink>Sequence</customLink>「邮件进程管理」的邮件列表中。「邮件进程管理」功能可以让你直接向网红达人发送电子邮件。',
         influencersFoundNextSteps: '你希望做什么呢？',
