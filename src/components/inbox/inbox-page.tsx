@@ -8,8 +8,10 @@ import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { ChangeInboxFolder, OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
-import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
-import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
+import {
+    getSequenceInfluencerByEmailAndCompanyCall,
+    getSequenceInfluencerByIdCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
@@ -146,7 +148,7 @@ export const InboxPage = () => {
     );
 
     const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
-    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
+    const getSequenceInfluencer = useDB(getSequenceInfluencerByIdCall);
     const [uiState, setUiState] = useUiState();
 
     const handleUpdate = useCallback(
