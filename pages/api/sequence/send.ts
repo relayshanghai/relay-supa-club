@@ -65,11 +65,6 @@ const postHandler: NextApiHandler = async (req, res) => {
                 },
             ]);
         } else {
-            // revert optimistic update
-            await db(updateSequenceInfluencerCall)({
-                id: influencer.id,
-                funnel_status: 'To Contact',
-            });
             results.concat([
                 {
                     sequenceInfluencerId: influencer.id,
@@ -92,6 +87,17 @@ const postHandler: NextApiHandler = async (req, res) => {
                     error: 'failed to schedule 3',
                 },
             ]);
+            try {
+                // revert optimistic update
+                await db(updateSequenceInfluencerCall)({
+                    id: influencer.id,
+                    funnel_status: 'To Contact',
+                });
+            } catch (error) {
+                serverLogger(error);
+                results[results.length - 1].error =
+                    results[results.length - 1].error + ' and failed to revert optimistic update';
+            }
         }
     }
 
