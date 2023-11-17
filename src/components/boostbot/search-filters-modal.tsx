@@ -343,7 +343,6 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                     }
                                 />
                             </div>
-                            {/* )} */}
                         </div>
                         <p className="font-regular mt-1 text-xs text-tertiary-400">
                             {' '}
