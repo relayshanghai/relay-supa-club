@@ -9,9 +9,11 @@ type Suggestion = {
 type Props = {
     suggestions: Suggestion[];
     onSelect: (value: string) => void;
+    content?: any;
+    hideInput?: boolean;
 };
 
-export const InputWithSuggestions = ({ suggestions, onSelect }: Props) => {
+export const InputWithSuggestions = ({ suggestions, onSelect, content, hideInput }: Props) => {
     const inputWithSuggestionsRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -28,16 +30,19 @@ export const InputWithSuggestions = ({ suggestions, onSelect }: Props) => {
     );
 
     return (
-        <div className="relative w-full" ref={inputWithSuggestionsRef}>
-            <input
-                className="w-full rounded-md border-none px-1 py-2 text-xs focus:outline-none"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onFocus={() => setIsOpen(true)}
-            />
+        <div className="relative flex w-full" ref={inputWithSuggestionsRef}>
+            <div className="inline">{content}</div>
+            {!hideInput && (
+                <input
+                    className="grow rounded-md text-xs focus:outline-none"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    onFocus={() => setIsOpen(true)}
+                />
+            )}
 
             {isOpen && (
-                <ul className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-gray-700 shadow-md">
+                <ul className="absolute z-20 mt-6 max-h-44 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-gray-700 shadow-md">
                     {filteredSuggestions.map((suggestion) => (
                         <li key={suggestion.value}>
                             <button

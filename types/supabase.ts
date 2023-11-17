@@ -706,6 +706,52 @@ export interface Database {
           }
         ]
       }
+      jobs: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner: string | null
+          payload: Json | null
+          queue: string | null
+          result: Json | null
+          retry_count: number | null
+          run_at: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner?: string | null
+          payload?: Json | null
+          queue?: string | null
+          result?: Json | null
+          retry_count?: number | null
+          run_at: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner?: string | null
+          payload?: Json | null
+          queue?: string | null
+          result?: Json | null
+          retry_count?: number | null
+          run_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       logs: {
         Row: {
           created_at: string | null
@@ -1476,6 +1522,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      create_queue_worker: {
+        Args: {
+          worker_name: string
+          url: string
+          token: string
+          schedule: string
+        }
+        Returns: undefined
+      }
       is_activated_account: {
         Args: Record<PropertyKey, never>
         Returns: boolean
