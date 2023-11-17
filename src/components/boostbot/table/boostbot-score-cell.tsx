@@ -74,7 +74,10 @@ export const calculateIndexScore = (influencer: BoostbotInfluencer) => {
 
     const indexScore = Math.ceil(sigmoidIndex(score, platform));
 
-    return indexScore;
+    // If the score is 99, make it a random value between 93 and 99
+    const finalScore = indexScore === 99 ? Math.floor(Math.random() * (99 - 93 + 1) + 93) : indexScore;
+
+    return finalScore;
 };
 
 export const BoostbotScoreCell = ({ row, table }: BoostbotScoreCellProps) => {
