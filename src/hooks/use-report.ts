@@ -75,11 +75,13 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                 });
 
                 if (!report.success) throw new Error('Failed to fetch report');
-                // const transformed = transformReport(report, platform);
                 setErrorMessage('');
                 return { createdAt, report, influencer, socialProfile };
             } catch (error: any) {
                 clientLogger(error, 'error');
+                if (error.message.includes('retry_later')) {
+                    setErrorMessage('We are updating the influencer report. Please try again later');
+                }
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                     setErrorMessage(t(error.message) || '');
