@@ -9,5 +9,6 @@ const httpCodes = {
     METHOD_NOT_ALLOWED: 405,
     INTERNAL_SERVER_ERROR: 500,
     NOT_IMPLEMENTED: 501,
+    TOO_MANY_REQUESTS: 429,
 };
 export default httpCodes;
