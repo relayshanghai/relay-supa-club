@@ -106,14 +106,17 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     updateSequenceInfluencer,
                     company_id: sequenceInfluencer.company_id,
                 }).catch((error: any) => {
-                    if (error.message.includes('Email already exists for this company')) {
-                        // Sometimes a user adds an influencer to a sequence from both tiktok and instagram and the email is the same. More permanent solution linked below.
-                        // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1106
+                    // Temporarily comment out the deleteSequenceInfluencer call as it seems to be causing unexpected issues. https://relayclub.slack.com/archives/C05R1C6V553/p1700226227238909?thread_ts=1700225873.168129&cid=C05R1C6V553
+                    // if (error.message.includes('Email already exists for this company')) {
+                    //     // Sometimes a user adds an influencer to a sequence from both tiktok and instagram and the email is the same. More permanent solution linked below.
+                    //     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1106
 
-                        deleteSequenceInfluencer([sequenceInfluencer.id]);
-                    } else {
-                        clientLogger(error);
-                    }
+                    //     deleteSequenceInfluencer([sequenceInfluencer.id]);
+                    // } else {
+                    //     clientLogger(error);
+                    // }
+                    clientLogger(error);
+
                     return null;
                 });
             if (result?.email) {
