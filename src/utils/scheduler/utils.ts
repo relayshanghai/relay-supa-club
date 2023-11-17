@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import type { Jobs } from '../api/db';
 import { serverLogger } from '../logger-server';
 import { db } from '../supabase-client';
-import { createJob as createJobDb, finishJob as finishJobDb } from './db-queries';
+import { createJobDb, finishJobDb } from './db-queries';
 import type { JobNames, JobType } from './jobs';
 import { isValidJob, jobs } from './jobs';
 import { JOB_STATUS } from './types';
