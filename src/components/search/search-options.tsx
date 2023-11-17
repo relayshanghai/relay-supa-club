@@ -238,10 +238,10 @@ export const SearchOptions = ({
                         </div>
                     )}
                     <div className="flex w-full justify-end">
-                        <div className="my-4 grid w-fit grid-cols-4 items-end gap-4">
+                        <div className="my-4 grid w-fit grid-cols-3 items-end gap-4">
                             <Button
                                 variant="secondary"
-                                className="col-span-3 h-11 items-center justify-self-end"
+                                className="col-span-2 h-12 items-center justify-self-end"
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
@@ -251,7 +251,7 @@ export const SearchOptions = ({
                             </Button>
                             <Button
                                 data-testid="search-button"
-                                className="h-11 w-full items-center justify-self-end"
+                                className="h-12 w-full items-center justify-self-end"
                                 onClick={(e) => {
                                     if (isExpired) {
                                         return;
