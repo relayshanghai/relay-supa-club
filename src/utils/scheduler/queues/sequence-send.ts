@@ -1,5 +1,5 @@
 import type { JobQueue } from '../types';
-import { Blocking } from './blocking';
+import { Default } from './default';
 
 const SEQUENCE_SEND_QUEUE_NAME = 'sequence_send';
 
@@ -9,6 +9,6 @@ const SEQUENCE_SEND_QUEUE_NAME = 'sequence_send';
 export const SequenceSend: JobQueue<typeof SEQUENCE_SEND_QUEUE_NAME> = {
     name: SEQUENCE_SEND_QUEUE_NAME,
     run: async (payload) => {
-        return await Blocking.run({ ...payload, queue: SEQUENCE_SEND_QUEUE_NAME });
+        return await Default.run({ ...payload, queue: SEQUENCE_SEND_QUEUE_NAME });
     },
 };
