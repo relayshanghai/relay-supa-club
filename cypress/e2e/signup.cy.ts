@@ -77,7 +77,7 @@ describe('Signup and start trial', () => {
         cy.contains('label', 'I agree with the Terms and Conditions');
         //open and close terms and conditions modal
         cy.get('b').contains('Terms and Conditions').click();
-        cy.contains('RELAY.CLUB TERMS AND CONDITIONS');
+        cy.contains('BOOSTBOT TERMS AND CONDITIONS');
         cy.get('[data-test="close-button"]').click();
         cy.contains('label', 'I agree with the Terms and Conditions');
         cy.get('input[type="checkbox"]').check({ force: true });
