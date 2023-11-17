@@ -1,7 +1,7 @@
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { InputWithSuggestions } from './input-with-suggestions';
 
-describe('<InputWithSuggestions />', () => {
+describe('<InputWithSuggestions  />', () => {
     let onSelect: (value: string) => void;
     const suggestions = [
         { value: 'suggestion1', label: 'Suggestion 1' },
