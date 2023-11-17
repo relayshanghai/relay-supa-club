@@ -319,7 +319,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             </Tooltip>
                         </div>
 
-                        <div className="flex w-auto w-full flex-row rounded-md border bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        <div className="flex w-full flex-row rounded-md border bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
                             <div className="flex flex-row justify-center gap-1">
                                 {localFilters['audience_geo'].map((geo) => (
                                     <button
