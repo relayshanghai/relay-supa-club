@@ -130,6 +130,9 @@
     ],
     "(pages|src|styles|types|i18n|docs|cypress)/**/*.{js,jsx,ts,tsx}": [
       "eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 --fix"
+    ],
+    "middleware.{js,ts}": [
+      "prettier --no-error-on-unmatched-pattern --write --editorconfig"
     ]
   },
   "engines": {

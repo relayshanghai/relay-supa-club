@@ -14,6 +14,19 @@ const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai
 const BANNED_USERS: string[] = [];
 
 /**
+ * Paths found here are allowed to access without authentication
+ * These paths should have inherent checks in their respective serverless functions
+ */
+const PATH_WHITELIST = [
+    '/api/ping',
+    '/api/slack/create',
+    '/api/subscriptions/webhook',
+    '/api/company/exists',
+    '/api/jobs/run',
+    '/pricing',
+];
+
+/**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
@@ -63,10 +76,12 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
+
     if (req.nextUrl.pathname === '/api/profiles' && req.method === 'POST') {
         // for new user signup. We have checks in the next endpoint
         return res;
     }
+
     const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
@@ -190,24 +205,24 @@ const rateLimitMiddleware = async (req: NextRequest, identifier: string) => {
 };
 
 /**
+ * Checks if the pathname of the provided request is whitelisted
+ */
+const checkPathWhitelist = (req: NextRequest) => {
+    return PATH_WHITELIST.includes(req.nextUrl.pathname);
+};
+
+/**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
- *
  */
 // eslint-disable-next-line complexity
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    if (req.nextUrl.pathname === '/api/ping') return res;
-    if (req.nextUrl.pathname === '/pricing') return res;
+    if (checkPathWhitelist(req)) return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/slack/create') return res;
-    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
-    if (req.nextUrl.pathname === '/api/email-engine/webhook') {
-        return allowEmailWebhookCors(req, res);
-    }
-    if (req.nextUrl.pathname === '/api/company/exists') return res;
+    if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
@@ -216,7 +231,7 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.rewrite(`${req.nextUrl.origin}/api/forbidden`, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';
@@ -252,7 +267,7 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
-        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();
