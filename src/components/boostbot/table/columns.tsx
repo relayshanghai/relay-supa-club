@@ -1,13 +1,15 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid';
-import { DocumentDuplicateIcon } from '@heroicons/react/24/outline';
-import type { Influencer } from 'pages/boostbot';
-import { Spinner } from 'src/components/icons';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
-import { BoostbotTopPostsCell } from './boostbot-top-post-cell';
-import { copyToClipboard } from 'src/utils/copyToClipboard';
+import { BoostbotScoreCell } from './boostbot-score-cell';
+import { OpenInfluencerModalCell } from './boostbot-icon-cell';
+import { BoostbotFollowersCell } from './boostbot-followers-cell';
+import { BoostbotAudienceGenderCell } from './boostbot-audience-gender-cell';
+import { BoostbotAudienceLocationCell } from './boostbot-audience-location-cell';
+import { clientLogger } from 'src/utils/logger-client';
+import { Tooltip } from 'src/components/library';
 
-export const columns: ColumnDef<Influencer>[] = [
+export const columns: ColumnDef<BoostbotInfluencer>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -16,18 +18,40 @@ export const columns: ColumnDef<Influencer>[] = [
                 className="checkbox mr-0"
                 checked={table.getIsAllPageRowsSelected()}
                 aria-label={table.options.meta?.t('boostbot.table.selectAll')}
-                onChange={(e) => table.toggleAllPageRowsSelected(!!e.target.checked)}
+                disabled={table.options.meta?.isLoading}
+                onChange={(e) => {
+                    table.toggleAllPageRowsSelected(!!e.target.checked);
+                }}
             />
         ),
-        cell: ({ row, table }) => (
-            <input
-                type="checkbox"
-                className="checkbox mr-0"
-                checked={row.getIsSelected()}
-                aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
-                onChange={(e) => row.toggleSelected(!!e.target.checked)}
-            />
-        ),
+        cell: ({ row, table }) => {
+            if (table.options.meta?.allSequenceInfluencers?.some((x) => x.iqdata_id === row.original.user_id)) {
+                return (
+                    <Tooltip
+                        content={table.options.meta?.t('boostbot.table.alreadyAddedToSequence')}
+                        position="right"
+                        enabled={!table.options.meta?.isLoading}
+                    >
+                        <input
+                            type="checkbox"
+                            checked={false}
+                            className={`${table.options.meta?.isLoading ? 'checkbox' : 'checkbox-add-success'} mr-0`}
+                            disabled={true}
+                        />
+                    </Tooltip>
+                );
+            }
+            return (
+                <input
+                    type="checkbox"
+                    disabled={table.options.meta?.isLoading}
+                    className="checkbox mr-0"
+                    checked={row.getIsSelected()}
+                    aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
+                    onChange={(e) => row.toggleSelected(!!e.target.checked)}
+                />
+            );
+        },
     },
     {
         id: 'account',
@@ -35,47 +59,40 @@ export const columns: ColumnDef<Influencer>[] = [
         cell: BoostbotAccountCell,
     },
     {
-        id: 'topPosts',
-        header: ({ table }) => table.options.meta?.t('boostbot.table.topPosts'),
-        cell: BoostbotTopPostsCell,
+        id: 'boostbotScore',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.score'),
+        cell: BoostbotScoreCell,
     },
     {
-        id: 'email',
-        header: ({ table }) => table.options.meta?.t('boostbot.table.email'),
+        id: 'followers',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.followers'),
+        cell: BoostbotFollowersCell,
+    },
+    {
+        id: 'audienceGender',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceGender'),
+        cell: BoostbotAudienceGenderCell,
+    },
+    {
+        id: 'audienceGeolocations',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.audienceGeolocations'),
+        cell: BoostbotAudienceLocationCell,
+    },
+    {
+        id: 'openDetail',
+        header: () => <div className="min-w-[30px]" />,
         cell: ({ row, table }) => {
-            const influencer = row.original;
-
-            const unlockInfluencer = () => {
-                table.options.meta?.handleUnlockInfluencer(influencer);
-            };
-
-            const email =
-                'contacts' in influencer &&
-                influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
-
+            if (table.options.meta === undefined) {
+                clientLogger('table meta is undefined');
+                return;
+            }
             return (
-                <div>
-                    {email ? (
-                        <div
-                            className="flex cursor-pointer items-center gap-1 break-all pr-1 text-xs text-primary-500 hover:text-primary-600"
-                            onClick={() => copyToClipboard(email)}
-                        >
-                            <span className="min-w-[70px]">{email}</span>
-                            <DocumentDuplicateIcon className="h-4 w-4 flex-shrink-0" />
-                        </div>
-                    ) : influencer.isLoading ? (
-                        <Spinner className="h-6 w-6 fill-primary-500 text-primary-200" />
-                    ) : (
-                        <button
-                            className="group ml-2 table-cell p-1 pl-0 hover:cursor-pointer"
-                            onClick={unlockInfluencer}
-                            aria-label={table.options.meta?.t('boostbot.table.unlockInfluencer')}
-                        >
-                            <LockClosedIcon className="h-6 w-6 fill-primary-500 group-hover:hidden" />
-                            <LockOpenIcon className="relative left-[3px] hidden h-6 w-6 fill-primary-500 group-hover:block" />
-                        </button>
-                    )}
-                </div>
+                <OpenInfluencerModalCell
+                    row={row}
+                    table={table}
+                    setSelectedRow={table.options.meta.setSelectedRow}
+                    setIsInfluencerDetailsModalOpen={table.options.meta.setIsInfluencerDetailsModalOpen}
+                />
             );
         },
     },

@@ -1,6 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes, type ForwardedRef } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'neutral';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'neutral' | 'gray';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;
@@ -14,6 +14,7 @@ const ghostClasses =
     'text-primary-600 bg-primary-50 border-primary-50 hover:bg-primary-100 border-primary-50 hover:border-primary-100';
 /** override default browser styles */
 const neutralClasses = 'text-left';
+const grayClasses = 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50';
 
 /**
  * @param className additional classes to add to the button
@@ -22,7 +23,13 @@ const neutralClasses = 'text-left';
  */
 function ButtonWithRef({ children, variant, className, ...rest }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     const variantClasses =
-        variant === 'secondary' ? secondaryClasses : variant === 'ghost' ? ghostClasses : primaryClasses;
+        variant === 'secondary'
+            ? secondaryClasses
+            : variant === 'ghost'
+            ? ghostClasses
+            : variant === 'gray'
+            ? grayClasses
+            : primaryClasses;
 
     return (
         <button

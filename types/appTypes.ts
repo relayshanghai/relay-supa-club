@@ -101,6 +101,8 @@ export type UsageType = 'profile' | 'search' | 'ai_email';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
+export const influencerSizes = ['microinfluencer', 'nicheinfluencer', 'megainfluencer'] as const;
+export type InfluencerSize = (typeof influencerSizes)[number];
 
 export type InfluencerOutreachStatus =
     | 'to contact'
