@@ -112,7 +112,7 @@ const sendAndInsertEmail = async ({
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
 };
 
-const sendSequence = async (account: string, influencer: SequenceInfluencerManagerPage, tries = 0) => {
+const sendSequence = async (account: string, influencer: SequenceInfluencerManagerPage) => {
     const results: SendResult[] = [];
 
     const trackData: SequenceSendPayload = {
@@ -132,6 +132,7 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
         if (!sequenceSteps || sequenceSteps.length === 0) {
             throw new Error('No sequence steps found');
         }
+        sequenceSteps.sort((a, b) => a.step_number - b.step_number);
         trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
 
         const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
@@ -145,8 +146,12 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
             throw new Error('No influencer social profile id');
         }
         const outbox = await getOutbox();
+
         for (const step of sequenceSteps) {
             try {
+                if (step.step_number !== 0) {
+                    await wait(1000);
+                }
                 const references = generateReferences(messageIds, step.step_number);
                 const result = await sendAndInsertEmail({
                     step,
@@ -168,37 +173,25 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
                 });
             }
         }
-
-        // revert the optimistic update if not sent successfully
     } catch (error) {
         serverLogger(error); // truly unexpected error
         track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
-        return results;
+        return { results, success: false };
     }
 
     trackData.extra_info.results = results;
-    trackData.is_success = await handleResults(account, results, influencer, tries);
+    const success = await handleResults(results, influencer);
+    trackData.is_success = success;
     track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
-    return results;
+    return { results, success };
 };
 
-const handleResults = async (
-    account: string,
-    results: SendResult[],
-    influencer: SequenceInfluencerManagerPage,
-    tries: number,
-) => {
+const handleResults = async (results: SendResult[], influencer: SequenceInfluencerManagerPage) => {
     try {
         if (!results || results.length === 0 || results.some((result) => result.error)) {
-            if (tries < 3) {
-                await wait(5000);
-                await sendSequence(account, influencer, tries + 1);
-                return false;
-            } else {
-                const outbox = await getOutbox();
-                await handleSendFailed(influencer, outbox);
-                return false;
-            }
+            const outbox = await getOutbox();
+            await handleSendFailed(influencer, outbox);
+            return false;
         } else {
             return true;
         }
@@ -239,6 +232,7 @@ export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventR
     name: 'sequence_send',
     run: async (payload) => {
         const { emailEngineAccountId, sequenceInfluencer } = payload;
-        return await sendSequence(emailEngineAccountId, sequenceInfluencer);
+        const { results, success } = await sendSequence(emailEngineAccountId, sequenceInfluencer);
+        if (!success) throw new Error('Sequence send failed. results: ' + JSON.stringify(results));
     },
 };
