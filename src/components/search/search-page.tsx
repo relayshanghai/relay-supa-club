@@ -206,7 +206,7 @@ export const SearchPageInner = () => {
         setViews,
     ]);
     return (
-        <div className="space-y-4 p-6">
+        <div className="p-6">
             <ClientRoleWarning />
             <div className="flex justify-between">
                 <SelectPlatform />
