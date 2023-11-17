@@ -199,6 +199,12 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         fromAddress.includes('boostbot.ai') ||
         fromAddress.includes('noreply')
     ) {
+        if (!toAddress) {
+            track(rudderstack.getClient(), rudderstack.getIdentity())(EmailNew, {
+                ...trackData,
+                is_success: false, // an incoming email with no to address is strange
+            });
+        }
         return res.status(httpCodes.OK).json({});
     }
 
