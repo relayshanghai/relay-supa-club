@@ -136,11 +136,22 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            // Fallback added for Product Hunt launch. Can be removed after some time.
+            const updateIntroMessage = (message: MessageType) => {
+                if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
+                    message.translationValues = { username: profile?.first_name || '👋' };
+                }
+                return message;
+            };
+            // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
+
             const isErrorMessage = (message: MessageType) =>
                 message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
+            return onLoadMessages
+                .map(updateIntroMessage)
+                .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
