@@ -49,7 +49,8 @@ const tooltips = {
     },
     boostBotScore: {
         title: 'BoostBot Score',
-        description: 'We determine audience location by analyzing their comments, viewing habits and interactions.',
+        description:
+            'This score rates influencers on their audience engagement, relevance to your search, and post history!',
     },
     boostBotGender: {
         title: 'Audience Gender',
@@ -75,7 +76,8 @@ const tooltips = {
     },
     boostbotScore: {
         title: ' ',
-        description: 'We determine audience location by analyzing their comments, viewing habits and interactions.',
+        description:
+            'This score rates influencers on their audience engagement, relevance to your search, and post history!',
     },
     audienceGeolocations: {
         title: ' ',

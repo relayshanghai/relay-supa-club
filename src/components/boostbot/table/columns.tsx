@@ -80,7 +80,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     },
     {
         id: 'openDetail',
-        header: '',
+        header: () => <div className="min-w-[30px]" />,
         cell: ({ row, table }) => {
             if (table.options.meta === undefined) {
                 clientLogger('table meta is undefined');
