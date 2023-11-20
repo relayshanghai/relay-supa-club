@@ -19,6 +19,7 @@ import { db } from 'src/utils/supabase-client';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 
 export type SequenceSendPostBody = {
     account: string;
@@ -227,6 +228,7 @@ type SequenceSendEventRun = (payload: SequenceSendEventPayload) => Promise<any>;
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
+        await identifyAccount(payload.emailEngineAccountId);
         const { emailEngineAccountId, sequenceInfluencer } = payload;
         const { results, success } = await sendSequence(emailEngineAccountId, sequenceInfluencer);
         if (!success) throw new Error('Sequence send failed. results: ' + JSON.stringify(results));
