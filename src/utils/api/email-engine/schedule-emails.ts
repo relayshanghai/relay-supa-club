@@ -1,28 +1,24 @@
 import { addHours, getHours, isWeekend, isSameDay, weekDayAsNumber, getWeekday } from 'src/utils/time-zone-helpers';
-import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
+import type { SequenceEmail } from '../db';
 
 const MAX_DAILY_SEND = 70;
 const TARGET_TIMEZONE = 'America/Chicago';
 
 /** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 75 emails scheduled for that day, it will find the next available day with less than the max scheduled. Email send times will always be a random hour within Monday-Friday, 9am - 12am US Central Time */
 export const calculateSendAt = async (
-    account: string,
     waitTimeHours: number,
-    outbox: OutboxGetMessage[],
+    scheduledEmails: SequenceEmail[],
     maxDailySend = MAX_DAILY_SEND,
     now = new Date(),
 ): Promise<Date> => {
     const sendAt = addHours(now, waitTimeHours);
     const targetDate = findNextBusinessDayTime(sendAt); // Get initial targetDate
 
-    // Get all emails scheduled for the day for the account
-    const outboxEmails = outbox.filter((email) => email.account === account);
-
-    return findNextAvailableDateIfMaxEmailsPerDayMet(outboxEmails, targetDate, TARGET_TIMEZONE, maxDailySend);
+    return findNextAvailableDateIfMaxEmailsPerDayMet(scheduledEmails, targetDate, TARGET_TIMEZONE, maxDailySend);
 };
 
 export const findNextAvailableDateIfMaxEmailsPerDayMet = (
-    outboxEmails: OutboxGetMessage[],
+    scheduledEmails: SequenceEmail[],
     /** ISO time not Chicago time */
     passedDate: Date,
     timeZone = TARGET_TIMEZONE,
@@ -31,7 +27,9 @@ export const findNextAvailableDateIfMaxEmailsPerDayMet = (
     let targetDate = new Date(passedDate);
 
     const getTargetDaysEmails = (targetDate: Date) =>
-        outboxEmails.filter((email) => isSameDay(new Date(email.scheduled), targetDate, timeZone));
+        scheduledEmails.filter(
+            (email) => email.email_send_at && isSameDay(new Date(email.email_send_at), targetDate, timeZone),
+        );
 
     // Check if maximum number of emails for the day has been scheduled
     let targetDaysEmails = getTargetDaysEmails(targetDate);

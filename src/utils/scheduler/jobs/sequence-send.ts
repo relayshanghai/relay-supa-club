@@ -1,8 +1,9 @@
 import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
-import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailByInfluencerAndSequenceStep,
+    getSequenceEmailsByAccountCall,
     getSequenceEmailsBySequenceInfluencerCall,
     insertSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
@@ -20,13 +21,16 @@ import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
+import type { SendResult } from 'pages/api/sequence/send';
 
-export type SequenceSendPostBody = {
-    account: string;
-    sequenceInfluencers: SequenceInfluencerManagerPage[];
+type SequenceSendEventPayload = {
+    emailEngineAccountId: string;
+    sequenceInfluencer: SequenceInfluencerManagerPage;
+    sequenceSteps?: SequenceStep[];
+    templateVariables?: TemplateVariable[];
 };
 
-export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
+type SequenceSendEventRun = (payload: SequenceSendEventPayload) => Promise<any>;
 
 const sendAndInsertEmail = async ({
     step,
@@ -35,7 +39,7 @@ const sendAndInsertEmail = async ({
     templateVariables,
     messageId,
     references,
-    outbox,
+    scheduledEmails,
 }: {
     step: SequenceStep;
     influencer: SequenceInfluencerManagerPage;
@@ -43,7 +47,7 @@ const sendAndInsertEmail = async ({
     templateVariables: TemplateVariable[];
     messageId: string;
     references: string;
-    outbox: OutboxGetMessage[];
+    scheduledEmails: SequenceEmail[];
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
@@ -53,7 +57,6 @@ const sendAndInsertEmail = async ({
         throw new Error('No influencer name or handle');
     }
     const recentPostTitle = influencer.recent_post_title ?? 'recent';
-
     const recentPostURL = influencer.recent_post_url;
     if (!recentPostURL) {
         throw new Error('No recent post url');
@@ -85,7 +88,7 @@ const sendAndInsertEmail = async ({
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
-    const emailSendAt = (await calculateSendAt(account, wait_time_hours, outbox)).toISOString();
+    const emailSendAt = (await calculateSendAt(wait_time_hours, scheduledEmails)).toISOString();
 
     const res = await sendTemplateEmail({
         account,
@@ -112,7 +115,12 @@ const sendAndInsertEmail = async ({
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
 };
 
-const sendSequence = async (account: string, influencer: SequenceInfluencerManagerPage) => {
+const sendSequence = async ({
+    emailEngineAccountId: account,
+    sequenceInfluencer: influencer,
+    sequenceSteps,
+    templateVariables,
+}: SequenceSendEventPayload) => {
     const results: SendResult[] = [];
 
     const trackData: SequenceSendPayload = {
@@ -126,16 +134,19 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
         if (!account) {
             throw new Error('Missing required account id');
         }
-
         const sequenceId = influencer.sequence_id ?? '';
-        const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
+        if (!sequenceSteps || sequenceSteps.length === 0) {
+            sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
+        }
+        sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
+        trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
         if (!sequenceSteps || sequenceSteps.length === 0) {
             throw new Error('No sequence steps found');
         }
-        sequenceSteps.sort((a, b) => a.step_number - b.step_number);
-        trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
 
-        const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+        if (!templateVariables || templateVariables.length === 0) {
+            templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+        }
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
         if (!templateVariables || templateVariables.length === 0) {
             throw new Error('No template variables found');
@@ -145,7 +156,7 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
         if (!influencer.influencer_social_profile_id) {
             throw new Error('No influencer social profile id');
         }
-        const outbox = await getOutbox();
+        const scheduledEmails = await db(getSequenceEmailsByAccountCall)(account);
 
         for (const step of sequenceSteps) {
             try {
@@ -157,7 +168,7 @@ const sendSequence = async (account: string, influencer: SequenceInfluencerManag
                     templateVariables,
                     references,
                     messageId: messageIds[step.step_number],
-                    outbox,
+                    scheduledEmails,
                 });
                 results.push(result);
             } catch (error: any) {
@@ -218,19 +229,12 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
     }
 };
 
-type SequenceSendEventPayload = {
-    emailEngineAccountId: string;
-    sequenceInfluencer: SequenceInfluencerManagerPage;
-};
-
-type SequenceSendEventRun = (payload: SequenceSendEventPayload) => Promise<any>;
-
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
         await identifyAccount(payload.emailEngineAccountId);
-        const { emailEngineAccountId, sequenceInfluencer } = payload;
-        const { results, success } = await sendSequence(emailEngineAccountId, sequenceInfluencer);
+        const { results, success } = await sendSequence(payload);
         if (!success) throw new Error('Sequence send failed. results: ' + JSON.stringify(results));
+        return { results, success };
     },
 };

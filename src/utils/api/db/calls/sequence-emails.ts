@@ -79,3 +79,9 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     const { error } = await supabaseClient.from('sequence_emails').delete().eq('sequence_influencer_id', influencerId);
     if (error) throw error;
 };
+
+export const getSequenceEmailsByAccountCall = (supabaseClient: RelayDatabase) => async (accountId: string) => {
+    const { data, error } = await supabaseClient.from('sequence_emails').select('*').eq('account_id', accountId);
+    if (error) throw error;
+    return data;
+};
