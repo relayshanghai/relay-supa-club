@@ -48,10 +48,7 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
                 raceResult instanceof Error || !isProperJobResponse(raceResult)
                     ? {
                           status: JOB_STATUS.failed,
-                          result:
-                              raceResult && typeof raceResult === 'object' && 'message' in raceResult
-                                  ? raceResult.message
-                                  : JSON.stringify(raceResult) ?? '',
+                          result: JSON.stringify(raceResult),
                       }
                     : raceResult;
 
