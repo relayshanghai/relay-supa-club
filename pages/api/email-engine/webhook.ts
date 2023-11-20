@@ -192,8 +192,8 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         profile_id: null,
         extra_info: { event_data: event.data },
     };
-    const fromAddress = event.data.from.address;
-    const toAddress = event.data.to ? event.data.to[0]?.address : null;
+    const fromAddress = event.data.from.address?.toLowerCase();
+    const toAddress = event.data.to ? event.data.to[0]?.address?.toLowerCase() : null;
 
     // Ignore outgoing emails and drafts
     if (
