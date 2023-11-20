@@ -56,6 +56,8 @@ function MyApp({
                     localStorage.setItem('language', 'zh-CN');
                 }
             }
+            const referer = urlParams.get('ref');
+            referer === 'producthunt' && localStorage.setItem('referer', referer);
         }
     }, []);
 

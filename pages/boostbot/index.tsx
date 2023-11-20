@@ -30,6 +30,10 @@ import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-but
 const Boostbot = () => {
     const { t } = useTranslation();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
+    const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
+        'boostbot-is-first-time-add-to-sequence',
+        true,
+    );
     const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>('boostbot-influencers', []);
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
@@ -116,15 +120,36 @@ const Boostbot = () => {
             {
                 sender: 'Bot',
                 type: 'translation',
-                translationKey: 'boostbot.chat.introMessage',
+                translationKey: 'boostbot.chat.introMessageFirstTimeA',
+            },
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessageFirstTimeB',
+            },
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessageFirstTimeC',
             },
         ],
         (onLoadMessages) => {
+            // Fallback added for Product Hunt launch. Can be removed after some time.
+            const updateIntroMessage = (message: MessageType) => {
+                if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
+                    message.translationValues = { username: profile?.first_name || '👋' };
+                }
+                return message;
+            };
+            // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
+
             const isErrorMessage = (message: MessageType) =>
                 message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
+            return onLoadMessages
+                .map(updateIntroMessage)
+                .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
@@ -201,15 +226,34 @@ const Boostbot = () => {
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.outreachDone',
-                translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
-                translationValues: {
-                    sequenceName: sequence.name,
-                },
-            });
+            if (isFirstTimeAddToSequence) {
+                setIsFirstTimeAddToSequence(false);
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneFirstTime',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneA',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneB',
+                    translationValues: { count: influencers.length },
+                });
+            }
 
             // addMessage({
             //     sender: 'Bot',
@@ -242,6 +286,9 @@ const Boostbot = () => {
                 sender: 'Bot',
                 type: 'translation',
                 translationKey: 'boostbot.chat.introMessage',
+                translationValues: {
+                    username: profile?.first_name || '👋',
+                },
             },
         ]);
         setIsInitialLogoScreen(true);

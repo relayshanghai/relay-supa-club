@@ -13,7 +13,7 @@ export const getProfileByEmailEngineAccountQuery = (supabaseClient: RelayDatabas
         .select()
         .limit(1)
         .eq('email_engine_account_id', account)
-        .single();
+        .maybeSingle();
 
     if (error) {
         throw error;
