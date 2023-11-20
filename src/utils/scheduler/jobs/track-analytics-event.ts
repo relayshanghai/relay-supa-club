@@ -23,7 +23,7 @@ export const TrackAnalyticsEvent: JobInterface<'track_analytics_event', TrackAna
     run: async (payload) => {
         const { account, eventName, eventPayload, eventTimestamp } = payload;
 
-        identifyAccount(account);
+        await identifyAccount(account);
 
         const event = initEvent(eventName);
 

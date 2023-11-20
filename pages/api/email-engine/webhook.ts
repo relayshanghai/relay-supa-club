@@ -301,18 +301,28 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
     let update: SequenceEmailUpdate | null = null;
     let is_success = false;
     let errorMessage: string | null = null;
+
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
         update = {
             id: sequenceEmail.id,
             email_tracking_status: 'Opened',
         };
-        await updateSequenceEmail(update);
-        is_success = true;
     } catch (error: any) {
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
+
+    try {
+        if (update) {
+            await updateSequenceEmail(update);
+            is_success = true;
+        }
+    } catch (error: any) {
+        errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
+        serverLogger(errorMessage);
+    }
+
     await createJob('track_analytics_event', {
         queue: 'analytics',
         payload: {
