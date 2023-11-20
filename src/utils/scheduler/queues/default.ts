@@ -17,6 +17,15 @@ const isProperJobResponse = (response: unknown): response is JobResponse => {
     return true;
 };
 
+export const useMaxExecutionTime = async (func: () => Promise<any>, maxTime: number) => {
+    const timeout = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('Job timed out'));
+        }, maxTime);
+    });
+    return await Promise.race([func, timeout]);
+};
+
 /**
  * Default queue - Basic queue; first-in, first-out
  */
@@ -33,15 +42,7 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
 
         const runningJobs = jobs.map(async (job) => {
             const maxRunTime = 1000 * 60 * 3; // 3 minutes
-            const jobPromise = runJob(job);
-
-            const timeout = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject(new Error('Job timed out'));
-                }, maxRunTime);
-            });
-
-            const raceResult = await Promise.race([jobPromise, timeout]);
+            const raceResult = await useMaxExecutionTime(async () => await runJob(job), maxRunTime);
 
             const res =
                 raceResult instanceof Error || !isProperJobResponse(raceResult)
