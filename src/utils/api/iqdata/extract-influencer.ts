@@ -66,7 +66,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
         platform: userProfile.type,
         reference_id: `iqdata:${userProfile.user_id}`,
         name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
-        email: email.value,
+        email: email.value?.toLowerCase().trim() || '',
         avatar_url: userProfile.picture,
         recent_post_title: postTitle,
         recent_post_url: postLink,

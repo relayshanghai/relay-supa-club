@@ -74,7 +74,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     }
 
     if (!sequenceInfluencer.email && socialProfile.email) {
-        updatedValues.email = socialProfile.email;
+        updatedValues.email = socialProfile.email.toLowerCase().trim();
         updatedValues.social_profile_last_fetched = new Date().toISOString();
     }
     if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
