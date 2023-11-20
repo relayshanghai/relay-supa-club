@@ -9,7 +9,6 @@ import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
 import { Layout } from 'src/components/layout';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
@@ -70,7 +69,6 @@ const Boostbot = () => {
     const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((s) => s.id),
     );
-    const { sendSequence } = useSequence(sequence?.id);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
@@ -136,11 +134,22 @@ const Boostbot = () => {
             },
         ],
         (onLoadMessages) => {
+            // Fallback added for Product Hunt launch. Can be removed after some time.
+            const updateIntroMessage = (message: MessageType) => {
+                if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
+                    message.translationValues = { username: profile?.first_name || '👋' };
+                }
+                return message;
+            };
+            // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
+
             const isErrorMessage = (message: MessageType) =>
                 message.type === 'translation' && message.translationKey.includes('error');
             const isUnfinishedLoading = (message: MessageType) =>
                 message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
+            return onLoadMessages
+                .map(updateIntroMessage)
+                .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
         },
     );
 
@@ -252,11 +261,6 @@ const Boostbot = () => {
             //     videoUrl: '/assets/videos/sequence-guide.mp4',
             //     eventToTrack: OpenVideoGuideModal.eventName,
             // });
-
-            if (sequence?.auto_start) {
-                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-                await Promise.all(sendSequencePromises);
-            }
         } catch (error) {
             clientLogger(error, 'error');
             addMessage({
