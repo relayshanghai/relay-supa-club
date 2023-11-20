@@ -4,7 +4,7 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 
-const fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
+const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const _company_ids = [
         '504528ad-8f57-45e2-b82c-59ceb4bc9c54',
         '9ffda880-addd-4d28-b247-92b1884a3cd9',
@@ -241,4 +241,51 @@ const _fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-export default fixStuckInSequenceWithNoEmail;
+const fixUppercaseEmails: NextApiHandler = async (_req, res) => {
+    console.log('fixUppercaseEmails');
+
+    const { data: influencersWithEmails } = await supabase
+        .from('sequence_influencers')
+        .select('id, email')
+        .not('email', 'is', null);
+
+    console.log('found', influencersWithEmails?.length);
+    const { data: profilesWithEmails } = await supabase
+        .from('influencer_social_profiles')
+        .select('id, email')
+        .not('email', 'is', null);
+    console.log('found', profilesWithEmails?.length);
+
+    const influencerResults = [];
+    if (influencersWithEmails)
+        for (const influencer of influencersWithEmails) {
+            if (!influencer.email) continue;
+            //if contains uppercase letters, update to lowercase
+            if (influencer.email !== influencer.email.toLowerCase().trim()) {
+                influencerResults.push(`${influencer.email} ${influencer.email.toLowerCase().trim()}`);
+                await supabase
+                    .from('sequence_influencers')
+                    .update({ email: influencer.email.toLowerCase().trim() })
+                    .eq('id', influencer.id);
+            }
+        }
+
+    const profileResults = [];
+    if (profilesWithEmails)
+        for (const influencer of profilesWithEmails) {
+            if (!influencer.email) continue;
+            //if contains uppercase letters, update to lowercase
+            if (influencer.email !== influencer.email.toLowerCase().trim()) {
+                profileResults.push(`${influencer.email} ${influencer.email.toLowerCase().trim()}`);
+                await supabase
+                    .from('sequence_influencers')
+                    .update({ email: influencer.email.toLowerCase().trim() })
+                    .eq('id', influencer.id);
+            }
+        }
+
+    console.log('finished, total results', influencerResults.length, profileResults.length);
+    return res.json({ ok: 'asd' });
+};
+
+export default fixUppercaseEmails;
