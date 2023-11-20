@@ -2,12 +2,14 @@ import { Default } from './default';
 import { Failed } from './failed';
 import { Blocking } from './blocking';
 import { Analytics } from './analytics';
+import { SequenceSend } from './sequence-send';
 
 export const queues = {
     [Default.name]: Default,
     [Failed.name]: Failed,
     [Blocking.name]: Blocking,
     [Analytics.name]: Analytics,
+    [SequenceSend.name]: SequenceSend,
 };
 
 export type JOB_QUEUE = keyof typeof queues;
