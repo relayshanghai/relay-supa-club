@@ -151,7 +151,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const handleEmailUpdate = async (email: string) => {
         try {
-            const otherInfluencersEmails = sequenceInfluencers.map((influencer) => influencer.email);
+            const otherInfluencersEmails = sequenceInfluencers.map((influencer) =>
+                influencer.email?.trim().toLowerCase(),
+            );
             const uniqueEmail = !otherInfluencersEmails.includes(email);
             track(EnterInfluencerEmail, {
                 sequence_id: sequence?.id || '',
@@ -340,7 +342,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={handleEmailUpdate}
+                                    onSubmit={(emailSubmit) => {
+                                        const trimmed = emailSubmit.trim().toLowerCase();
+                                        return handleEmailUpdate(trimmed);
+                                    }}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (
