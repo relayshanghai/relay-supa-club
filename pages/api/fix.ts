@@ -241,7 +241,7 @@ const _fixSocialProfileIncomplete: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-const fixUppercaseEmails: NextApiHandler = async (_req, res) => {
+const _fixUppercaseEmails: NextApiHandler = async (_req, res) => {
     console.log('fixUppercaseEmails');
 
     const { data: influencersWithEmails } = await supabase
@@ -288,4 +288,14 @@ const fixUppercaseEmails: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-export default fixUppercaseEmails;
+const fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
+    const { data: hasSequenceSendProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .not('sequence_send_account_id', 'is', null);
+    console.log({ hasSequenceSendProfiles });
+    console.log('hasSequenceSendProfiles', hasSequenceSendProfiles?.length);
+    return res.json({ ok: 'asd' });
+};
+
+export default fixSequenceEmailsNoAccountId;
