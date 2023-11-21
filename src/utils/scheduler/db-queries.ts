@@ -69,6 +69,9 @@ export const createJobDb =
         return data;
     };
 
+/**
+ * if the job failed, increment the retry_count
+ */
 export const finishJobDb =
     (supabase: RelayDatabase) =>
     async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'> = JOB_STATUS.success, result: any = null) => {

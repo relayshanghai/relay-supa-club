@@ -3,13 +3,12 @@ import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/ap
 import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailByInfluencerAndSequenceStep,
-    getSequenceEmailsByAccountCall,
+    getSequenceEmailsByEmailEngineAccountId,
     getSequenceEmailsBySequenceInfluencerCall,
     insertSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
-import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
-import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
+
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
@@ -26,8 +25,8 @@ import type { SendResult } from 'pages/api/sequence/send';
 type SequenceSendEventPayload = {
     emailEngineAccountId: string;
     sequenceInfluencer: SequenceInfluencerManagerPage;
-    sequenceSteps?: SequenceStep[];
-    templateVariables?: TemplateVariable[];
+    sequenceSteps: SequenceStep[];
+    templateVariables: TemplateVariable[];
 };
 
 type SequenceSendEventRun = (payload: SequenceSendEventPayload) => Promise<any>;
@@ -47,7 +46,7 @@ const sendAndInsertEmail = async ({
     templateVariables: TemplateVariable[];
     messageId: string;
     references: string;
-    scheduledEmails: SequenceEmail[];
+    scheduledEmails: Pick<SequenceEmail, 'email_send_at'>[];
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
@@ -131,33 +130,14 @@ const sendSequence = async ({
     };
 
     try {
-        if (!account) {
-            throw new Error('Missing required account id');
-        }
-        const sequenceId = influencer.sequence_id ?? '';
-        if (!sequenceSteps || sequenceSteps.length === 0) {
-            sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
-        }
-        sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
         trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
-        if (!sequenceSteps || sequenceSteps.length === 0) {
-            throw new Error('No sequence steps found');
-        }
 
-        if (!templateVariables || templateVariables.length === 0) {
-            templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
-        }
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
-        if (!templateVariables || templateVariables.length === 0) {
-            throw new Error('No template variables found');
-        }
-
+        const scheduledEmails = await await db(getSequenceEmailsByEmailEngineAccountId)(account);
         const messageIds = gatherMessageIds(influencer.email ?? '', sequenceSteps);
         if (!influencer.influencer_social_profile_id) {
             throw new Error('No influencer social profile id');
         }
-        const scheduledEmails = await db(getSequenceEmailsByAccountCall)(account);
-
         for (const step of sequenceSteps) {
             try {
                 const references = generateReferences(messageIds, step.step_number);

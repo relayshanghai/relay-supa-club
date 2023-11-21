@@ -23,6 +23,7 @@ export const runJob = async (job: Jobs['Row']) => {
 
     try {
         const jobInstance = initJob(job.name);
+        // if max retries met, mark as failed and dont run.
         const payload = job.payload;
         result = await jobInstance.run(payload as any);
         status = JOB_STATUS.success;
