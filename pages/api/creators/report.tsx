@@ -152,8 +152,12 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             trackFetchNewReport();
             data = await requestNewReport({ req, res })(platform, creator_id);
         }
-    } catch (error) {
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error });
+    } catch (error: any) {
+        // catch the retry_later error from iqdata so front end can show a message, for other errors they will be caught by apiHandler
+        if (error.message.includes('retry_later')) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'retry_later' });
+        }
+        throw serverLogger(error);
     }
 
     if (!data?.success) throw new Error('Failed to find report');
