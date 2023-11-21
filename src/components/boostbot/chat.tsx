@@ -300,11 +300,14 @@ export const Chat: React.FC<ChatProps> = ({
             <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
+                    className="group flex items-center gap-1 rounded-[6px] py-2 pl-0 pr-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
-                    <Settings className="h-4 w-4 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
+                    <Settings
+                        strokeWidth="1.5"
+                        className="h-5 w-5 stroke-primary-600 group-disabled:stroke-primary-200"
+                    />{' '}
                     {t('boostbot.filters.openModalButton')}
                 </button>
                 <button
