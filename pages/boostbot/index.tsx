@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
@@ -26,9 +27,11 @@ import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { Row } from '@tanstack/react-table';
 import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-button';
+import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
+    const { getConversations } = useBoostbot();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
@@ -58,6 +61,23 @@ const Boostbot = () => {
     const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
     const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
     const [selectedCount, setSelectedCount] = useState(0);
+
+    useEffect(() => {
+        if (!profile) return;
+
+        getConversations()
+            .then((conversations) => {
+                // eslint-disable-next-line no-console
+                console.log('conversations from db :>> ', conversations);
+                // Set to state etc.
+            })
+            .catch((error) => {
+                clientLogger(error, 'error');
+                toast.error(t('boostbot.error.fetchingConversationsFailed'));
+            });
+        // No need to refetch conversations when language changes, the objects in the db are the same, translations happen on the frontend.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [profile]);
 
     useEffect(() => {
         if (sequences && !sequence) {

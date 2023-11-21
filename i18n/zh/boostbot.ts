@@ -100,6 +100,7 @@ const boostbot = {
             '很抱歉，你已达到解锁红人报告的限额，请<customLink>升级方案</customLink>，以便继续搜索更多内容。',
         expiredAccount:
             '哦，看起来你的帐户已经过期了。你可在升级帐户<customLink>后继续使用雷宝所提供的服务</customLink>。',
+        fetchingConversationsFailed: 'There was an error fetching your conversations', // TODO translate
     },
     modal: {
         unlockDetailedReport: '解锁分析报告细节',

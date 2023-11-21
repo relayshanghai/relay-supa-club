@@ -13,15 +13,18 @@ import type {
     GetTopicsAndRelevanceBody,
     GetTopicsAndRelevanceResponse,
 } from 'pages/api/boostbot/get-topics-and-relevance';
+import { getBoostbotConversationsCall } from 'src/utils/api/db/calls/boostbot-conversations';
+import { useDB } from 'src/utils/client-db/use-client-db';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
 };
 
 // Majority of these requests will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
-export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
+export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const { profile } = useUser();
     const { company } = useCompany();
+    const getBoostbotConversations = useDB(getBoostbotConversationsCall);
 
     const performFetch = useCallback(
         async <T, B>(endpoint: string, body: B): Promise<T> => {
@@ -40,6 +43,8 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
         },
         [abortSignal],
     );
+
+    const getConversations = useCallback(getBoostbotConversations, [getBoostbotConversations]);
 
     const getTopics = useCallback(
         async (productDescription: string) =>
@@ -93,6 +98,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     );
 
     return {
+        getConversations,
         getTopics,
         getRelevantTopics,
         getTopicClusters,
