@@ -105,8 +105,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     report,
                     updateSequenceInfluencer,
                     company_id: sequenceInfluencer.company_id,
-                }).catch((error) => {
+                }).catch((error: any) => {
+                    // Temporarily comment out the deleteSequenceInfluencer call as it seems to be causing unexpected issues. https://relayclub.slack.com/archives/C05R1C6V553/p1700226227238909?thread_ts=1700225873.168129&cid=C05R1C6V553
+                    // if (error.message.includes('Email already exists for this company')) {
+                    //     // Sometimes a user adds an influencer to a sequence from both tiktok and instagram and the email is the same. More permanent solution linked below.
+                    //     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1106
+
+                    //     deleteSequenceInfluencer([sequenceInfluencer.id]);
+                    // } else {
+                    //     clientLogger(error);
+                    // }
                     clientLogger(error);
+
                     return null;
                 });
             if (result?.email) {
@@ -115,7 +125,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         };
 
         update();
-    }, [report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+    }, [deleteSequenceInfluencer, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     useEffect(() => {
         checkForIgnoredEmails({
@@ -141,7 +151,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const handleEmailUpdate = async (email: string) => {
         try {
-            const otherInfluencersEmails = sequenceInfluencers.map((influencer) => influencer.email);
+            const otherInfluencersEmails = sequenceInfluencers.map((influencer) =>
+                influencer.email?.trim().toLowerCase(),
+            );
             const uniqueEmail = !otherInfluencersEmails.includes(email);
             track(EnterInfluencerEmail, {
                 sequence_id: sequence?.id || '',
@@ -273,7 +285,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             );
         });
     }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
-
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
@@ -331,7 +342,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={handleEmailUpdate}
+                                    onSubmit={(emailSubmit) => {
+                                        const trimmed = emailSubmit.trim().toLowerCase();
+                                        return handleEmailUpdate(trimmed);
+                                    }}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (

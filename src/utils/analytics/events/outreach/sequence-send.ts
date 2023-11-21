@@ -5,7 +5,7 @@ export const SEQUENCE_SEND = 'email-outreach_sequence_send';
 export type SequenceSendPayload = {
     is_success: boolean;
     account: string;
-    sequence_influencer_ids: string[];
+    sequence_influencer_id: string;
     extra_info?: any;
 };
 

@@ -40,51 +40,51 @@ export const createClient = (
     return null;
 };
 
+type TrackFuncType = (r: RudderBackend | null, u: (typeof Rudderstack.prototype)['session']) => TrackEvent;
+
 /**
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend | null, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
-    (rudder, session) => (event, payload) => {
-        if (!rudder || disabled) return;
+export const track: TrackFuncType = (rudder, session) => (event, payload) => {
+    if (!rudder || disabled) return false;
 
-        try {
-            const trigger: TriggerEvent = (eventName, payload) => {
-                if (!session) {
-                    serverLogger(new Error(`Rudderstack event "${eventName}" has no identity`), (scope) => {
-                        return scope.setContext(`Event`, { eventName });
-                    });
-                    return false;
-                }
-
-                const trackPayload: Parameters<typeof rudder.track>[0] = {
-                    event: eventName,
-                    properties: payload,
-                };
-
-                if (session.user_id) {
-                    trackPayload.userId = session.user_id;
-                }
-
-                if (!session.user_id && session.anonymous_id) {
-                    trackPayload.anonymousId = session.anonymous_id;
-                }
-
-                if (!trackPayload.userId && !trackPayload.anonymousId) {
-                    serverLogger(new Error(`Rudderstack event "${eventName}" has no identity`), (scope) => {
-                        return scope.setContext(`Event`, { eventName });
-                    });
-                    return false;
-                }
-
-                rudder.track(trackPayload);
-            };
-
-            return event(trigger, payload);
-        } catch (error) {
-            serverLogger(error);
+    const trigger: TriggerEvent = (eventName, payload) => {
+        if (!session) {
+            throw new Error(`Rudderstack event "${eventName}" has no session`);
         }
+
+        const trackPayload: Parameters<typeof rudder.track>[0] = {
+            event: eventName,
+            properties: payload,
+        };
+
+        if (session.user_id) {
+            trackPayload.userId = session.user_id;
+        }
+
+        if (!session.user_id && session.anonymous_id) {
+            trackPayload.anonymousId = session.anonymous_id;
+        }
+
+        if (!trackPayload.userId && !trackPayload.anonymousId) {
+            throw new Error(`Rudderstack event "${eventName}" has no identity`);
+        }
+
+        rudder.track(trackPayload);
     };
+
+    try {
+        event(trigger, payload);
+        return true;
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext(`Event`, { eventName: event.eventName });
+        });
+    }
+
+    return false;
+};
 
 const client = Symbol('Rudderstack Client');
 

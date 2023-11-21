@@ -221,8 +221,17 @@ export const useIdentifySession = () => {
                 // return void
             };
 
+            const referer = localStorage.getItem('referer');
+
             if (profile !== null && user !== null && company !== null && subscription && rudderstack) {
-                const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
+                const { id, traits } = profileToIdentifiable(
+                    profile,
+                    company,
+                    user,
+                    i18n.language,
+                    subscription,
+                    referer || undefined,
+                );
                 rudderstack.identify(id, traits, cb ?? noopfn);
                 return true;
             }
