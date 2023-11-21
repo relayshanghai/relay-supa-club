@@ -24,11 +24,10 @@ import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
-import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
-import Logo from 'src/components/icons/Boostbot_selected';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -305,7 +304,7 @@ export const Chat: React.FC<ChatProps> = ({
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
-                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
+                    <Settings className="h-4 w-4 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
                     {t('boostbot.filters.openModalButton')}
                 </button>
                 <button
