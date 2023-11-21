@@ -3,7 +3,7 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { getHostnameFromRequest } from 'src/utils/get-host';
+// import { getHostnameFromRequest } from 'src/utils/get-host';
 
 export type CreateSetUpIntentPostBody = {
     customerId: string;
@@ -30,7 +30,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         serverLogger('Failed to attach payment method to customer');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
     }
-    const { appUrl } = getHostnameFromRequest(req);
+    // const { appUrl } = getHostnameFromRequest(req);
     const returnUrlParams = new URLSearchParams();
     returnUrlParams.append('customerId', customerId);
     returnUrlParams.append('priceId', priceId);
@@ -60,8 +60,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 },
             },
             //TODO: change the return url to the APP_URL before production
-            // return_url: `https://preview.relay.club/payments/confirm-alipay?${returnUrlParams}`,
-            return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
+            return_url: `https://relay-supa-club-git-payments-add-alipay-relay-club.vercel.app/payments/confirm-alipay?${returnUrlParams}`,
+            // return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
         },
         undefined,
     );

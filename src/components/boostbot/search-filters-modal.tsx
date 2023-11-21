@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from 'react';
-import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, InfluencerSize } from 'types';
 import { influencerSizes } from 'types';
@@ -201,7 +201,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             <div className="mb-6 flex flex-1 space-x-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                        <AdjustmentsVerticalIcon className="h-6 w-6 fill-none stroke-primary-600 group-disabled:stroke-primary-200" />
+                        <AdjustmentsVerticalIcon className="h-5 w-5 fill-none stroke-primary-600 group-disabled:stroke-primary-200" />
                     </div>
                 </div>
                 {/* TO DO CLose button */}
