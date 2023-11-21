@@ -41,7 +41,7 @@ const pricing = {
     noChargeToday: 'No charge today!',
     getStartedWithYourFreeTrial: 'Get started with your free trial',
     justGettingStartedOrScalingUp: 'Just getting started, or scaling up.',
-    relayClubCanHelp: 'relay.club can help.',
+    relayClubCanHelp: 'BoostBot can help.',
     freePrice: 'Free',
     diy: {
         title: 'DIY',
@@ -65,6 +65,7 @@ const pricing = {
     },
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',
+    backToAccount: 'Back to account',
 };
 
 export default pricing;

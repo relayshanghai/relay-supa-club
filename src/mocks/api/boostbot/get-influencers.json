@@ -4,236 +4,1078 @@
     "custom_name": "DANNIVIVIANI",
     "handle": "DANNIVIVIANI",
     "url": "https://www.youtube.com/channel/UCSTgtLylu5QDTuWBHShXpLQ",
-    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaQWaFSl-f7SPAbQeMjHnG-aJDN0-D69BNI4eljAag=s480-c-k-c0x00ffffff-no-rj",
+    "picture": "https://yt3.googleusercontent.com/t8FDhZYrRbYRAtXrDc2AqUiSzwmZeqi-aALm33iW7Z3-j0mnPjcb8s9iIB_nll4s2CnRN2Pfvuc=s480-c-k-c0x00ffffff-no-rj",
     "fullname": "DANNI VIVIANI",
-    "is_verified": false,
+    "is_verified": true,
     "followers": 13200,
     "engagements": 5224,
     "engagement_rate": 0.39575757575757575,
     "avg_views": 120511,
-    "topics": ["facialhair", "bodyhair", "epilator"]
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 251,
+    "geo": {
+      "country": {
+        "id": 1428125,
+        "name": "Canada",
+        "code": "CA",
+        "coords": {
+          "lat": 45.41117,
+          "lon": -75.69812
+        }
+      }
+    },
+    "relevance": 0.9790990725663739,
+    "distance": 0.5191456079483032,
+    "followers_growth": 0.10139165009940365,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.7503267973856209
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.05800719216736226
+      },
+      {
+        "code": "18-24",
+        "male": 0.40981704596162427
+      },
+      {
+        "code": "25-34",
+        "male": 0.20415518282279443
+      },
+      {
+        "code": "35-44",
+        "male": 0.05348715121925611
+      },
+      {
+        "code": "45-64",
+        "male": 0.024860225214583826
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.5013192612137203
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffeelover"]
   },
   {
-    "user_id": "UCQDMy9uNKFYP7Ls60Hhh6kw",
-    "username": "davidmartin8000pga",
-    "handle": "OhioShaves",
-    "url": "https://www.youtube.com/channel/UCQDMy9uNKFYP7Ls60Hhh6kw",
-    "picture": "https://yt3.googleusercontent.com/HRuAQ3pfz15fKc3-44LbcYSA7MeMxo8yUpW5z0tMq7qGpph_m-j07kR_NACf5bW0WXEzX9g2jSM=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Ohio Shaves",
+    "user_id": "UCFcy7lNTEIT0qTRA_kwot8w",
+    "handle": "JessNicole____",
+    "url": "https://www.youtube.com/channel/UCFcy7lNTEIT0qTRA_kwot8w",
+    "picture": "https://yt3.googleusercontent.com/Qr_4xuKoWsfkJaePgR9V2YvEx6LaEmt2HIELwrjKgM24BgaG8SLWnkhLPrg02lA6HXXFzmBurA=s480-c-k-c0x00ffffff-no-rj",
+    "fullname": "JessNicole🤎",
     "is_verified": false,
-    "followers": 6430,
-    "engagements": 134,
-    "engagement_rate": 0.0208398133748056,
-    "avg_views": 3240,
-    "topics": ["facialhair", "bodyhair", "epilator"]
+    "followers": 254000,
+    "engagements": 23324,
+    "engagement_rate": 0.0918267716535433,
+    "avg_views": 319495,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 255,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.978945466864102,
+    "distance": 0.4245005249977112,
+    "followers_growth": 0.07060063224446789,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.135678391959799
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.006238086986657426
+      },
+      {
+        "code": "18-24",
+        "male": 0.07173800034656039
+      },
+      {
+        "code": "25-34",
+        "male": 0.04158724657771617
+      },
+      {
+        "code": "35-44",
+        "male": 0.0119563333910934
+      },
+      {
+        "code": "45-64",
+        "male": 0.0041587246577716175
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.8125
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffeelover"]
   },
   {
-    "user_id": "UCcYJ99drXoC2SECyTIy_ozA",
-    "custom_name": "LaviniaRusanda",
-    "handle": "LaviniaRusanda",
-    "url": "https://www.youtube.com/channel/UCcYJ99drXoC2SECyTIy_ozA",
-    "picture": "https://yt3.googleusercontent.com/y09IJ-yTr1fK7C-G_5xsTgwdqnOydya061id3PRsxLSZjpDHRpPxN-pomUj025-WhhmVYKDvCg=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Lavinia Rusanda",
+    "user_id": "UCG9rqLCUj6sXWI3wCM6Ymsw",
+    "custom_name": "FlameMonroe",
+    "handle": "FlameMonroe",
+    "url": "https://www.youtube.com/channel/UCG9rqLCUj6sXWI3wCM6Ymsw",
+    "picture": "https://yt3.googleusercontent.com/ytc/APkrFKY3bJBww6I70TAWQi5qEVNjKR4bwbPKDCBDGmXcQV0=s480-c-k-c0x00ffffff-no-rj",
+    "fullname": "Flame Monroe",
     "is_verified": false,
-    "followers": 151000,
-    "engagements": 2251,
-    "engagement_rate": 0.014907284768211921,
-    "avg_views": 57030,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 62000,
+    "engagements": 792,
+    "engagement_rate": 0.012774193548387098,
+    "avg_views": 6825,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 939,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9785862393451883,
+    "distance": 0.349609375,
+    "followers_growth": 0.002263174911089516,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.21258457374830853
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.0032057994156201096
+      },
+      {
+        "code": "18-24",
+        "male": 0.056502214700304434
+      },
+      {
+        "code": "25-34",
+        "male": 0.10579138071546362
+      },
+      {
+        "code": "35-44",
+        "male": 0.0407854595084355
+      },
+      {
+        "code": "45-64",
+        "male": 0.01453274993978736
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.9467787114845938
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffeelover"]
   },
   {
-    "user_id": "UC-m5VmOsc8aJt0elxk1Ia8A",
-    "handle": "sarabeqele",
-    "url": "https://www.youtube.com/channel/UC-m5VmOsc8aJt0elxk1Ia8A",
-    "picture": "https://yt3.googleusercontent.com/3lqTs6fKaXc42ohnfeyna5TSyrUE6fcCtpm2vZOINjxOmqnz2o5wHBAVkFzmGOVREOH2iD_b=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "SARA BEQELE",
+    "user_id": "6792963074171536389",
+    "username": "alex.altitudecoffee",
+    "url": "https://www.tiktok.com/@6792963074171536389",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/be537d9b520f9edf89f8eca6089e8070~c5_720x720.jpeg",
+    "fullname": "Alex Gren Coffee",
     "is_verified": false,
-    "followers": 211000,
-    "engagements": 14862,
-    "engagement_rate": 0.07043601895734597,
-    "avg_views": 238777,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 124900,
+    "engagements": 3539,
+    "engagement_rate": 0.02833466773418735,
+    "avg_views": 64184,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 379,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9887425647816874,
+    "distance": 0.20396482944488525,
+    "followers_growth": 0.08384387094534795,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.09651257096512572
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.007447915444254073
+      },
+      {
+        "code": "18-24",
+        "male": 0.048101120577474225
+      },
+      {
+        "code": "25-34",
+        "male": 0.032274300258434314
+      },
+      {
+        "code": "35-44",
+        "male": 0.0043446173424815425
+      },
+      {
+        "code": "45-64",
+        "male": 0.0043446173424815425
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.9557728119180633
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
   },
   {
-    "user_id": "UC8o9OGdiIG-Gh2hujz_lmOw",
-    "custom_name": "hannahchoyoutube",
-    "handle": "imhannahcho",
-    "url": "https://www.youtube.com/channel/UC8o9OGdiIG-Gh2hujz_lmOw",
-    "picture": "https://yt3.googleusercontent.com/mEuv_ocuLpPatGUEi5OJg6ih7A-bMOU9O2XpOT8RSSrKcyVhwR3AI4j8Gm0rNYMCHxHNVU9A=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "hannah cho",
+    "user_id": "6807171977842967557",
+    "username": "mamamadecoffee",
+    "url": "https://www.tiktok.com/@6807171977842967557",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/bbcde8fb5ab6822771800e105341eaee~c5_720x720.jpeg",
+    "fullname": "Cat ☕️ Herrington",
     "is_verified": false,
-    "followers": 81500,
-    "engagements": 3955,
-    "engagement_rate": 0.04852760736196319,
-    "avg_views": 50648,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 110500,
+    "engagements": 4733,
+    "engagement_rate": 0.04283257918552036,
+    "avg_views": 80626,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 408,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.987520608129097,
+    "distance": 0.25092458724975586,
+    "followers_growth": 0.2449441746752441,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.13938753959873287
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.009472939584379902
+      },
+      {
+        "code": "18-24",
+        "male": 0.06089746875672794
+      },
+      {
+        "code": "25-34",
+        "male": 0.05548436042279657
+      },
+      {
+        "code": "35-44",
+        "male": 0.012179493751345588
+      },
+      {
+        "code": "45-64",
+        "male": 0.001353277083482843
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.8575827559661278
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
   },
   {
-    "user_id": "UCzq-GBe1v0fkptsNnVr6DHQ",
-    "custom_name": "AliciaKim",
-    "handle": "AliciaKim",
-    "url": "https://www.youtube.com/channel/UCzq-GBe1v0fkptsNnVr6DHQ",
-    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRlgoBiLgQV9b43T4atb1vQ4ntP401LxV9b9DuABzo=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Alicia Kim",
+    "user_id": "531298",
+    "username": "kmaeleee",
+    "url": "https://www.tiktok.com/@531298",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/77dc73a2e11215a99e33493a0b9cca70~c5_720x720.jpeg",
+    "fullname": "kam 🫧",
+    "is_verified": false,
+    "followers": 103800,
+    "engagements": 2191,
+    "engagement_rate": 0.02110789980732177,
+    "avg_views": 23919,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 500,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9864553088727032,
+    "distance": 0.22730189561843872,
+    "followers_growth": 0.01327606403748538,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.2256584788398935
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.022832504875232945
+      },
+      {
+        "code": "18-24",
+        "male": 0.13449511995848895
+      },
+      {
+        "code": "25-34",
+        "male": 0.05849787745406397
+      },
+      {
+        "code": "35-44",
+        "male": 0.006999746020144407
+      },
+      {
+        "code": "45-64",
+        "male": 0.002833230531963212
+      },
+      {
+        "code": "65-",
+        "male": 0
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.9530217763640813
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
+  },
+  {
+    "user_id": "6814191304022770693",
+    "username": "amberalejandrez",
+    "url": "https://www.tiktok.com/@6814191304022770693",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/a9209a578ca4e9ed2f2a06fbdf92c460~c5_720x720.jpeg",
+    "fullname": "Amber Alejandrez",
+    "is_verified": false,
+    "followers": 104300,
+    "engagements": 6191,
+    "engagement_rate": 0.05935762224352829,
+    "avg_views": 78195,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 1032,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9853040659618132,
+    "distance": 0.2477157711982727,
+    "followers_growth": 0.014137642689069141,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.037797746398516616
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.002058293120711301
+      },
+      {
+        "code": "18-24",
+        "male": 0.016466344965690407
+      },
+      {
+        "code": "25-34",
+        "male": 0.014220934288550808
+      },
+      {
+        "code": "35-44",
+        "male": 0.0031809984592811014
+      },
+      {
+        "code": "45-64",
+        "male": 0.0018711755642830008
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.9768882008183125
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
+  },
+  {
+    "user_id": "300843826",
+    "username": "ryantagcoffee",
+    "url": "https://www.instagram.com/ryantagcoffee/",
+    "picture": "https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F%2FppcWBZyBSo5MG8vbMZFQsc2nC72MyIwe8rY3gqtHPvcGs%2B5OxH4GBuWqkveka8cZ1WRy4px2hZOI0xHcioAd55Y2hKQqbyqoOH4WkjibXu9%2B9cjM%2BjKWoZ6%2BUqP19pmw%3D%3D",
+    "fullname": "Ryan Tag",
     "is_verified": true,
-    "followers": 117000,
-    "engagements": 2877,
-    "engagement_rate": 0.024589743589743588,
-    "avg_views": 56459,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "account_type": 3,
+    "followers": 54363,
+    "engagements": 1561,
+    "engagement_rate": 0.028714382944281955,
+    "avg_reels_plays": 78195,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 273,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9861015951535691,
+    "distance": 0.22479677200317383,
+    "followers_growth": 0.19694834647056236,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.5660762074678222
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.015394601972421111
+      },
+      {
+        "code": "18-24",
+        "male": 0.17100991588641282
+      },
+      {
+        "code": "25-34",
+        "male": 0.28285262660171323
+      },
+      {
+        "code": "35-44",
+        "male": 0.08179541529924951
+      },
+      {
+        "code": "45-64",
+        "male": 0.015023647708025422
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.4577124868835257
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffelover"]
   },
   {
-    "user_id": "UCXDH4JLE9nt5Ga-lCNeGuFA",
-    "username": "tanjaruz",
-    "custom_name": "TaniaBWells",
-    "handle": "TaniaBWells",
-    "url": "https://www.youtube.com/channel/UCXDH4JLE9nt5Ga-lCNeGuFA",
-    "picture": "https://yt3.googleusercontent.com/7EIKnNQSHce4g-i3CxVw3GyJCkHKsaKHNU-tIQFl0NrDEawfNIWLDGwIvqBUm7GuW-YRx2cPFPc=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Tania B. Wells",
+    "user_id": "327288580",
+    "username": "adriaccopa",
+    "url": "https://www.instagram.com/adriaccopa/",
+    "picture": "https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDYwCkfbMxA5hs7Mya6WamPUBy7AQeZxtYE2EGDL8t35kpTc%2FJpnh10V1JXzk0gSWvpZjgwDlffUt42%2FHjPynIe3",
+    "fullname": "𝗔𝗱𝗿𝗶𝗮𝗻",
     "is_verified": false,
-    "followers": 31800,
-    "engagements": 607,
-    "engagement_rate": 0.019088050314465407,
-    "avg_views": 8934,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "account_type": 3,
+    "followers": 101767,
+    "engagements": 102370,
+    "engagement_rate": 1.0059252999498856,
+    "avg_reels_plays": 78195,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 137,
+    "geo": {
+      "country": {
+        "id": 1428125,
+        "name": "Canada",
+        "code": "CA",
+        "coords": {
+          "lat": 45.41117,
+          "lon": -75.69812
+        }
+      }
+    },
+    "relevance": 0.9858339576017775,
+    "distance": 0.28766876459121704,
+    "followers_growth": 0.053826797419461725,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.6041926628400299
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.013340686338129659
+      },
+      {
+        "code": "18-24",
+        "male": 0.13024722714331852
+      },
+      {
+        "code": "25-34",
+        "male": 0.3001654426079173
+      },
+      {
+        "code": "35-44",
+        "male": 0.12252367189492763
+      },
+      {
+        "code": "45-64",
+        "male": 0.037915634855736915
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.1559821734658896
+        },
+        {
+          "id": 1428125,
+          "name": "Canada",
+          "code": "CA",
+          "weight": 0.14364072677408296
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffelover"]
   },
   {
-    "user_id": "UCG2OQSvqQop9zeLvNTHA31w",
-    "custom_name": "HermelaSolomon94",
-    "handle": "HermelaSolomon",
-    "url": "https://www.youtube.com/channel/UCG2OQSvqQop9zeLvNTHA31w",
-    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRGQsCHOoJG8qHGy2Rrw1NJwqcadDDj4kttsG3GyQ=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Hermela Solomon",
-    "is_verified": false,
-    "followers": 79100,
-    "engagements": 843,
-    "engagement_rate": 0.01065739570164349,
-    "avg_views": 13495,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "user_id": "42271150",
+    "username": "thetattooedhusband",
+    "url": "https://www.instagram.com/thetattooedhusband/",
+    "picture": "https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZAuM8S6TK6GKPKKfIXtR8yYJFMvYZZKS7toIFUQvm5sGEEQ0FNiHXNy4uOnQOvPInLpuC5BX64ZosbXLiyI9%2BarOPQt%2BBH8xfdE2dL1avFgg%3D%3D",
+    "fullname": "Johnny Eastman",
+    "is_verified": true,
+    "account_type": 2,
+    "followers": 143329,
+    "engagements": 8416,
+    "engagement_rate": 0.0587180542667569,
+    "avg_reels_plays": 78195,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 2066,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9838722603924274,
+    "distance": 0.32007503509521484,
+    "followers_growth": 0.003479612411784405,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.36876026791356004
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.006894286814617401
+      },
+      {
+        "code": "18-24",
+        "male": 0.0746600816021982
+      },
+      {
+        "code": "25-34",
+        "male": 0.16294058349668927
+      },
+      {
+        "code": "35-44",
+        "male": 0.08525374182953713
+      },
+      {
+        "code": "45-64",
+        "male": 0.0385071141596923
+      },
+      {
+        "code": "65-",
+        "male": 0.0005044600108256635
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.5859247135842881
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffelover"]
   },
   {
-    "user_id": "UCTHb57pkZsg0SFI-rsXHGaQ",
-    "custom_name": "Tamara’sTimelessBeauty",
-    "handle": "TamarasTimelessBeauty",
-    "url": "https://www.youtube.com/channel/UCTHb57pkZsg0SFI-rsXHGaQ",
-    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRvdYV3-iCo8DAAcnOG5tsKiDTcHs9c1AWop8KCBQ=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Tamara’s Timeless Beauty",
+    "user_id": "UCkWWATxuu-D6uPydP-EvJYQ",
+    "custom_name": "LyneeMonae",
+    "handle": "LyneeMonae",
+    "url": "https://www.youtube.com/channel/UCkWWATxuu-D6uPydP-EvJYQ",
+    "picture": "https://yt3.googleusercontent.com/MAM4K5jNzLTvLo3KCTQbk09RkLId7a_fBSEEp3wO9gGMZR20XFKYbWWUCKLyHrs_QcZPW_9x9Q=s480-c-k-c0x00ffffff-no-rj",
+    "fullname": "Lynee' Monae",
     "is_verified": false,
-    "followers": 95200,
-    "engagements": 987,
-    "engagement_rate": 0.01036764705882353,
-    "avg_views": 19717,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 108000,
+    "engagements": 6497,
+    "engagement_rate": 0.06015740740740741,
+    "avg_views": 68010,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 478,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9691990855554162,
+    "distance": 0.5185489058494568,
+    "followers_growth": 0.06491022215210474,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.4448593477719692
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.01213252766650825
+      },
+      {
+        "code": "18-24",
+        "male": 0.11549215039525884
+      },
+      {
+        "code": "25-34",
+        "male": 0.2116452048490884
+      },
+      {
+        "code": "35-44",
+        "male": 0.08402898791248307
+      },
+      {
+        "code": "45-64",
+        "male": 0.02201829095032979
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.9362041467304625
+        }
+      ]
+    },
+    "topics": ["icedcoffee", "coffeeaddict", "coldbrew"]
   },
   {
-    "user_id": "UC0wZCPILuEVZaTPCUutXPag",
-    "handle": "herocosmetics4084",
-    "url": "https://www.youtube.com/channel/UC0wZCPILuEVZaTPCUutXPag",
-    "picture": "https://yt3.googleusercontent.com/ytc/AOPolaRZEt8cfMK7fP7LbzDM7N6LtkiK4SU0ArC28K4KzQ=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Hero Cosmetics",
+    "user_id": "6796041695354094597",
+    "username": "millionaiiredee",
+    "url": "https://www.tiktok.com/@6796041695354094597",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/2e36509d5135e53fc8d673eba8d6fb3f~c5_720x720.jpeg",
+    "fullname": "Millionaiire Dee",
     "is_verified": false,
-    "followers": 15200,
-    "engagements": 5827,
-    "engagement_rate": 0.38335526315789475,
-    "avg_views": 118425,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 298600,
+    "engagements": 19155,
+    "engagement_rate": 0.06414936369725385,
+    "avg_views": 369720,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 586,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9826407994214086,
+    "distance": 0.358310341835022,
+    "followers_growth": 0.11011971150271394,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.14092356687898092
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.01709427882259827
+      },
+      {
+        "code": "18-24",
+        "male": 0.0767157878867825
+      },
+      {
+        "code": "25-34",
+        "male": 0.03794096031357178
+      },
+      {
+        "code": "35-44",
+        "male": 0.0075048053367504615
+      },
+      {
+        "code": "45-64",
+        "male": 0.0016677345192778802
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.6073292076204344
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
   },
   {
-    "user_id": "UC_lw0c1NgN8BOuvY80vbQYA",
-    "custom_name": "EvieOjwang",
-    "handle": "EvieAswiti",
-    "url": "https://www.youtube.com/channel/UC_lw0c1NgN8BOuvY80vbQYA",
-    "picture": "https://yt3.googleusercontent.com/0Hb-4dn8eLJNQtuVph1jHCsls3v4RS9zbrgT92L1_grFWVLL6XIopAtz4FhegDRKXriIOpVYzZA=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Evie Aswiti",
+    "user_id": "6921515335868187654",
+    "username": "lyellgirl",
+    "url": "https://www.tiktok.com/@6921515335868187654",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/d67612d93faa5ecb8a607ba2598f56db~c5_720x720.jpeg",
+    "fullname": "Lyell",
     "is_verified": false,
-    "followers": 13300,
-    "engagements": 353,
-    "engagement_rate": 0.026541353383458647,
-    "avg_views": 5803,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 89500,
+    "engagements": 5513,
+    "engagement_rate": 0.06159776536312849,
+    "avg_views": 66630,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 775,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9816379333005594,
+    "distance": 0.3178509473800659,
+    "followers_growth": 0.16197548815953478,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.42793825462326157
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.00829270739681734
+      },
+      {
+        "code": "18-24",
+        "male": 0.11886213935438186
+      },
+      {
+        "code": "25-34",
+        "male": 0.17103709005935763
+      },
+      {
+        "code": "35-44",
+        "male": 0.0830998387056071
+      },
+      {
+        "code": "45-64",
+        "male": 0.04664647910709753
+      },
+      {
+        "code": "65-",
+        "male": 0
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.8195448171718261
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
   },
   {
-    "user_id": "UCEYRIzPJc0bVfGg5R6kEw3Q",
-    "custom_name": "Fitfashionistarocks",
-    "handle": "Fitfashionistarocks",
-    "url": "https://www.youtube.com/channel/UCEYRIzPJc0bVfGg5R6kEw3Q",
-    "picture": "https://yt3.googleusercontent.com/ZP0UY_JfBLlltxXMCen6fKuRfGChhMsb0SOPon6SgszjLzHe1UutQdv1IiLKwOe3HlspZH_-Tqo=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Fitfashionistarocks",
+    "user_id": "6805605824443728901",
+    "username": "jessnicole____",
+    "url": "https://www.tiktok.com/@6805605824443728901",
+    "picture": "https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/fa64ce1a80ac289a5b5a35ed71b91b43~c5_720x720.jpeg",
+    "fullname": "🎀JessNicole🎀",
     "is_verified": false,
-    "followers": 25500,
-    "engagements": 328,
-    "engagement_rate": 0.012862745098039216,
-    "avg_views": 1940,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "followers": 385800,
+    "engagements": 38960,
+    "engagement_rate": 0.10098496630378434,
+    "avg_views": 305948,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 270,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9814576039505216,
+    "distance": 0.3852388858795166,
+    "followers_growth": 0.09267021638155648,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.3299236421264947
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.023426530801881285
+      },
+      {
+        "code": "18-24",
+        "male": 0.18985251004024625
+      },
+      {
+        "code": "25-34",
+        "male": 0.09988812439135493
+      },
+      {
+        "code": "35-44",
+        "male": 0.013177423576058223
+      },
+      {
+        "code": "45-64",
+        "male": 0.0035790533169540854
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.6199638429752066
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeelover", "morningcoffee"]
   },
   {
-    "user_id": "UCOgtN9OnRLxWftGseqKgFbw",
-    "custom_name": "ajanarie",
-    "handle": "ajanarie",
-    "url": "https://www.youtube.com/channel/UCOgtN9OnRLxWftGseqKgFbw",
-    "picture": "https://yt3.googleusercontent.com/YyPwmeoEBoPqPErCJmaHARHSb8dQ9rHEXNvMZ4gDl2jOwAynzf2g-t2UhrL7mXDmVtUBcsPnsQ=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Aja Narie",
+    "user_id": "8460726280",
+    "username": "pullandpourcoffee",
+    "url": "https://www.instagram.com/pullandpourcoffee/",
+    "picture": "https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZV%2BMI1sY1L8JvHJB4dXZLApyAdMulDc2VV0HnKIsTUW7dTowpo97JbldauCAkOZs9It1zeqrySVqz%2Bj0AygEtQrOPQt%2BBH8xfdE2dL1avFgg%3D%3D",
+    "fullname": "Pull & Pour | Specialty Coffee",
     "is_verified": false,
-    "followers": 54900,
-    "engagements": 747,
-    "engagement_rate": 0.01360655737704918,
-    "avg_views": 15302,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
-  },
-  {
-    "user_id": "UCH4lbCrzfEFi11uUWFGEigg",
-    "custom_name": "LifeofaDreamer1",
-    "handle": "Loa.Dreamer",
-    "url": "https://www.youtube.com/channel/UCH4lbCrzfEFi11uUWFGEigg",
-    "picture": "https://yt3.googleusercontent.com/Ecr22u95OoDeNQT4zcj-kUhGwNFq57VITYiBR4qREcMNiR-p8Fjii5pDaHgAFFFglzMc42NRIA=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Life of a Dreamer",
-    "is_verified": false,
-    "followers": 6130,
-    "engagements": 129,
-    "engagement_rate": 0.021044045676998368,
-    "avg_views": 3507,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
-  },
-  {
-    "user_id": "UCGoPx3qaC3HLBXsYRXncRfg",
-    "custom_name": "lilcutenurse",
-    "handle": "lilcutenurse",
-    "url": "https://www.youtube.com/channel/UCGoPx3qaC3HLBXsYRXncRfg",
-    "picture": "https://yt3.googleusercontent.com/ueulJqaEF86aFSHtCjMXgQvFWKGEQZ7tiIigZvr01Hy6q5bYmzMeGI5UsMnkvbc70rAV_fjw=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Lilcutenurse",
-    "is_verified": false,
-    "followers": 15000,
-    "engagements": 173,
-    "engagement_rate": 0.011533333333333333,
-    "avg_views": 1612,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
-  },
-  {
-    "user_id": "UC8FJqFMgoYucnZAy1KRbnvA",
-    "username": "143LilianaMadrigal",
-    "custom_name": "LilianaMadrigalP",
-    "handle": "LilianaMadrigalP",
-    "url": "https://www.youtube.com/channel/UC8FJqFMgoYucnZAy1KRbnvA",
-    "picture": "https://yt3.googleusercontent.com/Bze05AN09ltKXiLLoxmmCUKdPOdmMySh7qZGuwPSv18mm8ReF4q8Aa6YVcASDSGszkhHSA3c=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Liliana Madrigal",
-    "is_verified": false,
-    "followers": 6500,
-    "engagements": 95,
-    "engagement_rate": 0.014615384615384615,
-    "avg_views": 1594,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
-  },
-  {
-    "user_id": "UC7r57vVML34kzLj6xsqPwwA",
-    "handle": "curly.glorii",
-    "url": "https://www.youtube.com/channel/UC7r57vVML34kzLj6xsqPwwA",
-    "picture": "https://yt3.googleusercontent.com/RwDylKsLBjcNJj1ZV-t9kdeTUpadxvHrJXSDlQNlp2gb2Y-conSk9_S6nxHSSJtAmiftZ5-8Omg=s480-c-k-c0x00ffffff-no-rj",
-    "fullname": "Glory♡Rose",
-    "is_verified": false,
-    "followers": 11500,
-    "engagements": 159,
-    "engagement_rate": 0.01382608695652174,
-    "avg_views": 3083,
-    "topics": ["skincare", "skincareroutine", "skincare products"]
+    "account_type": 2,
+    "followers": 126240,
+    "engagements": 2502,
+    "engagement_rate": 0.01981939163498099,
+    "avg_reels_plays": 78195,
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "posts_count": 1755,
+    "geo": {
+      "country": {
+        "id": 148838,
+        "name": "United States",
+        "code": "US",
+        "coords": {
+          "lat": 38.89511,
+          "lon": -77.03637
+        }
+      }
+    },
+    "relevance": 0.9836525002482029,
+    "distance": 0.3168160319328308,
+    "followers_growth": 0.06555924134612945,
+    "audience_genders": [
+      {
+        "code": "MALE",
+        "weight": 0.7162921348314607
+      }
+    ],
+    "audience_genders_per_age": [
+      {
+        "code": "13-17",
+        "male": 0.014472944758105039
+      },
+      {
+        "code": "18-24",
+        "male": 0.13879791284412207
+      },
+      {
+        "code": "25-34",
+        "male": 0.36656884674216855
+      },
+      {
+        "code": "35-44",
+        "male": 0.15113550509693294
+      },
+      {
+        "code": "45-64",
+        "male": 0.04507966400065503
+      },
+      {
+        "code": "65-",
+        "male": 0.00023726138947713178
+      }
+    ],
+    "audience_geo": {
+      "countries": [
+        {
+          "id": 148838,
+          "name": "United States",
+          "code": "US",
+          "weight": 0.2769596199524941
+        }
+      ]
+    },
+    "topics": ["coffee", "coffeeshop", "coffelover"]
   }
 ]

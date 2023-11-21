@@ -1,9 +1,10 @@
 import * as Sentry from '@sentry/nextjs';
 import { isUnknownError } from './is-api-error';
+import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-error';
 
 export type LogLevel = Sentry.SeverityLevel;
 
-type CaptureContext = Parameters<typeof Sentry.captureException>[1];
+export type CaptureContext = Parameters<typeof Sentry.captureException>[1];
 
 const isLogLevel = (value: any): value is LogLevel => {
     return ['fatal', 'error', 'warning', 'log', 'info', 'debug'].includes(value);
@@ -19,6 +20,11 @@ export const logError = (message: unknown, captureContext?: CaptureContext) => {
 export const log = (message: unknown) => {
     // eslint-disable-next-line no-console
     console.log(message);
+};
+
+export const logWarn = (message: unknown) => {
+    // eslint-disable-next-line no-console
+    console.warn(message);
 };
 
 /**
@@ -118,13 +124,22 @@ export const log = (message: unknown) => {
  */
 export const serverLogger = (message: unknown, captureContext?: LogLevel | CaptureContext) => {
     const messageRaw = message;
+
+    if (isPostgrestError(message)) {
+        message = normalizePostgrestError(message);
+    }
+
+    if (typeof message === 'string') {
+        message = new Error(message);
+    }
+
     const isUnknown = isUnknownError(message);
 
     if (isUnknown) {
-        message = JSON.stringify(message);
+        message = new Error('Unknown Error', { cause: message });
     }
 
-    let level = 'error';
+    let level: LogLevel = 'error';
 
     if (isLogLevel(captureContext)) {
         level = captureContext;
@@ -150,6 +165,10 @@ export const serverLogger = (message: unknown, captureContext?: LogLevel | Captu
         }
 
         return logError(message, _captureContext);
+    }
+
+    if (level === 'warning') {
+        return logWarn(message);
     }
 
     return log(message);

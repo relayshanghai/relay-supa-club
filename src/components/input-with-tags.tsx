@@ -8,10 +8,19 @@ export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputEl
     onTagRemove: (tag: CreatorSearchTag | LocationWeighted) => void;
     TagComponent?: React.FC<any>;
     spinnerLoading: boolean;
+    topicSearch: boolean;
 }
-export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, spinnerLoading, ...rest }: Props) => {
+export const InputWithTags = ({
+    disabled,
+    tags = [],
+    onTagRemove,
+    TagComponent,
+    spinnerLoading,
+    topicSearch,
+    ...rest
+}: Props) => {
     return (
-        <label className="flex w-full flex-col text-xs font-medium text-gray-500">
+        <label className="flex w-full flex-col text-xs font-medium text-gray-500 ">
             <div
                 className={`flex w-full flex-row items-center rounded-md ${
                     tags.length > 0 && 'pl-2'
@@ -23,7 +32,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                               if (TagComponent) {
                                   return (
                                       <span key={i}>
-                                          {spinnerLoading && (
+                                          {spinnerLoading && !topicSearch && (
                                               <Spinner
                                                   data-testid="search-spinner"
                                                   className="h-5 w-5 fill-primary-600 text-white"
@@ -58,7 +67,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                     className="w-full appearance-none rounded border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     {...rest}
                 />
-                {spinnerLoading && (
+                {spinnerLoading && !topicSearch && (
                     <Spinner data-testid="search-spinner" className="h-5 w-5 fill-primary-600 text-white" />
                 )}
             </div>

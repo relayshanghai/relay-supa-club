@@ -1,14 +1,16 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import type { ApiError } from 'src/errors/api-error';
 import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
 import { nanoid } from 'nanoid';
 import { setUser } from '@sentry/nextjs';
+import type { Session, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-
-export type ApiError = { error: any };
+import { RelayError } from 'src/errors/relay-error';
+import type { RelayDatabase } from './api/db';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -39,42 +41,19 @@ export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: 
 
 export type ApiResponse<T> = T | ApiError;
 
+type RelayApiRequest = NextApiRequest & {
+    supabase: SupabaseClient<RelayDatabase>;
+    session?: Session;
+};
+
+export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes>) => void;
+
 export type ApiHandlerParams = {
-    getHandler?: NextApiHandler;
-    postHandler?: NextApiHandler;
-    deleteHandler?: NextApiHandler;
-    putHandler?: NextApiHandler;
+    getHandler?: NextApiHandler | ActionHandler;
+    postHandler?: NextApiHandler | ActionHandler;
+    deleteHandler?: NextApiHandler | ActionHandler;
+    putHandler?: NextApiHandler | ActionHandler;
 };
-
-export type RelayErrorOptions = {
-    shouldLog?: boolean;
-    sendToSentry?: boolean;
-};
-
-export class RelayError extends Error {
-    readonly _httpCode: number;
-    readonly _shouldLog: boolean;
-    readonly _sendToSentry: boolean;
-
-    constructor(msg: string, httpCode = httpCodes.INTERNAL_SERVER_ERROR, options?: RelayErrorOptions) {
-        super(msg);
-        this._httpCode = httpCode;
-        this._shouldLog = options?.shouldLog || true; // log to server by default
-        this._sendToSentry = !!options?.sendToSentry && process.env.NODE_ENV !== 'development'; // Don’t send to sentry unless explicitly set in options, and only in production
-    }
-
-    get httpCode() {
-        return this._httpCode;
-    }
-
-    get shouldLog() {
-        return this._shouldLog;
-    }
-
-    get sendToSentry() {
-        return this._sendToSentry;
-    }
-}
 
 const isJsonable = (error: any) => {
     return (
@@ -123,55 +102,59 @@ const createErrorObject = (error: any, tag: string) => {
     return e;
 };
 
-export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
-    return async (req: NextApiRequest, res: NextApiResponse<T | ApiError>) => {
-        try {
-            await fn(req, res);
-        } catch (error) {
-            const tag = nanoid(6);
-            const e = createErrorObject(error, tag);
+const determineHandler = (req: NextApiRequest, params: ApiHandlerParams) => {
+    if (req.method === 'GET' && params.getHandler !== undefined) {
+        return params.getHandler;
+    }
 
-            serverLogger(error, (scope) => {
-                return scope.setTag('error_code_tag', e.tag);
-            });
+    if (req.method === 'POST' && params.postHandler !== undefined) {
+        return params.postHandler;
+    }
 
-            return res.status(e.httpCode).json({ error: e.message });
-        }
-    };
+    if (req.method === 'PUT' && params.putHandler !== undefined) {
+        return params.putHandler;
+    }
+
+    if (req.method === 'DELETE' && params.deleteHandler !== undefined) {
+        return params.deleteHandler;
+    }
+
+    return false;
 };
 
-export const ApiHandler =
-    <T = any>(params: ApiHandlerParams) =>
-    async (req: NextApiRequest, res: NextApiResponse) => {
-        const supabase = createServerSupabaseClient({ req, res });
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
+export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequest, res: NextApiResponse) => {
+    req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
+    const {
+        data: { session },
+    } = await req.supabase.auth.getSession();
 
-        if (session) {
-            setUser({
-                id: session.user.id,
-                email: session.user.email,
-            });
-        }
+    if (session) {
+        req.session = session;
 
-        if (req.method === 'GET' && params.getHandler !== undefined) {
-            return await exceptionHandler<T>(params.getHandler)(req, res);
-        }
+        setUser({
+            id: session.user.id,
+            email: session.user.email,
+        });
+    }
 
-        if (req.method === 'POST' && params.postHandler !== undefined) {
-            return await exceptionHandler<T>(params.postHandler)(req, res);
-        }
+    const handler = determineHandler(req, params);
 
-        if (req.method === 'PUT' && params.putHandler !== undefined) {
-            return await exceptionHandler<T>(params.putHandler)(req, res);
-        }
-
-        if (req.method === 'DELETE' && params.deleteHandler !== undefined) {
-            return await exceptionHandler<T>(params.deleteHandler)(req, res);
-        }
-
+    if (handler === false) {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
             error: 'Method not allowed',
         });
-    };
+    }
+
+    try {
+        return await handler(req, res);
+    } catch (error) {
+        const tag = nanoid(6);
+        const e = createErrorObject(error, tag);
+
+        serverLogger(error, (scope) => {
+            return scope.setTag('error_code_tag', e.tag);
+        });
+
+        return res.status(e.httpCode).json({ error: e.message });
+    }
+};

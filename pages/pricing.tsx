@@ -1,5 +1,5 @@
-import { PricingPage } from 'src/components/pricing/pricing-page';
+import { LandingPage } from 'src/components/signup/landing-page';
 
 export default function upgradeSubscriptionPage() {
-    return <PricingPage />;
+    return <LandingPage />;
 }

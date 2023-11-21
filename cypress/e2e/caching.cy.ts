@@ -32,7 +32,7 @@ describe('Caches SWR requests', () => {
             req.reply({ body: cocomelon, delay: 10000 });
         });
         cy.reload();
-        cy.contains('Sequences', { timeout: 10000 }); // sidebar has loaded
+        cy.contains('CRM', { timeout: 10000 }); // sidebar has loaded
 
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });

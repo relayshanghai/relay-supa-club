@@ -19,47 +19,72 @@ export type RudderIdentifier = {
     anonymousId?: string;
 };
 
-export const createClient = (writeKey?: string, dataPlane?: string, options?: constructorOptions): RudderBackend =>
-    new Analytics(writeKey ?? process.env.RUDDERSTACK_APP_WRITE_KEY ?? '', {
-        dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
-        ...options,
-    });
+export const createClient = (
+    writeKey?: string,
+    dataPlane?: string,
+    options?: constructorOptions,
+): RudderBackend | null => {
+    try {
+        return new Analytics(writeKey ?? process.env.RUDDERSTACK_APP_WRITE_KEY ?? '', {
+            dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
+            ...options,
+        });
+    } catch (error) {
+        serverLogger('Cannot instantiate Rudderstack', (scope) => {
+            return scope.setContext('Error', {
+                error,
+            });
+        });
+    }
+
+    return null;
+};
+
+type TrackFuncType = (r: RudderBackend | null, u: (typeof Rudderstack.prototype)['session']) => TrackEvent;
 
 /**
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend, u: (typeof Rudderstack.prototype)['session']) => TrackEvent =
-    (rudder, session) => (event, payload) => {
-        if (disabled) return;
+export const track: TrackFuncType = (rudder, session) => (event, payload) => {
+    if (!rudder || disabled) return false;
 
-        const trigger: TriggerEvent = (eventName, payload) => {
-            if (!session) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-            }
+    const trigger: TriggerEvent = (eventName, payload) => {
+        if (!session) {
+            throw new Error(`Rudderstack event "${eventName}" has no session`);
+        }
 
-            const trackPayload: Parameters<typeof rudder.track>[0] = {
-                event: eventName,
-                properties: payload,
-            };
-
-            if (session.user_id) {
-                trackPayload.userId = session.user_id;
-            }
-
-            if (!session.user_id && session.anonymous_id) {
-                trackPayload.anonymousId = session.anonymous_id;
-            }
-
-            if (!trackPayload.userId && !trackPayload.anonymousId) {
-                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-            }
-
-            rudder.track(trackPayload);
+        const trackPayload: Parameters<typeof rudder.track>[0] = {
+            event: eventName,
+            properties: payload,
         };
 
-        return event(trigger, payload);
+        if (session.user_id) {
+            trackPayload.userId = session.user_id;
+        }
+
+        if (!session.user_id && session.anonymous_id) {
+            trackPayload.anonymousId = session.anonymous_id;
+        }
+
+        if (!trackPayload.userId && !trackPayload.anonymousId) {
+            throw new Error(`Rudderstack event "${eventName}" has no identity`);
+        }
+
+        rudder.track(trackPayload);
     };
+
+    try {
+        event(trigger, payload);
+        return true;
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext(`Event`, { eventName: event.eventName });
+        });
+    }
+
+    return false;
+};
 
 const client = Symbol('Rudderstack Client');
 
@@ -100,7 +125,7 @@ export class Rudderstack {
 
     context: RudderstackContext | null = null;
 
-    getClient(writeKey?: string, dataPlaneUrl?: string, options?: constructorOptions): RudderBackend {
+    getClient(writeKey?: string, dataPlaneUrl?: string, options?: constructorOptions): RudderBackend | null {
         if (this[client] === null) {
             this[client] = createClient(writeKey, dataPlaneUrl, options);
         }
@@ -114,21 +139,31 @@ export class Rudderstack {
      * @todo decouple from supabase
      */
     async identify(context: ServerContext) {
-        if (this.session || disabled) return;
+        try {
+            if (this.session || disabled) return;
 
-        const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-        const session = await getUserSession(supabase)();
+            const client = this.getClient();
+            if (!client) return;
 
-        this.getClient().identify({
-            userId: session.user_id,
-        });
+            const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+            const session = await getUserSession(supabase)();
 
-        this.session = session;
-        this.serverContext = context;
+            client.identify({
+                userId: session.user_id,
+            });
+
+            this.session = session;
+            this.serverContext = context;
+        } catch (error) {
+            serverLogger(error);
+        }
     }
 
     async identifyWithProfile(userId: string) {
-        this.getClient().identify({
+        const client = this.getClient();
+        if (!client) return;
+
+        client.identify({
             userId,
         });
 
@@ -138,7 +173,10 @@ export class Rudderstack {
     }
 
     async identifyWithAnonymousID(anonymousId: string) {
-        this.getClient().identify({
+        const client = this.getClient();
+        if (!client) return;
+
+        client.identify({
             anonymousId,
         });
 
@@ -159,7 +197,7 @@ export class Rudderstack {
         if (disabled) return;
 
         if (this.context && this.context.event !== params.event) {
-            serverLogger(`Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`);
+            serverLogger(`Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`, 'log');
             return;
         }
 
@@ -183,6 +221,9 @@ export class Rudderstack {
         if (this.session === null || this.serverContext === null || this.context === null) {
             return;
         }
+
+        const client = this.getClient();
+        if (!client) return;
 
         const context = { ...this.context };
         this.context = null;
@@ -221,9 +262,10 @@ export class Rudderstack {
             return;
         }
 
-        this.getClient().track(
+        client.track(
             {
                 userId: this.session.user_id,
+                anonymousId: this.session.anonymous_id,
                 event: context.event,
                 properties: { ...(context.payload ?? {}), ...extra },
             },

@@ -9,10 +9,10 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
+import { AvatarDefault, DeleteOutline, SendOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
-import { EMAIL_STATUS_STYLES } from './constants';
+import type { EmailStatus } from './constants';
 
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
@@ -24,16 +24,17 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
-import { useCompany } from 'src/hooks/use-company';
 import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
 import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
+import { EmailStatusBadge } from './email-status-badge';
+import Image from 'next/image';
 
 interface SequenceRowProps {
     sequence?: Sequence;
     sequenceInfluencer: SequenceInfluencerManagerPage;
+    loadingEmails: boolean;
     lastEmail?: SequenceEmail;
-    nextEmail?: SequenceEmail;
     lastStep?: SequenceStep;
     nextStep?: SequenceStep;
     sequenceSteps: SequenceStep[];
@@ -47,25 +48,17 @@ interface SequenceRowProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
 }
 
-const Icons = {
-    Opened: <EmailOpenOutline className="h-4 w-4 stroke-blue-500" />,
-    Scheduled: <Clock className="h-4 w-4 stroke-yellow-500" />,
-    Bounced: <AlertCircleOutline className="h-4 w-4 stroke-red-500" />,
-    Delivered: <Send className="h-4 w-4 stroke-green-500" />,
-    Default: <Send className="h-4 w-4 stroke-gray-500" />,
-};
-
 /** use the tracking status if it is delivered */
-const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
+const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
     sequenceEmail?.email_delivery_status === 'Delivered'
-        ? sequenceEmail.email_tracking_status ?? sequenceEmail.email_delivery_status
-        : sequenceEmail?.email_delivery_status;
+        ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
+        : sequenceEmail?.email_delivery_status ?? 'Scheduling';
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,
     sequenceInfluencer,
+    loadingEmails,
     lastEmail,
-    nextEmail,
     lastStep,
     nextStep,
     currentTab,
@@ -77,23 +70,30 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     onCheckboxChange,
     checked,
 }) => {
+    const [avatarError, setAvatarError] = useState(false);
     const {
         sequenceInfluencers,
         updateSequenceInfluencer,
         deleteSequenceInfluencers: deleteSequenceInfluencer,
         refreshSequenceInfluencers,
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
-    const wasFetchedWithin10Minutes = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 600000);
+    const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
+
     const missingSocialProfileInfo =
-        !sequenceInfluencer.social_profile_last_fetched || !sequenceInfluencer.influencer_social_profile_id;
-    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin10Minutes;
+        !sequenceInfluencer.recent_post_title ||
+        !sequenceInfluencer.recent_post_url ||
+        !sequenceInfluencer.avatar_url ||
+        !sequenceInfluencer.social_profile_last_fetched ||
+        !sequenceInfluencer.influencer_social_profile_id ||
+        !sequenceInfluencer.tags ||
+        sequenceInfluencer.tags.length === 0;
+    const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
     const { report, socialProfile } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
     });
-    const { company } = useCompany();
 
     useEffect(() => {
         const update = async () => {
@@ -104,14 +104,28 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     socialProfile,
                     report,
                     updateSequenceInfluencer,
-                    company_id: company?.id ?? '',
+                    company_id: sequenceInfluencer.company_id,
+                }).catch((error: any) => {
+                    // Temporarily comment out the deleteSequenceInfluencer call as it seems to be causing unexpected issues. https://relayclub.slack.com/archives/C05R1C6V553/p1700226227238909?thread_ts=1700225873.168129&cid=C05R1C6V553
+                    // if (error.message.includes('Email already exists for this company')) {
+                    //     // Sometimes a user adds an influencer to a sequence from both tiktok and instagram and the email is the same. More permanent solution linked below.
+                    //     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1106
+
+                    //     deleteSequenceInfluencer([sequenceInfluencer.id]);
+                    // } else {
+                    //     clientLogger(error);
+                    // }
+                    clientLogger(error);
+
+                    return null;
                 });
             if (result?.email) {
                 setEmail(result.email);
             }
         };
+
         update();
-    }, [company?.id, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+    }, [deleteSequenceInfluencer, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     useEffect(() => {
         checkForIgnoredEmails({
@@ -137,7 +151,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const handleEmailUpdate = async (email: string) => {
         try {
-            const otherInfluencersEmails = sequenceInfluencers.map((influencer) => influencer.email);
+            const otherInfluencersEmails = sequenceInfluencers.map((influencer) =>
+                influencer.email?.trim().toLowerCase(),
+            );
             const uniqueEmail = !otherInfluencersEmails.includes(email);
             track(EnterInfluencerEmail, {
                 sequence_id: sequence?.id || '',
@@ -227,7 +243,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const sequenceSendTooltipTitle = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipTitle = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltip')
         : !sequenceInfluencer?.email
         ? t('sequences.missingEmail')
@@ -236,7 +252,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipDescription = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipDescription')
         : !sequenceInfluencer?.email
         ? t('sequences.missingEmailTooltipDescription')
@@ -248,7 +264,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
           })
         : t('sequences.sequenceSendTooltipDescription');
 
-    const sequenceSendTooltipHighlight = !sequenceInfluencer.influencer_social_profile_id
+    const sequenceSendTooltipHighlight = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
@@ -269,6 +285,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             );
         });
     }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
+    const lastEmailStatus: EmailStatus =
+        sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
     return (
         <>
@@ -290,11 +308,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <img
-                            className="inline-block h-14 w-14 bg-slate-300"
-                            src={imgProxy(sequenceInfluencer.avatar_url ?? '')}
-                            alt={`Influencer avatar ${sequenceInfluencer.name}`}
-                        />
+                        {sequenceInfluencer.avatar_url && !avatarError ? (
+                            <Image
+                                className="inline-block h-14 w-14 bg-slate-300"
+                                onError={() => setAvatarError(true)}
+                                src={imgProxy(sequenceInfluencer.avatar_url) ?? ''}
+                                alt={`Influencer avatar ${sequenceInfluencer.name}`}
+                                height={56}
+                                width={56}
+                            />
+                        ) : (
+                            <AvatarDefault height={56} width={56} />
+                        )}
 
                         <div className="flex flex-col">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
@@ -314,10 +339,13 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {isDuplicateInfluencer ? (
                                 <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
-                            ) : sequenceInfluencer.influencer_social_profile_id ? (
+                            ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={handleEmailUpdate}
+                                    onSubmit={(emailSubmit) => {
+                                        const trimmed = emailSubmit.trim().toLowerCase();
+                                        return handleEmailUpdate(trimmed);
+                                    }}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (
@@ -326,7 +354,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceInfluencer.influencer_social_profile_id ? (
+                            {!missingSocialProfileInfo ? (
                                 sequenceInfluencer.tags?.map((tag) => (
                                     <span
                                         key={tag}
@@ -359,7 +387,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         isMissingSequenceSendEmail ||
                                         !sequenceInfluencer?.email ||
                                         sendingEmail ||
-                                        !sequenceInfluencer.influencer_social_profile_id
+                                        missingSocialProfileInfo
                                     }
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
@@ -379,21 +407,20 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             {lastStep?.name ?? ''}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 align-middle">
-                            <span
-                                className={`flex w-fit flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm ${
-                                    EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default'].style
-                                }`}
-                            >
-                                {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
-                                {getStatus(lastEmail || nextEmail)}
-                            </span>
+                            <EmailStatusBadge loading={loadingEmails} status={lastEmailStatus} />
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {lastEmail?.email_send_at &&
-                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
-                                    month: 'short',
-                                    day: 'numeric',
-                                })}
+                            {loadingEmails ? (
+                                '--'
+                            ) : (
+                                <>
+                                    {lastEmail?.email_send_at &&
+                                        new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
+                                            month: 'short',
+                                            day: 'numeric',
+                                        })}
+                                </>
+                            )}
                         </td>
                         <td className="px-6 py-4 align-middle">
                             <div className="flex">
@@ -423,14 +450,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 })}
                         </td>
                         <td className={`whitespace-nowrap px-6 py-4`}>
-                            <div
-                                className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(lastEmail) || 'Default']
-                                }`}
-                            >
-                                {Icons[getStatus(lastEmail) as keyof typeof Icons] || Icons.Default}
-                                {getStatus(lastEmail)}
-                            </div>
+                            <EmailStatusBadge loading={loadingEmails} status={lastEmailStatus} />
                         </td>
                         {/* TODO */}
                         {/* <td className=" whitespace-nowrap px-6 py-4 text-gray-600">

@@ -1,18 +1,16 @@
-import { SparklesIcon } from '@heroicons/react/24/solid';
-import type { Influencer } from 'pages/boostbot';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { RecommendInfluencers, StopBoostbot, OpenVideoGuideModal } from 'src/utils/analytics/events';
+import { RecommendInfluencers, StopBoostbot } from 'src/utils/analytics/events';
 import type { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot/recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform } from 'types';
+import type { CreatorPlatform, InfluencerSize } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
-import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays, randomNumber } from 'src/utils/utils';
 import type { MessageType } from 'src/components/boostbot/message';
@@ -26,71 +24,94 @@ import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
+import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
+import { InfluencerDetailsModal } from './modal-influencer-details';
+import type { Row } from '@tanstack/react-table';
+import Logo from 'src/components/icons/Boostbot_selected';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export type Filters = {
     platforms: CreatorPlatform[];
     audience_geo: AudienceGeo[];
+    influencerSizes: InfluencerSize[];
 };
 
 interface ChatProps {
     messages: MessageType[];
     setMessages: Dispatch<SetStateAction<MessageType[]>>;
     addMessage: (message: MessageType) => void;
-    isUnlockOutreachLoading: boolean;
+    isOutreachLoading: boolean;
     isSearchLoading: boolean;
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
-    influencers: Influencer[];
-    setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
+    influencers: BoostbotInfluencer[];
+    setInfluencers: Dispatch<SetStateAction<BoostbotInfluencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
-    handleSelectedInfluencersToUnlock: () => void;
     handleSelectedInfluencersToOutreach: () => void;
-    handleUnlockInfluencers: (
-        influencers: Influencer[],
-        freeOfCharge: boolean,
-    ) => Promise<CreatorsReportGetResponse[] | undefined>;
     isSearchDisabled: boolean;
-    isUnlockButtonDisabled: boolean;
     isOutreachButtonDisabled: boolean;
     setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
     clearChatHistory: () => void;
+    isLoading: boolean;
+    isDisabled: boolean;
+    isInfluencerDetailsModalOpen: boolean;
+    setIsInfluencerDetailsModalOpen: (open: boolean) => void;
+    selectedRow?: Row<BoostbotInfluencer>;
+    showSequenceSelector: boolean;
+    setShowSequenceSelector: (show: boolean) => void;
+    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
     messages,
     setMessages,
     addMessage,
-    isUnlockOutreachLoading,
+    isOutreachLoading,
     isSearchLoading,
     areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
-    handleSelectedInfluencersToUnlock,
     handleSelectedInfluencersToOutreach,
-    handleUnlockInfluencers,
     isSearchDisabled,
-    isUnlockButtonDisabled,
     isOutreachButtonDisabled,
     setSearchId,
     sequence,
     setSequence,
     sequences,
     clearChatHistory,
+    isLoading,
+    isDisabled,
+    isInfluencerDetailsModalOpen,
+    setIsInfluencerDetailsModalOpen,
+    selectedRow,
+    showSequenceSelector,
+    setShowSequenceSelector,
+    allSequenceInfluencers,
+    setSelectedInfluencers,
 }) => {
-    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
-    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
-    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', {
+    const defaultFilters: Filters = {
         platforms: ['youtube', 'tiktok', 'instagram'],
         audience_geo: [
             { id: countriesByCode.US.id, weight: 0.15 },
             { id: countriesByCode.CA.id, weight: 0.1 },
         ],
+        influencerSizes: ['microinfluencer', 'nicheinfluencer'],
+    };
+    const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
+    const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
+    const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters, (onLoadFilters) => {
+        // Fallback for users who had the old version of the filters saved in localStorage
+        if (!onLoadFilters.influencerSizes) {
+            onLoadFilters.influencerSizes = ['microinfluencer', 'nicheinfluencer'];
+        }
+        return onLoadFilters;
     });
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
@@ -98,7 +119,6 @@ export const Chat: React.FC<ChatProps> = ({
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
     const { track } = useRudderstackTrack();
 
@@ -127,11 +147,6 @@ export const Chat: React.FC<ChatProps> = ({
             ...messages.slice(0, -1),
             { sender: 'Neutral', type: 'progress', progressData: progress },
         ]);
-
-    const chatSelectedInfluencersToUnlock = () => {
-        addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.unlockSelected' });
-        handleSelectedInfluencersToUnlock();
-    };
 
     const chatSelectedInfluencersToOutreach = () => {
         addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
@@ -163,6 +178,12 @@ export const Chat: React.FC<ChatProps> = ({
             payload.topics_generated = topics;
             updateProgress({ topics, isMidway: false, totalFound: null });
 
+            // Since we are getting rid of unlocking the top 3 influencers, we instead simulate the 2nd loading step with a timer.
+            const secondStepTimeout = setTimeout(
+                () => updateProgress({ topics, isMidway: true, totalFound: null }),
+                5000,
+            );
+
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
@@ -183,12 +204,10 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            track(RecommendInfluencers, payload);
 
-            updateProgress({ topics, isMidway: true, totalFound: null });
+            clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             setInfluencers(influencers);
-
-            await handleUnlockInfluencers(influencers.slice(0, 3), true);
-
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             if (influencers.length > 0) {
@@ -197,37 +216,25 @@ export const Chat: React.FC<ChatProps> = ({
                     addMessage({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTime',
-                        translationValues: {
-                            count: influencers.length,
-                        },
-                        translationValuesToTranslate: {
-                            geolocations: filters.audience_geo,
-                        },
-                    });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'video',
-                        videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                        eventToTrack: OpenVideoGuideModal.eventName,
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
                     });
                     addMessage({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundAddToSequence',
-                        translationLink: '/sequences',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
                     });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'video',
-                        videoUrl: '/assets/videos/sequence-guide.mp4',
-                        eventToTrack: OpenVideoGuideModal.eventName,
-                    });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundNextSteps',
-                    });
+                    // addMessage({
+                    //     sender: 'Bot',
+                    //     type: 'video',
+                    //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                    //     eventToTrack: OpenVideoGuideModal.eventName,
+                    // });
+                    // addMessage({
+                    //     sender: 'Bot',
+                    //     type: 'video',
+                    //     videoUrl: '/assets/videos/sequence-guide.mp4',
+                    //     eventToTrack: OpenVideoGuideModal.eventName,
+                    // });
                 } else {
                     addMessage({
                         sender: 'Bot',
@@ -242,15 +249,14 @@ export const Chat: React.FC<ChatProps> = ({
                     type: 'translation',
                     translationKey: 'boostbot.chat.noInfluencersFound',
                 });
-                addMessage({
-                    sender: 'Bot',
-                    type: 'video',
-                    videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                    eventToTrack: OpenVideoGuideModal.eventName,
-                });
+                // addMessage({
+                //     sender: 'Bot',
+                //     type: 'video',
+                //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
+                //     eventToTrack: OpenVideoGuideModal.eventName,
+                // });
             }
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-            track(RecommendInfluencers, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 return;
@@ -268,8 +274,13 @@ export const Chat: React.FC<ChatProps> = ({
         }
     };
 
+    const clearChatHistoryAndFilters = () => {
+        clearChatHistory();
+        setFilters(defaultFilters);
+    };
+
     return (
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-500 bg-white shadow-lg">
             <ModalSequenceSelector
                 show={showSequenceSelector}
                 setShow={setShowSequenceSelector}
@@ -278,10 +289,33 @@ export const Chat: React.FC<ChatProps> = ({
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="boostbot-gradient z-10 shadow">
-                <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
-                    BoostBot <SparklesIcon className="inline h-4 w-4" />
+            <div className="boostbot-gradient z-10 m-0 flex px-4 py-3.5 shadow">
+                <div className="flex h-[32px] w-[32px] justify-center rounded-full bg-white">
+                    <Logo height={16} width={19} className="m-1 self-center stroke-none" />
+                </div>
+
+                <h1 className="text-md self-center px-[10px] font-semibold text-white drop-shadow-md">
+                    BoostBot AI Search
                 </h1>
+            </div>
+            <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">
+                <button
+                    data-testid="boostbot-open-filters"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
+                    onClick={() => setIsFiltersModalOpen(true)}
+                    disabled={isLoading || isDisabled}
+                >
+                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
+                    {t('boostbot.filters.openModalButton')}
+                </button>
+                <button
+                    data-testid="boostbot-open-clear-chat-history"
+                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-tertiary-400 transition-all hover:text-tertiary-600 disabled:bg-transparent disabled:text-primary-200"
+                    onClick={() => setIsClearChatHistoryModalOpen(true)}
+                    disabled={isLoading || isDisabled}
+                >
+                    {t('boostbot.chat.clearChatModal.open')}
+                </button>
             </div>
 
             <SearchFiltersModal
@@ -294,33 +328,42 @@ export const Chat: React.FC<ChatProps> = ({
             <ClearChatHistoryModal
                 isOpen={isClearChatHistoryModalOpen}
                 setIsOpen={setIsClearChatHistoryModalOpen}
-                onConfirm={clearChatHistory}
+                onConfirm={clearChatHistoryAndFilters}
+            />
+
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isInfluencerDetailsModalOpen}
+                setIsOpen={setIsInfluencerDetailsModalOpen}
+                setShowSequenceSelector={setShowSequenceSelector}
+                outReachDisabled={
+                    (isOutreachLoading ||
+                        areChatActionsDisabled ||
+                        allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
+                    false
+                }
+                setSelectedInfluencers={setSelectedInfluencers}
             />
 
             <ChatContent
                 messages={messages}
                 shouldShowButtons={shouldShowButtons}
                 isSearchLoading={isSearchLoading}
-                isUnlockOutreachLoading={isUnlockOutreachLoading}
-                handleSelectedInfluencersToUnlock={chatSelectedInfluencersToUnlock}
-                handleSelectedInfluencersToOutreach={() => {
-                    setShowSequenceSelector(true);
-                }}
+                isOutreachLoading={isOutreachLoading}
+                handleSelectedInfluencersToOutreach={() => setShowSequenceSelector(true)}
                 stopBoostbot={stopBoostbot}
                 areChatActionsDisabled={areChatActionsDisabled}
-                isUnlockButtonDisabled={isUnlockButtonDisabled}
                 isOutreachButtonDisabled={isOutreachButtonDisabled}
             />
 
-            <div className="relative">
+            <div className="relative ">
                 {/* Below is a gradient that hides the bottom of the chat */}
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
                 <ChatInput
                     isDisabled={isSearchDisabled}
-                    isLoading={isSearchLoading || isUnlockOutreachLoading}
+                    isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
-                    openFiltersModal={() => setIsFiltersModalOpen(true)}
-                    openClearChatHistoryModal={() => setIsClearChatHistoryModalOpen(true)}
+                    setSelectedInfluencers={setSelectedInfluencers}
                 />
             </div>
         </div>

@@ -7,7 +7,22 @@ import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 
-const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
+const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
+
+const BANNED_USERS: string[] = [];
+
+/**
+ * Paths found here are allowed to access without authentication
+ * These paths should have inherent checks in their respective serverless functions
+ */
+const PATH_WHITELIST = [
+    '/api/ping',
+    '/api/slack/create',
+    '/api/subscriptions/webhook',
+    '/api/company/exists',
+    '/api/jobs/run',
+    '/pricing',
+];
 
 /**
  *
@@ -59,10 +74,12 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
+
     if (req.nextUrl.pathname === '/api/profiles' && req.method === 'POST') {
         // for new user signup. We have checks in the next endpoint
         return res;
     }
+
     const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
@@ -71,7 +88,12 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('signup')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial' || subscriptionStatus === 'canceled') {
+    } else if (
+        subscriptionStatus === 'active' ||
+        subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'canceled' ||
+        subscriptionStatus === 'paused'
+    ) {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
@@ -161,23 +183,25 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
-/** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
+/**
+ * Checks if the pathname of the provided request is whitelisted
+ */
+const checkPathWhitelist = (req: NextRequest) => {
+    return PATH_WHITELIST.includes(req.nextUrl.pathname);
+};
+
+/**
+ * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
- *
  */
 // eslint-disable-next-line complexity
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    if (req.nextUrl.pathname === '/api/ping') return res;
+    if (checkPathWhitelist(req)) return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/slack/create') return res;
-    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
-    if (req.nextUrl.pathname === '/api/email-engine/webhook') {
-        return allowEmailWebhookCors(req, res);
-    }
-    if (req.nextUrl.pathname === '/api/company/exists') return res;
+    if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
@@ -186,7 +210,7 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.rewrite(`${req.nextUrl.origin}/api/forbidden`, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';
@@ -194,6 +218,13 @@ export async function middleware(req: NextRequest) {
     }
 
     const { data: authData } = await supabase.auth.getSession();
+
+    if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
+        const redirect = req.nextUrl.clone();
+        redirect.pathname = '/logout';
+        return NextResponse.redirect(redirect);
+    }
+
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
             return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
@@ -207,7 +238,7 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
-        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();
@@ -233,8 +264,7 @@ export const config = {
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
          * - /api/webhooks/* (webhook routes)
-         * - free-trial - (free-trial page)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|free-trial).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook).*)',
     ],
 };

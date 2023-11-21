@@ -32,7 +32,6 @@ export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
 export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach';
-export type newActiveSubscriptionTier = 'discovery' | 'outreach';
 export type RelayPlan = {
     currency: string;
     prices: {
@@ -87,7 +86,7 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
-export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
+export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled' | 'paused';
 //the subscription plan are from Stripe Product, some of the old plans should be archived when all user data is migrated to the new plans
 export type SubscriptionPlans =
     | 'Discovery'
@@ -102,6 +101,8 @@ export type UsageType = 'profile' | 'search' | 'ai_email';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
+export const influencerSizes = ['microinfluencer', 'nicheinfluencer', 'megainfluencer'] as const;
+export type InfluencerSize = (typeof influencerSizes)[number];
 
 export type InfluencerOutreachStatus =
     | 'to contact'
@@ -112,7 +113,7 @@ export type InfluencerOutreachStatus =
     | 'rejected'
     | 'ignored';
 
-export type InfluencerStepTypes = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
+export type SequenceEmailStep = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
 
 /**
  * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.

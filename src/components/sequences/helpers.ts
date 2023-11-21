@@ -63,20 +63,29 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     }
 
     // for now, what we need from the social profile is the id, email, tags
-    const updatedValues = {
+    const updatedValues: SequenceInfluencerUpdate = {
         id: sequenceInfluencer.id,
-        influencer_social_profile_id: socialProfile.id,
-        email: socialProfile.email,
-        tags: getRelevantTags(report),
-        social_profile_last_fetched: new Date().toISOString(),
         company_id,
     };
 
-    if (
-        JSON.stringify(updatedValues.tags) === JSON.stringify(sequenceInfluencer.tags) &&
-        updatedValues.influencer_social_profile_id === sequenceInfluencer.influencer_social_profile_id &&
-        updatedValues.email === sequenceInfluencer.email
-    ) {
+    if (!sequenceInfluencer.influencer_social_profile_id) {
+        updatedValues.influencer_social_profile_id = socialProfile.id;
+        updatedValues.social_profile_last_fetched = new Date().toISOString();
+    }
+
+    if (!sequenceInfluencer.email && socialProfile.email) {
+        updatedValues.email = socialProfile.email.toLowerCase().trim();
+        updatedValues.social_profile_last_fetched = new Date().toISOString();
+    }
+    if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
+        updatedValues.tags = getRelevantTags(report);
+        updatedValues.social_profile_last_fetched = new Date().toISOString();
+    }
+    if (!sequenceInfluencer.social_profile_last_fetched) {
+        updatedValues.social_profile_last_fetched = new Date().toISOString();
+    }
+
+    if (!updatedValues.social_profile_last_fetched) {
         return;
     }
 

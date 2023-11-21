@@ -6,8 +6,10 @@ import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-infl
 import { db } from 'src/utils/supabase-client';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
-    manager_first_name: string;
+    manager_first_name?: string;
     address?: Addresses['Update'] | null;
+    recent_post_title: string;
+    recent_post_url: string;
 };
 
 const postHandler: NextApiHandler = async (

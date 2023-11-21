@@ -6,6 +6,8 @@ import { apiFetch as apiFetchOriginal } from '../api-fetch';
 import { forensicTrack } from '../forensicTrack';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
 import type { ApiPayload } from '../types';
+import { serverLogger } from 'src/utils/logger-server';
+import { nanoid } from 'nanoid';
 
 /**
  * For fetching IQData API
@@ -23,18 +25,29 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
 
     if (context) {
         await rudderstack.identify(context);
-        await rudderstack.send(content);
+        const identity = rudderstack.getIdentity();
+        try {
+            await rudderstack.send(content);
+        } catch (error: unknown) {
+            serverLogger(error, (scope) => {
+                return scope.setContext('Rudderstack Identity', identity);
+            });
+        }
     }
 
     // @note refactor. content should return the Response object itself
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
-            logRateLimitError(url, context);
-            forensicTrack(context, 'rate_limit_error');
+            const errorTag = nanoid();
+
+            logRateLimitError(url, context, errorTag);
+            forensicTrack(context, 'rate_limit_error', errorTag);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
-            logDailyTokensError(url, context);
-            forensicTrack(context, 'daily_tokens_limit_exceeded');
+            const errorTag = nanoid();
+
+            logDailyTokensError(url, context, errorTag);
+            forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
         }
     }
     return content;

@@ -12,6 +12,17 @@ export const ANALYTICS_HEADER_NAME = 'x-analytics-anon-id';
  * @see https://www.rudderstack.com/docs/destinations/streaming-destinations/mixpanel/#explicitly-setting-people-properties-and-super-properties
  */
 export enum MixpanelPeopleProps {
+    email = 'email',
+    firstName = 'firstName',
+    lastName = 'lastName',
+    userRole = 'userRole',
+    company = 'company',
+    companyId = 'companyId',
+    companyName = 'companyName',
+    number = 'number',
+    lang = 'lang',
+    paidUserSince = 'paidUserSince',
+    subscriptionStatus = 'subscriptionStatus',
     total_sessions = 'total_sessions',
     total_searches = 'total_searches',
     total_reports = 'total_reports',
@@ -20,6 +31,8 @@ export enum MixpanelPeopleProps {
     user_open_count = 'user_open_count',
     user_play_count = 'user_play_count',
     sequence_open_count = 'sequence_open_count',
+    created_at = 'createdAt',
+    referer = 'referer',
 }
 
 /**

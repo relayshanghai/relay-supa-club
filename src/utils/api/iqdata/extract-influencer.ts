@@ -33,6 +33,15 @@ export const mapIqdataProfileToInfluencer = (
     };
 };
 
+const findMostRecentPostWithTextOrTitle = (posts: CreatorReport['user_profile']['recent_posts']) => {
+    const post = posts?.find((p) => p.text || p.title);
+
+    return {
+        postTitle: trimTitle(post?.title ?? post?.text ?? ''),
+        postLink: post?.link,
+    };
+};
+
 // eslint-disable-next-line complexity
 export const mapIqdataProfileToInfluencerSocialProfile = (
     userProfile: CreatorReport['user_profile'],
@@ -50,16 +59,17 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
 > => {
     const contacts = userProfile.contacts || [];
     const email = contacts.find((v: any) => v.type === 'email') || { value: undefined };
+    const { postTitle, postLink } = findMostRecentPostWithTextOrTitle(userProfile.recent_posts);
     return {
         url: userProfile.url,
         username: userProfile.username || userProfile.handle || userProfile.custom_name || '',
         platform: userProfile.type,
         reference_id: `iqdata:${userProfile.user_id}`,
         name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
-        email: email.value,
+        email: email.value?.toLowerCase().trim() || '',
         avatar_url: userProfile.picture,
-        recent_post_title: trimTitle(userProfile.recent_posts?.[0]?.title ?? userProfile.recent_posts?.[0]?.text ?? ''),
-        recent_post_url: userProfile.recent_posts?.[0]?.link ?? '',
+        recent_post_title: postTitle,
+        recent_post_url: postLink,
     };
 };
 

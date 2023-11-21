@@ -1,7 +1,8 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { RelayError } from 'src/errors/relay-error';
+import { ApiHandler } from 'src/utils/api-handler';
 import { getAddressByInfluencer, saveAddressByInfluencer } from 'src/utils/api/db/calls/addresses';
 import { getProfileByIdCall } from 'src/utils/api/db/calls/profiles';
 import {
@@ -56,6 +57,9 @@ export const ProfileValue = z.object({
     shippingDetails: ProfileShippingDetails.optional(),
 });
 
+/**
+ * Note that this will not return the recent post title or url
+ */
 const postHandler: NextApiHandler = async (
     req: NextApiRequest,
     res: NextApiResponse<SequenceInfluencerManagerPage>,
@@ -130,6 +134,8 @@ const postHandler: NextApiHandler = async (
         ...sequenceInfluencer,
         manager_first_name: manager.first_name,
         address,
+        recent_post_title: '',
+        recent_post_url: '',
     });
 };
 

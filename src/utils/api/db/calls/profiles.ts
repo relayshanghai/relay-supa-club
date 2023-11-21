@@ -11,6 +11,7 @@ export const getProfileByEmailEngineAccountQuery = (supabaseClient: RelayDatabas
     const { data, error } = await supabaseClient
         .from('profiles')
         .select()
+        .limit(1)
         .eq('email_engine_account_id', account)
         .maybeSingle();
 

@@ -15,9 +15,12 @@ export const useSequenceEmails = (sequenceId?: string) => {
     );
     const updateSequenceEmail = useDB<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
 
-    const { data: sequenceEmails, mutate: refreshSequenceEmails } = useSWR(
-        sequenceId ? [sequenceId, 'sequence_email'] : null,
-        ([sequenceId]) => getSequenceEmailsBySequenceDBCall(sequenceId),
+    const {
+        data: sequenceEmails,
+        mutate: refreshSequenceEmails,
+        isLoading,
+    } = useSWR(sequenceId ? [sequenceId, 'sequence_email'] : null, ([sequenceId]) =>
+        getSequenceEmailsBySequenceDBCall(sequenceId),
     );
 
     const getAllSequenceEmailsDBCall = useDB<typeof getAllSequenceEmailsCall>(getAllSequenceEmailsCall);
@@ -31,5 +34,6 @@ export const useSequenceEmails = (sequenceId?: string) => {
         refreshSequenceEmails,
         updateSequenceEmail,
         allSequenceEmails,
+        isLoading,
     };
 };

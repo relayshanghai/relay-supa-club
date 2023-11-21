@@ -1,80 +1,109 @@
 const boostbot = {
     filters: {
-        openModalButton: 'Filter influencers',
-        modalTitle: 'Basic Filters',
-        fromPlatform: 'Show me influencers from',
-        fromGeos: 'who have followers in',
+        openModalButton: 'Filters',
+        modalTitle: 'Set BoostBot Search Filters',
+        modalTitleSubtitle: 'Setting these filters will help you focus BoostBot’s recommendations',
+        fromPlatform: 'Social Media Platforms',
+        audienceLocation: 'Audience Locations',
         addMoreGeos: 'Add more',
         selectGeo: 'Select a location',
-        advancedFilters: 'Advanced Filters',
+        influencerSize: 'Influencer Size',
         advancedFiltersTooltip: 'This feature is not yet available',
-        updateFilters: 'Update',
-        atLeast: 'at least',
+        updateFilters: 'Save and close',
+        addUpLocation: 'Add up to 2 locations to target',
         inLocation: 'of their followers must be in {{location}}',
+        platformSub: {
+            youtube: 'Long-lasting content',
+            instagram: 'Great for brand building',
+            tiktok: 'High content virality',
+        },
+        influencerSub: {
+            microinfluencer: { title: 'Micro-influencer', subtitle: 'Authentic Engagement' },
+            nicheinfluencer: { title: 'Niche-influencer', subtitle: 'Specialized Reach' },
+            megainfluencer: { title: 'Mega-influencer', subtitle: 'Massive Audience' },
+        },
     },
     chat: {
-        introMessage: `Hi, I'm BoostBot 🙂
+        introMessage: `Hey {{ username }}, what are we trying to sell today? 😄`,
+        introMessageFirstTimeA: `Hi I'm BoostBot, your AI Influencer Marketing Assistant! 😄`,
+        introMessageFirstTimeB: `Describe your product or brand for me below and I'll work my magic to find you great influencers to collab with.`,
+        introMessageFirstTimeC: `Right now, I'm set up to focus on influencers from YouTube, TikTok, and Instagram with an audience in the US and Canada.
 
-Please send me a description of your product - in any language - and I'll recommend influencers to promote it on YouTube, TikTok, and Instagram.
-
-For example: “A lightweight and foldable mini camera drone with 4K HDR video”`,
-        noInfluencersFound:
-            "Hmm, I can't seem to find influencers under your selected filters. Please update them here:",
+You can change that in the 'Filters' section at the top 👆🏻 if you're looking to boost sales elsewhere though!`,
+        noInfluencersFound: "Hmm, I can't seem to find influencers under your selected filters.",
         influencersFound:
-            'I handpicked {{count}} influencers who have the best chances of promoting your product and making sales. What would you like to do next?',
-        influencersFoundFirstTime:
-            'I handpicked {{count}} influencers who are perfect for your product description. Their followers are mainly in {{geolocations}}. You can change your target location here:',
-        influencersFoundAddToSequence:
-            'You may add these influencers to a mailing list called <customLink>Sequence</customLink>. Sequence allows you to email influencers directly.',
-        influencersFoundNextSteps: 'What would you like to do?',
+            'After you add your favourites to a sequence, let me know if you want to do another search 😄',
+        influencersFoundFirstTimeA:
+            "Select the influencers you you'd like to collab with from the results and add them to a sequence to unlock their full profile and contact info.",
+        influencersFoundFirstTimeB: `BoostBot Pro Tip:
+
+Cast a wide net, then spend your time vetting the responders!
+
+Since most influencers you reach out to probably won't respond to you, you'll save yourself a ton of time if you contact lots of potential influencers, and only spend time carefully considering them if they actually reply!`,
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        unlockSelected: 'Unlock selected influencers',
         outreachSelected: 'Add selected influencers to Sequence',
         progress: {
-            step1: 'Generating topics and niches',
-            step2: 'Browsing through millions of influencers in our database',
-            step2B: 'Several thousand influencers found',
-            step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
-            step3B: '{{count}} influencers selected',
+            step1: 'Finding niches for your product',
+            step2: 'Searching our database for relevant influencers',
+            step2B: 'Selected influencers with content related to those niches.',
+            step3: 'Narrowing those results down according to your filters',
+            step3B: "Found {{count}} influencers I think you'll be happy with!",
         },
-        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <customLink>upgrade for more</customLink>.
+        outreachDoneA: `Done!
 
-Tip: You can also unlock influencers one by one.`,
-        outreachDone:
-            "Great. I'm sending the selected influencers to your Sequence now. You may check the status here:",
-        hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
+You can check them out here <customLink>{{sequenceName}}</customLink>`,
+        outreachDoneB: 'Change up your description to help me think of different influencers to recommend!',
+        outreachDoneFirstTime: `Done!
+
+You can check them out here <customLink>{{sequenceName}}</customLink>
+
+Sequences are our email automation feature. You can set up your email templates, schedule your outreach and follow-up emails to make contacting influencers a breeze!`,
         and: 'and',
         clearChatModal: {
-            open: 'Clear chat history',
-            title: 'Are you sure you want to delete your BoostBot chat history and influencer results?',
+            open: 'Clear chat and filters',
+            title: 'Are you sure you want to delete your BoostBot chat history, filters, and influencer results?',
             confirm: 'Yes',
             cancel: 'Back',
         },
     },
     table: {
         account: 'Account',
-        topPosts: 'Top Posts',
-        email: 'Email',
-        unlockInfluencer: 'Unlock influencer',
+        score: 'BoostBot Score',
+        followers: 'Followers',
+        audienceGender: 'Audience Gender',
+        audienceGeolocations: 'Audience Locations',
         noResults: 'No results',
         pagination: 'Page {{current}} of {{total}}',
         selectAll: 'Select all',
         selectInfluencer: 'Select influencer',
-        selectedAmount: '{{selectedCount}} of {{total}} influencer(s) selected.',
+        selectedAmount: '{{selectedCount}} selected.',
+        alreadyAddedToSequence: 'Already added to sequence',
     },
     success: {
         influencersToOutreach: 'Influencers successfully added to outreach!',
     },
     error: {
         influencerSearch: 'Error fetching BoostBot influencers',
-        influencerUnlock: 'Unlocking influencer failed',
         influencersToOutreach: 'Adding influencers to outreach failed',
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
-        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please <customLink>upgrade to a subscription</customLink> to unlock more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
+    },
+    modal: {
+        unlockDetailedReport: 'Unlock Detailed Analysis Report',
+        topNiches: 'Top Niches',
+        audienceEngagementStats: 'Audience Engagement Stats',
+        audienceGender: 'Audience Gender',
+        engagedAudience: 'Audience Engagement Rate',
+        engagementRate: 'Engagement Rate',
+        averageViews: 'Average Views',
+        channelStats: 'Channel Stats',
+        followersGrowth: 'Followers Growth',
+        totalPosts: 'Total Posts',
+        addToSequence: 'Add to Sequence',
+        followers: 'Followers',
     },
 };
 

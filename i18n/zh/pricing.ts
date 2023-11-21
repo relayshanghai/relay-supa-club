@@ -41,7 +41,7 @@ const pricing = {
     noChargeToday: '今天不收费！',
     getStartedWithYourFreeTrial: '开始免费试用',
     justGettingStartedOrScalingUp: '刚开始或正在扩展业务',
-    relayClubCanHelp: 'relay.club可以帮助',
+    relayClubCanHelp: 'BoostBot雷宝可以帮助',
     freePrice: '免费',
     diy: {
         title: 'DIY',
@@ -65,6 +65,7 @@ const pricing = {
     },
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
+    backToAccount: '回到账号',
 };
 
 export default pricing;

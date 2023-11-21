@@ -8,7 +8,7 @@ const guidePage = {
         boostbot: {
             title: 'BoostBot',
             description:
-                'Stop spending hours on finding the right influencers. With relay.club’s BoostBot AI technology, you can start contacting the perfect influencers to do product reviews and brand collabs in minutes! ',
+                "Stop spending hours on finding the right influencers. With BoostBot's AI technology, you can start contacting the perfect influencers to do product reviews and brand collabs in minutes!",
         },
         sequences: {
             title: 'Sequences',
@@ -22,7 +22,7 @@ const guidePage = {
         },
         inbox: {
             title: 'Inbox',
-            description: 'No more switching between your email window, and relay.club.',
+            description: 'No more switching between your email window, and boostbot.ai.',
         },
         influencerProfile: {
             title: 'Influencer Profile',
@@ -225,7 +225,7 @@ const guidePage = {
                 {
                     title: 'Engagement Rate',
                     description:
-                        'The formula for calculating engagement rate may vary across the industry as there isn’t one recognized way to calculate it. At relay.club we divide Average Likes for the last 30 posts by the total number of followers.',
+                        'The formula for calculating engagement rate may vary across the industry as there isn’t one recognized way to calculate it. At BoostBot we divide Average Likes for the last 30 posts by the total number of followers.',
                 },
                 {
                     title: 'Contact Info',
@@ -241,7 +241,7 @@ const guidePage = {
                 {
                     title: 'Manage your teams efforts',
                     description:
-                        'The ‘My Account’ section is there to keep track of the details for you. See which team members are signed up on relay.club, how many Searches and Influencer Reports you’ve opened so far this month, and how many you have left. If you find you’re running out too quickly, get in touch with our sales team to upgrade your account!',
+                        'The ‘My Account’ section is there to keep track of the details for you. See which team members are signed up on boostbot.ai, how many Searches and Influencer Reports you’ve opened so far this month, and how many you have left. If you find you’re running out too quickly, get in touch with our sales team to upgrade your account!',
                 },
             ],
         },

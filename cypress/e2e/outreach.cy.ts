@@ -33,7 +33,7 @@ describe('outreach', () => {
         cy.loginTestUser();
     });
     it('can create new sequences. Can delete sequences', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
         cy.contains('button', 'Create new sequence').click();
@@ -46,7 +46,7 @@ describe('outreach', () => {
             'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         ).should('not.exist');
         cy.contains('Template variables updated');
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('tr', 'New Sequence Test').contains('Test Product');
         //  create another dummy sequence to show multi-delete works
         cy.contains('New sequence').click();
@@ -68,7 +68,7 @@ describe('outreach', () => {
         cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
     it('displays sequence page stats and influencers table', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
 
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
@@ -141,7 +141,7 @@ describe('outreach', () => {
             });
     });
     it('can delete influencer', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.getByTestId('delete-influencers-button').should('not.be.visible');
         cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
@@ -164,7 +164,7 @@ describe('outreach', () => {
     });
     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1009
     it.skip('can edit email', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
@@ -183,7 +183,7 @@ describe('outreach', () => {
         });
     });
     it('can edit template variables. sending is enabled/disabled based on missing variables', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
         setTemplateVariableDescription(''); // reset the empty template variable so you can run the test again
         // send sequence is disabled if missing template variables
@@ -225,7 +225,7 @@ describe('outreach', () => {
         cy.contains('Missing required template variables: **Product Description**').should('exist');
     });
     it('can send sequence, webhooks update influencer funnel status', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
         setTemplateVariableDescription('test description entry for webhook test'); // send sequence is disabled if missing template variables
@@ -249,7 +249,7 @@ describe('outreach', () => {
             if (retries > 30) {
                 throw new Error('Timed out waiting for status to update');
             }
-            cy.contains('Sequences').click(); // click around to trigger SWR refresh
+            cy.contains('CRM').click(); // click around to trigger SWR refresh
             cy.contains('New sequence', { timeout: 10000 });
             cy.contains('General collaboration', { timeout: 10000 }).click();
             cy.contains('button', 'In sequence').click();
@@ -282,19 +282,19 @@ describe('outreach', () => {
             body: JSON.parse(JSON.stringify(messageNewReply)),
             timeout: 10000,
         });
-        cy.contains('Sequences').click(); // click around to trigger SWR refresh
+        cy.contains('CRM').click(); // click around to trigger SWR refresh
         cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.contains('button', 'In sequence').click();
 
         // influencer has been moved to the manage influencers page
         // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('tr', 'Bob-Recommended Brown', { timeout: 100000 }).within(() => {
             cy.contains('Negotiating', { timeout: 10000 });
         });
     });
     it('can view templates for sequences', () => {
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('Widget X', { timeout: 10000 }).click();
         cy.contains('button', 'View sequence templates', { timeout: 10000 }).click();
         cy.contains('Email preview');
@@ -319,10 +319,10 @@ describe('non-outreach user', () => {
     it('Shows banner and preview pages when logged in as non outreach user', () => {
         cy.loginAdmin();
 
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('Outreach Plan Exclusive Feature');
         cy.contains('Sending sequence emails is only available for Outreach Plan accounts.');
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('Outreach Plan Exclusive Feature');
         cy.contains('Influencer Manager is only available for Outreach Plan accounts.');
         cy.contains('tr', 'Influencer Name');
@@ -337,9 +337,9 @@ describe('non-outreach user', () => {
     });
     it('does not show on outreach users', () => {
         cy.loginTestUser();
-        cy.contains('Sequences').click();
+        cy.contains('CRM').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
-        cy.contains('Influencer Manager').click();
+        cy.contains('Manager').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');
         cy.contains('Inbox').click();
         cy.contains('Outreach Plan Exclusive Feature').should('not.exist');

@@ -2,7 +2,7 @@ const creators = {
     recommended: 'Recommended',
     recommendedTooltip: 'Recommended Influencers',
     recommendedTooltipDetail:
-        'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+        'Are those which have worked with boostbot.ai brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
     resultsPrefix: 'We found',
     resultsPostfixKeywords:
@@ -86,8 +86,14 @@ const creators = {
     },
     show: {
         lastUpdate: 'The report was last updated on',
-        searchInfluencerPlaceholder: 'Search for an influencer',
+        searchInfluencerPlaceholder: 'Search for influencer username eg. @mrbeast',
+        noInfluencerSearchResults: `Sorry, we don't have a report for {{ username }} on {{ platform }}`,
         noSearchResults: 'No results found, please try another keyword',
+        noTopicResults: {
+            title: 'Sorry, no relevant topic found.',
+            description:
+                'Try deleting the last few letters of your current search, or typing only the first few letters of a new search and selecting one of the suggested topics',
+        },
         pressEnterToSearch: 'Press enter to search',
         editProfile: 'Edit Profile',
         description: 'Description',

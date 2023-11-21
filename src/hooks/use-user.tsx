@@ -1,7 +1,7 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudder, useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
 import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
@@ -14,11 +14,13 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { useSession } from './use-session';
-import { useTranslation } from 'react-i18next';
-import { useSubscription } from './use-subscription';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
+import { deleteDB } from 'idb';
+import { appCacheDBKey } from 'src/constants';
+import { useRouter } from 'next/router';
+import { useAnalytics } from 'src/components/analytics/analytics-provider';
+import { useMixpanel } from './use-mixpanel';
 
 export type SignupData = {
     email: string;
@@ -86,11 +88,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
-    const { trackEvent, identifyFromProfile } = useRudderstack();
-    const { user, company } = useSession();
-    const { i18n } = useTranslation();
-    const { subscription } = useSubscription();
+    const { trackEvent } = useRudderstack();
     const clientRoleData = useAtomValue(clientRoleAtom);
+    const rudder = useRudder();
+    const mixpanel = useMixpanel();
+    const { analytics } = useAnalytics();
+    const router = useRouter();
 
     useEffect(() => {
         setLoading(isLoading);
@@ -113,23 +116,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');
         }
-
-        // only set Sentry user if it is the first time we are fetching the profile
-        if (fetchedProfile?.email && !profile?.email) {
-            Sentry.setUser({
-                email: fetchedProfile.email,
-                id: fetchedProfile.id,
-                name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
-            });
-        }
         return fetchedProfile;
     });
-
-    useEffect(() => {
-        if (profile && identifyFromProfile && user && company && i18n && subscription) {
-            identifyFromProfile(profile, user, company, i18n.language, subscription);
-        }
-    }, [identifyFromProfile, profile, user, company, i18n, subscription]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -140,8 +128,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
-            // @note `total_sessions` is an incrementable property
-            trackEvent('Log In, undefined', { email, total_sessions: 1 });
+            trackEvent('Log In', { email: email, total_sessions: 1 });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -223,14 +210,36 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         },
         [session?.user],
     );
-    const logout = async () => {
-        Sentry.setUser(null);
-        const email = session?.user?.email;
-        // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
-        window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
-        trackEvent('Logout', { email });
-    };
+    const logout = useCallback(async () => {
+        if (!supabaseClient || !rudder) {
+            clientLogger('User cannot logout', 'error', true);
+            return;
+        }
+
+        const email = session?.user?.email;
+        await trackEvent('Logout', { email });
+        // destroy the session first
+        await supabaseClient.auth.signOut();
+
+        // reset all analytics
+        try {
+            rudder.reset(true);
+            await analytics.reset();
+            // @note if window.mixpanel does not exist, there is probably nothing to reset
+            if (mixpanel) mixpanel.reset();
+        } catch (error: unknown) {
+            clientLogger(error, 'error', true);
+        }
+
+        // @todo deleting idb is blocked so we do not wait to allow us to continue
+        deleteDB(appCacheDBKey);
+
+        Sentry.setUser(null);
+
+        const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
+        await router.replace(redirectUrl);
+    }, [analytics, rudder, mixpanel, router, supabaseClient, trackEvent, session]);
 
     useEffect(() => {
         // detect if the email has been changed on the supabase side and update the profile

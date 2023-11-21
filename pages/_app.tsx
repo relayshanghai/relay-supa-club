@@ -35,7 +35,30 @@ function MyApp({
 
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
-        storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
+        if (storedLanguage !== null) {
+            i18n.changeLanguage(storedLanguage);
+            setLang(storedLanguage);
+        } else {
+            i18n.changeLanguage(); // triggers the language detector
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const setLang = urlParams.get('set_lang');
+            if (typeof setLang === 'string') {
+                if (setLang.includes('en')) {
+                    i18n.changeLanguage('en-US');
+                    localStorage.setItem('language', 'en-US');
+                } else if (setLang.includes('zh')) {
+                    i18n.changeLanguage('zh-CN');
+                    localStorage.setItem('language', 'zh-CN');
+                }
+            }
+            const referer = urlParams.get('ref');
+            referer === 'producthunt' && localStorage.setItem('referer', referer);
+        }
     }, []);
 
     useEffect(() => {
@@ -72,19 +95,19 @@ function MyApp({
             </Script>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <meta name="title" content="relay.club: A complete influencer management software solution" />
+                <meta name="title" content="boostbot.ai: A complete influencer management software solution" />
                 <meta
                     name="description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
-                <meta property="og:title" content="relay.club: A complete influencer management software solution" />
+                <meta property="og:title" content="boostbot.ai: A complete influencer management software solution" />
                 <meta
                     property="og:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
-                <meta property="og:url" content="https://relay.club/" />
-                <meta property="og:site_name" content="relay.club: Influencer Management Software" />
-                <meta name="twitter:title" content="relay.club: A complete influencer management software solution" />
+                <meta property="og:url" content="https://boostbot.ai/" />
+                <meta property="og:site_name" content="boostbot.ai: Influencer Management Software" />
+                <meta name="twitter:title" content="boostbot.ai: A complete influencer management software solution" />
                 <meta
                     name="twitter:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"

@@ -8,10 +8,10 @@ describe('Signup and start trial', () => {
     });
     it('Landing page loads, has both languages, and links to signup', () => {
         cy.visit('/');
-        cy.contains('relay.club可以帮助');
+        cy.contains('BoostBot雷宝可以帮助');
         cy.getByTestId('language-toggle').click();
-        cy.contains('relay.club可以帮助').should('not.exist');
-        cy.contains('relay.club can help.');
+        cy.contains('BoostBot雷宝可以帮助').should('not.exist');
+        cy.contains('BoostBot can help.');
         cy.contains('Already signed up? Log in');
         cy.contains('button', 'Start Your Free Trial').click();
         cy.url().should('include', '/signup');
@@ -77,7 +77,7 @@ describe('Signup and start trial', () => {
         cy.contains('label', 'I agree with the Terms and Conditions');
         //open and close terms and conditions modal
         cy.get('b').contains('Terms and Conditions').click();
-        cy.contains('RELAY.CLUB TERMS AND CONDITIONS');
+        cy.contains('BOOSTBOT TERMS AND CONDITIONS');
         cy.get('[data-test="close-button"]').click();
         cy.contains('label', 'I agree with the Terms and Conditions');
         cy.get('input[type="checkbox"]').check({ force: true });

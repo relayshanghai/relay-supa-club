@@ -1,7 +1,7 @@
 const creators = {
     recommended: '推荐',
     recommendedTooltip: '推荐KOL',
-    recommendedTooltipDetail: '是与relay.club合作过的KOL，更有可能愿意合作',
+    recommendedTooltipDetail: '是与boostbot.ai合作过的KOL，更有可能愿意合作',
     loadMore: '更多',
     resultsPrefix: '我们发现了',
     resultsPostfixKeywords:
@@ -83,8 +83,14 @@ const creators = {
     },
     show: {
         lastUpdate: '报告更新于',
-        searchInfluencerPlaceholder: '搜索KOL',
+        searchInfluencerPlaceholder: '请搜索达人的用户名，例如：@mrbeast',
+        noInfluencerSearchResults: `很抱歉，我们暂时没有 {{ username }}上{{ platform }}的报告`,
         noSearchResults: '没有搜索结果, 请尝试其他关键词',
+        noTopicResults: {
+            title: '抱歉，我们未能找到相关主题。',
+            description:
+                '请尝试将当前所搜索词条的最后几个字母删除，或键入新搜索词条的首几个字母，并从建议的主题中选择一个',
+        },
         pressEnterToSearch: '按回车键搜索',
         editProfile: '编辑信息',
         description: '描述',

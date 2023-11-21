@@ -369,7 +369,31 @@ OR REPLACE FUNCTION create_sequence_influencer(
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     _row RECORD;
+    _platform TEXT;
+    _name TEXT;
+    _url TEXT;
+    _username TEXT;
   BEGIN
+    _platform := (
+      SELECT platform
+      FROM influencer_social_profiles
+      WHERE id = influencer_social_profile_id
+    );
+    _name := (
+      SELECT name
+      FROM influencer_social_profiles
+      WHERE id = influencer_social_profile_id
+    );
+    _url := (
+      SELECT url
+      FROM influencer_social_profiles
+      WHERE id = influencer_social_profile_id
+    );
+    _username := (
+      SELECT username
+      FROM influencer_social_profiles
+      WHERE id = influencer_social_profile_id
+    );
     INSERT INTO sequence_influencers
       (
         id,
@@ -389,7 +413,13 @@ OR REPLACE FUNCTION create_sequence_influencer(
         sequence_step,
         tags,
         video_details,
-        iqdata_id
+        iqdata_id,
+        social_profile_last_fetched,
+        platform,
+        name,
+        url,
+        username,
+        avatar_url
       )
     VALUES
       (
@@ -410,7 +440,13 @@ OR REPLACE FUNCTION create_sequence_influencer(
         sequence_step,
         ARRAY['tag1', 'tag2'],
         'video_details',
-        uuid_generate_v4()
+        uuid_generate_v4(),
+        now(),
+        _platform,
+        _name,
+        _url,
+        _username,
+        'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj'
       )
     RETURNING * INTO _row;
     RETURN _row;
@@ -461,7 +497,8 @@ OR REPLACE FUNCTION create_influencer_social_profile(
   _name TEXT,
   _email TEXT,
   _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
-  _recent_post_title TEXT DEFAULT 'Recent Video Title'
+  _recent_post_title TEXT DEFAULT 'Recent Video Title',
+  _recent_post_url TEXT DEFAULT 'https://example.com/recent-video'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
 _row RECORD;
@@ -477,7 +514,8 @@ INSERT INTO influencer_social_profiles (
   name,
   email,
   avatar_url,
-  recent_post_title
+  recent_post_title,
+  recent_post_url
 )
 VALUES (
   uuid_generate_v4(),
@@ -490,7 +528,8 @@ VALUES (
   _name,
   _email,
   _avatar_url,
-  _recent_post_title
+  _recent_post_title,
+  _recent_post_url
 )
 RETURNING * INTO _row;
 RETURN _row;
@@ -865,8 +904,7 @@ _influencer_social_profile_alice_1 := create_influencer_social_profile(
   'iqdata:1',
   'alice1',
   _influencer_alice.name,
-  _influencer_alice.email,
-  null
+  _influencer_alice.email
 );
 _influencer_social_profile_bob_1 := create_influencer_social_profile(
   'https://instagram.com/bob1',
@@ -875,8 +913,7 @@ _influencer_social_profile_bob_1 := create_influencer_social_profile(
   'iqdata:2',
   'bob1',
   _influencer_bob.name,
-  _influencer_bob.email,
-  null
+  _influencer_bob.email
 );
 _influencer_social_profile_bob_2 := create_influencer_social_profile(
   'https://youtube.com/bob2',
@@ -885,8 +922,7 @@ _influencer_social_profile_bob_2 := create_influencer_social_profile(
   'iqdata:3',
   'bob2',
   _influencer_bob.name,
-  _influencer_bob.email,
-  null
+  _influencer_bob.email
 );
 _influencer_social_profile_charlie_1 := create_influencer_social_profile(
   'https://instagram.com/charlie1',
@@ -895,8 +931,7 @@ _influencer_social_profile_charlie_1 := create_influencer_social_profile(
   'iqdata:4',
   'charlie1',
   _influencer_charlie.name,
-  _influencer_charlie.email,
-  null
+  _influencer_charlie.email
 );
 _influencer_social_profile_daniel_1 := create_influencer_social_profile(
   'https://instagram.com/daniel1',
@@ -905,8 +940,7 @@ _influencer_social_profile_daniel_1 := create_influencer_social_profile(
   'iqdata:5',
   'daniel1',
   _influencer_daniel.name,
-  _influencer_daniel.email,
-  null
+  _influencer_daniel.email
 );
 _influencer_social_profile_felicia_1 := create_influencer_social_profile(
   'https://instagram.com/felicia1',
@@ -915,8 +949,7 @@ _influencer_social_profile_felicia_1 := create_influencer_social_profile(
   'iqdata:6',
   'felicia1',
   _influencer_felicia.name,
-  _influencer_felicia.email,
-  null
+  _influencer_felicia.email
 );
 _influencer_social_profile_georgia_1 := create_influencer_social_profile(
   'https://instagram.com/georgia1',
@@ -925,8 +958,7 @@ _influencer_social_profile_georgia_1 := create_influencer_social_profile(
   'iqdata:7',
   'georgia1',
   _influencer_georgia.name,
-  _influencer_georgia.email,
-  null
+  _influencer_georgia.email
 );
 _influencer_social_profile_pewdiepie := create_influencer_social_profile(
   'https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw',

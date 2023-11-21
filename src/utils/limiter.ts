@@ -37,10 +37,10 @@ limiter.on('failed', async (error, jobInfo) => {
     const { retryCount, options } = jobInfo;
     const logger = typeof window === 'undefined' ? serverLogger : clientLogger;
 
-    logger(`Job ${options.id} failed: ${error}, retries: ${retryCount}`, 'warn');
+    logger(`Job ${options.id} failed: ${error}, retries: ${retryCount}`, 'warning');
 
     if (error.message === usageErrors.limitExceeded) {
-        return; // Don't retry if the error is due to our profile unlock/search usages being exceeded.
+        return; // Don't retry if the error is due to our profile search usage being exceeded.
     }
 
     if (retryCount < RETRY_LIMIT) {

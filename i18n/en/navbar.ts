@@ -1,15 +1,15 @@
 const navbar = {
     campaigns: 'Campaigns',
-    discover: 'Discover',
+    discover: 'Classic',
     aiEmailGenerator: 'AI Email Generator',
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
-    boostbot: 'BoostBot Search',
+    boostbot: 'BoostBot',
     guide: 'Guide',
-    sequences: 'Sequences',
+    sequences: 'CRM',
     inbox: 'Inbox',
-    influencerManager: 'Influencer Manager',
+    influencerManager: 'Manager',
     report: "{{influencerName}}'s Report",
 };
 

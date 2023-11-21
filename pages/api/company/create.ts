@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { RELAY_DOMAIN } from 'src/constants';
+import { LEGACY_RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
-import { RelayError, ApiHandler } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB } from 'src/utils/api/db';
 import { deleteUserById, findCompaniesByNames } from 'src/utils/api/db';
 import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src/utils/api/db';
@@ -12,6 +12,7 @@ import { db } from 'src/utils/supabase-client';
 import { CompanySize } from 'types';
 import { z } from 'zod';
 import { addCompanyCategory } from 'src/utils/api/db/calls/company-categories';
+import { RelayError } from 'src/errors/relay-error';
 
 const CompanyCreatePostBody = z.object({
     user_id: z.string(),
@@ -37,7 +38,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const name = untrimmedName.trim();
 
     // Do not allow users to create a company with our reserved name for internal employees
-    if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
+    if (name.toLowerCase() === LEGACY_RELAY_DOMAIN.toLowerCase()) {
         await deleteUserById(user_id);
         return res.status(httpCodes.BAD_REQUEST).json({});
     }

@@ -1,10 +1,6 @@
 run-name: Run main workflow by @${{ github.actor }}
 
 on:
-    # only run on all pushes if it is to `main` branch
-    push:
-        branches:
-            - main
     # allow manual trigger of the workflow
     workflow_dispatch:
     # Only pushes to active PRs will trigger the workflow, pushes to other branches will not trigger run
@@ -27,12 +23,13 @@ env:
     NEXT_PUBLIC_STRIPE_PRODUCT_OUTREACH: prod_OSxdtb3ukjSg08
     NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DISCOVERY: price_1Ng1a3F5PN4woVWo9KP4S4oM
     NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_OUTREACH: price_1Ng1iHF5PN4woVWogNiPDp2I
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DISCOVERY_USD: price_1OCDriF5PN4woVWoLDuwWWk9
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_OUTREACH_USD: price_1OCDrGF5PN4woVWo2oAsIMPM
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
     NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
     SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
-    NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     NEXT_PUBLIC_FEAT_EMAIL: true
@@ -55,33 +52,6 @@ env:
     NEXT_PUBLIC_DISABLE_CHATWOOT: true
 
 jobs:
-    component-test:
-        runs-on:
-            group: large-runner
-        environment: preview
-        env:
-            # unit tests don't need the real keys, but they load some functions that check for them on init.
-            SUPABASE_SERVICE_KEY: dummy key
-            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-        steps:
-            - uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
-
-            - run: npm ci
-            - run: npm run lint
-            - run: npx prettier . --check
-            - run: npm run build
-            - run: npm run test-cypress-unit
-
     e2e-test:
         environment: preview
 
@@ -148,3 +118,31 @@ jobs:
                   # http://localhost:54323/ is the supabase dashboard
                   wait-on: http://localhost:3000, http://localhost:54323
                   wait-on-timeout: 180
+
+    component-test:
+        needs: e2e-test
+        runs-on:
+            group: large-runner
+        environment: preview
+        env:
+            # unit tests don't need the real keys, but they load some functions that check for them on init.
+            SUPABASE_SERVICE_KEY: dummy key
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - run: npm ci
+            - run: npm run lint
+            - run: npx prettier . --check
+            - run: npm run build
+            - run: npm run test-cypress-unit
