@@ -201,7 +201,10 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             <div className="mb-6 flex flex-1 space-x-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                        <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
+                        <AdjustmentsVerticalIcon
+                            strokeWidth="1.5"
+                            className="h-5 w-5 stroke-primary-600 group-disabled:stroke-primary-200"
+                        />{' '}
                     </div>
                 </div>
                 {/* TO DO CLose button */}
