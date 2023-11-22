@@ -17,10 +17,21 @@ const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? n
 const createBrevoContact = async (email?: string | null) => {
     if (!email || !BREVO_NEWTRIALUSERS_LIST_ID) return false;
 
-    return await createContact({
-        email: email,
-        listIds: [Number(BREVO_NEWTRIALUSERS_LIST_ID)],
-    });
+    try {
+        return await createContact({
+            email: email,
+            listIds: [Number(BREVO_NEWTRIALUSERS_LIST_ID)],
+        });
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext('Error', {
+                error: 'Cannot create brevo contact',
+                email,
+                listId: BREVO_NEWTRIALUSERS_LIST_ID,
+            });
+        });
+        return false;
+    }
 };
 
 const Handler: NextApiHandler = async (req, res) => {
