@@ -30,7 +30,7 @@ const handledWebhooks = {
     invoicePaymentFailed: 'invoice.payment_failed',
     invoicePaymentSucceeded: 'invoice.payment_succeeded',
     setupIntentSucceeded: 'setup_intent.succeeded',
-    setupIntentFailed: 'setup_intent.failed',
+    setupIntentFailed: 'setup_intent.setup_failed',
     customerSubscriptionPaused: 'customer.subscription.paused',
 };
 
