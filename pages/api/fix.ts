@@ -289,12 +289,50 @@ const _fixUppercaseEmails: NextApiHandler = async (_req, res) => {
 };
 
 const fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
+    console.log('fixSequenceEmailsNoAccountId');
+    console.time('fixSequenceEmailsNoAccountId');
     const { data: hasSequenceSendProfiles } = await supabase
         .from('profiles')
-        .select('id')
-        .not('sequence_send_account_id', 'is', null);
-    console.log({ hasSequenceSendProfiles });
+        .select('id, email_engine_account_id')
+        .not('email_engine_account_id', 'is', null);
     console.log('hasSequenceSendProfiles', hasSequenceSendProfiles?.length);
+
+    const { data: influencers } = await supabase
+        .from('sequence_influencers')
+        .select('id, added_by')
+        .in('added_by', hasSequenceSendProfiles?.map((p) => p.id) ?? []);
+
+    console.log('influencers', influencers?.length);
+
+    const { data: emails } = await supabase
+        .from('sequence_emails')
+        .select('id, sequence_influencer_id, email_message_id')
+        .is('email_engine_account_id', null);
+
+    console.log(emails?.length);
+    const results = [];
+    if (emails)
+        for (const email of emails) {
+            const influencer = influencers?.find((i) => i.id === email.sequence_influencer_id);
+            if (influencer) {
+                const profile = hasSequenceSendProfiles?.find((p) => p.id === influencer.added_by);
+                if (!profile || !profile.email_engine_account_id) {
+                    console.log('no profile found', profile);
+                    continue;
+                }
+                // console.log('updating', profile.email_engine_account_id);
+                await supabase
+                    .from('sequence_emails')
+                    .update({ email_engine_account_id: profile.email_engine_account_id })
+                    .eq('id', email.id);
+                results.push(email.id);
+            } else {
+                console.log('no influencer found', email.sequence_influencer_id);
+            }
+        }
+    console.log(results.length);
+    console.timeEnd('fixSequenceEmailsNoAccountId');
+
     return res.json({ ok: 'asd' });
 };
 
