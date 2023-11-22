@@ -122,6 +122,7 @@ const sendSequence = async ({
     templateVariables,
 }: SequenceSendEventPayload) => {
     const results: SendResult[] = [];
+    const startTime = Date.now();
 
     const trackData: SequenceSendPayload = {
         extra_info: { results },
@@ -171,6 +172,7 @@ const sendSequence = async ({
     trackData.extra_info.results = results;
     const success = await handleResults(results, influencer);
     trackData.is_success = success;
+    trackData.extra_info.duration = Date.now() - startTime;
     track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
     return { results, success };
 };
