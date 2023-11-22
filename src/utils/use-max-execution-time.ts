@@ -1,8 +1,9 @@
+import { wait } from './utils';
+
 export const useMaxExecutionTime = async (func: () => Promise<any>, maxTime: number) => {
-    const timeout = new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject(new Error('Job timed out'));
-        }, maxTime);
-    });
+    const timeout = async () => {
+        await wait(maxTime);
+        throw new Error('Job timed out');
+    };
     return await Promise.race([await func(), await timeout]);
 };
