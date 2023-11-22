@@ -3,17 +3,18 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-// import { getHostnameFromRequest } from 'src/utils/get-host';
+import { getHostnameFromRequest } from 'src/utils/get-host';
 
 export type CreateSetUpIntentPostBody = {
     customerId: string;
     paymentMethodTypes: string[];
     priceId: string;
     companyId: string;
+    currency: string;
 };
 // this is actually create setup intent with alipay as payment method, not a generic create setup intent
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { companyId, customerId, paymentMethodTypes, priceId } = req.body;
+    const { companyId, customerId, paymentMethodTypes, priceId, currency } = req.body;
     //create an payment method to confirm the setup intent
     const paymentMethod = await stripeClient.paymentMethods.create({
         type: 'alipay',
@@ -26,16 +27,16 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const paymentMethodAttach = await stripeClient.paymentMethods.attach(paymentMethod.id, {
         customer: customerId,
     });
+
     if (!paymentMethodAttach) {
         serverLogger('Failed to attach payment method to customer');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
     }
-    // const { appUrl } = getHostnameFromRequest(req);
+    const { appUrl } = getHostnameFromRequest(req);
     const returnUrlParams = new URLSearchParams();
     returnUrlParams.append('customerId', customerId);
     returnUrlParams.append('priceId', priceId);
     returnUrlParams.append('companyId', companyId);
-
     //create a setup intent
     const response = await stripeClient.setupIntents.create(
         {
@@ -46,7 +47,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             payment_method_options: {
                 //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
                 alipay: {
-                    currency: 'cny',
+                    currency,
                 },
             },
             usage: 'off_session',
@@ -60,12 +61,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 },
             },
             //TODO: change the return url to the APP_URL before production
-            return_url: `https://relay-supa-club-git-payments-add-alipay-relay-club.vercel.app/payments/confirm-alipay?${returnUrlParams}`,
-            // return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
+            // return_url: `https://relay-supa-club-git-payments-add-alipay-relay-club.vercel.app/payments/confirm-alipay?${returnUrlParams}`,
+            return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
         },
         undefined,
     );
-
     return res.status(httpCodes.OK).json(response);
 };
 

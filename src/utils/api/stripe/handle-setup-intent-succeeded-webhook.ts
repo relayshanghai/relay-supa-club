@@ -16,6 +16,5 @@ export const handleSetupIntentSucceeded = async (res: NextApiResponse, setupInte
         },
     });
 
-    // console.log('setupinent_succeeded =========================>', updateCustomer);
     return res.status(httpCodes.OK).json({ updateCustomer });
 };
