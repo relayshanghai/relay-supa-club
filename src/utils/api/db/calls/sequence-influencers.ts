@@ -126,8 +126,9 @@ export const updateSequenceInfluencerCall =
         if (Object.keys(update).includes('platform') && !update.platform) {
             serverLogger(`strange update ${update}`);
         }
+        const email = update.email?.trim().toLowerCase();
         update.updated_at = new Date().toISOString();
-        if (update.email) {
+        if (email) {
             if (!update.company_id) {
                 throw new Error('Must provide a company id when updating email');
             }
@@ -135,7 +136,7 @@ export const updateSequenceInfluencerCall =
                 .from('sequence_influencers')
                 .select('email')
                 .limit(1)
-                .match({ email: update.email, company_id: update.company_id })
+                .match({ email, company_id: update.company_id })
                 .single();
             if (existingEmail) {
                 throw new Error('Email already exists for this company');

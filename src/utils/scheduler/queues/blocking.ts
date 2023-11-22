@@ -54,7 +54,7 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
         const runningJobs = jobs.map(async (job) => {
             const res = await runJob(job);
 
-            // only mark jobs finished if successful
+            // set status to pending if failed so that we can retry
             const status = res.status === JOB_STATUS.success ? JOB_STATUS.success : JOB_STATUS.pending;
             await finishJob(job, status, res.result);
 

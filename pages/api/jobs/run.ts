@@ -16,8 +16,8 @@ const postHandler: ActionHandler = async (req, res) => {
 
     const { queue, status, limit } = { queue: 'default', status: JOB_STATUS.pending, limit: 1, ...query };
 
-    const jobqueue = initQueue(queue);
-    const results = await jobqueue.run({ status, limit });
+    const jobQueue = initQueue(queue);
+    const results = await jobQueue.run({ status, limit });
 
     return res.status(httpCodes.OK).json(results);
 };

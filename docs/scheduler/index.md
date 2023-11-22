@@ -83,7 +83,7 @@ SELECT create_queue_worker('worker-default-2', 'https://app.relay.club/api/jobs/
 SELECT create_queue_worker('worker-failed-1', 'https://app.relay.club/api/jobs/run?status=failed', '123ABC', '* * * * *');
 
 -- or create workers for your custom queues
--- SELECT create_queue_worker('worker-myqueue-1', 'https://app.relay.club/api/jobs/run?status=myqueue', '123ABC', '* * * * *');
+-- SELECT create_queue_worker('worker-myqueue-1', 'https://app.relay.club/api/jobs/run?queue=myqueue', '123ABC', '* * * * *');
 
 -- Cleanup job details
 SELECT cron.schedule('cleanup-cron-details', '0 0 * * *', $$ DELETE FROM cron.job_run_details WHERE end_time < now() - interval '7 days' $$);
@@ -111,8 +111,14 @@ SELECT cron.unschedule('worker-default-1');
 ```
 
 ### Local Development
-Local development is basically the same, the only difference is that the `endpoint` should be pointing to your ngrok url. 
-Unfortunately, Supabase pgsql_http extension cannot access `localhost:3000`
+
+Because Supabase pgsql_http extension cannot make requests to your locally running Next app on `localhost:3000`, you need to expose it with `ngrok http 3000`. Copy the `Forwarding` line e.g. 
+```
+Forwarding                    https://b4d9-118-107-244-171.ngrok.io -> http://localhost:3000       
+```
+paste it into the create worker call (e.g. for sequence_send)
+`SELECT create_queue_worker('sequence_send', 'https://b4d9-118-107-244-171.ngrok.io/api/jobs/run?queue=sequence_send', '123ABC', '* * * * *');`
+and it will call the run job endpoint.
 
 ### More Reading
 - https://github.com/citusdata/pg_cron
