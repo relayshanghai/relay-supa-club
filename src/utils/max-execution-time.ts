@@ -1,9 +1,12 @@
 import { wait } from './utils';
 
-export const maxExecutionTime = <T>(func: Promise<T>, maxTime: number): Promise<T> | undefined => {
+/**
+ * @throws {Error} will throw when timeout() resolves first
+ */
+export const maxExecutionTime = <T extends Promise<any>>(func: T, maxTime: number) => {
     const timeout = async () => {
         await wait(maxTime);
         throw new Error('Job timed out');
     };
-    return Promise.race([func, timeout()]);
+    return Promise.race<T>([func, timeout()]);
 };
