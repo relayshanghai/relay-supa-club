@@ -4,18 +4,21 @@ import { wait } from './utils';
 
 describe('useMaxExecutionTime', () => {
     it('should return the result of the function if it finishes before the timeout', async () => {
-        const result = await useMaxExecutionTime(async () => {
+        const call = async () => {
             await wait(100);
             return 'result';
-        }, 1000);
+        };
+
+        const result = await useMaxExecutionTime(call(), 1000);
         expect(result).toBe('result');
     });
     it('should throw an error if the function takes longer than the timeout', async () => {
+        const call = async () => {
+            await wait(200);
+            return 'result';
+        };
         try {
-            await useMaxExecutionTime(async () => {
-                await wait(2000);
-                return 'result';
-            }, 1000);
+            await useMaxExecutionTime(call(), 1000);
         } catch (error: any) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('Job timed out');

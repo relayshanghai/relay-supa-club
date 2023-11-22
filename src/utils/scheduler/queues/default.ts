@@ -44,7 +44,7 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
 
             let raceResult: unknown;
             try {
-                raceResult = await useMaxExecutionTime(() => runJob(job), maxRunTime);
+                raceResult = await useMaxExecutionTime(runJob(job), maxRunTime);
             } catch (error: any) {
                 if (!error?.message?.includes('Job timed out')) {
                     serverLogger(error);
