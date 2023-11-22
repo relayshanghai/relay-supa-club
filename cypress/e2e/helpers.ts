@@ -4,6 +4,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
+import { mockProfile } from 'src/mocks/test-user';
 export const bobEmail = 'bob.brown@example.com';
 export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail, 'charlie.charles@example.com'];
 
@@ -152,6 +153,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 sequence_step_id: step.id,
                 email_delivery_status: 'Scheduled',
                 email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
+                email_engine_account_id: mockProfile.email_engine_account_id,
             });
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }

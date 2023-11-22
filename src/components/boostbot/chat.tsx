@@ -24,11 +24,10 @@ import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
-import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
-import Logo from 'src/components/icons/Boostbot_selected';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -301,11 +300,14 @@ export const Chat: React.FC<ChatProps> = ({
             <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">
                 <button
                     data-testid="boostbot-open-filters"
-                    className="group flex items-center gap-1 rounded-[6px] p-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
+                    className="group flex items-center gap-1 rounded-[6px] py-2 pl-0 pr-2 text-xs font-semibold text-primary-600 transition-all hover:text-primary-800 disabled:bg-transparent disabled:text-primary-200"
                     onClick={() => setIsFiltersModalOpen(true)}
                     disabled={isLoading || isDisabled}
                 >
-                    <AdjustmentsVerticalIcon className="h-6 w-6 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
+                    <Settings
+                        strokeWidth="1.5"
+                        className="h-5 w-5 stroke-primary-600 group-disabled:stroke-primary-200"
+                    />{' '}
                     {t('boostbot.filters.openModalButton')}
                 </button>
                 <button

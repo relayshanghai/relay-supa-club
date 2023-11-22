@@ -41,13 +41,13 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
             const errorTag = nanoid();
 
             logRateLimitError(url, context, errorTag);
-            forensicTrack(context, 'rate_limit_error', errorTag);
+            await forensicTrack(context, 'IQData: rate_limit_error', errorTag);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
             const errorTag = nanoid();
 
             logDailyTokensError(url, context, errorTag);
-            forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
+            await forensicTrack(context, 'IQData: daily_tokens_limit_exceeded', errorTag);
         }
     }
     return content;

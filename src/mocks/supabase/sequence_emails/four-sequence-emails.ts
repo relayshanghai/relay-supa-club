@@ -1,3 +1,4 @@
+import { mockProfile } from 'src/mocks/test-user';
 import type { SequenceEmail } from 'src/utils/api/db';
 
 const sequenceEmails: SequenceEmail[] = [
@@ -12,6 +13,7 @@ const sequenceEmails: SequenceEmail[] = [
         sequence_influencer_id: 'e4df4975-6f86-423c-9346-8b865da60c25',
         sequence_step_id: 'ac2692b7-6e07-4361-b819-62f3fb8efe7e',
         sequence_id: '1528cb28-50d1-4e9f-bfe6-cd58b69e0d1d',
+        email_engine_account_id: mockProfile.email_engine_account_id,
     },
     {
         id: '5fd55fd9-6b34-4475-b53b-d3c0dab8bc9b',
@@ -24,6 +26,7 @@ const sequenceEmails: SequenceEmail[] = [
         sequence_influencer_id: 'e4df4975-6f86-423c-9346-8b865da60c25',
         sequence_step_id: 'cf261a09-24f7-4653-98f4-657b16758c3f',
         sequence_id: '1528cb28-50d1-4e9f-bfe6-cd58b69e0d1d',
+        email_engine_account_id: mockProfile.email_engine_account_id,
     },
     {
         id: 'ff52b5e2-12ea-41fe-beb1-637767041917',
@@ -36,6 +39,7 @@ const sequenceEmails: SequenceEmail[] = [
         sequence_influencer_id: 'e4df4975-6f86-423c-9346-8b865da60c25',
         sequence_step_id: 'd429de58-dbc1-4579-80ef-c2ba88ed090e',
         sequence_id: '1528cb28-50d1-4e9f-bfe6-cd58b69e0d1d',
+        email_engine_account_id: mockProfile.email_engine_account_id,
     },
     {
         id: 'd314b69d-b3d3-4ce2-92f4-0ef68106a49e',
@@ -48,6 +52,7 @@ const sequenceEmails: SequenceEmail[] = [
         sequence_influencer_id: 'e4df4975-6f86-423c-9346-8b865da60c25',
         sequence_step_id: '3da02623-9946-40e1-9349-d173bbfea7f9',
         sequence_id: '1528cb28-50d1-4e9f-bfe6-cd58b69e0d1d',
+        email_engine_account_id: mockProfile.email_engine_account_id,
     },
 ];
 
