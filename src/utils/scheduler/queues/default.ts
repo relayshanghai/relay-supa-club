@@ -42,13 +42,14 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
              */
             const maxRunTime = 1000 * 30; // 30 seconds
 
-            let raceResult: unknown;
+            let raceResult: JobResponse | undefined | string;
             try {
                 raceResult = await useMaxExecutionTime(runJob(job), maxRunTime);
             } catch (error: any) {
                 if (!error?.message?.includes('Job timed out')) {
                     serverLogger(error);
                 }
+                raceResult = 'Job timed out';
             }
             const res =
                 raceResult instanceof Error || !isProperJobResponse(raceResult)
