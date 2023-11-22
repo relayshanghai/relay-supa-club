@@ -12,19 +12,6 @@ const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai
 const BANNED_USERS: string[] = [];
 
 /**
- * Paths found here are allowed to access without authentication
- * These paths should have inherent checks in their respective serverless functions
- */
-const PATH_WHITELIST = [
-    '/api/ping',
-    '/api/slack/create',
-    '/api/subscriptions/webhook',
-    '/api/company/exists',
-    '/api/jobs/run',
-    '/pricing',
-];
-
-/**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
@@ -184,13 +171,6 @@ const isSessionClean = async (supabase: SupabaseClient) => {
 };
 
 /**
- * Checks if the pathname of the provided request is whitelisted
- */
-const checkPathWhitelist = (req: NextRequest) => {
-    return PATH_WHITELIST.includes(req.nextUrl.pathname);
-};
-
-/**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
  */
@@ -199,7 +179,6 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    if (checkPathWhitelist(req)) return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
 
@@ -266,5 +245,11 @@ export const config = {
          * - /api/webhooks/* (webhook routes)
          */
         '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook).*)',
+        '/((?!api/ping).*)',
+        '/((?!api/slack/create).*)',
+        '/((?!api/subscriptions/webhook).*)',
+        '/((?!api/company/exists).*)',
+        '/((?!api/jobs/run).*)',
+        '/((?!pricing).*)',
     ],
 };
