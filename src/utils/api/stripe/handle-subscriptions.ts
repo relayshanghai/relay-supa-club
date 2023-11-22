@@ -43,12 +43,18 @@ export const cancelSubscriptionWithSubscriptionId = async (subscriptionId: strin
     return res;
 };
 
-export const createSetupIntentForAlipay = async (companyId: string, customerId: string, priceId: string) => {
+export const createSetupIntentForAlipay = async (
+    companyId: string,
+    customerId: string,
+    priceId: string,
+    currency: string,
+) => {
     const body: CreateSetUpIntentPostBody = {
         companyId,
         customerId,
         paymentMethodTypes: ['alipay'],
         priceId,
+        currency,
     };
 
     const res = await nextFetch('subscriptions/create-setup-intent', {

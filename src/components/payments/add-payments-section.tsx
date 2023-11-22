@@ -24,12 +24,11 @@ export type CreatePaymentIntentResponse = {
 
 export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
-    const prices = usePrices();
+    const { prices } = usePrices();
     const { trackEvent } = useRudderstack();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
-
     const batchId = useMemo(() => randomNumber(), []);
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',

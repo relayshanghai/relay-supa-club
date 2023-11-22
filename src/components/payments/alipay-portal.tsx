@@ -15,7 +15,7 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
-
+    console.log(selectedPrice);
     //handle any next actions https://stripe.com/docs/payments/finalize-payments-on-the-server?platform=web&type=setup#next-actions
     const handleServerResponse = async (setupIntent: Stripe.SetupIntent) => {
         const stripe = await stripePromise;
@@ -43,8 +43,8 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
         setIsLoading(true);
         try {
             const priceId = selectedPrice.priceIds.monthly;
-
-            const setupIntent = await createSetupIntentForAlipay(company.id, company.cus_id, priceId);
+            const currency = selectedPrice.currency;
+            const setupIntent = await createSetupIntentForAlipay(company.id, company.cus_id, priceId, currency);
 
             await handleServerResponse(setupIntent);
         } catch (error) {
