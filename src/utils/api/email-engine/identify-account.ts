@@ -19,18 +19,19 @@ export const identifyAccount = async (account: string) => {
     }
 
     let profile = null;
+    let getProfileByEmailEngineAccountQueryError = '';
 
     try {
         profile = await db(getProfileByEmailEngineAccountQuery)(account);
-    } catch (error) {
-        serverLogger(error, (scope) => {
-            return scope.setContext('Email Engine Account', { account });
-        });
+    } catch (error: any) {
+        getProfileByEmailEngineAccountQueryError = error?.message ?? '';
+        serverLogger(error, (scope) => scope.setContext('Email Engine Account', { account }));
     }
 
     if (profile) {
-        return rudderstack.identifyWithProfile(profile.id);
+        rudderstack.identifyWithProfile(profile.id);
+    } else {
+        rudderstack.identifyWithAnonymousID(account);
     }
-
-    return rudderstack.identifyWithAnonymousID(account);
+    return getProfileByEmailEngineAccountQueryError;
 };
