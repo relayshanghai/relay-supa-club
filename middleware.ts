@@ -234,22 +234,33 @@ export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
+         *
+         * Static routes
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
-         * - accept invite (accept invite api). User hasn't logged in yet
-         * - create-employee endpoint (api/company/create-employee)
-         * - login, signup, logout (login, signup, logout pages)
-         * - Stripe webhook (instead use signing key to protect)
-         * - /api/webhooks/* (webhook routes)
+         *
+         * Page routes
+         * - login*
+         * - login/reset-password
+         * - signup/invite*
+         * - logout
+         * - pricing
+         *
+         * API routes
+         * - api/invites/accept*
+         * - api/company/create-employee
+         * - api/subscriptions/webhook
+         * - api/webhooks
+         * - api/logs/vercel
+         * - api/brevo/webhook
+         * - api/ping
+         * - api/slack/create
+         * - api/subscriptions/webhook
+         * - api/company/exists
+         * - api/jobs/run
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook).*)',
-        '/((?!api/ping).*)',
-        '/((?!api/slack/create).*)',
-        '/((?!api/subscriptions/webhook).*)',
-        '/((?!api/company/exists).*)',
-        '/((?!api/jobs/run).*)',
-        '/((?!pricing).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run).*)',
     ],
 };
