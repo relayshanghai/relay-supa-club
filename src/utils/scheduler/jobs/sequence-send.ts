@@ -21,6 +21,7 @@ import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
+import { maxExecutionTime } from 'src/utils/max-execution-time';
 
 type SequenceSendEventPayload = {
     emailEngineAccountId: string;
@@ -135,7 +136,7 @@ const sendSequence = async ({
         trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
 
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
-        const scheduledEmails = await await db(getSequenceEmailsByEmailEngineAccountId)(account);
+        const scheduledEmails = await db(getSequenceEmailsByEmailEngineAccountId)(account);
         const messageIds = gatherMessageIds(influencer.email ?? '', sequenceSteps);
         if (!influencer.influencer_social_profile_id) {
             throw new Error('No influencer social profile id');
@@ -215,9 +216,16 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
+        const maxRunTime = 1000 * 30; // 30 seconds
+
         await identifyAccount(payload.emailEngineAccountId);
-        const { results, success } = await sendSequence(payload);
-        if (!success) throw new Error('Sequence send failed. results: ' + JSON.stringify(results));
-        return { results, success };
+
+        const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
+
+        if (!success) {
+            throw new Error('Sequence send job failed. results: ' + JSON.stringify(results));
+        }
+
+        return results;
     },
 };
