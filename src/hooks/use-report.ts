@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import { useCompany } from './use-company';
 import type { eventKeys } from 'src/utils/analytics/events';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
+import { useRouter } from 'next/router';
 
 // reports that have `createdAt` older than 59 days are considered stale
 export const reportIsStale = (createdAt: string) => {
@@ -43,11 +44,12 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
     const { t } = useTranslation();
     const { profile } = useUser();
     const { company } = useCompany();
+    const router = useRouter();
     const { data, isLoading, mutate } = useSWR(
         !suppressFetch && platform && creator_id && company?.id && profile?.id
-            ? ['creators/report', platform, creator_id, company?.id, profile?.id]
+            ? ['creators/report', platform, creator_id, company?.id, profile?.id, router.pathname]
             : null,
-        async ([path, platform, creator_id, company_id, user_id]) => {
+        async ([path, platform, creator_id, company_id, user_id, pageUrl]) => {
             try {
                 const { createdAt, influencer, socialProfile, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
@@ -58,6 +60,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     company_id,
                     user_id,
                     track,
+                    pageUrl,
                 });
                 setErrorMessage('');
                 return { createdAt, report, influencer, socialProfile };
