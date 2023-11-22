@@ -2,6 +2,7 @@ import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type {
+    ProfileDB,
     SequenceEmail,
     SequenceEmailUpdate,
     SequenceInfluencer,
@@ -193,18 +194,21 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         extra_info: { event_data: event.data },
     };
     const fromAddress = event.data.from.address?.toLowerCase();
-    const toAddress = event.data.to ? event.data.to[0]?.address?.toLowerCase() : null;
+    const toAddresses = event.data.to ? event.data.to.map((a) => a.address?.toLowerCase().trim()) : [];
+    if (event.data.cc) {
+        toAddresses.push(...event.data.cc.map((a) => a.address?.toLowerCase().trim()));
+    }
 
     // Ignore outgoing emails and drafts
     if (
-        !toAddress ||
+        toAddresses.length === 0 ||
         event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
         event.data.draft === true ||
         fromAddress.includes('boostbot.ai') ||
         fromAddress.includes('noreply') ||
         fromAddress.includes('no-reply')
     ) {
-        if (!toAddress) {
+        if (toAddresses.length === 0) {
             createJob('track_analytics_event', {
                 queue: 'analytics',
                 payload: {
@@ -221,10 +225,20 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
 
+    let ourUser: ProfileDB | null = null;
+    let findUserError = '';
+    for (const toAddress of toAddresses) {
+        const { data: foundUser, error } = await getProfileBySequenceSendEmail(toAddress);
+        if (foundUser) {
+            ourUser = foundUser;
+            break;
+        }
+        findUserError += ` Find user error, address: ${toAddress}, error: ${error?.message} ` ?? '';
+    }
+
     // If there are multiple users at the same company with the same email address, this will get the first one. We only use it to supply a `company_id`, so it doesn't matter which user we get as long as the email is unique per company.
-    const { data: ourUser, error } = await getProfileBySequenceSendEmail(toAddress);
-    if (error) {
-        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;
+    if (!ourUser) {
+        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${findUserError}`;
 
         await createJob('track_analytics_event', {
             queue: 'analytics',
