@@ -4,6 +4,7 @@ import type { JobQueue } from '../types';
 import { JOB_STATUS } from '../types';
 import { finishJob, runJob } from '../utils';
 import { useMaxExecutionTime } from 'src/utils/use-max-execution-time';
+import { serverLogger } from 'src/utils/logger-server';
 
 const QUEUE_NAME = 'default';
 
@@ -40,7 +41,15 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
              *  https://github.com/pramsey/pgsql-http
              */
             const maxRunTime = 1000 * 30; // 30 seconds
-            const raceResult = await useMaxExecutionTime(() => runJob(job), maxRunTime);
+
+            let raceResult: unknown;
+            try {
+                raceResult = await useMaxExecutionTime(() => runJob(job), maxRunTime);
+            } catch (error: any) {
+                if (!error?.message?.includes('Job timed out')) {
+                    serverLogger(error);
+                }
+            }
             const res =
                 raceResult instanceof Error || !isProperJobResponse(raceResult)
                     ? {

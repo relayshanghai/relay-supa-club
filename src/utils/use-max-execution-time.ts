@@ -4,5 +4,5 @@ export const useMaxExecutionTime = async (func: () => Promise<any>, maxTime: num
             reject(new Error('Job timed out'));
         }, maxTime);
     });
-    return await Promise.race([func(), timeout]);
+    return await Promise.race([await func(), await timeout]);
 };
