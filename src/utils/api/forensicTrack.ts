@@ -60,6 +60,6 @@ export const logIqdataLimits = async (
         const errorTag = nanoid();
 
         await logDailyTokensError(action, context, errorTag);
-        await forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
+        await forensicTrack(context, 'IQData: daily_tokens_limit_exceeded', errorTag);
     }
 };

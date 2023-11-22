@@ -47,7 +47,7 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
             const errorTag = nanoid();
 
             logDailyTokensError(url, context, errorTag);
-            await forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
+            await forensicTrack(context, 'IQData: daily_tokens_limit_exceeded', errorTag);
         }
     }
     return content;
