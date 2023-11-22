@@ -109,6 +109,7 @@ const sendAndInsertEmail = async ({
         email_delivery_status: 'Scheduled',
         email_message_id: res.messageId,
         email_send_at: emailSendAt,
+        email_engine_account_id: account,
     });
 
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };

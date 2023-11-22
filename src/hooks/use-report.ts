@@ -11,20 +11,7 @@ import useSWR from 'swr';
 import { useCompany } from './use-company';
 import type { eventKeys } from 'src/utils/analytics/events';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
-
-//The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
-// const transformReport = (report: CreatorReport, platform: string) => {
-//     if (platform === 'youtube' || platform === 'tiktok') {
-//         return {
-//             ...report,
-//             user_profile: {
-//                 ...report.user_profile,
-//                 picture: imgProxy(report.user_profile.picture) as string,
-//             },
-//         };
-//     }
-//     return report;
-// };
+import { useRouter } from 'next/router';
 
 // reports that have `createdAt` older than 59 days are considered stale
 export const reportIsStale = (createdAt: string) => {
@@ -57,11 +44,12 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
     const { t } = useTranslation();
     const { profile } = useUser();
     const { company } = useCompany();
+    const router = useRouter();
     const { data, isLoading, mutate } = useSWR(
         !suppressFetch && platform && creator_id && company?.id && profile?.id
-            ? ['creators/report', platform, creator_id, company?.id, profile?.id]
+            ? ['creators/report', platform, creator_id, company?.id, profile?.id, router.pathname]
             : null,
-        async ([path, platform, creator_id, company_id, user_id]) => {
+        async ([path, platform, creator_id, company_id, user_id, pageUrl]) => {
             try {
                 const { createdAt, influencer, socialProfile, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
@@ -72,15 +60,16 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     company_id,
                     user_id,
                     track,
+                    pageUrl,
                 });
-
-                if (!report.success) throw new Error('Failed to fetch report');
-                // const transformed = transformReport(report, platform);
                 setErrorMessage('');
                 return { createdAt, report, influencer, socialProfile };
             } catch (error: any) {
                 clientLogger(error, 'error');
-                if (hasCustomError(error, usageErrors)) {
+                const isRetryError = error.message.includes('retry_later');
+                if (isRetryError) {
+                    setErrorMessage(t('creators.retryLaterMessage') || '');
+                } else if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                     setErrorMessage(t(error.message) || '');
                 } else setErrorMessage(t('creators.failedToFetchReport') || '');

@@ -60,6 +60,10 @@ export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async 
 };
 
 export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async (insert: SequenceEmailInsert) => {
+    if (!insert.email_engine_account_id) {
+        // This column was added later and is not 'not null', so add this check for any new ones
+        throw new Error('Missing required email_engine_account_id');
+    }
     const { data, error } = await supabaseClient.from('sequence_emails').insert(insert).single();
     if (error) throw error;
     return data;

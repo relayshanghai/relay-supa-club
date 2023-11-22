@@ -1091,6 +1091,7 @@ export interface Database {
         Row: {
           created_at: string
           email_delivery_status: string | null
+          email_engine_account_id: string | null
           email_message_id: string | null
           email_send_at: string | null
           email_tracking_status: string | null
@@ -1103,6 +1104,7 @@ export interface Database {
         Insert: {
           created_at?: string
           email_delivery_status?: string | null
+          email_engine_account_id?: string | null
           email_message_id?: string | null
           email_send_at?: string | null
           email_tracking_status?: string | null
@@ -1115,6 +1117,7 @@ export interface Database {
         Update: {
           created_at?: string
           email_delivery_status?: string | null
+          email_engine_account_id?: string | null
           email_message_id?: string | null
           email_send_at?: string | null
           email_tracking_status?: string | null
