@@ -1,5 +1,6 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createContact } from 'src/utils/api/brevo';
 import type { ProfileDB, ProfileDBInsert, ProfileDBUpdate } from 'src/utils/api/db';
 import { insertProfile } from 'src/utils/api/db';
 import { updateProfile } from 'src/utils/api/db';
@@ -9,6 +10,18 @@ import { serverLogger } from 'src/utils/logger-server';
 export type ProfilePutBody = ProfileDBUpdate & { id: string };
 export type ProfilePutResponse = ProfileDB;
 export type ProfileInsertBody = ProfileDBInsert;
+
+// Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation
+const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
+
+const createBrevoContact = async (email?: string | null) => {
+    if (!email || !BREVO_NEWTRIALUSERS_LIST_ID) return false;
+
+    return await createContact({
+        email: email,
+        listIds: [Number(BREVO_NEWTRIALUSERS_LIST_ID)],
+    });
+};
 
 const Handler: NextApiHandler = async (req, res) => {
     if (req.method === 'PUT') {
@@ -50,6 +63,9 @@ const Handler: NextApiHandler = async (req, res) => {
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const result: ProfilePutResponse = data;
+
+            await createBrevoContact(profile.email);
+
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error);

@@ -89,3 +89,6 @@ NEXT_PUBLIC_ENABLE_RUDDERSTACK=true
 
 # Supabase workers token
 SCHEDULER_WORKER_TOKEN=
+
+# Brevo List ID for the new signups that will be funneled to an marketing automation
+BREVO_NEWTRIALUSERS_LIST_ID=8
