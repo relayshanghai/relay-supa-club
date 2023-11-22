@@ -592,13 +592,18 @@ const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) =>
     return res.status(httpCodes.OK).json({});
 };
 
+const ignoredWebhooks = ['messageUpdated'];
+
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
 
-    await identifyAccount(body?.account);
+    if (ignoredWebhooks.includes(body.event)) {
+        return res.status(httpCodes.OK).json({});
+    }
 
+    await identifyAccount(body?.account);
     try {
         switch (body.event) {
             case 'messageNew':
