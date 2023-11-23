@@ -1,310 +1,137 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { InfluencerSocialProfileRow, SequenceStep, TemplateVariable } from 'src/utils/api/db';
-import { type SequenceInfluencer } from 'src/utils/api/db';
-import { getInfluencerSocialProfilesByIdsCall } from 'src/utils/api/db/calls/influencers';
-import {
-    deleteSequenceEmailsByInfluencerCall,
-    getSequenceEmailByInfluencerAndSequenceStep,
-    getSequenceEmailsBySequenceInfluencerCall,
-    insertSequenceEmailCall,
-} from 'src/utils/api/db/calls/sequence-emails';
+import { rudderstack } from 'src/utils/rudderstack';
+import { createJob } from 'src/utils/scheduler/utils';
+import type { SequenceInfluencerManagerPage } from './influencers';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
-import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
-import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
-import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
-import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
-import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
-import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
 import { serverLogger } from 'src/utils/logger-server';
-import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import { wait } from 'src/utils/utils';
-import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
+import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
+import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
 export type SequenceSendPostBody = {
     account: string;
-    sequenceInfluencers: SequenceInfluencer[];
+    sequenceInfluencers: SequenceInfluencerManagerPage[];
+    sequenceSteps: SequenceStep[];
+    templateVariables: TemplateVariable[];
 };
 
 export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
 
 export type SequenceSendPostResponse = SendResult[];
 
-const sendAndInsertEmail = async ({
-    step,
-    account,
-    sequenceInfluencer,
-    templateVariables,
-    messageId,
-    references,
-    influencerSocialProfile,
-    outbox,
-}: {
-    step: SequenceStep;
-    sequenceInfluencer: SequenceInfluencer;
-    account: string;
-    templateVariables: TemplateVariable[];
-    messageId: string;
-    references: string;
-    influencerSocialProfile: InfluencerSocialProfileRow;
-    outbox: OutboxGetMessage[];
-}): Promise<SendResult> => {
-    if (!sequenceInfluencer.email) {
-        throw new Error('No email address');
+const postHandler: NextApiHandler = async (req, res) => {
+    await rudderstack.identify({ req, res });
+    const { account, sequenceInfluencers } = req.body as SequenceSendPostBody;
+    let { sequenceSteps, templateVariables } = req.body as SequenceSendPostBody;
+    const results: SequenceSendPostResponse = [];
+    if (sequenceInfluencers.length === 0) {
+        throw new Error('No influencers found');
     }
-    const influencerAccountName = influencerSocialProfile.name || influencerSocialProfile.username;
-    if (!influencerAccountName) {
-        throw new Error('No influencer name or handle');
-    }
-    const recentPostTitle = influencerSocialProfile.recent_post_title ?? 'recent';
-
-    const recentPostURL = influencerSocialProfile.recent_post_url;
-    if (!recentPostURL) {
-        throw new Error('No recent post url');
-    }
-    // make sure there is not an existing sequence email for this influencer for this step:
-    const { data: existingSequenceEmail } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
-        sequenceInfluencer.id,
-        step.id,
-    );
-    if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
-        // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
-        if (sequenceInfluencer.funnel_status === 'To Contact') {
-            await db(updateSequenceInfluencerCall)({
-                id: sequenceInfluencer.id,
-                funnel_status: 'In Sequence',
-            });
-            return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
-        } else {
-            throw new Error('Email already sent');
-        }
-    }
-
-    const params = {
-        ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
-        // fill in the params not in the template variables
-        influencerAccountName,
-        recentPostTitle,
-        recentPostURL,
-    };
-    // add the step's waitTimeHrs to the sendAt date
-    const { template_id, wait_time_hours } = step;
-    const emailSendAt = (await calculateSendAt(account, wait_time_hours, outbox)).toISOString();
-
-    const res = await sendTemplateEmail({
-        account,
-        toEmail: sequenceInfluencer.email,
-        template: template_id,
-        sendAt: emailSendAt,
-        params,
-        messageId,
-        references,
-    });
-
-    if ('error' in res) {
-        throw new Error(res.error);
-    }
-    await db(insertSequenceEmailCall)({
-        sequence_influencer_id: sequenceInfluencer.id,
-        sequence_id: sequenceInfluencer.sequence_id,
-        sequence_step_id: step.id,
-        email_delivery_status: 'Scheduled',
-        email_message_id: res.messageId,
-        email_send_at: emailSendAt,
-    });
-
-    return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
-};
-
-// eslint-disable-next-line complexity
-const sendSequence = async (
-    { account, sequenceInfluencers: sequenceInfluencersPassed }: SequenceSendPostBody,
-    tries: number,
-) => {
-    const results: SendResult[] = [];
-    const uniqueInfluencerIds = Array.from(new Set(sequenceInfluencersPassed.map((influencer) => influencer.id)));
-    const trackData: SequenceSendPayload = {
-        extra_info: { results },
-        account,
-        sequence_influencer_ids: uniqueInfluencerIds,
-        is_success: false,
-    };
-
-    const isInfluencer = (influencer: any): influencer is SequenceInfluencer => {
-        return influencer && influencer.id && influencer.sequence_id;
-    };
-
-    const sequenceInfluencers = uniqueInfluencerIds
-        .map((id) => sequenceInfluencersPassed.find((i) => i.id === id) ?? null)
-        .filter(isInfluencer);
-
     // optimistic updates
-    for (const i of sequenceInfluencers) {
+    for (const influencer of sequenceInfluencers) {
         try {
             await wait(100);
             await db(updateSequenceInfluencerCall)({
-                id: i.id,
+                id: influencer.id,
                 funnel_status: 'In Sequence',
             });
         } catch (error) {
             serverLogger(error);
         }
     }
+    if (!account) {
+        throw new Error('Missing required account id');
+    }
+    const sequenceId = sequenceInfluencers[0].sequence_id ?? '';
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        sequenceSteps = (await db(getSequenceStepsBySequenceIdCall)(sequenceId)) ?? [];
+    }
+    sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        throw new Error('No sequence steps found');
+    }
 
-    try {
-        if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
-            throw new Error('Missing required parameters');
-        }
+    if (!templateVariables || templateVariables.length === 0) {
+        templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    }
 
-        const sequenceId = sequenceInfluencers[0].sequence_id;
-        const sequenceSteps = await db(getSequenceStepsBySequenceIdCall)(sequenceId);
-        if (!sequenceSteps || sequenceSteps.length === 0) {
-            throw new Error('No sequence steps found');
-        }
-        trackData.extra_info.sequence_steps = sequenceSteps.map((step) => step.id);
+    if (!templateVariables || templateVariables.length === 0) {
+        throw new Error('No template variables found');
+    }
 
-        const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
-        trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
-        if (!templateVariables || templateVariables.length === 0) {
-            throw new Error('No template variables found');
-        }
-
-        const influencerSocialProfiles = await db(getInfluencerSocialProfilesByIdsCall)(
-            sequenceInfluencers.map((i) => i.influencer_social_profile_id ?? ''),
-        );
-
-        const promises = sequenceInfluencers.map((sequenceInfluencer) => async (outbox: OutboxGetMessage[]) => {
+    for (const influencer of sequenceInfluencers) {
+        const payload = {
+            emailEngineAccountId: account,
+            sequenceInfluencer: influencer,
+            sequenceSteps,
+            templateVariables,
+        };
+        const jobCreated = await createJob('sequence_send', {
+            queue: 'sequence_send',
+            payload,
+        });
+        if (jobCreated && jobCreated.id) {
+            // TODO: make better https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1100
+            // Now that we use the scheduler, it is hard to know which sequence step failed, so we just do it per influencer
+            results.concat([
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 0,
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 1,
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 2,
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 3,
+                },
+            ]);
+        } else {
+            results.concat([
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 0,
+                    error: 'failed to schedule 0',
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 1,
+                    error: 'failed to schedule 1',
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 2,
+                    error: 'failed to schedule 2',
+                },
+                {
+                    sequenceInfluencerId: influencer.id,
+                    stepNumber: 3,
+                    error: 'failed to schedule 3',
+                },
+            ]);
             try {
-                const messageIds = gatherMessageIds(sequenceInfluencer.email ?? '', sequenceSteps);
-                if (!sequenceInfluencer.influencer_social_profile_id) {
-                    throw new Error('No influencer social profile id');
-                }
-                const influencerSocialProfile = influencerSocialProfiles.find(
-                    (profile) => profile.id === sequenceInfluencer.influencer_social_profile_id,
-                );
-                if (!influencerSocialProfile) {
-                    throw new Error('No influencer social profile');
-                }
-
-                const stepPromises = sequenceSteps.map(async (step) => {
-                    try {
-                        const references = generateReferences(messageIds, step.step_number);
-                        const result = await sendAndInsertEmail({
-                            step,
-                            account,
-                            sequenceInfluencer,
-                            templateVariables,
-                            references,
-                            messageId: messageIds[step.step_number],
-                            influencerSocialProfile,
-                            outbox,
-                        });
-                        results.push(result);
-                    } catch (error: any) {
-                        serverLogger(error);
-                        results.push({
-                            sequenceInfluencerId: sequenceInfluencer.id,
-                            error:
-                                `error: ${error?.message}\n stack ${error?.stack}` ??
-                                'Something went wrong sending the email',
-                        });
-                    }
+                // revert optimistic update
+                await db(updateSequenceInfluencerCall)({
+                    id: influencer.id,
+                    funnel_status: 'To Contact',
                 });
-                await Promise.all(stepPromises);
-                // revert the optimistic update if not sent successfully
-            } catch (error: any) {
+            } catch (error) {
                 serverLogger(error);
-                results.push({
-                    sequenceInfluencerId: sequenceInfluencer.id,
-                    error: `error: ${error?.message}\n stack ${error?.stack}` ?? '',
-                });
-            }
-        });
-
-        // send the promises in batches of 3, with a 5 second timeout between to not overload the server.
-        // fetch the outbox only once every batch to cut down on that expensive call.
-        const promisesBatches = [];
-        for (let i = 0; i < promises.length; i += 3) {
-            promisesBatches.push(promises.slice(i, i + 3));
-        }
-        for (const batch of promisesBatches) {
-            const outbox = await getOutbox();
-            await Promise.all(batch.map((p) => p(outbox)));
-            await wait(5000);
-        }
-    } catch (error) {
-        serverLogger(error); // truly unexpected error
-        try {
-            track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
-        } catch (error) {
-            serverLogger(error); // truly unexpected error
-        }
-        return results;
-    }
-
-    await handleResults(account, results, sequenceInfluencers, tries);
-    trackData.is_success = true;
-    track(rudderstack.getClient(), rudderstack.getIdentity())(SequenceSend, trackData);
-    return results;
-};
-
-const handleResults = async (
-    account: string,
-    results: SendResult[],
-    sequenceInfluencers: SequenceInfluencer[],
-    tries: number,
-) => {
-    try {
-        const outbox = await getOutbox();
-        const retryList: SequenceInfluencer[] = [];
-
-        for (const influencer of sequenceInfluencers) {
-            const outreachResults = results.filter((result) => result.sequenceInfluencerId === influencer.id);
-            if (!outreachResults || outreachResults.length === 0 || outreachResults.some((result) => result.error)) {
-                if (tries < 3) {
-                    retryList.push(influencer);
-                } else {
-                    await handleSendFailed(influencer, outbox);
-                }
+                results[results.length - 1].error =
+                    results[results.length - 1].error + ' and failed to revert optimistic update';
             }
         }
-
-        if (retryList.length > 0) {
-            await wait(3000);
-            await sendSequence({ account, sequenceInfluencers: retryList }, tries + 1);
-        }
-    } catch (error) {
-        serverLogger(error);
     }
-};
 
-/** Revert the optimistic update and set the influencer to 'To Contact', delete the sequence_emails, and cancel outgoing emails in the outbox */
-const handleSendFailed = async (sequenceInfluencer: SequenceInfluencer, outbox: OutboxGetMessage[]) => {
-    try {
-        await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
-            id: sequenceInfluencer.id,
-            funnel_status: 'To Contact',
-        });
-        const emails = await db(getSequenceEmailsBySequenceInfluencerCall)(sequenceInfluencer.id);
-        for (const email of emails) {
-            const outboxMessage = outbox.find((m) => m.messageId === email.email_message_id);
-            if (outboxMessage && email.email_message_id) {
-                await deleteEmailFromOutbox(email.email_message_id);
-            }
-        }
-        await db(deleteSequenceEmailsByInfluencerCall)(sequenceInfluencer.id);
-    } catch (error) {
-        serverLogger(error);
-    }
-};
-
-const postHandler: NextApiHandler = async (req, res) => {
-    await rudderstack.identify({ req, res });
-    const body = req.body as SequenceSendPostBody;
-    const results: SequenceSendPostResponse = await sendSequence(body, 0);
     return res.status(httpCodes.OK).json(results);
 };
 

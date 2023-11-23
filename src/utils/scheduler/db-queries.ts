@@ -56,18 +56,23 @@ export const getJob =
         return data;
     };
 
-export const createJob =
+export const createJobDb =
     (supabase: RelayDatabase) => async (id: string, job: Omit<Jobs['Insert'], 'id' | 'status'>) => {
         const status = JOB_STATUS.pending;
         const { data, error } = await supabase
             .from('jobs')
             .upsert({ ...job, status, id })
-            .select();
+            .limit(1)
+            .select()
+            .single();
         if (error) throw error;
         return data;
     };
 
-export const finishJob =
+/**
+ * if the job failed, increment the retry_count
+ */
+export const finishJobDb =
     (supabase: RelayDatabase) =>
     async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'> = JOB_STATUS.success, result: any = null) => {
         const retry_count = status !== JOB_STATUS.success ? (job.retry_count ?? 0) + 1 : job.retry_count;

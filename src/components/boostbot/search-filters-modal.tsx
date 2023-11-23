@@ -1,12 +1,12 @@
 import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from 'react';
-import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, InfluencerSize } from 'types';
 import { influencerSizes } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
-import { Question, Sparkles } from 'src/components/icons';
+import { Question, Sparkles, MicroInfluencer, NicheInfluencer, Settings } from 'src/components/icons';
 import { countries, countriesByFlag } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { randomNumber } from 'src/utils/utils';
@@ -14,8 +14,6 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenBoostbotFiltersModal } from 'src/utils/analytics/events/boostbot/open-filters-modal';
 import { SetBoostbotFilter } from 'src/utils/analytics/events/boostbot/set-filter';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import MicroInfluencer from '../icons/MicroInfluencer';
-import NicheInfluencer from '../icons/NicheInfluencer';
 import { Tooltip } from '../library/tooltip';
 
 type SearchFiltersModalProps = {
@@ -201,7 +199,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             <div className="mb-6 flex flex-1 space-x-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                        <AdjustmentsVerticalIcon className="h-6 w-6 fill-none stroke-primary-600 group-disabled:stroke-primary-200" />
+                        <Settings className="h-5 w-5 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
                     </div>
                 </div>
                 {/* TO DO CLose button */}

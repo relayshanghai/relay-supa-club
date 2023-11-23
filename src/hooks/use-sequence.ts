@@ -1,7 +1,7 @@
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
 import { useUser } from 'src/hooks/use-user';
 import { CreateSequence } from 'src/utils/analytics/events';
-import type { SequenceInfluencer, SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
+import type { SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
 import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
@@ -10,6 +10,8 @@ import useSWR from 'swr';
 import { useRudderstackTrack } from './use-rudderstack';
 import { useSequenceSteps } from './use-sequence-steps';
 import { useSequences } from './use-sequences';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useTemplateVariables } from './use-template_variables';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
@@ -17,6 +19,7 @@ export const useSequence = (sequenceId?: string) => {
 
     const db = useClientDb();
     const { refreshSequences } = useSequences();
+    const { templateVariables } = useTemplateVariables(sequenceId);
     const { data: sequence, mutate: refreshSequence } = useSWR(
         sequenceId ? [sequenceId, 'sequences'] : null,
         ([sequenceId]) => db.getSequenceById(sequenceId),
@@ -64,13 +67,15 @@ export const useSequence = (sequenceId?: string) => {
         }
     };
 
-    const sendSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
+    const sendSequence = async (sequenceInfluencers: SequenceInfluencerManagerPage[]) => {
         if (!profile?.email_engine_account_id) {
             throw new Error('No email account found');
         }
         const body: SequenceSendPostBody = {
             account: profile.email_engine_account_id,
             sequenceInfluencers,
+            sequenceSteps: sequenceSteps ?? [],
+            templateVariables: templateVariables ?? [],
         };
         return await nextFetch<SequenceSendPostResponse>('sequence/send', {
             method: 'POST',
