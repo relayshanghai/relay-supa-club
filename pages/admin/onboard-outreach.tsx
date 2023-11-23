@@ -11,7 +11,10 @@ import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 
 const cleanUserInput = (input: string) => {
     // remove spaces and line breaks
-    return input.trim().replace(/\r?\n|\r/g, '');
+    return input
+        .trim()
+        .replace(/\r?\n|\r/g, '')
+        .toLowerCase(); // all email engine account ids are lowercase and emails should be too
 };
 
 const validateEmail = (email: string | null) => {
