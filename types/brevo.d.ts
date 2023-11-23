@@ -7,9 +7,14 @@ declare module 'sib-api-v3-sdk' {
     /**
      * @see https://github.com/sendinblue/APIv3-nodejs-library/blob/master/docs/CreateContact.md
      */
-    export type CreateContactType = {
+    export type CreateContactType<T extends Record<string, any> = undefined> = {
         email?: string;
-        attributes?: Record<string, any>;
+        /**
+         * Contact attributes are defined here.
+         * Also, they should be uppercase
+         * @see https://my.brevo.com/lists/add-attributes
+         */
+        attributes?: T;
         emailBlacklisted?: boolean;
         smsBlacklisted?: boolean;
         listIds?: number[];

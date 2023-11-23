@@ -14,19 +14,23 @@ export type ProfileInsertBody = ProfileDBInsert;
 // Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
-const createBrevoContact = async (email?: string | null) => {
-    if (!email || !BREVO_NEWTRIALUSERS_LIST_ID) return false;
+const createBrevoContact = async (profile: ProfileDBInsert) => {
+    if (!profile.email || !BREVO_NEWTRIALUSERS_LIST_ID) return false;
 
     try {
         return await createContact({
-            email: email,
+            email: profile.email,
+            attributes: {
+                FIRSTNAME: profile.first_name,
+                LASTNAME: profile.last_name,
+            },
             listIds: [Number(BREVO_NEWTRIALUSERS_LIST_ID)],
         });
     } catch (error) {
         serverLogger(error, (scope) => {
             return scope.setContext('Error', {
                 error: 'Cannot create brevo contact',
-                email,
+                email: profile.email,
                 listId: BREVO_NEWTRIALUSERS_LIST_ID,
             });
         });
@@ -75,7 +79,7 @@ const Handler: NextApiHandler = async (req, res) => {
             }
             const result: ProfilePutResponse = data;
 
-            await createBrevoContact(profile.email);
+            await createBrevoContact(profile);
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
