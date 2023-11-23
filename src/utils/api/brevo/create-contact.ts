@@ -7,6 +7,7 @@ type RelayBrevoContactAttributes = {
     FIRSTNAME?: string;
     SMS?: string;
     WHATSAPP?: string;
+    COMPANYNAME?: string;
 };
 
 export const createContact = async (params: CreateContact<RelayBrevoContactAttributes>) => {
