@@ -11,6 +11,7 @@ import { useRudderstackTrack } from './use-rudderstack';
 import { useSequenceSteps } from './use-sequence-steps';
 import { useSequences } from './use-sequences';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useTemplateVariables } from './use-template_variables';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
@@ -18,6 +19,7 @@ export const useSequence = (sequenceId?: string) => {
 
     const db = useClientDb();
     const { refreshSequences } = useSequences();
+    const { templateVariables } = useTemplateVariables(sequenceId);
     const { data: sequence, mutate: refreshSequence } = useSWR(
         sequenceId ? [sequenceId, 'sequences'] : null,
         ([sequenceId]) => db.getSequenceById(sequenceId),
@@ -72,6 +74,8 @@ export const useSequence = (sequenceId?: string) => {
         const body: SequenceSendPostBody = {
             account: profile.email_engine_account_id,
             sequenceInfluencers,
+            sequenceSteps: sequenceSteps ?? [],
+            templateVariables: templateVariables ?? [],
         };
         return await nextFetch<SequenceSendPostResponse>('sequence/send', {
             method: 'POST',
