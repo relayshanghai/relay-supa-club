@@ -23,8 +23,9 @@ const validateEmail = (email: string | null) => {
 
 const validateEmailEngineAccountId = (emailEngineAccountId: string | null) => {
     if (!emailEngineAccountId) return false;
-    if (emailEngineAccountId.includes('/')) return false;
     if (emailEngineAccountId.length !== 16) return false;
+    // should be all letters and numbers only
+    if (!/^[a-zA-Z0-9]+$/.test(emailEngineAccountId)) return false;
     return true;
 };
 
