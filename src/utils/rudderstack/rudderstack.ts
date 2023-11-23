@@ -63,7 +63,7 @@ export const track: TrackFuncType = (rudder, session) => (event, payload) => {
             trackPayload.userId = session.user_id;
         }
 
-        if (!session.user_id && session.anonymous_id) {
+        if (session.anonymous_id) {
             trackPayload.anonymousId = session.anonymous_id;
         }
 
@@ -163,26 +163,30 @@ export class Rudderstack {
         const client = this.getClient();
         if (!client) return;
 
+        this.session = this.session ?? {};
+        this.session['user_id'] = userId;
+
         client.identify({
             userId,
+            anonymousId: this.session.anonymous_id,
         });
 
-        this.session = {
-            user_id: userId,
-        };
+        return this.session;
     }
 
     async identifyWithAnonymousID(anonymousId: string) {
         const client = this.getClient();
         if (!client) return;
 
+        this.session = this.session ?? {};
+        this.session['anonymous_id'] = anonymousId;
+
         client.identify({
+            userId: this.session.user_id,
             anonymousId,
         });
 
-        this.session = {
-            anonymous_id: anonymousId,
-        };
+        return this.session;
     }
 
     getIdentity() {
