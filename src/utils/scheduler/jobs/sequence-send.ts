@@ -22,6 +22,8 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTime } from 'src/utils/max-execution-time';
+import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
+import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
 type SequenceSendEventPayload = {
     emailEngineAccountId: string;
@@ -133,6 +135,24 @@ const sendSequence = async ({
     };
 
     try {
+        if (!account) {
+            throw new Error('Missing required account id');
+        }
+        if (!sequenceSteps || sequenceSteps.length === 0) {
+            sequenceSteps = (await db(getSequenceStepsBySequenceIdCall)(influencer.sequence_id)) ?? [];
+        }
+        sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
+        if (!sequenceSteps || sequenceSteps.length === 0) {
+            throw new Error('No sequence steps found');
+        }
+
+        if (!templateVariables || templateVariables.length === 0) {
+            templateVariables = await db(getTemplateVariablesBySequenceIdCall)(influencer.sequence_id);
+        }
+
+        if (!templateVariables || templateVariables.length === 0) {
+            throw new Error('No template variables found');
+        }
         trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
 
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
