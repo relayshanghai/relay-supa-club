@@ -32,6 +32,7 @@ const validateEmailEngineAccountId = (emailEngineAccountId: string | null) => {
 const OnboardOutreach = () => {
     const [profile, setProfile] = useState<ProfileDB | null>(null);
     const [fetchingProfile, setFetchingProfile] = useState<boolean>(false);
+    const [submittingProfile, setSubmittingProfile] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const fetchProfile: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
@@ -52,6 +53,7 @@ const OnboardOutreach = () => {
 
     const updateProfile: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
+        setSubmittingProfile(true);
         try {
             if (!profile) {
                 return;
@@ -74,6 +76,8 @@ const OnboardOutreach = () => {
             }
         } catch (error) {
             alert(error);
+        } finally {
+            setSubmittingProfile(false);
         }
     };
 
@@ -111,7 +115,9 @@ const OnboardOutreach = () => {
                                         setProfile({ ...profile, sequence_send_email: cleanUserInput(e.target.value) })
                                     }
                                 />
-                                <Button type="submit">Submit</Button>
+                                <Button disabled={submittingProfile} type="submit">
+                                    Submit
+                                </Button>
                             </form>
                         </div>
                     ) : !fetchingProfile ? (
