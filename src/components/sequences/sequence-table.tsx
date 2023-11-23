@@ -2,9 +2,10 @@ import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'sr
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
-import { type SetStateAction, useCallback } from 'react';
+import { type SetStateAction, useCallback, useState } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import {DataTablePagination as Pagination} from './pagination';
 
 interface SequenceTableProps {
     sequence?: Sequence;
@@ -65,15 +66,25 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 }) => {
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
+    const [currentPage,setCurrentPage]=useState(1);
+    const totalNumberOfPages= ()=>{
+        if (sortedInfluencers?.length){
+            console.log(sortInfluencers.length)
+            return (sortedInfluencers.length/numberOfInfluencersPerPage); // change to 25 later
+        }
+        return 1;
+    };
+    const numberOfInfluencersPerPage=6;
+    const getRangePerPage=()=>{}
 
     const handleCheckboxChange = useCallback(
-        (id: string) => {
-            if (selection.includes(id)) {
-                setSelection(selection.filter((selectedId) => selectedId !== id));
-                return;
-            }
-            setSelection([...selection, id]);
-        },
+        function (id: string) {
+        if (selection.includes(id)) {
+            setSelection(selection.filter((selectedId) => selectedId !== id));
+            return;
+        }
+        setSelection([...selection, id]);
+    },
         [selection, setSelection],
     );
 
@@ -87,6 +98,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 
     const columns = sequenceColumns(currentTab);
     return (
+        <div>
         <table className="w-full border-collapse border border-gray-300">
             <thead>
                 <tr className="border-b-2 border-gray-200">
@@ -110,7 +122,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                 </tr>
             </thead>
             <tbody>
-                {sortedInfluencers?.map((influencer) => {
+                {sortedInfluencers?.slice((currentPage-1)*numberOfInfluencersPerPage, currentPage*numberOfInfluencersPerPage)?.map((influencer) => {
                     const influencerEmails = sequenceEmails?.filter(
                         (email) => email.sequence_influencer_id === influencer.id,
                     );
@@ -140,6 +152,10 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                 })}
             </tbody>
         </table>
+        <Pagination setPageIndex={setCurrentPage} currentPage={currentPage} pages={totalNumberOfPages()}/>
+        </div>
+        //   * use state total number of pages,currentpage,if can nextpage, sa setter of the current page  */
+        
     );
 };
 
