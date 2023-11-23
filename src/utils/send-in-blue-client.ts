@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // Docs in https://github.com/sendinblue/APIv3-nodejs-library
 //@ts-ignore
 import SendInBlue from 'sib-api-v3-sdk'; // no types for this library

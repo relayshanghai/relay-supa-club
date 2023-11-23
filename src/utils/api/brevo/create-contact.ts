@@ -1,4 +1,4 @@
-import type { CreateContactType } from 'sib-api-v3-sdk';
+import type { CreateContact } from 'sib-api-v3-sdk';
 import Brevo from './brevo';
 
 type RelayBrevoContactAttributes = {
@@ -9,7 +9,7 @@ type RelayBrevoContactAttributes = {
     WHATSAPP?: string;
 };
 
-export const createContact = async (params: CreateContactType<RelayBrevoContactAttributes>) => {
+export const createContact = async (params: CreateContact<RelayBrevoContactAttributes>) => {
     const api = new (Brevo('ContactsApi'))();
 
     return await api.createContact(Brevo('CreateContact').constructFromObject(params));
