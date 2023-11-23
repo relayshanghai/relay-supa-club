@@ -2,6 +2,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { rudderstack } from 'src/utils/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import { getProfileByEmailEngineAccountQuery } from '../db/calls/profiles';
+import { isFetchFailedError } from 'pages/api/email-engine/webhook';
 
 // Identity for webhook events that have no `body.account`
 const EMAIL_ENGINE_TEST_IDENTITY = 'a579b7c282704275a93aaf0e304335f1302babb91496c6ee3174c8bd3c316601';
@@ -19,19 +20,18 @@ export const identifyAccount = async (account: string) => {
     }
 
     let profile = null;
-    let getProfileByEmailEngineAccountQueryError = '';
 
     try {
         profile = await db(getProfileByEmailEngineAccountQuery)(account);
     } catch (error: any) {
-        getProfileByEmailEngineAccountQueryError = error?.message ?? '';
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         serverLogger(error, (scope) => scope.setContext('Email Engine Account', { account }));
     }
 
     if (profile) {
-        rudderstack.identifyWithProfile(profile.id);
-    } else {
-        rudderstack.identifyWithAnonymousID(account);
+        return rudderstack.identifyWithProfile(profile.id);
     }
-    return getProfileByEmailEngineAccountQueryError;
+    return rudderstack.identifyWithAnonymousID(account);
 };
