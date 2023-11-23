@@ -30,11 +30,12 @@ import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topic
 import type { Dispatch, SetStateAction } from 'react';
 import { Tooltip } from '../library/tooltip';
 import { Question } from '../icons';
+import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
-    selectedRow?: Row<BoostbotInfluencer>;
+    selectedRow?: Row<BoostbotInfluencer | ClassicSearchInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;

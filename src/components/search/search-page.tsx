@@ -11,7 +11,6 @@ import { Search, SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/
 import { startJourney } from 'src/utils/analytics/journey';
 import { numberFormatter } from 'src/utils/formatter';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
-import type { CreatorSearchAccountObject } from 'types';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { Layout } from '../layout';
@@ -20,12 +19,9 @@ import ClientRoleWarning from './client-role-warning';
 import { SearchCreators } from './search-creators';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
-import { MoreResultsRows } from './search-result-row';
-import { SearchResultsTable } from './search-results-table';
 import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
@@ -35,6 +31,15 @@ import { randomNumber } from 'src/utils/utils';
 import { FaqModal } from '../library';
 import discoveryfaq from 'i18n/en/discovery-faq';
 import { useRouter } from 'next/router';
+import { classicColumns } from '../boostbot/table/columns';
+import { InfluencersTable } from '../boostbot/table/influencers-table';
+import type { Row } from '@tanstack/react-table';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { AddToSequenceButton } from '../boostbot/add-to-sequence-button';
+import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
@@ -58,19 +63,16 @@ export const SearchPageInner = () => {
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
-    const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
+    const [selectedCreator, _setSelectedCreator] = useState<ClassicSearchInfluencer | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
     const { trackEvent } = useRudderstack();
-    const [batchId, setBatchId] = useState(() => randomNumber());
+    const [_batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
         results: firstPageSearchResults,
         resultsTotal,
         noResults,
-        error,
-        isValidating,
         loading: resultsLoading,
         metadata,
         setOnLoad,
@@ -182,6 +184,8 @@ export const SearchPageInner = () => {
         });
     }, [platform, setSearchParams]);
 
+    const searchId = randomNumber();
+
     useEffect(() => {
         setAudience([null, null]);
         setViews([null, null]);
@@ -205,6 +209,18 @@ export const SearchPageInner = () => {
         setTopicTags,
         setViews,
     ]);
+    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+        'classic-selected-influencers',
+        {},
+    );
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+    const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
+    const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
+    const { sequenceInfluencers: allSequenceInfluencers } = useSequenceInfluencers(sequences?.map((s) => s.id));
+    const [selectedCount, setSelectedCount] = useState(0);
+    const [_showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+
     return (
         <div className="p-6">
             <ClientRoleWarning />
@@ -230,34 +246,52 @@ export const SearchPageInner = () => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-            <SearchResultsTable
-                setSelectedCreator={setSelectedCreator}
-                setShowCampaignListModal={setShowCampaignListModal}
-                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                allCampaignCreators={allCampaignCreators}
-                allSequenceInfluencersIqDataIdsAndSequenceNames={allSequenceInfluencersIqDataIdsAndSequenceNames}
-                loading={resultsLoading}
-                validating={isValidating}
-                results={firstPageSearchResults}
-                error={error}
-                batchId={batchId}
-                moreResults={
-                    <>
-                        {new Array(page).fill(0).map((_, i) => (
-                            <MoreResultsRows
-                                key={i}
-                                page={i + 1}
-                                setSelectedCreator={setSelectedCreator}
-                                setShowCampaignListModal={setShowCampaignListModal}
-                                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                allCampaignCreators={allCampaignCreators}
-                                trackSearch={track}
-                                batchId={batchId}
-                                resultIndex={i}
+            {firstPageSearchResults && (
+                <div className="flex w-full basis-3/4 flex-col">
+                    <div className="flex flex-row items-center justify-between">
+                        <div className="ml-4 text-gray-400">
+                            {t('boostbot.table.selectedAmount', {
+                                selectedCount,
+                            })}
+                        </div>
+                        <div className="w-fit pb-3">
+                            <AddToSequenceButton
+                                buttonText={t('boostbot.chat.outreachSelected')}
+                                outReachDisabled={false}
+                                handleAddToSequenceButton={() => {
+                                    //
+                                }}
                             />
-                        ))}
-                    </>
+                        </div>
+                    </div>
+                    <InfluencersTable
+                        columns={classicColumns}
+                        data={firstPageSearchResults}
+                        selectedInfluencers={selectedInfluencers}
+                        setSelectedInfluencers={setSelectedInfluencers}
+                        meta={{
+                            t,
+                            searchId,
+                            setIsInfluencerDetailsModalOpen,
+                            setSelectedRow,
+                            allSequenceInfluencers,
+                            setSelectedCount,
+                            isLoading: resultsLoading,
+                        }}
+                    />
+                </div>
+            )}
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isInfluencerDetailsModalOpen}
+                setIsOpen={setIsInfluencerDetailsModalOpen}
+                setShowSequenceSelector={setShowSequenceSelector}
+                outReachDisabled={
+                    (resultsLoading ||
+                        allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
+                    false
                 }
+                setSelectedInfluencers={setSelectedInfluencers}
             />
             {!noResults && (
                 <Button
@@ -275,14 +309,14 @@ export const SearchPageInner = () => {
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
                 platform={platform}
-                selectedCreator={selectedCreator?.account.user_profile}
+                selectedCreator={selectedCreator}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {
                     // @todo ideally we would want this to use useTrackEvent.track
                     selectedCreator &&
                         trackAnalytics(SearchAddToCampaign, {
-                            creator: selectedCreator.account.user_profile,
+                            creator: selectedCreator,
                             campaign: campaign,
                         });
                 }}
@@ -291,7 +325,7 @@ export const SearchPageInner = () => {
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
+                selectedCreatorUserId={selectedCreator?.user_id}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
             />

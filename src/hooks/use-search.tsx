@@ -1,4 +1,8 @@
-import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
+import type {
+    ClassicSearchInfluencer,
+    InfluencerPostRequest,
+    InfluencerPostResponse,
+} from 'pages/api/influencer-search';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { usageErrors } from 'src/errors/usages';
@@ -133,7 +137,7 @@ export const useSearchResults = (page: number) => {
     const ref = useRef<any>();
 
     type SearchResults = {
-        results: InfluencerPostResponse['accounts'];
+        results: ClassicSearchInfluencer[];
         resultsTotal: InfluencerPostResponse['total'];
         __metadata: SearchResultMetadata['__metadata'];
     };
@@ -175,17 +179,13 @@ export const useSearchResults = (page: number) => {
                     page,
                 };
 
-                const res = await nextFetch<InfluencerPostResponse & SearchResultMetadata>(path, {
+                const res = await nextFetch<ClassicSearchInfluencer[] & SearchResultMetadata>(path, {
                     method: 'post',
                     signal,
                     body,
                 });
 
-                if (!res?.accounts) {
-                    throw new Error('no accounts in results');
-                }
-
-                return { results: res?.accounts, resultsTotal: res?.total, __metadata: res.__metadata };
+                return { results: res, resultsTotal: res.length, __metadata: res.__metadata };
             } catch (error: any) {
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);

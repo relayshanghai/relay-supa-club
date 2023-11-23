@@ -3,14 +3,17 @@ import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandler } from 'src/utils/api-handler';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
-import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
+import {
+    type SearchInfluencersPayloadInput,
+    searchInfluencersWithContext as searchInfluencers,
+} from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
-import type { CreatorSearchResult } from 'types';
+import type { AudienceLikers, CreatorAccount, CreatorSearchResult, UserProfileMatch } from 'types';
 import { v4 } from 'uuid';
 import type { z } from 'zod';
 
@@ -19,6 +22,8 @@ export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     user_id: string;
 };
 export type InfluencerPostResponse = CreatorSearchResult;
+
+export type ClassicSearchInfluencer = CreatorAccount & AudienceLikers & UserProfileMatch & { topics: string[] };
 
 // eslint-disable-next-line complexity
 const generateFiltersMixpanelPayload = (
@@ -87,9 +92,23 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
-    const parameters = {
+    const parameters: SearchInfluencersPayloadInput = {
         query: { platform },
-        body,
+        body: {
+            ...body,
+            filter: {
+                ...body?.filter,
+                followers_growth: {
+                    interval: 'i1month',
+                    operator: 'gte',
+                    value: 0,
+                },
+                lang: { code: 'en' },
+                posts_count: {
+                    left_number: 0,
+                },
+            },
+        },
     };
 
     await rudderstack.identify({ req, res });
@@ -114,6 +133,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const results = await searchInfluencers(parameters, { req, res });
 
+    const structuredResults = results.accounts.map((creator) => ({
+        ...creator.account.user_profile,
+        ...creator.match.user_profile,
+        ...creator.match.audience_likers?.data,
+        topics: ['search'],
+    }));
+
     const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
 
     const snapshot = await createSearchSnapshot(
@@ -131,8 +157,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         snapshot_id: snapshot.id,
         parameters_id: parameter.id,
     };
-
-    return res.status(httpCodes.OK).json(results);
+    return res.status(httpCodes.OK).json(structuredResults);
 };
 
 export default ApiHandler({

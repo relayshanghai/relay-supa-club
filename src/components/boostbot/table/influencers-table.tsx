@@ -21,7 +21,7 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
-        setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+        setSelectedRow: (row: Row<TData>) => void;
         setIsInfluencerDetailsModalOpen: (open: boolean) => void;
         allSequenceInfluencers?: SequenceInfluencerManagerPage[];
         setSelectedCount: (count: number) => void;
