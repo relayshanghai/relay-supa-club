@@ -19,7 +19,7 @@ const isCurrentPlan = (
     return subscription?.name === tierName && subscription.interval === period && subscription.status === 'active';
 };
 
-const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment'];
+const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
 
 const disableButton = (
     tier: ActiveSubscriptionTier,

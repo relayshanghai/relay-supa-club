@@ -47,6 +47,7 @@ const account = {
         viewBillingPortal: '查看账单',
         freeTrial: '免费试用',
         canceled: '已取消',
+        trialExpired: '试用已过期',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: '您没有活动的订阅。请在下面购买。',
         beforePurchasingYouNeedPaymentMethod: '在购买订阅之前，您需要添加付款方式。',
         addPaymentMethod: '添加付款方式',
