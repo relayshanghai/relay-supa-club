@@ -281,7 +281,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         // Don't want to lose a record of this entirely, but it generally isn't important, cause it just means it is a reply to a regular email, not a sequenced email
         await supabaseLogger({ type: 'email-webhook', message: trackData.extra_info.error, data: trackData });
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         return res.status(httpCodes.OK).json({});
     }
@@ -299,7 +299,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
@@ -337,7 +337,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
         };
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
@@ -350,7 +350,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
         }
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
@@ -403,7 +403,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         trackData.is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
     }
@@ -453,7 +453,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
@@ -493,7 +493,7 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
@@ -595,7 +595,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            throw error;
         }
         if (trackData.sequence_email_id) {
             // If we don't have a sequence_email_id, this is a regular email, not a sequenced email and we don't want to track it
@@ -661,16 +661,15 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleOtherWebhook(body, res);
         }
     } catch (error: any) {
-        if (isFetchFailedError(error)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
         if (isPostgrestError(error)) {
             error = normalizePostgrestError(error);
         }
 
-        serverLogger(error, (scope) => {
-            return scope.setContext('Webhook Payload', req.body);
-        });
+        serverLogger(error, (scope) => scope.setContext('Webhook Payload', req.body));
+
+        if (isFetchFailedError(error)) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
     }
 
     return res.status(httpCodes.OK).json({});
