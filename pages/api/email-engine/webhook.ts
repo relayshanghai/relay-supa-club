@@ -165,6 +165,9 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
             try {
                 await updateSequenceEmail(emailUpdate);
             } catch (error: any) {
+                if (isFetchFailedError(error)) {
+                    throw error;
+                }
                 trackData.extra_info.email_update_errors = trackData.extra_info.email_update_errors || [];
                 trackData.extra_info.email_update_errors.push(
                     `${JSON.stringify(emailUpdate)} error: ${error?.message}\n stack ${error?.stack}`,
@@ -178,6 +181,9 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         trackData.extra_info.influencer_update = update;
         trackData.is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
         trackData.is_success = false;
     } finally {
@@ -241,6 +247,9 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         }
         findUserError += ` Find user error, address: ${toAddress}, error: ${error?.message} ` ?? '';
     }
+    if (isFetchFailedError(findUserError)) {
+        throw findUserError;
+    }
 
     // If there are multiple users at the same company with the same email address, this will get the first one. We only use it to supply a `company_id`, so it doesn't matter which user we get as long as the email is unique per company.
     if (!ourUser) {
@@ -258,9 +267,6 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
                 eventTimestamp: now(),
             },
         });
-        if (isFetchFailedError(findUserError)) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
         return res.status(httpCodes.OK).json({});
     }
     trackData.profile_id = ourUser.id;
@@ -278,11 +284,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         trackData.extra_info.error =
             'Sequence influencer not found:' + `error: ${error?.message}\n stack ${error?.stack}`;
 
-        // Don't want to lose a record of this entirely, but it generally isn't important, cause it just means it is a reply to a regular email, not a sequenced email
-        await supabaseLogger({ type: 'email-webhook', message: trackData.extra_info.error, data: trackData });
         if (isFetchFailedError(error)) {
             throw error;
         }
+        // Don't want to lose a record of this entirely, but it generally isn't important, cause it just means it is a reply to a regular email, not a sequenced email
+        await supabaseLogger({ type: 'email-webhook', message: trackData.extra_info.error, data: trackData });
         return res.status(httpCodes.OK).json({});
     }
 };
