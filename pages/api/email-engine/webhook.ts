@@ -634,12 +634,9 @@ const postHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.OK).json({});
     }
 
-    const identifyAccountError = await identifyAccount(body?.account);
-    if (isFetchFailedError(identifyAccountError)) {
-        // If we get a fetch failed error, we want to return an error so the webhook will try again
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-    }
     try {
+        await identifyAccount(body?.account);
+
         switch (body.event) {
             case 'messageNew':
                 return handleNewEmail(body, res);
