@@ -8,10 +8,15 @@ import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-in
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
 import { wait } from 'src/utils/utils';
+import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
+import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
 export type SequenceSendPostBody = {
     account: string;
     sequenceInfluencers: SequenceInfluencerManagerPage[];
+    sequenceSteps: SequenceStep[];
+    templateVariables: TemplateVariable[];
 };
 
 export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
@@ -20,10 +25,14 @@ export type SequenceSendPostResponse = SendResult[];
 
 const postHandler: NextApiHandler = async (req, res) => {
     await rudderstack.identify({ req, res });
-    const body = req.body as SequenceSendPostBody;
+    const { account, sequenceInfluencers } = req.body as SequenceSendPostBody;
+    let { sequenceSteps, templateVariables } = req.body as SequenceSendPostBody;
     const results: SequenceSendPostResponse = [];
+    if (sequenceInfluencers.length === 0) {
+        throw new Error('No influencers found');
+    }
     // optimistic updates
-    for (const influencer of body.sequenceInfluencers) {
+    for (const influencer of sequenceInfluencers) {
         try {
             await wait(100);
             await db(updateSequenceInfluencerCall)({
@@ -34,10 +43,32 @@ const postHandler: NextApiHandler = async (req, res) => {
             serverLogger(error);
         }
     }
-    for (const influencer of body.sequenceInfluencers) {
+    if (!account) {
+        throw new Error('Missing required account id');
+    }
+    const sequenceId = sequenceInfluencers[0].sequence_id ?? '';
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        sequenceSteps = (await db(getSequenceStepsBySequenceIdCall)(sequenceId)) ?? [];
+    }
+    sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        throw new Error('No sequence steps found');
+    }
+
+    if (!templateVariables || templateVariables.length === 0) {
+        templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    }
+
+    if (!templateVariables || templateVariables.length === 0) {
+        throw new Error('No template variables found');
+    }
+
+    for (const influencer of sequenceInfluencers) {
         const payload = {
-            emailEngineAccountId: body.account,
+            emailEngineAccountId: account,
             sequenceInfluencer: influencer,
+            sequenceSteps,
+            templateVariables,
         };
         const jobCreated = await createJob('sequence_send', {
             queue: 'sequence_send',

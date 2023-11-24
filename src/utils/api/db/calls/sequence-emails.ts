@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase, SequenceEmail, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -60,6 +60,10 @@ export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async 
 };
 
 export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async (insert: SequenceEmailInsert) => {
+    if (!insert.email_engine_account_id) {
+        // This column was added later and is not 'not null', so add this check for any new ones
+        throw new Error('Missing required email_engine_account_id');
+    }
     const { data, error } = await supabaseClient.from('sequence_emails').insert(insert).single();
     if (error) throw error;
     return data;
@@ -79,3 +83,14 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     const { error } = await supabaseClient.from('sequence_emails').delete().eq('sequence_influencer_id', influencerId);
     if (error) throw error;
 };
+
+export const getSequenceEmailsByEmailEngineAccountId =
+    (supabaseClient: RelayDatabase) =>
+    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at'>[]> => {
+        const { data, error } = await supabaseClient
+            .from('sequence_emails')
+            .select('email_send_at')
+            .eq('email_engine_account_id', accountId);
+        if (error) throw error;
+        return data ?? [];
+    };
