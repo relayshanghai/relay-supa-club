@@ -16,11 +16,8 @@ interface DataTablePaginationProps {
 
 export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTablePaginationProps) {
     // const { t } = useTranslation();
-    // const { track } = useRudderstackTrack();
 
-    //adjust to control the number of links in the pagination section
-    const noOfLinks = pages;
-    const pageNums = getPaginationItems(currentPage + 1, pages, noOfLinks);
+    const pageNums = getPaginationItems(currentPage + 1, pages, pages);
 
     return (
         <div className="flex w-full justify-between px-0">
