@@ -288,7 +288,7 @@ const _fixUppercaseEmails: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-const fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
+const _fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
     console.log('fixSequenceEmailsNoAccountId');
     console.time('fixSequenceEmailsNoAccountId');
     const { data: hasSequenceSendProfiles } = await supabase
@@ -336,4 +336,76 @@ const fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-export default fixSequenceEmailsNoAccountId;
+const fixDeleteInfluencersStillSendingEmails: NextApiHandler = async (_req, res) => {
+    console.log('fixDeleteInfluencersStillSendingEmails');
+    const outbox = await getOutbox();
+    console.log('outbox', outbox.length);
+    const results = [];
+
+    const { data: allSequenceEmails } = await supabase
+        .from('sequence_emails')
+        .select('id, sequence_influencer_id, email_message_id');
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+
+    const { data: sequenceInfluencers } = await supabase.from('sequence_influencers').select('id, name');
+    console.log('sequenceInfluencers', sequenceInfluencers?.length);
+    if (allSequenceEmails)
+        for (const message of outbox) {
+            const sequenceEmail = allSequenceEmails.find((e) => e.email_message_id === message.messageId);
+            // delete if no sequence email
+            if (!sequenceEmail) {
+                console.log('deleting', message.queueId);
+                await deleteEmailFromOutbox(message.queueId);
+                results.push(message.queueId);
+                continue;
+            }
+
+            const sequenceInfluencer = sequenceInfluencers?.find((i) => i.id === sequenceEmail.sequence_influencer_id);
+            //delete if no sequence influencer
+            if (!sequenceInfluencer) {
+                console.log('cancelling', message.queueId);
+                await deleteEmailFromOutbox(message.queueId);
+                results.push(message.queueId);
+                await supabase.from('sequence_emails').delete().eq('email_message_id', message.messageId);
+
+                continue;
+            } else {
+                // console.log('found', sequenceInfluencer.name);
+            }
+        }
+    console.log('results', results.length);
+    return res.json({ results });
+};
+
+const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) => {
+    console.log('deleteSequenceEmailsWithNoInfluencer');
+    const { data: emails } = await supabase
+        .from('sequence_emails')
+        .select('id, sequence_influencer_id, email_message_id');
+    console.log('emails', emails?.length);
+    const outbox = await getOutbox();
+
+    const { data: sequenceInfluencers } = await supabase.from('sequence_influencers').select('id, name');
+    console.log('sequenceInfluencers', sequenceInfluencers?.length);
+
+    const results = [];
+    if (emails)
+        for (const email of emails) {
+            const sequenceInfluencer = sequenceInfluencers?.find((i) => i.id === email.sequence_influencer_id);
+            if (!sequenceInfluencer) {
+                console.log('deleting', email.id);
+                const outboxMessage = outbox.find((e) => e.messageId === email.email_message_id);
+                if (outboxMessage) {
+                    console.log('cancelling outbox message');
+                    await deleteEmailFromOutbox(outboxMessage.queueId);
+                }
+                await supabase.from('sequence_emails').delete().eq('id', email.id);
+
+                results.push(email.id);
+            }
+        }
+    console.log('results', results.length);
+    return res.json({ results });
+};
+
+export default fixDeleteInfluencersStillSendingEmails;
