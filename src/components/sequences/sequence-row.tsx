@@ -307,7 +307,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     />
                 </td>
                 <td className="overflow-clip whitespace-nowrap px-6 py-2">
-                    <div className="flex flex-row items-center gap-2">
+                    <div className="flex flex-row items-center gap-2 xl:w-28">
                         {sequenceInfluencer.avatar_url && !avatarError ? (
                             <Image
                                 className="inline-block h-14 w-14 bg-slate-300"
@@ -353,19 +353,21 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             )}
                         </td>
 
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {!missingSocialProfileInfo ? (
-                                sequenceInfluencer.tags?.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))
-                            ) : (
-                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
-                            )}
+                        <td className="max-w-[15rem] whitespace-nowrap px-6 py-4 text-gray-600">
+                            <div className="flex flex-wrap">
+                                {!missingSocialProfileInfo ? (
+                                    sequenceInfluencer.tags?.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="mr-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-800"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                                )}
+                            </div>
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
