@@ -12,6 +12,7 @@ const creators = {
     searchResultError: '无法获取搜索结果',
     clearFilter: '清除筛选',
     failedToFetchReport: '无法获取报告',
+    retryLaterMessage: '我们正在更新此KOL报告。请在10-15分钟后刷新重试。',
     accountExpired: '你的免费试用已到期。你可在升级帐户后继续使用此功能。',
     subscribers: '粉丝',
     avgViews: '平均观看量',

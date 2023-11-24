@@ -47,6 +47,7 @@ const account = {
         viewBillingPortal: 'View billing portal',
         freeTrial: 'Free trial',
         canceled: 'Canceled',
+        trialExpired: 'Trial expired',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: 'You have no active subscription. Please purchase one below.',
         beforePurchasingYouNeedPaymentMethod: 'Before purchasing a subscription, you need to add a payment method.',
         addPaymentMethod: 'Add payment method',

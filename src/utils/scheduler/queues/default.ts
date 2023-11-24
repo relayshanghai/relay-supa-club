@@ -21,9 +21,9 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
         });
 
         const runningJobs = jobs.map(async (job) => {
-            const res = await runJob(job);
-            await finishJob(job, res.status, res.result);
-            return { job: job.id, result: res.status === JOB_STATUS.success };
+            const jobResult = await runJob(job);
+            await finishJob(job, jobResult.status, jobResult.result);
+            return { job: job.id, result: jobResult.status === JOB_STATUS.success };
         });
 
         const finishedJobs = await Promise.allSettled(runningJobs);
