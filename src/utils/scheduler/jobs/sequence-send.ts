@@ -135,6 +135,7 @@ const sendSequence = async ({
     };
 
     try {
+        await identifyAccount(account);
         if (!account) {
             throw new Error('Missing required account id');
         }
@@ -237,8 +238,6 @@ export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventR
     name: 'sequence_send',
     run: async (payload) => {
         const maxRunTime = 1000 * 30; // 30 seconds
-
-        await identifyAccount(payload.emailEngineAccountId);
 
         const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
 
