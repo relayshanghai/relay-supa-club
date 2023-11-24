@@ -13,7 +13,7 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
-import { serverLogger } from 'src/utils/logger-server';
+import { crumb, serverLogger } from 'src/utils/logger-server';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
@@ -135,7 +135,9 @@ const sendSequence = async ({
     };
 
     try {
+        crumb({ message: 'Identifying EE Account' });
         await identifyAccount(account);
+
         if (!account) {
             throw new Error('Missing required account id');
         }
@@ -237,7 +239,7 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
-        const maxRunTime = 1000 * 45; // 45 seconds
+        const maxRunTime = 1000 * 7; // 7 seconds
 
         const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
 
