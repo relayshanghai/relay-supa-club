@@ -96,7 +96,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
     const [currentPage, setCurrentPage] = useState(1);
-    const numberOfInfluencersPerPage = 5; // change to 25 later or number of influencers needed per page
+    const numberOfInfluencersPerPage = 25; // change to 25 later or number of influencers needed per page
 
     const handleCheckboxChange = useCallback(
         function (id: string) {
