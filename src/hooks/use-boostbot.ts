@@ -13,6 +13,7 @@ import type {
     GetTopicsAndRelevanceBody,
     GetTopicsAndRelevanceResponse,
 } from 'pages/api/boostbot/get-topics-and-relevance';
+import type { RelevantTopic } from 'src/utils/api/boostbot/get-topic-relevance';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -81,7 +82,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     );
 
     const getTopicsAndRelevance = useCallback(
-        async (topics: string[]) => {
+        async (topics: RelevantTopic[]) => {
             const topicsAndRelevance = await performFetch<GetTopicsAndRelevanceResponse, GetTopicsAndRelevanceBody>(
                 'get-topics-and-relevance',
                 { topics },

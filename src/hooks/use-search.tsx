@@ -26,6 +26,36 @@ import { useCompany } from './use-company';
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 
+export const defaultAudienceLocations: LocationWeighted[] = [
+    {
+        id: 148838,
+        type: ['country'],
+        name: 'United States',
+        title: 'United States',
+        country: {
+            id: 148838,
+            code: 'US',
+        },
+        weight: 5,
+    },
+    {
+        id: 1428125,
+        type: ['country'],
+        name: 'Canada',
+        title: 'Canada',
+        country: {
+            id: 1428125,
+            code: 'CA',
+        },
+        weight: 1,
+    },
+];
+
+export const defaultAudienceGender = {
+    code: 'MALE',
+    weight: 0.01,
+};
+
 export interface ISearchContext {
     loading: boolean;
     setLoading: (loading: boolean) => void;
@@ -256,9 +286,9 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [engagement, setEngagement] = useState<number>();
     const [lastPost, setLastPost] = useState<string>();
     const [contactInfo, setContactInfo] = useState<string>();
-    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
+    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>(defaultAudienceLocations);
     const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>();
-    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted | undefined>();
+    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted>(defaultAudienceGender);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
     const [activeSearch, setActiveSearch] = useState(false);

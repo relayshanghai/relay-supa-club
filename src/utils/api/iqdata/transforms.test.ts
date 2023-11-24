@@ -61,19 +61,19 @@ describe('prepareFetchCreatorsFiltered', () => {
 
     it('adds the audience and influencer location filter', () => {
         const location: LocationWeighted = {
-            id: 'test id',
+            id: 123,
             name: 'test name',
             title: 'test title',
-            country: { id: 'test country id', code: 'test code' },
+            country: { id: 123, code: 'test code' },
             weight: 1,
             type: ['test type'],
         };
         const options: FetchCreatorsFilteredParams = {
             ...defaultOptions,
-            influencerLocation: [{ ...location, id: '123', weight: 50 }],
+            influencerLocation: [{ ...location, id: 123, weight: 50 }],
             audienceLocation: [
-                { ...location, id: '345', weight: 75 },
-                { ...location, id: '678', weight: 25 },
+                { ...location, id: 345, weight: 75 },
+                { ...location, id: 678, weight: 25 },
             ],
         };
         const { body } = prepareFetchCreatorsFiltered(options);
