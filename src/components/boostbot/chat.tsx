@@ -44,7 +44,7 @@ interface ChatProps {
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: BoostbotInfluencer[];
-    setInfluencers: Dispatch<SetStateAction<BoostbotInfluencer[]>>;
+    setInfluencers: (influencers: BoostbotInfluencer[]) => void;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handleSelectedInfluencersToOutreach: () => void;
     isSearchDisabled: boolean;

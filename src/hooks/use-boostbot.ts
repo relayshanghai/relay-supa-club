@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import useSWR from 'swr';
 import type { CreatorPlatform } from 'types';
 import { useUser } from './use-user';
 import { useCompany } from './use-company';
@@ -13,7 +14,11 @@ import type {
     GetTopicsAndRelevanceBody,
     GetTopicsAndRelevanceResponse,
 } from 'pages/api/boostbot/get-topics-and-relevance';
-import { getBoostbotConversationsCall } from 'src/utils/api/db/calls/boostbot-conversations';
+import {
+    getBoostbotConversationCall,
+    createNewBoostbotConversationCall,
+    updateBoostbotConversationCall,
+} from 'src/utils/api/db/calls/boostbot-conversations';
 import { useDB } from 'src/utils/client-db/use-client-db';
 
 type UseBoostbotProps = {
@@ -24,7 +29,9 @@ type UseBoostbotProps = {
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const getBoostbotConversations = useDB(getBoostbotConversationsCall);
+    const getBoostbotConversation = useDB(getBoostbotConversationCall);
+    const createNewConversation = useDB(createNewBoostbotConversationCall);
+    const updateConversation = useDB(updateBoostbotConversationCall);
 
     const performFetch = useCallback(
         async <T, B>(endpoint: string, body: B): Promise<T> => {
@@ -44,7 +51,8 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         [abortSignal],
     );
 
-    const getConversations = useCallback(getBoostbotConversations, [getBoostbotConversations]);
+    // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
+    const { data: conversation } = useSWR(profile?.id, getBoostbotConversation);
 
     const getTopics = useCallback(
         async (productDescription: string) =>
@@ -98,7 +106,9 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
 
     return {
-        getConversations,
+        conversation,
+        createNewConversation,
+        updateConversation,
         getTopics,
         getRelevantTopics,
         getTopicClusters,

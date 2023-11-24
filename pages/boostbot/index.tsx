@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
@@ -31,13 +30,25 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { getConversations } = useBoostbot();
+    const { conversation, createNewConversation, updateConversation } = useBoostbot();
+    const messages = (conversation?.chat_messages as MessageType[]) ?? [];
+    const influencers = (conversation?.search_results as BoostbotInfluencer[]) ?? [];
+    const setInfluencers = (influencers: BoostbotInfluencer[]) => {
+        updateConversation({ ...conversation, searchResults: influencers });
+    };
+    const setMessages = (messages: MessageType[] | ((messages: MessageType[]) => MessageType[])) => {
+        if (typeof messages === 'function') {
+            updateConversation({ ...conversation, chatMessages: messages(conversation?.chat_messages) });
+        } else {
+            updateConversation({ ...conversation, chatMessages: messages });
+        }
+    };
+
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
         true,
     );
-    const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>('boostbot-influencers', []);
     const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
@@ -61,23 +72,6 @@ const Boostbot = () => {
     const [selectedRow, setSelectedRow] = useState<Row<BoostbotInfluencer>>();
     const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
     const [selectedCount, setSelectedCount] = useState(0);
-
-    useEffect(() => {
-        if (!profile) return;
-
-        getConversations()
-            .then((conversations) => {
-                // eslint-disable-next-line no-console
-                console.log('conversations from db :>> ', conversations);
-                // Set to state etc.
-            })
-            .catch((error) => {
-                clientLogger(error, 'error');
-                toast.error(t('boostbot.error.fetchingConversationsFailed'));
-            });
-        // No need to refetch conversations when language changes, the objects in the db are the same, translations happen on the frontend.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profile]);
 
     useEffect(() => {
         if (sequences && !sequence) {
@@ -107,7 +101,7 @@ const Boostbot = () => {
 
     useEffect(() => {
         refreshUsages();
-    }, [influencers, refreshUsages]);
+    }, [conversation?.search_results, refreshUsages]);
 
     useEffect(() => {
         if (isSearchLoading || !isUsageLoaded) return;
@@ -134,44 +128,25 @@ const Boostbot = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
-    const [messages, setMessages] = usePersistentState<MessageType[]>(
-        'boostbot-messages',
-        [
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessageFirstTimeA',
-            },
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessageFirstTimeB',
-            },
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessageFirstTimeC',
-            },
-        ],
-        (onLoadMessages) => {
-            // Fallback added for Product Hunt launch. Can be removed after some time.
-            const updateIntroMessage = (message: MessageType) => {
-                if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
-                    message.translationValues = { username: profile?.first_name || '👋' };
-                }
-                return message;
-            };
-            // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
+    // TODO: Remove this or move it to a better place
+    // (onLoadMessages) => {
+    //     // Fallback added for Product Hunt launch. Can be removed after some time.
+    //     const updateIntroMessage = (message: MessageType) => {
+    //         if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
+    //             message.translationValues = { username: profile?.first_name || '👋' };
+    //         }
+    //         return message;
+    //     };
+    //     // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
 
-            const isErrorMessage = (message: MessageType) =>
-                message.type === 'translation' && message.translationKey.includes('error');
-            const isUnfinishedLoading = (message: MessageType) =>
-                message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages
-                .map(updateIntroMessage)
-                .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
-        },
-    );
+    //     const isErrorMessage = (message: MessageType) =>
+    //         message.type === 'translation' && message.translationKey.includes('error');
+    //     const isUnfinishedLoading = (message: MessageType) =>
+    //         message.type === 'progress' && message.progressData.totalFound === null;
+    //     return onLoadMessages
+    //         .map(updateIntroMessage)
+    //         .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
+    // },
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
@@ -301,18 +276,8 @@ const Boostbot = () => {
     };
 
     const clearChatHistory = () => {
-        setMessages([
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessage',
-                translationValues: {
-                    username: profile?.first_name || '👋',
-                },
-            },
-        ]);
+        createNewConversation();
         setIsInitialLogoScreen(true);
-        setInfluencers([]);
         setSelectedInfluencers({});
     };
 
