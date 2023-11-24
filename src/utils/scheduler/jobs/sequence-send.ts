@@ -133,9 +133,9 @@ const sendSequence = async ({
         sequence_influencer_id: influencer.id,
         is_success: false,
     };
+    crumb({ message: 'Start Sequence Send Job' });
 
     try {
-        crumb({ message: 'Identifying EE Account' });
         await identifyAccount(account);
 
         if (!account) {
@@ -159,12 +159,14 @@ const sendSequence = async ({
         trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
 
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
+        crumb({ message: 'Get scheduled emails' });
         const scheduledEmails = await db(getSequenceEmailsByEmailEngineAccountId)(account);
         const messageIds = gatherMessageIds(influencer.email ?? '', sequenceSteps);
         if (!influencer.influencer_social_profile_id) {
             throw new Error('No influencer social profile id');
         }
         for (const step of sequenceSteps) {
+            crumb({ message: `Create step ${step.step_number}` });
             try {
                 const references = generateReferences(messageIds, step.step_number);
                 const result = await sendAndInsertEmail({
