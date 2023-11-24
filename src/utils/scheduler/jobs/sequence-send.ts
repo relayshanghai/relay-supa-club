@@ -242,7 +242,7 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
-        const maxRunTime = 1000 * 7; // 7 seconds
+        const maxRunTime = 1000 * 12; // 12 seconds
 
         const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
 
