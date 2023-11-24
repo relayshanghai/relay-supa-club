@@ -49,6 +49,35 @@ const sortInfluencers = (
     });
 };
 
+const totalNumberOfPages = (sortedInfluencers: any[] | undefined, numberOfInfluencersPerPage: number) => {
+    //gets the number of pages
+    if (sortedInfluencers?.length) {
+        return Math.ceil(sortedInfluencers.length / numberOfInfluencersPerPage);
+    }
+    return 1;
+};
+
+const filterByPage = (
+    currentPage: number,
+    numberOfInfluencersPerPage: number,
+    sortedInfluencers: any[] | undefined,
+) => {
+    //calculates the range splice   the results
+    const lastPage = totalNumberOfPages(sortedInfluencers, numberOfInfluencersPerPage);
+    const startRange = (currentPage - 1) * numberOfInfluencersPerPage;
+    let endRange: any = currentPage * numberOfInfluencersPerPage;
+    const totalNoOfInfluencers: any = sortedInfluencers?.length;
+
+    if (totalNoOfInfluencers > endRange && currentPage == lastPage) {
+        endRange = sortedInfluencers?.length;
+    }
+
+    if (sortedInfluencers) {
+        return sortedInfluencers?.slice(startRange, endRange);
+    }
+    return [];
+};
+
 const SequenceTable: React.FC<SequenceTableProps> = ({
     sequence,
     sequenceInfluencers,
@@ -67,28 +96,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
     const [currentPage, setCurrentPage] = useState(1);
-
-    const totalNumberOfPages = () => {
-        //gets the number of pages
-        if (sortedInfluencers?.length) {
-            return Math.floor(sortedInfluencers.length / numberOfInfluencersPerPage);
-        }
-        return 1;
-    };
     const numberOfInfluencersPerPage = 5; // change to 25 later or number of influencers needed per page
-
-    const getRangePerPage = () => {
-        //calculates the range splice in the results
-        const lastPage = totalNumberOfPages();
-        const startRange = (currentPage - 1) * numberOfInfluencersPerPage;
-        let endRange: any = currentPage * numberOfInfluencersPerPage;
-        const totalNoOfInfluencers: any = sortedInfluencers?.length;
-
-        if (totalNoOfInfluencers > endRange && currentPage == lastPage) {
-            endRange = sortedInfluencers?.length;
-        }
-        return { end: endRange, start: startRange };
-    };
 
     const handleCheckboxChange = useCallback(
         function (id: string) {
@@ -135,7 +143,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedInfluencers?.slice(getRangePerPage().start, getRangePerPage().end)?.map((influencer) => {
+                    {filterByPage(currentPage, numberOfInfluencersPerPage, sortedInfluencers).map((influencer) => {
                         const influencerEmails = sequenceEmails?.filter(
                             (email) => email.sequence_influencer_id === influencer.id,
                         );
@@ -167,7 +175,11 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                     })}
                 </tbody>
             </table>
-            <Pagination setPageIndex={setCurrentPage} currentPage={currentPage} pages={totalNumberOfPages()} />
+            <Pagination
+                setPageIndex={setCurrentPage}
+                currentPage={currentPage}
+                pages={totalNumberOfPages(sortedInfluencers, numberOfInfluencersPerPage)}
+            />
         </div>
     );
 };
