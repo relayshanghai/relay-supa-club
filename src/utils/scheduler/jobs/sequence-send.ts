@@ -196,6 +196,7 @@ const sendSequence = async ({
     }
 
     trackData.extra_info.results = results;
+    crumb({ message: `Handle results` });
     const success = await handleResults(results, influencer);
     trackData.is_success = success;
     trackData.extra_info.duration = Date.now() - startTime;
