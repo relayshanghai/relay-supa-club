@@ -237,7 +237,8 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
-        const maxRunTime = 1000 * 45; // 45 seconds
+        // 4 minutes and 30 seconds. Make this lower than /api/jobs/run maxDuration to trigger sentry
+        const maxRunTime = 1000 * 270;
 
         const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
 
