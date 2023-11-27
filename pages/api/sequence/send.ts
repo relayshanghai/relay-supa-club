@@ -12,8 +12,9 @@ import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
-import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-send';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { maxExecutionTime } from 'src/utils/max-execution-time';
+import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 
 export type SequenceSendPostBody = {
     account: string;
@@ -127,8 +128,8 @@ const postHandler: NextApiHandler = async (req, res) => {
             sequenceSteps,
             templateVariables,
         };
-        const jobCreated = await createJob('sequence_send', {
-            queue: 'sequence_send',
+        const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+            queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
             payload,
         });
         if (jobCreated && jobCreated.id) {

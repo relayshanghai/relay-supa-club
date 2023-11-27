@@ -17,7 +17,7 @@ const postHandler: ActionHandler = async (req, res) => {
 
     const job = await createJob(body.name, {
         run_at: body.run_at,
-        payload: body.payload,
+        payload: body.payload as any,
         queue: body.queue,
         owner: req.session.user.id,
     });

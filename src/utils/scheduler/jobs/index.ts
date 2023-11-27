@@ -1,11 +1,12 @@
 import { TrackAnalyticsEvent } from './track-analytics-event';
-import { Foo } from './foo';
 import { SequenceSendEvent } from './sequence-send';
+import { SequenceStepSend } from '../queues/sequence-step-send';
+import { SequenceStepSendEvent } from './sequence-step-send';
 
 export const jobs = {
-    [Foo.name]: Foo,
     [TrackAnalyticsEvent.name]: TrackAnalyticsEvent,
     [SequenceSendEvent.name]: SequenceSendEvent,
+    [SequenceStepSend.name]: SequenceStepSendEvent,
 };
 
 export type JobNames = keyof typeof jobs;

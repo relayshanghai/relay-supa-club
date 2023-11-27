@@ -52,8 +52,9 @@ import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import { createJob } from 'src/utils/scheduler/utils';
 import { now } from 'src/utils/datetime';
-import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-send';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
+import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -615,8 +616,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 templateVariables,
             };
             trackData.extra_info.next_sequence_email_payload = payload;
-            const jobCreated = await createJob('sequence_send', {
-                queue: 'sequence_send',
+            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
                 payload,
             });
             trackData.extra_info.job_created = jobCreated;

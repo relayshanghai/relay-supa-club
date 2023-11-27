@@ -116,8 +116,8 @@ Because Supabase pgsql_http extension cannot make requests to your locally runni
 ```
 Forwarding                    https://b4d9-118-107-244-171.ngrok.io -> http://localhost:3000       
 ```
-paste it into the create worker call (e.g. for sequence_send)
-`SELECT create_queue_worker('sequence_send', 'https://b4d9-118-107-244-171.ngrok.io/api/jobs/run?queue=sequence_send', '123ABC', '* * * * *');`
+paste it into the create worker call (e.g. for sequence_step_send)
+`SELECT create_queue_worker('sequence_step_send', 'https://b4d9-118-107-244-171.ngrok.io/api/jobs/run?queue=sequence_step_send', '123ABC', '* * * * *');`
 and it will call the run job endpoint.
 
 ### More Reading
