@@ -12,6 +12,9 @@ import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-send';
+import { maxExecutionTime } from 'src/utils/max-execution-time';
+
 export type SequenceSendPostBody = {
     account: string;
     sequenceInfluencers: SequenceInfluencerManagerPage[];
@@ -22,6 +25,51 @@ export type SequenceSendPostBody = {
 export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
 
 export type SequenceSendPostResponse = SendResult[];
+
+/**
+ * TODO: make better https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1100
+ * Now that we use the scheduler, it is hard to know which sequence step failed, so we just do it per influencer
+ */
+const successResults = (influencer: SequenceInfluencerManagerPage) => [
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 0,
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 1,
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 2,
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 3,
+    },
+];
+const failedResults = (influencer: SequenceInfluencerManagerPage) => [
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 0,
+        error: 'failed to schedule 0',
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 1,
+        error: 'failed to schedule 1',
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 2,
+        error: 'failed to schedule 2',
+    },
+    {
+        sequenceInfluencerId: influencer.id,
+        stepNumber: 3,
+        error: 'failed to schedule 3',
+    },
+];
 
 const postHandler: NextApiHandler = async (req, res) => {
     await rudderstack.identify({ req, res });
@@ -34,11 +82,14 @@ const postHandler: NextApiHandler = async (req, res) => {
     // optimistic updates
     for (const influencer of sequenceInfluencers) {
         try {
+            await maxExecutionTime(
+                db(updateSequenceInfluencerCall)({
+                    id: influencer.id,
+                    funnel_status: 'In Sequence',
+                }),
+                1000,
+            );
             await wait(100);
-            await db(updateSequenceInfluencerCall)({
-                id: influencer.id,
-                funnel_status: 'In Sequence',
-            });
         } catch (error) {
             serverLogger(error);
         }
@@ -64,9 +115,15 @@ const postHandler: NextApiHandler = async (req, res) => {
     }
 
     for (const influencer of sequenceInfluencers) {
-        const payload = {
+        // only sent the first step. Subsequent steps will be sent after from email-engine/webhook `handleSent`
+        const firstStep = sequenceSteps.find((step) => step.step_number === 0);
+        if (!firstStep) {
+            throw new Error('No first step found');
+        }
+        const payload: SequenceStepSendArgs = {
             emailEngineAccountId: account,
             sequenceInfluencer: influencer,
+            sequenceStep: firstStep,
             sequenceSteps,
             templateVariables,
         };
@@ -75,49 +132,9 @@ const postHandler: NextApiHandler = async (req, res) => {
             payload,
         });
         if (jobCreated && jobCreated.id) {
-            // TODO: make better https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1100
-            // Now that we use the scheduler, it is hard to know which sequence step failed, so we just do it per influencer
-            results.concat([
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 0,
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 1,
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 2,
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 3,
-                },
-            ]);
+            results.concat(successResults(influencer));
         } else {
-            results.concat([
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 0,
-                    error: 'failed to schedule 0',
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 1,
-                    error: 'failed to schedule 1',
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 2,
-                    error: 'failed to schedule 2',
-                },
-                {
-                    sequenceInfluencerId: influencer.id,
-                    stepNumber: 3,
-                    error: 'failed to schedule 3',
-                },
-            ]);
+            results.concat(failedResults(influencer));
             try {
                 // revert optimistic update
                 await db(updateSequenceInfluencerCall)({

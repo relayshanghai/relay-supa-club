@@ -52,6 +52,8 @@ import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import { createJob } from 'src/utils/scheduler/utils';
 import { now } from 'src/utils/datetime';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-send';
+import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -587,6 +589,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         trackData.sequence_step = currentStep.step_number;
         trackData.sequence_step_id = currentStep.id;
+        trackData.extra_info.sequence_steps_length = sequenceSteps.length;
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
@@ -597,8 +600,32 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
+        if (sequenceSteps.length > currentStep.step_number) {
+            const nextStep = sequenceSteps.find((step) => step.step_number === currentStep.step_number + 1);
 
-        trackData.is_success = true;
+            if (!nextStep) {
+                throw new Error('No next sequence step found');
+            }
+            const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
+            const payload: SequenceStepSendArgs = {
+                emailEngineAccountId: event.account,
+                sequenceInfluencer: sequenceInfluencer,
+                sequenceStep: nextStep,
+                sequenceSteps,
+                templateVariables,
+            };
+            trackData.extra_info.next_sequence_email_payload = payload;
+            const jobCreated = await createJob('sequence_send', {
+                queue: 'sequence_send',
+                payload,
+            });
+            trackData.extra_info.job_created = jobCreated;
+            if (jobCreated && jobCreated.id) {
+                trackData.is_success = true;
+            }
+        } else {
+            trackData.is_success = true;
+        }
     } catch (error: any) {
         if (isFetchFailedError(error)) {
             throw error;
