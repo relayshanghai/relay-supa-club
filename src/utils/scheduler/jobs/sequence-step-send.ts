@@ -22,7 +22,6 @@ import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTime } from 'src/utils/max-execution-time';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
-import { SEQUENCE_STEP_SEND_QUEUE_NAME } from '../queues/sequence-step-send';
 
 export type SequenceStepSendArgs = {
     emailEngineAccountId: string;
@@ -228,8 +227,8 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
     }
 };
 
-export const SequenceStepSendEvent: JobInterface<typeof SEQUENCE_STEP_SEND_QUEUE_NAME, SequenceSendEventRun> = {
-    name: SEQUENCE_STEP_SEND_QUEUE_NAME,
+export const SequenceStepSendEvent: JobInterface<'sequence_step_send', SequenceSendEventRun> = {
+    name: 'sequence_step_send',
     run: async (payload) => {
         // 4 minutes and 30 seconds. Make this lower than /api/jobs/run maxDuration to trigger sentry
         const maxRunTime = 1000 * 270;

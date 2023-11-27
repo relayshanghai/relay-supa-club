@@ -20,7 +20,7 @@ export const isValidJobQueue = (name: string | number): name is JOB_QUEUE => {
     return name in queues;
 };
 
-export const initQueue = (name: string) => {
+export const initQueue = <T>(name: T extends JOB_QUEUE ? Extract<T, JOB_QUEUE> : string) => {
     if (isValidJobQueue(name)) {
         return queues[name];
     }
