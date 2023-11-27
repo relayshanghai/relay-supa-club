@@ -6,6 +6,8 @@ import type { RunJobRequest } from 'src/utils/scheduler/types';
 import { JOB_STATUS, SCHEDULER_TOKEN_HEADER, SCHEDULER_TOKEN_KEY } from 'src/utils/scheduler/types';
 import { initQueue } from 'src/utils/scheduler/queues';
 
+export const maxDuration = 300;
+
 const postHandler: ActionHandler = async (req, res) => {
     const query = (req.query ?? {}) as RunJobRequest['query'];
     const token = String(req.headers[SCHEDULER_TOKEN_HEADER] ?? '');

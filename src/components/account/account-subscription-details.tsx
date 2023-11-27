@@ -64,6 +64,8 @@ export const SubscriptionDetails = () => {
                                             {subscription.name}
                                             {subscription.status === 'trialing' &&
                                                 ` - ${t('account.subscription.freeTrial')}`}
+                                            {subscription.status === 'paused' &&
+                                                ` - ${t('account.subscription.trialExpired')}`}
                                             {isExpired && ` - ${t('account.subscription.canceled')}`}
                                         </div>
                                     </div>

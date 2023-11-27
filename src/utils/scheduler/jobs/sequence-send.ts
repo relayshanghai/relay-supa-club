@@ -13,7 +13,7 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
-import { serverLogger } from 'src/utils/logger-server';
+import { crumb, serverLogger } from 'src/utils/logger-server';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
@@ -133,8 +133,11 @@ const sendSequence = async ({
         sequence_influencer_id: influencer.id,
         is_success: false,
     };
+    crumb({ message: 'Start Sequence Send Job' });
 
     try {
+        await identifyAccount(account);
+
         if (!account) {
             throw new Error('Missing required account id');
         }
@@ -156,12 +159,14 @@ const sendSequence = async ({
         trackData.extra_info.sequence_steps = sequenceSteps?.map((step) => step.id);
 
         trackData.extra_info.template_variables = templateVariables.map((variable) => variable.id);
+        crumb({ message: 'Get scheduled emails' });
         const scheduledEmails = await db(getSequenceEmailsByEmailEngineAccountId)(account);
         const messageIds = gatherMessageIds(influencer.email ?? '', sequenceSteps);
         if (!influencer.influencer_social_profile_id) {
             throw new Error('No influencer social profile id');
         }
         for (const step of sequenceSteps) {
+            crumb({ message: `Create step ${step.step_number}` });
             try {
                 const references = generateReferences(messageIds, step.step_number);
                 const result = await sendAndInsertEmail({
@@ -191,6 +196,7 @@ const sendSequence = async ({
     }
 
     trackData.extra_info.results = results;
+    crumb({ message: `Handle results` });
     const success = await handleResults(results, influencer);
     trackData.is_success = success;
     trackData.extra_info.duration = Date.now() - startTime;
@@ -236,9 +242,8 @@ const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPag
 export const SequenceSendEvent: JobInterface<'sequence_send', SequenceSendEventRun> = {
     name: 'sequence_send',
     run: async (payload) => {
-        const maxRunTime = 1000 * 30; // 30 seconds
-
-        await identifyAccount(payload.emailEngineAccountId);
+        // 4 minutes and 30 seconds. Make this lower than /api/jobs/run maxDuration to trigger sentry
+        const maxRunTime = 1000 * 270;
 
         const { results, success } = await maxExecutionTime(sendSequence(payload), maxRunTime);
 
