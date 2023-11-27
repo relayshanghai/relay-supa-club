@@ -147,6 +147,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 throw new Error(signOutError?.message || 'Error signing out previous session');
             }
         }
+
+        // @note This needs `Confirm Email` and `Secure Email Change` settings disabled
+        // These are found under your Supabase Project > Authentication > Providers > Email
+        // With those enabled, signing up will not automatically create a new session (since it needs confirmation)
         const { error, data: signupResData } = await supabaseClient.auth.signUp({
             email,
             password,
