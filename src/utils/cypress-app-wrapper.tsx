@@ -9,8 +9,8 @@ import { Toaster } from 'react-hot-toast';
 import type { TestMountOptions } from './user-test-wrapper';
 import { UserAndCompanyTestWrapper } from './user-test-wrapper';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
-import './cypress-mock-router';
-import { RouterContext } from 'next/dist/shared/lib/router-context';
+import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
+import './cypress-mock-router'; // loads window.useRouter
 
 i18n.changeLanguage('en-US');
 
