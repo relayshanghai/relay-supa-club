@@ -98,7 +98,9 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                             </StripeElementsProvider>
                         )}
 
-                        {selectedPaymentMethod === 'alipay' && <AlipayPortal selectedPrice={selectedPrice} />}
+                        {selectedPaymentMethod === 'alipay' && (
+                            <AlipayPortal selectedPrice={selectedPrice} priceTier={priceTier} />
+                        )}
                     </>
                 ) : (
                     <p className="p-6 text-xs text-gray-500">{t('account.choosePaymentMethod')}</p>

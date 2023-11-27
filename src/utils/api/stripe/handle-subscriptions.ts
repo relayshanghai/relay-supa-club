@@ -48,6 +48,7 @@ export const createSetupIntentForAlipay = async (
     customerId: string,
     priceId: string,
     currency: string,
+    priceTier: string,
 ) => {
     const body: CreateSetUpIntentPostBody = {
         companyId,
@@ -55,6 +56,7 @@ export const createSetupIntentForAlipay = async (
         paymentMethodTypes: ['alipay'],
         priceId,
         currency,
+        priceTier,
     };
 
     const res = await nextFetch('subscriptions/create-setup-intent', {
@@ -75,6 +77,13 @@ export const upgradeSubscriptionWithAlipay = async (companyId: string, cusId: st
         body: JSON.stringify(body),
     });
     return res;
+};
+
+export const getSetupIntents = async (cusId: string) => {
+    const setupIntents = await nextFetch(`subscriptions/setup-intents?cusId=${cusId}`, {
+        method: 'get',
+    });
+    return setupIntents;
 };
 
 export const getAllPromoCodes = async () => {

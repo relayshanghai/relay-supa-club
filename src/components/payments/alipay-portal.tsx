@@ -8,14 +8,20 @@ import { useState } from 'react';
 import { Spinner } from '../icons';
 import type { NewRelayPlan } from 'types';
 import { clientLogger } from 'src/utils/logger-client';
+import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 
-export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
+export default function AlipayPortal({
+    selectedPrice,
+    priceTier,
+}: {
+    selectedPrice: NewRelayPlan;
+    priceTier: ActiveSubscriptionTier;
+}) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
-    console.log(selectedPrice);
     //handle any next actions https://stripe.com/docs/payments/finalize-payments-on-the-server?platform=web&type=setup#next-actions
     const handleServerResponse = async (setupIntent: Stripe.SetupIntent) => {
         const stripe = await stripePromise;
@@ -24,12 +30,12 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
         // redirect to Alipay website
         if (setupIntent.status === 'requires_action') {
             // Use Stripe.js to handle required next action
-            const { error: errorConfirm } = await stripe.handleNextAction({
+            const { error } = await stripe.handleNextAction({
                 clientSecret: setupIntent.client_secret,
             });
 
-            if (errorConfirm) {
-                handleError(errorConfirm);
+            if (error) {
+                handleError(error);
                 return;
             }
         }
@@ -44,7 +50,13 @@ export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRela
         try {
             const priceId = selectedPrice.priceIds.monthly;
             const currency = selectedPrice.currency;
-            const setupIntent = await createSetupIntentForAlipay(company.id, company.cus_id, priceId, currency);
+            const setupIntent = await createSetupIntentForAlipay(
+                company.id,
+                company.cus_id,
+                priceId,
+                currency,
+                priceTier,
+            );
 
             await handleServerResponse(setupIntent);
         } catch (error) {
