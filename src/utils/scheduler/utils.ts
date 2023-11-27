@@ -63,7 +63,7 @@ export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'runn
 type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
     queue?: JOB_QUEUE;
     run_at?: string;
-    payload: Parameters<JobType<T>['run']>[0];
+    payload?: Parameters<JobType<T>['run']>[0];
 };
 
 export const createJob = async <J extends JobNames>(jobName: J, job: CreateJobInsert<J>) => {

@@ -16,6 +16,7 @@ export type ReplyEmailPostRequestBody = {
             message: string;
             inline?: boolean;
             action: string;
+            documentStore: boolean;
         };
         html: string;
     };
