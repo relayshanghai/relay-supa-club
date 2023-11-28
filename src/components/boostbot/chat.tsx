@@ -24,11 +24,12 @@ import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations'
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
-import type { Sequence } from 'src/utils/api/db';
+import type { InfluencerSocialProfileInsert, Sequence } from 'src/utils/api/db';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -114,10 +115,17 @@ export const Chat: React.FC<ChatProps> = ({
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
-    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers, updateConversation, refreshConversation } =
-        useBoostbot({
-            abortSignal: abortController.signal,
-        });
+    const {
+        getTopics,
+        getRelevantTopics,
+        getTopicClusters,
+        getInfluencers,
+        updateConversation,
+        refreshConversation,
+        upsertInfluencerProfiles,
+    } = useBoostbot({
+        abortSignal: abortController.signal,
+    });
 
     const { track } = useRudderstackTrack();
 
@@ -202,7 +210,7 @@ export const Chat: React.FC<ChatProps> = ({
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
             const searchResults = await Promise.all(parallelSearchPromises);
-            const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            const influencers: BoostbotInfluencer[] = mixArrays(searchResults).filter((i) => !!i.url);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             track(RecommendInfluencers, payload);
@@ -241,9 +249,25 @@ export const Chat: React.FC<ChatProps> = ({
                 }
 
                 const newData = { searchResults: influencers, chatMessages: newMessages };
-                const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+                const newDataInDbFormat = {
+                    search_results: influencers as unknown as Json,
+                    chat_messages: newMessages as Json,
+                };
 
                 refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
+
+                const socialProfiles = influencers.map((i) => ({
+                    avatar_url: i.picture,
+                    influencer_id: '', // There is no influencer created in the db at this time. Should we create one first and only then we can create a social profile?
+                    reference_id: `iqdata:${i.user_id}`,
+                    name: i.fullname || i.username || i.handle || i.custom_name || '',
+                    platform: extractPlatformFromURL(i.url),
+                    url: i.url,
+                    username: i.username || i.handle || i.custom_name || '',
+                })) as InfluencerSocialProfileInsert[];
+
+                upsertInfluencerProfiles(socialProfiles);
+
                 return newMessages;
             });
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));

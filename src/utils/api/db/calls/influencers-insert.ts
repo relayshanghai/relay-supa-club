@@ -12,6 +12,21 @@ import type {
 } from '../types';
 import type { Database } from 'types/supabase';
 
+export const upsertInfluencerProfiles =
+    (db: SupabaseClient<Database>) =>
+    async (data: InfluencerSocialProfileInsert[]): Promise<InfluencerSocialProfileRow[]> => {
+        const influencers = await db
+            .from('influencer_social_profiles')
+            .upsert(data, { onConflict: 'reference_id' })
+            .select();
+
+        if (influencers.error) {
+            throw influencers.error;
+        }
+
+        return influencers.data;
+    };
+
 export const insertInfluencer =
     (db: SupabaseClient<Database>) =>
     async (data: InfluencerInsert): Promise<InfluencerRow> => {
