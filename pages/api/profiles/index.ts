@@ -50,6 +50,7 @@ const Handler: NextApiHandler = async (req, res) => {
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const result: ProfilePutResponse = data;
+
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error);
