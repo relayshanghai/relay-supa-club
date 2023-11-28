@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { LanguageToggle } from 'src/components/common/language-toggle';
-import { Spinner } from 'src/components/icons';
+import { Loader } from 'src/components/icons';
 import { Title } from 'src/components/title';
 import {
     cancelSubscriptionWithSubscriptionId,
@@ -10,12 +10,13 @@ import {
 } from 'src/utils/api/stripe/handle-subscriptions';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const { companyId, customerId, priceId, selectedPlan } = router.query;
-
+    const { t } = useTranslation();
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
         if (typeof companyId !== 'string' || typeof customerId !== 'string' || typeof priceId !== 'string') {
             return;
@@ -26,7 +27,7 @@ const ConfirmAlipayPaymentPage = () => {
             //handle setupIntent authorization failure
             const setupIntents = await getSetupIntents(customerId);
             if (setupIntents.length < 1) {
-                toast.error('Something went wrong in the process, please try again or use another payment method.');
+                toast.error(t('account.generalPaymentError'));
                 router.push(`/payments?plan=${selectedPlan}`);
                 clientLogger(`Cannot find setupIntents from this customer - ${customerId}`, 'error');
                 return;
@@ -35,7 +36,7 @@ const ConfirmAlipayPaymentPage = () => {
             const latestSetupIntent = setupIntents.data[0];
             const { last_setup_error } = latestSetupIntent;
             if (last_setup_error && last_setup_error.code.includes('setup_intent_authentication_failure')) {
-                toast.error('Your payment authorization failed, please try again or use another payment method.');
+                toast.error(t('account.authorizationPaymentError'));
                 router.push(`/payments?plan=${selectedPlan}`);
                 clientLogger(`SetupIntent setup failed - ${customerId}`, 'error');
                 return;
@@ -52,13 +53,13 @@ const ConfirmAlipayPaymentPage = () => {
             }
             router.push('/account');
         } catch (error: any) {
-            toast.error('Something went wrong in the process, please try again');
-            router.push('/account');
+            toast.error(t('account.generalPaymentError'));
+            router.push(`/payments?plan=${selectedPlan}`);
             clientLogger(error, 'error');
         } finally {
             setIsProcessing(false);
         }
-    }, [companyId, customerId, priceId, router, selectedPlan]);
+    }, [companyId, customerId, priceId, router, selectedPlan, t]);
 
     useEffect(() => {
         handleCreateSubscriptionWithAlipay();
@@ -73,8 +74,8 @@ const ConfirmAlipayPaymentPage = () => {
             <div className="flex h-full flex-col justify-center pb-32 text-center">
                 {isProcessing && (
                     <div className="flex flex-col">
-                        <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
-                        <div className="p-3">We are processing the payment for you...</div>
+                        <Loader className="m-auto h-6 w-6 fill-primary-600 text-white" />
+                        <div className="p-6">{t('account.processingMessage')}</div>
                     </div>
                 )}
             </div>
