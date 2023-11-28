@@ -411,7 +411,7 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
 };
 
 const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
-    const password = 'secret';
+    const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'password';
     const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id');
     const results = [];
     const companies = companiesAll;
