@@ -411,10 +411,10 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
 };
 
 const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
-    const password = 'B00$t80t*Support';
+    const password = 'secret';
     const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id');
     const results = [];
-    const companies = companiesAll?.slice(0, 100);
+    const companies = companiesAll;
     console.log('companies', companies?.length);
     if (companies)
         for (const company of companies) {
@@ -483,7 +483,7 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 email_engine_account_id: hasAccountProfile?.email_engine_account_id,
                 sequence_send_email: hasAccountProfile?.sequence_send_email,
             };
-            const { data, error: error2 } = await supabase.from('profiles').insert(profileBody);
+            const { data, error: error2 } = await supabase.from('profiles').upsert(profileBody).select('*').single();
             if (!data || error2) {
                 console.log('error inserting profile', error2?.message || 'unknown error');
                 continue;
