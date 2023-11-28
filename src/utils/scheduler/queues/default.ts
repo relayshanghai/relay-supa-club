@@ -3,6 +3,7 @@ import { fetchJobs } from '../db-queries';
 import type { JobQueue } from '../types';
 import { JOB_STATUS } from '../types';
 import { finishJob, runJob } from '../utils';
+import { crumb } from 'src/utils/logger-server';
 
 const QUEUE_NAME = 'default';
 
@@ -21,8 +22,13 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
         });
 
         const runningJobs = jobs.map(async (job) => {
+            crumb({ message: `Start Job: ${job.id}` });
             const jobResult = await runJob(job);
+
+            crumb({ message: `Finish Job: ${job.id}` });
             await finishJob(job, jobResult.status, jobResult.result);
+
+            crumb({ message: `Done Job: ${job.id}` });
             return { job: job.id, result: jobResult.status === JOB_STATUS.success };
         });
 
