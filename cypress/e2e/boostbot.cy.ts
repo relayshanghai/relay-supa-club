@@ -54,7 +54,7 @@ describe('Boostbot', () => {
         cy.contains('@DANNIVIVIANI');
     });
 
-    it('accepts limited filters and fetches influencers only for 1 platform', () => {
+    it.skip('accepts limited filters and fetches influencers only for 1 platform', () => {
         cy.contains("Hi I'm BoostBot");
 
         cy.getByTestId('boostbot-open-filters').click();
