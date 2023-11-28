@@ -42,6 +42,8 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
         (conversation?.search_results as unknown as BoostbotInfluencer[]) ?? [],
     );
+    // eslint-disable-next-line no-console
+    console.log('influencers, profile?.id, conversation :>> ', influencers, profile?.id, conversation);
     // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).
     useEffect(() => {
         if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
