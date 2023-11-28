@@ -1534,6 +1534,26 @@ export interface Database {
         }
         Returns: undefined
       }
+      fetch_pending_jobs: {
+        Args: {
+          job_queue: string
+          job_status: string
+          queue_limit: number
+          run_time: string
+        }
+        Returns: {
+          created_at: string | null
+          id: string
+          name: string
+          owner: string | null
+          payload: Json | null
+          queue: string | null
+          result: Json | null
+          retry_count: number | null
+          run_at: string
+          status: string | null
+        }[]
+      }
       is_activated_account: {
         Args: Record<PropertyKey, never>
         Returns: boolean

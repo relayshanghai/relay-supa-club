@@ -22,20 +22,12 @@ export const fetchJobs =
     async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 1 }) => {
         const ts = now();
 
-        let dbquery = supabase
-            .from('jobs')
-            .update({ status: JOB_STATUS.running })
-            .eq('status', filters.status)
-            .eq('queue', filters.queue)
-            .lte('run_at', ts);
-
-        if (filters.owner) {
-            dbquery = dbquery.eq('owner', filters.owner);
-        }
-
-        dbquery = dbquery.limit(filters.limit).order('created_at');
-
-        const { data, error } = await dbquery.select();
+        const { data, error } = await supabase.rpc('fetch_pending_jobs', {
+            job_queue: filters.queue,
+            queue_limit: filters.limit,
+            job_status: JOB_STATUS.pending,
+            run_time: ts,
+        });
 
         if (error) throw error;
         return data;
