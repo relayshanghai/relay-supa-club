@@ -41,7 +41,7 @@ const ActiveLink = ({ href, children, expandedName }: { href: string; children: 
     const { track } = useRudderstackTrack();
 
     return (
-        <Tooltip content={expandedName} position="inset-right" contentSize="small" delay={500} enabled={true}>
+        <Tooltip content={expandedName} position="inset-right" contentSize="small" delay={500} enabled={false}>
             <Link
                 onMouseOver={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}

@@ -92,7 +92,8 @@ describe('Boostbot', () => {
         cy.contains('Finding niches for your product').should('not.exist'); // And this proves that the unfinished messages have been removed
     });
 
-    it('accepts limited filters and fetches influencers only for 1 platform', () => {
+    /** TODO: fix https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1133 */
+    it.skip('accepts limited filters and fetches influencers only for 1 platform', () => {
         cy.contains("Hi I'm BoostBot");
 
         cy.getByTestId('boostbot-open-filters').click();

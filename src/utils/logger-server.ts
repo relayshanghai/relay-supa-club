@@ -173,3 +173,33 @@ export const serverLogger = (message: unknown, captureContext?: LogLevel | Captu
 
     return log(message);
 };
+
+/**
+ * @see https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/#breadcrumb-types
+ */
+type BreadcrumbTypes =
+    | 'default'
+    | 'debug'
+    | 'error'
+    | 'navigation'
+    | 'http'
+    | 'info'
+    | 'query'
+    | 'transaction'
+    | 'ui'
+    | 'user';
+
+type Breadcrumb = Omit<Sentry.Breadcrumb, 'type'> & { type?: BreadcrumbTypes };
+
+/**
+ * Add a breadcrumb to the sentry log for tracking
+ *
+ * @see https://docs.sentry.io/product/issues/issue-details/breadcrumbs
+ * @see https://docs.sentry.io/platforms/node/enriching-events/breadcrumbs/
+ */
+export const crumb = (breadcrumb: Breadcrumb) => {
+    const now = new Date().getTime() / 1000;
+    const data: Breadcrumb = { timestamp: now, level: 'info', type: 'default', ...breadcrumb };
+
+    return Sentry.addBreadcrumb(data);
+};
