@@ -30,20 +30,7 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { conversation, createNewConversation, updateConversation } = useBoostbot();
-    const messages = (conversation?.chat_messages as MessageType[]) ?? [];
-    const influencers = (conversation?.search_results as BoostbotInfluencer[]) ?? [];
-    const setInfluencers = (influencers: BoostbotInfluencer[]) => {
-        updateConversation({ ...conversation, searchResults: influencers });
-    };
-    const setMessages = (messages: MessageType[] | ((messages: MessageType[]) => MessageType[])) => {
-        if (typeof messages === 'function') {
-            updateConversation({ ...conversation, chatMessages: messages(conversation?.chat_messages) });
-        } else {
-            updateConversation({ ...conversation, chatMessages: messages });
-        }
-    };
-
+    const { messages, setMessages, influencers, createNewConversation, refreshConversation } = useBoostbot();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
@@ -101,7 +88,7 @@ const Boostbot = () => {
 
     useEffect(() => {
         refreshUsages();
-    }, [conversation?.search_results, refreshUsages]);
+    }, [influencers, refreshUsages]);
 
     useEffect(() => {
         if (isSearchLoading || !isUsageLoaded) return;
@@ -127,26 +114,6 @@ const Boostbot = () => {
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
-
-    // TODO: Remove this or move it to a better place
-    // (onLoadMessages) => {
-    //     // Fallback added for Product Hunt launch. Can be removed after some time.
-    //     const updateIntroMessage = (message: MessageType) => {
-    //         if (message.type === 'translation' && message.translationKey === 'boostbot.chat.introMessage') {
-    //             message.translationValues = { username: profile?.first_name || '👋' };
-    //         }
-    //         return message;
-    //     };
-    //     // Fallback end. The above can be removed after some time, including the `.map(updateIntroMessage)` below.
-
-    //     const isErrorMessage = (message: MessageType) =>
-    //         message.type === 'translation' && message.translationKey.includes('error');
-    //     const isUnfinishedLoading = (message: MessageType) =>
-    //         message.type === 'progress' && message.progressData.totalFound === null;
-    //     return onLoadMessages
-    //         .map(updateIntroMessage)
-    //         .filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
-    // },
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
@@ -275,8 +242,9 @@ const Boostbot = () => {
         }
     };
 
-    const clearChatHistory = () => {
-        createNewConversation();
+    const clearChatHistory = async () => {
+        await createNewConversation();
+        refreshConversation();
         setIsInitialLogoScreen(true);
         setSelectedInfluencers({});
     };
@@ -296,7 +264,6 @@ const Boostbot = () => {
                 <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
                     <Chat
                         influencers={influencers}
-                        setInfluencers={setInfluencers}
                         allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import type { CreatorPlatform } from 'types';
 import { useUser } from './use-user';
@@ -20,6 +20,8 @@ import {
     updateBoostbotConversationCall,
 } from 'src/utils/api/db/calls/boostbot-conversations';
 import { useDB } from 'src/utils/client-db/use-client-db';
+import type { MessageType } from 'src/components/boostbot/message';
+import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -32,6 +34,20 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const getBoostbotConversation = useDB(getBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
+
+    // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
+    const { data: conversation, mutate: refreshConversation } = useSWR(profile?.id, getBoostbotConversation);
+
+    const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);
+    const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
+        (conversation?.search_results as unknown as BoostbotInfluencer[]) ?? [],
+    );
+    // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).
+    useEffect(() => {
+        if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
+        if (conversation?.search_results)
+            setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
+    }, [conversation]);
 
     const performFetch = useCallback(
         async <T, B>(endpoint: string, body: B): Promise<T> => {
@@ -50,9 +66,6 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         },
         [abortSignal],
     );
-
-    // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
-    const { data: conversation } = useSWR(profile?.id, getBoostbotConversation);
 
     const getTopics = useCallback(
         async (productDescription: string) =>
@@ -106,9 +119,12 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
 
     return {
-        conversation,
-        createNewConversation,
+        messages,
+        setMessages,
+        influencers,
         updateConversation,
+        refreshConversation,
+        createNewConversation,
         getTopics,
         getRelevantTopics,
         getTopicClusters,

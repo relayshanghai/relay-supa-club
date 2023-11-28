@@ -1,5 +1,6 @@
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import type { Dispatch, SetStateAction } from 'react';
+import type { Json } from 'types/supabase';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,6 @@ interface ChatProps {
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: BoostbotInfluencer[];
-    setInfluencers: (influencers: BoostbotInfluencer[]) => void;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handleSelectedInfluencersToOutreach: () => void;
     isSearchDisabled: boolean;
@@ -74,7 +74,6 @@ export const Chat: React.FC<ChatProps> = ({
     areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
-    setInfluencers,
     setIsInitialLogoScreen,
     handleSelectedInfluencersToOutreach,
     isSearchDisabled,
@@ -115,9 +114,10 @@ export const Chat: React.FC<ChatProps> = ({
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
-    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
-        abortSignal: abortController.signal,
-    });
+    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers, updateConversation, refreshConversation } =
+        useBoostbot({
+            abortSignal: abortController.signal,
+        });
 
     const { track } = useRudderstackTrack();
 
@@ -203,58 +203,49 @@ export const Chat: React.FC<ChatProps> = ({
             );
             const searchResults = await Promise.all(parallelSearchPromises);
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
-            track(RecommendInfluencers, payload);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
-            setInfluencers(influencers);
+            track(RecommendInfluencers, payload);
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
-            if (influencers.length > 0) {
-                if (isFirstTimeSearch) {
-                    setIsFirstTimeSearch(false);
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
-                    });
-                    addMessage({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
-                    });
-                    // addMessage({
-                    //     sender: 'Bot',
-                    //     type: 'video',
-                    //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                    //     eventToTrack: OpenVideoGuideModal.eventName,
-                    // });
-                    // addMessage({
-                    //     sender: 'Bot',
-                    //     type: 'video',
-                    //     videoUrl: '/assets/videos/sequence-guide.mp4',
-                    //     eventToTrack: OpenVideoGuideModal.eventName,
-                    // });
+            setMessages((prevMessages) => {
+                const newMessages = [...prevMessages];
+
+                if (influencers.length > 0) {
+                    if (isFirstTimeSearch) {
+                        setIsFirstTimeSearch(false);
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
+                        });
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
+                        });
+                    } else {
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFound',
+                            translationValues: { count: influencers.length },
+                        });
+                    }
                 } else {
-                    addMessage({
+                    newMessages.push({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFound',
-                        translationValues: { count: influencers.length },
+                        translationKey: 'boostbot.chat.noInfluencersFound',
                     });
                 }
-            } else {
-                addMessage({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.noInfluencersFound',
-                });
-                // addMessage({
-                //     sender: 'Bot',
-                //     type: 'video',
-                //     videoUrl: '/assets/videos/boostbot-filters-guide.mp4',
-                //     eventToTrack: OpenVideoGuideModal.eventName,
-                // });
-            }
+
+                const newData = { searchResults: influencers, chatMessages: newMessages };
+                const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+
+                refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
+                return newMessages;
+            });
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {

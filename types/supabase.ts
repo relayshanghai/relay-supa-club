@@ -64,6 +64,37 @@ export interface Database {
           }
         ]
       }
+      boostbot_conversations: {
+        Row: {
+          chat_messages: Json | null
+          created_at: string | null
+          id: string
+          profile_id: string
+          search_results: Json | null
+        }
+        Insert: {
+          chat_messages?: Json | null
+          created_at?: string | null
+          id?: string
+          profile_id: string
+          search_results?: Json | null
+        }
+        Update: {
+          chat_messages?: Json | null
+          created_at?: string | null
+          id?: string
+          profile_id?: string
+          search_results?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boostbot_conversations_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       campaign_creators: {
         Row: {
           added_by_id: string

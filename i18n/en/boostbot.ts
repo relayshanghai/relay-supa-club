@@ -90,7 +90,6 @@ Sequences are our email automation feature. You can set up your email templates,
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
-        fetchingConversationsFailed: 'There was an error fetching your conversations',
     },
     modal: {
         unlockDetailedReport: 'Unlock Detailed Analysis Report',
