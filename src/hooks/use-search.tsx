@@ -52,7 +52,7 @@ export const defaultAudienceLocations: LocationWeighted[] = [
 ];
 
 export const defaultAudienceGender = {
-    code: 'MALE',
+    code: 'FEMALE',
     weight: 0.01,
 };
 

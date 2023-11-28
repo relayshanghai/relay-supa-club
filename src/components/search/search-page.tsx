@@ -195,7 +195,6 @@ export const SearchPageInner = () => {
         setContactInfo(undefined);
         setTopicTags([]);
         setInfluencerLocation([]);
-        setAudienceLocation([]);
         setPage(0);
     }, [
         platform,

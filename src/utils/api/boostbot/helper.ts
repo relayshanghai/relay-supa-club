@@ -26,23 +26,17 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
 
 export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
     const { audience_genders_per_age: audienceDemoData, audience_genders } = influencer;
-    const maleAudienceWeight = audience_genders && audience_genders[0].weight;
-    const WEIGHT_TO_PERCENTAGE = 10000;
 
-    if (!audienceDemoData || !maleAudienceWeight) {
-        return [];
-    }
-
-    const transformAndMergeData = (rawData: GenderPerAge[]): GenderPerAge[] => {
+    const transformAndMergeData = (rawData: GenderPerAge[], genderSearched: 'male' | 'female'): GenderPerAge[] => {
         return rawData.some((audienceData) => audienceData.code === '65-')
             ? rawData.reduce((acc: GenderPerAge[], audienceCategory, index) => {
                   if (audienceCategory.code !== '65-') {
                       acc.push({
                           code: audienceCategory.code === '45-64' ? '45+' : audienceCategory.code,
-                          male:
+                          [genderSearched]:
                               audienceCategory.code === '45-64'
-                                  ? (audienceCategory.male ?? 0) + (rawData[index + 1]?.male ?? 0)
-                                  : audienceCategory.male,
+                                  ? audienceCategory[genderSearched] ?? 0 + (rawData[index + 1][genderSearched] ?? 0)
+                                  : audienceCategory[genderSearched],
                       });
                   }
                   return acc;
@@ -53,23 +47,58 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
               }));
     };
 
-    const processRawData = (rawData: GenderPerAge[], maleAudienceWeight: number) => {
-        const totalMale = rawData.reduce((sum, item) => sum + (item.male ?? 0), 0);
-        const femaleAudienceWeight = 1 - maleAudienceWeight;
+    const processRawData = (
+        rawData: GenderPerAge[],
+        searchedGender: 'male' | 'female',
+        calculateGender: 'male' | 'female',
+        searchedGenderAudienceWeight: number,
+    ) => {
+        const totalSearchedGender = rawData.reduce((sum, item) => sum + (item[searchedGender] ?? 0), 0);
+        const calculateAudienceWeight = 1 - searchedGenderAudienceWeight;
 
         return rawData.map((item) => {
             return {
                 category: item.code,
-                male: (item.male ?? 0) * maleAudienceWeight * WEIGHT_TO_PERCENTAGE,
-                female:
-                    totalMale === 0 || item.male === undefined
+                [searchedGender]: (item[searchedGender] ?? 0) * searchedGenderAudienceWeight * WEIGHT_TO_PERCENTAGE,
+                [calculateGender]:
+                    totalSearchedGender === 0 || item[searchedGender] === undefined
                         ? 0
-                        : (item.male / totalMale) * femaleAudienceWeight * 10000,
+                        : (item[searchedGender] ?? 0 / totalSearchedGender) * calculateAudienceWeight * 10000,
             };
         });
     };
 
-    return processRawData(transformAndMergeData(audienceDemoData), maleAudienceWeight);
+    const searchedGenderAudienceWeight = audience_genders && audience_genders[0].weight;
+    const WEIGHT_TO_PERCENTAGE = 10000;
+
+    if (!audienceDemoData || !searchedGenderAudienceWeight) {
+        return [];
+    }
+
+    if ('male' in audienceDemoData[1] && !('female' in audienceDemoData[1])) {
+        return processRawData(
+            transformAndMergeData(audienceDemoData, 'male'),
+            'male',
+            'female',
+            searchedGenderAudienceWeight,
+        ) as {
+            category: string;
+            male: number;
+            female: number;
+        }[];
+    } else if ('female' in audienceDemoData[1] && !('male' in audienceDemoData[1])) {
+        return processRawData(
+            transformAndMergeData(audienceDemoData, 'female'),
+            'female',
+            'male',
+            searchedGenderAudienceWeight,
+        ) as {
+            category: string;
+            male: number;
+            female: number;
+        }[];
+    }
+    return [];
 };
 
 export const convertAudienceDataToPercentage = (
