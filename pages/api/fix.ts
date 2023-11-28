@@ -468,10 +468,7 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                     continue;
                 }
             }
-            if (error) {
-                console.log(error?.message || 'Unknown error', email);
-                continue;
-            }
+
             if (!id) {
                 console.log('Error creating profile, no id in response');
                 continue;
@@ -491,6 +488,7 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 console.log('error inserting profile', error2?.message || 'unknown error');
                 continue;
             }
+            console.log('created profile', data);
             results.push(email);
         }
     console.log('results', results);
