@@ -15,7 +15,6 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export default function AlipayPortal({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
-    console.log(selectedPrice);
     //handle any next actions https://stripe.com/docs/payments/finalize-payments-on-the-server?platform=web&type=setup#next-actions
     const handleServerResponse = async (setupIntent: Stripe.SetupIntent) => {
         const stripe = await stripePromise;
