@@ -3,6 +3,8 @@ import type { NextApiHandler } from 'next';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
+import type { ProfileInsertBody } from './profiles';
+import { emailRegex } from 'src/constants';
 
 const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
     const _company_ids = [
@@ -336,7 +338,7 @@ const _fixSequenceEmailsNoAccountId: NextApiHandler = async (_req, res) => {
     return res.json({ ok: 'asd' });
 };
 
-const fixDeleteInfluencersStillSendingEmails: NextApiHandler = async (_req, res) => {
+const _fixDeleteInfluencersStillSendingEmails: NextApiHandler = async (_req, res) => {
     console.log('fixDeleteInfluencersStillSendingEmails');
     const outbox = await getOutbox();
     console.log('outbox', outbox.length);
@@ -408,4 +410,91 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
     return res.json({ results });
 };
 
-export default fixDeleteInfluencersStillSendingEmails;
+const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
+    const password = 'B00$t80t*Support';
+    const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id');
+    const results = [];
+    const companies = companiesAll?.slice(0, 100);
+    console.log('companies', companies?.length);
+    if (companies)
+        for (const company of companies) {
+            if (!company.name || !company.cus_id) {
+                console.log('no company name or cus_id', company);
+                continue;
+            }
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id, email_engine_account_id, sequence_send_email')
+                .eq('company_id', company.id);
+
+            let hasAccountProfile:
+                | {
+                      id: string;
+                      email_engine_account_id: string | null;
+                      sequence_send_email: string | null;
+                  }
+                | undefined;
+            if (profiles)
+                for (const profile of profiles) {
+                    if (profile.email_engine_account_id) {
+                        hasAccountProfile = profile;
+                        break;
+                    }
+                }
+            const emailBadCharactersReplacer = (email: string) => {
+                return email.replace(/[.,'"\(\) ]/g, '');
+            };
+
+            const identifier = emailBadCharactersReplacer(company.cus_id.toLowerCase().trim());
+            const email = `support+${identifier}@boostbot.ai`;
+            const emailCheck = emailRegex.test(email);
+            if (!emailCheck) {
+                console.log('email invalid', email);
+                continue;
+            }
+            const { error, data: signupResData } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+            let id = signupResData?.user?.id;
+            if (error?.message.includes('User already registered')) {
+                const { error: error2, data: signinResData } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+                id = signinResData?.user?.id;
+                if (error2) {
+                    console.log(error2?.message || 'Unknown error', email);
+                    continue;
+                }
+            }
+            if (error) {
+                console.log(error?.message || 'Unknown error', email);
+                continue;
+            }
+            if (!id) {
+                console.log('Error creating profile, no id in response');
+                continue;
+            }
+            const profileBody: ProfileInsertBody = {
+                id,
+                email,
+                company_id: company.id,
+                first_name: 'BoostBot',
+                last_name: 'Support',
+                user_role: 'company_owner',
+                email_engine_account_id: hasAccountProfile?.email_engine_account_id,
+                sequence_send_email: hasAccountProfile?.sequence_send_email,
+            };
+            const { data, error: error2 } = await supabase.from('profiles').insert(profileBody);
+            if (!data || error2) {
+                console.log('error inserting profile', error2?.message || 'unknown error');
+                continue;
+            }
+            results.push(email);
+        }
+    console.log('results', results);
+    return res.json({ results });
+};
+
+export default addAdminSuperuserToEachAccount;
