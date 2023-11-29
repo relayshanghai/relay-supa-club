@@ -2,7 +2,8 @@ import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { rudderstack } from 'src/utils/rudderstack';
-import { createJob } from 'src/utils/scheduler/utils';
+import type { CreateJobInsert } from 'src/utils/scheduler/utils';
+import { createJobs } from 'src/utils/scheduler/utils';
 import type { SequenceInfluencerManagerPage } from './influencers';
 import {
     updateSequenceInfluencerCall,
@@ -10,7 +11,7 @@ import {
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
-import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceInfluencerInsert, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
@@ -78,16 +79,46 @@ const postHandler: NextApiHandler = async (req, res) => {
     const { account, sequenceInfluencers } = req.body as SequenceSendPostBody;
     let { sequenceSteps, templateVariables } = req.body as SequenceSendPostBody;
     const results: SequenceSendPostResponse = [];
+
+    const revertOptimisticUpdate = async (influencerId: string) => {
+        try {
+            await db(updateSequenceInfluencerCall)({
+                id: influencerId,
+                funnel_status: 'To Contact',
+            });
+        } catch (error) {
+            serverLogger(error);
+            results[results.length - 1].error =
+                results[results.length - 1].error + ' and failed to revert optimistic update';
+        }
+    };
+
     if (sequenceInfluencers.length === 0) {
         throw new Error('No influencers found');
     }
     // optimistic updates
-    try {
-        // don't await, we don't want to wait for the db to update before sending the emails
-        db(upsertSequenceInfluencersFunnelStatusCall);
-    } catch (error) {
-        serverLogger(error);
-    }
+    await db(upsertSequenceInfluencersFunnelStatusCall)(
+        sequenceInfluencers.map(
+            ({
+                manager_first_name: _filterOut,
+                address: _filterOut2,
+                recent_post_title: _filterOut3,
+                recent_post_url: _filterOut4,
+                ...influencer
+            }) => {
+                const upsert: SequenceInfluencerInsert = {
+                    ...influencer,
+                    funnel_status: 'In Sequence',
+                    name: influencer.name ?? '',
+                    username: influencer.username ?? '',
+                    avatar_url: influencer.avatar_url ?? '',
+                    url: influencer.url ?? '',
+                    platform: influencer.platform ?? '',
+                };
+                return upsert;
+            },
+        ),
+    );
 
     if (!account) {
         throw new Error('Missing required account id');
@@ -109,11 +140,15 @@ const postHandler: NextApiHandler = async (req, res) => {
         throw new Error('No template variables found');
     }
 
+    const createJobsPayloads: CreateJobInsert<typeof SEQUENCE_STEP_SEND_QUEUE_NAME>[] = [];
+
     for (const influencer of sequenceInfluencers) {
         // only sent the first step. Subsequent steps will be sent after from email-engine/webhook `handleSent`
         const firstStep = sequenceSteps.find((step) => step.step_number === 0);
         if (!firstStep) {
-            throw new Error('No first step found');
+            await revertOptimisticUpdate(influencer.id);
+            results.push(...failedResults(influencer));
+            continue;
         }
         const payload: SequenceStepSendArgs = {
             emailEngineAccountId: account,
@@ -122,25 +157,22 @@ const postHandler: NextApiHandler = async (req, res) => {
             sequenceSteps,
             templateVariables,
         };
-        const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
-            queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
-            payload,
+        createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
+    }
+
+    const createdJobs = await createJobs(SEQUENCE_STEP_SEND_QUEUE_NAME, createJobsPayloads);
+
+    for (const influencer of sequenceInfluencers) {
+        const createdJob = createdJobs?.find((job) => {
+            const payload = job.payload as SequenceStepSendArgs;
+            return payload?.sequenceInfluencer.id === influencer.id;
         });
-        if (jobCreated && jobCreated.id) {
-            results.concat(successResults(influencer));
+        if (!createdJob) {
+            await revertOptimisticUpdate(influencer.id);
+            results.push(...failedResults(influencer));
+            continue;
         } else {
-            results.concat(failedResults(influencer));
-            try {
-                // revert optimistic update
-                await db(updateSequenceInfluencerCall)({
-                    id: influencer.id,
-                    funnel_status: 'To Contact',
-                });
-            } catch (error) {
-                serverLogger(error);
-                results[results.length - 1].error =
-                    results[results.length - 1].error + ' and failed to revert optimistic update';
-            }
+            results.push(...successResults(influencer));
         }
     }
 

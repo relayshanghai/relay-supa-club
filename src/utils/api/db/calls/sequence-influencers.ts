@@ -118,11 +118,11 @@ export const getSequenceInfluencerByEmailAndCompanyCall =
     };
 
 export const upsertSequenceInfluencersFunnelStatusCall =
-    (supabaseClient: RelayDatabase) => async (influencers: { id: string; funnel_status: string }[]) => {
+    (supabaseClient: RelayDatabase) => async (influencers: SequenceInfluencerInsert[]) => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            // need to type cast here, because upsert also requires all the other fields
-            .upsert(influencers as unknown as SequenceInfluencerInsert, { ignoreDuplicates: true });
+            .upsert(influencers, { ignoreDuplicates: false })
+            .select();
 
         if (error) throw error;
         return data;
