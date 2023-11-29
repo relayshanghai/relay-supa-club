@@ -35,6 +35,7 @@ const account = {
     subscription: {
         plan: 'Plan',
         renewsOn: 'Renews on',
+        expiresOn: 'Expires on',
         paymentCycle: 'Payment cycle',
         usageLimits: 'Usage limits',
         used: 'Used',
@@ -96,8 +97,8 @@ const account = {
     cancelModal: {
         title: 'Cancel subscription',
         areYouSureYouWantToCancelYourSubscription: 'Are you sure you want to cancel your subscription?',
-        youWillLoseAccessToAllData:
-            'You will lose access to all your projects and data once the current billing period expires.',
+        youWillLoseAccessToAllFeature: `You will no longer have access to Boostbot features after {{expirationDate}}.`,
+        currentPeriodEnd: 'current period end',
         cancelSubscription: 'Cancel subscription',
         orRenewAtDiscount_percentage: 'Or renew now at {{percentage}}% discount',
         renewNow: 'Renew now',

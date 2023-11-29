@@ -35,6 +35,7 @@ const account = {
     subscription: {
         plan: '计划',
         renewsOn: '续订日期',
+        expiresOn: '过期日期',
         paymentCycle: '付款周期',
         usageLimits: '使用限制',
         used: '已使用',
@@ -96,7 +97,8 @@ const account = {
     cancelModal: {
         title: '取消订阅',
         areYouSureYouWantToCancelYourSubscription: '您确定要取消订阅吗？',
-        youWillLoseAccessToAllData: '本期订阅结束后，您将失去对所有数据的访问权限。',
+        youWillLoseAccessToAllFeature: `您将在{{expirationDate}}后失去 BoostBot 各项功能使用权限。`,
+        currentPeriodEnd: '本期订阅结束',
         cancelSubscription: '取消订阅',
         orRenewAtDiscount_percentage: '或以 {{percentage}} 折扣续订',
         renewNow: '立即续订',

@@ -26,7 +26,6 @@ export const SubscriptionDetails = () => {
         setShowCancelModal(true);
         trackEvent(ACCOUNT_SUBSCRIPTION('open cancel subscription modal'));
     };
-
     checkStripeAndDatabaseMatch(company, subscription);
 
     // these we get from stripe directly
@@ -48,7 +47,11 @@ export const SubscriptionDetails = () => {
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
-            <CancelSubscriptionModal visible={showCancelModal} onClose={() => setShowCancelModal(false)} />
+            <CancelSubscriptionModal
+                visible={showCancelModal}
+                onClose={() => setShowCancelModal(false)}
+                periodEnd={periodEnd}
+            />
             <div className="flex w-full flex-row items-center justify-between">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
             </div>
@@ -75,7 +78,7 @@ export const SubscriptionDetails = () => {
                                             {t(`account.subscription.${subscription.interval}`)}
                                         </div>
                                     </div>
-                                    {subscription.status !== 'canceled' && periodEnd && (
+                             {subscription.status !== 'canceled' && periodEnd && (
                                         <div className="flex flex-col space-y-3">
                                             <div className="text-sm">{t('account.subscription.renewsOn')}</div>
                                             <div className="ml-2 text-sm font-bold">
