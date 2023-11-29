@@ -161,6 +161,11 @@ export const SearchContext = createContext<ISearchContext>({
 
 export const useSearch = () => useContext(SearchContext);
 
+export type SearchInfluencerResult = {
+    total: number;
+    influencers: ClassicSearchInfluencer[];
+};
+
 export const useSearchResults = (page: number) => {
     const { profile } = useUser();
     const { company } = useCompany();
@@ -209,13 +214,13 @@ export const useSearchResults = (page: number) => {
                     page,
                 };
 
-                const res = await nextFetch<ClassicSearchInfluencer[] & SearchResultMetadata>(path, {
+                const res = await nextFetch<SearchInfluencerResult & SearchResultMetadata>(path, {
                     method: 'post',
                     signal,
                     body,
                 });
 
-                return { results: res, resultsTotal: res.length, __metadata: res.__metadata };
+                return { results: res.influencers, resultsTotal: res.total, __metadata: res.__metadata };
             } catch (error: any) {
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);

@@ -157,7 +157,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         snapshot_id: snapshot.id,
         parameters_id: parameter.id,
     };
-    return res.status(httpCodes.OK).json(structuredResults);
+    return res.status(httpCodes.OK).json({ total: results.total, influencers: structuredResults });
 };
 
 export default ApiHandler({

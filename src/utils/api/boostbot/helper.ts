@@ -63,7 +63,7 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
                 [calculateGender]:
                     totalSearchedGender === 0 || item[searchedGender] === undefined
                         ? 0
-                        : (item[searchedGender] ?? 0 / totalSearchedGender) * calculateAudienceWeight * 10000,
+                        : ((item[searchedGender] ?? 0) / totalSearchedGender) * calculateAudienceWeight * 10000,
             };
         });
     };

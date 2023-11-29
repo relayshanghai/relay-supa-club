@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'src/components/button';
 import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 import { IQDATA_MAINTENANCE } from 'src/constants';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { Search, SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
 import { startJourney } from 'src/utils/analytics/journey';
 import { numberFormatter } from 'src/utils/formatter';
-import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { Layout } from '../layout';
@@ -25,7 +22,7 @@ import { useTrackEvent } from './use-track-event';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
-import { randomNumber } from 'src/utils/utils';
+import { getFulfilledData, randomNumber } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 import { FaqModal } from '../library';
@@ -40,6 +37,15 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { AddToSequenceButton } from '../boostbot/add-to-sequence-button';
 import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
 import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
+import { ModalSequenceSelector } from '../boostbot/modal-sequence-selector';
+import type { Sequence } from 'src/utils/api/db';
+import { useUser } from 'src/hooks/use-user';
+import {
+    type SendInfluencersToOutreachPayload,
+    SendInfluencersToOutreach,
+} from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
@@ -66,7 +72,6 @@ export const SearchPageInner = () => {
     const [selectedCreator, _setSelectedCreator] = useState<ClassicSearchInfluencer | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { trackEvent } = useRudderstack();
     const [_batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
@@ -76,7 +81,7 @@ export const SearchPageInner = () => {
         loading: resultsLoading,
         metadata,
         setOnLoad,
-    } = useSearchResults(0);
+    } = useSearchResults(page);
 
     const { track: trackAnalytics } = useAnalytics();
     const { track } = useTrackEvent();
@@ -195,7 +200,6 @@ export const SearchPageInner = () => {
         setContactInfo(undefined);
         setTopicTags([]);
         setInfluencerLocation([]);
-        setPage(0);
     }, [
         platform,
         setAudience,
@@ -212,14 +216,120 @@ export const SearchPageInner = () => {
         'classic-selected-influencers',
         {},
     );
+    const { profile } = useUser();
+
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
-    const { sequenceInfluencers: allSequenceInfluencers } = useSequenceInfluencers(sequences?.map((s) => s.id));
+    const {
+        sequenceInfluencers: allSequenceInfluencers,
+        refreshSequenceInfluencers,
+        createSequenceInfluencer,
+    } = useSequenceInfluencers(sequences?.map((s) => s.id));
+    const [isOutreachLoading, setIsOutreachLoading] = useState(false);
+    const outReachDisabled = isOutreachLoading || resultsLoading;
     const [selectedCount, setSelectedCount] = useState(0);
-    const [_showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
+    const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
+
+    const [sequence, setSequence] = useState<Sequence | undefined>(() =>
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
+    );
+
+    const handleSelectedInfluencersToOutreach = useCallback(async () => {
+        const selectedInfluencersData =
+            // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+            firstPageSearchResults && firstPageSearchResults.length > 0
+                ? Object.keys(selectedInfluencers).map((key) => firstPageSearchResults[Number(key)])
+                : [];
+        setIsOutreachLoading(true);
+
+        const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
+            currentPage: CurrentPageEvent.dashboard,
+            influencer_ids: [],
+            sequence_influencer_ids: [],
+            topics: [],
+            is_multiple: null,
+            is_success: true,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_sequence_autostart: null,
+        };
+
+        try {
+            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+
+            if (!selectedInfluencersData) {
+                throw new Error('Error adding influencers to sequence: no valid influencers selected');
+            }
+            if (!sequence?.id) {
+                throw new Error('Error creating sequence: no sequence id selected');
+            }
+
+            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+                const creatorProfileId = influencer.user_id;
+
+                if (trackingPayload.influencer_ids !== null) {
+                    trackingPayload.influencer_ids.push(creatorProfileId);
+                }
+
+                if (trackingPayload.topics !== null) {
+                    trackingPayload.topics.push(...influencer.topics.map((v) => v));
+                }
+
+                if (!platform) {
+                    throw new Error('Error creating sequence influencer: no platform detected');
+                }
+                return createSequenceInfluencer({
+                    iqdata_id: creatorProfileId,
+                    avatar_url: influencer.picture ?? '',
+                    platform,
+                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
+                    username: influencer.handle ?? influencer.username ?? '',
+
+                    url: influencer.url,
+                    sequence_id: sequence?.id,
+                });
+            });
+            const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
+
+            if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
+
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
+            trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
+            trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
+        } catch (error) {
+            clientLogger(error, 'error');
+
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
+        } finally {
+            // @ts-ignore bypasses apiObject type requirement of is_multiple.
+            // Needs `null` for it to show in mixpanel without explicitly
+            // saying that it is multiple or not
+            track(SendInfluencersToOutreach.eventName, trackingPayload);
+            setIsOutreachLoading(false);
+        }
+    }, [
+        allSequenceInfluencers,
+        sequence,
+        platform,
+        selectedInfluencers,
+        createSequenceInfluencer,
+        refreshSequenceInfluencers,
+        track,
+        firstPageSearchResults,
+    ]);
+
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
     return (
         <div className="p-6">
             <ClientRoleWarning />
@@ -237,7 +347,14 @@ export const SearchPageInner = () => {
                 onSearchTypeChange={handleSearchTypeChange}
                 setShowNeedHelpModal={setShowNeedHelpModal}
             />
-
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={handleSelectedInfluencersToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
@@ -245,7 +362,7 @@ export const SearchPageInner = () => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-            {firstPageSearchResults && (
+            {firstPageSearchResults && !noResults && (
                 <div className="flex w-full basis-3/4 flex-col">
                     <div className="flex flex-row items-center justify-between">
                         <div className="ml-4 text-gray-400">
@@ -256,9 +373,9 @@ export const SearchPageInner = () => {
                         <div className="w-fit pb-3">
                             <AddToSequenceButton
                                 buttonText={t('boostbot.chat.outreachSelected')}
-                                outReachDisabled={false}
+                                outReachDisabled={outReachDisabled}
                                 handleAddToSequenceButton={() => {
-                                    //
+                                    setShowSequenceSelector(true);
                                 }}
                             />
                         </div>
@@ -268,6 +385,9 @@ export const SearchPageInner = () => {
                         data={firstPageSearchResults}
                         selectedInfluencers={selectedInfluencers}
                         setSelectedInfluencers={setSelectedInfluencers}
+                        influencerCount={resultsTotal}
+                        setPage={setPage}
+                        currentPage={page}
                         meta={{
                             t,
                             searchId,
@@ -292,17 +412,6 @@ export const SearchPageInner = () => {
                 }
                 setSelectedInfluencers={setSelectedInfluencers}
             />
-            {!noResults && (
-                <Button
-                    onClick={async () => {
-                        const nextPage = page + 1;
-                        setPage(nextPage);
-                        trackEvent(SEARCH_RESULT('load more'));
-                    }}
-                >
-                    {t('creators.loadMore')}
-                </Button>
-            )}
 
             <AddToCampaignModal
                 show={showCampaignListModal}
