@@ -19,14 +19,12 @@ type GetJobFilters = {
  */
 export const fetchJobs =
     (supabase: RelayDatabase) =>
-    async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 1 }) => {
-        const ts = now();
-
+    async ({ queue, limit, status }: GetJobsFilters) => {
         const { data, error } = await supabase.rpc('fetch_pending_jobs', {
-            job_queue: filters.queue,
-            queue_limit: filters.limit,
-            job_status: JOB_STATUS.pending,
-            run_time: ts,
+            job_queue: queue,
+            queue_limit: limit,
+            job_status: status,
+            run_time: now(),
         });
 
         if (error) throw error;
@@ -47,6 +45,12 @@ export const getJob =
         if (error) throw error;
         return data;
     };
+
+export const createJobsDb = (supabase: RelayDatabase) => async (jobs: Omit<Jobs['Insert'], 'id' | 'status'>[]) => {
+    const { data, error } = await supabase.from('jobs').insert(jobs).select('*');
+    if (error) throw error;
+    return data;
+};
 
 export const createJobDb =
     (supabase: RelayDatabase) => async (id: string, job: Omit<Jobs['Insert'], 'id' | 'status'>) => {
