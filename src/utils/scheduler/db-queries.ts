@@ -46,6 +46,12 @@ export const getJob =
         return data;
     };
 
+export const createJobsDb = (supabase: RelayDatabase) => async (jobs: Omit<Jobs['Insert'], 'id' | 'status'>[]) => {
+    const { data, error } = await supabase.from('jobs').insert(jobs).select('*');
+    if (error) throw error;
+    return data;
+};
+
 export const createJobDb =
     (supabase: RelayDatabase) => async (id: string, job: Omit<Jobs['Insert'], 'id' | 'status'>) => {
         const status = JOB_STATUS.pending;
