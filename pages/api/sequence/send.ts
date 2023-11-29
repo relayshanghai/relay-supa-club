@@ -4,16 +4,17 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { rudderstack } from 'src/utils/rudderstack';
 import { createJob } from 'src/utils/scheduler/utils';
 import type { SequenceInfluencerManagerPage } from './influencers';
-import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
+import {
+    updateSequenceInfluencerCall,
+    upsertSequenceInfluencersFunnelStatusCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
-import { wait } from 'src/utils/utils';
 import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
-import { maxExecutionTime } from 'src/utils/max-execution-time';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 
 export type SequenceSendPostBody = {
@@ -81,20 +82,13 @@ const postHandler: NextApiHandler = async (req, res) => {
         throw new Error('No influencers found');
     }
     // optimistic updates
-    for (const influencer of sequenceInfluencers) {
-        try {
-            await maxExecutionTime(
-                db(updateSequenceInfluencerCall)({
-                    id: influencer.id,
-                    funnel_status: 'In Sequence',
-                }),
-                1000,
-            );
-            await wait(100);
-        } catch (error) {
-            serverLogger(error);
-        }
+    try {
+        // don't await, we don't want to wait for the db to update before sending the emails
+        db(upsertSequenceInfluencersFunnelStatusCall);
+    } catch (error) {
+        serverLogger(error);
     }
+
     if (!account) {
         throw new Error('Missing required account id');
     }

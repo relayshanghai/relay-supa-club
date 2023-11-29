@@ -117,6 +117,17 @@ export const getSequenceInfluencerByEmailAndCompanyCall =
         return unpackSocialProfile(data);
     };
 
+export const upsertSequenceInfluencersFunnelStatusCall =
+    (supabaseClient: RelayDatabase) => async (influencers: { id: string; funnel_status: string }[]) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            // need to type cast here, because upsert also requires all the other fields
+            .upsert(influencers as unknown as SequenceInfluencerInsert, { ignoreDuplicates: true });
+
+        if (error) throw error;
+        return data;
+    };
+
 /**
  * If updating the email, also pass in the company_id so we can check if the email already exists for this company
  */
