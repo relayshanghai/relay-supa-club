@@ -16,7 +16,7 @@ export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCar
     return (
         <div
             data-testid={`stat-card-${name.toLowerCase()}`}
-            className="flex w-[312px] cursor-default rounded-xl border border-gray-200 bg-white p-5"
+            className="flex h-[113px] w-[312px] cursor-default rounded-xl border border-gray-200 bg-white p-5"
         >
             <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 p-3 text-primary-700">
                 {largeIcon}
