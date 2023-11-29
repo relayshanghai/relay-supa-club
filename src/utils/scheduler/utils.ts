@@ -29,7 +29,12 @@ export const runJob = async (job: Jobs['Row']) => {
     } catch (e) {
         status = JOB_STATUS.failed;
 
-        serverLogger(e);
+        serverLogger(e, (scope) => {
+            return scope.setContext('Job', {
+                job: job.id,
+                error: 'Job failed',
+            });
+        });
         result = { error: new Error(String(e)).message };
     }
 
