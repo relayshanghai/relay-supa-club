@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { updateCompanySubscriptionStatus } from 'src/utils/api/db';
+// import { updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
-import { unixEpochToISOString } from 'src/utils/utils';
+// import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 
 export type SubscriptionCancelPostBody = {
@@ -34,11 +34,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
         },
     );
 
-    await updateCompanySubscriptionStatus({
-        subscription_status: 'canceled',
-        id: company_id,
-        subscription_end_date: unixEpochToISOString(subscription.current_period_end),
-    });
+    // await updateCompanySubscriptionStatus({
+    //     subscription_status: 'canceled',
+    //     id: company_id,
+    //     subscription_end_date: unixEpochToISOString(subscription.current_period_end),
+    // });
 
     return res.status(httpCodes.OK).json(subscription);
 }

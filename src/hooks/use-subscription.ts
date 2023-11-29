@@ -87,8 +87,8 @@ export const useSubscription = () => {
             body: JSON.stringify(body),
         });
 
-        const status: SubscriptionGetResponse['status'] = 'canceled';
-        mutate({ ...subscription, status });
+        // const status: SubscriptionGetResponse['status'] = 'canceled';
+        mutate({ ...subscription });
 
         return res;
     }, [company?.id, mutate, subscription]);
