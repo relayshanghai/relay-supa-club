@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "pages/api/jobs/run.ts": {
+      "maxDuration": 300,
+      "memory": 3008
+    }
+  }
+}

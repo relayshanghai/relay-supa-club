@@ -75,10 +75,8 @@ const sendAndInsertEmail = async ({
                 id: influencer.id,
                 funnel_status: 'In Sequence',
             });
-            return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
-        } else {
-            throw new Error('Email already sent');
         }
+        return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
     }
 
     const params = {
@@ -209,6 +207,10 @@ const handleResult = async (result: SendResult, influencer: SequenceInfluencerMa
 
 /** Revert the optimistic update and set the influencer to 'To Contact', delete the sequence_emails, and cancel outgoing emails in the outbox */
 const handleSendFailed = async (sequenceInfluencer: SequenceInfluencerManagerPage, outbox: OutboxGetMessage[]) => {
+    if (sequenceInfluencer.sequence_step !== 0) {
+        // only reset the sequence influencer if it fails on the first step
+        return;
+    }
     try {
         await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
             id: sequenceInfluencer.id,
