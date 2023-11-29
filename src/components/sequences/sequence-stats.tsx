@@ -71,7 +71,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         },
     ];
     return (
-        <div className="flex flex-wrap justify-between gap-6 pb-8">
+        <div className="flex flex-wrap justify-between gap-6 pb-8 md:gap-4">
             {stats.map((stat) => (
                 <StatCard {...stat} key={stat.name} />
             ))}
