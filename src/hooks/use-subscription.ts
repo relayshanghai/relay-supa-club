@@ -2,10 +2,6 @@ import type { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/
 import type { SubscriptionCancelPostBody, SubscriptionCancelPostResponse } from 'pages/api/subscriptions/cancel';
 import type { SubscriptionCreatePostBody, SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
 import type {
-    SubscriptionCreateTrialPostBody,
-    SubscriptionCreateTrialResponse,
-} from 'pages/api/subscriptions/create-trial-legacy';
-import type {
     SubscriptionDiscountRenewPostBody,
     SubscriptionDiscountRenewPostResponse,
 } from 'pages/api/subscriptions/discount-renew';
@@ -31,19 +27,6 @@ export const useSubscription = () => {
                 id: company?.id ?? '',
             }),
     );
-
-    const createTrialLegacy = useCallback(async () => {
-        if (!company?.id) throw new Error('No company found');
-        const body: SubscriptionCreateTrialPostBody = {
-            company_id: company?.id,
-        };
-        const res = await nextFetch<SubscriptionCreateTrialResponse>('subscriptions/create-trial-legacy', {
-            method: 'post',
-            body: JSON.stringify(body),
-        });
-        mutate();
-        return res;
-    }, [company?.id, mutate]);
 
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
@@ -99,7 +82,6 @@ export const useSubscription = () => {
         refreshPaymentMethods,
         refreshSubscription: mutate,
         createSubscription,
-        createTrialLegacy,
         createDiscountRenew,
         cancelSubscription,
     };

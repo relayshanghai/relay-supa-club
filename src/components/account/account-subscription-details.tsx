@@ -65,7 +65,7 @@ export const SubscriptionDetails = () => {
                                         <div className="text-sm">{t('account.subscription.plan')}</div>
                                         <div className="ml-2 text-sm font-bold">
                                             {subscription.name}
-                                            {subscription.status === 'trialing' &&
+                                            {subscription.status === 'trial' &&
                                                 ` - ${t('account.subscription.freeTrial')}`}
                                             {subscription.status === 'paused' &&
                                                 ` - ${t('account.subscription.trialExpired')}`}
@@ -78,7 +78,7 @@ export const SubscriptionDetails = () => {
                                             {t(`account.subscription.${subscription.interval}`)}
                                         </div>
                                     </div>
-                             {subscription.status !== 'canceled' && periodEnd && (
+                                    {subscription.status !== 'canceled' && periodEnd && (
                                         <div className="flex flex-col space-y-3">
                                             <div className="text-sm">{t('account.subscription.renewsOn')}</div>
                                             <div className="ml-2 text-sm font-bold">
