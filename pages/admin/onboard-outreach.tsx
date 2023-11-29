@@ -1,4 +1,8 @@
-import type { AdminGetProfileGetQueries, AdminGetProfileGetResponse } from 'pages/api/admin/profile';
+import type {
+    AdminGetProfileGetQueries,
+    AdminGetProfileGetResponse,
+    AdminGetProfilePutResponse,
+} from 'pages/api/admin/profile';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -69,7 +73,7 @@ const OnboardOutreach = () => {
                 toast.error('Invalid email_engine_account_id');
                 return;
             }
-            const res = await nextFetch<AdminGetProfileGetResponse>('admin/profile', {
+            const res = await nextFetch<AdminGetProfilePutResponse>('admin/profile', {
                 method: 'PUT',
                 body: profile,
             });
