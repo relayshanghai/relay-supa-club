@@ -1,16 +1,9 @@
-import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { StatCardProps } from './stat-card';
 import { StatCard } from './stat-card';
-import {
-    AlertCircleOutline,
-    CheckCircleOutline,
-    EmailOpenOutline,
-    MessageDotsCircleOutline,
-    MessageXCircleOutline,
-    TeamOutline,
-} from '../icons';
+import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, TeamOutline } from '../icons';
 import { decimalToPercent } from 'src/utils/formatter';
+import AlertOrCheckIcon from './alerticons';
 export interface SequenceStatsProps {
     totalInfluencers: number;
     /** percentage in decimal from 0 to 1 (.10 = 10%) */
@@ -20,24 +13,8 @@ export interface SequenceStatsProps {
     /** percentage in decimal from 0 to 1 (.10 = 10%) */
     bounceRate: number;
 }
-const getStatusDiv = (status: string): ReactElement => {
-    if (status === 'alert') {
-        return (
-            <div className="flex h-4 w-5 items-center justify-center rounded bg-red-50 p-1 text-red-500">
-                <AlertCircleOutline className="h-3 w-3" strokeWidth="1.5" />
-            </div>
-        );
-    } else if (status === 'check') {
-        return (
-            <div className="flex h-4 w-5 items-center justify-center rounded bg-green-50 p-1 text-green-500">
-                <CheckCircleOutline className="h-3 w-3" strokeWidth="1.5" />
-            </div>
-        );
-    }
-    return <></>;
-};
 
-export const getAlertIconAcctToStatus = (rate: number, rateType: string) => {
+export const markAlertForLowStatRate = (rate: number, rateType: string) => {
     let alertType = 'alert';
     if (
         (rate >= 0.15 && rateType === 'openRate') ||
@@ -46,7 +23,7 @@ export const getAlertIconAcctToStatus = (rate: number, rateType: string) => {
     ) {
         alertType = 'check';
     }
-    return getStatusDiv(alertType);
+    return alertType;
 };
 
 export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRate }: SequenceStatsProps) => {
@@ -69,7 +46,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(openRate, 0) ?? '0%',
             largeIcon: <EmailOpenOutline />,
-            smallIcon: getAlertIconAcctToStatus(openRate, 'openRate'),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(openRate, 'openRate')} />,
         },
         {
             name: t('sequences.replyRate'),
@@ -79,7 +56,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(replyRate, 0) ?? '0%',
             largeIcon: <MessageDotsCircleOutline />,
-            smallIcon: getAlertIconAcctToStatus(replyRate, 'replyRate'),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(replyRate, 'replyRate')} />,
         },
         {
             name: t('sequences.bounceRate'),
@@ -90,7 +67,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(bounceRate, 0) ?? '0%',
             largeIcon: <MessageXCircleOutline />,
-            smallIcon: getAlertIconAcctToStatus(bounceRate, 'bounceRate'),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(bounceRate, 'bounceRate')} />,
         },
     ];
     return (
