@@ -182,7 +182,14 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         setVariables({ ...variables, [key]: { ...variables[key], value: value } });
     };
     const [submitting, setSubmitting] = useState(false);
-    const { emailTemplates } = useEmailTemplates(props.sequenceSteps.map((step) => step.template_id));
+    const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(
+        props.sequenceSteps.map((step) => step.template_id),
+    );
+    useEffect(() => {
+        if (props.visible) {
+            refreshEmailTemplates();
+        }
+    }, [refreshEmailTemplates, props.visible]);
     const [previewPage, setPreviewPage] = useState(0);
 
     const handleSetPreviewPage = useCallback(
