@@ -261,6 +261,6 @@ export const config = {
          * - api/company/exists
          * - api/jobs/run
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/track/*).*)',
     ],
 };

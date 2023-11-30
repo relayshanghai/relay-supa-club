@@ -10,6 +10,8 @@ import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/anal
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
 import { nextFetch } from 'src/utils/fetcher';
+import { deviceIdAtom } from 'src/atoms/device-id-atom';
+import { useAtomValue } from 'jotai';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -129,6 +131,7 @@ export const profileToIdentifiable = (
 };
 
 export const useRudderstack = () => {
+    const deviceId = useAtomValue(deviceIdAtom);
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
         await nextFetch('/track/identify', {
             method: 'POST',
@@ -144,15 +147,19 @@ export const useRudderstack = () => {
         rudder.page(pageName, properties);
     }, []);
 
-    const trackEvent = useCallback(async (eventName: string, properties?: apiObject) => {
-        await nextFetch('/track', {
-            method: 'POST',
-            body: JSON.stringify({
-                eventName,
-                ...properties,
-            }),
-        });
-    }, []);
+    const trackEvent = useCallback(
+        async (eventName: string, properties?: apiObject) => {
+            await nextFetch('/track', {
+                method: 'POST',
+                body: JSON.stringify({
+                    deviceId,
+                    eventName,
+                    ...properties,
+                }),
+            });
+        },
+        [deviceId],
+    );
 
     const group = useCallback(async (groupId: string, traits?: apiObject) => {
         await nextFetch('/track/group', {
@@ -202,6 +209,7 @@ export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const currentPage = useGetCurrentPage();
 
+    const deviceId = useAtomValue(deviceIdAtom);
     const identify = useCallback((userId: string, traits: IdentityTraits, cb?: () => void) => {
         const abort = () => {
             isAborted.current = true;
@@ -252,6 +260,7 @@ export const useRudderstackTrack = () => {
                     nextFetch('/track', {
                         method: 'POST',
                         body: JSON.stringify({
+                            deviceId,
                             eventName: eventName,
                             currentPage,
                             ...payload,
@@ -272,7 +281,7 @@ export const useRudderstackTrack = () => {
 
             return { request, abort };
         },
-        [currentPage],
+        [currentPage, deviceId],
     );
 
     return { track, identify };
