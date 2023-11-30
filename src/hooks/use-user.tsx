@@ -16,8 +16,6 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
-import { deleteDB } from 'idb';
-import { appCacheDBKey } from 'src/constants';
 import { useRouter } from 'next/router';
 import { useAnalytics } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
@@ -236,8 +234,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
 
         // @todo deleting idb is blocked so we do not wait to allow us to continue
-        deleteDB(appCacheDBKey);
-
         Sentry.setUser(null);
 
         const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';

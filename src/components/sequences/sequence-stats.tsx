@@ -1,15 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import type { StatCardProps } from './stat-card';
 import { StatCard } from './stat-card';
-import {
-    AlertCircleOutline,
-    CheckCircleOutline,
-    EmailOpenOutline,
-    MessageDotsCircleOutline,
-    MessageXCircleOutline,
-    TeamOutline,
-} from '../icons';
+import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, TeamOutline } from '../icons';
 import { decimalToPercent } from 'src/utils/formatter';
+import AlertOrCheckIcon from './alerticons';
 export interface SequenceStatsProps {
     totalInfluencers: number;
     /** percentage in decimal from 0 to 1 (.10 = 10%) */
@@ -19,6 +13,18 @@ export interface SequenceStatsProps {
     /** percentage in decimal from 0 to 1 (.10 = 10%) */
     bounceRate: number;
 }
+
+export const markAlertForLowStatRate = (rate: number, rateType: string) => {
+    let alertType = 'alert';
+    if (
+        (rate >= 0.15 && rateType === 'openRate') ||
+        (rate >= 0.1 && rateType === 'replyRate') ||
+        (rate < 0.03 && rateType === 'bounceRate')
+    ) {
+        alertType = 'check';
+    }
+    return alertType;
+};
 
 export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRate }: SequenceStatsProps) => {
     const { t } = useTranslation();
@@ -40,11 +46,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(openRate, 0) ?? '0%',
             largeIcon: <EmailOpenOutline />,
-            smallIcon: (
-                <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
-                    <CheckCircleOutline className="h-3 w-3" />
-                </div>
-            ),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(openRate, 'openRate')} />,
         },
         {
             name: t('sequences.replyRate'),
@@ -54,11 +56,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(replyRate, 0) ?? '0%',
             largeIcon: <MessageDotsCircleOutline />,
-            smallIcon: (
-                <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
-                    <CheckCircleOutline className="h-3 w-3" />
-                </div>
-            ),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(replyRate, 'replyRate')} />,
         },
         {
             name: t('sequences.bounceRate'),
@@ -69,15 +67,11 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: decimalToPercent(bounceRate, 0) ?? '0%',
             largeIcon: <MessageXCircleOutline />,
-            smallIcon: (
-                <div className="flex h-4 w-5 items-center justify-center bg-red-50 p-1 text-red-500">
-                    <AlertCircleOutline className="h-3 w-3" />
-                </div>
-            ),
+            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(bounceRate, 'bounceRate')} />,
         },
     ];
     return (
-        <div className="flex flex-wrap justify-between gap-6 pb-8">
+        <div className="flex flex-wrap justify-between gap-6 pb-8 md:gap-4">
             {stats.map((stat) => (
                 <StatCard {...stat} key={stat.name} />
             ))}
