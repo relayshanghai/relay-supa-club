@@ -8,36 +8,52 @@ export const parseUserAgent = (userAgent?: string) => {
             os: 'Unknown',
         };
     }
+
     const ua = userAgent.toLowerCase();
+
     const getBrowser = () => {
-        const match = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-        const version = match[2] || 'Unknown';
+        let match;
+        let version = 'Unknown';
 
         if (/safari/.test(ua) && !/chrome/.test(ua)) {
+            match = ua.match(/version\/(\d+)/i);
+            if (match !== null) {
+                version = match[1];
+            }
             return { name: 'Safari', version };
         } else if (/chrome/.test(ua)) {
+            match = ua.match(/chrome\/(\d+)/i);
+            if (match !== null) {
+                version = match[1];
+            }
             return { name: 'Chrome', version };
         } else if (/firefox/.test(ua)) {
+            match = ua.match(/firefox\/(\d+)/i);
+            if (match !== null) {
+                version = match[1];
+            }
             return { name: 'Firefox', version };
-        } else if (/msie/.test(ua)) {
+        } else if (/msie/.test(ua) || /trident/.test(ua)) {
+            match = ua.match(/(?:msie |rv:)(\d+)/i);
+            if (match !== null) {
+                version = match[1];
+            }
             return { name: 'Internet Explorer', version };
         }
         return { name: 'Unknown', version };
     };
+    const osMatch = /(windows|macintosh|linux)/.exec(ua);
 
-    const getOS = () => {
-        if (/windows/.test(ua)) {
-            return 'Windows';
-        } else if (/macintosh/.test(ua)) {
-            return 'Mac OS';
-        } else if (/linux/.test(ua)) {
-            return 'Linux';
-        }
-        return 'Unknown';
+    const osLookup: { [key: string]: string } = {
+        windows: 'Windows',
+        macintosh: 'Mac OS',
+        linux: 'Linux',
     };
+
+    const os = osLookup[osMatch ? osMatch[1] : ''] || 'Unknown';
 
     return {
         browser: getBrowser(),
-        os: getOS(),
+        os,
     };
 };
