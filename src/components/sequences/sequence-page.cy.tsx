@@ -93,17 +93,31 @@ describe('<SequencePage />', () => {
         });
     });
     it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
+        const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         testMount(<SequencePage {...props} />);
         cy.contains('h1', "Joe's BoostBot Sequence"); // loaded
-        // expected number of pagination buttons are there
+
+        // expected number of pagination buttons are there 2
+        cy.contains('link', '1');
         // back and next buttons are there. Back is disabled.
-        // number of influencers shown is 25
+        cy.contains('button', 'Previous').should('be.disabled');
+
+        cy.contains('button', 'Next');
+        // number of influencers shown is 25 //21 in the mocks
+        cy.get('table tbody tr').should('have.length', 21);
         // check a certain name is there
-        // click next
+        cy.contains('tr', mario?.name ?? '');
+        // click next=====================
+        cy.contains('button', 'Next').click();
         // back button is enabled
+        cy.contains('button', 'Previous').should('not.be.disabled');
         // number of influencers shown is ??... we might need to update the mock //import mockInfluencers from 'src/mocks/api/sequence/influencers/sequence-influencers-1';
+        cy.get('table tbody tr').should('have.length', 15);
         // previous certain name influencer is not there
+        cy.contains('tr', mario?.name ?? '');
         // click back
+        cy.contains('button', 'Previous').click();
         // number of influencers shown is 25
+        cy.get('table tbody tr').should('have.length', 25);
     });
 });

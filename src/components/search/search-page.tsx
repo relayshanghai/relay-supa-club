@@ -259,6 +259,7 @@ export const SearchPageInner = () => {
                     </>
                 }
             />
+            {/* add here paginaiton */}
             {!noResults && (
                 <Button
                     onClick={async () => {
