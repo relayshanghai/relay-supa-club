@@ -109,22 +109,22 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
         [selection, setSelection],
     );
 
+    const [isChecked, setIsChecked] = useState(false);
+
     const handleCheckAll = useCallback(
         (currentPage: number, numberOfInfluencersPerPage: number) => {
-            if (selection.length === sequenceInfluencers.length) {
+            setIsChecked(!isChecked);
+            if (!isChecked == false) {
                 setSelection([]);
                 return;
             }
-            //sortInfluencersWithEmail
-            // console.log();
-            // setSelection(sequenceInfluencers.map((influencer) => influencer.id));
             setSelection(
                 filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers)
                     .filter((influencer) => influencer.email)
                     .map((influencer) => influencer.id),
             );
         },
-        [selection, sequenceInfluencers, setSelection],
+        [isChecked, sequenceInfluencers, setSelection],
     );
 
     const columns = sequenceColumns(currentTab);
@@ -138,7 +138,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 data-testid="sequence-influencers-select-all"
                                 className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
                                 type="checkbox"
-                                checked={sequenceInfluencers.length === selection.length && selection.length > 0}
+                                checked={isChecked}
                                 onChange={() => handleCheckAll(currentPage, numberOfInfluencersPerPage)}
                             />
                         </th>
@@ -151,7 +151,6 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                             </th>
                         ))}
                     </tr>
-                    xs
                 </thead>
                 <tbody>
                     {filterByPage(currentPage, numberOfInfluencersPerPage, sortedInfluencers).map((influencer) => {
