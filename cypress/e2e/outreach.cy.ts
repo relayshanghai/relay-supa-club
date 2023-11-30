@@ -67,7 +67,7 @@ describe('outreach', () => {
         cy.contains('tr', 'New Sequence Test').should('not.exist', { timeout: 10000 });
         cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
-    it.skip('displays sequence page stats and influencers table', () => {
+    it('displays sequence page stats and influencers table', () => {
         cy.contains('CRM').click();
 
         cy.contains('General collaboration', { timeout: 10000 }).click();
