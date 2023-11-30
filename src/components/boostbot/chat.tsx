@@ -24,12 +24,11 @@ import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations'
 import { SearchFiltersModal } from 'src/components/boostbot/search-filters-modal';
 import { ClearChatHistoryModal } from 'src/components/boostbot/clear-chat-history-modal';
 import { ModalSequenceSelector } from './modal-sequence-selector';
-import type { InfluencerSocialProfileInsert, Sequence } from 'src/utils/api/db';
+import type { Sequence } from 'src/utils/api/db';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
-import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -122,7 +121,7 @@ export const Chat: React.FC<ChatProps> = ({
         getInfluencers,
         updateConversation,
         refreshConversation,
-        upsertInfluencerProfiles,
+        saveSearchResults,
     } = useBoostbot({
         abortSignal: abortController.signal,
     });
@@ -256,17 +255,7 @@ export const Chat: React.FC<ChatProps> = ({
 
                 refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
 
-                const socialProfiles = influencers.map((i) => ({
-                    avatar_url: i.picture,
-                    influencer_id: '', // There is no influencer created in the db at this time. Should we create one first and only then we can create a social profile?
-                    reference_id: `iqdata:${i.user_id}`,
-                    name: i.fullname || i.username || i.handle || i.custom_name || '',
-                    platform: extractPlatformFromURL(i.url),
-                    url: i.url,
-                    username: i.username || i.handle || i.custom_name || '',
-                })) as InfluencerSocialProfileInsert[];
-
-                upsertInfluencerProfiles(socialProfiles);
+                saveSearchResults(influencers);
 
                 return newMessages;
             });

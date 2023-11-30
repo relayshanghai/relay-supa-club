@@ -5,6 +5,7 @@ import { useUser } from './use-user';
 import { useCompany } from './use-company';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
+import type { SaveSearchResultsBody } from 'pages/api/boostbot/save-search-results';
 import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
@@ -19,7 +20,6 @@ import {
     createNewBoostbotConversationCall,
     updateBoostbotConversationCall,
 } from 'src/utils/api/db/calls/boostbot-conversations';
-import { upsertInfluencerProfiles as upsertInfluencerProfilesCall } from 'src/utils/api/db/calls/influencers-insert';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
@@ -35,7 +35,6 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const getBoostbotConversation = useDB(getBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
-    const upsertInfluencerProfiles = useDB(upsertInfluencerProfilesCall);
 
     // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
     const { data: conversation, mutate: refreshConversation } = useSWR(profile?.id, getBoostbotConversation);
@@ -69,6 +68,14 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
             }
         },
         [abortSignal],
+    );
+
+    const saveSearchResults = useCallback(
+        async (influencers: BoostbotInfluencer[]) =>
+            await performFetch<void, SaveSearchResultsBody>('save-search-results', {
+                influencers,
+            }),
+        [performFetch],
     );
 
     const getTopics = useCallback(
@@ -129,7 +136,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         updateConversation,
         refreshConversation,
         createNewConversation,
-        upsertInfluencerProfiles,
+        saveSearchResults,
         getTopics,
         getRelevantTopics,
         getTopicClusters,

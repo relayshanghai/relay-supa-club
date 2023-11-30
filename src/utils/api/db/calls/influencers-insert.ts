@@ -27,6 +27,18 @@ export const upsertInfluencerProfiles =
         return influencers.data;
     };
 
+export const insertInfluencers =
+    (db: SupabaseClient<Database>) =>
+    async (data: InfluencerInsert[]): Promise<InfluencerRow[]> => {
+        const influencer = await db.from('influencers').insert(data).select();
+
+        if (influencer.error) {
+            throw influencer.error;
+        }
+
+        return influencer.data;
+    };
+
 export const insertInfluencer =
     (db: SupabaseClient<Database>) =>
     async (data: InfluencerInsert): Promise<InfluencerRow> => {
