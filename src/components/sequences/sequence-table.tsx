@@ -109,16 +109,23 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
         [selection, setSelection],
     );
 
-    const handleCheckAll = useCallback(() => {
-        if (selection.length === sequenceInfluencers.length) {
-            setSelection([]);
-            return;
-        }
-        //sortInfluencersWithEmail
-        // console.log();
-        // setSelection(sequenceInfluencers.map((influencer) => influencer.id));
-        setSelection(sequenceInfluencers.filter((influencer) => influencer.email).map((influencer) => influencer.id));
-    }, [selection, sequenceInfluencers, setSelection]);
+    const handleCheckAll = useCallback(
+        (currentPage: number, numberOfInfluencersPerPage: number) => {
+            if (selection.length === sequenceInfluencers.length) {
+                setSelection([]);
+                return;
+            }
+            //sortInfluencersWithEmail
+            // console.log();
+            // setSelection(sequenceInfluencers.map((influencer) => influencer.id));
+            setSelection(
+                filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers)
+                    .filter((influencer) => influencer.email)
+                    .map((influencer) => influencer.id),
+            );
+        },
+        [selection, sequenceInfluencers, setSelection],
+    );
 
     const columns = sequenceColumns(currentTab);
     return (
@@ -132,7 +139,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
                                 type="checkbox"
                                 checked={sequenceInfluencers.length === selection.length && selection.length > 0}
-                                onChange={handleCheckAll}
+                                onChange={() => handleCheckAll(currentPage, numberOfInfluencersPerPage)}
                             />
                         </th>
                         {columns.map((column) => (
@@ -144,6 +151,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                             </th>
                         ))}
                     </tr>
+                    xs
                 </thead>
                 <tbody>
                     {filterByPage(currentPage, numberOfInfluencersPerPage, sortedInfluencers).map((influencer) => {
