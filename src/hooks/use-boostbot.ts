@@ -34,6 +34,8 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const getBoostbotConversation = useDB(getBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
+    // eslint-disable-next-line no-console
+    console.log('profile?.id :>> ', profile?.id);
 
     // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
     const {
