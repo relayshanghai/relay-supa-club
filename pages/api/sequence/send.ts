@@ -55,22 +55,22 @@ const failedResults = (influencer: SequenceInfluencerManagerPage, error?: string
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 0,
-        error: 'failed to schedule 0 ' + error,
+        error: `failed to schedule 0 ${error}`,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 1,
-        error: 'failed to schedule 1 ' + error,
+        error: `failed to schedule 1 ${error}`,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 2,
-        error: 'failed to schedule 2 ' + error,
+        error: `failed to schedule 2 ${error}`,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 3,
-        error: 'failed to schedule 3 ' + error,
+        error: `failed to schedule 3 ${error}`,
     },
 ];
 
