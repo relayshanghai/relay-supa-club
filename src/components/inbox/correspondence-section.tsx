@@ -34,6 +34,7 @@ export const CorrespondenceSection = ({
             reference: {
                 message: selectedMessages[selectedMessages.length - 1].id,
                 action: 'reply',
+                documentStore: true,
             },
             html: replaceNewlinesAndTabs(replyMessage),
         };

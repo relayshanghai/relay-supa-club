@@ -29,6 +29,7 @@ export type CreatorsReportGetQueries = {
     user_id: string;
     track?: eventKeys | undefined;
     source?: 'boostbot' | 'default';
+    pageUrl?: string;
 };
 
 const trackAndSnap = async (
@@ -77,7 +78,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     await rudderstack.identify({ req, res });
 
-    const { platform, creator_id, company_id, user_id, track } = req.query as CreatorsReportGetQueries;
+    const { platform, creator_id, company_id, user_id, track, pageUrl } = req.query as CreatorsReportGetQueries;
     if (!platform || !creator_id || !company_id || !user_id)
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
@@ -137,7 +138,10 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     let createdAt = '';
 
     trackListReports();
-    const reportMetadata: CreatorReportsMetadata = await fetchReportsMetadata({ req, res })(platform, creator_id);
+    const reportMetadata: CreatorReportsMetadata = await fetchReportsMetadata({ req, res, metadata: { pageUrl } })(
+        platform,
+        creator_id,
+    );
 
     report_id = reportMetadata?.results[0]?.id ?? '';
     createdAt = reportMetadata?.results[0]?.created_at ?? '';
@@ -147,10 +151,10 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     try {
         if (report_id) {
             trackFetchReportOnFile();
-            data = await fetchReport({ req, res })(report_id);
+            data = await fetchReport({ req, res, metadata: { pageUrl } })(report_id);
         } else {
             trackFetchNewReport();
-            data = await requestNewReport({ req, res })(platform, creator_id);
+            data = await requestNewReport({ req, res, metadata: { pageUrl } })(platform, creator_id);
         }
     } catch (error: any) {
         // catch the retry_later error from iqdata so front end can show a message, for other errors they will be caught by apiHandler

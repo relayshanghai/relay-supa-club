@@ -10,6 +10,7 @@ export const useEmailTemplates = (templateIds: string[]) => {
                 method: 'POST',
                 body: { templateIds },
             }),
+        { revalidateIfStale: false, revalidateOnFocus: false, revalidateOnReconnect: false },
     );
 
     return {

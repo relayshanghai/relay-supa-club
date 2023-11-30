@@ -50,7 +50,7 @@ export const logIqdataLimits = async (
         const errorTag = nanoid();
 
         await logRateLimitError(action, context, errorTag);
-        forensicTrack(context, 'rate_limit_error', errorTag);
+        await forensicTrack(context, 'IQData: rate_limit_error', errorTag);
     }
 
     const clone = res.clone();
@@ -60,6 +60,6 @@ export const logIqdataLimits = async (
         const errorTag = nanoid();
 
         await logDailyTokensError(action, context, errorTag);
-        forensicTrack(context, 'daily_tokens_limit_exceeded', errorTag);
+        await forensicTrack(context, 'IQData: daily_tokens_limit_exceeded', errorTag);
     }
 };

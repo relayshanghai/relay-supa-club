@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { findNextAvailableDateIfMaxEmailsPerDayMet, findNextBusinessDayTime } from './schedule-emails';
 import { getHours, getWeekday, isSameDay } from 'src/utils/time-zone-helpers';
+import type { SequenceEmail } from '../db';
 
 const timeZone = 'America/Chicago';
 const chicagoOffset = '-05:00';
@@ -97,20 +98,20 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
         const wednesdayDate = new Date(`2023-09-27T14:00:00${chicagoOffset}`).toISOString();
         const outbox = [
             // monday has 3 emails scheduled
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
 
             // tuesday has 3 emails scheduled
-            { account: 'test-account', scheduled: tuesdayDate },
-            { account: 'test-account', scheduled: tuesdayDate },
-            { account: 'test-account', scheduled: tuesdayDate },
+            { email_send_at: tuesdayDate },
+            { email_send_at: tuesdayDate },
+            { email_send_at: tuesdayDate },
 
             // wednesday has 2 emails scheduled
-            { account: 'test-account', scheduled: wednesdayDate },
-            { account: 'test-account', scheduled: wednesdayDate },
-        ];
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox as any, new Date(mondayDate), timeZone, 3);
+            { email_send_at: wednesdayDate },
+            { email_send_at: wednesdayDate },
+        ] as SequenceEmail[];
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox, new Date(mondayDate), timeZone, 3);
 
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Wednesday');
@@ -133,20 +134,20 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
         const outbox = [
             // monday has 3 emails scheduled
 
-            { account: 'test-account', scheduled: fridayDate },
-            { account: 'test-account', scheduled: fridayDate },
-            { account: 'test-account', scheduled: fridayDate },
+            { email_send_at: fridayDate },
+            { email_send_at: fridayDate },
+            { email_send_at: fridayDate },
             // tuesday has 3 emails scheduled
 
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
             // wednesday has 2 emails scheduled
 
-            { account: 'test-account', scheduled: tuesdayDate },
-            { account: 'test-account', scheduled: tuesdayDate },
-        ];
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox as any, new Date(mondayDate), timeZone, 3);
+            { email_send_at: tuesdayDate },
+            { email_send_at: tuesdayDate },
+        ] as SequenceEmail[];
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox, new Date(mondayDate), timeZone, 3);
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Tuesday');
 
@@ -173,20 +174,20 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
 
         const outbox = [
             // monday has 3 emails scheduled
-            { account: 'test-account', scheduled: fridayDate },
-            { account: 'test-account', scheduled: fridayDate },
-            { account: 'test-account', scheduled: fridayDate },
+            { email_send_at: fridayDate },
+            { email_send_at: fridayDate },
+            { email_send_at: fridayDate },
 
             // tuesday has 3 emails scheduled
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
-            { account: 'test-account', scheduled: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
+            { email_send_at: mondayDate },
 
             // wednesday has 2 emails scheduled
-            { account: 'test-account', scheduled: tuesdayDate },
-            { account: 'test-account', scheduled: tuesdayDate },
-        ];
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox as any, new Date(mondayDate), timeZone, 3);
+            { email_send_at: tuesdayDate },
+            { email_send_at: tuesdayDate },
+        ] as SequenceEmail[];
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(outbox, new Date(mondayDate), timeZone, 3);
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Wednesday');
 

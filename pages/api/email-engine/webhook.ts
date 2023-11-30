@@ -2,6 +2,7 @@ import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type {
+    ProfileDB,
     SequenceEmail,
     SequenceEmailUpdate,
     SequenceInfluencer,
@@ -51,6 +52,9 @@ import { isPostgrestError, normalizePostgrestError } from 'src/errors/postgrest-
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import { createJob } from 'src/utils/scheduler/utils';
 import { now } from 'src/utils/datetime';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
+import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
+import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -91,6 +95,12 @@ export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmai
         sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId),
     );
 };
+
+/** If the error is because of a supabase timeout/overload, we want the webhook to send back an error so it will try again */
+export const isFetchFailedError = (error: any) =>
+    (typeof error === 'string' && error?.includes('TypeError: fetch failed')) ||
+    (typeof error === 'object' && 'message' in error && error.message.includes('TypeError: fetch failed'));
+
 /** Deletes all outgoing, scheduled emails from the outbox for a given influencer */
 const deleteScheduledEmails = async (
     trackData: EmailReplyPayload,
@@ -158,6 +168,9 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
             try {
                 await updateSequenceEmail(emailUpdate);
             } catch (error: any) {
+                if (isFetchFailedError(error)) {
+                    throw error;
+                }
                 trackData.extra_info.email_update_errors = trackData.extra_info.email_update_errors || [];
                 trackData.extra_info.email_update_errors.push(
                     `${JSON.stringify(emailUpdate)} error: ${error?.message}\n stack ${error?.stack}`,
@@ -171,6 +184,9 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         trackData.extra_info.influencer_update = update;
         trackData.is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
         trackData.is_success = false;
     } finally {
@@ -193,18 +209,21 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         extra_info: { event_data: event.data },
     };
     const fromAddress = event.data.from.address?.toLowerCase();
-    const toAddress = event.data.to ? event.data.to[0]?.address?.toLowerCase() : null;
+    const toAddresses = event.data.to ? event.data.to.map((a) => a.address?.toLowerCase().trim()) : [];
+    if (event.data.cc) {
+        toAddresses.push(...event.data.cc.map((a) => a.address?.toLowerCase().trim()));
+    }
 
     // Ignore outgoing emails and drafts
     if (
-        !toAddress ||
+        toAddresses.length === 0 ||
         event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG ||
         event.data.draft === true ||
         fromAddress.includes('boostbot.ai') ||
         fromAddress.includes('noreply') ||
         fromAddress.includes('no-reply')
     ) {
-        if (!toAddress) {
+        if (toAddresses.length === 0) {
             createJob('track_analytics_event', {
                 queue: 'analytics',
                 payload: {
@@ -221,10 +240,23 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
 
+    let ourUser: ProfileDB | null = null;
+    let findUserError = '';
+    for (const toAddress of toAddresses) {
+        const { data: foundUser, error } = await getProfileBySequenceSendEmail(toAddress);
+        if (foundUser) {
+            ourUser = foundUser;
+            break;
+        }
+        findUserError += ` Find user error, address: ${toAddress}, error: ${error?.message} ` ?? '';
+    }
+    if (isFetchFailedError(findUserError)) {
+        throw findUserError;
+    }
+
     // If there are multiple users at the same company with the same email address, this will get the first one. We only use it to supply a `company_id`, so it doesn't matter which user we get as long as the email is unique per company.
-    const { data: ourUser, error } = await getProfileBySequenceSendEmail(toAddress);
-    if (error) {
-        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${error?.message}`;
+    if (!ourUser) {
+        trackData.extra_info.error = 'Unable to find user with matching sequence send email: ' + `${findUserError}`;
 
         await createJob('track_analytics_event', {
             queue: 'analytics',
@@ -238,7 +270,6 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
                 eventTimestamp: now(),
             },
         });
-
         return res.status(httpCodes.OK).json({});
     }
     trackData.profile_id = ourUser.id;
@@ -256,9 +287,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         trackData.extra_info.error =
             'Sequence influencer not found:' + `error: ${error?.message}\n stack ${error?.stack}`;
 
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         // Don't want to lose a record of this entirely, but it generally isn't important, cause it just means it is a reply to a regular email, not a sequenced email
         await supabaseLogger({ type: 'email-webhook', message: trackData.extra_info.error, data: trackData });
-
         return res.status(httpCodes.OK).json({});
     }
 };
@@ -274,6 +307,9 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
         await updateSequenceEmail(update);
         is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
@@ -309,6 +345,9 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
             email_tracking_status: 'Opened',
         };
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
@@ -319,6 +358,9 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
             is_success = true;
         }
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
@@ -369,6 +411,9 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         trackData = (await deleteScheduledEmails(trackData as any, sequenceInfluencer)) as any; // deleteScheduledEmails requires another Payload type and it is too troublesome to get it to accept both Payload types. I've confirmed that the keys set in deleteScheduledEmails won't be undefined.
         trackData.is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
     }
 
@@ -416,6 +461,9 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
         await updateSequenceEmail(update);
         is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
@@ -453,6 +501,9 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
         await updateSequenceEmail(update);
         is_success = true;
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         errorMessage = `error: ${error?.message}\n stack ${error?.stack}`;
         serverLogger(errorMessage);
     }
@@ -539,6 +590,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         trackData.sequence_step = currentStep.step_number;
         trackData.sequence_step_id = currentStep.id;
+        trackData.extra_info.sequence_steps_length = sequenceSteps.length;
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
@@ -549,9 +601,36 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
+        if (sequenceSteps.length > currentStep.step_number) {
+            const nextStep = sequenceSteps.find((step) => step.step_number === currentStep.step_number + 1);
 
-        trackData.is_success = true;
+            if (!nextStep) {
+                throw new Error('No next sequence step found');
+            }
+            const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
+            const payload: SequenceStepSendArgs = {
+                emailEngineAccountId: event.account,
+                sequenceInfluencer: sequenceInfluencer,
+                sequenceStep: nextStep,
+                sequenceSteps,
+                templateVariables,
+            };
+            trackData.extra_info.next_sequence_email_payload = payload;
+            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
+                payload,
+            });
+            trackData.extra_info.job_created = jobCreated;
+            if (jobCreated && jobCreated.id) {
+                trackData.is_success = true;
+            }
+        } else {
+            trackData.is_success = true;
+        }
     } catch (error: any) {
+        if (isFetchFailedError(error)) {
+            throw error;
+        }
         if (trackData.sequence_email_id) {
             // If we don't have a sequence_email_id, this is a regular email, not a sequenced email and we don't want to track it
             trackData.extra_info.error = `error: ${error?.message}\n stack ${error?.stack}`;
@@ -578,14 +657,20 @@ const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) =>
     return res.status(httpCodes.OK).json({});
 };
 
+const ignoredWebhooks = ['messageUpdated'];
+
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
 
-    await identifyAccount(body?.account);
+    if (ignoredWebhooks.includes(body.event)) {
+        return res.status(httpCodes.OK).json({});
+    }
 
     try {
+        await identifyAccount(body?.account);
+
         switch (body.event) {
             case 'messageNew':
                 return handleNewEmail(body, res);
@@ -611,9 +696,11 @@ const postHandler: NextApiHandler = async (req, res) => {
             error = normalizePostgrestError(error);
         }
 
-        serverLogger(error, (scope) => {
-            return scope.setContext('Webhook Payload', req.body);
-        });
+        serverLogger(error, (scope) => scope.setContext('Webhook Payload', req.body));
+
+        if (isFetchFailedError(error)) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
     }
 
     return res.status(httpCodes.OK).json({});

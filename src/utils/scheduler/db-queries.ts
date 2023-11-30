@@ -19,23 +19,13 @@ type GetJobFilters = {
  */
 export const fetchJobs =
     (supabase: RelayDatabase) =>
-    async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 1 }) => {
-        const ts = now();
-
-        let dbquery = supabase
-            .from('jobs')
-            .update({ status: JOB_STATUS.running })
-            .eq('status', filters.status)
-            .eq('queue', filters.queue)
-            .lte('run_at', ts);
-
-        if (filters.owner) {
-            dbquery = dbquery.eq('owner', filters.owner);
-        }
-
-        dbquery = dbquery.limit(filters.limit).order('created_at');
-
-        const { data, error } = await dbquery.select();
+    async ({ queue, limit, status }: GetJobsFilters) => {
+        const { data, error } = await supabase.rpc('fetch_pending_jobs', {
+            job_queue: queue,
+            queue_limit: limit,
+            job_status: status,
+            run_time: now(),
+        });
 
         if (error) throw error;
         return data;
@@ -56,6 +46,12 @@ export const getJob =
         return data;
     };
 
+export const createJobsDb = (supabase: RelayDatabase) => async (jobs: Omit<Jobs['Insert'], 'id' | 'status'>[]) => {
+    const { data, error } = await supabase.from('jobs').insert(jobs).select('*');
+    if (error) throw error;
+    return data;
+};
+
 export const createJobDb =
     (supabase: RelayDatabase) => async (id: string, job: Omit<Jobs['Insert'], 'id' | 'status'>) => {
         const status = JOB_STATUS.pending;
@@ -69,6 +65,9 @@ export const createJobDb =
         return data;
     };
 
+/**
+ * if the job failed, increment the retry_count
+ */
 export const finishJobDb =
     (supabase: RelayDatabase) =>
     async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'running'> = JOB_STATUS.success, result: any = null) => {
