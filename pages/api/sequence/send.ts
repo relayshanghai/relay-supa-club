@@ -143,21 +143,39 @@ const postHandler: NextApiHandler = async (req, res) => {
     const createJobsPayloads: CreateJobInsert<typeof SEQUENCE_STEP_SEND_QUEUE_NAME>[] = [];
 
     for (const influencer of sequenceInfluencers) {
-        // only sent the first step. Subsequent steps will be sent after from email-engine/webhook `handleSent`
-        const firstStep = sequenceSteps.find((step) => step.step_number === 0);
-        if (!firstStep) {
+        try {
+            // only sent the first step. Subsequent steps will be sent after from email-engine/webhook `handleSent`
+            const firstStep = sequenceSteps.find((step) => step.step_number === 0);
+            if (!firstStep) {
+                throw new Error('No sequence step found');
+            }
+            if (!influencer.influencer_social_profile_id) {
+                throw new Error('No influencer social profile id');
+            }
+            if (!influencer.email) {
+                throw new Error('No email address');
+            }
+            const influencerAccountName = influencer.name || influencer.username;
+            if (!influencerAccountName) {
+                throw new Error('No influencer name or handle');
+            }
+            const recentPostURL = influencer.recent_post_url;
+            if (!recentPostURL) {
+                throw new Error('No recent post url');
+            }
+            const payload: SequenceStepSendArgs = {
+                emailEngineAccountId: account,
+                sequenceInfluencer: influencer,
+                sequenceStep: firstStep,
+                sequenceSteps,
+                templateVariables,
+            };
+            createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
+        } catch (error) {
+            serverLogger(error);
             await revertOptimisticUpdate(influencer.id);
             results.push(...failedResults(influencer));
-            continue;
         }
-        const payload: SequenceStepSendArgs = {
-            emailEngineAccountId: account,
-            sequenceInfluencer: influencer,
-            sequenceStep: firstStep,
-            sequenceSteps,
-            templateVariables,
-        };
-        createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
     }
 
     const createdJobs = await createJobs(SEQUENCE_STEP_SEND_QUEUE_NAME, createJobsPayloads);
