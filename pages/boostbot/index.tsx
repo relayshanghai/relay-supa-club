@@ -30,7 +30,8 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { messages, setMessages, influencers, createNewConversation, refreshConversation } = useBoostbot();
+    const { messages, setMessages, influencers, createNewConversation, refreshConversation, isConversationLoading } =
+        useBoostbot();
     const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
@@ -243,7 +244,7 @@ const Boostbot = () => {
     };
 
     const clearChatHistory = async () => {
-        await createNewConversation();
+        await createNewConversation(profile?.first_name);
         refreshConversation();
         setIsInitialLogoScreen(true);
         setSelectedInfluencers({});
@@ -322,7 +323,7 @@ const Boostbot = () => {
                                 setSelectedRow,
                                 allSequenceInfluencers,
                                 setSelectedCount,
-                                isLoading: isSearchLoading,
+                                isLoading: isSearchLoading || isConversationLoading,
                             }}
                         />
                     </div>

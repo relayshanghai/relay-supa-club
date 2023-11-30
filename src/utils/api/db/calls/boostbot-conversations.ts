@@ -46,18 +46,17 @@ export const getBoostbotConversationCall = (supabaseClient: RelayDatabase) => as
     return data;
 };
 
-export const createNewBoostbotConversationCall = (supabaseClient: RelayDatabase) => async () => {
-    const { data: userData } = await supabaseClient.auth.getUser();
-
-    return await createBoostbotConversation(supabaseClient)([
-        {
-            sender: 'Bot',
-            type: 'translation',
-            translationKey: 'boostbot.chat.introMessage',
-            translationValues: { username: userData.user?.user_metadata.first_name || '👋' },
-        },
-    ]);
-};
+export const createNewBoostbotConversationCall =
+    (supabaseClient: RelayDatabase) =>
+    async (firstName = '') =>
+        await createBoostbotConversation(supabaseClient)([
+            {
+                sender: 'Bot',
+                type: 'translation',
+                translationKey: 'boostbot.chat.introMessage',
+                translationValues: { username: firstName || '👋' },
+            },
+        ]);
 
 export const updateBoostbotConversationCall =
     (supabaseClient: RelayDatabase) =>
