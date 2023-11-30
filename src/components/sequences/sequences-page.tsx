@@ -91,7 +91,7 @@ export const SequencesPage = () => {
             />
             <div className=" mx-6 flex flex-col space-y-4 py-6">
                 <div className="flex w-full justify-between">
-                    <div className="md:w-1/2 xl:w-1/3">
+                    <div className="md:w-1/2">
                         <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">
                             {t('sequences.sequences')}
                         </h1>
