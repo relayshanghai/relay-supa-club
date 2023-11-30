@@ -1,7 +1,7 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
-import { useRudder, useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
 import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
@@ -90,7 +90,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const [loading, setLoading] = useState<boolean>(true);
     const { trackEvent } = useRudderstack();
     const clientRoleData = useAtomValue(clientRoleAtom);
-    const rudder = useRudder();
     const mixpanel = useMixpanel();
     const { analytics } = useAnalytics();
     const router = useRouter();
@@ -216,7 +215,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     );
 
     const logout = useCallback(async () => {
-        if (!supabaseClient || !rudder) {
+        if (!supabaseClient) {
             clientLogger('User cannot logout', 'error', true);
             return;
         }
@@ -228,7 +227,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
         // reset all analytics
         try {
-            rudder.reset(true);
+            mixpanel.reset(true);
             await analytics.reset();
             // @note if window.mixpanel does not exist, there is probably nothing to reset
             if (mixpanel) mixpanel.reset();
@@ -243,7 +242,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
         const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
         await router.replace(redirectUrl);
-    }, [analytics, rudder, mixpanel, router, supabaseClient, trackEvent, session]);
+    }, [analytics, mixpanel, router, supabaseClient, trackEvent, session]);
 
     useEffect(() => {
         // detect if the email has been changed on the supabase side and update the profile

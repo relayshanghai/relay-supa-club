@@ -53,6 +53,7 @@
     "i18next-browser-languagedetector": "^7.0.1",
     "idb": "^7.1.1",
     "jotai": "^2.0.4",
+    "mixpanel": "^0.18.0",
     "nanoid": "^4.0.2",
     "next": "^13.5.0",
     "node-object-hash": "^3.0.0",
