@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import type { Jobs } from '../api/db';
 import { serverLogger } from '../logger-server';
 import { db } from '../supabase-client';
-import { createJobDb, finishJobDb } from './db-queries';
+import { createJobDb, createJobsDb, finishJobDb } from './db-queries';
 import type { JobNames, JobType } from './jobs';
 import { isValidJob, jobs } from './jobs';
 import { JOB_STATUS } from './types';
@@ -65,7 +65,7 @@ export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'runn
     return false;
 };
 
-type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
+export type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
     queue?: JOB_QUEUE;
     run_at?: string;
     payload?: Parameters<JobType<T>['run']>[0];
@@ -98,4 +98,38 @@ export const createJob = async <J extends JobNames>(jobName: J, job: CreateJobIn
     }
 
     return false;
+};
+
+export const createJobs = async <J extends JobNames>(jobName: J, jobs: CreateJobInsert<J>[]) => {
+    const inserts = jobs.map((job) => {
+        const { run_at, queue } = job;
+        const id = v4();
+        const schedule = run_at ?? now();
+
+        return {
+            id,
+            name: jobName,
+            run_at: schedule,
+            payload: job.payload,
+            queue: queue ?? 'default',
+            owner: job.owner,
+        };
+    });
+
+    try {
+        return await db(createJobsDb)(inserts);
+    } catch (error) {
+        serverLogger('Cannot create jobs', (scope) => {
+            return scope.setContext('Job', {
+                job: jobName,
+                queue: jobs[0].queue,
+                payload: JSON.stringify(jobs[0].payload ?? {}),
+                owner: jobs[0].owner,
+                run_at: jobs[0].run_at,
+                error,
+            });
+        });
+    }
+
+    return null;
 };
