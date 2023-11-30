@@ -6,23 +6,27 @@ import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 
-const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
+const fixInToContactWithEmails: NextApiHandler = async (_req, res) => {
     const _company_ids = [
-        '504528ad-8f57-45e2-b82c-59ceb4bc9c54',
-        '9ffda880-addd-4d28-b247-92b1884a3cd9',
-        '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
+        // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
         'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
+        '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
         '2d01d750-8668-4990-812f-38b36c35e8c3',
-        'ea8ad9fb-7c52-46c3-bd95-4709b1dc70a5',
+        '00da5f09-4ce1-404e-a2ce-18f137b739e2',
+        'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
+        '35a9af70-3c7f-4873-9f10-eebece955b83',
+        '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
+        '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
+        '7b0b4586-57d3-4909-8489-45b726e94510',
+        '70215f95-2953-4b88-a445-1b0b8886f389',
     ];
-    console.log('fixing');
-    const outbox = await getOutbox();
+    console.log('fixing fixInToContactWithEmails');
 
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
-        .select('id, name, company_id')
-        .eq('funnel_status', 'In Sequence');
-    // .in('company_id', _company_ids);
+        .select('id, name, company_id, sequence_step, sequence_id')
+        .eq('funnel_status', 'To Contact')
+        .in('company_id', _company_ids);
 
     console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
     if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
@@ -33,31 +37,32 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
             count: number;
         };
     } = {};
+    const sequenceIds: string[] = [];
+    allSequenceInfluencers.forEach((i) => {
+        if (!sequenceIds.includes(i.sequence_id)) sequenceIds.push(i.sequence_id);
+    });
+    console.log('sequenceIds', sequenceIds.length);
+    const { data: allSequenceEmails } = await supabase
+        .from('sequence_emails')
+        .select('*')
+        .in('sequence_id', sequenceIds);
+    console.log('allSequenceEmails', allSequenceEmails?.length);
     // const sentMalformed = [];
+    const outbox = await getOutbox();
+
     for (const influencer of allSequenceInfluencers) {
         try {
-            const {
-                data: emails,
-                count,
-                error: _error,
-            } = await supabase
-                .from('sequence_emails')
-                .select('email_message_id', { count: 'exact' })
-                .eq('sequence_influencer_id', influencer.id);
-            // console.log('emails', count, '   error: ', _error);
-
-            if (emails && count !== null && count < 4) {
-                // const hasAlreadyDelivered = emails.some(
-                //     (e) =>
-                //         e.email_delivery_status === 'Delivered' ||
-                //         e.email_tracking_status === 'Link Clicked' ||
-                //         e.email_tracking_status === 'Opened',
-                // );
-                // if (hasAlreadyDelivered) {
-                //     console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
-                //     sentMalformed.push(`${influencer.name} ${influencer.id} ${influencer.company_id}`);
-                //     continue;
-                // }
+            const emails = allSequenceEmails?.filter((e) => e.sequence_influencer_id === influencer.id);
+            const count = emails?.length ?? 0;
+            // console.log('emails', count);
+            if (count > 0) {
+                const hasAlreadyDelivered = emails?.some(
+                    (e) => e.email_delivery_status && e.email_delivery_status !== 'Scheduled',
+                );
+                if (hasAlreadyDelivered) {
+                    console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
+                    continue;
+                }
                 if (!Object.keys(messedUpCompanies).includes(influencer.company_id)) {
                     messedUpCompanies[influencer.company_id] = {
                         name: '',
@@ -66,21 +71,131 @@ const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
                 } else {
                     messedUpCompanies[influencer.company_id].count++;
                 }
-                const messageIds = emails.map((e) => e.email_message_id);
+                const messageIds = emails?.map((e) => e.email_message_id);
                 console.log('updating, ', influencer.name, influencer.company_id);
                 await supabase
                     .from('sequence_influencers')
-                    .update({ funnel_status: 'To Contact' })
+                    .update({ funnel_status: 'To Contact', sequence_step: 0 })
                     .eq('id', influencer.id);
                 updated.push(influencer.name + ' ' + influencer.id);
-                const outboxToDelete = outbox.filter((e) => messageIds.includes(e.messageId)).map((e) => e.queueId);
+                const outboxToDelete = outbox.filter((e) => messageIds?.includes(e.messageId)).map((e) => e.queueId);
                 for (const email of outboxToDelete) {
                     const canceledConfirm = await deleteEmailFromOutbox(email);
                     console.log(`canceled ${email} ${canceledConfirm.deleted}`);
                 }
 
                 // console.log('deleting', emails);
-                if (emails.length > 0) {
+                if (count > 0) {
+                    const { data: deleteConfirm } = await supabase
+                        .from('sequence_emails')
+                        .delete()
+                        .eq('sequence_influencer_id', influencer.id)
+                        .select('id');
+
+                    console.log('deleteConfirmed', deleteConfirm?.length);
+                }
+            }
+        } catch (error) {
+            console.log('error with influencer', influencer.name, influencer.id);
+            console.error(error);
+        }
+    }
+    const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .in('id', Object.keys(messedUpCompanies));
+    companies?.forEach((c) => {
+        messedUpCompanies[c.id].name = c.name ?? '';
+    });
+    console.log('messedUpCompanies', messedUpCompanies);
+    console.log('updated', updated.length);
+    // console.log('sentMalformed', sentMalformed.length, sentMalformed);
+
+    return res.status(200).json({ message: updated });
+};
+
+const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
+    const _company_ids = [
+        // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
+        // 'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
+        '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
+        // '2d01d750-8668-4990-812f-38b36c35e8c3',
+        // '00da5f09-4ce1-404e-a2ce-18f137b739e2',
+        // 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
+        // '35a9af70-3c7f-4873-9f10-eebece955b83',
+        // '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
+        // '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
+        // '7b0b4586-57d3-4909-8489-45b726e94510',
+        // '70215f95-2953-4b88-a445-1b0b8886f389',
+    ];
+    console.log('fixing _fixStuckInSequenceWithNoEmail');
+
+    const { data: allSequenceInfluencers } = await supabase
+        .from('sequence_influencers')
+        .select('id, name, company_id, sequence_step, sequence_id')
+        .eq('funnel_status', 'In Sequence')
+        .in('company_id', _company_ids);
+
+    console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+    if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
+    const updated: any = [];
+    const messedUpCompanies: {
+        [companyId: string]: {
+            name: string;
+            count: number;
+        };
+    } = {};
+    const sequenceIds: string[] = [];
+    allSequenceInfluencers.forEach((i) => {
+        if (!sequenceIds.includes(i.sequence_id)) sequenceIds.push(i.sequence_id);
+    });
+    console.log('sequenceIds', sequenceIds.length);
+    const { data: allSequenceEmails } = await supabase
+        .from('sequence_emails')
+        .select('*')
+        .in('sequence_id', sequenceIds);
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+    // const sentMalformed = [];
+    const outbox = await getOutbox();
+
+    for (const influencer of allSequenceInfluencers) {
+        try {
+            const emails = allSequenceEmails?.filter((e) => e.sequence_influencer_id === influencer.id);
+            const count = emails?.length ?? 0;
+            // console.log('emails', count);
+            if (count !== influencer.sequence_step + 1) {
+                if (count === 4 && influencer.sequence_step === 0) continue;
+                console.log('count mismatch', influencer.name, count, influencer.sequence_step);
+                const hasAlreadyDelivered = emails?.some(
+                    (e) => e.email_delivery_status && e.email_delivery_status !== 'Scheduled',
+                );
+                if (hasAlreadyDelivered) {
+                    console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
+                    continue;
+                }
+                if (!Object.keys(messedUpCompanies).includes(influencer.company_id)) {
+                    messedUpCompanies[influencer.company_id] = {
+                        name: '',
+                        count: 1,
+                    };
+                } else {
+                    messedUpCompanies[influencer.company_id].count++;
+                }
+                const messageIds = emails?.map((e) => e.email_message_id);
+                console.log('updating, ', influencer.name, influencer.company_id);
+                await supabase
+                    .from('sequence_influencers')
+                    .update({ funnel_status: 'To Contact', sequence_step: 0 })
+                    .eq('id', influencer.id);
+                updated.push(influencer.name + ' ' + influencer.id);
+                const outboxToDelete = outbox.filter((e) => messageIds?.includes(e.messageId)).map((e) => e.queueId);
+                for (const email of outboxToDelete) {
+                    const canceledConfirm = await deleteEmailFromOutbox(email);
+                    console.log(`canceled ${email} ${canceledConfirm.deleted}`);
+                }
+
+                // console.log('deleting', emails);
+                if (count > 0) {
                     const { data: deleteConfirm } = await supabase
                         .from('sequence_emails')
                         .delete()
@@ -410,7 +525,7 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
     return res.json({ results });
 };
 
-const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
+const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'password';
     const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id');
     const results = [];
@@ -495,4 +610,4 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     return res.json({ results });
 };
 
-export default addAdminSuperuserToEachAccount;
+export default fixInToContactWithEmails;
