@@ -115,7 +115,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             return;
         }
         //sortInfluencersWithEmail
-        setSelection(sequenceInfluencers.map((influencer) => influencer.id));
+        // console.log();
+        // setSelection(sequenceInfluencers.map((influencer) => influencer.id));
+        setSelection(sequenceInfluencers.filter((influencer) => influencer.email).map((influencer) => influencer.id));
     }, [selection, sequenceInfluencers, setSelection]);
 
     const columns = sequenceColumns(currentTab);

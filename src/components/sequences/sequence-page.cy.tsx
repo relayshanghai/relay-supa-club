@@ -92,4 +92,18 @@ describe('<SequencePage />', () => {
             cy.contains('Warning: duplicate influencer could cause issues');
         });
     });
+    it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
+        testMount(<SequencePage {...props} />);
+        cy.contains('h1', "Joe's BoostBot Sequence"); // loaded
+        // expected number of pagination buttons are there
+        // back and next buttons are there. Back is disabled.
+        // number of influencers shown is 25
+        // check a certain name is there
+        // click next
+        // back button is enabled
+        // number of influencers shown is ??... we might need to update the mock //import mockInfluencers from 'src/mocks/api/sequence/influencers/sequence-influencers-1';
+        // previous certain name influencer is not there
+        // click back
+        // number of influencers shown is 25
+    });
 });

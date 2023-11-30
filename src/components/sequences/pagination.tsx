@@ -1,8 +1,8 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import PageLink from './pagelink';
 import { getPaginationItems } from '../boostbot/table/helper';
+import PageLink from '../boostbot/table/pagelink';
 
 interface DataTablePaginationProps {
     pages: number;
@@ -42,7 +42,7 @@ export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTa
                 </Button>
             </div>
 
-            <div className="flex w-[300px] flex-row ">
+            <div className="flex w-[300px] flex-row justify-center ">
                 {pageNums.map((pageNum, idx) => (
                     <PageLink
                         className="mx-2 flex items-center text-sm text-primary-600"
