@@ -64,7 +64,7 @@ describe('outreach', () => {
         cy.getByTestId('sequences-select-all').should('not.be.checked');
         cy.getByTestId('delete-sequences-button').click();
         cy.contains('button', 'Yes. Delete this sequence').click();
-        cy.contains('tr', 'New Sequence Test').should('not.exist', { timeout: 10000 });
+        cy.contains('tr', 'New Sequence Test', { timeout: 10000 }).should('not.exist');
         cy.contains('tr', 'New Sequence Test 2').should('not.exist');
     });
     it('displays sequence page stats and influencers table', () => {
