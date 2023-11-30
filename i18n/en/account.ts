@@ -33,9 +33,10 @@ const account = {
         oopsWentWrong: 'Oops, something went wrong',
     },
     subscription: {
-        plan: 'Plan',
+        plan: 'Current Plan',
         renewsOn: 'Renews on',
-        expiresOn: 'Expires on',
+        subscriptionStatus: 'Subscription Status',
+        canceledMessage: `Your subscription is canceled. Your account will remain active until {{expirationDate}}.`,
         paymentCycle: 'Payment cycle',
         usageLimits: 'Usage limits',
         used: 'Used',
@@ -120,6 +121,10 @@ const account = {
         validDuration: ' For next {{validMonths}} months',
         offEn: 'Off',
         offCn: '',
+    },
+    plans: {
+        discovery: 'Discovery',
+        outreach: 'Outreach',
     },
 };
 

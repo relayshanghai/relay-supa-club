@@ -178,18 +178,18 @@ export const PersonalDetails = () => {
                 </div>
             ) : (
                 <div className={`w-full space-y-6`}>
-                    <div className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-2">
                         <div className="text-sm">{t('account.personal.firstName')}</div>
-                        <div className="ml-2 text-sm font-bold">{profile?.first_name}</div>
+                        <div className="ml-2 text-sm font-semibold">{profile?.first_name}</div>
                     </div>
 
-                    <div className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-2">
                         <div className="text-sm">{t('account.personal.lastName')}</div>
-                        <div className="ml-2 text-sm font-bold">{profile?.last_name}</div>
+                        <div className="ml-2 text-sm font-semibold">{profile?.last_name}</div>
                     </div>
-                    <div className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-2">
                         <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="ml-2 text-sm font-bold">{profile?.email}</div>
+                        <div className="ml-2 text-sm font-semibold">{profile?.email}</div>
                     </div>
                 </div>
             )}

@@ -33,9 +33,10 @@ const account = {
         oopsWentWrong: '哎呀，出错了',
     },
     subscription: {
-        plan: '计划',
+        plan: '当前方案',
         renewsOn: '续订日期',
-        expiresOn: '过期日期',
+        subscriptionStatus: '订阅状态',
+        canceledMessage: `您的订阅已取消，该账号将在{{expirationDate}}后失去 BoostBot 各项功能使用权限。`,
         paymentCycle: '付款周期',
         usageLimits: '使用限制',
         used: '已使用',
@@ -44,7 +45,7 @@ const account = {
         profilesUnlocked: '解锁的KOL资料',
         searches: 'KOL搜索',
         aiEmailGeneration: 'AI 邮件生成',
-        title: '订阅',
+        title: '订阅方案',
         viewBillingPortal: '查看账单',
         freeTrial: '免费试用',
         canceled: '已取消',
@@ -52,7 +53,7 @@ const account = {
         youHaveNoActiveSubscriptionPleasePurchaseBelow: '您没有活动的订阅。请在下面购买。',
         beforePurchasingYouNeedPaymentMethod: '在购买订阅之前，您需要添加付款方式。',
         addPaymentMethod: '添加付款方式',
-        availablePlans: '可用计划',
+        availablePlans: '可用方案',
         planName: '名称',
         active: '活跃',
         upgradeSubscription: '升级订阅',
@@ -61,7 +62,7 @@ const account = {
         quarterly: '每季度',
         annually: '每年',
         modal: {
-            plan_planName: '{{planName}} 计划',
+            plan_planName: '{{planName}} 方案',
             youAreAboutToSubscribeFor: '您将订阅',
             subscribing: '订阅中...',
             subscriptionPurchased: '订阅已购买',
@@ -97,7 +98,7 @@ const account = {
     cancelModal: {
         title: '取消订阅',
         areYouSureYouWantToCancelYourSubscription: '您确定要取消订阅吗？',
-        youWillLoseAccessToAllFeature: `您将在{{expirationDate}}后失去 BoostBot 各项功能使用权限。`,
+        youWillLoseAccessToAllFeature: `您将在 {{expirationDate}} 后失去 BoostBot 各项功能使用权限。`,
         currentPeriodEnd: '本期订阅结束',
         cancelSubscription: '取消订阅',
         orRenewAtDiscount_percentage: '或以 {{percentage}} 折扣续订',
@@ -106,7 +107,7 @@ const account = {
         subscriptionCancelled: '订阅已取消',
     },
     planIsReady: '您已成功订阅！',
-    redirectingMsg: '正在自动跳转页面。。。',
+    redirectingMsg: '正在自动跳转页面...',
     card: '银行卡',
     alipay: '支付宝',
     choosePaymentMethod: '请选择付款方式',
@@ -120,6 +121,10 @@ const account = {
         validDuration: ' 前{{validMonths}}个月有效',
         offEn: '',
         offCn: '节省',
+    },
+    plans: {
+        discovery: '探索方案',
+        outreach: '拓展方案',
     },
 };
 
