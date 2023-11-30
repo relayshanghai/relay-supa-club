@@ -23,7 +23,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             ...trackingPayload,
         });
         mixpanelClient.people.increment(user_id, $add);
-        return res.status(200).json({ success: true });
+        return res.status(200).json({ success: true, data: JSON.stringify(req.headers) });
     } catch (error: any) {
         return res.status(400).json({ error: error.message });
     }
