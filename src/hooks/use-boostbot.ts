@@ -36,14 +36,16 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const updateConversation = useDB(updateBoostbotConversationCall);
 
     // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
-    const { data: conversation, mutate: refreshConversation } = useSWR(profile?.id, getBoostbotConversation);
+    const {
+        data: conversation,
+        mutate: refreshConversation,
+        isLoading: isConversationLoading,
+    } = useSWR(profile?.id, getBoostbotConversation);
 
     const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);
     const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
         (conversation?.search_results as unknown as BoostbotInfluencer[]) ?? [],
     );
-    // eslint-disable-next-line no-console
-    console.log('influencers, profile?.id, conversation :>> ', influencers, profile?.id, conversation);
     // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).
     useEffect(() => {
         if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
@@ -127,6 +129,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         updateConversation,
         refreshConversation,
         createNewConversation,
+        isConversationLoading,
         getTopics,
         getRelevantTopics,
         getTopicClusters,
