@@ -35,7 +35,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             $last_name,
             $email,
             $company,
-            ip: req.headers['x-forwarded-host'],
             $os: os,
             $browser: browser.name,
             $browser_version: browser.version,
