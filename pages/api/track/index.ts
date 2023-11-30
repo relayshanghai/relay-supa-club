@@ -14,6 +14,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!user_id) {
         mixpanelClient.track(eventName, {
             $device_id: deviceId,
+            $ip: req.headers['x-real-ip'] || req.socket.remoteAddress,
             ...trackingPayload,
         });
         return res.status(200).json({ success: true });
@@ -25,6 +26,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         mixpanelClient.track(eventName, {
             $user_id: user_id,
             $device_id: deviceId,
+            $ip: req.headers['x-real-ip'] || req.socket.remoteAddress,
             ...trackingPayload,
         });
         mixpanelClient.people.increment(user_id, $add);
