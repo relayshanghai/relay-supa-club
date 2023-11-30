@@ -48,10 +48,15 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
     // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).
     useEffect(() => {
-        if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
-        if (conversation?.search_results)
-            setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
-    }, [conversation]);
+        if (!profile?.id) {
+            setMessages([]);
+            setInfluencers([]);
+        } else {
+            if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
+            if (conversation?.search_results)
+                setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
+        }
+    }, [conversation, profile?.id]);
 
     const performFetch = useCallback(
         async <T, B>(endpoint: string, body: B): Promise<T> => {
