@@ -51,26 +51,26 @@ const successResults = (influencer: SequenceInfluencerManagerPage) => [
         stepNumber: 3,
     },
 ];
-const failedResults = (influencer: SequenceInfluencerManagerPage) => [
+const failedResults = (influencer: SequenceInfluencerManagerPage, error?: string) => [
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 0,
-        error: 'failed to schedule 0',
+        error: 'failed to schedule 0 ' + error,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 1,
-        error: 'failed to schedule 1',
+        error: 'failed to schedule 1 ' + error,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 2,
-        error: 'failed to schedule 2',
+        error: 'failed to schedule 2 ' + error,
     },
     {
         sequenceInfluencerId: influencer.id,
         stepNumber: 3,
-        error: 'failed to schedule 3',
+        error: 'failed to schedule 3 ' + error,
     },
 ];
 
@@ -171,10 +171,10 @@ const postHandler: NextApiHandler = async (req, res) => {
                 templateVariables,
             };
             createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
-        } catch (error) {
+        } catch (error: any) {
             serverLogger(error);
             await revertOptimisticUpdate(influencer.id);
-            results.push(...failedResults(influencer));
+            results.push(...failedResults(influencer, error?.message ?? ''));
         }
     }
 
@@ -187,7 +187,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         });
         if (!createdJob) {
             await revertOptimisticUpdate(influencer.id);
-            results.push(...failedResults(influencer));
+            results.push(...failedResults(influencer, 'failed to create job'));
             continue;
         } else {
             results.push(...successResults(influencer));
