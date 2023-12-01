@@ -29,7 +29,8 @@ export const fetchJobs =
                 job_status: status,
                 run_time: now(),
             });
-        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
+        // if the job failed within 1 second, will retry up to 100 times, with a delay of 100ms
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job(), 1000), 100, 100);
         if (error) throw error;
         return data;
     };
@@ -46,7 +47,7 @@ export const getJob =
 
             return await dbquery.maybeSingle();
         };
-        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job(), 1000), 100, 100);
         if (error) throw error;
         return data;
     };
@@ -105,7 +106,7 @@ export const getJobs =
 
             return await dbquery;
         };
-        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job(), 1000), 100, 100);
         if (error) throw error;
         return data;
     };
