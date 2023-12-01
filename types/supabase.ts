@@ -64,6 +64,37 @@ export interface Database {
           }
         ]
       }
+      boostbot_conversations: {
+        Row: {
+          chat_messages: Json | null
+          created_at: string | null
+          id: string
+          profile_id: string
+          search_results: Json | null
+        }
+        Insert: {
+          chat_messages?: Json | null
+          created_at?: string | null
+          id?: string
+          profile_id: string
+          search_results?: Json | null
+        }
+        Update: {
+          chat_messages?: Json | null
+          created_at?: string | null
+          id?: string
+          profile_id?: string
+          search_results?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boostbot_conversations_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       campaign_creators: {
         Row: {
           added_by_id: string
@@ -1533,6 +1564,26 @@ export interface Database {
           schedule: string
         }
         Returns: undefined
+      }
+      fetch_pending_jobs: {
+        Args: {
+          job_queue: string
+          job_status: string
+          queue_limit: number
+          run_time: string
+        }
+        Returns: {
+          created_at: string | null
+          id: string
+          name: string
+          owner: string | null
+          payload: Json | null
+          queue: string | null
+          result: Json | null
+          retry_count: number | null
+          run_at: string
+          status: string | null
+        }[]
       }
       is_activated_account: {
         Args: Record<PropertyKey, never>
