@@ -19,8 +19,7 @@ const canGoPrev = (currentPage: number) => {
 
 export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTablePaginationProps) {
     const { t } = useTranslation();
-    const noOfLinks = 11; //controls the number of links shown in the pagination bar
-    const pageNums = getPaginationItems(currentPage + 1, pages, noOfLinks);
+    const pageNumbers = getPaginationItems(currentPage + 1, pages, 11);
 
     return (
         <div className="flex w-full justify-between px-0">
@@ -43,7 +42,7 @@ export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTa
             </div>
 
             <div className="flex w-[300px] flex-row justify-center ">
-                {pageNums.map((pageNum, idx) => (
+                {pageNumbers.map((pageNum, idx) => (
                     <PageLink
                         className="mx-2 flex items-center text-sm text-primary-600"
                         key={idx}
