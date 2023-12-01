@@ -28,8 +28,8 @@ const ConfirmAlipayPaymentPage = () => {
             const setupIntents = await getSetupIntents(customerId);
             if (setupIntents.length < 1) {
                 toast.error(t('account.generalPaymentError'));
-                router.push(`/payments?plan=${selectedPlan}`);
                 clientLogger(`Cannot find setupIntents from this customer - ${customerId}`, 'error');
+                router.push(`/payments?plan=${selectedPlan}`);
                 return;
             }
             //get the latest setup intent
@@ -55,7 +55,7 @@ const ConfirmAlipayPaymentPage = () => {
         } catch (error: any) {
             toast.error(t('account.generalPaymentError'));
             router.push(`/payments?plan=${selectedPlan}`);
-            clientLogger(error, 'error');
+            clientLogger('Error when creating a subscription with Alipay ', 'error');
         } finally {
             setIsProcessing(false);
         }
