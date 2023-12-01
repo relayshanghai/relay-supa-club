@@ -79,8 +79,11 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         updatedValues.social_profile_last_fetched = new Date().toISOString();
     }
     if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
-        updatedValues.tags = getRelevantTags(report);
-        updatedValues.social_profile_last_fetched = new Date().toISOString();
+        const tags = getRelevantTags(report);
+        if (tags.length > 0) {
+            updatedValues.tags = getRelevantTags(report);
+            updatedValues.social_profile_last_fetched = new Date().toISOString();
+        }
     }
     if (!sequenceInfluencer.social_profile_last_fetched) {
         updatedValues.social_profile_last_fetched = new Date().toISOString();
