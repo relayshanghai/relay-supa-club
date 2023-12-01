@@ -44,12 +44,11 @@ export const getJob =
                 dbquery.eq('owner', filters.owner);
             }
 
-            const { data, error } = await dbquery.maybeSingle();
-
-            if (error) throw error;
-            return data;
+            return await dbquery.maybeSingle();
         };
-        return await retryIfFailed(() => maxExecutionTime(job()), 100);
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
+        if (error) throw error;
+        return data;
     };
 
 export const createJobsDb = (supabase: RelayDatabase) => async (jobs: Omit<Jobs['Insert'], 'id' | 'status'>[]) => {
@@ -104,11 +103,9 @@ export const getJobs =
                 dbquery.eq('owner', filters.owner);
             }
 
-            const { data, error } = await dbquery;
-
-            if (error) throw error;
-            return data;
+            return await dbquery;
         };
-
-        return await retryIfFailed(() => maxExecutionTime(job()), 100);
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
+        if (error) throw error;
+        return data;
     };
