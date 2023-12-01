@@ -201,8 +201,10 @@ export const crumb = (breadcrumb: Breadcrumb) => {
     const now = new Date().getTime() / 1000;
     const data: Breadcrumb = { timestamp: now, level: 'info', type: 'default', ...breadcrumb };
 
-    // eslint-disable-next-line no-console
-    console.log(breadcrumb);
+    if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.log(breadcrumb);
+    }
 
     return Sentry.addBreadcrumb(data);
 };

@@ -182,7 +182,6 @@ const sendSequenceStep = async ({
     }
 
     trackData.extra_info.results = result;
-    crumb({ message: `Handle result` });
     const success = await handleResult(result, influencer);
     trackData.is_success = success;
     trackData.extra_info.duration = Date.now() - startTime;
@@ -193,10 +192,12 @@ const sendSequenceStep = async ({
 const handleResult = async (result: SendResult, influencer: SequenceInfluencerManagerPage) => {
     try {
         if (!result || result.error) {
+            crumb({ message: `Handle Result: failed` });
             const outbox = await getOutbox();
             await handleSendFailed(influencer, outbox);
             return false;
         } else {
+            crumb({ message: `Handle Result: success` });
             return true;
         }
     } catch (error) {
