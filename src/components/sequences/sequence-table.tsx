@@ -99,18 +99,19 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     const [currentPage, setCurrentPageState] = useState(1);
     const numberOfInfluencersPerPage = 25;
 
+    const [checkAll, setCheckAll] = useState(false);
+
     const handleCheckboxChange = useCallback(
         (id: string) => {
             if (selection.includes(id)) {
                 setSelection(selection.filter((selectedId) => selectedId !== id));
+                setCheckAll(false);
                 return;
             }
             setSelection([...selection, id]);
         },
         [selection, setSelection],
     );
-
-    const [checkAll, setCheckAll] = useState(false);
 
     const resetCheckAllAndSelection = useCallback(() => {
         setCheckAll(false);
