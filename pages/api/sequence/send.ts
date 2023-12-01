@@ -96,6 +96,26 @@ const postHandler: NextApiHandler = async (req, res) => {
     if (sequenceInfluencers.length === 0) {
         throw new Error('No influencers found');
     }
+
+    if (!account) {
+        throw new Error('Missing required account id');
+    }
+    const sequenceId = sequenceInfluencers[0].sequence_id ?? '';
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        sequenceSteps = (await db(getSequenceStepsBySequenceIdCall)(sequenceId)) ?? [];
+    }
+    sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
+    if (!sequenceSteps || sequenceSteps.length === 0) {
+        throw new Error('No sequence steps found');
+    }
+
+    if (!templateVariables || templateVariables.length === 0) {
+        templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
+    }
+
+    if (!templateVariables || templateVariables.length === 0) {
+        throw new Error('No template variables found');
+    }
     // optimistic updates
     await db(upsertSequenceInfluencersFunnelStatusCall)(
         sequenceInfluencers.map(
@@ -119,26 +139,6 @@ const postHandler: NextApiHandler = async (req, res) => {
             },
         ),
     );
-
-    if (!account) {
-        throw new Error('Missing required account id');
-    }
-    const sequenceId = sequenceInfluencers[0].sequence_id ?? '';
-    if (!sequenceSteps || sequenceSteps.length === 0) {
-        sequenceSteps = (await db(getSequenceStepsBySequenceIdCall)(sequenceId)) ?? [];
-    }
-    sequenceSteps?.sort((a, b) => a.step_number - b.step_number);
-    if (!sequenceSteps || sequenceSteps.length === 0) {
-        throw new Error('No sequence steps found');
-    }
-
-    if (!templateVariables || templateVariables.length === 0) {
-        templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
-    }
-
-    if (!templateVariables || templateVariables.length === 0) {
-        throw new Error('No template variables found');
-    }
 
     const createJobsPayloads: CreateJobInsert<typeof SEQUENCE_STEP_SEND_QUEUE_NAME>[] = [];
 

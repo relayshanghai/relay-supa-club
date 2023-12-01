@@ -2,6 +2,8 @@ import type { RelayDatabase, Jobs } from '../api/db';
 import { now } from '../datetime';
 import { JOB_STATUS } from './types';
 import type { JOB_QUEUE } from './queues';
+import { maxExecutionTime } from '../max-execution-time';
+import { retryIfFailed } from '../retry-if-failed';
 
 type GetJobsFilters = {
     queue: JOB_QUEUE;
@@ -20,13 +22,14 @@ type GetJobFilters = {
 export const fetchJobs =
     (supabase: RelayDatabase) =>
     async ({ queue, limit, status }: GetJobsFilters) => {
-        const { data, error } = await supabase.rpc('fetch_pending_jobs', {
-            job_queue: queue,
-            queue_limit: limit,
-            job_status: status,
-            run_time: now(),
-        });
-
+        const job = async () =>
+            supabase.rpc('fetch_pending_jobs', {
+                job_queue: queue,
+                queue_limit: limit,
+                job_status: status,
+                run_time: now(),
+            });
+        const { data, error } = await retryIfFailed(() => maxExecutionTime(job()), 100);
         if (error) throw error;
         return data;
     };
@@ -34,16 +37,19 @@ export const fetchJobs =
 export const getJob =
     (supabase: RelayDatabase) =>
     async (id: string, filters: GetJobFilters = {}) => {
-        const dbquery = supabase.from('jobs').select().eq('id', id);
+        const job = async () => {
+            const dbquery = supabase.from('jobs').select().eq('id', id);
 
-        if (filters.owner) {
-            dbquery.eq('owner', filters.owner);
-        }
+            if (filters.owner) {
+                dbquery.eq('owner', filters.owner);
+            }
 
-        const { data, error } = await dbquery.maybeSingle();
+            const { data, error } = await dbquery.maybeSingle();
 
-        if (error) throw error;
-        return data;
+            if (error) throw error;
+            return data;
+        };
+        return await retryIfFailed(() => maxExecutionTime(job()), 100);
     };
 
 export const createJobsDb = (supabase: RelayDatabase) => async (jobs: Omit<Jobs['Insert'], 'id' | 'status'>[]) => {
@@ -87,18 +93,22 @@ export const finishJobDb =
 export const getJobs =
     (supabase: RelayDatabase) =>
     async (filters: GetJobsFilters = { queue: 'default', status: JOB_STATUS.pending, limit: 0 }) => {
-        const dbquery = supabase.from('jobs').select('*').eq('status', filters.status).eq('queue', filters.queue);
+        const job = async () => {
+            const dbquery = supabase.from('jobs').select('*').eq('status', filters.status).eq('queue', filters.queue);
 
-        if (filters.limit > 0) {
-            dbquery.limit(filters.limit);
-        }
+            if (filters.limit > 0) {
+                dbquery.limit(filters.limit);
+            }
 
-        if (filters.owner) {
-            dbquery.eq('owner', filters.owner);
-        }
+            if (filters.owner) {
+                dbquery.eq('owner', filters.owner);
+            }
 
-        const { data, error } = await dbquery;
+            const { data, error } = await dbquery;
 
-        if (error) throw error;
-        return data;
+            if (error) throw error;
+            return data;
+        };
+
+        return await retryIfFailed(() => maxExecutionTime(job()), 100);
     };
