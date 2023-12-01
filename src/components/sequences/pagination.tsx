@@ -27,9 +27,7 @@ export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTa
                 <Button
                     variant="neutral"
                     className="flex h-8 w-32 items-center justify-center !py-0 px-2 text-sm font-medium text-primary-500 disabled:text-gray-400"
-                    onClick={() => {
-                        setPageIndex(currentPage - 1);
-                    }}
+                    onClick={() => setPageIndex(currentPage - 1)}
                     disabled={canGoPrev(currentPage)}
                 >
                     <ArrowLeftIcon
@@ -59,9 +57,7 @@ export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTa
                 <Button
                     variant="neutral"
                     className="flex h-8 w-32 items-center justify-center border-transparent !py-0 px-2 text-sm font-medium text-primary-500 disabled:text-gray-400"
-                    onClick={() => {
-                        setPageIndex(currentPage + 1);
-                    }}
+                    onClick={() => setPageIndex(currentPage + 1)}
                     disabled={canGoNext(currentPage, pages)}
                 >
                     {t('manager.next')}
