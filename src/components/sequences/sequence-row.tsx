@@ -307,7 +307,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         type="checkbox"
                     />
                 </td>
-                <td className="whitespace-nowrap px-6 py-2">
+                <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
                         {sequenceInfluencer.avatar_url && !avatarError ? (
                             <Image
@@ -421,7 +421,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="px-6 py-4 align-middle">
                             <div className="flex">
                                 <button
-                                    className="text-primary-600"
+                                    className="w-[100px] text-primary-600"
                                     onClick={() => setShowEmailPreview(nextStep ? [nextStep] : [])}
                                 >
                                     {nextStep?.name ?? '-'}

@@ -42,7 +42,7 @@ export function DataTablePagination({ pages, currentPage, setPageIndex }: DataTa
             <div className="flex w-[300px] flex-row justify-center ">
                 {pageNumbers.map((pageNum, idx) => (
                     <PageLink
-                        className="mx-2 flex items-center text-sm text-primary-600"
+                        className="mx-1 flex items-center text-sm text-primary-600"
                         key={idx}
                         active={currentPage === pageNum}
                         disabled={isNaN(pageNum)}
