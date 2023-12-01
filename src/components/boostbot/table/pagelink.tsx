@@ -1,19 +1,24 @@
-import type { HTMLProps } from 'react';
+import type { ButtonProps } from 'src/components/button';
+import { Button } from 'src/components/button';
 
-export type Props = HTMLProps<HTMLAnchorElement> & { active?: boolean };
+export type Props = ButtonProps & {
+    active?: boolean;
+    className?: string;
+    children: string | number;
+    disabled?: boolean;
+};
 
-export default function PageLink({ className, active, disabled, children, ...otherProps }: Props) {
-    const customClassName = `${className} ${
-        active ? 'font-bold underline' : 'font-medium'
-    } text-primary-300 px-2 transition-all cursor-pointer`;
-
-    if (disabled) {
-        return <span className="px-2 font-medium text-tertiary-200">{children}</span>;
-    }
-
+export default function PageLink({ className, active, children, ...otherProps }: Props) {
     return (
-        <a className={customClassName} {...otherProps}>
+        <Button
+            variant="neutral"
+            data-testid={`pagination-link-${children}`}
+            className={`${className} ${
+                active ? 'font-bold underline' : 'font-medium'
+            } !px-2 text-primary-300 transition-all`}
+            {...otherProps}
+        >
             {children}
-        </a>
+        </Button>
     );
 }
