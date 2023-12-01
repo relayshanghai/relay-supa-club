@@ -20,7 +20,7 @@ import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
-import { maxExecutionTime } from 'src/utils/max-execution-time';
+import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 
 export type SequenceStepSendArgs = {
@@ -236,7 +236,7 @@ export const SequenceStepSendEvent: JobInterface<'sequence_step_send', SequenceS
         // 4 minutes and 30 seconds. Make this lower than /api/jobs/run maxDuration to trigger sentry
         const maxRunTime = 1000 * 270;
 
-        const { result, success } = await maxExecutionTime(sendSequenceStep(payload), maxRunTime);
+        const { result, success } = await maxExecutionTimeAndMemory(sendSequenceStep(payload), maxRunTime);
 
         if (!success) {
             throw new Error('Sequence send job failed. result: ' + JSON.stringify(result));
