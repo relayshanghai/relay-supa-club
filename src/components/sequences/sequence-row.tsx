@@ -243,7 +243,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const sequenceSendTooltipTitle = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltip')
-        : !sequenceInfluencer?.email
+        : !sequenceInfluencer.email
         ? t('sequences.missingEmail')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
@@ -252,7 +252,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         : t('sequences.sequenceSendTooltip');
     const sequenceSendTooltipDescription = missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipDescription')
-        : !sequenceInfluencer?.email
+        : !sequenceInfluencer.email
         ? t('sequences.missingEmailTooltipDescription')
         : isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
@@ -268,7 +268,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isDuplicateInfluencer = useMemo(() => {
         return sequenceInfluencers.some((influencer) => {
-            if (!influencer?.id || !sequenceInfluencer?.id) {
+            if (!influencer.id || !sequenceInfluencer.id) {
                 return false;
             }
             if (influencer.id === sequenceInfluencer.id) {
@@ -287,7 +287,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
     const disableSend =
-        isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail || missingSocialProfileInfo;
+        isMissingSequenceSendEmail || !sequenceInfluencer.email || sendingEmail || missingSocialProfileInfo;
 
     return (
         <>
