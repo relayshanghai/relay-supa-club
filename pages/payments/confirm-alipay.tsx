@@ -55,7 +55,12 @@ const ConfirmAlipayPaymentPage = () => {
         } catch (error: any) {
             toast.error(t('account.generalPaymentError'));
             router.push(`/payments?plan=${selectedPlan}`);
-            clientLogger('Error when creating a subscription with Alipay ', 'error');
+            clientLogger(error, (scope) => {
+                return scope.setContext('Error', {
+                    error: 'Create subscription with Alipay Error',
+                    customer: customerId,
+                });
+            });
         } finally {
             setIsProcessing(false);
         }
