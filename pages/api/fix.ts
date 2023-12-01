@@ -7,20 +7,25 @@ import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 
 const fixInToContactWithEmails: NextApiHandler = async (_req, res) => {
-    const _company_ids = [
-        // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
-        'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
-        '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
-        '2d01d750-8668-4990-812f-38b36c35e8c3',
-        '00da5f09-4ce1-404e-a2ce-18f137b739e2',
-        'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-        '35a9af70-3c7f-4873-9f10-eebece955b83',
-        '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
-        '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
-        '7b0b4586-57d3-4909-8489-45b726e94510',
-        '70215f95-2953-4b88-a445-1b0b8886f389',
-    ];
+    // const _company_ids = [
+    //     // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
+    //     'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
+    //     '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
+    //     '2d01d750-8668-4990-812f-38b36c35e8c3',
+    //     '00da5f09-4ce1-404e-a2ce-18f137b739e2',
+    //     'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
+    //     '35a9af70-3c7f-4873-9f10-eebece955b83',
+    //     '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
+    //     '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
+    //     '7b0b4586-57d3-4909-8489-45b726e94510',
+    //     '70215f95-2953-4b88-a445-1b0b8886f389',
+    // ];
     console.log('fixing fixInToContactWithEmails');
+    const { data: companiesWithOutreach } = await supabase
+        .from('companies')
+        .select('id, name, cus_id')
+        .eq('subscription_plan', 'Outreach');
+    const _company_ids = companiesWithOutreach?.map((c) => c.id) ?? [];
 
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
@@ -115,21 +120,25 @@ const fixInToContactWithEmails: NextApiHandler = async (_req, res) => {
 };
 
 const _fixStuckInSequenceWithNoEmail: NextApiHandler = async (req, res) => {
-    const _company_ids = [
-        // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
-        // 'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
-        '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
-        // '2d01d750-8668-4990-812f-38b36c35e8c3',
-        // '00da5f09-4ce1-404e-a2ce-18f137b739e2',
-        // 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
-        // '35a9af70-3c7f-4873-9f10-eebece955b83',
-        // '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
-        // '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
-        // '7b0b4586-57d3-4909-8489-45b726e94510',
-        // '70215f95-2953-4b88-a445-1b0b8886f389',
-    ];
+    // const _company_ids = [
+    //     // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
+    //     // 'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
+    //     '625aa3ea-a54e-436a-a4c6-89ee09b148bb',
+    //     // '2d01d750-8668-4990-812f-38b36c35e8c3',
+    //     // '00da5f09-4ce1-404e-a2ce-18f137b739e2',
+    //     // 'd2d8534b-65c3-4e21-89a7-f8c9aa570b79',
+    //     // '35a9af70-3c7f-4873-9f10-eebece955b83',
+    //     // '12513ff1-c7d9-417c-9e38-7e9d8de459bd',
+    //     // '3d52ee9a-c9e4-46c1-9264-0bd4c096f9ae',
+    //     // '7b0b4586-57d3-4909-8489-45b726e94510',
+    //     // '70215f95-2953-4b88-a445-1b0b8886f389',
+    // ];
     console.log('fixing _fixStuckInSequenceWithNoEmail');
-
+    const { data: companiesWithOutreach } = await supabase
+        .from('companies')
+        .select('id, name, cus_id')
+        .eq('subscription_plan', 'Outreach');
+    const _company_ids = companiesWithOutreach?.map((c) => c.id) ?? [];
     const { data: allSequenceInfluencers } = await supabase
         .from('sequence_influencers')
         .select('id, name, company_id, sequence_step, sequence_id')
