@@ -183,6 +183,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
     if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === 'api/track/identify') {
         res.headers.set('Access-Control-Allow-Origin', '*');
+        res.headers.set('Access-Control-Allow-Methods', 'POST');
         return res;
     }
 
