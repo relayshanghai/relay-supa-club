@@ -1,3 +1,4 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type {
     InfluencerSocialProfileRow,
     SequenceInfluencer,
@@ -100,3 +101,12 @@ export const wasFetchedWithinMinutes = (
     const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
     return now - socialProfileLastFetched < timeDifference; // 10 minutes
 };
+
+export const isMissingSocialProfileInfo = (sequenceInfluencer: SequenceInfluencerManagerPage) =>
+    !sequenceInfluencer.recent_post_title ||
+    !sequenceInfluencer.recent_post_url ||
+    !sequenceInfluencer.avatar_url ||
+    !sequenceInfluencer.social_profile_last_fetched ||
+    !sequenceInfluencer.influencer_social_profile_id ||
+    !sequenceInfluencer.tags ||
+    sequenceInfluencer.tags.length === 0;

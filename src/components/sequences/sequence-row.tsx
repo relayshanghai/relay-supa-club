@@ -24,7 +24,11 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
-import { updateSequenceInfluencerIfSocialProfileAvailable, wasFetchedWithinMinutes } from './helpers';
+import {
+    isMissingSocialProfileInfo,
+    updateSequenceInfluencerIfSocialProfileAvailable,
+    wasFetchedWithinMinutes,
+} from './helpers';
 import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
@@ -79,14 +83,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
 
-    const missingSocialProfileInfo =
-        !sequenceInfluencer.recent_post_title ||
-        !sequenceInfluencer.recent_post_url ||
-        !sequenceInfluencer.avatar_url ||
-        !sequenceInfluencer.social_profile_last_fetched ||
-        !sequenceInfluencer.influencer_social_profile_id ||
-        !sequenceInfluencer.tags ||
-        sequenceInfluencer.tags.length === 0;
+    const missingSocialProfileInfo = isMissingSocialProfileInfo(sequenceInfluencer);
+
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
     const { report, socialProfile } = useReport({
@@ -288,6 +286,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
+    const disableSend =
+        isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail || missingSocialProfileInfo;
+
     return (
         <>
             <EmailPreviewModal
@@ -383,12 +384,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 position="left"
                             >
                                 <Button
-                                    disabled={
-                                        isMissingSequenceSendEmail ||
-                                        !sequenceInfluencer?.email ||
-                                        sendingEmail ||
-                                        missingSocialProfileInfo
-                                    }
+                                    disabled={disableSend}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart

@@ -6,6 +6,7 @@ import { type SetStateAction, useCallback, useState } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
+import { isMissingSocialProfileInfo } from './helpers';
 
 interface SequenceTableProps {
     sequence?: Sequence;
@@ -95,11 +96,15 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
 }) => {
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPageState] = useState(1);
     const numberOfInfluencersPerPage = 25;
+    const setCurrentPage = (page: number) => {
+        setSelection([]);
+        setCurrentPageState(page);
+    };
 
     const handleCheckboxChange = useCallback(
-        function (id: string) {
+        (id: string) => {
             if (selection.includes(id)) {
                 setSelection(selection.filter((selectedId) => selectedId !== id));
                 return;
@@ -109,22 +114,23 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
         [selection, setSelection],
     );
 
-    const [isChecked, setIsChecked] = useState(false);
+    const [checkAll, setCheckAll] = useState(false);
 
     const handleCheckAll = useCallback(
         (currentPage: number, numberOfInfluencersPerPage: number) => {
-            setIsChecked(!isChecked);
-            if (!isChecked == false) {
+            if (checkAll) {
                 setSelection([]);
+                setCheckAll(false);
                 return;
             }
+            setCheckAll(true);
             setSelection(
                 filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers)
-                    .filter((influencer) => influencer.email)
+                    .filter((influencer) => influencer.email && !isMissingSocialProfileInfo(influencer))
                     .map((influencer) => influencer.id),
             );
         },
-        [isChecked, sequenceInfluencers, setSelection],
+        [checkAll, sequenceInfluencers, setSelection],
     );
 
     const columns = sequenceColumns(currentTab);
@@ -138,7 +144,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 data-testid="sequence-influencers-select-all"
                                 className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
                                 type="checkbox"
-                                checked={isChecked}
+                                checked={checkAll}
                                 onChange={() => handleCheckAll(currentPage, numberOfInfluencersPerPage)}
                             />
                         </th>
