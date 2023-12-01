@@ -138,6 +138,8 @@ const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
+const trakingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'cn.boostbot.ai'];
+
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
@@ -182,7 +184,12 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
     if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === 'api/track/identify') {
-        res.headers.set('Access-Control-Allow-Origin', '*');
+        const origin = req.headers.get('origin');
+        if (origin && origin.includes('localhost')) {
+            res.headers.set('Access-Control-Allow-Origin', '*');
+        } else if (origin && trakingAllowList.some((allowed) => origin.includes(allowed))) {
+            res.headers.set('Access-Control-Allow-Origin', origin);
+        }
         res.headers.set('Access-Control-Allow-Methods', 'POST');
         return res;
     }

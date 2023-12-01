@@ -7,12 +7,7 @@ import { parseUserAgent } from 'src/utils/api/mixpanel/helpers';
 import type { DatabaseWithCustomTypes } from 'types';
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    let body = req.body;
-    if (req.headers['content-type']?.includes('text/plain')) {
-        body = JSON.parse(req.body);
-    }
-
-    const { deviceId, eventName, $add, ...trackingPayload } = body;
+    const { deviceId, eventName, $add, ...trackingPayload } = req.body;
 
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>({ req, res });
     const { user_id } = await getUserSession(supabase)();
