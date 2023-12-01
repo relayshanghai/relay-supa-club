@@ -354,7 +354,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             )}
                         </td>
 
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">
+                        <td className="max-w-[200px] overflow-hidden whitespace-nowrap px-6 py-4 text-gray-600">
                             {!missingSocialProfileInfo ? (
                                 sequenceInfluencer.tags?.map((tag) => (
                                     <span
