@@ -42,6 +42,8 @@ export const SubscriptionDetails = () => {
             : undefined,
     );
 
+    const statusColor = subscriptionEndDate ? ' bg-red-100 text-red-500' : ' bg-green-100 text-green-500';
+
     useEffect(() => {
         refreshCompany();
         refreshUsages();
@@ -59,13 +61,15 @@ export const SubscriptionDetails = () => {
             </div>
             {company ? (
                 <>
-                    <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
-                        <div className="flex flex-col space-y-2 ">
+                    <div className={`w-full ${userDataLoading ? 'opacity-50' : ''}`}>
+                        <div className="w-ful flex flex-col space-y-2">
                             {subscription && (
-                                <div className={`mb-8 w-full space-y-6`}>
-                                    <div className="flex flex-col space-y-2">
-                                        <div className="text-sm">{t('account.subscription.plan')}</div>
-                                        <div className="ml-2 text-sm font-semibold">
+                                <div className={`mb-8 w-full md:flex md:flex-wrap md:justify-between`}>
+                                    <div className="flex min-w-fit flex-col space-y-2 p-4">
+                                        <div className="text-xs font-medium uppercase text-gray-600 ">
+                                            {t('account.subscription.plan')}
+                                        </div>
+                                        <div className="py-1 text-sm font-semibold">
                                             {t(`account.plans.${subscription.name.toLowerCase()}`)}
                                             {subscription.status === 'trial' &&
                                                 ` - ${t('account.subscription.freeTrial')}`}
@@ -74,20 +78,47 @@ export const SubscriptionDetails = () => {
                                             {isExpired && ` - ${t('account.subscription.canceled')}`}
                                         </div>
                                     </div>
-                                    <div className="flex flex-col space-y-2">
-                                        <div className="text-sm">{t('account.subscription.paymentCycle')}</div>
-                                        <div className="ml-2 text-sm font-semibold">
+                                    <div className="flex min-w-fit flex-col space-y-2 p-4">
+                                        <div className="text-xs font-medium uppercase text-gray-600 ">
+                                            {t('account.subscription.paymentCycle')}
+                                        </div>
+                                        <div className="py-1 text-sm font-semibold">
                                             {t(`account.subscription.${subscription.interval}`)}
                                         </div>
                                     </div>
-                                    {subscriptionEndDate && (
-                                        <div className="flex flex-col space-y-2">
-                                            <div className="text-sm ">
-                                                {t('account.subscription.subscriptionStatus')}
-                                            </div>
 
-                                            <div className="ml-2 text-sm font-semibold">
-                                                {' '}
+                                    {subscription.status !== 'canceled' && periodEnd && (
+                                        <div className="flex min-w-fit flex-col space-y-2 p-4">
+                                            <div className="text-xs font-medium uppercase text-gray-600 ">
+                                                {t('account.subscription.renewsOn')}
+                                            </div>
+                                            <div className="py-1 text-sm font-semibold text-gray-700">
+                                                {new Date(subscriptionEndDate ?? periodEnd).toLocaleDateString(
+                                                    i18n.language,
+                                                    {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                    },
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex min-w-fit flex-col p-4">
+                                        <div className="text-xs font-medium uppercase text-gray-600">
+                                            {t('account.subscription.subscriptionStatus')}
+                                        </div>
+                                        <div
+                                            className={`w-fit whitespace-nowrap rounded-md px-3 py-2 text-center text-xs  ${statusColor} mt-1`}
+                                        >
+                                            {subscriptionEndDate
+                                                ? t('account.subscription.canceled')
+                                                : t(`account.subscription.${subscription.status}`)}
+                                        </div>
+                                    </div>
+                                    {subscriptionEndDate && (
+                                        <div className="flex min-w-fit flex-col space-y-2 p-4">
+                                            <div className="text-sm text-red-500">
                                                 {t('account.subscription.canceledMessage', {
                                                     expirationDate: new Date(subscriptionEndDate).toLocaleDateString(
                                                         i18n.language,
@@ -101,23 +132,11 @@ export const SubscriptionDetails = () => {
                                             </div>
                                         </div>
                                     )}
-                                    {subscription.status !== 'canceled' && periodEnd && !subscriptionEndDate && (
-                                        <div className="flex flex-col space-y-2">
-                                            <div className="text-sm">{t('account.subscription.renewsOn')}</div>
-                                            <div className="ml-2 text-sm font-semibold text-gray-700">
-                                                {new Date(periodEnd).toLocaleDateString(i18n.language, {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                             )}
                             <table>
                                 <thead>
-                                    <tr className="text-sm font-medium">
+                                    <tr className="text-xs font-medium text-gray-600 ">
                                         <th className="px-4 py-2 text-left">{t('account.subscription.usageLimits')}</th>
                                         <th className="px-4 py-2 text-right">
                                             {t('account.subscription.usedThisMonth')}
