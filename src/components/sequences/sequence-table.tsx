@@ -2,7 +2,7 @@ import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'sr
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
-import { type SetStateAction, useCallback, useState } from 'react';
+import { type SetStateAction, useCallback, useState, useEffect } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
@@ -98,10 +98,6 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     const { t } = useTranslation();
     const [currentPage, setCurrentPageState] = useState(1);
     const numberOfInfluencersPerPage = 25;
-    const setCurrentPage = (page: number) => {
-        setSelection([]);
-        setCurrentPageState(page);
-    };
 
     const handleCheckboxChange = useCallback(
         (id: string) => {
@@ -115,6 +111,23 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     );
 
     const [checkAll, setCheckAll] = useState(false);
+
+    const resetCheckAllAndSelection = useCallback(() => {
+        setCheckAll(false);
+        setSelection([]);
+    }, [setSelection]);
+
+    const setCurrentPage = useCallback(
+        (page: number) => {
+            resetCheckAllAndSelection();
+            setCurrentPageState(page);
+        },
+        [resetCheckAllAndSelection],
+    );
+
+    useEffect(() => {
+        resetCheckAllAndSelection();
+    }, [currentTab, resetCheckAllAndSelection]);
 
     const handleCheckAll = useCallback(
         (currentPage: number, numberOfInfluencersPerPage: number) => {
