@@ -34,6 +34,8 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const getBoostbotConversation = useDB(getBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
+    // eslint-disable-next-line no-console
+    console.log('profile?.id :>> ', profile?.id);
 
     // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
     const {
@@ -48,10 +50,15 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
     // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).
     useEffect(() => {
-        if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
-        if (conversation?.search_results)
-            setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
-    }, [conversation]);
+        if (!profile?.id) {
+            setMessages([]);
+            setInfluencers([]);
+        } else {
+            if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
+            if (conversation?.search_results)
+                setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
+        }
+    }, [conversation, profile?.id]);
 
     const performFetch = useCallback(
         async <T, B>(endpoint: string, body: B): Promise<T> => {
