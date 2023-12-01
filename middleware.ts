@@ -138,6 +138,20 @@ const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
+const trackingAllowList = ['cn.boostbot.ai', 'boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai'];
+
+const allowTrackingCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    if (origin && origin.includes('localhost')) {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && trackingAllowList.some((allowed) => origin.includes(allowed))) {
+        res.headers.set('Access-Control-Allow-Origin', origin);
+    }
+
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
+    return res;
+};
+
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
@@ -181,6 +195,8 @@ export async function middleware(req: NextRequest) {
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
+    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === 'api/track/identify')
+        return allowTrackingCors(req, res);
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });

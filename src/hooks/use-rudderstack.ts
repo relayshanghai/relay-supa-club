@@ -10,8 +10,6 @@ import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/anal
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
 import { nextFetch } from 'src/utils/fetcher';
-import { deviceIdAtom } from 'src/atoms/device-id-atom';
-import { useAtomValue } from 'jotai';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -131,7 +129,10 @@ export const profileToIdentifiable = (
 };
 
 export const useRudderstack = () => {
-    const deviceId = useAtomValue(deviceIdAtom);
+    let deviceId = '';
+    if (typeof window !== 'undefined') {
+        deviceId = localStorage.getItem('deviceId') || '';
+    }
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
         await nextFetch('/track/identify', {
             method: 'POST',
@@ -208,8 +209,11 @@ type RudderstackTrackPayload<T extends eventKeys> = Omit<payloads[T], 'currentPa
 export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const currentPage = useGetCurrentPage();
+    let deviceId = '';
+    if (typeof window !== 'undefined') {
+        deviceId = localStorage.getItem('deviceId') || '';
+    }
 
-    const deviceId = useAtomValue(deviceIdAtom);
     const identify = useCallback((userId: string, traits: IdentityTraits, cb?: () => void) => {
         const abort = () => {
             isAborted.current = true;
