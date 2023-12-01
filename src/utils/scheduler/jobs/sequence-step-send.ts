@@ -20,7 +20,7 @@ import type { JobInterface } from '../types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
-import { maxExecutionTime } from 'src/utils/max-execution-time';
+import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
 
 export type SequenceStepSendArgs = {
@@ -182,7 +182,6 @@ const sendSequenceStep = async ({
     }
 
     trackData.extra_info.results = result;
-    crumb({ message: `Handle result` });
     const success = await handleResult(result, influencer);
     trackData.is_success = success;
     trackData.extra_info.duration = Date.now() - startTime;
@@ -193,10 +192,12 @@ const sendSequenceStep = async ({
 const handleResult = async (result: SendResult, influencer: SequenceInfluencerManagerPage) => {
     try {
         if (!result || result.error) {
+            crumb({ message: `Handle Result: failed` });
             const outbox = await getOutbox();
             await handleSendFailed(influencer, outbox);
             return false;
         } else {
+            crumb({ message: `Handle Result: success` });
             return true;
         }
     } catch (error) {
@@ -235,7 +236,7 @@ export const SequenceStepSendEvent: JobInterface<'sequence_step_send', SequenceS
         // 4 minutes and 30 seconds. Make this lower than /api/jobs/run maxDuration to trigger sentry
         const maxRunTime = 1000 * 270;
 
-        const { result, success } = await maxExecutionTime(sendSequenceStep(payload), maxRunTime);
+        const { result, success } = await maxExecutionTimeAndMemory(sendSequenceStep(payload), maxRunTime);
 
         if (!success) {
             throw new Error('Sequence send job failed. result: ' + JSON.stringify(result));
