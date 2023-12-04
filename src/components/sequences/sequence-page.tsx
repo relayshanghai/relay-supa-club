@@ -475,7 +475,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             >
                                 <DeleteOutline className="h-4 w-4 stroke-red-500" />
                             </button>
-                            {selection.length > 0 && (
+                            {currentTab === 'To Contact' && selection.length > 0 && (
                                 <Tooltip
                                     content={sequenceSendTooltipTitle}
                                     detail={sequenceSendTooltipDescription}

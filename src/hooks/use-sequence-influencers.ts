@@ -1,13 +1,17 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencersDeleteRequestBody,
+    SequenceInfluencersDeleteResponse,
+} from 'pages/api/sequence/influencers/delete';
 import { useUser } from 'src/hooks/use-user';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import {
     createSequenceInfluencerCall,
-    deleteSequenceInfluencersCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { useDB } from 'src/utils/client-db/use-client-db';
+import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
@@ -54,9 +58,14 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         return res;
     };
 
-    const deleteSequenceInfluencerDBCall = useDB<typeof deleteSequenceInfluencersCall>(deleteSequenceInfluencersCall);
     const deleteSequenceInfluencers = async (ids: string[]) => {
-        const res = await deleteSequenceInfluencerDBCall(ids);
+        const body: SequenceInfluencersDeleteRequestBody = { ids };
+        // optimistic update
+        refreshSequenceInfluencers((prev) => prev?.filter((i) => !ids.includes(i.id)) ?? []);
+        const res = await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
+            method: 'POST',
+            body,
+        });
         refreshSequenceInfluencers();
         return res;
     };
