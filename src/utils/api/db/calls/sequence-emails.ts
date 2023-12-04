@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase, SequenceEmail, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -15,6 +15,17 @@ export const getSequenceEmailsBySequenceInfluencerCall =
             .from('sequence_emails')
             .select('*')
             .eq('sequence_influencer_id', sequenceInfluencerId);
+
+        if (error) throw error;
+        return data;
+    };
+
+export const getSequenceEmailsBySequenceInfluencersCall =
+    (supabaseClient: RelayDatabase) => async (sequenceInfluencerIds: string[]) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_emails')
+            .select('id, email_message_id')
+            .in('sequence_influencer_id', sequenceInfluencerIds);
 
         if (error) throw error;
         return data;
@@ -83,3 +94,14 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     const { error } = await supabaseClient.from('sequence_emails').delete().eq('sequence_influencer_id', influencerId);
     if (error) throw error;
 };
+
+export const getSequenceEmailsByEmailEngineAccountId =
+    (supabaseClient: RelayDatabase) =>
+    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at'>[]> => {
+        const { data, error } = await supabaseClient
+            .from('sequence_emails')
+            .select('email_send_at')
+            .eq('email_engine_account_id', accountId);
+        if (error) throw error;
+        return data ?? [];
+    };

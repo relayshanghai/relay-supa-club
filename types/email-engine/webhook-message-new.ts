@@ -37,6 +37,7 @@ interface Data {
     messageSpecialUse: string;
     summary: Summary;
     draft?: boolean;
+    cc?: From[];
 }
 
 interface From {

@@ -58,7 +58,6 @@ export const InfluencerDetailsModal = ({
     const [areTopicsAndRelevanceLoading, setAreTopicsAndRelevanceLoading] = useState(true);
     const { getTopicsAndRelevance } = useBoostbot({});
     const platform = selectedRow?.original.url ? extractPlatformFromURL(selectedRow?.original.url) : 'youtube';
-
     const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
     const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
         ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0 }))

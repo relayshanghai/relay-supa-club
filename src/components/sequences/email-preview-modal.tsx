@@ -5,6 +5,7 @@ import { useEmailTemplates } from 'src/hooks/use-email-templates';
 import { fillInTemplateVariables, replaceNewlinesAndTabs } from './helpers';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '../icons';
+import { useEffect } from 'react';
 
 export interface EmailPreviewModalProps extends Omit<ModalProps, 'children'> {
     sequenceSteps: SequenceStep[];
@@ -13,7 +14,14 @@ export interface EmailPreviewModalProps extends Omit<ModalProps, 'children'> {
 
 export const EmailPreviewModal = ({ templateVariables, sequenceSteps, ...modalProps }: EmailPreviewModalProps) => {
     const { t } = useTranslation();
-    const { emailTemplates } = useEmailTemplates(sequenceSteps.map((step) => step.template_id));
+
+    const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(sequenceSteps.map((step) => step.template_id));
+    useEffect(() => {
+        if (modalProps.visible) {
+            refreshEmailTemplates();
+        }
+    }, [refreshEmailTemplates, modalProps.visible]);
+
     return (
         <Modal {...modalProps} maxWidth="max-w-3xl">
             <div>
