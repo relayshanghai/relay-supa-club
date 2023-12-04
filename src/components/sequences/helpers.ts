@@ -81,7 +81,7 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
     if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
         const tags = getRelevantTags(report);
         if (tags.length > 0) {
-            updatedValues.tags = getRelevantTags(report);
+            updatedValues.tags = tags;
             updatedValues.social_profile_last_fetched = new Date().toISOString();
         }
     }
