@@ -29,13 +29,13 @@ type UseBoostbotProps = {
 
 // Majority of these requests will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
-    const { profile } = useUser();
+    const { profile, loading } = useUser();
     const { company } = useCompany();
     const getBoostbotConversation = useDB(getBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
     // eslint-disable-next-line no-console
-    console.log('profile?.id :>> ', profile?.id);
+    console.log('profile?.id :>> ', profile?.id, loading);
 
     // Using 'profile?.id' as a key does 2 things - 1) If the user profile hasn't loaded yet, don't fetch. 2) If a different account logged in, revalidate.
     const {
