@@ -2,6 +2,7 @@ import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-w
 import type { NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from './stripe-client';
+import { serverLogger } from 'src/utils/logger-server';
 
 export const handleSetupIntentSucceeded = async (res: NextApiResponse, setupIntentBody: SetupIntentSucceeded) => {
     const { customer, payment_method: paymentMethod } = setupIntentBody.data.object;
@@ -10,11 +11,15 @@ export const handleSetupIntentSucceeded = async (res: NextApiResponse, setupInte
     }
 
     //attach the payment method to the customer as default payment here
-    const updateCustomer = await stripeClient.customers.update(customer, {
-        invoice_settings: {
-            default_payment_method: paymentMethod,
-        },
-    });
-
-    return res.status(httpCodes.OK).json({ updateCustomer });
+    try {
+        const updateCustomer = await stripeClient.customers.update(customer, {
+            invoice_settings: {
+                default_payment_method: paymentMethod,
+            },
+        });
+        return res.status(httpCodes.OK).json({ updateCustomer });
+    } catch (error) {
+        serverLogger(error, 'error');
+    }
+    return res.status(httpCodes.OK).json({});
 };

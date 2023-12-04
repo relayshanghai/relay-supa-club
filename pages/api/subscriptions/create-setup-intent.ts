@@ -11,10 +11,11 @@ export type CreateSetUpIntentPostBody = {
     priceId: string;
     companyId: string;
     currency: string;
+    priceTier: string;
 };
 // this is actually create setup intent with alipay as payment method, not a generic create setup intent
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { companyId, customerId, paymentMethodTypes, priceId, currency } = req.body;
+    const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier } = req.body;
     //create an payment method to confirm the setup intent
     const paymentMethod = await stripeClient.paymentMethods.create({
         type: 'alipay',
@@ -37,6 +38,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     returnUrlParams.append('customerId', customerId);
     returnUrlParams.append('priceId', priceId);
     returnUrlParams.append('companyId', companyId);
+    returnUrlParams.append('selectedPlan', priceTier);
     //create a setup intent
     const response = await stripeClient.setupIntents.create(
         {
@@ -60,8 +62,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                 },
             },
-            //TODO: change the return url to the APP_URL before production
-            // return_url: `https://relay-supa-club-git-payments-add-alipay-relay-club.vercel.app/payments/confirm-alipay?${returnUrlParams}`,
             return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
         },
         undefined,
