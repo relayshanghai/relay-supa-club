@@ -4,6 +4,7 @@ import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
 import { getHostnameFromRequest } from 'src/utils/get-host';
+import type Stripe from 'stripe';
 
 export type CreateSetUpIntentPostBody = {
     customerId: string;
@@ -13,6 +14,9 @@ export type CreateSetUpIntentPostBody = {
     currency: string;
     priceTier: string;
 };
+
+export type CreateSetUpIntentPostResponse = Stripe.SetupIntent;
+
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier } = req.body;
     //create an payment method to confirm the setup intent
@@ -39,7 +43,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     returnUrlParams.append('companyId', companyId);
     returnUrlParams.append('selectedPlan', priceTier);
     //create a setup intent
-    const response = await stripeClient.setupIntents.create(
+    const response: CreateSetUpIntentPostResponse = await stripeClient.setupIntents.create(
         {
             customer: customerId,
             payment_method_types: paymentMethodTypes,
