@@ -13,7 +13,6 @@ export type CreateSetUpIntentPostBody = {
     currency: string;
     priceTier: string;
 };
-// this is actually create setup intent with alipay as payment method, not a generic create setup intent
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier } = req.body;
     //create an payment method to confirm the setup intent
