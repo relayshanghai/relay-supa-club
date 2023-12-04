@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 import { IQDATA_MAINTENANCE } from 'src/constants';
-import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
-import { useCampaigns } from 'src/hooks/use-campaigns';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
-import { Search, SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
+import { Search, SearchDefault } from 'src/utils/analytics/events';
 import { startJourney } from 'src/utils/analytics/journey';
 import { numberFormatter } from 'src/utils/formatter';
-import { useAnalytics } from '../analytics/analytics-provider';
-import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { Layout } from '../layout';
 import { MaintenanceMessage } from '../maintenance-message';
 import ClientRoleWarning from './client-role-warning';
@@ -68,10 +63,6 @@ export const SearchPageInner = () => {
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
-    const [showCampaignListModal, setShowCampaignListModal] = useState(false);
-    const [selectedCreator, _setSelectedCreator] = useState<ClassicSearchInfluencer | null>(null);
-    const { campaigns } = useCampaigns({});
-    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const [_batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
@@ -83,7 +74,6 @@ export const SearchPageInner = () => {
         setOnLoad,
     } = useSearchResults(page);
 
-    const { track: trackAnalytics } = useAnalytics();
     const { track } = useTrackEvent();
 
     const [rendered, setRendered] = useState(false);
@@ -166,8 +156,6 @@ export const SearchPageInner = () => {
 
         return () => controller.abort();
     }, [track, setOnLoad, searchParams, metadata, rendered]);
-
-    const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
     // Automatically start a journey on render
     useEffect(() => {
@@ -362,7 +350,9 @@ export const SearchPageInner = () => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-            {firstPageSearchResults && !noResults && (
+            {noResults && !resultsLoading ? (
+                <p>{t('creators.noResults')}</p>
+            ) : (
                 <div className="flex w-full basis-3/4 flex-col">
                     <div className="flex flex-row items-center justify-between">
                         <div className="ml-4 text-gray-400">
@@ -412,32 +402,6 @@ export const SearchPageInner = () => {
                 }
                 setSelectedInfluencers={setSelectedInfluencers}
             />
-
-            <AddToCampaignModal
-                show={showCampaignListModal}
-                setShow={setShowCampaignListModal}
-                platform={platform}
-                selectedCreator={selectedCreator}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-                track={(campaign: string) => {
-                    // @todo ideally we would want this to use useTrackEvent.track
-                    selectedCreator &&
-                        trackAnalytics(SearchAddToCampaign, {
-                            creator: selectedCreator,
-                            campaign: campaign,
-                        });
-                }}
-            />
-            <InfluencerAlreadyAddedModal
-                show={showAlreadyAddedModal}
-                setCampaignListModal={setShowCampaignListModal}
-                setShow={setShowAlreadyAddedModal}
-                selectedCreatorUserId={selectedCreator?.user_id}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-            />
-
             <SearchFiltersModal
                 show={filterModalOpen}
                 setShow={setShowFiltersModal}

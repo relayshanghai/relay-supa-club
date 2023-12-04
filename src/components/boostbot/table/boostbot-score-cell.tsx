@@ -95,7 +95,7 @@ export const BoostbotScoreCell = ({ row, table }: BoostbotScoreCellProps) => {
                 <div className="h-11 w-11 animate-pulse rounded-full bg-gray-300 p-2" />
             ) : (
                 <div
-                    className={`inline-block rounded-full border-4 p-2 text-center text-sm font-semibold ${bgColorClass}`}
+                    className={`inline-block h-11 w-11 rounded-full border-4 p-2 text-center text-sm font-semibold ${bgColorClass}`}
                 >
                     {indexScore}
                 </div>
