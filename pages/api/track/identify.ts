@@ -15,7 +15,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             company: $company,
             ...peoplePayload
         } = propertiesPayload;
-
+        // Refer for more info https://docs.mixpanel.com/docs/tracking-methods/sdks/nodejs#setting-profile-properties
         mixpanelClient.people.set(userId, {
             $first_name,
             $last_name,
