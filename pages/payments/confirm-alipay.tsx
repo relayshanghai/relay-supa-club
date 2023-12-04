@@ -24,7 +24,7 @@ const ConfirmAlipayPaymentPage = () => {
         setIsProcessing(true);
 
         try {
-            //handle setupIntent authorization failure first
+            // handle setupIntent authorization failure first
             const setupIntents = await getSetupIntents(customerId);
             if (setupIntents.length < 1) {
                 toast.error(t('account.generalPaymentError'));
@@ -32,7 +32,7 @@ const ConfirmAlipayPaymentPage = () => {
                 router.push(`/payments?plan=${selectedPlan}`);
                 return;
             }
-            //get the latest setup intent
+            // get the latest setup intent
             const latestSetupIntent = setupIntents.data[0];
             const { last_setup_error } = latestSetupIntent;
             if (last_setup_error && last_setup_error.code.includes('setup_intent_authentication_failure')) {
@@ -41,7 +41,7 @@ const ConfirmAlipayPaymentPage = () => {
                 clientLogger(`SetupIntent setup failed - ${customerId}`, 'error');
                 return;
             }
-            //if no setupError, create subscription with the customer
+            // if no setupError, create subscription with the customer
             const { paymentIntent, oldSubscriptionId } = await upgradeSubscriptionWithAlipay(
                 companyId,
                 customerId,
