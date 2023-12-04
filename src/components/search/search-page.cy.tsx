@@ -1,7 +1,7 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 import React from 'react';
-import { SearchPageInner } from './search-page';
+import { SearchPageInner } from './search-page-legacy';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchProvider } from '../../hooks/use-search';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
