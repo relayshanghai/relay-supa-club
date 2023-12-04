@@ -36,6 +36,7 @@ export const getSubscription = async (companyId: string) => {
         const paused = await stripeClient.subscriptions.list({
             customer: cusId,
             status: 'paused',
+            expand: ['data.plan.product'],
         });
         subscription = paused.data[0] as StripeSubscriptionWithPlan | undefined;
     }

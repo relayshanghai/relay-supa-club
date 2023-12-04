@@ -34,7 +34,7 @@ export const SubscriptionDetails = () => {
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
     const subscriptionEndDate = company?.subscription_end_date;
-
+    const canceledNotExpired = (subscriptionEndDate && new Date(subscriptionEndDate) > new Date()) || false;
     const { usages, refreshUsages } = useUsages(
         true,
         periodStart && periodEnd
@@ -42,7 +42,12 @@ export const SubscriptionDetails = () => {
             : undefined,
     );
 
-    const statusColor = subscriptionEndDate ? ' bg-red-100 text-red-500' : ' bg-green-100 text-green-500';
+    const statusColor =
+        canceledNotExpired || subscription?.status === 'canceled'
+            ? ' bg-red-100 text-red-500'
+            : subscription?.status === 'paused'
+            ? 'bg-yellow-100 text-yellow-500'
+            : 'bg-green-100 text-green-500';
 
     useEffect(() => {
         refreshCompany();
@@ -85,7 +90,7 @@ export const SubscriptionDetails = () => {
                                     {periodEnd && (
                                         <div className="flex min-w-fit flex-col space-y-2 p-4">
                                             <div className="text-xs font-medium uppercase text-gray-600 ">
-                                                {subscription.status === 'active'
+                                                {subscription.status === 'active' && !canceledNotExpired
                                                     ? t('account.subscription.renewsOn')
                                                     : t('account.subscription.expirationDate')}
                                             </div>
@@ -113,7 +118,14 @@ export const SubscriptionDetails = () => {
                                                 : t(`account.subscription.${subscription.status}`)}
                                         </div>
                                     </div>
-                                    {subscriptionEndDate && (
+                                    {subscription.status === 'paused' && (
+                                        <div className="flex min-w-fit flex-col space-y-2 p-4">
+                                            <div className="text-sm text-red-500">
+                                                {t('account.subscription.pausedMessage')}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {canceledNotExpired && subscriptionEndDate && (
                                         <div className="flex min-w-fit flex-col space-y-2 p-4">
                                             <div className="text-sm text-red-500">
                                                 {t('account.subscription.canceledMessage', {
@@ -161,7 +173,7 @@ export const SubscriptionDetails = () => {
                         </div>
                     </div>
                     <div className="flex w-full justify-end space-x-6 pt-5">
-                        {subscription?.status === 'active' && (
+                        {subscription?.status === 'active' && !canceledNotExpired && (
                             <Button onClick={handleCancelSubscription} variant="secondary">
                                 {t('account.subscription.cancelSubscription')}
                             </Button>
