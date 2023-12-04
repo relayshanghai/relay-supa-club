@@ -601,7 +601,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
-        if (sequenceSteps.length > currentStep.step_number) {
+        if (sequenceSteps.length > currentStep.step_number + 1) {
             const nextStep = sequenceSteps.find((step) => step.step_number === currentStep.step_number + 1);
 
             if (!nextStep) {
