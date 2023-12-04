@@ -35,6 +35,7 @@ const account = {
     subscription: {
         plan: 'Current Plan',
         renewsOn: 'Renews on',
+        expirationDate: 'Expiration Date',
         subscriptionStatus: 'Subscription Status',
         canceledMessage: `Your subscription is canceled. Your account will remain active until {{expirationDate}}.`,
         paymentCycle: 'Payment cycle',

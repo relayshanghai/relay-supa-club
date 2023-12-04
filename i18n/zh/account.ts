@@ -35,6 +35,7 @@ const account = {
     subscription: {
         plan: '当前方案',
         renewsOn: '续订日期',
+        expirationDate: '到期日期',
         subscriptionStatus: '订阅状态',
         canceledMessage: `您的订阅已取消，该账号将在{{expirationDate}}后失去 BoostBot 各项功能使用权限。`,
         paymentCycle: '付款周期',

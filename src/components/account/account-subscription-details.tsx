@@ -16,7 +16,7 @@ import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-    const { company, refreshCompany, isExpired } = useCompany();
+    const { company, refreshCompany } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
     const { trackEvent } = useRudderstack();
@@ -71,11 +71,6 @@ export const SubscriptionDetails = () => {
                                         </div>
                                         <div className="py-1 text-sm font-semibold">
                                             {t(`account.plans.${subscription.name.toLowerCase()}`)}
-                                            {subscription.status === 'trial' &&
-                                                ` - ${t('account.subscription.freeTrial')}`}
-                                            {subscription.status === 'paused' &&
-                                                ` - ${t('account.subscription.trialExpired')}`}
-                                            {isExpired && ` - ${t('account.subscription.canceled')}`}
                                         </div>
                                     </div>
                                     <div className="flex min-w-fit flex-col space-y-2 p-4">
@@ -87,10 +82,12 @@ export const SubscriptionDetails = () => {
                                         </div>
                                     </div>
 
-                                    {subscription.status !== 'canceled' && periodEnd && (
+                                    {periodEnd && (
                                         <div className="flex min-w-fit flex-col space-y-2 p-4">
                                             <div className="text-xs font-medium uppercase text-gray-600 ">
-                                                {t('account.subscription.renewsOn')}
+                                                {subscription.status === 'active'
+                                                    ? t('account.subscription.renewsOn')
+                                                    : t('account.subscription.expirationDate')}
                                             </div>
                                             <div className="py-1 text-sm font-semibold text-gray-700">
                                                 {new Date(subscriptionEndDate ?? periodEnd).toLocaleDateString(
@@ -164,7 +161,7 @@ export const SubscriptionDetails = () => {
                         </div>
                     </div>
                     <div className="flex w-full justify-end space-x-6 pt-5">
-                        {!subscriptionEndDate && (
+                        {subscription?.status === 'active' && (
                             <Button onClick={handleCancelSubscription} variant="secondary">
                                 {t('account.subscription.cancelSubscription')}
                             </Button>
