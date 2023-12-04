@@ -21,7 +21,7 @@ import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succe
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
 import type { SetupIntentFailed } from 'types/stripe/setup-intent-failed-webhook';
 import { handleSetupIntentFailed } from 'src/utils/api/stripe/handle-setup-intent-failed-webhook';
-import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
+import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-webhook';
 import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-customer-subscription-paused';
 import { ApiHandler } from 'src/utils/api-handler';
 
@@ -68,7 +68,6 @@ const identifyWebhook = async (
 };
 
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
-    // console.log('type======================', event.type);
     switch (event.type) {
         case handledWebhooks.setupIntentFailed:
             return await handleSetupIntentFailed(res, event as SetupIntentFailed);
@@ -142,7 +141,6 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
         };
 
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
-        // console.log('======================', event);
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
         serverLogger('stripe caught error', { level: 'error' });
