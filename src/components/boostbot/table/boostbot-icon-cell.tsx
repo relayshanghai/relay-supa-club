@@ -40,7 +40,7 @@ export const OpenInfluencerModalCell = ({
     if (table.options.meta?.isLoading) return <></>;
 
     return (
-        <div className="cursor-pointer">
+        <div data-testid={`open-influencer-modal/${row.original.user_id}`} className="cursor-pointer">
             <ReportOutline
                 data-testid="boostbot-open-modal-icon"
                 className="stroke-gray-400 stroke-2"

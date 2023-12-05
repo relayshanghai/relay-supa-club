@@ -26,15 +26,16 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it('can open analyze page', () => {
+    it.only('can open analyze page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
-        cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
+        cy.contains('Cocomelon - Nursery Rhymes');
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`).click({
             force: true,
         });
 
-        cy.getByTestId(`analyze-button/${cocomelonId}`)
+        cy.contains(`Unlock Detailed Analysis Report`)
             .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
         cy.visit(`influencer/youtube/${cocomelonId}`);

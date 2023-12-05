@@ -98,7 +98,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             ...body,
             filter: {
                 followers_growth: {
-                    interval: 'i1month',
+                    interval: 'i3months',
                     operator: 'gte',
                     value: 0,
                 },

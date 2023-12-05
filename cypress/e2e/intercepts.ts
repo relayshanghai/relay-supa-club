@@ -1,6 +1,6 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
-import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
@@ -24,7 +24,9 @@ import type { UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 
-import { insertSequenceEmails, supabaseClientCypress } from './helpers';
+import { flattenInfluencerData, insertSequenceEmails, supabaseClientCypress } from './helpers';
+
+const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -51,7 +53,7 @@ export const setupIntercepts = (options?: InterceptOptions) => {
         req.reply({ body: cocomelon });
     });
     cy.intercept('POST', '/api/influencer-search*', {
-        body: defaultLandingPageInfluencerSearch,
+        body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
     });
     cy.intercept('/api/topics/tensor', { body: topicTensorMock });
     cy.intercept('/api/influencer-search/topics*', {
@@ -236,7 +238,7 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: influencerSearch,
+                        body: flattenInfluencerData(influencerSearch),
                     });
                 });
         } else if (body.tags && body.tags[0]?.tag === 'alligators') {
@@ -245,7 +247,7 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: keywordSearch,
+                        body: flattenInfluencerData(keywordSearch),
                     });
                 });
         } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
@@ -254,12 +256,12 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: keywordSearchMonkeys,
+                        body: flattenInfluencerData(keywordSearchMonkeys),
                     });
                 });
         } else {
             return req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
             });
         }
     });
@@ -267,26 +269,17 @@ export const searchIntercepts = () => {
         const body = req.query as { username: string; platform: string };
         if (body.username === 'GRTR') {
             req.reply({
-                accounts: [
+                influencers: [
                     {
-                        account: {
-                            user_profile: {
-                                user_id: 'GRTR',
-                            },
-                        },
-                        match: {},
+                        user_id: 'GRTR',
                     },
                 ],
                 total: 1,
-                shown_accounts: [0],
-                cost: 0,
             });
         } else {
             req.reply({
-                accounts: [{}],
+                influencers: [{}],
                 total: 0,
-                shown_accounts: [0],
-                cost: 0,
             });
         }
     });
