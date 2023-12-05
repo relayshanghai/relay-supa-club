@@ -260,8 +260,8 @@ export const useRudderstackTrack = () => {
 
                 const { $add, ...eventPayload } = properties ?? {};
 
-                const trigger: TriggerEvent = (eventName, payload) => {
-                    nextFetch('/track', {
+                const trigger: TriggerEvent = async (eventName, payload) => {
+                    const res = await nextFetch('/track', {
                         method: 'POST',
                         body: {
                             deviceId,
@@ -271,11 +271,11 @@ export const useRudderstackTrack = () => {
                             ...$add,
                             ...options,
                         },
-                    }).then((res) => {
-                        if (res.ok) {
-                            resolve(res.json());
-                        }
                     });
+
+                    if (res.ok) {
+                        return await res.json();
+                    }
                 };
 
                 event(trigger, eventPayload);
