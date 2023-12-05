@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { mixpanelClient } from 'src/utils/api/mixpanel';
 import { parseUserAgent } from 'src/utils/api/mixpanel/helpers';
@@ -7,7 +8,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const mixpanel = mixpanelClient();
 
     if (!mixpanel) {
-        throw new Error('Tracking disabled');
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Tracking disabled' });
     }
 
     const { userId, ...propertiesPayload } = req.body;
