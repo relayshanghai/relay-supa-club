@@ -92,3 +92,6 @@ SCHEDULER_WORKER_TOKEN=
 
 # Brevo List ID for the new signups that will be funneled to an marketing automation
 BREVO_NEWTRIALUSERS_LIST_ID=8
+
+# An admin user created in each company
+SERVICE_ACCOUNT_PASSWORD=

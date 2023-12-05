@@ -1,3 +1,4 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type {
     InfluencerSocialProfileRow,
     SequenceInfluencer,
@@ -78,8 +79,11 @@ export const updateSequenceInfluencerIfSocialProfileAvailable = async ({
         updatedValues.social_profile_last_fetched = new Date().toISOString();
     }
     if (!sequenceInfluencer.tags || sequenceInfluencer.tags.length === 0) {
-        updatedValues.tags = getRelevantTags(report);
-        updatedValues.social_profile_last_fetched = new Date().toISOString();
+        const tags = getRelevantTags(report);
+        if (tags.length > 0) {
+            updatedValues.tags = tags;
+            updatedValues.social_profile_last_fetched = new Date().toISOString();
+        }
     }
     if (!sequenceInfluencer.social_profile_last_fetched) {
         updatedValues.social_profile_last_fetched = new Date().toISOString();
@@ -100,3 +104,12 @@ export const wasFetchedWithinMinutes = (
     const socialProfileLastFetched = new Date(sequenceInfluencer.social_profile_last_fetched ?? '').getTime();
     return now - socialProfileLastFetched < timeDifference; // 10 minutes
 };
+
+export const isMissingSocialProfileInfo = (sequenceInfluencer: SequenceInfluencerManagerPage) =>
+    !sequenceInfluencer.recent_post_title ||
+    !sequenceInfluencer.recent_post_url ||
+    !sequenceInfluencer.avatar_url ||
+    !sequenceInfluencer.social_profile_last_fetched ||
+    !sequenceInfluencer.influencer_social_profile_id ||
+    !sequenceInfluencer.tags ||
+    sequenceInfluencer.tags.length === 0;
