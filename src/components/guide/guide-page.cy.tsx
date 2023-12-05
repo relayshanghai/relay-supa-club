@@ -7,6 +7,9 @@ import { GuideCards, GuideComponent } from './index';
 import guidePage from 'i18n/en/guide';
 
 describe('GuideComponent', () => {
+    beforeEach(async () => {
+        cy.intercept('POST', '/api/track*', { status: true });
+    });
     Object.keys(guidePage.modalInfo).forEach((_section) => {
         const section = Object.keys(guidePage.modalInfo).find((key) => key === _section) as GuideCardKey;
         const cardDetails = guidePage.cards[section];
@@ -26,6 +29,9 @@ describe('GuideComponent', () => {
 });
 
 describe('GuideCards', () => {
+    beforeEach(async () => {
+        cy.intercept('POST', '/api/track*', { status: true });
+    });
     Object.keys(guidePage.cards).forEach((_section) => {
         const section = Object.keys(guidePage.cards).find((key) => key === _section) as GuideCardKey;
         const sectionDetails = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];

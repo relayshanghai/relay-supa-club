@@ -11,6 +11,9 @@ const faqs = [
     },
 ];
 describe('<Accordion />', () => {
+    beforeEach(async () => {
+        cy.intercept('POST', '/api/track*', { status: true });
+    });
     it('it will hide details by default, and show details when each title or expand button is clicked', () => {
         testMount(<Accordion content={faqs} type="FAQ" modalName="Example FAQ" />);
         cy.contains(faqs[0].detail).should('not.exist');

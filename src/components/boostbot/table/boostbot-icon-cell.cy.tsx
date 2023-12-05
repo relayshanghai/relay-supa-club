@@ -11,6 +11,7 @@ describe('<OpenInfluencerModalCell />', () => {
     beforeEach(() => {
         setIsInfluencerDetailsModalOpen = cy.stub();
         setSelectedRow = cy.stub();
+        cy.intercept('POST', '/api/track*', { status: true });
     });
 
     it('Should call setIsInfluencerDetailsModalOpen when the icon is clicked', () => {

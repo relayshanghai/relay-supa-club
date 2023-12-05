@@ -21,6 +21,7 @@ describe('<Faq />', () => {
         cy.contains(title);
         cy.contains(faqs[0].title);
         cy.contains(faqs[1].title);
+        cy.intercept('POST', '/api/track*', { status: true });
         // accordion open/close functionality is tested in accordion.cy.tsx
     });
     it('close/back buttons work. Get more info button gets called and closes modal', () => {

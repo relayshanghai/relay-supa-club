@@ -12,6 +12,7 @@ import { randomString } from '../../../cypress/e2e/helpers';
 describe('<SequencePage />', () => {
     before(() => {
         worker.start();
+        cy.intercept('POST', '/api/track*', { status: true });
     });
     const props = {
         sequenceId: 'b7ddd2a8-e114-4423-8cc6-30513c885f07',

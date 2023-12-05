@@ -69,8 +69,9 @@ const tiktokT =
     'https://vt.tiktok.com/@graceofearth/video/7230816093755936043?is_from_webapp=1&sender_device=pc&web_id=7214153327838512682';
 
 describe('AddPostModal', () => {
-    before(async () => {
+    beforeEach(async () => {
         await worker.start();
+        cy.intercept('POST', '/api/track*', { status: true });
     });
     it('Should display a modal with Manage Posts as the title, and subtitle Add Post URL', () => {
         testMount(<AddPostModal {...props} />);

@@ -22,6 +22,7 @@ const priceTier = 'discovery';
 describe('<PromoCodeSection />', () => {
     before(async () => {
         worker.start();
+        cy.intercept('POST', '/api/track*', { status: true });
     });
 
     it('renders the promo code section correctly', () => {

@@ -134,7 +134,7 @@ export const useRudderstack = () => {
         deviceId = localStorage.getItem('deviceId') || '';
     }
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
-        await nextFetch('/track/identify', {
+        await nextFetch('track/identify', {
             method: 'POST',
             body: JSON.stringify({
                 userId,
@@ -163,7 +163,7 @@ export const useRudderstack = () => {
     );
 
     const group = useCallback(async (groupId: string, traits?: apiObject) => {
-        await nextFetch('/track/group', {
+        await nextFetch('track/group', {
             method: 'POST',
             body: {
                 groupId,
@@ -224,7 +224,7 @@ export const useRudderstackTrack = () => {
                 return resolve(null);
             }
 
-            nextFetch('/track/identify', {
+            nextFetch('track/identify', {
                 method: 'POST',
                 body: {
                     userId,
@@ -261,7 +261,7 @@ export const useRudderstackTrack = () => {
                 const { $add, ...eventPayload } = properties ?? {};
 
                 const trigger: TriggerEvent = async (eventName, payload) => {
-                    const res = await nextFetch('/track', {
+                    const res = await nextFetch('track', {
                         method: 'POST',
                         body: {
                             deviceId,
