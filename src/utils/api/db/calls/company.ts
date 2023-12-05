@@ -93,24 +93,13 @@ export const updateCompanySubscriptionStatus = async ({
     const update: CompanyDBUpdate = {
         subscription_status,
     };
-
-    if (subscription_end_date) update.subscription_end_date = subscription_end_date;
+    //update subscription_end_date to null when upgrading
+    update.subscription_end_date = subscription_end_date ?? null;
     if (subscription_start_date) update.subscription_start_date = subscription_start_date;
     if (subscription_current_period_start) update.subscription_current_period_start = subscription_current_period_start;
     if (subscription_current_period_end) update.subscription_current_period_end = subscription_current_period_end;
     if (subscription_plan) update.subscription_plan = subscription_plan;
     const { data, error } = await supabase.from('companies').update(update).eq('id', id).select().single();
-    // this set to null update does not work in the destructuring
-    if (subscription_end_date === undefined) {
-        const { data, error } = await supabase
-            .from('companies')
-            .update({ subscription_end_date: null })
-            .eq('id', id)
-            .select()
-            .single();
-        if (error) throw error;
-        return data;
-    }
 
     if (error) throw error;
     return data;
