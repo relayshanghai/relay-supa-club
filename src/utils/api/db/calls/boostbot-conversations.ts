@@ -25,9 +25,16 @@ const createBoostbotConversation = (supabaseClient: RelayDatabase) => async (cha
 };
 
 export const getBoostbotConversationCall = (supabaseClient: RelayDatabase) => async () => {
+    const { data: userData } = await supabaseClient.auth.getUser();
+
+    if (!userData.user) {
+        throw new Error('No profile id found');
+    }
+
     const { data, error } = await supabaseClient
         .from('boostbot_conversations')
         .select('chat_messages, search_results')
+        .eq('profile_id', userData.user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
