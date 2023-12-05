@@ -1,7 +1,7 @@
 const pricing = {
     startNow: '立即开始',
     chooseA: '选择最适合您的',
-    plan: '计划',
+    plan: '方案',
     thatWorksBest: '',
     subTitle: '几分钟内，找到并开始与您的产品合适的海外KOL合作。',
     monthly: '每月',
@@ -29,7 +29,7 @@ const pricing = {
     buyNow: '立即购买',
     contactUs: '联系我们',
     popular: '热门',
-    yourCurrentPlan: '您当前的计划',
+    yourCurrentPlan: '您当前的方案',
     invalidCoupon: '无效的优惠券',
     couponApplied: '优惠券已应用',
     applyCoupon: '应用优惠券',

@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type Stripe from 'stripe';
-import type { SubscriptionPeriod } from 'types';
-import { getSubscription } from 'src/utils/api/stripe/helpers';
+import type { SubscriptionPeriod, SubscriptionStatus } from 'types';
+import { getSubscription, transformStripeStatus } from 'src/utils/api/stripe/helpers';
 import { ApiHandler } from 'src/utils/api-handler';
 
 export type SubscriptionGetQueries = {
@@ -15,7 +14,7 @@ export type SubscriptionGetResponse = {
     /** date in seconds */
     current_period_end: number;
     current_period_start: number;
-    status: Stripe.Subscription.Status;
+    status: SubscriptionStatus;
 };
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -48,7 +47,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
         interval,
         current_period_end: subscription.current_period_end,
         current_period_start: subscription.current_period_start,
-        status: subscription.status,
+        status: transformStripeStatus(subscription.status),
     };
 
     return res.status(httpCodes.OK).json(returnData);
