@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IQDATA_MAINTENANCE } from 'src/constants';
-import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
+import {
+    SearchProvider,
+    defaultAudienceGender,
+    defaultAudienceLocations,
+    useSearch,
+    useSearchResults,
+} from 'src/hooks/use-search';
 import { Search, SearchDefault } from 'src/utils/analytics/events';
 import { startJourney } from 'src/utils/analytics/journey';
 import { numberFormatter } from 'src/utils/formatter';
@@ -172,6 +178,8 @@ export const SearchPageInner = () => {
             text: '',
             views: [null, null],
             audience: [null, null],
+            audienceGender: defaultAudienceGender,
+            audienceLocation: defaultAudienceLocations,
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
             // only_recommended: featRecommended() ? onlyRecommended : false,
         });
