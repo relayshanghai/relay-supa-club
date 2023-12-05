@@ -29,7 +29,7 @@ describe('GuideComponent', () => {
 });
 
 describe('GuideCards', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         cy.intercept('POST', '/api/track*', { status: true });
     });
     Object.keys(guidePage.cards).forEach((_section) => {

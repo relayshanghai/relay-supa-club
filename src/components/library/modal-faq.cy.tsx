@@ -16,9 +16,11 @@ const faqs = [
 const title = 'Your Frequently Asked Questions';
 
 describe('<Faq />', () => {
+    beforeEach(() => {
+        cy.intercept('POST', '/api/track*', { status: true });
+    });
     it('displays the title and the faqs', () => {
         testMount(<FaqModal visible={true} onClose={() => null} content={faqs} title={title} source="Cypress" />);
-        cy.intercept('POST', '/api/track*', { status: true });
         cy.contains(title);
         cy.contains(faqs[0].title);
         cy.contains(faqs[1].title);

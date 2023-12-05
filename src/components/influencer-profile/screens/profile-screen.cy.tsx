@@ -9,7 +9,7 @@ const profileValue = mapProfileToFormData(profile);
 
 describe('<ProfileScreen />', () => {
     if (!profileValue) return;
-    beforeEach(async () => {
+    beforeEach(() => {
         cy.intercept('POST', '/api/track*', { status: true });
     });
     it('Mounts', () => {

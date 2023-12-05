@@ -11,7 +11,7 @@ const faqs = [
     },
 ];
 describe('<Accordion />', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         cy.intercept('POST', '/api/track*', { status: true });
     });
     it('it will hide details by default, and show details when each title or expand button is clicked', () => {
