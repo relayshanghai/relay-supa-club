@@ -57,19 +57,22 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const companyId = clientRoleData.companyId || profile?.company_id;
 
     // @note why not fetch it along the profile in useUser?
-    const { data: company, mutate: refreshCompany } = useSWR(profile && companyId ? 'company' : null, async () => {
-        const fetchedCompany = await getCompanyById(companyId);
-        if (profile && fetchedCompany?.name && !company?.name) {
-            Sentry.setUser({
-                id: profile.id,
-                email: profile.email ?? '',
-                name: `${profile.first_name} ${profile.last_name}`,
-                company_name: clientRoleData.companyName || fetchedCompany.name,
-                company_id: companyId,
-            });
-        }
-        return fetchedCompany;
-    });
+    const { data: company, mutate: refreshCompany } = useSWR(
+        profile && companyId ? [companyId, 'company'] : null,
+        async ([id]) => {
+            const fetchedCompany = await getCompanyById(id);
+            if (profile && fetchedCompany?.name && !company?.name) {
+                Sentry.setUser({
+                    id: profile.id,
+                    email: profile.email ?? '',
+                    name: `${profile.first_name} ${profile.last_name}`,
+                    company_name: clientRoleData.companyName || fetchedCompany.name,
+                    company_id: id,
+                });
+            }
+            return fetchedCompany;
+        },
+    );
 
     // @note this will wait for profile to load and rerender for refreshCompany
     useEffect(() => {

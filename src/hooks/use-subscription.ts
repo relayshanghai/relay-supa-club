@@ -18,18 +18,13 @@ import { useCompany } from './use-company';
 export const useSubscription = () => {
     const { company } = useCompany();
     const { data: subscription, mutate } = useSWR(
-        company?.id ? 'subscriptions' : null,
-        async (path) =>
-            await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, {
-                id: company?.id ?? '',
-            }),
+        company?.id ? [company.id, 'subscriptions'] : null,
+        async ([id, path]) => await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, { id }),
     );
     const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
-        company?.id ? 'subscriptions/payment-method' : null,
-        async (path) =>
-            await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, {
-                id: company?.id ?? '',
-            }),
+        company?.id ? [company.id, 'subscriptions/payment-method'] : null,
+        async ([id, path]) =>
+            await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
     );
 
     const createTrialLegacy = useCallback(async () => {

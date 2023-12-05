@@ -23,10 +23,10 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string | n
         mutate: refreshNotes,
         isLoading,
     } = useSWR(
-        'notes',
-        (path) =>
+        campaignCreatorId ? [campaignCreatorId, 'notes'] : null,
+        ([id, path]) =>
             nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
-                id: campaignCreatorId ?? '',
+                id,
             }),
         { refreshInterval: 500 },
     );
