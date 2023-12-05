@@ -150,7 +150,7 @@ export const useRudderstack = () => {
 
     const trackEvent = useCallback(
         async (eventName: string, properties?: apiObject) => {
-            await nextFetch('/track', {
+            await nextFetch('track', {
                 method: 'POST',
                 body: JSON.stringify({
                     deviceId,

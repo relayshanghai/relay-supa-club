@@ -11,7 +11,6 @@ import { deleteDB } from 'idb';
 describe('<SearchPage />', () => {
     before(async () => {
         worker.start();
-        cy.intercept('POST', '/api/track*', { status: true });
     });
 
     it('renders default landing page results from mocks', () => {

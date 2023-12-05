@@ -11,7 +11,6 @@ import { randomString } from '../../../cypress/e2e/helpers';
 
 describe('<SequencePage />', () => {
     before(() => {
-        cy.intercept('POST', '/api/track*', { status: true });
         worker.start();
     });
     const props = {

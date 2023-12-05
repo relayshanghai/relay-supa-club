@@ -195,7 +195,7 @@ export async function middleware(req: NextRequest) {
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
-    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === 'api/track/identify')
+    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
         return allowTrackingCors(req, res);
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
