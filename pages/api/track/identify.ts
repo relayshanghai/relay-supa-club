@@ -7,31 +7,27 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { userId, ...propertiesPayload } = req.body;
     const { browser, os } = parseUserAgent(req.headers['user-agent']);
 
-    try {
-        const {
-            firstName: $first_name,
-            lastName: $last_name,
-            email: $email,
-            company: $company,
-            ...peoplePayload
-        } = propertiesPayload;
-        // Refer for more info https://docs.mixpanel.com/docs/tracking-methods/sdks/nodejs#setting-profile-properties
-        mixpanelClient.people.set(userId, {
-            $first_name,
-            $last_name,
-            $email,
-            $company,
-            $os: os,
-            ip: req.headers['x-real-ip'],
-            $browser: browser.name,
-            $browser_version: browser.version,
-            ...peoplePayload,
-        });
+    const {
+        firstName: $first_name,
+        lastName: $last_name,
+        email: $email,
+        company: $company,
+        ...peoplePayload
+    } = propertiesPayload;
+    // Refer for more info https://docs.mixpanel.com/docs/tracking-methods/sdks/nodejs#setting-profile-properties
+    mixpanelClient.people.set(userId, {
+        $first_name,
+        $last_name,
+        $email,
+        $company,
+        $os: os,
+        ip: req.headers['x-real-ip'],
+        $browser: browser.name,
+        $browser_version: browser.version,
+        ...peoplePayload,
+    });
 
-        return res.status(200).json({ success: true });
-    } catch (error: any) {
-        return res.status(400).json({ error: error.message });
-    }
+    return res.status(200).json({ success: true });
 };
 
 export default ApiHandler({
