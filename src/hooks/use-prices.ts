@@ -65,7 +65,7 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
 export const usePrices = () => {
     const { i18n } = useTranslation();
     const en = i18n.language.toLowerCase().includes('en');
-    const pricesBlank = {
+    const pricesForUI = {
         discovery: {
             currency: en ? 'usd' : 'cny',
             prices: { monthly: en ? '41' : '299' },
@@ -82,23 +82,20 @@ export const usePrices = () => {
         },
     };
 
-    const {
-        data: newPrices,
-        isValidating,
-        isLoading,
-    } = useSWR(['prices', en], async () => {
+    const { data: prices } = useSWR(['prices'], async () => {
         try {
             const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
-            const currencyToMatch = en ? 'usd' : 'cny';
-            const newPrices = {
-                discovery: data.discovery.find((plan) => plan.currency === currencyToMatch) || pricesBlank.discovery,
-                outreach: data.outreach.find((plan) => plan.currency === currencyToMatch) || pricesBlank.outreach,
+            // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
+            // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
+            const prices = {
+                discovery: data.discovery.find((plan) => plan.currency === 'cny') || pricesForUI.discovery,
+                outreach: data.outreach.find((plan) => plan.currency === 'cny') || pricesForUI.outreach,
             };
 
-            return newPrices;
+            return prices;
         } catch (error) {
             clientLogger(error, 'error');
         }
     });
-    return !newPrices || isLoading || isValidating ? pricesBlank : newPrices;
+    return { pricesForUI, prices: prices ? prices : pricesForUI };
 };

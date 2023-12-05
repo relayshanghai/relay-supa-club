@@ -130,6 +130,10 @@ const account = {
         discovery: '探索方案',
         outreach: '拓展方案',
     },
+    enableAlipay: '前往支付宝验证',
+    processingMessage: '我们正在处理您的付款。感谢您的耐心等待。',
+    generalPaymentError: '付款失败，请选择其他付款方式或稍后再试。',
+    authorizationPaymentError: '支付宝授权失败，请选择其他付款方式或稍后再试。',
 };
 
 export default account;

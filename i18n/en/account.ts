@@ -130,6 +130,13 @@ const account = {
         discovery: 'Discovery',
         outreach: 'Outreach',
     },
+    enableAlipay: 'Enable Alipay Agreement',
+    processingMessage: `We are currently processing your payment.
+
+Thank you for your patience.`,
+    generalPaymentError: 'Something went wrong in the process, please try again or use another payment method.',
+    authorizationPaymentError:
+        'Your Alipay payment authorization failed, please try again or use another payment method.',
 };
 
 export default account;

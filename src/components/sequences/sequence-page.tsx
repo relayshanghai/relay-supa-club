@@ -70,27 +70,34 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const handleStartSequence = useCallback(
         async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
-            const results = await sendSequence(sequenceInfluencersToSend);
+            try {
+                const results = await sendSequence(sequenceInfluencersToSend);
 
-            // handle optimistic update
-            const succeeded = results.filter((result) => !result.error);
-            const failed = results.filter((result) => result.error);
-            refreshSequenceInfluencers((influencers) =>
-                influencers?.map(
-                    (influencer) => ({
-                        ...influencer,
-                        funnel_status: succeeded.some((i) => i.sequenceInfluencerId === influencer.id)
-                            ? 'In Sequence'
-                            : failed.some((i) => i.sequenceInfluencerId === influencer.id)
-                            ? 'To Contact'
-                            : influencer.funnel_status,
-                    }),
-                    { revalidate: false },
-                ),
-            );
-            return results;
+                // handle optimistic update
+                const succeeded = results.filter((result) => !result.error);
+                const failed = results.filter((result) => result.error);
+                refreshSequenceInfluencers((influencers) =>
+                    influencers?.map(
+                        (influencer) => ({
+                            ...influencer,
+                            funnel_status: succeeded.some((i) => i.sequenceInfluencerId === influencer.id)
+                                ? 'In Sequence'
+                                : failed.some((i) => i.sequenceInfluencerId === influencer.id)
+                                ? 'To Contact'
+                                : influencer.funnel_status,
+                        }),
+                        { revalidate: false },
+                    ),
+                );
+                return results;
+            } catch (error) {
+                clientLogger(error, 'error');
+                toast.error(t('sequences.sequenceScheduleFailed'));
+
+                return [];
+            }
         },
-        [refreshSequenceInfluencers, sendSequence],
+        [refreshSequenceInfluencers, sendSequence, t],
     );
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -468,7 +475,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             >
                                 <DeleteOutline className="h-4 w-4 stroke-red-500" />
                             </button>
-                            {selection.length > 0 && (
+                            {currentTab === 'To Contact' && selection.length > 0 && (
                                 <Tooltip
                                     content={sequenceSendTooltipTitle}
                                     detail={sequenceSendTooltipDescription}

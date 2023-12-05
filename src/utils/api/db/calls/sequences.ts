@@ -1,4 +1,4 @@
-import type { FunnelStatus, RelayDatabase, Sequence, SequenceInsert, SequenceUpdate } from '../types';
+import type { RelayDatabase, Sequence, SequenceInsert, SequenceUpdate } from '../types';
 
 export const getSequencesByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
     if (!companyId) return;
@@ -36,8 +36,6 @@ export const createSequenceCall = (supabaseClient: RelayDatabase) => async (inse
     return data;
 };
 
-const sequenceInfluencersToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
-
 export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (ids: string[]) => {
     const { error } = await supabaseClient
         .from('sequences')
@@ -46,10 +44,4 @@ export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (ids:
         })
         .in('id', ids);
     if (error) throw error;
-    const { error: deleteInfluencersError } = await supabaseClient
-        .from('sequence_influencers')
-        .delete()
-        .in('funnel_status', sequenceInfluencersToDelete)
-        .in('sequence_id', ids);
-    if (deleteInfluencersError) throw deleteInfluencersError;
 };
