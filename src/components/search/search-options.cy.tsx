@@ -18,8 +18,8 @@ const initialValues: InitialValues = [
 
 describe('SearchOptions', () => {
     before(() => {
-        worker.start();
         cy.intercept('POST', '/api/track*', { status: true });
+        worker.start();
     });
 
     it('Shows search button', () => {

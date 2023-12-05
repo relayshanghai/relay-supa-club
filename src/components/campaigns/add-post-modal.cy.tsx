@@ -70,8 +70,8 @@ const tiktokT =
 
 describe('AddPostModal', () => {
     beforeEach(async () => {
-        await worker.start();
         cy.intercept('POST', '/api/track*', { status: true });
+        await worker.start();
     });
     it('Should display a modal with Manage Posts as the title, and subtitle Add Post URL', () => {
         testMount(<AddPostModal {...props} />);

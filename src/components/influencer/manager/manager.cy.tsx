@@ -6,8 +6,8 @@ import faq from 'i18n/en/faq';
 
 describe('Manager', () => {
     before(() => {
-        worker.start();
         cy.intercept('POST', '/api/track*', { status: true });
+        worker.start();
     });
 
     it('Should render the managers with the right funnel statuses in a table', () => {

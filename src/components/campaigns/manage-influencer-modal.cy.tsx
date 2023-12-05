@@ -60,8 +60,8 @@ const props: ManageInfluencerModalProps = {
 
 describe('Add', () => {
     before(async () => {
-        await worker.start();
         cy.intercept('POST', '/api/track*', { status: true });
+        await worker.start();
     });
     it('Should display a modal with Manage Influencer as the title, and includes the influencers handle', () => {
         testMount(<ManageInfluencerModal {...props} />);

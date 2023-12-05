@@ -18,10 +18,10 @@ const title = 'Your Frequently Asked Questions';
 describe('<Faq />', () => {
     it('displays the title and the faqs', () => {
         testMount(<FaqModal visible={true} onClose={() => null} content={faqs} title={title} source="Cypress" />);
+        cy.intercept('POST', '/api/track*', { status: true });
         cy.contains(title);
         cy.contains(faqs[0].title);
         cy.contains(faqs[1].title);
-        cy.intercept('POST', '/api/track*', { status: true });
         // accordion open/close functionality is tested in accordion.cy.tsx
     });
     it('close/back buttons work. Get more info button gets called and closes modal', () => {
