@@ -7,6 +7,11 @@ import { parseUserAgent } from 'src/utils/api/mixpanel/helpers';
 import type { DatabaseWithCustomTypes } from 'types';
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const mixpanel = mixpanelClient();
+
+    if (!mixpanel) {
+        throw new Error('Tracking disabled');
+    }
     const { deviceId, eventName, $add, ...trackingPayload } = req.body;
 
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>({ req, res });
@@ -14,7 +19,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { browser, os } = parseUserAgent(req.headers['user-agent']);
     // More information about mixpanel tracking https://docs.mixpanel.com/docs/tracking-methods/sdks/nodejs
     if (!user_id) {
-        mixpanelClient.track(eventName, {
+        mixpanel.track(eventName, {
             $device_id: deviceId, // We need to specify a device_id while we do not have an user_id
             ip: req.headers['x-real-ip'],
             $os: os,
@@ -27,7 +32,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ error: 'Missing event name' });
     }
 
-    mixpanelClient.track(eventName, {
+    mixpanel.track(eventName, {
         $user_id: user_id, // Once we have an user_id, we can use it instead of the device_id
         $device_id: deviceId, // We need to specify a device_id to associate any previous events with this device_id with the user
         ip: req.headers['x-real-ip'],
@@ -36,7 +41,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         $browser_version: browser.version,
         ...trackingPayload,
     });
-    mixpanelClient.people.increment(user_id, $add);
+    mixpanel.people.increment(user_id, $add);
     return res.status(200).json({ success: true });
 };
 

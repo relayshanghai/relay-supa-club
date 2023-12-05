@@ -3,10 +3,16 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { mixpanelClient } from 'src/utils/api/mixpanel';
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const mixpanel = mixpanelClient();
+
+    if (!mixpanel) {
+        throw new Error('Tracking disabled');
+    }
+
     const { groupId, ...traits } = req.body;
 
     try {
-        mixpanelClient.groups.set('companyId', groupId, traits);
+        mixpanel.groups.set('companyId', groupId, traits);
 
         return res
             .status(200)

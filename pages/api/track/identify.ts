@@ -4,6 +4,12 @@ import { mixpanelClient } from 'src/utils/api/mixpanel';
 import { parseUserAgent } from 'src/utils/api/mixpanel/helpers';
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const mixpanel = mixpanelClient();
+
+    if (!mixpanel) {
+        throw new Error('Tracking disabled');
+    }
+
     const { userId, ...propertiesPayload } = req.body;
     const { browser, os } = parseUserAgent(req.headers['user-agent']);
 
@@ -15,7 +21,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         ...peoplePayload
     } = propertiesPayload;
     // Refer for more info https://docs.mixpanel.com/docs/tracking-methods/sdks/nodejs#setting-profile-properties
-    mixpanelClient.people.set(userId, {
+    mixpanel.people.set(userId, {
         $first_name,
         $last_name,
         $email,
