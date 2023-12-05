@@ -380,7 +380,7 @@ export const SearchPageInner = () => {
                     </div>
                     <InfluencersTable
                         columns={classicColumns}
-                        data={firstPageSearchResults}
+                        data={firstPageSearchResults || Array(10).fill({ url: 'https://www.youtube.com' })}
                         selectedInfluencers={selectedInfluencers}
                         setSelectedInfluencers={setSelectedInfluencers}
                         influencerCount={resultsTotal}

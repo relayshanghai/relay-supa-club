@@ -10,7 +10,7 @@ import Question from 'src/components/icons/Question';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
-    data?: TData[];
+    data: TData[];
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     influencerCount?: number;
@@ -33,7 +33,7 @@ declare module '@tanstack/react-table' {
 }
 
 export function InfluencersTable<TData, TValue>({
-    data = [],
+    data,
     columns,
     selectedInfluencers,
     setSelectedInfluencers,
