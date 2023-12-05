@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { isDev } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
@@ -142,7 +143,7 @@ const trakingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'c
 
 const allowTrackingCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
-    if (origin && origin.includes('localhost')) {
+    if (origin && origin.includes('localhost') && isDev()) {
         res.headers.set('Access-Control-Allow-Origin', '*');
     } else if (origin && trakingAllowList.some((allowed) => origin.includes(allowed))) {
         res.headers.set('Access-Control-Allow-Origin', origin);
