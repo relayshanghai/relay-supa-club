@@ -6,7 +6,93 @@ import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 
-const fixInToContactWithEmails: NextApiHandler = async (_req, res) => {
+const fixSequenceStepDoesNotMatchNumberOfEmails: NextApiHandler = async (_req, res) => {
+    const { data: _companiesWithOutreach } = await supabase
+        .from('companies')
+        .select('id, name, cus_id')
+        .eq('subscription_plan', 'Outreach');
+    // const _company_ids = companiesWithOutreach?.map((c) => c.id) ?? [];
+    const _company_ids = ['7b0b4586-57d3-4909-8489-45b726e94510'];
+    const { data: allSequenceInfluencers } = await supabase
+        .from('sequence_influencers')
+        .select('id, name, company_id, sequence_step, sequence_id')
+        .eq('funnel_status', 'In Sequence')
+        .in('company_id', _company_ids);
+
+    console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+    if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
+    const updated: any = [];
+    const messedUpCompanies: {
+        [companyId: string]: {
+            name: string;
+            count: number;
+        };
+    } = {};
+    const sequenceIds: string[] = [];
+    allSequenceInfluencers.forEach((i) => {
+        if (!sequenceIds.includes(i.sequence_id)) sequenceIds.push(i.sequence_id);
+    });
+    console.log('sequenceIds', sequenceIds.length);
+    const { data: allSequenceEmails } = await supabase
+        .from('sequence_emails')
+        .select('*')
+        .in('sequence_id', sequenceIds);
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+    // const sentMalformed = [];
+    // const outbox = await getOutbox();
+
+    for (const influencer of allSequenceInfluencers) {
+        try {
+            const emails = allSequenceEmails?.filter((e) => e.sequence_influencer_id === influencer.id);
+            // console.log('count mismatch', influencer.name, count, influencer.sequence_step);
+            const hasAlreadyDelivered = emails?.filter(
+                (e) =>
+                    e.email_delivery_status !== null &&
+                    (e.email_delivery_status === 'Delivered' || e.email_delivery_status === 'Replied'),
+            );
+
+            const shouldSequenceStep = hasAlreadyDelivered?.length ? hasAlreadyDelivered?.length - 1 : 0;
+            console.log(emails?.length, hasAlreadyDelivered?.length, influencer.sequence_step);
+            // sequencestep should match already delivered -1
+            if (shouldSequenceStep !== influencer.sequence_step) {
+                console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
+            } else {
+                continue;
+            }
+            if (!Object.keys(messedUpCompanies).includes(influencer.company_id)) {
+                messedUpCompanies[influencer.company_id] = {
+                    name: '',
+                    count: 1,
+                };
+            } else {
+                messedUpCompanies[influencer.company_id].count++;
+            }
+            console.log('updating, ', influencer.name, influencer.company_id);
+            await supabase
+                .from('sequence_influencers')
+                .update({ sequence_step: shouldSequenceStep })
+                .eq('id', influencer.id);
+            updated.push(influencer.name + ' ' + influencer.id);
+        } catch (error) {
+            console.log('error with influencer', influencer.name, influencer.id);
+            console.error(error);
+        }
+    }
+    const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .in('id', Object.keys(messedUpCompanies));
+    companies?.forEach((c) => {
+        messedUpCompanies[c.id].name = c.name ?? '';
+    });
+    console.log('messedUpCompanies', messedUpCompanies);
+    console.log('updated', updated.length);
+    // console.log('sentMalformed', sentMalformed.length, sentMalformed);
+
+    return res.status(200).json({ message: updated });
+};
+
+const _fixInToContactWithEmails: NextApiHandler = async (_req, res) => {
     // const _company_ids = [
     //     // 'f5009eba-1af2-46f4-be3a-dfe2221d35ed',
     //     'd9d76bb4-9fe5-4ddb-bf1b-83eea7505281',
@@ -619,4 +705,4 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     return res.json({ results });
 };
 
-export default fixInToContactWithEmails;
+export default fixSequenceStepDoesNotMatchNumberOfEmails;
