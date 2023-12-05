@@ -27,21 +27,17 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ error: 'Missing event name' });
     }
 
-    try {
-        mixpanelClient.track(eventName, {
-            $user_id: user_id, // Once we have an user_id, we can use it instead of the device_id
-            $device_id: deviceId, // We need to specify a device_id to associate any previous events with this device_id with the user
-            ip: req.headers['x-real-ip'],
-            $os: os,
-            $browser: browser.name,
-            $browser_version: browser.version,
-            ...trackingPayload,
-        });
-        mixpanelClient.people.increment(user_id, $add);
-        return res.status(200).json({ success: true });
-    } catch (error: any) {
-        return res.status(400).json({ error: error.message });
-    }
+    mixpanelClient.track(eventName, {
+        $user_id: user_id, // Once we have an user_id, we can use it instead of the device_id
+        $device_id: deviceId, // We need to specify a device_id to associate any previous events with this device_id with the user
+        ip: req.headers['x-real-ip'],
+        $os: os,
+        $browser: browser.name,
+        $browser_version: browser.version,
+        ...trackingPayload,
+    });
+    mixpanelClient.people.increment(user_id, $add);
+    return res.status(200).json({ success: true });
 };
 
 export default ApiHandler({
