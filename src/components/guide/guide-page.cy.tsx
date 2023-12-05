@@ -7,7 +7,7 @@ import { GuideCards, GuideComponent } from './index';
 import guidePage from 'i18n/en/guide';
 
 describe('GuideComponent', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         cy.intercept('POST', '/api/track*', { status: true });
     });
     Object.keys(guidePage.modalInfo).forEach((_section) => {
