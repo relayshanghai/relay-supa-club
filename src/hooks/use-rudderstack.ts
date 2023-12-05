@@ -165,10 +165,10 @@ export const useRudderstack = () => {
     const group = useCallback(async (groupId: string, traits?: apiObject) => {
         await nextFetch('/track/group', {
             method: 'POST',
-            body: JSON.stringify({
+            body: {
                 groupId,
                 ...traits,
-            }),
+            },
         });
     }, []);
 
@@ -226,10 +226,10 @@ export const useRudderstackTrack = () => {
 
             nextFetch('/track/identify', {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                     userId,
                     ...traits,
-                }),
+                },
             }).then((res) => {
                 if (res.ok) {
                     resolve(res.json());
@@ -263,14 +263,14 @@ export const useRudderstackTrack = () => {
                 const trigger: TriggerEvent = (eventName, payload) => {
                     nextFetch('/track', {
                         method: 'POST',
-                        body: JSON.stringify({
+                        body: {
                             deviceId,
                             eventName: eventName,
                             currentPage,
                             ...payload,
                             ...$add,
                             ...options,
-                        }),
+                        },
                     }).then((res) => {
                         if (res.ok) {
                             resolve(res.json());
