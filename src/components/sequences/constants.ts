@@ -31,7 +31,7 @@ export const sequencesIndexColumns: SequenceIndexColumn[] = [
     'sequenceActions',
 ];
 
-export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Scheduling' | 'Ignored';
+export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Ignored';
 
 export const EMAIL_STATUS_STYLES: {
     [key in EmailStatus]: { style: string };

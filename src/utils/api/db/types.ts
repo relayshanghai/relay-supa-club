@@ -104,7 +104,7 @@ export type SequenceStep = SequenceStepsTable['Row'];
 export type SequenceStepInsert = SequenceStepsTable['Insert'];
 export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
-export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
+export type EmailDeliveryStatus = 'Scheduling' | 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
