@@ -152,11 +152,11 @@ export const useRudderstack = () => {
         async (eventName: string, properties?: apiObject) => {
             await nextFetch('track', {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                     deviceId,
                     eventName,
                     ...properties,
-                }),
+                },
             });
         },
         [deviceId],

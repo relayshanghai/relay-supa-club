@@ -36,7 +36,6 @@ const makeProps = () => {
 
 describe('CampaignInfluencersTable', () => {
     before(async () => {
-        cy.intercept('POST', '/api/track*', { status: true });
         await worker.start();
     });
 

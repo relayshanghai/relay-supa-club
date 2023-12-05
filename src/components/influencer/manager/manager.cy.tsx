@@ -6,7 +6,6 @@ import faq from 'i18n/en/faq';
 
 describe('Manager', () => {
     before(() => {
-        cy.intercept('POST', '/api/track*', { status: true });
         worker.start();
     });
 
