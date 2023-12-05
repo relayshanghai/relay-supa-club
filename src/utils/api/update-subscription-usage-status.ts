@@ -40,7 +40,7 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
         id: companyId,
         subscription_plan: subscriptionPlan,
-        subscription_end_date: undefined, //reset subscription_end_date to null when upgrade a subscription from canceled to active
+        subscription_end_date: null, //reset subscription_end_date to null when upgrade a subscription from canceled to active
     });
 };
 

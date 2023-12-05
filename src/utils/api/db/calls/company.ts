@@ -1,5 +1,4 @@
 import { supabase } from 'src/utils/supabase-client';
-import type { SubscriptionPlans, SubscriptionStatus } from 'types';
 import type { CompanyDB, CompanyDBInsert, CompanyDBUpdate, RelayDatabase } from '../types';
 
 export const getCompanyCusId = (companyId: string) =>
@@ -81,15 +80,7 @@ export const updateCompanySubscriptionStatus = async ({
     subscription_current_period_end,
     id,
     subscription_plan,
-}: {
-    subscription_status: SubscriptionStatus;
-    subscription_start_date?: string;
-    subscription_end_date?: string;
-    subscription_current_period_start?: string;
-    subscription_current_period_end?: string;
-    id: string;
-    subscription_plan?: SubscriptionPlans;
-}) => {
+}: CompanyDBUpdate) => {
     const update: CompanyDBUpdate = {
         subscription_status,
     };
