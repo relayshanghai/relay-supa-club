@@ -1,6 +1,5 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { getUserSession } from 'src/utils/api/analytics';
 import { mixpanelClient } from 'src/utils/api/mixpanel';
@@ -11,7 +10,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const mixpanel = mixpanelClient();
 
     if (!mixpanel) {
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Tracking disabled' });
+        return res.status(200).json({ message: 'Tracking disabled' });
     }
     const { deviceId, eventName, $add, ...trackingPayload } = req.body;
 
