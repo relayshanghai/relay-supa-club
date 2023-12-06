@@ -6,8 +6,16 @@ import { Button } from '../button';
 import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 
-export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
-    const { t } = useTranslation();
+export const CancelSubscriptionModal = ({
+    visible,
+    onClose,
+    periodEnd,
+}: {
+    visible: boolean;
+    onClose: () => void;
+    periodEnd?: string;
+}) => {
+    const { t, i18n } = useTranslation();
     const { cancelSubscription } = useSubscription();
     const { trackEvent } = useRudderstack();
 
@@ -46,7 +54,17 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
                 <h3 className="text-lg font-bold">
                     {t('account.cancelModal.areYouSureYouWantToCancelYourSubscription')}
                 </h3>
-                <p className="text-gray-500">{t('account.cancelModal.youWillLoseAccessToAllData')}</p>
+                <p className="text-gray-500">
+                    {t('account.cancelModal.youWillLoseAccessToAllFeature', {
+                        expirationDate: periodEnd
+                            ? new Date(periodEnd).toLocaleDateString(i18n.language, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                              })
+                            : t('account.cancelModal.currentPeriodEnd'),
+                    })}
+                </p>
                 <div className="flex flex-row space-x-4">
                     <Button
                         disabled={submitting}

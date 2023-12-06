@@ -1,7 +1,7 @@
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
 import { useUser } from 'src/hooks/use-user';
 import { CreateSequence } from 'src/utils/analytics/events';
-import type { SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
+import type { FunnelStatus, SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
 import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
@@ -12,6 +12,11 @@ import { useSequenceSteps } from './use-sequence-steps';
 import { useSequences } from './use-sequences';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useTemplateVariables } from './use-template_variables';
+import { getSequenceInfluencersBySequenceIdsCall } from 'src/utils/api/db/calls/sequence-influencers';
+import type {
+    SequenceInfluencersDeleteRequestBody,
+    SequenceInfluencersDeleteResponse,
+} from 'pages/api/sequence/influencers/delete';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
@@ -34,8 +39,20 @@ export const useSequence = (sequenceId?: string) => {
     };
 
     const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
+    const getInfluencersBySequenceIdsCall = useDB(getSequenceInfluencersBySequenceIdsCall);
     const deleteSequence = async (ids: string[]) => {
         const res = await deleteSequenceDBCall(ids);
+        const sequenceInfluencers = await getInfluencersBySequenceIdsCall(ids);
+        /** only delete them if they are not yet in the manager page */
+        const sequenceInfluencerTypesToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
+        const sequenceInfluencerIds = sequenceInfluencers
+            .filter(({ funnel_status }) => sequenceInfluencerTypesToDelete.includes(funnel_status))
+            .map(({ id }) => id);
+        const body: SequenceInfluencersDeleteRequestBody = { ids: sequenceInfluencerIds };
+        await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
+            method: 'POST',
+            body,
+        });
         refreshSequence();
         refreshSequences();
         return res;

@@ -117,14 +117,14 @@ export const CompanyDetails = () => {
                 </div>
             ) : (
                 <div className={`w-full space-y-6`}>
-                    <div className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-2">
                         <div className="text-sm">{t('account.company.companyName')}</div>
-                        <div className="ml-2 text-sm font-bold">{companyValues.name}</div>
+                        <div className="ml-2 text-sm font-semibold">{companyValues.name}</div>
                     </div>
 
-                    <div className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-2">
                         <div className="text-sm">{t('account.company.website')}</div>
-                        <div className="ml-2 text-sm font-bold">{companyValues.website}</div>
+                        <div className="ml-2 text-sm font-semibold">{companyValues.website}</div>
                     </div>
                 </div>
             )}
@@ -164,14 +164,14 @@ export const CompanyDetails = () => {
                         teammates.map((profile) => {
                             return (
                                 <div key={profile.id} className="flex w-full flex-row items-center space-x-8 py-2">
-                                    <div className="w-1/3">
+                                    <div className="w-1/3 text-sm font-semibold">
                                         <p className="text-xs text-gray-500">{t('account.company.fullName')}</p>
                                         <p>
                                             {' '}
                                             {profile.first_name} {profile.last_name}
                                         </p>
                                     </div>
-                                    <div className="text-sm font-bold">
+                                    <div className="text-sm font-semibold">
                                         <p className="text-xs font-normal text-gray-500">{t('account.company.role')}</p>
                                         <p>
                                             {isAdmin(profile?.user_role)

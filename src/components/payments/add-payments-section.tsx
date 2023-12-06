@@ -4,12 +4,12 @@ import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
 import CheckoutForm from './checkout-form';
 import { type ActiveSubscriptionTier, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
-import { useMemo, useState } from 'react';
-import Image from 'next/legacy/image';
+import { useEffect, useMemo, useState } from 'react';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { randomNumber } from 'src/utils/utils';
 import { PromoCodeSection } from './promo-code-section';
+import AlipayPortal from './alipay-portal';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -24,12 +24,11 @@ export type CreatePaymentIntentResponse = {
 
 export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
-    const prices = usePrices();
+    const { prices } = usePrices();
     const { trackEvent } = useRudderstack();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
-
     const batchId = useMemo(() => randomNumber(), []);
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',
@@ -44,6 +43,10 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
         locale: i18n.language.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
     };
+
+    useEffect(() => {
+        localStorage.setItem('selectedPlan', priceTier);
+    }, [priceTier]);
 
     return (
         <div className="w-80 lg:w-[28rem]">
@@ -96,17 +99,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                         )}
 
                         {selectedPaymentMethod === 'alipay' && (
-                            <div className="mb-2 p-6">
-                                <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
-
-                                <Image
-                                    src="/assets/imgs/qrcodes/relayclub-clubby.png"
-                                    alt="qr code to contact customer service"
-                                    layout="responsive"
-                                    width={1000}
-                                    height={1000}
-                                />
-                            </div>
+                            <AlipayPortal selectedPrice={selectedPrice} priceTier={priceTier} />
                         )}
                     </>
                 ) : (

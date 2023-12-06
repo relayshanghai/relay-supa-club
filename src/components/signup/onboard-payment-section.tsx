@@ -70,7 +70,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     }, [redirect, router]);
 
     useEffect(() => {
-        if (subscription?.status === 'trialing' || subscription?.status === 'active') {
+        if (subscription?.status === 'trial' || subscription?.status === 'active') {
             return handleSuccess();
         }
     }, [subscription?.status, handleSuccess]);
