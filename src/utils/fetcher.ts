@@ -18,6 +18,10 @@ export const handleResError = async (res: ResponseWithError) => {
 
             if (contentType.indexOf('application/json') !== -1) {
                 const json = await res.json();
+                if (Object.keys(json).length === 1 && 'error' in json) {
+                    logger(json.error);
+                    throw new Error(json.error);
+                }
                 const errorMessage = `${res.status} ${res.statusText} ${json}`;
                 logger(errorMessage);
                 throw new Error(errorMessage);
