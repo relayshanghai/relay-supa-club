@@ -1,5 +1,5 @@
 import { useCompany } from 'src/hooks/use-company';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from 'src/hooks/use-user';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,12 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { nextFetch } from 'src/utils/fetcher';
-import type { SubscriptionCreateTrialResponse } from 'pages/api/subscriptions/create-trial-without-payment-intent';
+import type {
+    SubscriptionCreateTrialPostBody,
+    SubscriptionCreateTrialResponse,
+} from 'pages/api/subscriptions/create-trial-without-payment-intent';
 import { createSubscriptionErrors } from 'src/errors/subscription';
+import { serverLogger } from 'src/utils/logger-server';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -32,7 +36,7 @@ const FreeTrialPage = () => {
     const { profile } = useUser();
     const [error, setError] = useState('');
 
-    const createDefaultSequence = async () => {
+    const createDefaultSequence = useCallback(async () => {
         if (!profile) {
             throw new Error('No profile found');
         }
@@ -43,20 +47,25 @@ const FreeTrialPage = () => {
         }
         await createDefaultSequenceSteps(newSequenceData.id);
         await createDefaultTemplateVariables(newSequenceData.id);
-    };
+    }, [createDefaultSequenceSteps, createDefaultTemplateVariables, createSequence, profile]);
 
-    const startFreeTrial = async () => {
+    const startFreeTrial = useCallback(async () => {
         setLoading(true);
         setError('');
+        if (!company?.id || !company.cus_id) {
+            serverLogger('No company id or cus_id found'); //send to Sentry
+            return;
+        }
         try {
+            const body: SubscriptionCreateTrialPostBody = {
+                companyId: company.id,
+                cusId: company.cus_id,
+            };
             const response = await nextFetch<SubscriptionCreateTrialResponse>(
                 'subscriptions/create-trial-without-payment-intent',
                 {
                     method: 'POST',
-                    body: {
-                        companyId: company?.id,
-                        termsChecked: termsChecked,
-                    },
+                    body,
                 },
             );
 
@@ -76,7 +85,7 @@ const FreeTrialPage = () => {
             await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
         }
         setLoading(false);
-    };
+    }, [company, createDefaultSequence, router, t, trackEvent]);
 
     return (
         <div>
@@ -184,7 +193,7 @@ const FreeTrialPage = () => {
             </div>
             <Button
                 onClick={startFreeTrial}
-                disabled={loading || !termsChecked}
+                disabled={loading || !termsChecked || !company?.id || !company.cus_id}
                 className="w-full rounded border-2 px-40 py-3 text-white transition duration-300 hover:border-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             >
                 {loading ? <Spinner className="h-5 w-full fill-primary-600" /> : t('signup.freeTrial.submitButton')}
