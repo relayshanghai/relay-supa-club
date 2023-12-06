@@ -168,7 +168,7 @@ const sendSequenceStep = async ({
                 account,
                 influencer,
                 templateVariables,
-                references: reference,
+                references: reference ?? '',
                 messageId: messageIds[step.step_number],
                 scheduledEmails,
             });
