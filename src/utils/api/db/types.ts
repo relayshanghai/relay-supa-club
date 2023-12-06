@@ -104,7 +104,14 @@ export type SequenceStep = SequenceStepsTable['Row'];
 export type SequenceStepInsert = SequenceStepsTable['Insert'];
 export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
-export type EmailDeliveryStatus = 'Scheduling' | 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
+/**
+ * Unscheduled means we've created a `sequence_email` record, but haven't sent it to Email Engine.
+ *
+ * Scheduled means we've sent it to Email Engine, but it hasn't been sent yet.
+ *
+ * Delivered means it has triggered the `messageSent` webhook from Email Engine.
+ */
+export type EmailDeliveryStatus = 'Unscheduled' | 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {

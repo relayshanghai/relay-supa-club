@@ -40,6 +40,10 @@ export type SequenceStepSendArgs = {
 
 type SequenceSendEventRun = (payload: SequenceStepSendArgs) => Promise<SendResult>;
 
+/**
+ *  if step 0, insert all 4 sequence_email records
+ *  else if step > 0, update the existing sequence_email record
+ */
 const sendAndInsertEmail = async ({
     step,
     sequenceSteps,
@@ -83,7 +87,7 @@ const sendAndInsertEmail = async ({
     if (
         existingSequenceEmail &&
         existingSequenceEmail.email_delivery_status &&
-        existingSequenceEmail.email_delivery_status !== 'Scheduling'
+        existingSequenceEmail.email_delivery_status !== 'Unscheduled'
     ) {
         // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
         if (influencer.funnel_status === 'To Contact') {
@@ -134,7 +138,7 @@ const sendAndInsertEmail = async ({
         const otherSteps = sequenceSteps
             .filter((s) => s.step_number !== 0)
             .sort((a, b) => a.step_number - b.step_number);
-        const schedulingStatus: EmailDeliveryStatus = 'Scheduling';
+        const schedulingStatus: EmailDeliveryStatus = 'Unscheduled';
         const scheduledEmailsPlusNewlyScheduled: Pick<SequenceEmail, 'email_send_at'>[] = [
             ...scheduledEmails,
             { email_send_at: emailSendAt },
