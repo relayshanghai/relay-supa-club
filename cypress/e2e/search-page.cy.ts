@@ -26,7 +26,7 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it.only('can open analyze page', () => {
+    it('can open analyze page', () => {
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.contains('Cocomelon - Nursery Rhymes');
