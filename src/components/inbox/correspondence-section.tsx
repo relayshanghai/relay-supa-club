@@ -75,7 +75,7 @@ export const CorrespondenceSection = ({
     );
 
     return (
-        <div className="h-full">
+        <>
             {loadingSelectedMessages ? (
                 <div className="flex h-full items-center justify-center">
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
@@ -99,6 +99,6 @@ export const CorrespondenceSection = ({
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };

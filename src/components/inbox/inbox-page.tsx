@@ -243,7 +243,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="col-span-3 h-full w-full overflow-auto">
+                        <div className="col-span-3 flex h-full w-full flex-1 flex-col overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -252,30 +252,21 @@ export const InboxPage = () => {
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
                                     />
-                                    {searchResults.length > 0 ? (
-                                        <PreviewSection
-                                            messages={searchResults}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    ) : (
-                                        <PreviewSection
-                                            messages={filteredMessages}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    )}
+
+                                    <PreviewSection
+                                        messages={searchResults.length > 0 ? searchResults : filteredMessages}
+                                        selectedMessages={selectedMessages}
+                                        handleGetThreadEmails={handleGetThreadEmails}
+                                        loadingSelectedMessages={loadingSelectedMessages}
+                                        onSelect={handleSelectPreviewCard}
+                                    />
                                 </>
                             )}
                         </div>
                         <div
                             className={`${
                                 sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
-                            } h-full w-full overflow-auto`}
+                            }   h-full w-full flex-1 overflow-auto`}
                         >
                             {selectedMessages && (
                                 <CorrespondenceSection
@@ -286,7 +277,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                            <div className="col-span-4 h-screen w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}
