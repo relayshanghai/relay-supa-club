@@ -18,14 +18,7 @@ export const handleResError = async (res: ResponseWithError) => {
 
             if (contentType.indexOf('application/json') !== -1) {
                 const json = await res.json();
-                if (json?.error)
-                    throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
-                if (json?.message)
-                    throw new Error(typeof json.message === 'string' ? json.message : JSON.stringify(json.message));
-
-                if (res.statusText) throw new Error(res.statusText);
-                logger(res);
-                throw new Error('Something went wrong with the request.');
+                throw new Error(JSON.stringify(json));
             } else {
                 const text = await res.text();
                 throw new Error(text);

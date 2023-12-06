@@ -70,7 +70,7 @@ const FreeTrialPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error', true); //send to Sentry
             setError(error?.message || t('signup.errorStartingTrial'));
-            if (error?.message === createSubscriptionErrors.alreadySubscribed) {
+            if (error?.message.includes(createSubscriptionErrors.alreadySubscribed)) {
                 await router.push('/boostbot');
             }
             await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
