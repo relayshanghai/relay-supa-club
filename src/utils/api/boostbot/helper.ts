@@ -27,16 +27,16 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
 export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
     const { audience_genders_per_age: audienceDemoData, audience_genders } = influencer;
 
-    const transformAndMergeData = (rawData: GenderPerAge[], genderSearched: 'male' | 'female'): GenderPerAge[] => {
+    const transformAndMergeData = (rawData: GenderPerAge[], searchedGender: 'male' | 'female'): GenderPerAge[] => {
         return rawData.some((audienceData) => audienceData.code === '65-')
             ? rawData.reduce((acc: GenderPerAge[], audienceCategory, index) => {
                   if (audienceCategory.code !== '65-') {
                       acc.push({
                           code: audienceCategory.code === '45-64' ? '45+' : audienceCategory.code,
-                          [genderSearched]:
+                          [searchedGender]:
                               audienceCategory.code === '45-64'
-                                  ? audienceCategory[genderSearched] ?? 0 + (rawData[index + 1][genderSearched] ?? 0)
-                                  : audienceCategory[genderSearched],
+                                  ? audienceCategory[searchedGender] ?? 0 + (rawData[index + 1][searchedGender] ?? 0)
+                                  : audienceCategory[searchedGender],
                       });
                   }
                   return acc;

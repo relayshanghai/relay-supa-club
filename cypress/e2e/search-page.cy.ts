@@ -6,10 +6,10 @@ describe('Dashboard/Search page', () => {
         deleteDB('app-cache');
         setupIntercepts();
         searchIntercepts();
+        cy.loginTestUser();
     });
 
     it('can search for a topic', () => {
-        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
@@ -27,7 +27,6 @@ describe('Dashboard/Search page', () => {
     });
 
     it.only('can open analyze page', () => {
-        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.contains('Cocomelon - Nursery Rhymes');

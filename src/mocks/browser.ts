@@ -23,6 +23,7 @@ import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
 import sophiaCampaignSocialProfiles from './supabase/influencer_social_profile/sophias-campaign.json';
+import { flattenInfluencerData } from 'cypress/e2e/helpers';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
@@ -71,7 +72,7 @@ const frontendHandlers = [
         return res(ctx.json(campaigns));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
-        return res(ctx.json(defaultLandingPageInfluencerSearch));
+        return res(ctx.json(flattenInfluencerData(defaultLandingPageInfluencerSearch)));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/topics`, async (req, res, ctx) => {
         const { term } = await req.json();

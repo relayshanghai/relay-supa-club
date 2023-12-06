@@ -1,6 +1,6 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
-import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
@@ -26,7 +26,6 @@ import type { SequenceInfluencer } from 'src/utils/api/db';
 
 import { flattenInfluencerData, insertSequenceEmails, supabaseClientCypress } from './helpers';
 
-const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;

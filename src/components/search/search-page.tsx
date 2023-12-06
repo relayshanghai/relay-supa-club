@@ -96,7 +96,6 @@ export const SearchPageInner = () => {
     );
 
     const { push } = useRouter();
-
     /**
      * Handle the SearchOptions.onSearch event
      */

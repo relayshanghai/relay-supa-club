@@ -1,5 +1,6 @@
 import { deleteDB } from 'idb';
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
+import { flattenInfluencerData } from './helpers';
 
 describe('Caches SWR requests', () => {
     beforeEach(() => {
@@ -11,13 +12,12 @@ describe('Caches SWR requests', () => {
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
 
-        cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`).click({
             force: true,
         });
-        cy.getByTestId(`analyze-button/${cocomelonId}`)
+        cy.contains(`Unlock Detailed Analysis Report`)
             .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
-
         cy.intercept('/api/creators/report*', (req) => {
             req.reply({ body: cocomelon, delay: 3000 });
         });
@@ -39,7 +39,7 @@ describe('Caches SWR requests', () => {
     it('caches searches on the dashboard', () => {
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
                 delay: 3000,
             });
         });
@@ -50,7 +50,7 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
                 delay: 10000,
             });
         });
