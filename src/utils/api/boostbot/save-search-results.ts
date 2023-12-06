@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { db } from 'src/utils/supabase-client';
 import { insertInfluencers, upsertInfluencerProfiles } from 'src/utils/api/db/calls/influencers-insert';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
@@ -11,11 +10,7 @@ export const saveSearchResults = async (influencers: BoostbotInfluencer[]) => {
         name: i.fullname || i.username || i.handle || i.custom_name || '',
     }));
 
-    console.log('to insert :>> ', influencersToInsert);
     const insertedInfluencers = await db(insertInfluencers)(influencersToInsert);
-
-    console.log('influencers :>> ', influencers);
-    console.log('insertedInfluencers :>> ', insertedInfluencers);
 
     const socialProfilesToInsert = influencers.map((i, index) => ({
         avatar_url: i.picture,
