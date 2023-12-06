@@ -1,9 +1,9 @@
-import { deleteDB } from 'idb';
+import { deleteAppCacheDatabases } from './helpers';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
+        deleteAppCacheDatabases();
         setupIntercepts();
         searchIntercepts();
         cy.loginTestUser();

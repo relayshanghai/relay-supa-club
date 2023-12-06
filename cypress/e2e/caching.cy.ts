@@ -1,10 +1,9 @@
-import { deleteDB } from 'idb';
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
-import { flattenInfluencerData } from './helpers';
+import { deleteAppCacheDatabases, flattenInfluencerData } from './helpers';
 
 describe('Caches SWR requests', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
+        deleteAppCacheDatabases();
         setupIntercepts(); // some will be overwritten
         cy.loginTestUser();
     });
