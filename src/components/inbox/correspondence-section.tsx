@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useUser } from 'src/hooks/use-user';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
@@ -12,6 +12,15 @@ import { ReplyEditor } from './reply-editor';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SendEmailReply } from 'src/utils/analytics/events';
 
+export const findMostRecentMessageFromOtherPerson = (messages: SearchResponseMessage[], userEmail: string) => {
+    const sortedMessages = messages.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    return sortedMessages.find(
+        (message) => message.from?.address.trim().toLowerCase() !== userEmail.trim().toLowerCase(),
+    );
+};
+
 export const CorrespondenceSection = ({
     selectedMessages,
     loadingSelectedMessages,
@@ -23,36 +32,47 @@ export const CorrespondenceSection = ({
     const { profile } = useUser();
     const { track } = useRudderstackTrack();
 
-    const handleSubmit = async (replyMessage: string) => {
-        if (!profile?.email_engine_account_id) {
-            throw new Error('No email account');
-        }
-        if (replyMessage === '') {
-            return;
-        }
-        const replyBody = {
-            reference: {
-                message: selectedMessages[selectedMessages.length - 1].id,
-                action: 'reply',
-                documentStore: true,
-            },
-            html: replaceNewlinesAndTabs(replyMessage),
-        };
-        try {
-            await sendReply(replyBody, profile?.email_engine_account_id);
-            track(SendEmailReply, {
-                sequence_email_address: profile?.sequence_send_email ?? '',
-                email_thread_id: selectedMessages[0].threadId,
-                attachment: false, //TODO V2-703 & V2-971: Attachment not implemented in code yet
-                attachment_types: [],
-                cc: false, //TODO V2-972: CCs not implemented in code yet
-                cc_emails: [],
-            });
-            setReplyMessage('');
-        } catch (error) {
-            clientLogger(error, 'error');
-        }
-    };
+    const handleSubmit = useCallback(
+        async (replyMessage: string) => {
+            if (!profile?.email_engine_account_id) {
+                throw new Error('No email account');
+            }
+            if (replyMessage === '') {
+                return;
+            }
+            const replyToMessage = findMostRecentMessageFromOtherPerson(
+                selectedMessages,
+                profile.email_engine_account_id,
+            );
+            if (!replyToMessage) {
+                throw new Error('No message to reply to');
+            }
+
+            const replyBody = {
+                reference: {
+                    message: replyToMessage.id,
+                    action: 'reply',
+                    documentStore: true,
+                },
+                html: replaceNewlinesAndTabs(replyMessage),
+            };
+            try {
+                await sendReply(replyBody, profile?.email_engine_account_id);
+                track(SendEmailReply, {
+                    sequence_email_address: profile?.sequence_send_email ?? '',
+                    email_thread_id: selectedMessages[0].threadId,
+                    attachment: false, //TODO V2-703 & V2-971: Attachment not implemented in code yet
+                    attachment_types: [],
+                    cc: false, //TODO V2-972: CCs not implemented in code yet
+                    cc_emails: [],
+                });
+                setReplyMessage('');
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
+        },
+        [profile?.email_engine_account_id, profile?.sequence_send_email, selectedMessages, track],
+    );
 
     return (
         <div className="h-full">

@@ -167,16 +167,19 @@ export const InboxPage = () => {
         [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
     );
 
-    const handleSelectedTabChange = (tab: { value: string; name: string }) => {
-        if (!profile || !profile.sequence_send_email) return;
-        track(ChangeInboxFolder, {
-            sequence_email_address: profile.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
-            selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
-            total_unread_emails: messages.filter((message) => message.unseen).length,
-        });
-        setSelectedTab(tab.value);
-    };
+    const handleSelectedTabChange = useCallback(
+        (tab: { value: string; name: string }) => {
+            if (!profile || !profile.sequence_send_email) return;
+            track(ChangeInboxFolder, {
+                sequence_email_address: profile.sequence_send_email,
+                current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
+                selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
+                total_unread_emails: messages.filter((message) => message.unseen).length,
+            });
+            setSelectedTab(tab.value);
+        },
+        [profile, selectedTab, messages, track],
+    );
 
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
