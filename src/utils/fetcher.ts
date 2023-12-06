@@ -18,7 +18,9 @@ export const handleResError = async (res: ResponseWithError) => {
 
             if (contentType.indexOf('application/json') !== -1) {
                 const json = await res.json();
-                throw new Error(JSON.stringify(json));
+                const errorMessage = `${res.status} ${res.statusText} ${json}`;
+                logger(errorMessage);
+                throw new Error(errorMessage);
             } else {
                 const text = await res.text();
                 throw new Error(text);
