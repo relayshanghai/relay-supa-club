@@ -29,7 +29,7 @@ export type SequenceStepSendArgs = {
     sequenceStep: SequenceStep;
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
-    reference: string;
+    reference?: string;
 };
 
 type SequenceSendEventRun = (payload: SequenceStepSendArgs) => Promise<SendResult>;
