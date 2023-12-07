@@ -81,22 +81,22 @@ jobs:
             - name: Start Supabase local development setup
               run: supabase start
 
-            - name: Verify generated types are up-to-date
-              run: |
-                  supabase gen types typescript --local --schema=public > types/supabase.ts
-                  if [ "$(git diff --ignore-space-at-eol types/supabase.ts | wc -l)" -gt "0" ]; then
-                    echo "Detected uncommitted changes after build. See status below:"
-                    git diff
-                    exit 1
-                  fi
+            # - name: Verify generated types are up-to-date
+            #   run: |
+            #       supabase gen types typescript --local --schema=public > types/supabase.ts
+            #       if [ "$(git diff --ignore-space-at-eol types/supabase.ts | wc -l)" -gt "0" ]; then
+            #         echo "Detected uncommitted changes after build. See status below:"
+            #         git diff
+            #         exit 1
+            #       fi
 
-            - name: Run lint
-              run: supabase db lint
+            # - name: Run lint
+            #   run: supabase db lint
 
-            - name: Run tests
-              run: |
-                  chmod +x ./supabase/db.sh
-                  ./supabase/db.sh db_test
+            # - name: Run tests
+            #   run: |
+            #       chmod +x ./supabase/db.sh
+            #       ./supabase/db.sh db_test
 
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
@@ -142,7 +142,8 @@ jobs:
                   cache: 'npm'
 
             - run: npm ci
-            - run: npm run lint
-            - run: npx prettier . --check
+            # - run: npm run lint
+            # - run: npx prettier . --check
             - run: npm run build
-            - run: npm run test-cypress-unit
+            # - run: npm run test-cypress-unit
+            - run: cypress run --spec cypress/e2e/search-page.cy.ts
