@@ -11,7 +11,7 @@ import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-in
 
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
-import { gatherMessageIds, generateReferences } from 'src/utils/api/email-engine/thread-helpers';
+import { gatherMessageIds } from 'src/utils/api/email-engine/thread-helpers';
 import { crumb, serverLogger } from 'src/utils/logger-server';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { db } from 'src/utils/supabase-client';
@@ -29,6 +29,7 @@ export type SequenceStepSendArgs = {
     sequenceStep: SequenceStep;
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
+    reference?: string;
 };
 
 type SequenceSendEventRun = (payload: SequenceStepSendArgs) => Promise<SendResult>;
@@ -63,6 +64,7 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent post url');
     }
 
+    // @note if by this point you are not sure if there's an existing email, you shouldn't be running this function
     // make sure there is not an existing sequence email for this influencer for this step:
     const { data: existingSequenceEmail } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
         influencer.id,
@@ -122,6 +124,7 @@ const sendSequenceStep = async ({
     sequenceStep: step,
     sequenceSteps,
     templateVariables,
+    reference,
 }: SequenceStepSendArgs) => {
     const trackData: SequenceSendPayload = {
         sequence_influencer_id: influencer.id,
@@ -154,7 +157,6 @@ const sendSequenceStep = async ({
         }
 
         const messageIds = gatherMessageIds(influencer.email, sequenceSteps);
-        const references = generateReferences(messageIds, step.step_number);
 
         crumb({ message: 'Get scheduled emails' });
         const scheduledEmails = await db(getSequenceEmailsByEmailEngineAccountId)(account);
@@ -166,7 +168,7 @@ const sendSequenceStep = async ({
                 account,
                 influencer,
                 templateVariables,
-                references,
+                references: reference ?? '',
                 messageId: messageIds[step.step_number],
                 scheduledEmails,
             });
