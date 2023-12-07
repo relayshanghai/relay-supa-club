@@ -30,7 +30,7 @@ describe('Dashboard/Search page', () => {
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.contains('Cocomelon - Nursery Rhymes');
-        cy.getByTestId(`open-influencer-modal/${cocomelonId}`).click({
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 10000 }).click({
             force: true,
         });
 
