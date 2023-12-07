@@ -196,7 +196,6 @@ export const InboxPageDummy = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
                                         />
                                     ) : (
                                         <PreviewSection
@@ -204,7 +203,6 @@ export const InboxPageDummy = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
                                         />
                                     )}
                                 </>
