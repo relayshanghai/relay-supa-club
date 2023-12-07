@@ -40,7 +40,7 @@ export const OpenInfluencerModalCell = ({
     if (table.options.meta?.isLoading) return <></>;
 
     return (
-        <div data-testid={`open-influencer-modal/${row.original.user_id}`} className="cursor-pointer">
+        <div data-testid={`open-influencer-modal`} className="cursor-pointer">
             <ReportOutline className="stroke-gray-400 stroke-2" onClick={handleIconClick} />
         </div>
     );
