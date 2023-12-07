@@ -21,7 +21,7 @@ export const supabaseClientCypress = () => {
 };
 
 export async function deleteAppCacheDatabases() {
-    deleteDB('app-store');
+    await deleteDB('app-store');
     const databases = await window.indexedDB.databases();
     for (const db of databases) {
         if (db.name && db.name.includes('app-cache')) {
