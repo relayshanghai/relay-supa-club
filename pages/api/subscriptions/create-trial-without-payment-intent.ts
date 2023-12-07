@@ -2,12 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { ApiHandler } from 'src/utils/api-handler';
-import {
-    getCompanyCusId,
-    updateCompanySubscriptionStatus,
-    updateCompanyUsageLimits,
-    updateCompany,
-} from 'src/utils/api/db';
+import { updateCompanySubscriptionStatus, updateCompanyUsageLimits, updateCompany } from 'src/utils/api/db';
 import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRODUCT_ID_DISCOVERY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
@@ -16,27 +11,24 @@ import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata } from 'types';
 
 export type SubscriptionCreateTrialPostBody = {
-    company_id: string;
+    companyId: string;
+    cusId: string;
 };
 
 export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     // Check the request method
-    const { companyId, termsChecked } = req.body;
+    const { companyId, cusId } = req.body as SubscriptionCreateTrialPostBody;
 
     if (!companyId) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
     }
-
-    if (!termsChecked) {
-        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.termsNotChecked });
+    if (!cusId) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
     }
-    await updateCompany({ id: companyId, terms_accepted: termsChecked });
-    const { data, error } = await getCompanyCusId(companyId);
-    const cusId = data?.cus_id;
-    if (error) throw error;
-    if (!cusId) throw new Error('No data');
+
+    await updateCompany({ id: companyId, terms_accepted: true });
 
     const subscriptions = await stripeClient.subscriptions.list({
         customer: cusId,
@@ -115,7 +107,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
         subscription_plan: 'Discovery',
     });
 
-    return res.status(httpCodes.OK).json(subscription);
+    const returnData: SubscriptionCreateTrialResponse = subscription;
+
+    return res.status(httpCodes.OK).json(returnData);
 }
 
 export default ApiHandler({
