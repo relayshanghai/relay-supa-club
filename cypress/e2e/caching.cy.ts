@@ -7,7 +7,7 @@ describe('Caches SWR requests', () => {
         deleteAppCacheDatabases();
     });
     it('caches reports from `use-report`', () => {
-        cy.loginTestUser();
+        cy.loginTeammate();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.wait(30000);

@@ -91,10 +91,11 @@ Cypress.Commands.add('loginAdmin', loginAdmin);
 function loginExpired(switchLangToEnglish = true) {
     loginTestUser('company_owner', switchLangToEnglish, true);
 }
+Cypress.Commands.add('loginExpired', loginExpired);
 function loginTeammate(switchLangToEnglish = true) {
     loginTestUser('company_teammate', switchLangToEnglish, true);
 }
-Cypress.Commands.add('loginExpired', loginExpired);
+Cypress.Commands.add('loginTeammate', loginTeammate);
 
 function switchToEnglish() {
     localStorage.setItem('language', 'en-US');
