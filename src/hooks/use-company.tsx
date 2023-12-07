@@ -160,9 +160,10 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
     const isExpired = useMemo(
         () =>
-            company?.subscription_status === 'canceled' &&
-            company?.subscription_end_date &&
-            new Date().toISOString() >= company?.subscription_end_date
+            company?.subscription_status === 'paused' ||
+            (company?.subscription_status === 'canceled' &&
+                company?.subscription_end_date &&
+                new Date().toISOString() >= company?.subscription_end_date)
                 ? true
                 : false,
         [company],
