@@ -24,7 +24,7 @@ import type { MessagesGetMessage } from 'types/email-engine/account-account-mess
 import { Spinner } from '../icons';
 import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
-import { CorrespondenceSection } from './correspondence-section';
+import { CorrespondenceSection, findMostRecentMessageFromOtherPerson } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
 import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
@@ -33,6 +33,7 @@ import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-no
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { mapProfileToFormData } from './helpers';
 import inboxTranslation from 'i18n/en/inbox';
+import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -181,9 +182,17 @@ export const InboxPage = () => {
         [profile, selectedTab, messages, track],
     );
 
-    const handleSelectPreviewCard = useCallback(
-        async (message: MessagesGetMessage) => {
-            if (!profile) return;
+    // set the sequence influencer when the user clicks on a message
+    useEffect(() => {
+        if (!selectedMessages || selectedMessages.length === 0 || !profile?.email_engine_account_id) {
+            setSequenceInfluencer(null);
+            return;
+        }
+        const influencerSentEmail = findMostRecentMessageFromOtherPerson(
+            selectedMessages,
+            profile.email_engine_account_id,
+        );
+        const findInfluencer = async (message: SearchResponseMessage) => {
             try {
                 const influencer = await getSequenceInfluencerByEmailAndCompany(
                     message.from.address,
@@ -191,11 +200,17 @@ export const InboxPage = () => {
                 );
                 const influencerFull = await getSequenceInfluencer(influencer.id);
                 setSequenceInfluencer(influencerFull);
-                // @note avoid try..catch hell. influencer should have been a monad
-            } catch (error) {}
-        },
-        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
-    );
+            } catch (error) {
+                setSequenceInfluencer(null);
+                clientLogger(error);
+            }
+        };
+        if (influencerSentEmail) {
+            findInfluencer(influencerSentEmail);
+        } else {
+            setSequenceInfluencer(null);
+        }
+    }, [getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany, profile, selectedMessages]);
 
     const handleNoteListOpen = useCallback(() => {
         if (!sequenceInfluencer) return;
@@ -229,9 +244,8 @@ export const InboxPage = () => {
     useEffect(() => {
         if (!selectedMessages && messages.length > 0) {
             handleGetThreadEmails(messages[0]);
-            handleSelectPreviewCard(messages[0]);
         }
-    }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
+    }, [messages, handleGetThreadEmails, selectedMessages]);
 
     return (
         <Layout>
@@ -258,7 +272,6 @@ export const InboxPage = () => {
                                         selectedMessages={selectedMessages}
                                         handleGetThreadEmails={handleGetThreadEmails}
                                         loadingSelectedMessages={loadingSelectedMessages}
-                                        onSelect={handleSelectPreviewCard}
                                     />
                                 </>
                             )}
@@ -266,7 +279,7 @@ export const InboxPage = () => {
                         <div
                             className={`${
                                 sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
-                            }   h-full w-full flex-1 overflow-auto`}
+                            } h-full w-full flex-1 overflow-auto`}
                         >
                             {selectedMessages && (
                                 <CorrespondenceSection
@@ -277,7 +290,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-4 h-screen w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                            <div className="col-span-4 h-full w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}
