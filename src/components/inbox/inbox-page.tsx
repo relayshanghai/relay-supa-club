@@ -31,7 +31,7 @@ import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list
 import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { mapProfileToFormData } from './helpers';
+import { findOtherPeopleInThread, mapProfileToFormData } from './helpers';
 import inboxTranslation from 'i18n/en/inbox';
 
 export const InboxPage = () => {
@@ -167,32 +167,50 @@ export const InboxPage = () => {
         [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
     );
 
-    const handleSelectedTabChange = (tab: { value: string; name: string }) => {
-        if (!profile || !profile.sequence_send_email) return;
-        track(ChangeInboxFolder, {
-            sequence_email_address: profile.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
-            selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
-            total_unread_emails: messages.filter((message) => message.unseen).length,
-        });
-        setSelectedTab(tab.value);
-    };
-
-    const handleSelectPreviewCard = useCallback(
-        async (message: MessagesGetMessage) => {
-            if (!profile) return;
-            try {
-                const influencer = await getSequenceInfluencerByEmailAndCompany(
-                    message.from.address,
-                    profile.company_id,
-                );
-                const influencerFull = await getSequenceInfluencer(influencer.id);
-                setSequenceInfluencer(influencerFull);
-                // @note avoid try..catch hell. influencer should have been a monad
-            } catch (error) {}
+    const handleSelectedTabChange = useCallback(
+        (tab: { value: string; name: string }) => {
+            if (!profile || !profile.sequence_send_email) return;
+            track(ChangeInboxFolder, {
+                sequence_email_address: profile.sequence_send_email,
+                current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
+                selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
+                total_unread_emails: messages.filter((message) => message.unseen).length,
+            });
+            setSelectedTab(tab.value);
         },
-        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
+        [profile, selectedTab, messages, track],
     );
+
+    // set the sequence influencer when the user clicks on a message and the selectedMessages state is updated
+    useEffect(() => {
+        if (!selectedMessages || selectedMessages.length === 0 || !profile?.email_engine_account_id) {
+            setSequenceInfluencer(null);
+            return;
+        }
+        const potentialInfluencerEmails = findOtherPeopleInThread(selectedMessages, profile.email_engine_account_id);
+
+        const findInfluencer = async (emails: string[]) => {
+            let influencer: SequenceInfluencerManagerPage | null = null;
+            for (const email of emails) {
+                try {
+                    const foundInfluencer = await getSequenceInfluencerByEmailAndCompany(email, profile.company_id);
+                    if (foundInfluencer) {
+                        influencer = foundInfluencer;
+                        break;
+                    }
+                } catch (error) {
+                    clientLogger(error);
+                }
+            }
+            setSequenceInfluencer(influencer);
+        };
+
+        if (potentialInfluencerEmails.length > 0) {
+            findInfluencer(potentialInfluencerEmails);
+        } else {
+            setSequenceInfluencer(null);
+        }
+    }, [getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany, profile, selectedMessages]);
 
     const handleNoteListOpen = useCallback(() => {
         if (!sequenceInfluencer) return;
@@ -226,9 +244,8 @@ export const InboxPage = () => {
     useEffect(() => {
         if (!selectedMessages && messages.length > 0) {
             handleGetThreadEmails(messages[0]);
-            handleSelectPreviewCard(messages[0]);
         }
-    }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
+    }, [messages, handleGetThreadEmails, selectedMessages]);
 
     return (
         <Layout>
@@ -240,7 +257,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="col-span-3 h-full w-full overflow-auto">
+                        <div className="col-span-3 flex h-full w-full flex-1 flex-col overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -249,30 +266,20 @@ export const InboxPage = () => {
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
                                     />
-                                    {searchResults.length > 0 ? (
-                                        <PreviewSection
-                                            messages={searchResults}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    ) : (
-                                        <PreviewSection
-                                            messages={filteredMessages}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    )}
+
+                                    <PreviewSection
+                                        messages={searchResults.length > 0 ? searchResults : filteredMessages}
+                                        selectedMessages={selectedMessages}
+                                        handleGetThreadEmails={handleGetThreadEmails}
+                                        loadingSelectedMessages={loadingSelectedMessages}
+                                    />
                                 </>
                             )}
                         </div>
                         <div
                             className={`${
                                 sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
-                            } h-full w-full overflow-auto`}
+                            } h-full w-full flex-1 overflow-auto`}
                         >
                             {selectedMessages && (
                                 <CorrespondenceSection
@@ -283,7 +290,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                            <div className="col-span-4 h-full w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}

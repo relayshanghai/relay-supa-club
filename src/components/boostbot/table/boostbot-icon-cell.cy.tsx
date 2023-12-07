@@ -3,12 +3,14 @@ import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 import boostbotGetInfluencers from '../../../mocks/api/boostbot/get-influencers.json';
 import type { Row } from '@tanstack/react-table';
 import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import { worker } from 'src/mocks/browser';
 
 describe('<OpenInfluencerModalCell />', () => {
     let setIsInfluencerDetailsModalOpen: (open: boolean) => void;
     let setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
 
     beforeEach(() => {
+        worker.start();
         setIsInfluencerDetailsModalOpen = cy.stub();
         setSelectedRow = cy.stub();
     });
