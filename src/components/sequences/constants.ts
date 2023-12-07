@@ -31,12 +31,12 @@ export const sequencesIndexColumns: SequenceIndexColumn[] = [
     'sequenceActions',
 ];
 
-export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Scheduling' | 'Ignored';
+export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Ignored';
 
 export const EMAIL_STATUS_STYLES: {
     [key in EmailStatus]: { style: string };
 } = {
-    Scheduling: { style: 'bg-yellow-100 text-yellow-500' },
+    Unscheduled: { style: 'bg-yellow-100 text-yellow-500' },
     Scheduled: { style: 'bg-primary-100 text-primary-500' },
     Delivered: { style: 'bg-blue-100 text-blue-500' },
     Opened: { style: 'bg-pink-100 text-pink-500' },

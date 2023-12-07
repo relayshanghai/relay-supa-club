@@ -16,7 +16,7 @@ import { EMAIL_STATUS_STYLES, type EmailStatus } from './constants';
 export const EMAIL_STATUS_ICONS: {
     [key in EmailStatus]: JSX.Element;
 } = {
-    Scheduling: <CalendarSearch className="h-4 w-4 stroke-yellow-500" />,
+    Unscheduled: <CalendarSearch className="h-4 w-4 stroke-yellow-500" />,
     Scheduled: <CalendarCheck className="h-4 w-4 stroke-primary-500" />,
     Delivered: <EmailCheck className="h-4 w-4 stroke-blue-500" />,
     Opened: <EmailOpenOutline className="h-4 w-4 stroke-pink-500" />,
