@@ -26,7 +26,7 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it.only('can open analyze page', async () => {
+    it('can open analyze page', async () => {
         await deleteAppCacheDatabases();
         cy.loginTestUser();
         cy.visit('/dashboard');
