@@ -30,7 +30,7 @@ describe('Dashboard/Search page', () => {
 
     it('can search for a topic', async () => {
         await deleteAppCacheDatabases();
-        cy.loginTestUser();
+        cy.loginTeammate();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
