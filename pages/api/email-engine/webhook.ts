@@ -616,6 +616,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 sequenceStep: nextStep,
                 sequenceSteps,
                 templateVariables,
+                reference: event.data.messageId,
             };
             trackData.extra_info.next_sequence_email_payload = payload;
             const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {

@@ -10,6 +10,7 @@ export type SessionIds = {
     company_id?: string | null;
     fullname?: string;
     email?: string | null;
+    number?: string | null;
 };
 
 /**
@@ -34,6 +35,7 @@ export const getUserSession = (db: SupabaseClient) => async () => {
         data.company_id = profile.company_id;
         data.fullname = profile.first_name + ' ' + profile.last_name;
         data.email = profile.email;
+        data.number = profile.phone;
     }
 
     return data;
