@@ -24,16 +24,15 @@ import type { MessagesGetMessage } from 'types/email-engine/account-account-mess
 import { Spinner } from '../icons';
 import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
-import { CorrespondenceSection, findMostRecentMessageFromOtherPerson } from './correspondence-section';
+import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
 import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { mapProfileToFormData } from './helpers';
+import { findOtherPeopleInThread, mapProfileToFormData } from './helpers';
 import inboxTranslation from 'i18n/en/inbox';
-import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -182,31 +181,32 @@ export const InboxPage = () => {
         [profile, selectedTab, messages, track],
     );
 
-    // set the sequence influencer when the user clicks on a message
+    // set the sequence influencer when the user clicks on a message and the selectedMessages state is updated
     useEffect(() => {
         if (!selectedMessages || selectedMessages.length === 0 || !profile?.email_engine_account_id) {
             setSequenceInfluencer(null);
             return;
         }
-        const influencerSentEmail = findMostRecentMessageFromOtherPerson(
-            selectedMessages,
-            profile.email_engine_account_id,
-        );
-        const findInfluencer = async (message: SearchResponseMessage) => {
-            try {
-                const influencer = await getSequenceInfluencerByEmailAndCompany(
-                    message.from.address,
-                    profile.company_id,
-                );
-                const influencerFull = await getSequenceInfluencer(influencer.id);
-                setSequenceInfluencer(influencerFull);
-            } catch (error) {
-                setSequenceInfluencer(null);
-                clientLogger(error);
+        const potentialInfluencerEmails = findOtherPeopleInThread(selectedMessages, profile.email_engine_account_id);
+
+        const findInfluencer = async (emails: string[]) => {
+            let influencer: SequenceInfluencerManagerPage | null = null;
+            for (const email of emails) {
+                try {
+                    const foundInfluencer = await getSequenceInfluencerByEmailAndCompany(email, profile.company_id);
+                    if (foundInfluencer) {
+                        influencer = foundInfluencer;
+                        break;
+                    }
+                } catch (error) {
+                    clientLogger(error);
+                }
             }
+            setSequenceInfluencer(influencer);
         };
-        if (influencerSentEmail) {
-            findInfluencer(influencerSentEmail);
+
+        if (potentialInfluencerEmails.length > 0) {
+            findInfluencer(potentialInfluencerEmails);
         } else {
             setSequenceInfluencer(null);
         }

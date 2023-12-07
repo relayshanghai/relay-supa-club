@@ -11,15 +11,7 @@ import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SendEmailReply } from 'src/utils/analytics/events';
-
-export const findMostRecentMessageFromOtherPerson = (messages: SearchResponseMessage[], userEmail: string) => {
-    const sortedMessages = messages.sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
-    return sortedMessages.find(
-        (message) => message.from?.address.trim().toLowerCase() !== userEmail.trim().toLowerCase(),
-    );
-};
+import { findMostRecentMessageFromOtherPerson } from './helpers';
 
 export const CorrespondenceSection = ({
     selectedMessages,
