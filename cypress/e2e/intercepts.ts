@@ -47,6 +47,7 @@ interface InterceptOptions {
 export const setupIntercepts = (options?: InterceptOptions) => {
     const supabase = supabaseClientCypress();
     // IQData intercepts
+    cy.intercept('/api/track*', { body: { success: true } });
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });

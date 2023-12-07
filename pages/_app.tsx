@@ -17,6 +17,7 @@ import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
+import { nanoid } from 'nanoid';
 
 function MyApp({
     Component,
@@ -25,7 +26,6 @@ function MyApp({
     initialSession: Session;
 }>) {
     const [lang, setLang] = useState(i18n.language);
-
     useEffect(() => {
         rudderInitialized();
     }, []); //enable rudderstack Analytics
@@ -57,6 +57,12 @@ function MyApp({
                 }
             }
             const referer = urlParams.get('ref');
+            const deviceId = urlParams.get('device_id');
+            if (deviceId) {
+                localStorage.setItem('deviceId', deviceId);
+            } else {
+                localStorage.setItem('deviceId', nanoid());
+            }
             referer === 'producthunt' && localStorage.setItem('referer', referer);
         }
     }, []);
