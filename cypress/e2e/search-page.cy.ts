@@ -27,7 +27,6 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can open analyze page', async () => {
-        await deleteAppCacheDatabases();
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
