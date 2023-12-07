@@ -1,4 +1,3 @@
-import { deleteAppCacheDatabases } from './helpers';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
@@ -8,7 +7,6 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can search for a topic', async () => {
-        await deleteAppCacheDatabases();
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
@@ -27,7 +25,6 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can open analyze page', async () => {
-        await deleteAppCacheDatabases();
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
