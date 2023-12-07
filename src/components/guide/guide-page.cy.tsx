@@ -7,7 +7,7 @@ import { GuideCards, GuideComponent } from './index';
 import guidePage from 'i18n/en/guide';
 import { worker } from 'src/mocks/browser';
 
-describe.skip('GuideComponent', () => {
+describe('GuideComponent', () => {
     beforeEach(() => {
         worker.start();
     });
@@ -29,7 +29,7 @@ describe.skip('GuideComponent', () => {
     });
 });
 
-describe.skip('GuideCards', () => {
+describe('GuideCards', () => {
     beforeEach(() => {
         worker.start();
     });
