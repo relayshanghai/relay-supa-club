@@ -41,6 +41,7 @@ declare global {
             loginTestUser: typeof loginTestUser;
             loginAdmin: typeof loginAdmin;
             loginExpired: typeof loginExpired;
+            loginTeammate: typeof loginTeammate;
             switchToEnglish: typeof switchToEnglish;
             mount: typeof mount;
         }
@@ -89,6 +90,9 @@ Cypress.Commands.add('loginAdmin', loginAdmin);
 
 function loginExpired(switchLangToEnglish = true) {
     loginTestUser('company_owner', switchLangToEnglish, true);
+}
+function loginTeammate(switchLangToEnglish = true) {
+    loginTestUser('company_teammate', switchLangToEnglish, true);
 }
 Cypress.Commands.add('loginExpired', loginExpired);
 

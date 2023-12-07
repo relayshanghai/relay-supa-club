@@ -4,10 +4,10 @@ import { deleteAppCacheDatabases, flattenInfluencerData } from './helpers';
 describe('Caches SWR requests', () => {
     beforeEach(() => {
         setupIntercepts(); // some will be overwritten
-        cy.loginTestUser();
         deleteAppCacheDatabases();
     });
     it('caches reports from `use-report`', () => {
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.wait(30000);
@@ -35,6 +35,7 @@ describe('Caches SWR requests', () => {
         // cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
     it('caches searches on the dashboard', () => {
+        cy.loginTestUser();
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
                 body: flattenInfluencerData(defaultLandingPageInfluencerSearch),

@@ -10,7 +10,7 @@ export default defineConfig({
             // implement node event listeners here
             config.env = {
                 TEST_USER_EMAIL_COMPANY_OWNER: 'william.edward.douglas@blue-moonlight-stream.com',
-                TEST_USER_EMAIL_COMPANY_TEAMMATE: 'william.edward.douglas@blue-moonlight-stream.com',
+                TEST_USER_EMAIL_COMPANY_TEAMMATE: 'christopher.david.thompson@blue-moonlight-stream.com',
                 TEST_USER_EMAIL_RELAY_EMPLOYEE: 'jacob@relay.club',
                 TEST_USER_EMAIL_EXPIRED: 'expired_user@expired.com',
                 TEST_USER_PASSWORD: 'password123!',
