@@ -41,7 +41,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         data: conversation,
         mutate: refreshConversation,
         isLoading: isConversationLoading,
-    } = useSWR(profile?.id, getBoostbotConversation);
+    } = useSWR(profile?.id ? [profile.id, 'get-boostbot-conversation'] : null, getBoostbotConversation);
 
     const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);
     const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
