@@ -7,26 +7,8 @@ describe('Dashboard/Search page', () => {
         searchIntercepts();
     });
 
-    it('can search for a topic', async () => {
-        await deleteAppCacheDatabases();
-        cy.loginTestUser();
-        cy.visit('/dashboard');
-        cy.contains('Search by Topics', { timeout: 10000 });
-        cy.getByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators');
-            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
-        });
-
-        // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
-        cy.contains('alligators').click();
-
-        cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
-        cy.contains('button', 'Search').click();
-
-        cy.contains('Brave Wilderness'); // the first influencer search result for alligators
-    });
-
     it('can open analyze page', async () => {
+        await deleteAppCacheDatabases();
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
@@ -44,6 +26,25 @@ describe('Dashboard/Search page', () => {
         cy.contains('Cocomelon - Nursery Rhymes');
         cy.contains('Similar Influencers');
         cy.contains('Shorts Factory');
+    });
+
+    it('can search for a topic', async () => {
+        await deleteAppCacheDatabases();
+        cy.loginTestUser();
+        cy.visit('/dashboard');
+        cy.contains('Search by Topics', { timeout: 10000 });
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
+        });
+
+        // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
+        cy.contains('alligators').click();
+
+        cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
+        cy.contains('button', 'Search').click();
+
+        cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 });
 
