@@ -32,7 +32,7 @@ describe('<OpenInfluencerModalCell />', () => {
             />,
         );
 
-        cy.getByTestId('boostbot-open-modal-icon').click({ force: true });
+        cy.getByTestId(`open-influencer-modal/${influencer.user_id}`).click({ force: true });
         cy.wrap(setIsInfluencerDetailsModalOpen).should('have.been.called');
     });
 });
