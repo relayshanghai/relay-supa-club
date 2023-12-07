@@ -29,6 +29,8 @@ import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
+import { QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
+import { now } from 'src/utils/datetime';
 
 export type SequenceStepSendArgs = {
     emailEngineAccountId: string;
@@ -110,8 +112,9 @@ const sendAndInsertEmail = async ({
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
-    const emailSendAt =
-        existingSequenceEmail?.email_send_at ?? calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
+    const emailSendAt = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
+        ? now() // send immediately
+        : existingSequenceEmail?.email_send_at ?? calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
 
     const res = await sendTemplateEmail({
         account,
@@ -137,7 +140,7 @@ const sendAndInsertEmail = async ({
             email_send_at: emailSendAt,
             email_engine_account_id: account,
         };
-        const otherSteps = sequenceSteps
+        const followUpSteps = sequenceSteps
             .filter((s) => s.step_number !== 0)
             .sort((a, b) => a.step_number - b.step_number);
         const schedulingStatus: EmailDeliveryStatus = 'Unscheduled';
@@ -145,10 +148,12 @@ const sendAndInsertEmail = async ({
             ...scheduledEmails,
             { email_send_at: emailSendAt },
         ];
-        const otherInserts: SequenceEmailInsert[] = [];
-        otherSteps.forEach((s) => {
-            const email_send_at = calculateSendAt(s.wait_time_hours, scheduledEmailsPlusNewlyScheduled).toISOString();
-            otherInserts.push({
+        const followupEmailInserts: SequenceEmailInsert[] = [];
+        followUpSteps.forEach((s) => {
+            const email_send_at = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
+                ? now() // send immediately
+                : calculateSendAt(s.wait_time_hours, scheduledEmailsPlusNewlyScheduled).toISOString();
+            followupEmailInserts.push({
                 sequence_influencer_id: influencer.id,
                 sequence_id: influencer.sequence_id,
                 email_engine_account_id: account,
@@ -161,7 +166,7 @@ const sendAndInsertEmail = async ({
             scheduledEmailsPlusNewlyScheduled.push({ email_send_at });
         });
 
-        await db(insertSequenceEmailsCall)([outreachStepInsert, ...otherInserts]);
+        await db(insertSequenceEmailsCall)([outreachStepInsert, ...followupEmailInserts]);
     } else {
         if (!existingSequenceEmail) {
             serverLogger(new Error('No existing sequence email found'));
