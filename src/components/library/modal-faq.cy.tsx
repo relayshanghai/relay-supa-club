@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { FaqModal } from './modal-faq';
+import { worker } from 'src/mocks/browser';
 
 const faqs = [
     {
@@ -16,6 +17,9 @@ const faqs = [
 const title = 'Your Frequently Asked Questions';
 
 describe('<Faq />', () => {
+    beforeEach(() => {
+        worker.start();
+    });
     it('displays the title and the faqs', () => {
         testMount(<FaqModal visible={true} onClose={() => null} content={faqs} title={title} source="Cypress" />);
         cy.contains(title);

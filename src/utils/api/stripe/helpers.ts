@@ -32,6 +32,14 @@ export const getSubscription = async (companyId: string) => {
         });
         subscription = trial.data[0] as StripeSubscriptionWithPlan | undefined;
     }
+    if (!subscription) {
+        const paused = await stripeClient.subscriptions.list({
+            customer: cusId,
+            status: 'paused',
+            expand: ['data.plan.product'],
+        });
+        subscription = paused.data[0] as StripeSubscriptionWithPlan | undefined;
+    }
     return subscription;
 };
 

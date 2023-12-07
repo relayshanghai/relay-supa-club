@@ -40,7 +40,7 @@ Example response:
     { "topic_en": "Ethnic Themes", "topic_zh": "民族主题", "relevance": 0.34 }
 ]
 
-Only respond in JSON format with the 7 object as an array. Do not respond with any other text.
+Only respond in JSON format with the 7 objects as an array. Do not respond with any other text.
 `;
 
     const userPrompt = `Influencer topics: "${JSON.stringify(topics)}"`;

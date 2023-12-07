@@ -5,8 +5,12 @@ import { testMount } from 'src/utils/cypress-app-wrapper';
 import type { GuideCardKey } from './index';
 import { GuideCards, GuideComponent } from './index';
 import guidePage from 'i18n/en/guide';
+import { worker } from 'src/mocks/browser';
 
 describe.skip('GuideComponent', () => {
+    beforeEach(() => {
+        worker.start();
+    });
     Object.keys(guidePage.modalInfo).forEach((_section) => {
         const section = Object.keys(guidePage.modalInfo).find((key) => key === _section) as GuideCardKey;
         const cardDetails = guidePage.cards[section];
@@ -26,6 +30,9 @@ describe.skip('GuideComponent', () => {
 });
 
 describe.skip('GuideCards', () => {
+    beforeEach(() => {
+        worker.start();
+    });
     Object.keys(guidePage.cards).forEach((_section) => {
         const section = Object.keys(guidePage.cards).find((key) => key === _section) as GuideCardKey;
         const sectionDetails = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];

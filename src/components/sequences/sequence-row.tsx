@@ -56,7 +56,7 @@ interface SequenceRowProps {
 const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
     sequenceEmail?.email_delivery_status === 'Delivered'
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
-        : sequenceEmail?.email_delivery_status ?? 'Scheduling';
+        : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,

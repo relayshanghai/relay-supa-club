@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { isDev } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
@@ -138,6 +139,19 @@ const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
+const trakingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'cn.boostbot.ai'];
+
+const allowTrackingCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    if (origin && origin.includes('localhost') && isDev()) {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && trakingAllowList.some((allowed) => origin.includes(allowed))) {
+        res.headers.set('Access-Control-Allow-Origin', origin);
+    }
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
+    return res;
+};
+
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
@@ -181,7 +195,8 @@ export async function middleware(req: NextRequest) {
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
-
+    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
+        return allowTrackingCors(req, res);
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
 
@@ -261,6 +276,6 @@ export const config = {
          * - api/company/exists
          * - api/jobs/run
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run/*).*)',
     ],
 };

@@ -74,6 +74,12 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
         return res(ctx.json(flattenInfluencerData(defaultLandingPageInfluencerSearch)));
     }),
+    rest.post(`${APP_URL_CYPRESS}/api/track`, (req, res, ctx) => {
+        return res(ctx.json({ success: true }));
+    }),
+    rest.post(`${APP_URL_CYPRESS}/api/tracking`, (req, res, ctx) => {
+        return res(ctx.json({ success: true }));
+    }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/topics`, async (req, res, ctx) => {
         const { term } = await req.json();
         return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));

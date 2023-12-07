@@ -110,7 +110,9 @@ const deleteScheduledEmails = async (
         // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
-        const toDelete = sequenceEmails.filter((email) => email.email_delivery_status === 'Scheduled');
+        const toDelete = sequenceEmails.filter(
+            (email) => email.email_delivery_status === 'Scheduled' || email.email_delivery_status === 'Unscheduled',
+        );
         const outbox = await getOutbox();
         // If there are any scheduled emails in the outbox to this address, cancel them
         const scheduledMessages = getScheduledMessages(outbox, toDelete);
@@ -614,6 +616,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 sequenceStep: nextStep,
                 sequenceSteps,
                 templateVariables,
+                reference: event.data.messageId,
             };
             trackData.extra_info.next_sequence_email_payload = payload;
             const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
