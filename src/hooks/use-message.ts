@@ -7,10 +7,6 @@ import { useUser } from './use-user';
 
 export const useMessages = () => {
     const { profile } = useUser();
-    const body: ListEmailsPostRequestBody = {
-        account: profile?.email_engine_account_id || '',
-        mailboxPath: GMAIL_INBOX,
-    };
 
     const {
         data: inboxMessages,
@@ -18,12 +14,17 @@ export const useMessages = () => {
         isLoading,
         error,
     } = useSWR(
-        profile?.email_engine_account_id ? 'email-engine/list-emails' : null,
-        () =>
-            nextFetch<ListEmailsPostResponseBody>('email-engine/list-emails', {
+        profile?.email_engine_account_id ? [profile?.email_engine_account_id, 'email-engine/list-emails'] : null,
+        async ([account, path]) => {
+            const body: ListEmailsPostRequestBody = {
+                account,
+                mailboxPath: GMAIL_INBOX,
+            };
+            return await nextFetch<ListEmailsPostResponseBody>(path, {
                 method: 'POST',
                 body,
-            }),
+            });
+        },
         {
             refreshInterval: 30000, // 30 seconds
         },

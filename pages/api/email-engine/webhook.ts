@@ -612,7 +612,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
             const payload: SequenceStepSendArgs = {
                 emailEngineAccountId: event.account,
-                sequenceInfluencer: sequenceInfluencer,
+                sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
                 sequenceStep: nextStep,
                 sequenceSteps,
                 templateVariables,
