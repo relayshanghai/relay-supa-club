@@ -19,14 +19,11 @@ export const useSequenceEmails = (sequenceId?: string) => {
         data: sequenceEmails,
         mutate: refreshSequenceEmails,
         isLoading,
-    } = useSWR(sequenceId ? [sequenceId, 'sequence_email'] : null, ([sequenceId]) =>
-        getSequenceEmailsBySequenceDBCall(sequenceId),
-    );
+    } = useSWR(sequenceId ? [sequenceId, 'sequence_email'] : null, ([id]) => getSequenceEmailsBySequenceDBCall(id));
 
     const getAllSequenceEmailsDBCall = useDB<typeof getAllSequenceEmailsCall>(getAllSequenceEmailsCall);
-    const { data: allSequenceEmails } = useSWR(
-        allSequenceIds ? [allSequenceIds, 'sequence_email'] : null,
-        ([allSequenceIds]) => getAllSequenceEmailsDBCall(allSequenceIds),
+    const { data: allSequenceEmails } = useSWR(allSequenceIds ? [allSequenceIds, 'sequence_email'] : null, ([ids]) =>
+        getAllSequenceEmailsDBCall(ids),
     );
 
     return {

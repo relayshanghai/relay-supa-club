@@ -15,10 +15,12 @@ import { useCompany } from './use-company';
 export const useInvites = () => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const { data: invites, mutate: refreshUsages } = useSWR(company?.id ? 'invites' : null, (path) =>
-        nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
-            id: company?.id ?? '',
-        }),
+    const { data: invites, mutate: refreshUsages } = useSWR(
+        company?.id ? [company.id, 'invites'] : null,
+        ([id, path]) =>
+            nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
+                id,
+            }),
     );
 
     const createInvite = useCallback(

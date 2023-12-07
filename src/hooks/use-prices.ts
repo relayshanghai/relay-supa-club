@@ -82,7 +82,7 @@ export const usePrices = () => {
         },
     };
 
-    const { data: prices } = useSWR(['prices'], async () => {
+    const { data: prices } = useSWR(['prices', en], async () => {
         try {
             const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.

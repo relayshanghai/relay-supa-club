@@ -96,89 +96,93 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         setLoading(isLoading);
     }, [isLoading]);
 
-    const { data: profile, mutate: refreshProfile } = useSWR(session?.user.id ? 'profiles' : null, async () => {
-        if (getProfileController.current) {
-            getProfileController.current.abort();
-        }
-        const controller = new AbortController();
-        getProfileController.current = controller;
-        if (!session?.user.id) {
-            return;
-        }
-        const { data: fetchedProfile, error } = await getProfileById(
-            session.user.id,
-            getProfileController.current?.signal,
-        );
-        if (error) {
-            clientLogger(error, 'error');
-            throw new Error(error.message || 'Unknown error');
-        }
-        return fetchedProfile;
-    });
+    const { data: profile, mutate: refreshProfile } = useSWR(
+        session?.user.id ? [session.user.id, 'profiles'] : null,
+        async ([userId]) => {
+            if (getProfileController.current) {
+                getProfileController.current.abort();
+            }
+            const controller = new AbortController();
+            getProfileController.current = controller;
 
-    const login = async (email: string, password: string) => {
-        setLoading(true);
-        try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
+            const { data: fetchedProfile, error } = await getProfileById(userId, getProfileController.current?.signal);
+            if (error) {
+                clientLogger(error, 'error');
+                throw new Error(error.message || 'Unknown error');
+            }
+            return fetchedProfile;
+        },
+    );
+
+    const login = useCallback(
+        async (email: string, password: string) => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
+                if (error) throw new Error(error.message || 'Unknown error');
+                trackEvent('Log In', { email: email, total_sessions: 1 });
+                return data;
+            } catch (e: unknown) {
+                clientLogger(e, 'error');
+                let message = 'Unknown error';
+                if (e instanceof Error) message = e.message ?? 'Unknown error';
+                throw new Error(message);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [supabaseClient, trackEvent],
+    );
+
+    const signup = useCallback(
+        async ({ email, password, data }: SignupData) => {
+            if (session?.user) {
+                const { error: signOutError } = await supabaseClient.auth.signOut();
+                if (signOutError) {
+                    throw new Error(signOutError?.message || 'Error signing out previous session');
+                }
+            }
+
+            // @note This needs `Confirm Email` and `Secure Email Change` settings disabled
+            // These are found under your Supabase Project > Authentication > Providers > Email
+            // With those enabled, signing up will not automatically create a new session (since it needs confirmation)
+            const { error, data: signupResData } = await supabaseClient.auth.signUp({
                 email,
                 password,
             });
 
-            if (error) throw new Error(error.message || 'Unknown error');
-            trackEvent('Log In', { email: email, total_sessions: 1 });
-            return data;
-        } catch (e: unknown) {
-            clientLogger(e, 'error');
-            let message = 'Unknown error';
-            if (e instanceof Error) message = e.message ?? 'Unknown error';
-            throw new Error(message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const signup = async ({ email, password, data }: SignupData) => {
-        if (session?.user) {
-            const { error: signOutError } = await supabaseClient.auth.signOut();
-            if (signOutError) {
-                throw new Error(signOutError?.message || 'Error signing out previous session');
+            if (error) {
+                throw new Error(error?.message || 'Unknown error');
             }
-        }
+            const id = signupResData?.user?.id;
+            if (!id) {
+                throw new Error('Error creating profile, no id in response');
+            }
+            const profileBody: ProfileInsertBody = {
+                id,
+                email,
+                ...data,
+            };
+            const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
+                method: 'POST',
+                body: profileBody,
+            });
 
-        // @note This needs `Confirm Email` and `Secure Email Change` settings disabled
-        // These are found under your Supabase Project > Authentication > Providers > Email
-        // With those enabled, signing up will not automatically create a new session (since it needs confirmation)
-        const { error, data: signupResData } = await supabaseClient.auth.signUp({
-            email,
-            password,
-        });
+            if (!createProfileResponse.id) {
+                clientLogger(createProfileResponse, 'error');
+                throw new Error('Error creating profile');
+            }
 
-        if (error) {
-            throw new Error(error?.message || 'Unknown error');
-        }
-        const id = signupResData?.user?.id;
-        if (!id) {
-            throw new Error('Error creating profile, no id in response');
-        }
-        const profileBody: ProfileInsertBody = {
-            id,
-            email,
-            ...data,
-        };
-        const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
-            method: 'POST',
-            body: profileBody,
-        });
+            return signupResData;
+        },
+        [session?.user, supabaseClient],
+    );
 
-        if (!createProfileResponse.id) {
-            clientLogger(createProfileResponse, 'error');
-            throw new Error('Error creating profile');
-        }
-
-        return signupResData;
-    };
-
-    const createEmployee = async (email: string) => {
+    const createEmployee = useCallback(async (email: string) => {
         const body: CreateEmployeePostBody = { email };
         const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>('company/create-employee', {
             method: 'POST',
@@ -188,7 +192,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             throw new Error('Error creating employee');
         }
         return createEmployeeRes;
-    };
+    }, []);
 
     const updateProfile = useCallback(
         async (updateData: Omit<ProfilePutBody, 'id'>) => {

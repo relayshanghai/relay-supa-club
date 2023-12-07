@@ -8,10 +8,7 @@ import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { ChangeInboxFolder, OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
-import {
-    getSequenceInfluencerByEmailAndCompanyCall,
-    getSequenceInfluencerByIdCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
@@ -39,7 +36,6 @@ export const InboxPage = () => {
     const [searchResults, setSearchResults] = useState<MessagesGetMessage[]>([]);
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
-    const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
@@ -53,13 +49,6 @@ export const InboxPage = () => {
 
     const { track } = useRudderstackTrack();
 
-    useEffect(() => {
-        if (!inboxMessages) {
-            return;
-        }
-        setMessages(inboxMessages);
-    }, [inboxMessages]);
-
     const filteredMessages = useMemo(() => {
         if (selectedTab === 'new') {
             return messages.filter((message) => message.unseen);
@@ -68,49 +57,13 @@ export const InboxPage = () => {
     }, [messages, selectedTab]);
     const { profile } = useUser();
 
-    useEffect(() => {
-        if (!sequenceInfluencer) return;
-        if (!sequenceInfluencer.influencer_social_profile_id) {
-            throw Error('No social profile id');
-        }
-        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
-        track(OpenInfluencerProfile, {
-            influencer_id: sequenceInfluencer.influencer_social_profile_id,
-            search_id: searchTerm,
-            current_status: sequenceInfluencer?.funnel_status,
-            currently_filtered: false,
-            currently_searched: searchTerm !== '',
-            view_mine_enabled: false,
-            is_users_influencer: false,
-        });
-    }, [sequenceInfluencer, searchTerm, track]);
-
-    useEffect(() => {
-        if (!profile || !profile.sequence_send_email) {
-            return;
-        }
-        if (searchTerm === '') {
-            setSearchResults([]);
-            return;
-        }
-        const fuse = new Fuse(filteredMessages, {
-            keys: ['from.name', 'from.address', 'to.name', 'to.address', 'date', 'subject'],
-        });
-        const results = fuse.search(searchTerm);
-        setSearchResults(results.map((result) => result.item));
-        track(SearchInbox, {
-            sequence_email_address: profile.sequence_send_email,
-            search_query: searchTerm,
-            total_results: results.length,
-        });
-    }, [filteredMessages, searchTerm, profile, track]);
+    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
 
     const handleGetThreadEmails = useCallback(
         async (message: MessagesGetMessage) => {
+            setSequenceInfluencer(null);
             setSelectedMessages([]);
-
             setLoadingSelectedMessages(true);
-            setGetSelectedMessagesError('');
             try {
                 if (!profile?.email_engine_account_id) {
                     throw new Error('No email account');
@@ -121,13 +74,43 @@ export const InboxPage = () => {
 
                 if (threadMessages.length === 0) {
                     setLoadingSelectedMessages(false);
-                    throw new Error('No thread messages found');
+                    return;
                 }
 
                 threadMessages.sort((a, b) => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
                 });
                 setSelectedMessages(threadMessages);
+                setLoadingSelectedMessages(false);
+
+                const potentialInfluencerEmails = findOtherPeopleInThread(
+                    threadMessages,
+                    profile.email_engine_account_id,
+                );
+
+                const findInfluencer = async (emails: string[]) => {
+                    let influencer: SequenceInfluencerManagerPage | null = null;
+                    for (const email of emails) {
+                        try {
+                            const foundInfluencer = await getSequenceInfluencerByEmailAndCompany(
+                                email,
+                                profile.company_id,
+                            );
+                            if (foundInfluencer) {
+                                influencer = foundInfluencer;
+                                break;
+                            }
+                        } catch (error) {
+                            // ignore
+                        }
+                    }
+                    return influencer;
+                };
+
+                if (potentialInfluencerEmails.length > 0) {
+                    const influencer = await findInfluencer(potentialInfluencerEmails);
+                    setSequenceInfluencer(influencer);
+                }
                 track(OpenEmailThread, {
                     sequence_email_address: profile?.sequence_send_email ?? '',
                     email_thread_id: threadMessages[0].threadId,
@@ -136,19 +119,21 @@ export const InboxPage = () => {
                     recipient: threadMessages[0].to,
                     open_when_clicked: true,
                 });
-                setLoadingSelectedMessages(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                setGetSelectedMessagesError(error.message);
-                toast(getSelectedMessagesError);
+                toast(error.message);
             }
             setLoadingSelectedMessages(false);
         },
-        [getSelectedMessagesError, profile?.email_engine_account_id, profile?.sequence_send_email, track],
+        [
+            getSequenceInfluencerByEmailAndCompany,
+            profile?.company_id,
+            profile?.email_engine_account_id,
+            profile?.sequence_send_email,
+            track,
+        ],
     );
 
-    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
-    const getSequenceInfluencer = useDB(getSequenceInfluencerByIdCall);
     const [uiState, setUiState] = useUiState();
 
     const handleUpdate = useCallback(
@@ -180,38 +165,6 @@ export const InboxPage = () => {
         },
         [profile, selectedTab, messages, track],
     );
-
-    // set the sequence influencer when the user clicks on a message and the selectedMessages state is updated
-    useEffect(() => {
-        if (!selectedMessages || selectedMessages.length === 0 || !profile?.email_engine_account_id) {
-            setSequenceInfluencer(null);
-            return;
-        }
-        const potentialInfluencerEmails = findOtherPeopleInThread(selectedMessages, profile.email_engine_account_id);
-
-        const findInfluencer = async (emails: string[]) => {
-            let influencer: SequenceInfluencerManagerPage | null = null;
-            for (const email of emails) {
-                try {
-                    const foundInfluencer = await getSequenceInfluencerByEmailAndCompany(email, profile.company_id);
-                    if (foundInfluencer) {
-                        influencer = foundInfluencer;
-                        break;
-                    }
-                } catch (error) {
-                    clientLogger(error);
-                }
-            }
-            setSequenceInfluencer(influencer);
-        };
-
-        if (potentialInfluencerEmails.length > 0) {
-            findInfluencer(potentialInfluencerEmails);
-        } else {
-            setSequenceInfluencer(null);
-        }
-    }, [getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany, profile, selectedMessages]);
-
     const handleNoteListOpen = useCallback(() => {
         if (!sequenceInfluencer) return;
         getNotes.call(sequenceInfluencer.id);
@@ -223,6 +176,50 @@ export const InboxPage = () => {
         });
         getNotes.refresh();
     }, [getNotes, setUiState]);
+
+    useEffect(() => {
+        if (!inboxMessages) {
+            return;
+        }
+        setMessages(inboxMessages);
+    }, [inboxMessages]);
+
+    useEffect(() => {
+        if (!sequenceInfluencer) return;
+        if (!sequenceInfluencer.influencer_social_profile_id) {
+            throw Error('No social profile id');
+        }
+        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
+        track(OpenInfluencerProfile, {
+            influencer_id: sequenceInfluencer.influencer_social_profile_id,
+            search_id: searchTerm,
+            current_status: sequenceInfluencer?.funnel_status,
+            currently_filtered: false,
+            currently_searched: searchTerm !== '',
+            view_mine_enabled: false,
+            is_users_influencer: false,
+        });
+    }, [searchTerm, sequenceInfluencer, track]);
+
+    useEffect(() => {
+        if (!profile || !profile.sequence_send_email) {
+            return;
+        }
+        if (searchTerm === '') {
+            setSearchResults([]);
+            return;
+        }
+        const fuse = new Fuse(filteredMessages, {
+            keys: ['from.name', 'from.address', 'to.name', 'to.address', 'date', 'subject'],
+        });
+        const results = fuse.search(searchTerm);
+        setSearchResults(results.map((result) => result.item));
+        track(SearchInbox, {
+            sequence_email_address: profile.sequence_send_email,
+            search_query: searchTerm,
+            total_results: results.length,
+        });
+    }, [filteredMessages, profile, searchTerm, track]);
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -240,12 +237,14 @@ export const InboxPage = () => {
         });
     }, [refreshInboxMessages, selectedMessages, profile?.email_engine_account_id]);
 
-    //Show the first message in the list when the page loads by default
+    // Show the first message in the list when the page loads by default and messages are ready. only do once
     useEffect(() => {
-        if (!selectedMessages && messages.length > 0) {
-            handleGetThreadEmails(messages[0]);
+        if (isLoading || !messages || messages.length === 0 || selectedMessages) {
+            // selectedMessages is null initially, and set to an empty array once handleGetThreadEmails is called. so this should ensure it only runs once
+            return;
         }
-    }, [messages, handleGetThreadEmails, selectedMessages]);
+        handleGetThreadEmails(messages[0]);
+    }, [handleGetThreadEmails, isLoading, messages, selectedMessages]);
 
     return (
         <Layout>
