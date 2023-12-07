@@ -1,3 +1,4 @@
+import { worker } from 'src/mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { Accordion } from './accordion';
 const faqs = [
@@ -11,6 +12,9 @@ const faqs = [
     },
 ];
 describe('<Accordion />', () => {
+    beforeEach(() => {
+        worker.start();
+    });
     it('it will hide details by default, and show details when each title or expand button is clicked', () => {
         testMount(<Accordion content={faqs} type="FAQ" modalName="Example FAQ" />);
         cy.contains(faqs[0].detail).should('not.exist');

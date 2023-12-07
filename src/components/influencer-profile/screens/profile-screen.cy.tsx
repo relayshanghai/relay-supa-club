@@ -3,12 +3,16 @@ import { ProfileScreen } from './profile-screen';
 import { inManagerDummyInfluencers } from 'src/components/sequences/in-manager-dummy-sequence-influencers';
 import { ProfileScreenProvider } from './profile-screen-context';
 import { mapProfileToFormData } from 'src/components/inbox/helpers';
+import { worker } from 'src/mocks/browser';
 
 const profile = inManagerDummyInfluencers[0];
 const profileValue = mapProfileToFormData(profile);
 
 describe('<ProfileScreen />', () => {
     if (!profileValue) return;
+    beforeEach(() => {
+        worker.start();
+    });
     it('Mounts', () => {
         testMount(
             <ProfileScreenProvider initialValue={profileValue}>
