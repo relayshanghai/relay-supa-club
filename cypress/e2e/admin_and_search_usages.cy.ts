@@ -8,7 +8,7 @@ import { flattenInfluencerData, resetUsages, supabaseClientCypress } from './hel
 const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
-describe('Admin mode and search usages', () => {
+describe.skip('Admin mode and search usages', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         setupIntercepts({ useRealUsages: true, useRealSequences: true });

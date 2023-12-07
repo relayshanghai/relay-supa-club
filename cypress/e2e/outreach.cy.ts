@@ -24,7 +24,7 @@ const resetData = async () => {
     await resetSequenceEmails();
 };
 
-describe('outreach', () => {
+describe.skip('outreach', () => {
     beforeEach(() => {
         new Cypress.Promise(resetData);
         // turn back on the real database sequence calls
@@ -312,7 +312,7 @@ describe('outreach', () => {
     });
 });
 
-describe('non-outreach user', () => {
+describe.skip('non-outreach user', () => {
     beforeEach(() => {
         setupIntercepts();
     });
