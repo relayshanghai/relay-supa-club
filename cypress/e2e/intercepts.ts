@@ -24,7 +24,8 @@ import type { UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 
-import { flattenInfluencerData, insertSequenceEmails, supabaseClientCypress } from './helpers';
+import { insertSequenceEmails, supabaseClientCypress } from './helpers';
+import { flattenInfluencerData } from 'src/mocks/helpers';
 
 export { cocomelon, defaultLandingPageInfluencerSearch };
 

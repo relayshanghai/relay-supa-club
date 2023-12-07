@@ -1,5 +1,5 @@
+import { flattenInfluencerData } from 'src/mocks/helpers';
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
-import { flattenInfluencerData } from './helpers';
 
 describe('Caches SWR requests', () => {
     beforeEach(() => {

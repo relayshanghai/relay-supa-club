@@ -23,7 +23,7 @@ import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
 import sophiaCampaignSocialProfiles from './supabase/influencer_social_profile/sophias-campaign.json';
-import { flattenInfluencerData } from 'cypress/e2e/helpers';
+import { flattenInfluencerData } from './helpers';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';

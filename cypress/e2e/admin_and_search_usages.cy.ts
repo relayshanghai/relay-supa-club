@@ -3,7 +3,8 @@ import { searchIntercepts, setupIntercepts } from './intercepts';
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 
-import { flattenInfluencerData, resetUsages, supabaseClientCypress } from './helpers';
+import { resetUsages, supabaseClientCypress } from './helpers';
+import { flattenInfluencerData } from 'src/mocks/helpers';
 
 const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };
