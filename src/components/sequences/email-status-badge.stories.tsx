@@ -7,7 +7,7 @@ const options: EmailStatus[] = [
     'Scheduled',
     'Bounced',
     'Delivered',
-    'Scheduling',
+    'Unscheduled',
     'Replied',
     'Link Clicked',
     'Failed',

@@ -1,11 +1,18 @@
 import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
-import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type {
+    EmailDeliveryStatus,
+    SequenceEmail,
+    SequenceEmailInsert,
+    SequenceStep,
+    TemplateVariable,
+} from 'src/utils/api/db';
 import {
     deleteSequenceEmailsByInfluencerCall,
-    getSequenceEmailByInfluencerAndSequenceStep,
     getSequenceEmailsByEmailEngineAccountId,
     getSequenceEmailsBySequenceInfluencerCall,
     insertSequenceEmailCall,
+    insertSequenceEmailsCall,
+    updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 
@@ -34,8 +41,13 @@ export type SequenceStepSendArgs = {
 
 type SequenceSendEventRun = (payload: SequenceStepSendArgs) => Promise<SendResult>;
 
+/**
+ *  if step 0, insert all 4 sequence_email records
+ *  else if step > 0, update the existing sequence_email record
+ */
 const sendAndInsertEmail = async ({
     step,
+    sequenceSteps,
     account,
     influencer,
     templateVariables,
@@ -44,6 +56,7 @@ const sendAndInsertEmail = async ({
     scheduledEmails,
 }: {
     step: SequenceStep;
+    sequenceSteps: SequenceStep[];
     influencer: SequenceInfluencerManagerPage;
     account: string;
     templateVariables: TemplateVariable[];
@@ -66,11 +79,18 @@ const sendAndInsertEmail = async ({
 
     // @note if by this point you are not sure if there's an existing email, you shouldn't be running this function
     // make sure there is not an existing sequence email for this influencer for this step:
-    const { data: existingSequenceEmail } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
-        influencer.id,
-        step.id,
-    );
-    if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
+    let existingSequenceEmails: SequenceEmail[] = [];
+    try {
+        existingSequenceEmails = await db(getSequenceEmailsBySequenceInfluencerCall)(influencer.id);
+    } catch (error) {
+        serverLogger(error);
+    }
+    const existingSequenceEmail = existingSequenceEmails.find((email) => email.sequence_step_id === step.id);
+    if (
+        existingSequenceEmail &&
+        existingSequenceEmail.email_delivery_status &&
+        existingSequenceEmail.email_delivery_status !== 'Unscheduled'
+    ) {
         // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
         if (influencer.funnel_status === 'To Contact') {
             await db(updateSequenceInfluencerCall)({
@@ -90,7 +110,8 @@ const sendAndInsertEmail = async ({
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
-    const emailSendAt = calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
+    const emailSendAt =
+        existingSequenceEmail?.email_send_at ?? calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
 
     const res = await sendTemplateEmail({
         account,
@@ -105,15 +126,67 @@ const sendAndInsertEmail = async ({
     if ('error' in res) {
         throw new Error(res.error);
     }
-    await db(insertSequenceEmailCall)({
-        sequence_influencer_id: influencer.id,
-        sequence_id: influencer.sequence_id,
-        sequence_step_id: step.id,
-        email_delivery_status: 'Scheduled',
-        email_message_id: res.messageId,
-        email_send_at: emailSendAt,
-        email_engine_account_id: account,
-    });
+
+    if (step.step_number === 0) {
+        const outreachStepInsert: SequenceEmailInsert = {
+            sequence_influencer_id: influencer.id,
+            sequence_id: influencer.sequence_id,
+            sequence_step_id: step.id,
+            email_delivery_status: 'Scheduled',
+            email_message_id: res.messageId,
+            email_send_at: emailSendAt,
+            email_engine_account_id: account,
+        };
+        const otherSteps = sequenceSteps
+            .filter((s) => s.step_number !== 0)
+            .sort((a, b) => a.step_number - b.step_number);
+        const schedulingStatus: EmailDeliveryStatus = 'Unscheduled';
+        const scheduledEmailsPlusNewlyScheduled: Pick<SequenceEmail, 'email_send_at'>[] = [
+            ...scheduledEmails,
+            { email_send_at: emailSendAt },
+        ];
+        const otherInserts: SequenceEmailInsert[] = [];
+        otherSteps.forEach((s) => {
+            const email_send_at = calculateSendAt(s.wait_time_hours, scheduledEmailsPlusNewlyScheduled).toISOString();
+            otherInserts.push({
+                sequence_influencer_id: influencer.id,
+                sequence_id: influencer.sequence_id,
+                email_engine_account_id: account,
+                sequence_step_id: s.id,
+
+                email_delivery_status: schedulingStatus,
+                email_message_id: '', // will be filled in later
+                email_send_at,
+            });
+            scheduledEmailsPlusNewlyScheduled.push({ email_send_at });
+        });
+
+        await db(insertSequenceEmailsCall)([outreachStepInsert, ...otherInserts]);
+    } else {
+        if (!existingSequenceEmail) {
+            serverLogger(new Error('No existing sequence email found'));
+
+            await db(insertSequenceEmailCall)({
+                sequence_influencer_id: influencer.id,
+                sequence_id: influencer.sequence_id,
+                email_engine_account_id: account,
+                sequence_step_id: step.id,
+
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+                email_send_at: emailSendAt,
+            });
+            return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
+        } else {
+            await db(updateSequenceEmailCall)({
+                id: existingSequenceEmail.id,
+
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+                email_send_at: emailSendAt,
+            });
+        }
+    }
 
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
 };
@@ -165,6 +238,7 @@ const sendSequenceStep = async ({
         try {
             await sendAndInsertEmail({
                 step,
+                sequenceSteps,
                 account,
                 influencer,
                 templateVariables,
