@@ -7,7 +7,7 @@ describe('Caches SWR requests', () => {
         deleteAppCacheDatabases();
     });
     it('caches reports from `use-report`', () => {
-        cy.loginTeammate();
+        cy.loginAdmin();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 60000 });
