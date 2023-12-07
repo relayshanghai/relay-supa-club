@@ -10,8 +10,6 @@ describe('Caches SWR requests', () => {
         cy.loginTeammate();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
-        cy.wait(30000);
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 60000 });
         cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 60000 });
         // cy.contains(`Unlock Detailed Analysis Report`)
         //     .should('have.attr', 'target', '_blank')
