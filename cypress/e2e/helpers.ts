@@ -34,7 +34,7 @@ export async function deleteAppCacheDatabases() {
     }
 }
 
-export const flattenInfluencerData = (influencersData: any) => {
+export function flattenInfluencerData(influencersData: any) {
     if (!influencersData.accounts) return [];
     const structuredResults = influencersData.accounts.map((creator: any) => ({
         ...creator?.account?.user_profile,
@@ -46,7 +46,7 @@ export const flattenInfluencerData = (influencersData: any) => {
         total: influencersData.total,
         influencers: structuredResults,
     };
-};
+}
 
 export const reinsertAlice = async () => {
     try {
