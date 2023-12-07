@@ -31,7 +31,6 @@ export const useMessages = () => {
 
     if (error) {
         clientLogger(error);
-        throw new Error('Failed to load messages');
     }
 
     return {
