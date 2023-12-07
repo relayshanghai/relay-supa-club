@@ -3,13 +3,13 @@ import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
-        deleteAppCacheDatabases();
         setupIntercepts();
         searchIntercepts();
-        cy.loginTestUser();
     });
 
-    it('can search for a topic', () => {
+    it('can search for a topic', async () => {
+        await deleteAppCacheDatabases();
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
@@ -26,7 +26,9 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it('can open analyze page', () => {
+    it('can open analyze page', async () => {
+        await deleteAppCacheDatabases();
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.contains('Cocomelon - Nursery Rhymes');
