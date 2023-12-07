@@ -79,7 +79,7 @@ export const createBoostbotInfluencerPayload = ({
                 last_posted: 30,
                 with_contact: [{ type: 'email' }],
                 followers_growth: {
-                    interval: 'i1month',
+                    interval: 'i3months',
                     operator: 'gte',
                     value: 0,
                 },
