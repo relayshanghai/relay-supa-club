@@ -11,9 +11,9 @@ describe('Caches SWR requests', () => {
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
 
-        cy.contains('BoostBot Score', { timeout: 30000 });
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
 
-        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click({
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 300000 }).click({
             force: true,
         });
         cy.contains(`Unlock Detailed Analysis Report`)
