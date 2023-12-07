@@ -1,4 +1,4 @@
-import { defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
+import { cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
 import { deleteAppCacheDatabases, flattenInfluencerData } from './helpers';
 
 describe('Caches SWR requests', () => {
@@ -10,9 +10,9 @@ describe('Caches SWR requests', () => {
     it('caches reports from `use-report`', () => {
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
-
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
-        cy.getByTestId(`open-influencer-modal`, { timeout: 300000 });
+        cy.wait(30000);
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 60000 });
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 60000 });
         // cy.contains(`Unlock Detailed Analysis Report`)
         //     .should('have.attr', 'target', '_blank')
         //     .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
