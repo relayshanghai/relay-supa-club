@@ -18,11 +18,8 @@ export const handleResError = async (res: ResponseWithError) => {
 
             if (contentType.indexOf('application/json') !== -1) {
                 const json = await res.json();
-                if (Object.keys(json).length === 1 && 'error' in json) {
-                    logger(json.error);
-                    throw new Error(json.error);
-                }
-                const errorMessage = `${res.status} ${res.statusText} ${json}`;
+                const jsonObjectHasOnlyError = Object.keys(json).length === 1 && 'error' in json; // if there is only one key in the json object and it's 'error', then don't stringify the whole json object, just use the json.error
+                const errorMessage = `${res.status} ${res.statusText} ${jsonObjectHasOnlyError ? json.error : json}`;
                 logger(errorMessage);
                 throw new Error(errorMessage);
             } else {
