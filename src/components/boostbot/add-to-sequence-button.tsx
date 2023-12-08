@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { Button } from '../button';
 
 export const AddToSequenceButton = ({
@@ -6,14 +5,15 @@ export const AddToSequenceButton = ({
     handleAddToSequenceButton,
     buttonText,
     textClassName,
+    url,
 }: {
     outReachDisabled: boolean;
     handleAddToSequenceButton: () => void;
     buttonText: string;
     textClassName?: string;
+    url: string;
 }) => {
-    const router = useRouter();
-    const buttonColor = router.pathname.includes('boostbot') ? 'boostbot-gradient' : 'bg-primary-600';
+    const buttonColor = url.includes('boostbot') ? 'boostbot-gradient' : 'bg-primary-600';
     return (
         <Button
             data-testid="boostbot-button-outreach"

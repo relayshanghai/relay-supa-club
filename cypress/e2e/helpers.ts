@@ -5,7 +5,6 @@ import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-in
 import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { mockProfile } from 'src/mocks/test-user';
-import { deleteDB } from 'idb';
 export const bobEmail = 'bob.brown@example.com';
 export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail, 'charlie.charles@example.com'];
 
@@ -19,20 +18,6 @@ export const supabaseClientCypress = () => {
         auth: { persistSession: false },
     });
 };
-
-export async function deleteAppCacheDatabases() {
-    try {
-        await deleteDB('app-store');
-        const databases = await window.indexedDB.databases();
-        for (const db of databases) {
-            if (db.name && db.name.includes('app-cache')) {
-                await deleteDB(db.name);
-            }
-        }
-    } catch (error: any) {
-        cy.log(error);
-    }
-}
 
 export const reinsertAlice = async () => {
     try {

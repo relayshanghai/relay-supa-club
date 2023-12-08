@@ -1,10 +1,10 @@
 import { deleteDB } from 'idb';
 import { searchIntercepts, setupIntercepts } from './intercepts';
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
-import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch';
 
 import { resetUsages, supabaseClientCypress } from './helpers';
-import { flattenInfluencerData } from 'src/mocks/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
 
 const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };

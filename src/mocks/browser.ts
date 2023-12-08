@@ -2,7 +2,7 @@ import { rest, setupWorker } from 'msw';
 import { mockProfile } from '../mocks/test-user';
 import tSeries from './api/creators/report/tSeries.json';
 
-import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch';
 
 import jimTestCampaign from './supabase/campaigns/jimTestCampaign.json';
 import amyTestCampaign from './supabase/campaigns/amyTestCampaign.json';
@@ -23,7 +23,7 @@ import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
 import sophiaCampaignSocialProfiles from './supabase/influencer_social_profile/sophias-campaign.json';
-import { flattenInfluencerData } from './helpers';
+import { flattenInfluencerData } from '../utils/api/boostbot/helpers';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';

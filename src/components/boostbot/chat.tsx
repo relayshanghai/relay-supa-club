@@ -336,6 +336,7 @@ export const Chat: React.FC<ChatProps> = ({
                     false
                 }
                 setSelectedInfluencers={setSelectedInfluencers}
+                url="boostbot"
             />
 
             <ChatContent

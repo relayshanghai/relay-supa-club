@@ -43,6 +43,7 @@ type InfluencerDetailsModalProps = {
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    url: string;
 };
 
 export const InfluencerDetailsModal = ({
@@ -52,6 +53,7 @@ export const InfluencerDetailsModal = ({
     setShowSequenceSelector,
     outReachDisabled,
     setSelectedInfluencers,
+    url,
 }: InfluencerDetailsModalProps) => {
     const { t, i18n } = useTranslation();
     const { track } = useRudderstackTrack();
@@ -444,6 +446,7 @@ export const InfluencerDetailsModal = ({
                         outReachDisabled={outReachDisabled}
                         handleAddToSequenceButton={handleAddToSequence}
                         textClassName="px-12"
+                        url={url}
                     />
                 </div>
             </div>

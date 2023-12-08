@@ -6,7 +6,7 @@ describe('Dashboard/Search page', () => {
         searchIntercepts();
     });
 
-    it('can search for a topic', async () => {
+    it('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
@@ -24,7 +24,7 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it('can open analyze page', async () => {
+    it('can open analyze page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });

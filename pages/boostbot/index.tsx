@@ -308,6 +308,7 @@ const Boostbot = () => {
                                     buttonText={t('boostbot.chat.outreachSelected')}
                                     outReachDisabled={outReachDisabled}
                                     handleAddToSequenceButton={handleAddToSequenceButton}
+                                    url="boostbot"
                                 />
                             </div>
                         </div>

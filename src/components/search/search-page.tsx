@@ -374,6 +374,7 @@ export const SearchPageInner = () => {
                                 handleAddToSequenceButton={() => {
                                     setShowSequenceSelector(true);
                                 }}
+                                url="search"
                             />
                         </div>
                     </div>
@@ -408,6 +409,7 @@ export const SearchPageInner = () => {
                     false
                 }
                 setSelectedInfluencers={setSelectedInfluencers}
+                url="search"
             />
             <SearchFiltersModal
                 show={filterModalOpen}

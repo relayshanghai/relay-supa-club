@@ -18,6 +18,7 @@ describe('InfluencerDetailsModal', () => {
                 outReachDisabled={false}
                 setSelectedInfluencers={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
+                url="boostbot"
             />,
         );
         cy.get('img').should('have.attr', 'src', influencer.picture);
@@ -38,6 +39,7 @@ describe('InfluencerDetailsModal', () => {
                 outReachDisabled={false}
                 setSelectedInfluencers={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
+                url="boostbot"
             />,
         );
         cy.getByTestId('boostbot-modal-open-report-link').should('have.attr', 'target', '_blank');

@@ -1,6 +1,6 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
-import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
@@ -15,9 +15,9 @@ import boostbotGetInfluencers from '../../src/mocks/api/boostbot/get-influencers
 import pricesMock from '../../src/mocks/api/subscription/prices/prices.json';
 import usagesMock from '../../src/mocks/api/usages/usages.json';
 import paymentMethodsMock from '../../src/mocks/api/subscription/payment-methods.json';
-import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
-import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
-import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
+import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR';
+import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators';
+import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { UsagesDBInsert } from 'src/utils/api/db';
@@ -25,7 +25,7 @@ import { ulid } from 'ulid';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 
 import { insertSequenceEmails, supabaseClientCypress } from './helpers';
-import { flattenInfluencerData } from 'src/mocks/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
 
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
