@@ -27,11 +27,11 @@ export function DataTablePagination<TData>({
     const isSearchPage = currentPage !== undefined && count !== undefined && setPageFunction !== undefined;
 
     //adjust to control the number of links in the pagination section
-    const noOfLinks = 11;
+    const numOfLinks = 11;
     const pageNums = getPaginationItems(
         isSearchPage ? currentPage + 1 : table.getState().pagination.pageIndex + 1,
         isSearchPage ? Math.floor(count / 10) : table.getPageCount(),
-        noOfLinks,
+        numOfLinks,
     );
 
     const handlePreviousPage = useCallback(() => {
