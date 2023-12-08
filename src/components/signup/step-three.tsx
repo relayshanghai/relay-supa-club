@@ -135,7 +135,7 @@ export const StepThree = ({
         isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
     const submitDisabled = invalidFormInput || loading;
     const websiteRef = useRef<HTMLInputElement>(null);
-    const sizeRef = useRef<HTMLInputElement>(null);
+    const termsRef = useRef<HTMLInputElement>(null);
 
     const [existsTimeout, setExistsTimeout] = useState<NodeJS.Timeout | undefined>();
     const [existingOwnerEmail, setExistingOwnerEmail] = useState<string | undefined>();
@@ -202,11 +202,12 @@ export const StepThree = ({
                 ref={websiteRef}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                        sizeRef?.current?.focus();
+                        termsRef?.current?.focus();
                     }
                 }}
             />
             <input
+                ref={termsRef}
                 type="checkbox"
                 className="text-primary-600"
                 checked={termsChecked}
