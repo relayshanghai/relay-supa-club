@@ -36,7 +36,7 @@ export const defaultAudienceLocations: LocationWeighted[] = [
             id: 148838,
             code: 'US',
         },
-        weight: 5,
+        weight: 5, // 5 = 5%
     },
     {
         id: 1428125,
@@ -47,13 +47,13 @@ export const defaultAudienceLocations: LocationWeighted[] = [
             id: 1428125,
             code: 'CA',
         },
-        weight: 1,
+        weight: 1, // 1 = 1%
     },
 ];
 
 export const defaultAudienceGender = {
     code: 'FEMALE',
-    weight: 0.01,
+    weight: 0.01, // 0.01 = 0.1%
 };
 
 export interface ISearchContext {
