@@ -301,7 +301,7 @@ export const InfluencerDetailsModal = ({
                             {topicsAndRelevance.length === 0 && !areTopicsAndRelevanceLoading ? (
                                 <div className="relative flex h-[280px] w-80 items-center justify-center">
                                     <p className="left-[42%] top-[45%] flex text-center text-lg font-semibold">
-                                        No niche data available for this influencer
+                                        {t('boostbot.modal.noNichesFound')}
                                     </p>
                                     <ResponsiveContainer className="absolute" width={320} height={280}>
                                         <RadarChart cx="50%" cy="50%" outerRadius={90} data={emptyStateChartData}>
