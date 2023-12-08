@@ -19,15 +19,12 @@ export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => 
     } = company || {};
 
     const { data, mutate: refreshUsages } = useSWR(
-        company?.id ? ['usages', startEndDates?.thisMonthStartDate, startEndDates?.thisMonthEndDate] : null,
-        async ([path, startDate, endDate]) => {
-            if (!company?.id) {
-                return;
-            }
+        company?.id ? ['usages', company.id, startEndDates?.thisMonthStartDate, startEndDates?.thisMonthEndDate] : null,
+        async ([path, companyId, startDate, endDate]) => {
             if (useRange && (!startDate || !endDate)) {
                 return;
             }
-            const body = { startDate: startDate?.toISOString(), endDate: endDate?.toISOString(), id: company?.id };
+            const body = { startDate: startDate?.toISOString(), endDate: endDate?.toISOString(), id: companyId };
             return await nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, body);
         },
     );

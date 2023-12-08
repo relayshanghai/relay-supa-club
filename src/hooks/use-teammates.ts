@@ -7,10 +7,10 @@ import { useCompany } from './use-company';
 export const useTeammates = () => {
     const { company } = useCompany();
     const { data: teammates, mutate: refreshTeammates } = useSWR(
-        company?.id ? 'company/teammates' : null,
-        async (path) => {
+        company?.id ? [company.id, 'company/teammates'] : null,
+        async ([id, path]) => {
             const result = await nextFetchWithQueries<CompanyTeammatesGetQueries, CompanyTeammatesGetResponse>(path, {
-                id: company?.id ?? '',
+                id,
             });
             result.sort((a, b) => a.first_name.toLowerCase().localeCompare(b.first_name.toLowerCase()));
 
