@@ -6,11 +6,12 @@ describe('Dashboard/Search page', () => {
     beforeEach(() => {
         setupIntercepts();
         searchIntercepts();
-        deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
-        cy.loginTestUser();
     });
 
-    it('can search for a topic', () => {
+    it('can search for a topic', async () => {
+        await deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
+        await deleteDB('app-cache');
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
@@ -27,7 +28,10 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it('can open analyze page', () => {
+    it('can open analyze page', async () => {
+        await deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
+        await deleteDB('app-cache');
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click();

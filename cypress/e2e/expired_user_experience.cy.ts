@@ -1,6 +1,6 @@
 import { setupIntercepts } from './intercepts';
 
-describe.skip('Expired User Experience', () => {
+describe('Expired User Experience', () => {
     beforeEach(() => {
         setupIntercepts();
     });
@@ -18,8 +18,8 @@ describe.skip('Expired User Experience', () => {
             cy.get('input').type('alligators');
             cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to appear
         });
-        cy.contains('Your free trial has expired. Please upgrade your account to use this feature.');
-        cy.contains('Upgrade subscription');
+        cy.contains('Credit Limit Exceeded');
+        cy.contains("To discover more influencers you'll need to upgrade your account");
     });
     it('Cannot use boostbot and shows error', () => {
         cy.loginExpired();
