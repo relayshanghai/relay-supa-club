@@ -47,8 +47,9 @@ import {
 } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { SearchExpired } from './search-expired';
 
-export const SearchPageInner = () => {
+export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
 
     const {
@@ -319,7 +320,6 @@ export const SearchPageInner = () => {
         track,
         firstPageSearchResults,
     ]);
-
     useEffect(() => {
         if (sequences && !sequence) {
             setSequence(sequences[0]);
@@ -357,7 +357,11 @@ export const SearchPageInner = () => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-            {noResults && !resultsLoading ? (
+            {expired ? (
+                <div className="m-8 flex w-full justify-center">
+                    <SearchExpired />
+                </div>
+            ) : noResults && !resultsLoading ? (
                 <p>{t('creators.noResults')}</p>
             ) : (
                 <div className="flex w-full basis-3/4 flex-col">
@@ -452,7 +456,7 @@ export const SearchPage = () => {
             ) : (
                 <div className="flex flex-col">
                     <SearchProvider>
-                        <SearchPageInner />
+                        <SearchPageInner expired={isExpired} />
                     </SearchProvider>
                 </div>
             )}

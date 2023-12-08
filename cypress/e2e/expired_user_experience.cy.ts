@@ -43,5 +43,7 @@ describe('Expired User Experience', () => {
         cy.visit('/dashboard');
         cy.contains('Your free trial has expired');
         cy.contains('Please upgrade your account to use this feature.');
+        cy.contains('Credit Limit Exceeded');
+        cy.contains("To discover more influencers you'll need to upgrade your account");
     });
 });
