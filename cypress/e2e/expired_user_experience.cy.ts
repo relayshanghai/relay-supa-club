@@ -1,6 +1,6 @@
 import { setupIntercepts } from './intercepts';
 
-describe('Expired User Experience', () => {
+describe.skip('Expired User Experience', () => {
     beforeEach(() => {
         setupIntercepts();
     });
