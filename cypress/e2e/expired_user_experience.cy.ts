@@ -2,7 +2,7 @@ import { setupIntercepts } from './intercepts';
 import { deleteCache } from './helpers';
 
 describe('Expired User Experience', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         setupIntercepts();
     });
     it('Can access all pages', () => {
@@ -23,7 +23,8 @@ describe('Expired User Experience', () => {
         cy.contains('Credit Limit Exceeded');
         cy.contains("To discover more influencers you'll need to upgrade your account");
     });
-    it('Cannot use boostbot and shows error', () => {
+    it('Cannot use boostbot and shows error', async () => {
+        await deleteCache('expired_user@expired.com');
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.getByTestId('boostbot-send-message').should('be.disabled');
@@ -34,7 +35,7 @@ describe('Expired User Experience', () => {
     it('boostbot home button leads to boostbot', () => {
         cy.loginExpired();
         cy.visit('/account');
-        cy.getByTestId('home-icon').click();
+        cy.getByTestId('home-icon').click({ force: true });
         cy.url().should('include', '/boostbot');
     });
     it('Can see banners on boostbot and discover', async () => {
