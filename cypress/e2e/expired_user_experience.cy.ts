@@ -4,16 +4,16 @@ import { deleteCache } from './helpers';
 describe('Expired User Experience', () => {
     beforeEach(async () => {
         setupIntercepts();
-        await deleteCache('expired_user@expired.com');
     });
-    it('Can access all pages', async () => {
+    it('Can access all pages', () => {
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.visit('/dashboard');
         cy.visit('/sequences');
         cy.visit('/influencer-manager');
     });
-    it('Cannot search and shows error', () => {
+    it('Cannot search and shows error', async () => {
+        await deleteCache('expired_user@expired.com');
         cy.loginExpired();
         cy.visit('/dashboard');
         cy.getByTestId('search-topics').within(() => {
@@ -37,7 +37,8 @@ describe('Expired User Experience', () => {
         cy.getByTestId('home-icon').click();
         cy.url().should('include', '/boostbot');
     });
-    it('Can see banners on boostbot and discover', () => {
+    it('Can see banners on boostbot and discover', async () => {
+        await deleteCache('expired_user@expired.com');
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.contains('Your free trial has expired');
