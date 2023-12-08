@@ -63,7 +63,6 @@ const SignUpPage = ({
         companyWebsite: '',
     });
 
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
         lastName: '',
@@ -86,7 +85,6 @@ const SignUpPage = ({
         phoneNumber,
         companyName,
         companyWebsite,
-        companySize: selectedSize,
     };
 
     const PROFILE_FORM_STEP = 1;
@@ -156,7 +154,6 @@ const SignUpPage = ({
             phoneNumber,
             companyName,
             companyWebsite,
-            companySize: selectedSize ?? '',
         });
 
         // @note log when handleProfileCreate failed creating a user
@@ -279,7 +276,6 @@ const SignUpPage = ({
                                 <StepThree
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
-                                    setSelectedSize={setSelectedSize}
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
                                     loading={loading}
