@@ -1,13 +1,16 @@
+import { deleteDB } from 'idb';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
+import { getId } from './helpers';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
         setupIntercepts();
         searchIntercepts();
+        deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
+        cy.loginTestUser();
     });
 
     it('can search for a topic', () => {
-        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
@@ -25,7 +28,6 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can open analyze page', () => {
-        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click();
