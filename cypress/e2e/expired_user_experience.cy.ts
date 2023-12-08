@@ -1,10 +1,12 @@
 import { setupIntercepts } from './intercepts';
+import { deleteCache } from './helpers';
 
 describe('Expired User Experience', () => {
     beforeEach(() => {
         setupIntercepts();
     });
-    it('Can access all pages', () => {
+    it('Can access all pages', async () => {
+        await deleteCache('expired_user@expired.com');
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.visit('/dashboard');

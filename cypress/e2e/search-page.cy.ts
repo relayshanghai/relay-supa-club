@@ -1,6 +1,5 @@
-import { deleteDB } from 'idb';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
-import { getId } from './helpers';
+import { deleteCache } from './helpers';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
@@ -9,8 +8,7 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can search for a topic', async () => {
-        await deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
-        await deleteDB('app-cache');
+        await deleteCache('william.edward.douglas@blue-moonlight-stream.com');
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
@@ -29,10 +27,10 @@ describe('Dashboard/Search page', () => {
     });
 
     it('can open analyze page', async () => {
-        await deleteDB(`app-cache-${getId('william.edward.douglas@blue-moonlight-stream.com')}`);
-        await deleteDB('app-cache');
+        await deleteCache('william.edward.douglas@blue-moonlight-stream.com');
         cy.loginTestUser();
         cy.visit('/dashboard');
+
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click();
 
