@@ -16,7 +16,6 @@ import {
 } from 'recharts';
 import StatCard from './stat-card';
 import type { Row } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -30,7 +29,7 @@ import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topic
 import type { Dispatch, SetStateAction } from 'react';
 import { Tooltip } from '../library/tooltip';
 import { Question } from '../icons';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer } from 'types';
 import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
@@ -39,7 +38,7 @@ import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/g
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
-    selectedRow?: Row<BoostbotInfluencer | ClassicSearchInfluencer>;
+    selectedRow?: Row<SearchTableInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;

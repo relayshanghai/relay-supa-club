@@ -1,5 +1,5 @@
 import type { Row, Table } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Tooltip } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { HoverLocationGraph } from 'src/utils/analytics/events';

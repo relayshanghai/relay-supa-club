@@ -34,7 +34,7 @@ import { randomNumber } from 'src/utils/utils';
 import { FaqModal } from '../library';
 import discoveryfaq from 'i18n/en/discovery-faq';
 import { useRouter } from 'next/router';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();

@@ -4,7 +4,7 @@ import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row 
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import Question from 'src/components/icons/Question';
 

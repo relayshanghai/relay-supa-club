@@ -1,5 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { BoostbotAccountCell } from './boostbot-account-cell';
 import { BoostbotScoreCell } from './boostbot-score-cell';
 import { OpenInfluencerModalCell } from './boostbot-icon-cell';
@@ -8,9 +7,9 @@ import { BoostbotAudienceGenderCell } from './boostbot-audience-gender-cell';
 import { BoostbotAudienceLocationCell } from './boostbot-audience-location-cell';
 import { clientLogger } from 'src/utils/logger-client';
 import { Tooltip } from 'src/components/library';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer } from 'types';
 
-export const columns: ColumnDef<BoostbotInfluencer>[] = [
+export const columns: ColumnDef<SearchTableInfluencer>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -99,7 +98,7 @@ export const columns: ColumnDef<BoostbotInfluencer>[] = [
     },
 ];
 
-export const classicColumns: ColumnDef<ClassicSearchInfluencer>[] = [
+export const classicColumns: ColumnDef<SearchTableInfluencer>[] = [
     {
         id: 'select',
         header: ({ table }) => (

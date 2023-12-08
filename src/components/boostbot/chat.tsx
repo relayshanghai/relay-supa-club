@@ -1,4 +1,4 @@
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { Json } from 'types/supabase';
 import React, { useState } from 'react';

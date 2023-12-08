@@ -30,7 +30,7 @@ import type { analyzeInfluencerParams } from 'src/hooks/use-analyze-influencer';
 import { useAnalyzeInfluencer } from 'src/hooks/use-analyze-influencer';
 import { getJourney } from 'src/utils/analytics/journey';
 import { clientLogger } from 'src/utils/logger-client';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 
 export interface SearchResultRowProps {
     creator: ClassicSearchInfluencer;

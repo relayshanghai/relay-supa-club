@@ -22,7 +22,7 @@ import {
 } from 'src/utils/api/db/calls/boostbot-conversations';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];

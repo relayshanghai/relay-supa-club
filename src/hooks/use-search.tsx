@@ -1,8 +1,5 @@
-import type {
-    ClassicSearchInfluencer,
-    InfluencerPostRequest,
-    InfluencerPostResponse,
-} from 'pages/api/influencer-search';
+import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { usageErrors } from 'src/errors/usages';

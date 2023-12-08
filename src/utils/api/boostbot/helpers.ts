@@ -1,16 +1,19 @@
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
-import type { CreatorSearchAccountObject, CreatorSearchResult } from 'types';
+import type { CreatorSearchAccountObject, CreatorSearchResult, SearchTableInfluencer } from 'types';
 
-export function flattenInfluencerData(influencersData: CreatorSearchResult) {
-    if (!influencersData.accounts) return [];
-    const structuredResults: ClassicSearchInfluencer[] = influencersData.accounts.map(
-        (creator: CreatorSearchAccountObject) => ({
+export function flattenInfluencerData(influencersData: CreatorSearchResult, topics: string[] = []) {
+    if (!influencersData.accounts)
+        return {
+            total: 0,
+            influencers: [],
+        };
+    const structuredResults: SearchTableInfluencer[] = influencersData.accounts
+        .map((creator: CreatorSearchAccountObject) => ({
             ...creator.account?.user_profile,
             ...creator.match?.user_profile,
             ...creator.match?.audience_likers?.data,
-            topics: ['alligators', 'monkeys'],
-        }),
-    );
+            topics,
+        }))
+        .flat();
     return {
         total: influencersData.total,
         influencers: structuredResults,

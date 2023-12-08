@@ -36,7 +36,7 @@ import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { AddToSequenceButton } from '../boostbot/add-to-sequence-button';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
 import { ModalSequenceSelector } from '../boostbot/modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';

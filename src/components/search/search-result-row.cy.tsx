@@ -54,7 +54,7 @@ const setupProps = () => {
 import { SearchResultRow } from './search-result-row';
 import { worker } from '../../mocks/browser';
 import { featRecommended } from 'src/constants/feature-flags';
-import type { ClassicSearchInfluencer } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 describe('<CreatorPage />', () => {
     before(async () => {
         worker.start();

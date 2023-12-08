@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandler } from 'src/utils/api-handler';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import {
     type SearchInfluencersPayloadInput,
@@ -13,7 +14,7 @@ import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
 import { db } from 'src/utils/supabase-client';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
-import type { AudienceLikers, CreatorAccount, CreatorSearchResult, UserProfileMatch } from 'types';
+import type { CreatorSearchResult } from 'types';
 import { v4 } from 'uuid';
 import type { z } from 'zod';
 
@@ -22,8 +23,6 @@ export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     user_id: string;
 };
 export type InfluencerPostResponse = CreatorSearchResult;
-
-export type ClassicSearchInfluencer = CreatorAccount & AudienceLikers & UserProfileMatch & { topics: string[] };
 
 // eslint-disable-next-line complexity
 const generateFiltersMixpanelPayload = (
@@ -133,12 +132,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const results = await searchInfluencers(parameters, { req, res });
 
-    const structuredResults = results.accounts.map((creator) => ({
-        ...creator.account.user_profile,
-        ...creator.match.user_profile,
-        ...creator.match.audience_likers?.data,
-        topics: ['search'],
-    }));
+    const structuredResults = flattenInfluencerData(results, ['search']);
 
     const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
 

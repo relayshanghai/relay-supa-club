@@ -2,7 +2,7 @@ import { testMount } from '../../../utils/cypress-app-wrapper';
 import { OpenInfluencerModalCell } from './boostbot-icon-cell';
 import boostbotGetInfluencers from '../../../mocks/api/boostbot/get-influencers.json';
 import type { Row } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { worker } from 'src/mocks/browser';
 
 describe('<OpenInfluencerModalCell />', () => {
