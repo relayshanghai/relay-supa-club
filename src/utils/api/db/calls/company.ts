@@ -114,7 +114,10 @@ export const getTeammatesByCompanyId = async (companyId: string) => {
     return data;
 };
 
-export const findCompaniesByNames = (db: RelayDatabase) => async (name: string) => {
+/** Finds company name with case insensitive query */
+export const findCompaniesByName = (db: RelayDatabase) => async (name: string) => {
+    // case insensitive comparison
+    // https://supabase.com/docs/reference/javascript/ilike
     const { data, error } = await db.from('companies').select().ilike('name', name);
 
     if (error) {
