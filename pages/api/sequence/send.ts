@@ -131,6 +131,9 @@ const postHandler: NextApiHandler = async (req, res) => {
     if (!sequenceSteps || sequenceSteps.length === 0) {
         throw new Error('No sequence steps found');
     }
+    if (!sequenceSteps.every((step) => step.sequence_id === sequenceId)) {
+        throw new Error('Sequence steps do not match sequence id');
+    }
 
     if (!templateVariables || templateVariables.length === 0) {
         templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceId);
