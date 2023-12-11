@@ -4,7 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB, ProfileDB, RelayDatabase } from 'src/utils/api/db';
-import { addCompanyToUserAndMakeAdmin, deleteCompanyById, findCompaniesByNames } from 'src/utils/api/db';
+import { addCompanyToUserAndMakeAdmin, deleteCompanyById, findCompaniesByName } from 'src/utils/api/db';
 import { createCompany } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
@@ -60,7 +60,7 @@ const validateCompanyName = async ({ companyName }: { companyName: string }) => 
     }
     let companies = [];
     try {
-        companies = await db(findCompaniesByNames)(companyName.toLowerCase());
+        companies = await db(findCompaniesByName)(companyName);
     } catch (error) {
         serverLogger(error);
     }
