@@ -80,11 +80,6 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
             const productID = price.product;
             if (productID === STRIPE_PRODUCT_ID_VIP) {
                 return await handleVIPSubscription(res, event as CustomerSubscriptionCreated);
-            } else {
-                serverLogger('stripe productID does not match handled projectIDs', { level: 'error' });
-                return res
-                    .status(httpCodes.NO_CONTENT)
-                    .json({ message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP' });
             }
         case handledWebhooks.invoicePaymentFailed:
             return await handleInvoicePaymentFailed(res, event as InvoicePaymentFailed);
