@@ -3,20 +3,6 @@
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
 
-export const parseError = (error: any) => {
-    if (!error) {
-        return new Error('undefined error');
-    }
-    if (error.message) {
-        if ('stack' in error) return error;
-        return error.message;
-    }
-    if (typeof error === 'string') {
-        return error;
-    }
-    return JSON.stringify(error);
-};
-
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') {
         return 'Oops! Something went wrong. Try again';
