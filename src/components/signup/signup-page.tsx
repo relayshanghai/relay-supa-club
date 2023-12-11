@@ -202,7 +202,7 @@ const SignUpPage = ({
         } catch (error: any) {
             clientLogger(error, 'error');
             // this is a supabase provided error so we don't have our custom error handling
-            if (error?.message === 'User already registered') {
+            if (error?.message.includes('User already registered')) {
                 toast.error(t('login.userAlreadyRegistered'));
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
