@@ -86,6 +86,6 @@ describe('Signup and start trial', () => {
         signupIntercept();
 
         // redirects to boostbot page on success
-        cy.url().should('include', '/boostbot', { timeout: 30000 });
+        cy.contains('BoostBot AI Search', { timeout: 30000 });
     });
 });
