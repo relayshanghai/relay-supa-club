@@ -166,10 +166,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             // reset all analytics
             try {
-                mixpanel.reset(true);
-                await analytics.reset();
-                // @note if window.mixpanel does not exist, there is probably nothing to reset
-                if (mixpanel) mixpanel.reset();
+                if (mixpanel && mixpanel.reset) {
+                    mixpanel.reset(true);
+                }
+                if (analytics && analytics.reset) {
+                    await analytics.reset();
+                }
             } catch (error: unknown) {
                 clientLogger(error, 'error', true);
             }

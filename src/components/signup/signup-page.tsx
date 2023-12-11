@@ -175,7 +175,6 @@ const SignUpPage = ({
         async (data: SignupPostBody) => {
             try {
                 setLoading(true);
-                await logout(false);
 
                 const signupCompanyRes = await signup(data);
                 if (!signupCompanyRes?.cus_id) {
@@ -195,10 +194,13 @@ const SignUpPage = ({
                 setLoading(false);
             }
         },
-        [logout, signup, email, login, password, t],
+        [signup, email, login, password, t],
     );
 
     const onNext = async () => {
+        if (currentStep === PROFILE_FORM_STEP) {
+            await logout(false);
+        }
         if (currentStep === COMPANY_FORM_STEP) {
             const result = await handleSignup(formData);
             if (result === 'success') {
