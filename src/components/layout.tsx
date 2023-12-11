@@ -27,7 +27,7 @@ const pageNameMap: { [key: string]: string } = {
 };
 
 export const Layout = ({ children }: any) => {
-    const { profile, loading, refreshProfile, logout } = useUser();
+    const { profile, loading, refreshProfile } = useUser();
     const { track } = useRudderstackTrack();
 
     useEffect(() => {
@@ -76,7 +76,6 @@ export const Layout = ({ children }: any) => {
                 accountMenuButtonRef={accountMenuButtonRef}
                 accountMenuRef={accountMenuRef}
                 setAccountMenuOpen={setAccountMenuOpen}
-                logout={logout}
                 loggedIn={!!profile?.id && !loading}
                 profileFirstName={profile?.first_name}
             />

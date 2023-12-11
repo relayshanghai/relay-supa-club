@@ -1,3 +1,4 @@
+import { serverLogger } from 'src/utils/logger-server';
 import type { RelayDatabase } from '../types';
 
 export const getProfileByIdCall = (supabaseClient: RelayDatabase) => async (id: string, abortSignal?: AbortSignal) => {
@@ -35,4 +36,12 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
     }
 
     return data;
+};
+
+export const deleteUserById = (db: RelayDatabase) => async (profileId: string) => {
+    const { error } = await db.auth.admin.deleteUser(profileId);
+    if (error) {
+        serverLogger(error);
+    }
+    return db.from('profiles').delete().eq('id', profileId);
 };
