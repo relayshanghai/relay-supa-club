@@ -18,7 +18,7 @@ import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
 import { useAnalytics } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
-import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/signup';
+import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 
 export type SignupData = {
     email: string;
@@ -46,7 +46,7 @@ export interface IUserContext {
     refreshProfile: KeyedMutator<ProfileDB> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
-    signup: (body: CompanyCreatePostBody) => Promise<CompanyCreatePostResponse>;
+    signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -214,8 +214,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         : undefined;
 
     const signup = useCallback(
-        async (body: CompanyCreatePostBody) => {
-            const res = await nextFetch<CompanyCreatePostResponse>(`signup`, {
+        async (body: SignupPostBody) => {
+            const res = await nextFetch<SignupPostResponse>(`signup`, {
                 method: 'POST',
                 body,
             });

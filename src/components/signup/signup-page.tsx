@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
 import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
-import type { CompanyCreatePostBody } from 'pages/api/signup';
+import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 
@@ -172,7 +172,7 @@ const SignUpPage = ({
     };
 
     const handleSignup = useCallback(
-        async (data: CompanyCreatePostBody) => {
+        async (data: SignupPostBody) => {
             try {
                 setLoading(true);
                 await logout(false);

@@ -24,7 +24,7 @@ import { deleteUserById } from 'src/utils/api/db/calls/profiles';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
-const CompanyCreatePostBody = z.object({
+const SignupPostBody = z.object({
     email: z.string(),
     password: z.string(),
     firstName: z.string(),
@@ -35,12 +35,12 @@ const CompanyCreatePostBody = z.object({
     category: z.string().optional(),
 });
 
-export type CompanyCreatePostBody = z.input<typeof CompanyCreatePostBody>;
+export type SignupPostBody = z.input<typeof SignupPostBody>;
 
-export type CompanyCreatePostResponse = CompanyDB;
+export type SignupPostResponse = CompanyDB;
 
 const validateAndParseData = (req: NextApiRequest) => {
-    const validated = CompanyCreatePostBody.safeParse(req.body);
+    const validated = SignupPostBody.safeParse(req.body);
 
     if (!validated.success) {
         throw new Error(`${validated.error.format()}`);
@@ -341,7 +341,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         await createBrevoContact(profile, company);
         await createServiceAccount(company);
 
-        const response: CompanyCreatePostResponse = company;
+        const response: SignupPostResponse = company;
 
         return res.status(httpCodes.OK).json(response);
     } catch (error) {
