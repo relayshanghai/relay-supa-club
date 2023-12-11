@@ -6,7 +6,6 @@ import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
 import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
 import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
-import createTrialWithoutPaymentIntent from '../../src/mocks/api/subscription/create-trial-without-payment-intent.json';
 import createSequenceSteps from '../../src/mocks/supabase/sequences/createSequenceSteps.json';
 import boostbotGetTopics from '../../src/mocks/api/boostbot/get-topics.json';
 import boostbotGetRelevantTopics from '../../src/mocks/api/boostbot/get-relevant-topics.json';
@@ -138,9 +137,6 @@ export const setupIntercepts = (options?: InterceptOptions) => {
 };
 
 export const signupIntercept = () => {
-    cy.intercept('POST', '/api/subscriptions/create-trial-without-payment-intent', {
-        body: createTrialWithoutPaymentIntent,
-    });
     cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequences*`, {
         body: createDefaultSequence,
     });

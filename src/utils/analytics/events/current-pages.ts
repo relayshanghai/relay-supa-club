@@ -16,5 +16,4 @@ export enum CurrentPageEvent {
     campaigns = 'campaigns',
     admin = 'admin',
     performance = 'performance',
-    'free-trial' = 'free-trial',
 }

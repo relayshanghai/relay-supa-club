@@ -2,8 +2,8 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
-import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
+
+import type { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { KeyedMutator } from 'swr';
@@ -16,9 +16,9 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
-import { useRouter } from 'next/router';
 import { useAnalytics } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
+import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 
 export type SignupData = {
     email: string;
@@ -41,16 +41,12 @@ export interface IUserContext {
         user: User | null;
         session: Session | null;
     }>;
-    signup: (options: SignupData) => Promise<{
-        user: User | null;
-        session: Session | null;
-    }>;
-    createEmployee: (email: string) => Promise<CreateEmployeePostResponse | null>;
-    logout: () => void;
+    logout: (redirect?: boolean) => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
     refreshProfile: KeyedMutator<ProfileDB> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
+    signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -61,16 +57,12 @@ export const UserContext = createContext<IUserContext>({
         user: null,
         session: null,
     }),
-    createEmployee: async () => null,
     logout: () => null,
-    signup: async () => ({
-        user: null,
-        session: null,
-    }),
     updateProfile: () => null,
     refreshProfile: () => null,
     supabaseClient: null,
     getProfileController: { current: null },
+    signup: async () => undefined as any,
 });
 
 export const useUser = () => {
@@ -90,7 +82,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const clientRoleData = useAtomValue(clientRoleAtom);
     const mixpanel = useMixpanel();
     const { analytics } = useAnalytics();
-    const router = useRouter();
 
     useEffect(() => {
         setLoading(isLoading);
@@ -138,62 +129,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [supabaseClient, trackEvent],
     );
 
-    const signup = useCallback(
-        async ({ email, password, data }: SignupData) => {
-            if (session?.user) {
-                const { error: signOutError } = await supabaseClient.auth.signOut();
-                if (signOutError) {
-                    throw new Error(signOutError?.message || 'Error signing out previous session');
-                }
-            }
-
-            // @note This needs `Confirm Email` and `Secure Email Change` settings disabled
-            // These are found under your Supabase Project > Authentication > Providers > Email
-            // With those enabled, signing up will not automatically create a new session (since it needs confirmation)
-            const { error, data: signupResData } = await supabaseClient.auth.signUp({
-                email,
-                password,
-            });
-
-            if (error) {
-                throw new Error(error?.message || 'Unknown error');
-            }
-            const id = signupResData?.user?.id;
-            if (!id) {
-                throw new Error('Error creating profile, no id in response');
-            }
-            const profileBody: ProfileInsertBody = {
-                id,
-                email,
-                ...data,
-            };
-            const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
-                method: 'POST',
-                body: profileBody,
-            });
-
-            if (!createProfileResponse.id) {
-                clientLogger(createProfileResponse, 'error');
-                throw new Error('Error creating profile');
-            }
-
-            return signupResData;
-        },
-        [session?.user, supabaseClient],
-    );
-
-    const createEmployee = useCallback(async (email: string) => {
-        const body: CreateEmployeePostBody = { email };
-        const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>('company/create-employee', {
-            method: 'POST',
-            body,
-        });
-        if (!createEmployeeRes.id) {
-            throw new Error('Error creating employee');
-        }
-        return createEmployeeRes;
-    }, []);
-
     const updateProfile = useCallback(
         async (updateData: Omit<ProfilePutBody, 'id'>) => {
             setLoading(true);
@@ -216,33 +151,38 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [session?.user],
     );
 
-    const logout = useCallback(async () => {
-        if (!supabaseClient) {
-            clientLogger('User cannot logout', 'error', true);
-            return;
-        }
+    const logout = useCallback(
+        async (redirect = true) => {
+            refreshProfile(undefined, { revalidate: false }); // reset the profile to undefined
+            if (!supabaseClient) {
+                clientLogger('User cannot logout', 'error', true);
+                return;
+            }
 
-        const email = session?.user?.email;
-        await trackEvent('Logout', { email });
-        // destroy the session first
-        await supabaseClient.auth.signOut();
+            const email = session?.user?.email;
+            await trackEvent('Logout', { email });
+            // destroy the session first
+            await supabaseClient.auth.signOut();
 
-        // reset all analytics
-        try {
-            mixpanel.reset(true);
-            await analytics.reset();
-            // @note if window.mixpanel does not exist, there is probably nothing to reset
-            if (mixpanel) mixpanel.reset();
-        } catch (error: unknown) {
-            clientLogger(error, 'error', true);
-        }
+            // reset all analytics
+            try {
+                mixpanel.reset(true);
+                await analytics.reset();
+                // @note if window.mixpanel does not exist, there is probably nothing to reset
+                if (mixpanel) mixpanel.reset();
+            } catch (error: unknown) {
+                clientLogger(error, 'error', true);
+            }
 
-        // @todo deleting idb is blocked so we do not wait to allow us to continue
-        Sentry.setUser(null);
-
-        const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
-        await router.replace(redirectUrl);
-    }, [analytics, mixpanel, router, supabaseClient, trackEvent, session]);
+            Sentry.setUser(null);
+            if (redirect) {
+                const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
+                window.stop(); // stop all network requests so that an inflight request does not reset the cookie
+                window.location.href = redirectUrl;
+            }
+        },
+        [refreshProfile, supabaseClient, session?.user?.email, trackEvent, mixpanel, analytics],
+    );
 
     useEffect(() => {
         // detect if the email has been changed on the supabase side and update the profile
@@ -272,18 +212,29 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
           }
         : undefined;
 
+    const signup = useCallback(
+        async (body: SignupPostBody) => {
+            const res = await nextFetch<SignupPostResponse>(`signup`, {
+                method: 'POST',
+                body,
+            });
+            refreshProfile();
+            return res;
+        },
+        [refreshProfile],
+    );
+
     return (
         <UserContext.Provider
             value={{
                 user: session?.user || null,
                 login,
-                createEmployee,
-                signup,
                 loading,
                 profile: profileWithAdminOverrides,
                 updateProfile,
                 refreshProfile,
                 logout,
+                signup,
                 supabaseClient,
                 getProfileController,
             }}

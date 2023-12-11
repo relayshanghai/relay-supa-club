@@ -6,7 +6,7 @@ export const usePersistentState = <T>(
     key: string,
     initialValue: T,
     onLoadUpdate?: (currentValue: T) => T,
-): [T, React.Dispatch<React.SetStateAction<T>>, (key: string) => void] => {
+): [T, React.Dispatch<React.SetStateAction<T>>, () => void] => {
     const { profile } = useUser();
     const userSpecificKey = profile ? `${profile.id}-${key}` : key;
 
