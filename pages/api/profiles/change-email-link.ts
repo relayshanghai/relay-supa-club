@@ -6,16 +6,17 @@ import { supabase } from 'src/utils/supabase-client';
 export type ChangeEmailLinkBody = {
     oldMail: string;
     newMail: string;
+    redirectUrl: string;
 };
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { oldMail, newMail } = req.body as ChangeEmailLinkBody;
+    const { oldMail, newMail, redirectUrl } = req.body as ChangeEmailLinkBody;
     const { data, error } = await supabase.auth.admin.generateLink({
         type: 'email_change_new',
         email: oldMail,
         newEmail: newMail,
         options: {
-            redirectTo: `https://app.boostbot.ai/login?email=${newMail}`,
+            redirectTo: `${redirectUrl}/login?${new URLSearchParams({ newMail })}`,
         },
     });
     if (error) return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });

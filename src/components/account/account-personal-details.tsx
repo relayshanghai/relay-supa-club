@@ -119,6 +119,7 @@ export const PersonalDetails = () => {
                 body: {
                     oldMail: profile?.email,
                     newMail: email,
+                    redirectUrl: appUrl,
                 },
             });
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
