@@ -15,6 +15,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         type: 'email_change_new',
         email: oldMail,
         newEmail: newMail,
+        options: {
+            redirectTo: 'www.google.com',
+        },
     });
     if (error) return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });
     return res.status(httpCodes.OK).json(data);
