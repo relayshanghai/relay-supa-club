@@ -13,6 +13,8 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
 import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
+import { nextFetch } from 'src/utils/fetcher';
+import type { ChangeEmailLinkBody } from 'pages/api/profiles/change-email-link';
 
 export const PersonalDetails = () => {
     const {
@@ -105,13 +107,20 @@ export const PersonalDetails = () => {
             if (!emailRegex.test(email)) {
                 throw new Error(t('account.personal.pleaseEnterValidEmail') || '');
             }
-            const { error } = await supabaseClient.auth.updateUser(
-                { email },
-                {
-                    emailRedirectTo: `${appUrl}/login?${new URLSearchParams({ email })}`,
+            // const { error } = await supabaseClient.auth.updateUser(
+            //     { email },
+            //     {
+            //         emailRedirectTo: `${appUrl}/login?${new URLSearchParams({ email })}`,
+            //     },
+            // );
+
+            const _res = await nextFetch<ChangeEmailLinkBody>('profiles/change-email-link', {
+                method: 'POST',
+                body: {
+                    oldMail: profile?.email,
+                    newMail: email,
                 },
-            );
-            if (error) throw error;
+            });
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
             track(UpdateProfileInfo, {
                 info_type: 'Profile',
