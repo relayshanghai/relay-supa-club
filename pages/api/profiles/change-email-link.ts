@@ -11,7 +11,7 @@ export type ChangeEmailLinkBody = {
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { oldMail, newMail } = req.body as ChangeEmailLinkBody;
     const { data, error } = await supabase.auth.admin.generateLink({
-        type: 'email_change_current',
+        type: 'email_change_new',
         email: oldMail,
         newEmail: newMail,
         options: {
