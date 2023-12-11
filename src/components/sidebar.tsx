@@ -161,6 +161,7 @@ const NavBarInner = ({
                                         className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                         variant="neutral"
                                         onClick={() => {
+                                            window.stop(); // cancel any inflight requests
                                             window.location.href = '/logout';
                                         }}
                                     >
