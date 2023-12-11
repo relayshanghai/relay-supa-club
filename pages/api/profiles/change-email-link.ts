@@ -16,7 +16,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         email: oldMail,
         newEmail: newMail,
         options: {
-            redirectTo: `${redirectUrl}/login?${new URLSearchParams({ newMail })}`,
+            redirectTo: `${redirectUrl}/login?${new URLSearchParams({ email: newMail })}`,
         },
     });
     if (error) return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });
