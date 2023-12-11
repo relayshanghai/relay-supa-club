@@ -174,7 +174,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger(error, 'error', true);
             }
 
-            // @todo deleting idb is blocked so we do not wait to allow us to continue
             Sentry.setUser(null);
             if (redirect) {
                 const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
