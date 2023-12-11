@@ -236,7 +236,7 @@ export const StepThree = ({
                 className="mt-12 flex w-full justify-center"
                 onClick={onNext}
             >
-                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
+                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('pricing.startFreeTrial')}
             </Button>
             <div> {showTermsModal && <TermsModal setShowModal={setShowTermsModal} />}</div>
         </>
