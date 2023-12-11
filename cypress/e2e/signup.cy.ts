@@ -81,8 +81,7 @@ describe('Signup and start trial', () => {
         cy.get('[data-test="close-button"]').click();
 
         cy.get('input[type="checkbox"]').check({ force: true });
-        //last step - free trial page
-        cy.contains('Start your free trial');
+        cy.contains('button', 'Start Your Free Trial').click();
 
         signupIntercept();
 
