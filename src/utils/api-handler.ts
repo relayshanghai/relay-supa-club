@@ -94,11 +94,6 @@ const createErrorObject = (error: any, tag: string) => {
         e.message = `${message} - ERR:${tag}`;
     }
 
-    // Hide server errors if not in development
-    if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
-        e.message = `Error occurred - ERR:${tag}`;
-    }
-
     return e;
 };
 

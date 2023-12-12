@@ -7,6 +7,9 @@ import type { SlackMessage } from '.';
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as InsertProfilePayload;
     const { first_name: firstName, last_name: lastName, phone, email } = data.record;
+    if (email?.includes('support+cus_')) {
+        return;
+    }
     if (data.table === 'profiles' && data.type === 'INSERT') {
         //For how to format Slack message body, see more at https://api.slack.com/messaging/composing/layouts
         const reqBody: SlackMessage = {

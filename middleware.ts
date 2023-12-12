@@ -65,7 +65,7 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
-        if (req.nextUrl.pathname.includes('signup')) return res;
+        if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
     } else if (
@@ -221,6 +221,7 @@ export async function middleware(req: NextRequest) {
     // unauthenticated pages requests, send to signup
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/signup') return res;
+    if (req.nextUrl.pathname === '/login') return res;
     redirectUrl.pathname = '/login';
     return NextResponse.redirect(redirectUrl);
 }
@@ -238,7 +239,6 @@ export const config = {
          * - assets/* (assets files) (public/assets/*)
          *
          * Page routes
-         * - login*
          * - login/reset-password
          * - signup/invite*
          * - logout
@@ -257,6 +257,6 @@ export const config = {
          * - api/company/exists
          * - api/jobs/run
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run/*).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run/*).*)',
     ],
 };
