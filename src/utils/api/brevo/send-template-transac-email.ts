@@ -42,3 +42,20 @@ export const sendPasswordResetEmail = async (email: string, name: string, resetL
 
     return apiInstance.sendTransacEmail(sendSmtpEmail);
 };
+
+export const sendInviteEmail = async (email: string, senderName: string, companyName: string, inviteLink: string) => {
+    //@ts-ignore
+    const templateInfo: SmtpMailType = await apiInstance.getSmtpTemplate(6); // 6 is the id of the template for invitnig users on Brevo
+    const { htmlContent, subject } = templateInfo;
+    const sendSmtpEmail = new (Brevo('SendSmtpEmail'))();
+    sendSmtpEmail.sender = { name: BOOSTBOT_DOMAIN, email: `no-reply@${BOOSTBOT_DOMAIN}` };
+    sendSmtpEmail.to = [{ email, name: email }];
+    const replacedHtml = htmlContent
+        .replace('https://invite.link', inviteLink)
+        .replace('{{ contact.COMPANYNAME }}', companyName)
+        .replace('Someone', senderName);
+    sendSmtpEmail.htmlContent = replacedHtml;
+    sendSmtpEmail.subject = subject;
+
+    return apiInstance.sendTransacEmail(sendSmtpEmail);
+};
