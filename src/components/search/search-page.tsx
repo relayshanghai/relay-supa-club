@@ -23,7 +23,7 @@ import { useTrackEvent } from './use-track-event';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
-import { getFulfilledData, randomNumber } from 'src/utils/utils';
+import { getFulfilledData, randomNumber, unixEpochToISOString } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 import { FaqModal } from '../library';
@@ -48,6 +48,8 @@ import {
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { SearchExpired } from './search-expired';
+import { useUsages } from 'src/hooks/use-usages';
+import { useSubscription } from 'src/hooks/use-subscription';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -228,6 +230,18 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [selectedCount, setSelectedCount] = useState(0);
     const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
 
+    const { subscription } = useSubscription();
+
+    const periodStart = unixEpochToISOString(subscription?.current_period_start);
+    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+
+    const { usages } = useUsages(
+        true,
+        periodStart && periodEnd
+            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
+            : undefined,
+    );
+
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
 
     const [sequence, setSequence] = useState<Sequence | undefined>(() =>
@@ -325,6 +339,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             setSequence(sequences[0]);
         }
     }, [sequence, sequences]);
+
     return (
         <div className="p-6">
             <ClientRoleWarning />
@@ -357,9 +372,9 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-            {expired ? (
+            {expired || usages.search.remaining === 0 ? (
                 <div className="m-8 flex w-full justify-center">
-                    <SearchExpired />
+                    <SearchExpired type={expired ? 'plan' : 'credit'} subscriptionStatus={subscription?.status} />
                 </div>
             ) : noResults && !resultsLoading ? (
                 <p>{t('creators.noResults')}</p>

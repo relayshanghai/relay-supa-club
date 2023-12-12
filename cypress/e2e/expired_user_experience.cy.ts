@@ -20,8 +20,8 @@ describe('Expired User Experience', () => {
             cy.get('input').type('alligators');
             cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to appear
         });
-        cy.contains('Credit Limit Exceeded');
-        cy.contains("To discover more influencers you'll need to upgrade your account");
+        cy.contains('Subscription period has ended');
+        cy.contains('To discover more influencers you’ll need to upgrade your plan and get more searches');
     });
     it('Cannot use boostbot and shows error', async () => {
         await deleteCache('expired_user@expired.com');
@@ -47,7 +47,7 @@ describe('Expired User Experience', () => {
         cy.visit('/dashboard');
         cy.contains('Your free trial has expired');
         cy.contains('Please upgrade your account to use this feature.');
-        cy.contains('Credit Limit Exceeded');
-        cy.contains("To discover more influencers you'll need to upgrade your account");
+        cy.contains('Subscription period has ended');
+        cy.contains('To discover more influencers you’ll need to upgrade your plan and get more searches');
     });
 });
