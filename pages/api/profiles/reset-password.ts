@@ -4,19 +4,14 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { sendPasswordResetEmail } from 'src/utils/api/brevo/send-template-transac-email';
 import { supabase } from 'src/utils/supabase-client';
 
-export type ChangeEmailLinkReqBody = {
+export type ResetPasswordReqBody = {
     name: string;
     email: string;
     redirectUrl: string;
 };
 
-export type ChangeEmailLinkResBody = {
-    success?: boolean;
-    error?: string;
-};
-
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email, redirectUrl, name } = req.body as ChangeEmailLinkReqBody;
+    const { email, redirectUrl, name } = req.body as ResetPasswordReqBody;
     // Read more about auth admin commands here: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
     const { data, error } = await supabase.auth.admin.generateLink({
         type: 'recovery',
