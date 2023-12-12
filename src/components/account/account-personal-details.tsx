@@ -117,6 +117,7 @@ export const PersonalDetails = () => {
             await nextFetch<ChangeEmailLinkResBody>('profiles/change-email-link', {
                 method: 'POST',
                 body: {
+                    name: `${profile?.first_name} ${profile?.last_name}`,
                     oldMail: profile?.email,
                     newMail: email,
                     redirectUrl: appUrl,
