@@ -29,3 +29,16 @@ export const sendEmailChangeVerificationEmail = async (email: string, name: stri
 
     return apiInstance.sendTransacEmail(sendSmtpEmail);
 };
+
+export const sendPasswordResetEmail = async (email: string, name: string, verificationLink: string) => {
+    //@ts-ignore
+    const templateInfo: SmtpMailType = await apiInstance.getSmtpTemplate(5); // 5 is the id of the template for password reset on Brevo
+    const { htmlContent, subject } = templateInfo;
+    const sendSmtpEmail = new (Brevo('SendSmtpEmail'))();
+    sendSmtpEmail.sender = { name: BOOSTBOT_DOMAIN, email: `no-reply@${BOOSTBOT_DOMAIN}` };
+    sendSmtpEmail.to = [{ email, name }];
+    sendSmtpEmail.htmlContent = htmlContent.replace('https://verification.link', verificationLink);
+    sendSmtpEmail.subject = subject;
+
+    return apiInstance.sendTransacEmail(sendSmtpEmail);
+};
