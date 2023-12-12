@@ -10,7 +10,6 @@ export type CompleteSignupStepPayload = EventPayload<{
     phoneNumber: string;
     companyName: string;
     companyWebsite: string;
-    companySize: string;
 }>;
 
 export const CompleteSignupStep = (trigger: TriggerEvent, value?: CompleteSignupStepPayload) =>

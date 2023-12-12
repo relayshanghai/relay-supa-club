@@ -96,9 +96,10 @@ export const updateCompanySubscriptionStatus = async ({
     return data;
 };
 
-export const createCompany = (data: CompanyDBInsert) => {
-    data.subscription_status = 'awaiting_payment_method';
-    return supabase.from('companies').insert(data).select().single();
+export const createCompany = (db: RelayDatabase) => async (insert: CompanyDBInsert) => {
+    const { error, data } = await db.from('companies').insert(insert).select().single();
+    if (error) throw error;
+    return data;
 };
 
 export const getCompanyByName = (name: string) => supabase.from('companies').select().eq('name', name).single();
@@ -113,7 +114,10 @@ export const getTeammatesByCompanyId = async (companyId: string) => {
     return data;
 };
 
-export const findCompaniesByNames = (db: RelayDatabase) => async (name: string) => {
+/** Finds company name with case insensitive query */
+export const findCompaniesByName = (db: RelayDatabase) => async (name: string) => {
+    // case insensitive comparison
+    // https://supabase.com/docs/reference/javascript/ilike
     const { data, error } = await db.from('companies').select().ilike('name', name);
 
     if (error) {
@@ -122,3 +126,6 @@ export const findCompaniesByNames = (db: RelayDatabase) => async (name: string) 
 
     return data;
 };
+
+export const deleteCompanyById = (db: RelayDatabase) => async (id: string) =>
+    db.from('companies').delete().eq('id', id);

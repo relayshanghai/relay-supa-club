@@ -64,7 +64,6 @@ const NavBarInner = ({
     setAccountMenuOpen,
     accountMenuButtonRef,
     accountMenuRef,
-    logout,
     loggedIn,
     profileFirstName,
     isRelayEmployee,
@@ -73,7 +72,6 @@ const NavBarInner = ({
     accountMenuButtonRef: MutableRefObject<null>;
     accountMenuRef: MutableRefObject<null>;
     setAccountMenuOpen: (menu: boolean) => void;
-    logout: () => void;
     loggedIn: boolean | null;
     profileFirstName?: string;
     isRelayEmployee: boolean;
@@ -162,7 +160,10 @@ const NavBarInner = ({
                                     <Button
                                         className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                         variant="neutral"
-                                        onClick={logout}
+                                        onClick={() => {
+                                            window.stop(); // cancel any inflight requests
+                                            window.location.href = '/logout';
+                                        }}
                                     >
                                         {t('navbar.logout')}
                                     </Button>
@@ -181,7 +182,6 @@ export const Sidebar = ({
     accountMenuButtonRef,
     accountMenuRef,
     setAccountMenuOpen,
-    logout,
     loggedIn,
     profileFirstName,
 }: {
@@ -189,7 +189,6 @@ export const Sidebar = ({
     accountMenuButtonRef: MutableRefObject<null>;
     accountMenuRef: MutableRefObject<null>;
     setAccountMenuOpen: (menu: boolean) => void;
-    logout: () => void;
     loggedIn: boolean | null;
     profileFirstName?: string;
 }) => {
@@ -214,7 +213,6 @@ export const Sidebar = ({
                     accountMenuButtonRef={accountMenuButtonRef}
                     accountMenuRef={accountMenuRef}
                     setAccountMenuOpen={setAccountMenuOpen}
-                    logout={logout}
                     profileFirstName={profileFirstName}
                     loggedIn={loggedIn}
                     isRelayEmployee={profile?.user_role === 'relay_employee'}
