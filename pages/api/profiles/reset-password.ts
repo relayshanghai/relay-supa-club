@@ -17,11 +17,12 @@ export type ChangeEmailLinkResBody = {
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, redirectUrl, name } = req.body as ChangeEmailLinkReqBody;
+    // Read more about auth admin commands here: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
     const { data, error } = await supabase.auth.admin.generateLink({
         type: 'recovery',
         email,
         options: {
-            redirectTo: `${redirectUrl}/login/reset-password/${email}`,
+            redirectTo: `${redirectUrl}/login/reset-password/${email}`, // The redirect url must be allowed using wildcards in supabase Authentication settings
         },
     });
     if (error) return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });

@@ -14,7 +14,6 @@ import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
 import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
 import { nextFetch } from 'src/utils/fetcher';
-import type { ChangeEmailLinkResBody } from 'pages/api/profiles/change-email-link';
 
 export const PersonalDetails = () => {
     const {
@@ -106,7 +105,7 @@ export const PersonalDetails = () => {
                 throw new Error(t('account.personal.pleaseEnterValidEmail') || '');
             }
 
-            await nextFetch<ChangeEmailLinkResBody>('profiles/change-email-link', {
+            await nextFetch('profiles/change-email-link', {
                 method: 'POST',
                 body: {
                     name: `${profile?.first_name} ${profile?.last_name}`,
