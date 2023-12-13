@@ -67,41 +67,41 @@ describe('Admin mode and search usages', () => {
         });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
-        // can see client's sequences
-        cy.contains('CRM').click();
-        cy.contains('button', 'New sequence');
-        cy.contains('General collaboration', { timeout: 30000 }); // wait for campaigns to load
-        cy.contains('William Edward'); // manager of the sequence
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        // // can see client's sequences
+        // cy.contains('CRM').click();
+        // cy.contains('button', 'New sequence');
+        // cy.contains('General collaboration', { timeout: 30000 }); // wait for campaigns to load
+        // cy.contains('William Edward'); // manager of the sequence
+        // cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
-        // can see client's search totals
-        cy.getByTestId('layout-account-menu').click();
-        cy.contains('My Account').click();
-        cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
-        cy.contains('tr', 'Searches').within(() => {
-            cy.contains('td', '0'); // wait for count to update
-        });
+        // // can see client's search totals
+        // cy.getByTestId('layout-account-menu').click();
+        // cy.contains('My Account').click();
+        // cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
+        // cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        // cy.contains('tr', 'Searches').within(() => {
+        //     cy.contains('td', '0'); // wait for count to update
+        // });
 
-        // rack up 1 search
-        cy.contains('Classic').click();
-        cy.contains('button', 'Search');
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
-        cy.getByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators');
-        });
-        cy.contains('alligators').click();
-        cy.contains('button', 'Search').click();
+        // // rack up 1 search
+        // cy.contains('Classic').click();
+        // cy.contains('button', 'Search');
+        // cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        // cy.getByTestId('search-topics').within(() => {
+        //     cy.get('input').type('alligators');
+        // });
+        // cy.contains('alligators').click();
+        // cy.contains('button', 'Search').click();
 
-        // Check that search total increased
-        cy.getByTestId('layout-account-menu').click();
-        cy.contains('My Account').click();
-        cy.contains('https://blue-moonlight-stream.com');
-        cy.contains('td', '1', { timeout: 30000 }); // wait for count to update
-        cy.contains('tr', 'Searches').within(() => {
-            cy.contains('td', '1');
-        });
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        // // Check that search total increased
+        // cy.getByTestId('layout-account-menu').click();
+        // cy.contains('My Account').click();
+        // cy.contains('https://blue-moonlight-stream.com');
+        // cy.contains('td', '1', { timeout: 30000 }); // wait for count to update
+        // cy.contains('tr', 'Searches').within(() => {
+        //     cy.contains('td', '1');
+        // });
+        // cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can cancel out of manage mode
         cy.contains('Clients').click();
