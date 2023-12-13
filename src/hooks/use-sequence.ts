@@ -55,8 +55,8 @@ export const useSequence = (sequenceId?: string) => {
                 method: 'POST',
                 body,
             });
-            refreshSequence();
-            refreshSequences();
+            refreshSequence((prev) => (prev ? { ...prev, deleted: true } : prev));
+            refreshSequences((prev) => prev?.filter(({ id }) => !ids.includes(id)));
             return res;
         },
         [deleteSequenceDBCall, getInfluencersBySequenceIdsCall, refreshSequence, refreshSequences],
@@ -75,7 +75,7 @@ export const useSequence = (sequenceId?: string) => {
                     manager_first_name: profile.first_name,
                 };
                 const res = await createSequenceDBCall(insert);
-                refreshSequences();
+                refreshSequences((prev) => (prev ? [...prev, res] : prev));
                 return res;
             } catch (error) {
                 track(CreateSequence, {

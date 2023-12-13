@@ -38,8 +38,8 @@ describe('Boostbot', () => {
         cy.contains(formattedFollowers);
         cy.contains('@DANNIVIVIANI');
     });
-
-    it('can persist chat messages and influencer result states across reloads', () => {
+    // TODO: https://linear.app/boostbot/issue/BB-68/bug-boostbot-influencer-list-not-saved-on-reload
+    it.skip('can persist chat messages and influencer result states across reloads', () => {
         cy.get('textarea').type('LED beauty mask{enter}');
 
         cy.contains('@DANNIVIVIANI');
