@@ -28,7 +28,7 @@ export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => 
             return await nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, body);
         },
         // need to have a poll for this so that we can show the error on the boostbot page that usages are exceeded
-        { refreshInterval: 1000 * 60 * 1 },
+        { refreshInterval: 1000 * 30, revalidateOnFocus: true },
     );
 
     const limits = company
