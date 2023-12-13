@@ -185,7 +185,9 @@ const SignUpPage = ({
                 }
             } catch (e: any) {
                 clientLogger(e, 'error');
-                if (hasCustomError(e, signupErrors)) {
+                if (e?.message.includes('User already registered')) {
+                    toast.error(t('login.userAlreadyRegistered'));
+                } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else {
                     toast.error(`${t('login.oopsSomethingWentWrong')} ${e?.message}`);
