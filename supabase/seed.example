@@ -2,12 +2,8 @@ BEGIN;
 
 -- seed helpers
 CREATE
-OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
-DECLARE
-  user_id UUID;
+OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT, user_id TEXT) RETURNS UUID SECURITY DEFINER AS $$
 BEGIN
-  user_id := uuid_generate_v4();
-
   INSERT INTO auth.users (
     "instance_id",
     "id",
@@ -95,7 +91,8 @@ OR REPLACE FUNCTION create_profile(
   last_name TEXT,
   _role TEXT,
   _email_engine_account TEXT DEFAULT NULL,
-  _email_engine_email TEXT DEFAULT NULL
+  _email_engine_email TEXT DEFAULT NULL,
+  _user_id TEXT DEFAULT uuid_generate_v4()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   user_id UUID;
@@ -794,7 +791,8 @@ _profile_william := create_profile(
   'Douglas',
   'company_owner',
   'nqnwq6g9ooqhfexa',
-  'test@example.com'
+  'test@example.com',
+  '6e6e65ca-dd79-4e62-90e4-9c5462991ae5'
 );
 _profile_christopher := create_profile(
   _company_test.id,

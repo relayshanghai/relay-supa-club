@@ -3,7 +3,7 @@ import type { CompanyDB } from 'src/utils/api/db';
 
 export const testSequenceId = 'b7ddd2a8-e114-4423-8cc6-30513c885f07';
 
-const companyId = '6e6e65ca-dd79-4e62-90e4-9c5462991ae5';
+const companyId = '8e6e65ca-dd79-4e68-90e4-9c5462991ae4';
 
 export const mockCompany: CompanyDB = {
     id: companyId,
@@ -29,8 +29,9 @@ export const mockCompany: CompanyDB = {
     subscription_plan: 'Discovery',
 };
 
+/** ID matches william in the seed */
 export const mockProfile: ProfileWithCompany = {
-    id: companyId,
+    id: '6e6e65ca-dd79-4e62-90e4-9c5462991ae5',
     user_role: 'company_owner',
     company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
     avatar_url: null,
