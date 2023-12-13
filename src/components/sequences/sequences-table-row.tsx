@@ -4,7 +4,6 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceStep } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
 import { Brackets } from '../icons';
-import { useSequence } from 'src/hooks/use-sequence';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
@@ -12,6 +11,7 @@ import { Button } from '../button';
 import { EmailPreviewModal } from './email-preview-modal';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
 export const SequencesTableRow = ({
     sequence,
@@ -23,7 +23,7 @@ export const SequencesTableRow = ({
     checked: boolean;
 }) => {
     const { t } = useTranslation();
-    const { sequenceSteps } = useSequence(sequence.id);
+    const { sequenceSteps } = useSequenceSteps(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
