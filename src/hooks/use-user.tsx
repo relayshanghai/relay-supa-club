@@ -100,6 +100,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             const { data: fetchedProfile, error } = await getProfileById(userId, getProfileController.current?.signal);
             if (error) {
+                if (error?.message.includes('aborted')) {
+                    return;
+                }
                 clientLogger(error, 'error');
                 throw new Error(error.message || 'Unknown error');
             }
