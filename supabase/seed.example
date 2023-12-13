@@ -116,7 +116,7 @@ OR REPLACE FUNCTION create_company(
   subscription_current_period_start TIMESTAMP WITH TIME ZONE DEFAULT now(),
   subscription_current_period_end TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00',
   subscription_start_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  subscription_end_date TIMESTAMP WITH TIME ZONE DEFAULT '2025-01-01 00:00:00.000000+00'
+  subscription_end_date TIMESTAMP WITH TIME ZONE DEFAULT NULL
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
