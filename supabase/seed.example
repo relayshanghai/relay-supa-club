@@ -2,7 +2,7 @@ BEGIN;
 
 -- seed helpers
 CREATE
-OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT, user_id TEXT) RETURNS UUID SECURITY DEFINER AS $$
+OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT, _user_id UUID) RETURNS UUID SECURITY DEFINER AS $$
 BEGIN
   INSERT INTO auth.users (
     "instance_id",
@@ -39,7 +39,7 @@ BEGIN
     "is_sso_user"
   ) VALUES (
     '00000000-0000-0000-0000-000000000000',
-    user_id,
+    _user_id,
     'authenticated',
     'authenticated',
     email,
@@ -78,8 +78,7 @@ BEGIN
     NULL,
     'f'
   );
-
-  RETURN user_id;
+  RETURN _user_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -90,15 +89,15 @@ OR REPLACE FUNCTION create_profile(
   first_name TEXT,
   last_name TEXT,
   _role TEXT,
+  _user_id UUID,
   _email_engine_account TEXT DEFAULT NULL,
-  _email_engine_email TEXT DEFAULT NULL,
-  _user_id TEXT DEFAULT uuid_generate_v4()
+  _email_engine_email TEXT DEFAULT NULL
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   user_id UUID;
   _row RECORD;
 BEGIN
-  user_id := create_supabase_user(email, first_name, last_name);
+  user_id := create_supabase_user(email, first_name, last_name, _user_id);
 
   INSERT INTO profiles
     (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
@@ -790,9 +789,9 @@ _profile_william := create_profile(
   'William Edward',
   'Douglas',
   'company_owner',
+  '6e6e65ca-dd79-4e62-90e4-9c5462991ae5',
   'nqnwq6g9ooqhfexa',
-  'test@example.com',
-  '6e6e65ca-dd79-4e62-90e4-9c5462991ae5'
+  'test@boostbot.ai'
 );
 _profile_christopher := create_profile(
   _company_test.id,
@@ -800,8 +799,7 @@ _profile_christopher := create_profile(
   'Christopher David',
   'Thompson',
   'company_teammate',
-  null,
-  null
+  'e34a9478-be83-4225-a81c-16671737aeb7'
 );
 
 _profile_expired := create_profile(
@@ -810,8 +808,9 @@ _profile_expired := create_profile(
   'Expired',
   'User',
   'company_owner',
-  'e7ustgsqqvy9al6f',
-  'expired_user@example.com'
+  'bc885f95-c4c2-48c9-b074-2cbb99c13a4b',
+  'expired_user@example.com',
+  'c69c7ded-60a6-4cf4-b0af-e79342f24507'
 );
 
 _campaign_beauty_for_all := create_campaign(
@@ -1279,7 +1278,7 @@ _campaign_gaming := create_campaign(
   ARRAY['gaming','technology','highperformance','graphics','sound']
 );
 
-_profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee', null, null);
+_profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee', '07582945-5142-4e1f-9171-6a81e5db8cee');
 
 PERFORM create_campaign_creator(
   _campaign_gaming.id,
