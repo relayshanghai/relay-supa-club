@@ -12,7 +12,7 @@ export const mockCompany: CompanyDB = {
     website: 'https://blue-moonlight-stream.com',
     avatar_url: null,
     updated_at: null,
-    cus_id: 'cus_NKXV4aQYAU7GXG',
+    cus_id: 'cus_PB6Gc1XChOWv5t',
     searches_limit: '100000000',
     profiles_limit: '100000000',
     subscription_status: 'active',

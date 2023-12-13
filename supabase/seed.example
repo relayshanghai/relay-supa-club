@@ -146,7 +146,7 @@ BEGIN
       company_name,
       website,
       subscription_status,
-      'cus_NKXV4aQYAU7GXG',
+      'cus_PB6Gc1XChOWv5t',
       subscription_current_period_end,
       now(),
       subscription_end_date,
