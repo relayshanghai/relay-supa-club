@@ -110,6 +110,7 @@ $$;
 
 CREATE
 OR REPLACE FUNCTION create_company(
+  _id UUID,
   company_name TEXT,
   website TEXT,
   subscription_status TEXT,
@@ -138,7 +139,7 @@ BEGIN
     )
   VALUES
     (
-      uuid_generate_v4(),
+      _id,
       company_name,
       website,
       subscription_status,
@@ -778,8 +779,8 @@ _sequence_influencer_felicia RECORD;
 _sequence_influencer_georgia RECORD;
 BEGIN
 -- Test Company
-_company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
-_company_expired := create_company('Expired Company', 'https://expired-company.com', 'canceled', '2019-01-01 00:00:00.000000+00', '2020-01-01 00:00:00.000000+00', '2019-01-01 00:00:00.000000+00', '2020-01-01 00:00:00.000000+00');
+_company_test := create_company('8e6e65ca-dd79-4e68-90e4-9c5462991ae4', 'Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
+_company_expired := create_company('8e6e65ca-dd79-4e68-90e4-9c5462991ae5', 'Expired Company', 'https://expired-company.com', 'canceled', '2019-01-01 00:00:00.000000+00', '2020-01-01 00:00:00.000000+00', '2019-01-01 00:00:00.000000+00', '2020-01-01 00:00:00.000000+00');
 
 PERFORM create_company_category(_company_test.id, 'Video Game Streaming');
 
@@ -1264,7 +1265,7 @@ PERFORM create_posts_performance(
 );
 
 -- Relay Club
-_company_relay := create_company('Relay Club', 'https://relay.club', 'active');
+_company_relay := create_company('8e6e65ca-dd79-4e68-90e4-9c5462991ae1', 'Relay Club', 'https://relay.club', 'active');
 
 PERFORM create_company_category(_company_test.id, 'Influencer Marketing');
 
