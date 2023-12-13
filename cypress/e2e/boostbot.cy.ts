@@ -1,4 +1,3 @@
-import { deleteDB } from 'idb';
 import { numberFormatter } from 'src/utils/formatter';
 import { boostbotIntercepts, setupIntercepts } from './intercepts';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
@@ -6,8 +5,6 @@ import { countriesByCode } from 'src/utils/api/iqdata/dictionaries/geolocations'
 
 describe('Boostbot', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
-        deleteDB('app-store');
         setupIntercepts();
         boostbotIntercepts();
 

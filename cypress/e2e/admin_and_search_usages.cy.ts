@@ -1,4 +1,3 @@
-import { deleteDB } from 'idb';
 import { searchIntercepts, setupIntercepts } from './intercepts';
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
@@ -8,7 +7,6 @@ export { cocomelon, defaultLandingPageInfluencerSearch };
 
 describe('Admin mode and search usages', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
         setupIntercepts({ useRealUsages: true, useRealSequences: true });
         const supabase = supabaseClientCypress();
 

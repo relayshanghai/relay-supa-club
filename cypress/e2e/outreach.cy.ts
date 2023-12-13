@@ -1,4 +1,3 @@
-import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
@@ -16,8 +15,6 @@ const setTemplateVariableDescription = (description: string) => {
     cy.contains('button', 'Update variables').click();
 };
 const resetData = async () => {
-    await deleteDB('app-cache');
-
     await reinsertAlice();
     await resetBobsStatus();
     await reinsertCharlie(); // reinsert so you can run again easily

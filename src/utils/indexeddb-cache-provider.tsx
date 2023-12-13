@@ -1,6 +1,6 @@
 import { useCacheProvider } from 'src/utils/cache-provider';
 import { SWRConfig } from 'swr';
-import { appCacheDBKey, appCacheStoreKey } from 'src/constants';
+import { appCacheDBKey, appCacheStoreName } from 'src/constants';
 import type { FC, PropsWithChildren } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 
@@ -9,7 +9,7 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const cacheProvider = useCacheProvider({
         dbName: appCacheDBKey(session?.user.id ?? ''),
-        storeName: appCacheStoreKey,
+        storeName: appCacheStoreName,
     });
     if (!cacheProvider) {
         return <>Loading...</>;
