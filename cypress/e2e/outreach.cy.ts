@@ -142,6 +142,7 @@ describe('outreach', () => {
         cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.getByTestId('delete-influencers-button').should('not.be.visible');
         cy.getByTestId('sequence-influencers-select-all').should('not.be.checked');
+        cy.getByTestId('send-email-button-charlie.charles@example.com').should('not.be.disabled', { timeout: 5000 }); // wait for button to load. select all will not select unable to send influencers
         cy.getByTestId('sequence-influencers-select-all').check();
         cy.contains('Charlie Charles');
         cy.contains('Alice Anderson');
