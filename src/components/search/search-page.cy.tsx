@@ -19,9 +19,7 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains(
-            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-        );
+        cy.contains('8.43M influencers matching your search and filters found.');
         cy.contains('T-Series');
     });
     it('can filter results and clear filters', () => {
@@ -63,12 +61,7 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains('We found');
-        // there is a 5 second wait on the first load until 'no results' is shown
-        cy.contains(
-            'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-            { timeout: 6000 },
-        );
+        cy.contains('0 influencers matching your search and filters found.', { timeout: 6000 });
     });
 
     it('renders error on search error', async () => {
