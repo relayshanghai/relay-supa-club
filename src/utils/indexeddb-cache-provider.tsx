@@ -14,5 +14,5 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
     if (!cacheProvider) {
         return <>Loading...</>;
     }
-    return <SWRConfig value={{ provider: cacheProvider }}>{children}</SWRConfig>;
+    return <SWRConfig value={{ provider: cacheProvider, revalidateOnFocus: false }}>{children}</SWRConfig>;
 };
