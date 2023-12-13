@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { priceDetails, type PriceTiers } from 'src/hooks/use-prices';
+import type { PriceDetails } from 'src/hooks/use-prices';
+import { priceDetails } from 'src/hooks/use-prices';
 import { CheckIcon, CrossIcon, InfoIcon } from '../icons';
 
 /** priceTier can also be 'free' */
@@ -7,7 +8,7 @@ export const PriceDetailsCard = ({
     priceTier,
     size = 'large',
 }: {
-    priceTier: keyof PriceTiers;
+    priceTier: keyof PriceDetails;
     size?: 'small' | 'large';
 }) => {
     const { t } = useTranslation();
