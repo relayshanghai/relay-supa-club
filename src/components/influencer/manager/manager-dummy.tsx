@@ -137,7 +137,7 @@ const ManagerDummy = () => {
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
-                <Table influencers={influencers} onRowClick={handleRowClick} />
+                <Table loading={false} influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
                 profile={influencer}
