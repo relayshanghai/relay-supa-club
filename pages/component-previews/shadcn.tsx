@@ -204,7 +204,7 @@ const previewComponents = [
 
 const Shadcn = () => {
     return (
-        <div className="grid grid-cols-2 gap-8 p-4">
+        <div className="grid auto-rows-fr grid-cols-2 gap-8 p-4">
             {previewComponents.map(({ name, component }) => (
                 <section key={`previewcomponent-${name}`} className="h-full w-full">
                     {name}
