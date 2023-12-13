@@ -224,11 +224,11 @@ export const SearchPageInner = () => {
             />
 
             <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
-                    resultsTotal,
-                )} ${
-                    platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
-                }`}</div>
+                <div className="text-sm font-medium">
+                    {t('creators.results', {
+                        resultCount: numberFormatter(resultsTotal),
+                    })}
+                </div>
             </div>
             <SearchResultsTable
                 setSelectedCreator={setSelectedCreator}

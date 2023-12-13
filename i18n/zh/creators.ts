@@ -3,10 +3,7 @@ const creators = {
     recommendedTooltip: '推荐KOL',
     recommendedTooltipDetail: '是与boostbot.ai合作过的KOL，更有可能愿意合作',
     loadMore: '更多',
-    resultsPrefix: '我们发现了',
-    resultsPostfixKeywords:
-        '个达人账户与您的主题相关，或在最近发布的视频中使用了您的关键词，与您设置的筛选条件相匹配。',
-    resultsPostfixHashtags: '个达人账户与您的主题相关，或在最近发布的帖子中使用了您的标签，与您设置的筛选条件相匹配。',
+    results: '找到{{ resultCount }}与搜索筛选条件匹配的红人',
     noResults: '无结果',
     addFilters: '添加筛选项',
     searchResultError: '无法获取搜索结果',

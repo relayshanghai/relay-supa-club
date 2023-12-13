@@ -366,11 +366,11 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                 sequences={sequences || []}
             />
             <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
-                    resultsTotal,
-                )} ${
-                    platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
-                }`}</div>
+                <div className="text-sm font-medium">
+                    {t('creators.results', {
+                        resultCount: numberFormatter(resultsTotal),
+                    })}
+                </div>
             </div>
             {expired || usages.search.remaining === 0 ? (
                 <div className="m-8 flex w-full justify-center">

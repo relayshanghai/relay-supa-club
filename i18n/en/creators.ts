@@ -4,11 +4,7 @@ const creators = {
     recommendedTooltipDetail:
         'Are those which have worked with boostbot.ai brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
-    resultsPrefix: 'We found',
-    resultsPostfixKeywords:
-        'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-    resultsPostfixHashtags:
-        'influencer accounts relevant to your topics or using your hastags in recent posts, that matched your filters.',
+    results: '{{ resultCount }} influencers matching your search and filters found.',
     noResults: 'No results found',
     addFilters: 'Add filters to tailor your results',
     searchResultError: 'Failed to fetch search results',

@@ -28,9 +28,10 @@ export function DataTablePagination<TData>({
 
     //adjust to control the number of links in the pagination section
     const numOfLinks = 11;
+    const maxPages = Math.floor(count ?? 0 / 10);
     const pageNums = getPaginationItems(
         isSearchPage ? currentPage + 1 : table.getState().pagination.pageIndex + 1,
-        isSearchPage ? Math.floor(count / 10) : table.getPageCount(),
+        isSearchPage ? (maxPages > 1000 ? 1000 : maxPages) : table.getPageCount(),
         numOfLinks,
     );
 
