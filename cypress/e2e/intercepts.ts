@@ -24,7 +24,7 @@ import { ulid } from 'ulid';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 
 import { insertSequenceEmails, supabaseClientCypress } from './helpers';
-import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 
 export { cocomelon, defaultLandingPageInfluencerSearch };
 

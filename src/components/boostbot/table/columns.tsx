@@ -19,9 +19,7 @@ export const columns: ColumnDef<SearchTableInfluencer>[] = [
                 checked={table.getIsAllPageRowsSelected()}
                 aria-label={table.options.meta?.t('boostbot.table.selectAll')}
                 disabled={table.options.meta?.isLoading}
-                onChange={(e) => {
-                    table.toggleAllPageRowsSelected(!!e.target.checked);
-                }}
+                onChange={(e) => table.toggleAllPageRowsSelected(!!e.target.checked)}
             />
         ),
         cell: ({ row, table }) => {

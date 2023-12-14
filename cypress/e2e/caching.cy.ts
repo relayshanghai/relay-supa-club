@@ -1,4 +1,4 @@
-import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
 
 describe('Caches SWR requests', () => {

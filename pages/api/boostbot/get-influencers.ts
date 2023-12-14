@@ -7,7 +7,7 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
-import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 
 const GetInfluencersBody = z.object({
     searchPayloads: SearchInfluencersPayloadRequired.array(),

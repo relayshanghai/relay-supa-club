@@ -5,4 +5,4 @@ export const featRecommended = () => process.env.NEXT_PUBLIC_FEAT_RECOMMENDED ==
 const cutoffDate = new Date('2023-08-31');
 export const featEmail = (userCreatedDate: Date) => userCreatedDate > cutoffDate;
 
-export const featNewSearchTable = () => process.env.NEXT_PUBLIC_NEW_SEARCH_TABLE === 'true';
+export const featNewSearchTable = (userCreatedDate: Date) => userCreatedDate > cutoffDate;

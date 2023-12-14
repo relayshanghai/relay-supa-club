@@ -1,5 +1,6 @@
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { GenderPerAge } from 'types';
+import type { CreatorSearchAccountObject, CreatorSearchResult, SearchTableInfluencer } from 'types';
 
 interface InfluencerEvaluatedStats {
     [key: string]: number;
@@ -115,3 +116,23 @@ export const convertAudienceDataToPercentage = (
         female: (item.female / totalAudience) * 100,
     }));
 };
+
+export function flattenInfluencerData(influencersData: CreatorSearchResult, topics: string[] = []) {
+    if (!influencersData.accounts)
+        return {
+            total: 0,
+            influencers: [],
+        };
+    const structuredResults: SearchTableInfluencer[] = influencersData.accounts
+        .map((creator: CreatorSearchAccountObject) => ({
+            ...creator.account?.user_profile,
+            ...creator.match?.user_profile,
+            ...creator.match?.audience_likers?.data,
+            topics,
+        }))
+        .flat();
+    return {
+        total: influencersData.total,
+        influencers: structuredResults,
+    };
+}

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandler } from 'src/utils/api-handler';
-import { flattenInfluencerData } from 'src/utils/api/boostbot/helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import {
     type SearchInfluencersPayloadInput,
