@@ -141,6 +141,36 @@ const deleteScheduledEmails = async (
     }
 };
 
+const scheduleOutreachEmailRetry = async ({
+    event,
+    sequenceInfluencer,
+    sequenceStep,
+    sequenceSteps,
+    templateVariables,
+}: {
+    event: any;
+    sequenceInfluencer: any;
+    sequenceStep: any;
+    sequenceSteps: any;
+    templateVariables: any;
+}) => {
+    const payload: SequenceStepSendArgs = {
+        emailEngineAccountId: event.account,
+        sequenceInfluencer,
+        sequenceStep,
+        sequenceSteps,
+        templateVariables,
+        reference: event.data.messageId,
+    };
+
+    const job = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+        queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
+        payload,
+    });
+
+    return job;
+};
+
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     let trackData: EmailReplyPayload = {
         account_id: event.account,
@@ -550,7 +580,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     };
 
     try {
-        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
         trackData.extra_info.sequenceEmail = sequenceEmail;
 
         if (!sequenceEmail || !sequenceEmail.sequence_id) {
@@ -561,7 +592,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.sequence_id = sequenceEmail.sequence_id;
         trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id;
 
-        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id); // likewise will fail if there is no sequenceInfluencer
+        // likewise will fail if there is no sequenceInfluencer
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
         trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
         trackData.sequence_step = sequenceInfluencer.sequence_step;
@@ -603,6 +635,10 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
+
+        trackData.is_success = true;
+
+        // schedule next outreach email
         if (sequenceSteps.length > currentStep.step_number + 1) {
             const nextStep = sequenceSteps.find((step) => step.step_number === currentStep.step_number + 1);
 
@@ -610,25 +646,20 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 throw new Error('No next sequence step found');
             }
             const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
-            const payload: SequenceStepSendArgs = {
-                emailEngineAccountId: event.account,
+            const jobCreated = await scheduleOutreachEmailRetry({
+                event: event,
                 sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
                 sequenceStep: nextStep,
                 sequenceSteps,
                 templateVariables,
-                reference: event.data.messageId,
-            };
-            trackData.extra_info.next_sequence_email_payload = payload;
-            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
-                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
-                payload,
             });
-            trackData.extra_info.job_created = jobCreated;
-            if (jobCreated && jobCreated.id) {
-                trackData.is_success = true;
+
+            if (jobCreated) {
+                trackData.extra_info.next_sequence_email_payload = jobCreated.payload;
+                trackData.extra_info.job_created = jobCreated;
             }
-        } else {
-            trackData.is_success = true;
+
+            trackData.is_success = jobCreated !== false;
         }
     } catch (error: any) {
         if (isFetchFailedError(error)) {
