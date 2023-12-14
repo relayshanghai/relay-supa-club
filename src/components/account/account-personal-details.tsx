@@ -13,6 +13,7 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
 import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
+import { nextFetch } from 'src/utils/fetcher';
 
 export const PersonalDetails = () => {
     const {
@@ -25,7 +26,7 @@ export const PersonalDetails = () => {
         email: '',
     });
     const { refreshCompany } = useCompany();
-    const { loading: userDataLoading, profile, user, supabaseClient, updateProfile, refreshProfile } = useUser();
+    const { loading: userDataLoading, profile, user, updateProfile, refreshProfile } = useUser();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const { appUrl } = useHostname();
@@ -35,16 +36,17 @@ export const PersonalDetails = () => {
     const handleResetPassword = async () => {
         setGeneratingResetEmail(true);
         try {
-            if (!supabaseClient) {
-                throw new Error('Supabase client not initialized');
-            }
             if (!email) {
                 throw new Error('Please enter your email');
             }
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: `${appUrl}/login/reset-password/${email}`,
+            await nextFetch('profiles/reset-password', {
+                method: 'POST',
+                body: {
+                    name: `${profile?.first_name} ${profile?.last_name}`,
+                    email,
+                    redirectUrl: appUrl,
+                },
             });
-            if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
             track(ChangePassword);
         } catch (error: any) {
@@ -94,9 +96,6 @@ export const PersonalDetails = () => {
     };
     const handleUpdateEmail = async () => {
         try {
-            if (!supabaseClient) {
-                throw new Error('Supabase client not initialized');
-            }
             if (!email || email === profile?.email) {
                 throw new Error(t('account.personal.pleaseEnterNewEmail') || '');
             }
@@ -105,13 +104,16 @@ export const PersonalDetails = () => {
             if (!emailRegex.test(email)) {
                 throw new Error(t('account.personal.pleaseEnterValidEmail') || '');
             }
-            const { error } = await supabaseClient.auth.updateUser(
-                { email },
-                {
-                    emailRedirectTo: `${appUrl}/login?${new URLSearchParams({ email })}`,
+
+            await nextFetch('profiles/change-email-link', {
+                method: 'POST',
+                body: {
+                    name: `${profile?.first_name} ${profile?.last_name}`,
+                    oldMail: profile?.email,
+                    newMail: email,
+                    redirectUrl: appUrl,
                 },
-            );
-            if (error) throw error;
+            });
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
             track(UpdateProfileInfo, {
                 info_type: 'Profile',
