@@ -365,13 +365,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                 setSequence={setSequence}
                 sequences={sequences || []}
             />
-            <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">
-                    {t('creators.results', {
-                        resultCount: numberFormatter(resultsTotal),
-                    })}
-                </div>
-            </div>
             {expired || usages.search.remaining === 0 ? (
                 <div className="m-8 flex w-full justify-center">
                     <SearchExpired type={expired ? 'plan' : 'credit'} subscriptionStatus={subscription?.status} />
@@ -381,10 +374,15 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             ) : (
                 <div className="flex w-full basis-3/4 flex-col">
                     <div className="flex flex-row items-center justify-between">
-                        <div className="ml-4 text-gray-400">
+                        <div className="ml-4 flex gap-2 text-sm font-medium text-gray-400">
                             {t('boostbot.table.selectedAmount', {
                                 selectedCount,
                             })}
+                            <span className="text-black">
+                                {t('creators.results', {
+                                    resultCount: numberFormatter(resultsTotal, 0),
+                                })}
+                            </span>
                         </div>
                         <div className="w-fit pb-3">
                             <AddToSequenceButton
