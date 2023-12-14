@@ -1,5 +1,4 @@
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
-import { deleteCache } from './helpers';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
@@ -7,8 +6,7 @@ describe('Dashboard/Search page', () => {
         searchIntercepts();
     });
 
-    it('can search for a topic', async () => {
-        await deleteCache('william.edward.douglas@blue-moonlight-stream.com');
+    it('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
@@ -26,8 +24,7 @@ describe('Dashboard/Search page', () => {
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
 
-    it('can open analyze page', async () => {
-        await deleteCache('william.edward.douglas@blue-moonlight-stream.com');
+    it('can open analyze page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
 

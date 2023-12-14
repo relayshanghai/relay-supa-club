@@ -1,5 +1,4 @@
 import { setupIntercepts } from './intercepts';
-import { deleteCache } from './helpers';
 
 describe('Expired User Experience', () => {
     beforeEach(() => {
@@ -12,8 +11,7 @@ describe('Expired User Experience', () => {
         cy.visit('/sequences');
         cy.visit('/influencer-manager');
     });
-    it('Cannot search and shows error', async () => {
-        await deleteCache('expired_user@expired.com');
+    it('Cannot search and shows error', () => {
         cy.loginExpired();
         cy.visit('/dashboard');
         cy.getByTestId('search-topics').within(() => {
@@ -23,8 +21,7 @@ describe('Expired User Experience', () => {
         cy.contains('Subscription period has ended');
         cy.contains('To discover more influencers you’ll need to upgrade your plan and get more searches');
     });
-    it('Cannot use boostbot and shows error', async () => {
-        await deleteCache('expired_user@expired.com');
+    it('Cannot use boostbot and shows error', () => {
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.getByTestId('boostbot-send-message').should('be.disabled');
@@ -38,8 +35,7 @@ describe('Expired User Experience', () => {
         cy.getByTestId('home-icon').click({ force: true });
         cy.url().should('include', '/boostbot');
     });
-    it('Can see banners on boostbot and discover', async () => {
-        await deleteCache('expired_user@expired.com');
+    it('Can see banners on boostbot and discover', () => {
         cy.loginExpired();
         cy.visit('/boostbot');
         cy.contains('Your free trial has expired');
