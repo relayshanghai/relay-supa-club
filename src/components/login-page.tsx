@@ -13,13 +13,14 @@ import { PasswordReset } from 'src/utils/analytics/events';
 import { SignupStarted } from 'src/utils/analytics/events';
 import { clientLogger } from 'src/utils/logger-client';
 import { useHostname } from 'src/utils/get-host';
+import { nextFetch } from 'src/utils/fetcher';
 
 const LoginPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { email: emailQuery } = router.query;
-    const { login, supabaseClient } = useUser();
+    const { login } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
     const { appUrl } = useHostname();
@@ -62,16 +63,16 @@ const LoginPage = () => {
     const handleResetPassword = async () => {
         setGeneratingResetEmail(true);
         try {
-            if (!supabaseClient) {
-                throw new Error('Supabase client not initialized');
-            }
             if (!email) {
                 throw new Error('Please enter your email');
             }
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: `${appUrl}/login/reset-password/${email}`,
+            await nextFetch('profiles/reset-password', {
+                method: 'POST',
+                body: {
+                    email,
+                    redirectUrl: appUrl,
+                },
             });
-            if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
             track(PasswordReset);
         } catch (error: any) {
