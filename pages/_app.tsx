@@ -18,6 +18,11 @@ import { useTranslation } from 'react-i18next';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { nanoid } from 'nanoid';
+import { ClerkProvider } from '@clerk/nextjs';
+import { zhCN, enUS } from '@clerk/localizations';
+
+const chineseLang = 'zh-CN';
+const englishLang = 'en-US';
 
 function MyApp({
     Component,
@@ -49,11 +54,11 @@ function MyApp({
             const setLang = urlParams.get('set_lang');
             if (typeof setLang === 'string') {
                 if (setLang.includes('en')) {
-                    i18n.changeLanguage('en-US');
-                    localStorage.setItem('language', 'en-US');
+                    i18n.changeLanguage(englishLang);
+                    localStorage.setItem('language', englishLang);
                 } else if (setLang.includes('zh')) {
-                    i18n.changeLanguage('zh-CN');
-                    localStorage.setItem('language', 'zh-CN');
+                    i18n.changeLanguage(chineseLang);
+                    localStorage.setItem('language', chineseLang);
                 }
             }
             const referer = urlParams.get('ref');
@@ -123,15 +128,22 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <AnalyticsProvider>
                     <CacheProvider>
-                        <JotaiProvider>
-                            <UserProvider>
-                                <ChatwootProvider {...chatwootConfig} locale={lang}>
-                                    <CompanyProvider>
-                                        <Component {...pageProps} />
-                                    </CompanyProvider>
-                                </ChatwootProvider>
-                            </UserProvider>
-                        </JotaiProvider>
+                        <ClerkProvider
+                            signInUrl="/sign-in"
+                            signUpUrl="/sign-up"
+                            localization={i18n.language === chineseLang ? zhCN : enUS}
+                            {...pageProps}
+                        >
+                            <JotaiProvider>
+                                <UserProvider>
+                                    <ChatwootProvider {...chatwootConfig} locale={lang}>
+                                        <CompanyProvider>
+                                            <Component {...pageProps} />
+                                        </CompanyProvider>
+                                    </ChatwootProvider>
+                                </UserProvider>
+                            </JotaiProvider>
+                        </ClerkProvider>
                     </CacheProvider>
                 </AnalyticsProvider>
             </SessionContextProvider>

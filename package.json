@@ -28,6 +28,8 @@
   },
   "dependencies": {
     "@analytics/storage-utils": "^0.4.2",
+    "@clerk/localizations": "^1.26.13",
+    "@clerk/nextjs": "^4.28.0",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@rudderstack/rudder-sdk-node": "^2.0.2",

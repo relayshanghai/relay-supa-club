@@ -16,11 +16,28 @@ import { getSequenceInfluencersBySequenceIdCall } from '../api/db/calls/sequence
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
 import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from '../api/db/calls/sequences';
 import type { DBQuery } from '../types';
-
+import { createClient } from '@supabase/supabase-js';
+import { useAuth } from '@clerk/nextjs';
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
+
+const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const useDB = <T extends DBQuery>(query: T) => {
     const supabase = useSupabase();
+
+    useAuth()
+        .getToken({ template: 'supabase' })
+        .then(async (token) => {
+            if (!token) return;
+            const sesh = await supabase.auth.getSession();
+            if (!sesh) return;
+            const { session } = sesh.data;
+            if (session) {
+                session.access_token = token;
+                await supabase.auth.setSession(session);
+            }
+        });
     return query(supabase) as ReturnType<T>;
 };
 

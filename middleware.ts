@@ -7,6 +7,7 @@ import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
+import { authMiddleware, redirectToSignIn } from '@clerk/nextjs';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
@@ -35,6 +36,14 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
         return { subscriptionStatus: false, subscriptionEndDate: null };
     }
 };
+
+/**
+ *
+ * Check the user's subscription status. if they are active or in trial, continue.
+ * Ignore the api/profiles. (still relevant?)
+ * clerk will ignore the login pages so no need to add those, just add company onboarding to clerk ignore paths
+ * dont worry yet about the redirect to boostbot if they already have a session
+ */
 
 // eslint-disable-next-line complexity
 const checkOnboardingStatus = async (
@@ -165,12 +174,74 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
+const needsCorsRoutes = ['/api/subscriptions/prices', '/api/email-engine/webhook', '/api/track', '/api/track/identify'];
+const publicRoutes = [
+    '/',
+    '/sign-in',
+    '/sign-up',
+    '/logout',
+    '/signup/invite',
+    '/login/reset-password',
+
+    '/pricing',
+
+    '/api/invites/accept',
+    '/api/signup',
+    '/api/subscriptions/webhook',
+    '/api/webhooks',
+    '/api/logs/vercel',
+    '/api/brevo/webhook',
+    '/api/slack/create',
+    '/api/subscriptions/webhook',
+    '/api/company/exists',
+    '/api/jobs/run',
+    '/api/profiles/reset-password',
+
+    ...needsCorsRoutes,
+];
+
+export default authMiddleware({
+    signInUrl: '/sign-in',
+
+    afterAuth: async (auth, req, res: any) => {
+        // TODO: see if CORS actually works here. This res type is different than the basic middleware one.
+        if (needsCorsRoutes.includes(req.url)) {
+            if (req.nextUrl.pathname === '/api/subscriptions/prices') {
+                return allowPricingCors(req, res);
+            }
+            if (req.nextUrl.pathname === '/api/email-engine/webhook') {
+                return allowEmailWebhookCors(req, res);
+            }
+            if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify') {
+                return allowTrackingCors(req, res);
+            }
+        }
+
+        // Handle users who aren't authenticated
+        if (!auth.userId && !auth.isPublicRoute) {
+            return redirectToSignIn({ returnBackUrl: req.url });
+        }
+        // Redirect logged in users to organization selection page if they are not active in an organization
+        if (auth.userId && !auth.orgId && req.nextUrl.pathname !== '/org-selection') {
+            const orgSelection = new URL('/org-selection', req.url);
+            return NextResponse.redirect(orgSelection);
+        }
+        // If the user is logged in and trying to access a protected route, allow them to access route
+        if (auth.userId && !auth.isPublicRoute) {
+            return NextResponse.next();
+        }
+        // Allow users visiting public routes to access them
+        return NextResponse.next();
+    },
+    publicRoutes,
+});
+
 /**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
  */
 // eslint-disable-next-line complexity
-export async function middleware(req: NextRequest) {
+async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
@@ -237,27 +308,7 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
-         *
-         * Page routes
-         * - login/reset-password
-         * - signup/invite*
-         * - logout
-         * - pricing
-         *
-         * API routes
-         * - api/invites/accept*
-         * - api/signup
-         * - api/subscriptions/webhook
-         * - api/webhooks
-         * - api/logs/vercel
-         * - api/brevo/webhook
-         * - api/ping
-         * - api/slack/create
-         * - api/subscriptions/webhook
-         * - api/company/exists
-         * - api/jobs/run
-         * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run/|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*).*)',
     ],
 };
