@@ -28,7 +28,12 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         { req, res },
     );
 
-    return res.status(200).json(results);
+    const cleanedTopics = results.data.map((topic) => ({
+        tag: topic.tag,
+        distance: Number(topic.distance.toFixed(2)),
+    }));
+
+    return res.status(200).json({ success: true, data: cleanedTopics });
 };
 
 export default ApiHandler({

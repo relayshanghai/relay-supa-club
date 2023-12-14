@@ -71,23 +71,20 @@ export const InfluencerDetailsModal = ({
             if (!selectedRow?.original.url) {
                 throw new Error('No url found for influencer');
             }
-            const topics = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
+            const { data: topics } = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
                 method: 'POST',
                 body: {
                     username: handle,
                     platform,
                 },
             });
-            const cleanedTopics = topics.data.map((topic) => ({
-                tag: topic.tag,
-                distance: Number(topic.distance.toFixed(2)),
-            }));
-            if (cleanedTopics.length === 0) {
+
+            if (topics.length === 0) {
                 toast.error('Sorry, no topics found');
                 setAreTopicsAndRelevanceLoading(false);
                 return;
             }
-            const topicsAndRelevance = await getTopicsAndRelevance(cleanedTopics);
+            const topicsAndRelevance = await getTopicsAndRelevance(topics);
             setAreTopicsAndRelevanceLoading(false);
 
             setTopicsAndRelevance(topicsAndRelevance);
@@ -225,7 +222,7 @@ export const InfluencerDetailsModal = ({
                 onClose={() => setIsOpen(false)}
                 data-testid="boostbot-influencer-detail-modal"
             >
-                <p>Something went wrong</p>
+                <p>{t('account.personal.oopsWentWrong')}</p>
             </Modal>
         );
     }
