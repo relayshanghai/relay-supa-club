@@ -6,11 +6,7 @@ export const OPEN_INFLUENCER_PROFILE = 'Open Influencer Profile';
 export type OpenInfluencerProfilePayload = EventPayload<{
     /** references table influencer_social_profile.id */
     influencer_id: string;
-    search_id: string;
     current_status: FunnelStatus;
-    currently_filtered: boolean;
-    currently_searched: boolean;
-    view_mine_enabled: boolean;
     is_users_influencer: boolean;
 }>;
 
