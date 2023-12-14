@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
-import { profileToIdentifiable, useRudderstackTrack } from './use-rudderstack';
+import { profileToIdentifiable, useRudder, useRudderstackTrack } from './use-rudderstack';
 
 type useSessionParams = {
     onClear?: () => void;
@@ -214,6 +214,7 @@ export const useIdentifySession = () => {
     const { profile, user, company, subscription } = useSession();
     const { i18n } = useTranslation();
     const { identify } = useRudderstackTrack();
+    const rudder = useRudder();
 
     const identifySession = useCallback(
         (cb?: () => void) => {
@@ -223,7 +224,7 @@ export const useIdentifySession = () => {
 
             const referer = localStorage.getItem('referer');
 
-            if (profile !== null && user !== null && company !== null && subscription && identify) {
+            if (profile !== null && user !== null && company !== null && subscription && identify && rudder) {
                 const { id, traits } = profileToIdentifiable(
                     profile,
                     company,
@@ -232,13 +233,14 @@ export const useIdentifySession = () => {
                     subscription,
                     referer || undefined,
                 );
+                rudder?.identify(id, traits, cb ?? noopfn);
                 identify(id, traits, cb ?? noopfn);
                 return true;
             }
 
             return false;
         },
-        [profile, user, company, i18n, subscription, identify],
+        [profile, user, company, i18n, subscription, identify, rudder],
     );
 
     return { identifySession };
