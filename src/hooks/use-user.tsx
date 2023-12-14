@@ -108,7 +108,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             }
             return fetchedProfile;
         },
-        { refreshInterval: 1000 * 60 * 5, revalidateOnFocus: false, revalidateOnReconnect: false },
     );
 
     const login = useCallback(
