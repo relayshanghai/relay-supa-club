@@ -1,9 +1,7 @@
-import { deleteDB } from 'idb';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
         setupIntercepts();
         searchIntercepts();
     });

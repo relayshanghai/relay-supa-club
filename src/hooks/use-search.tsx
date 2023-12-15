@@ -17,7 +17,6 @@ import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
-import { useCompany } from './use-company';
 
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
@@ -129,7 +128,6 @@ export const useSearch = () => useContext(SearchContext);
 
 export const useSearchResults = (page: number) => {
     const { profile } = useUser();
-    const { company } = useCompany();
     const ref = useRef<any>();
 
     type SearchResults = {
@@ -163,7 +161,7 @@ export const useSearchResults = (page: number) => {
                 const signal = controller.signal;
                 ref.current = controller;
 
-                const companyId = company?.id || profile.company_id;
+                const companyId = profile.company?.id;
                 if (!companyId) {
                     throw new Error('No company');
                 }

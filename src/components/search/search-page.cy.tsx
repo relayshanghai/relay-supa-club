@@ -6,7 +6,6 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchProvider } from '../../hooks/use-search';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { rest } from 'msw';
-import { deleteDB } from 'idb';
 
 describe('<SearchPage />', () => {
     before(async () => {
@@ -72,7 +71,6 @@ describe('<SearchPage />', () => {
     });
 
     it('renders error on search error', async () => {
-        await deleteDB('app-cache');
         worker.use(rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (_, res, ctx) => res(ctx.status(500))));
 
         testMount(<SearchPageInner />);

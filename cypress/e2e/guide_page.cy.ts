@@ -1,10 +1,8 @@
-import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import guidePage from 'i18n/en/guide';
 
 describe('checks restricted to guide page', () => {
     it('check if guide page opens', async () => {
-        await deleteDB('app-cache');
         setupIntercepts();
         cy.loginTestUser();
         cy.contains('Guide').click();
@@ -13,9 +11,6 @@ describe('checks restricted to guide page', () => {
 });
 
 describe('checks restricted to guide page', () => {
-    beforeEach(() => {
-        deleteDB('app-cache');
-    });
     it('check modal functioning for every separate guide', () => {
         setupIntercepts();
         cy.loginTestUser();

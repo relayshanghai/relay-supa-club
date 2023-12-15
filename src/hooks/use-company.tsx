@@ -1,20 +1,17 @@
-import * as Sentry from '@sentry/browser';
 import type { PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 import type { KeyedMutator } from 'swr';
-import useSWR from 'swr';
 import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 
 import { nextFetch } from 'src/utils/fetcher';
 import { useUser } from './use-user';
-import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CompanyDB } from 'src/utils/api/db';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { clientLogger } from 'src/utils/logger-client';
 
 export interface CompanyContext {
-    company: CompanyDB | undefined;
+    company?: CompanyDB;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
     companyExists: (name: string) => Promise<{
@@ -34,28 +31,12 @@ export const companyContext = createContext<CompanyContext>({
 });
 
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
-    const { profile } = useUser();
-    const { getCompanyById } = useClientDb();
+    const { profile, refreshProfile } = useUser();
     const clientRoleData = useAtomValue(clientRoleAtom);
     const companyId = clientRoleData.companyId || profile?.company_id;
 
-    // @note why not fetch it along the profile in useUser?
-    const { data: company, mutate: refreshCompany } = useSWR(
-        profile && companyId ? [companyId, 'company'] : null,
-        async ([id]) => {
-            const fetchedCompany = await getCompanyById(id);
-            if (profile && fetchedCompany?.name && !company?.name) {
-                Sentry.setUser({
-                    id: profile.id,
-                    email: profile.email ?? '',
-                    name: `${profile.first_name} ${profile.last_name}`,
-                    company_name: clientRoleData.companyName || fetchedCompany.name,
-                    company_id: id,
-                });
-            }
-            return fetchedCompany;
-        },
-    );
+    const refreshCompany = refreshProfile;
+    const company = profile?.company ?? undefined;
 
     // @note this will wait for profile to load and rerender for refreshCompany
     useEffect(() => {
