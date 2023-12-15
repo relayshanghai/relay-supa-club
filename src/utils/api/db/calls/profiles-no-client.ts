@@ -10,6 +10,15 @@ export const insertProfile = (insert: ProfileDBInsert) => {
     return supabase.from('profiles').insert(insertData).select().single();
 };
 
+export const insertProfileWithRole = (db: RelayDatabase) => async (insert: ProfileDBInsert) => {
+    insert.updated_at = new Date().toISOString();
+    const { data: profile, error: profileError } = await db.from('profiles').insert(insert).select().single();
+    if (profileError) {
+        throw profileError;
+    }
+    return profile;
+};
+
 /** updates profile but does not allow changing of role status, automatically updates `updated_at` field */
 export const updateProfile = (update: ProfileDBUpdate) => {
     const { user_role: _filter_out, ...updateData } = update;
@@ -19,17 +28,6 @@ export const updateProfile = (update: ProfileDBUpdate) => {
 
 export const updateUserRole = (userId: string, user_role: AccountRole) =>
     supabase.from('profiles').update({ user_role }).eq('id', userId).select().single();
-
-export const addCompanyToUserAndMakeAdmin = (db: RelayDatabase) => async (userId: string, companyId: string) => {
-    const { data, error } = await db
-        .from('profiles')
-        .update({ user_role: 'company_owner', company_id: companyId })
-        .eq('id', userId)
-        .select()
-        .single();
-    if (error) throw error;
-    return data;
-};
 
 export const getUserRole = (userId: string) => supabase.from('profiles').select('user_role').eq('id', userId).single();
 
