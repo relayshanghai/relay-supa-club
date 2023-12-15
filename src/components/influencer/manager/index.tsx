@@ -70,15 +70,11 @@ const Manager = () => {
 
             track(OpenInfluencerProfile, {
                 influencer_id: influencer.influencer_social_profile_id,
-                search_id: searchTerm,
                 current_status: influencer?.funnel_status,
-                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
-                currently_searched: searchTerm !== '',
-                view_mine_enabled: onlyMe,
                 is_users_influencer: influencer.manager_first_name === profile?.first_name,
             });
         },
-        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
+        [setUiState, track, profile],
     );
 
     const handleProfileUpdate = useCallback(
