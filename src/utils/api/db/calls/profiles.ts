@@ -44,9 +44,12 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
 };
 
 export const deleteUserById = (db: RelayDatabase) => async (profileId: string) => {
+    const { error: profileDeleteError } = await db.from('profiles').delete().eq('id', profileId);
+    if (profileDeleteError) {
+        serverLogger(profileDeleteError);
+    }
     const { error } = await db.auth.admin.deleteUser(profileId);
     if (error) {
         serverLogger(error);
     }
-    return db.from('profiles').delete().eq('id', profileId);
 };
