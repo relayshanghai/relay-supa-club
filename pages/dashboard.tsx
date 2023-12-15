@@ -6,10 +6,10 @@ import { useUser } from 'src/hooks/use-user';
 const Page = () => {
     const { profile } = useUser();
 
-    return profile?.created_at && featNewSearchTable(new Date(profile.created_at)) ? (
-        <SearchPage />
-    ) : (
+    return profile?.created_at && !featNewSearchTable(new Date(profile.created_at)) ? (
         <SearchPageLegacy />
+    ) : (
+        <SearchPage />
     );
 };
 
