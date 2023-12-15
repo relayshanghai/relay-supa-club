@@ -7,9 +7,7 @@ export default function CreateOrganizationPage() {
         <LoginSignupLayout
             leftBgColor="boostbot-gradient"
             left={<ScreenshotsCarousel />}
-            right={
-                <CreateOrganization routing="path" path="/create-organization" afterCreateOrganizationUrl="/boostbot" />
-            }
+            right={<CreateOrganization routing="path" path="/create-org" afterCreateOrganizationUrl="/boostbot" />}
         />
     );
 }

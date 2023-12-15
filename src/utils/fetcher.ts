@@ -3,7 +3,6 @@ import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
 import { ANALYTICS_HEADER_NAME } from './analytics/constants';
 import { clientLogger } from './logger-client';
 import { serverLogger } from './logger-server';
-import { useAuth } from '@clerk/nextjs';
 
 interface ResponseWithError extends Response {
     success?: boolean;
@@ -81,7 +80,6 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
     queries: Q,
     options: RequestInit = {},
 ) => {
-    supabase;
     const anonymous_id = getItem(ANALYTICS_COOKIE_ANON);
     const url = new URL('/api/' + path, window.location.origin);
     for (const key in queries) {

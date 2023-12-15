@@ -1,112 +1,16 @@
-import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
+/* eslint-disable no-console */
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { isDev } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import type { RelayDatabase } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger-server';
-import { authMiddleware, redirectToSignIn } from '@clerk/nextjs';
-
-const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
+import { authMiddleware } from '@clerk/nextjs';
 
 const BANNED_USERS: string[] = [];
 
-/**
- *
-TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
- */
-const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: string) => {
-    try {
-        const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', userId).single();
-        if (!profile?.company_id) return { subscriptionStatus: false, subscriptionEndDate: null };
-
-        const { data: company } = await supabase
-            .from('companies')
-            .select('subscription_status, subscription_end_date')
-            .eq('id', profile.company_id)
-            .single();
-        return {
-            subscriptionStatus: company?.subscription_status,
-            subscriptionEndDate: company?.subscription_end_date,
-        };
-    } catch (error) {
-        serverLogger(error);
-        return { subscriptionStatus: false, subscriptionEndDate: null };
-    }
-};
-
-/**
- *
- * Check the user's subscription status. if they are active or in trial, continue.
- * Ignore the api/profiles. (still relevant?)
- * clerk will ignore the login pages so no need to add those, just add company onboarding to clerk ignore paths
- * dont worry yet about the redirect to boostbot if they already have a session
- */
-
-// eslint-disable-next-line complexity
-const checkOnboardingStatus = async (
-    req: NextRequest,
-    res: NextResponse,
-    session: Session,
-    supabase: RelayDatabase,
-) => {
-    const redirectUrl = req.nextUrl.clone();
-
-    // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
-        // print req queries
-        const id = new URL(req.url).searchParams.get('id');
-        if (!id || id !== session.user.id) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
-        }
-        return res;
-    }
-
-    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'POST') {
-        // for new user signup. We have checks in the next endpoint
-        return res;
-    }
-
-    const { subscriptionStatus } = await getCompanySubscriptionStatus(supabase, session.user.id);
-    if (!subscriptionStatus) {
-        if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
-        }
-        if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) return res;
-        //eslint-disable-next-line
-        console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
-    } else if (
-        subscriptionStatus === 'active' ||
-        subscriptionStatus === 'trial' ||
-        subscriptionStatus === 'canceled' ||
-        subscriptionStatus === 'paused'
-    ) {
-        // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
-            redirectUrl.pathname = '/boostbot';
-            return NextResponse.redirect(redirectUrl);
-        }
-
-        // Authentication successful, forward request to protected route.
-        return res;
-    } else if (subscriptionStatus === 'awaiting_payment_method') {
-        // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {
-            return res;
-        }
-    }
-
-    // should never reach here.
-    redirectUrl.pathname = '/signup';
-    return NextResponse.redirect(redirectUrl);
-};
-
-/** Special case: we need to be able to access this from the marketing page, so we need to allow CORS */
+const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 const allowPricingCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
-    // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         res.headers.set('Access-Control-Allow-Origin', '*');
     } else if (origin && pricingAllowList.some((allowed) => origin.includes(allowed)))
@@ -116,7 +20,6 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
 };
 
 const emailWebhookAllowList = ['email.relay.club'];
-
 const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
     if (origin && origin.includes('localhost')) {
@@ -129,49 +32,41 @@ const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
-const trakingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'cn.boostbot.ai'];
-
+const trackingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'cn.boostbot.ai'];
 const allowTrackingCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
     if (origin && origin.includes('localhost') && isDev()) {
         res.headers.set('Access-Control-Allow-Origin', '*');
-    } else if (origin && trakingAllowList.some((allowed) => origin.includes(allowed))) {
+    } else if (origin && trackingAllowList.some((allowed) => origin.includes(allowed))) {
         res.headers.set('Access-Control-Allow-Origin', origin);
     }
     res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
 };
 
+const handleCors = (req: NextRequest, res: NextResponse) => {
+    if (req.nextUrl.pathname === '/api/subscriptions/prices') {
+        return allowPricingCors(req, res);
+    }
+    if (req.nextUrl.pathname === '/api/email-engine/webhook') {
+        return allowEmailWebhookCors(req, res);
+    }
+    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify') {
+        return allowTrackingCors(req, res);
+    }
+    return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+};
+
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
     }
-    return res;
+    return NextResponse.next();
 };
 
-/**
- * Determines whether the local session from the given supabase client is clean
- *
- *  "clean" means that this local session is either non-existent
- *   or existent AND valid (matches the backend session)
- */
-const isSessionClean = async (supabase: SupabaseClient) => {
-    const { data: sessiondata } = await supabase.auth.getSession();
-
-    // Session is null, nothing to verify if clean or not
-    if (sessiondata.session === null) {
-        return true;
-    }
-
-    const { data: userdata } = await supabase.auth.getUser();
-
-    // Given that the user is not null, determine if the session is clean by comparing
-    // the local user id and the retrieved user id
-    if (userdata.user !== null && sessiondata.session.user.id === userdata.user.id) {
-        return true;
-    }
-
-    return false;
+const redirectToSignIn = (req: NextRequest) => {
+    const signInUrl = new URL('/sign-in', req.nextUrl.origin);
+    return NextResponse.redirect(signInUrl);
 };
 
 const needsCorsRoutes = ['/api/subscriptions/prices', '/api/email-engine/webhook', '/api/track', '/api/track/identify'];
@@ -182,7 +77,6 @@ const publicRoutes = [
     '/logout',
     '/signup/invite',
     '/login/reset-password',
-
     '/pricing',
 
     '/api/invites/accept',
@@ -201,101 +95,59 @@ const publicRoutes = [
 ];
 
 export default authMiddleware({
-    signInUrl: '/sign-in',
-
+    // debug: true,
     afterAuth: async (auth, req, res: any) => {
         // TODO: see if CORS actually works here. This res type is different than the basic middleware one.
-        if (needsCorsRoutes.includes(req.url)) {
-            if (req.nextUrl.pathname === '/api/subscriptions/prices') {
-                return allowPricingCors(req, res);
-            }
-            if (req.nextUrl.pathname === '/api/email-engine/webhook') {
-                return allowEmailWebhookCors(req, res);
-            }
-            if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify') {
-                return allowTrackingCors(req, res);
-            }
-        }
+        console.log('>>>>>>>> req.url >>>>>>>>', req.url);
 
+        if (needsCorsRoutes.includes(req.url)) {
+            console.log('>>>>>>>> handling cors >>>>>>>>');
+            return handleCors(req, res);
+        } else if (auth.userId && BANNED_USERS.includes(auth.userId)) {
+            console.log('>>>>>>>> banned user >>>>>>>>');
+            return redirectToSignIn(req);
+        } else if (auth.isPublicRoute || req.nextUrl.pathname.includes('api')) {
+            console.log('>>>>>>>> public route >>>>>>>>');
+            return NextResponse.next();
+        } else if (req.nextUrl.pathname.includes('/admin')) {
+            console.log('>>>>>>>> admin route >>>>>>>>');
+            if (!auth.user?.emailAddresses[0]?.emailAddress) {
+                return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+            }
+            return await checkIsRelayEmployee(res, auth.user.emailAddresses[0].emailAddress);
+        }
         // Handle users who aren't authenticated
-        if (!auth.userId && !auth.isPublicRoute) {
-            return redirectToSignIn({ returnBackUrl: req.url });
+        else if (!auth.userId) {
+            console.log('>>>>>>>> not logged in >>>>>>>>');
+            // cant use any apis unless you are logged in
+            if (req.nextUrl.pathname.includes('api')) {
+                return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+            }
+            return redirectToSignIn(req);
         }
-        // Redirect logged in users to organization selection page if they are not active in an organization
-        if (auth.userId && !auth.orgId && req.nextUrl.pathname !== '/org-selection') {
-            const orgSelection = new URL('/org-selection', req.url);
-            return NextResponse.redirect(orgSelection);
+        // Redirect logged in users to organization creation if they don't have one (in onboarding)
+        else if (auth.userId && !auth.orgId) {
+            console.log('>>>>>>>> no org >>>>>>>>');
+            if (req.nextUrl.pathname === '/create-org' || req.nextUrl.pathname.includes('api')) {
+                // will need to make some api calls during onboarding, so allow those
+                return NextResponse.next();
+            } else {
+                const orgCreation = new URL('/create-org', req.url);
+                return NextResponse.redirect(orgCreation);
+            }
         }
-        // If the user is logged in and trying to access a protected route, allow them to access route
-        if (auth.userId && !auth.isPublicRoute) {
+        // Handle users who are authenticated and have an organization
+        else if (auth.userId && auth.orgId) {
+            console.log('>>>>>>>> logged in >>>>>>>>');
             return NextResponse.next();
         }
-        // Allow users visiting public routes to access them
-        return NextResponse.next();
+
+        console.log('>>>>>>>> Should never get here', req.nextUrl.pathname);
+        // should never get here
+        return redirectToSignIn(req);
     },
     publicRoutes,
 });
-
-/**
- * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
- * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
- */
-// eslint-disable-next-line complexity
-async function middleware(req: NextRequest) {
-    // We need to create a response and hand it to the supabase client to be able to modify the response headers.
-    const res = NextResponse.next();
-
-    if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
-    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
-        return allowTrackingCors(req, res);
-    // Create authenticated Supabase Client.
-    const supabase = createMiddlewareSupabaseClient({ req, res });
-
-    if ((await isSessionClean(supabase)) === false) {
-        const redirectUrl = req.nextUrl.clone();
-
-        if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
-        }
-
-        redirectUrl.pathname = '/logout';
-        return NextResponse.redirect(redirectUrl);
-    }
-
-    const { data: authData } = await supabase.auth.getSession();
-
-    if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
-        const redirect = req.nextUrl.clone();
-        redirect.pathname = '/logout';
-        return NextResponse.redirect(redirect);
-    }
-
-    if (req.nextUrl.pathname.includes('/admin')) {
-        if (!authData.session?.user?.email) {
-            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
-        }
-        return await checkIsRelayEmployee(res, authData.session.user.email);
-    }
-
-    if (authData.session?.user?.email) {
-        return await checkOnboardingStatus(req, res, authData.session, supabase);
-    }
-
-    // not logged in -- api requests, just return an error
-    if (req.nextUrl.pathname.includes('api')) {
-        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
-    }
-
-    const redirectUrl = req.nextUrl.clone();
-
-    // unauthenticated pages requests, send to signup
-    if (req.nextUrl.pathname === '/') return res;
-    if (req.nextUrl.pathname === '/signup') return res;
-    if (req.nextUrl.pathname === '/login') return res;
-    redirectUrl.pathname = '/login';
-    return NextResponse.redirect(redirectUrl);
-}
 
 export const config = {
     /** https://nextjs.org/docs/advanced-features/middleware#matcher */
@@ -308,7 +160,9 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
+         *
+         * - api/* (api routes) TODO: remove this once we have a better way to handle api routes
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/*).*)',
     ],
 };

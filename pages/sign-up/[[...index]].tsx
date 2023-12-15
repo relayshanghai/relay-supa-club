@@ -7,7 +7,7 @@ export default function SignUpPage() {
         <LoginSignupLayout
             leftBgColor="bg-carouselbackground"
             left={<ScreenshotsCarousel />}
-            right={<SignUp path="/sign-up" routing="path" signInUrl="/sign-in" afterSignUpUrl="/create-organization" />}
+            right={<SignUp path="/sign-up" routing="path" signInUrl="/sign-in" afterSignUpUrl="/create-org" />}
         />
     );
 }
