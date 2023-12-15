@@ -4,6 +4,8 @@ import { Button } from '../button';
 import type { AdminClientsGetResponse, ClientInfo } from 'pages/api/admin/clients';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { appCacheDBKey } from 'src/constants';
+import { useUser } from 'src/hooks/use-user';
 
 type ClientsRowProps = {
     data: AdminClientsGetResponse;
@@ -14,7 +16,7 @@ type ClientsRowProps = {
 
 const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRoleData }: ClientsRowProps) => {
     const { companyId } = useAtomValue(clientRoleAtom);
-
+    const { profile } = useUser();
     const onManageClick = async (client: ClientInfo) => {
         if (companyId !== '' && companyId === client.id) {
             client.name && resetClientRoleData();
@@ -23,7 +25,7 @@ const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRol
         }
         // reset cache
         const { deleteDB } = await import('idb');
-        await deleteDB('app-cache');
+        await deleteDB(appCacheDBKey(profile?.id));
     };
 
     return (

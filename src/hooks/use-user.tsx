@@ -9,7 +9,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
-import type { ProfileDB } from 'src/utils/api/db/types';
+import type { ProfileDB, CompanyDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
@@ -30,9 +30,11 @@ export type SignupData = {
     };
 };
 
+export type ProfileWithCompany = ProfileDB & { company: CompanyDB | null };
+
 export interface IUserContext {
     user: User | null;
-    profile: ProfileDB | undefined;
+    profile?: ProfileWithCompany;
     loading: boolean;
     login: (
         email: string,
@@ -43,7 +45,7 @@ export interface IUserContext {
     }>;
     logout: (redirect?: boolean) => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
-    refreshProfile: KeyedMutator<ProfileDB> | (() => void);
+    refreshProfile: KeyedMutator<ProfileWithCompany> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
     signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
@@ -98,6 +100,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             const { data: fetchedProfile, error } = await getProfileById(userId, getProfileController.current?.signal);
             if (error) {
+                if (error?.message.includes('aborted')) {
+                    return;
+                }
                 clientLogger(error, 'error');
                 throw new Error(error.message || 'Unknown error');
             }
@@ -206,7 +211,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         updateEmail();
     }, [session?.user.email, profile?.email, updateProfile, profile, session, refreshProfile]);
 
-    const profileWithAdminOverrides: ProfileDB | undefined = profile
+    const profileWithAdminOverrides: ProfileWithCompany | undefined = profile
         ? {
               ...profile,
               email_engine_account_id: clientRoleData.emailEngineAccountId || profile?.email_engine_account_id,

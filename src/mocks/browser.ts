@@ -45,28 +45,7 @@ const frontendHandlers = [
         return res(ctx.json(campaignCreatorsJim));
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/companies`, (_, res, ctx) => {
-        return res(
-            ctx.json({
-                id: '4f3ddadc-29dc-4cf4-977c-32597566c2d1',
-                created_at: '2023-05-30T04:10:10.171802+00:00',
-                name: 'Relay Club',
-                website: 'https://relay.club',
-                avatar_url: null,
-                updated_at: null,
-                cus_id: 'cus_NKXV4aQYAU7GXG',
-                searches_limit: '100000000',
-                profiles_limit: '100000000',
-                subscription_status: 'active',
-                trial_searches_limit: '99999',
-                trial_profiles_limit: '99999',
-                subscription_start_date: '2023-05-30T04:10:10.171802+00:00',
-                subscription_end_date: '2025-01-01 00:00:00.000000+00',
-                subscription_current_period_end: '2025-01-01T00:00:00+00:00',
-                subscription_current_period_start: '2023-05-30T04:10:10.171802+00:00',
-                ai_email_generator_limit: '100000000',
-                trial_ai_email_generator_limit: '10',
-            }),
-        );
+        return res(ctx.json(mockProfile.company));
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/campaigns`, (_req, res, ctx) => {
         return res(ctx.json(campaigns));
