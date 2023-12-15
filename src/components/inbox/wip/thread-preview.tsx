@@ -4,19 +4,30 @@ import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Clock, Instagram, Tiktok, Youtube } from 'src/components/icons';
 import type { CreatorPlatform } from 'types';
 
-type ThreadInfo = {
+export type EmailContact = { email: string; name: string };
+
+export type Message = {
     id: string;
-    title: string;
-    unread: boolean;
-    messages: {
-        id: string;
-        from: string;
-        to: string[];
-        cc: string[];
-    }[];
+    from: EmailContact;
+    to: EmailContact[];
+    cc: EmailContact[];
+    body: string;
+    date: Date;
 };
 
-type CurrentInbox = {
+export type ThreadInfo = {
+    id: string;
+    title: string;
+    sequenceInfo: {
+        sequenceId: string;
+        sequenceName: string;
+        product: string;
+    };
+    unread: boolean;
+    messages: Message[];
+};
+
+export type CurrentInbox = {
     email: string;
 };
 
@@ -31,6 +42,7 @@ type ThreadPreviewProps = {
     threadInfo: ThreadInfo;
     currentInbox: CurrentInbox;
     selected: boolean;
+    onClick: () => void;
 };
 
 const getPlatformIcon = (platform: CreatorPlatform) => {
@@ -55,7 +67,13 @@ const getUnreadMarker = (unread: boolean, replied: boolean) => {
     return <></>;
 };
 
-export const ThreadPreview = ({ sequenceInfluencer, threadInfo, currentInbox, selected }: ThreadPreviewProps) => {
+export const ThreadPreview = ({
+    sequenceInfluencer,
+    threadInfo,
+    currentInbox,
+    selected,
+    onClick,
+}: ThreadPreviewProps) => {
     const { name, avatar_url, username, platform } = sequenceInfluencer;
     const { messages, unread } = threadInfo;
     const { email: currentInboxEmail } = currentInbox;
@@ -63,15 +81,16 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, currentInbox, se
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform);
-    const UnreadMarker = getUnreadMarker(unread, currentInboxEmail === lastMessage.from);
+    const UnreadMarker = getUnreadMarker(unread, currentInboxEmail === lastMessage.from.email);
 
     return (
         <Card
-            className={`flex rounded-none ${
+            onClick={onClick}
+            className={`flex cursor-pointer rounded-none ${
                 selected && 'border-l-4 border-l-primary-700 bg-primary-200'
             } transition-all`}
         >
-            <CardContent className="mt-5 w-full">
+            <CardContent className="w-full p-4">
                 <div className="flex items-center gap-4">
                     <section className="relative">
                         <Avatar>

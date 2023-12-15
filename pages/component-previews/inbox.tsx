@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { MessagesComponent } from 'src/components/inbox/wip/message-component';
+import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview } from 'src/components/inbox/wip/thread-preview';
 import type { CreatorPlatform } from 'types';
 
@@ -16,39 +19,150 @@ const sequenceInfluencer: {
     platform: 'youtube',
 };
 
-const threadInfo = {
-    id: 'id',
-    title: 'title',
-    unread: false,
-    messages: [
-        {
-            id: 'id',
-            from: 'current_inbox@email.com',
-            to: ['influencer@email.com'],
-            cc: ['cc@email.com'],
+const threadInfo = [
+    {
+        id: 'id1',
+        title: 'title',
+        sequenceInfo: {
+            sequenceId: 'seq-id1',
+            sequenceName: 'Sequence Name 1',
+            product: 'Product Name 1',
         },
-        {
-            id: 'id',
-            from: 'influencer@email.com',
-            to: ['current_inbox@email.com'],
-            cc: ['cc@email.com'],
+        unread: true,
+        messages: [
+            {
+                id: 'id1',
+                from: { email: 'current_inbox@email.com', name: 'Current' },
+                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 1',
+                date: new Date('December 17, 1995 03:24:00'),
+            },
+            {
+                id: 'id2',
+                from: { email: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 2',
+                date: new Date('December 18, 1995 03:24:00'),
+            },
+        ],
+    },
+    {
+        id: 'id2',
+        title: 'title',
+        sequenceInfo: {
+            sequenceId: 'seq-id2',
+            sequenceName: 'Sequence Name 2',
+            product: 'Product Name 2',
         },
-    ],
-};
+        unread: false,
+        messages: [
+            {
+                id: 'id1',
+                from: { email: 'current_inbox@email.com', name: 'Current' },
+                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 1',
+                date: new Date('December 17, 1995 03:24:00'),
+            },
+            {
+                id: 'id2',
+                from: { email: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 2',
+                date: new Date('December 18, 1995 03:24:00'),
+            },
+            {
+                id: 'id2',
+                from: { email: 'current_inbox@email.com', name: 'Current' },
+                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 3',
+                date: new Date('December 19, 1995 03:24:00'),
+            },
+        ],
+    },
+    {
+        id: 'id3',
+        title: 'title',
+        sequenceInfo: {
+            sequenceId: 'seq-id1',
+            sequenceName: 'Sequence Name 1',
+            product: 'Product Name 1',
+        },
+        unread: false,
+        messages: [
+            {
+                id: 'id1',
+                from: { email: 'current_inbox@email.com', name: 'Current' },
+                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 1',
+                date: new Date('December 17, 1995 03:24:00'),
+            },
+            {
+                id: 'id2',
+                from: { email: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+
+                body: 'sample body 2',
+                date: new Date('December 18, 1995 03:24:00'),
+            },
+            {
+                id: 'id3',
+                from: { email: 'current_inbox@email.com', name: 'Current' },
+                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 3',
+                date: new Date('December 19, 1995 03:24:00'),
+            },
+            {
+                id: 'id4',
+                from: { email: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+
+                body: 'sample body 4',
+                date: new Date('December 20, 1995 03:24:00'),
+            },
+        ],
+    },
+];
 
 const currentInbox = {
     email: 'current_inbox@email.com',
 };
 
 const InboxPreview = () => {
+    const [selectedThread, setSelectedThread] = useState(threadInfo[0]);
     return (
-        <div className="p-4">
-            <ThreadPreview
-                sequenceInfluencer={sequenceInfluencer}
-                threadInfo={threadInfo}
-                currentInbox={currentInbox}
-                selected={true}
-            />
+        <div className="space-y-4 p-4">
+            <section className="flex flex-col gap-4 border-4 p-4">
+                Thread Previews
+                <div>
+                    {threadInfo.map((thread) => (
+                        <ThreadPreview
+                            key={thread.id}
+                            sequenceInfluencer={sequenceInfluencer}
+                            threadInfo={thread}
+                            currentInbox={currentInbox}
+                            selected={selectedThread.id === thread.id}
+                            onClick={() => setSelectedThread(thread)}
+                        />
+                    ))}
+                </div>
+            </section>
+            <section className="flex flex-col gap-4 border-4 p-4">
+                Correspondence Section
+                <MessagesComponent messages={selectedThread.messages} />
+            </section>
+            <section className="flex flex-col gap-4 border-4 p-4">
+                Thread Header
+                <ThreadHeader currentInbox={currentInbox} threadInfo={selectedThread} />
+            </section>
         </div>
     );
 };

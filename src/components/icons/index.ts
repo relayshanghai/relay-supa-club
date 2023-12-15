@@ -99,3 +99,6 @@ export { default as AvatarDefault } from './AvatarDefault';
 export { default as NicheInfluencer } from './NicheInfluencer';
 export { default as MicroInfluencer } from './MicroInfluencer';
 export { default as Settings } from './Settings';
+export { default as ThreeDots } from './ThreeDots';
+export { default as Expand } from './Expand';
+export { default as Collapse } from './Collapse';
