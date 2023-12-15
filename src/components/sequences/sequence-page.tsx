@@ -32,13 +32,15 @@ import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
+    const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
+    const { sequenceSteps } = useSequenceSteps(sequenceId);
     const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequence && [sequenceId],
     );
@@ -71,7 +73,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const handleStartSequence = useCallback(
         async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
             try {
-                const results = await sendSequence(sequenceInfluencersToSend);
+                if (!sequenceSteps || sequenceSteps.length === 0) {
+                    throw new Error('Sequence steps not found');
+                }
+                const results = await sendSequence(sequenceInfluencersToSend, sequenceSteps);
 
                 // handle optimistic update
                 const succeeded = results.filter((result) => !result.error);
@@ -97,7 +102,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 return [];
             }
         },
-        [refreshSequenceInfluencers, sendSequence, t],
+        [refreshSequenceInfluencers, sendSequence, sequenceSteps, t],
     );
 
     const handleAutostartToggle = async (checked: boolean) => {

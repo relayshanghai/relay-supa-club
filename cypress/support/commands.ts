@@ -51,11 +51,23 @@ Cypress.Commands.add('getByTestId', (selector, ...args) => {
     cy.get(`[data-testid="${selector}"]`, ...args);
 });
 
+export const deleteIndexedDbs = () => {
+    new Cypress.Promise(async () => {
+        if (window.indexedDB.databases) {
+            const dbs = await window.indexedDB.databases();
+            dbs.forEach((db) => {
+                if (db.name) window.indexedDB.deleteDatabase(db.name);
+            });
+        }
+    });
+};
+
 function loginTestUser(
     role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'company_owner',
     switchLangToEnglish = true,
     expired = false,
 ) {
+    deleteIndexedDbs();
     if (switchLangToEnglish) {
         switchToEnglish();
     }

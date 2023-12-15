@@ -18,7 +18,12 @@ import useSWR from 'swr';
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
 
-    const { data, mutate: refreshSequenceInfluencers } = useSWR<SequenceInfluencerManagerPage[]>(
+    const {
+        data,
+        mutate: refreshSequenceInfluencers,
+        isLoading,
+        isValidating,
+    } = useSWR<SequenceInfluencerManagerPage[]>(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
@@ -26,6 +31,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
             });
             return allInfluencers.content;
         },
+        { revalidateOnFocus: true },
     );
     const sequenceInfluencers = data && Array.isArray(data) ? data : [];
 
@@ -81,6 +87,8 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     );
 
     return {
+        loading:
+            isLoading || (!sequenceInfluencers && isValidating) || (sequenceInfluencers.length === 0 && isValidating),
         sequenceInfluencers,
         createSequenceInfluencer,
         updateSequenceInfluencer,
