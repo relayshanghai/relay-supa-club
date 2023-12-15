@@ -17,22 +17,22 @@ export const usePersistentState = <T>(
             const db = await openDB(appCacheDBKey(profile?.id), 2, {
                 upgrade(upgradeDb, oldVersion) {
                     if (!oldVersion) {
-                        simpleStorageHandler.initialize(upgradeDb, persistentStateStoreName);
+                        simpleStorageHandler.initialize(upgradeDb, persistentStateStoreName(profile?.id, key));
                     } else {
-                        simpleStorageHandler.upgrade(upgradeDb, persistentStateStoreName, oldVersion);
+                        simpleStorageHandler.upgrade(upgradeDb, persistentStateStoreName(profile?.id, key), oldVersion);
                     }
                 },
             });
 
-            let value = await db.get(persistentStateStoreName, key);
+            let value = await db.get(persistentStateStoreName(profile?.id, key), key);
 
             // Backward compatibility: If value doesn't exist with user-specific key, look for old key
             if (value === undefined && profile) {
-                value = await db.get(persistentStateStoreName, key);
+                value = await db.get(persistentStateStoreName(profile?.id, key), key);
                 if (value !== undefined) {
                     // Migrate data to new key
-                    await db.put(persistentStateStoreName, value, key);
-                    await db.delete(persistentStateStoreName, key);
+                    await db.put(persistentStateStoreName(profile?.id, key), value, key);
+                    await db.delete(persistentStateStoreName(profile?.id, key), key);
                 }
             }
 
@@ -51,7 +51,7 @@ export const usePersistentState = <T>(
         // Update the value in the database when state changes
         const updateDB = async () => {
             const db = await openDB(appCacheDBKey(profile?.id), 2);
-            await db.put(persistentStateStoreName, state, key);
+            await db.put(persistentStateStoreName(profile?.id, key), state, key);
         };
 
         updateDB();
@@ -60,7 +60,7 @@ export const usePersistentState = <T>(
     const removeState = async () => {
         setState(initialValue);
         const db = await openDB(appCacheDBKey(profile?.id), 2);
-        await db.delete(persistentStateStoreName, key);
+        await db.delete(persistentStateStoreName(profile?.id, key), key);
     };
 
     return [state, setState, removeState];
