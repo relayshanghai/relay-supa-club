@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { apiObject, apiOptions } from 'rudder-sdk-js';
 import type { eventKeys, payloads } from 'src/utils/analytics/events';
 import type { TrackedEvent, TriggerEvent } from 'src/utils/analytics/types';
@@ -126,6 +126,18 @@ export const profileToIdentifiable = (
     };
 
     return { id, traits };
+};
+
+export const useRudder = () => {
+    const [rudder, setRudder] = useState(() => (typeof window !== 'undefined' ? window.rudder : null));
+
+    useEffect(() => {
+        rudderInitialized().then((rudder) => {
+            setRudder(rudder);
+        });
+    }, []);
+
+    return rudder;
 };
 
 export const useRudderstack = () => {
