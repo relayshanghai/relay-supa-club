@@ -1,4 +1,5 @@
 import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { usageErrors } from 'src/errors/usages';
@@ -20,6 +21,36 @@ import { featRecommended } from 'src/constants/feature-flags';
 
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
+
+export const defaultAudienceLocations: LocationWeighted[] = [
+    {
+        id: 148838,
+        type: ['country'],
+        name: 'United States',
+        title: 'United States',
+        country: {
+            id: 148838,
+            code: 'US',
+        },
+        weight: 5, // 5 = 5%
+    },
+    {
+        id: 1428125,
+        type: ['country'],
+        name: 'Canada',
+        title: 'Canada',
+        country: {
+            id: 1428125,
+            code: 'CA',
+        },
+        weight: 1, // 1 = 1%
+    },
+];
+
+export const defaultAudienceGender = {
+    code: 'FEMALE',
+    weight: 0.01, // 0.01 = 0.1%
+};
 
 export interface ISearchContext {
     loading: boolean;
@@ -126,12 +157,17 @@ export const SearchContext = createContext<ISearchContext>({
 
 export const useSearch = () => useContext(SearchContext);
 
+export type SearchInfluencerResult = {
+    total: number;
+    influencers: ClassicSearchInfluencer[];
+};
+
 export const useSearchResults = (page: number) => {
     const { profile } = useUser();
     const ref = useRef<any>();
 
     type SearchResults = {
-        results: InfluencerPostResponse['accounts'];
+        results: ClassicSearchInfluencer[];
         resultsTotal: InfluencerPostResponse['total'];
         __metadata: SearchResultMetadata['__metadata'];
     };
@@ -173,17 +209,13 @@ export const useSearchResults = (page: number) => {
                     page,
                 };
 
-                const res = await nextFetch<InfluencerPostResponse & SearchResultMetadata>(path, {
+                const res = await nextFetch<SearchInfluencerResult & SearchResultMetadata>(path, {
                     method: 'post',
                     signal,
                     body,
                 });
 
-                if (!res?.accounts) {
-                    throw new Error('no accounts in results');
-                }
-
-                return { results: res?.accounts, resultsTotal: res?.total, __metadata: res.__metadata };
+                return { results: res.influencers, resultsTotal: res.total, __metadata: res.__metadata };
             } catch (error: any) {
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
@@ -254,9 +286,9 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [engagement, setEngagement] = useState<number>();
     const [lastPost, setLastPost] = useState<string>();
     const [contactInfo, setContactInfo] = useState<string>();
-    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
+    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>(defaultAudienceLocations);
     const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>();
-    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted | undefined>();
+    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted>(defaultAudienceGender);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
     const [activeSearch, setActiveSearch] = useState(false);

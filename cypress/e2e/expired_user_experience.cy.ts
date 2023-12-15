@@ -18,8 +18,8 @@ describe('Expired User Experience', () => {
             cy.get('input').type('alligators');
             cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to appear
         });
-        cy.contains('Your free trial has expired. Please upgrade your account to use this feature.');
-        cy.contains('Upgrade subscription');
+        cy.contains('Subscription period has ended');
+        cy.contains('To discover more influencers you’ll need to upgrade your plan and get more searches');
     });
     it('Cannot use boostbot and shows error', () => {
         cy.loginExpired();
@@ -32,7 +32,7 @@ describe('Expired User Experience', () => {
     it('boostbot home button leads to boostbot', () => {
         cy.loginExpired();
         cy.visit('/account');
-        cy.getByTestId('home-icon').click();
+        cy.getByTestId('home-icon').click({ force: true });
         cy.url().should('include', '/boostbot');
     });
     it('Can see banners on boostbot and discover', () => {
@@ -43,5 +43,7 @@ describe('Expired User Experience', () => {
         cy.visit('/dashboard');
         cy.contains('Your free trial has expired');
         cy.contains('Please upgrade your account to use this feature.');
+        cy.contains('Subscription period has ended');
+        cy.contains('To discover more influencers you’ll need to upgrade your plan and get more searches');
     });
 });

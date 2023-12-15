@@ -1,7 +1,7 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 import React from 'react';
-import { SearchPageInner } from './search-page';
+import { SearchPageInner } from './search-page-legacy';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchProvider } from '../../hooks/use-search';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
@@ -18,9 +18,7 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains(
-            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-        );
+        cy.contains('8.43M influencers matching your search and filters found.');
         cy.contains('T-Series');
     });
     it('can filter results and clear filters', () => {
@@ -45,8 +43,8 @@ describe('<SearchPage />', () => {
 
         cy.findAllByTestId('filters-button').click();
         cy.findAllByTestId('clear-filters').click();
-        cy.get('[data-testid="filter-gender"]').should('have.value', 'ANY');
-        cy.get('[data-testid="filter-gender-percent"]').should('be.disabled');
+        cy.get('[data-testid="filter-gender"]').should('have.value', 'FEMALE');
+        cy.get('[data-testid="filter-gender-percent"]').should('have.value', '0.05');
 
         // cy.findAllByRole('row').should('have.length', 11);
     });
@@ -62,12 +60,7 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains('We found');
-        // there is a 5 second wait on the first load until 'no results' is shown
-        cy.contains(
-            'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-            { timeout: 6000 },
-        );
+        cy.contains('0 influencers matching your search and filters found.', { timeout: 6000 });
     });
 
     it('renders error on search error', async () => {

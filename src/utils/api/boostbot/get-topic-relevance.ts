@@ -6,18 +6,28 @@ const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+export type RelevantTopic = {
+    tag: string;
+    distance: number;
+};
+
 export type TopicsAndRelevance = {
     topic_en: string;
     topic_zh: string;
     relevance: number;
 };
 
-export const getTopicsAndRelevance = async (topics: string[]): Promise<TopicsAndRelevance[]> => {
+export const getTopicsAndRelevance = async (topics: RelevantTopic[]): Promise<TopicsAndRelevance[]> => {
     const openai = new OpenAIApi(configuration);
 
     const systemPrompt = `Based on the given influencer topics, please generate 7 diverse niche groups and its relevance to the given topics. The groups should have good relevance to the topics. Do not use more than two words for the labels.
 
-    Influencer topics: ["makeup", "makeupartist", "howtobeauty", "vancouvermua", "beautyenthusiast"]
+    Influencer topics: [
+        { tag: 'makeupartist', distance: 0.75 },
+        { tag: 'howtobeauty', distance: 0.15 },
+        { tag: 'vancouvermua', distance: 0.45 },
+        { tag: 'beautyenthusiast', distance: 0.25 }
+      ]
 
 Example response:
 [
@@ -33,7 +43,7 @@ Example response:
 Only respond in JSON format with the 7 objects as an array. Do not respond with any other text.
 `;
 
-    const userPrompt = `Influencer topics: "${topics}"`;
+    const userPrompt = `Influencer topics: "${JSON.stringify(topics)}"`;
 
     const chatCompletion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',

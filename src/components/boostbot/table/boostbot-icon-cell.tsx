@@ -1,5 +1,5 @@
 import { ReportOutline } from 'src/components/icons';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Row, Table } from '@tanstack/react-table';
 import type { CreatorPlatform } from 'types';
 import { OpenInfluencerCard } from 'src/utils/analytics/events';
@@ -42,7 +42,7 @@ export const OpenInfluencerModalCell = ({
     return (
         <div className="cursor-pointer">
             <ReportOutline
-                data-testid="boostbot-open-modal-icon"
+                data-testid={`open-influencer-modal/${row.original.user_id}`}
                 className="stroke-gray-400 stroke-2"
                 onClick={handleIconClick}
             />

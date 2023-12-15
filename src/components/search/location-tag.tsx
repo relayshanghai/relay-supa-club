@@ -15,14 +15,14 @@ const LocationTag: React.FC<LocationTagProps> = ({ onClick, ...item }: LocationT
 
     return (
         <div
-            className="flex cursor-pointer flex-row items-center whitespace-nowrap rounded bg-gray-100 pl-2 pr-1 text-gray-900 hover:bg-gray-200"
+            className="flex cursor-pointer flex-row items-center whitespace-nowrap rounded bg-gray-100 pl-2 pr-0 text-gray-900 hover:bg-gray-200"
             key={(item as LocationWeighted).id}
             onClick={onClick}
         >
             {(item as LocationWeighted).title}
             <select
                 value={selected.weight}
-                className="ml-2 rounded-md bg-primary-200 py-0 pl-2 pr-5"
+                className="ml-2 rounded-md border-gray-300 bg-gray-100 py-0 pl-2 pr-5"
                 onClick={(e: any) => {
                     e.preventDefault();
                     e.stopPropagation();

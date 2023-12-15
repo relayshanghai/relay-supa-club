@@ -19,6 +19,11 @@ export const supabaseClientCypress = () => {
     });
 };
 
+export const getId = async (email: string) => {
+    const supabase = supabaseClientCypress();
+    return await supabase.from('profiles').select('id').eq('email', email).single();
+};
+
 export const reinsertAlice = async () => {
     try {
         const supabase = supabaseClientCypress();

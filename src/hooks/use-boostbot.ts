@@ -14,6 +14,7 @@ import type {
     GetTopicsAndRelevanceBody,
     GetTopicsAndRelevanceResponse,
 } from 'pages/api/boostbot/get-topics-and-relevance';
+import type { RelevantTopic } from 'src/utils/api/boostbot/get-topic-relevance';
 import {
     getBoostbotConversationCall,
     createNewBoostbotConversationCall,
@@ -21,7 +22,7 @@ import {
 } from 'src/utils/api/db/calls/boostbot-conversations';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -116,7 +117,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
 
     const getTopicsAndRelevance = useCallback(
-        async (topics: string[]) => {
+        async (topics: RelevantTopic[]) => {
             const topicsAndRelevance = await performFetch<GetTopicsAndRelevanceResponse, GetTopicsAndRelevanceBody>(
                 'get-topics-and-relevance',
                 { topics },

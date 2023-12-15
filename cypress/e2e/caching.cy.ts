@@ -1,21 +1,19 @@
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
+
 import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
 
 describe('Caches SWR requests', () => {
     beforeEach(() => {
         setupIntercepts(); // some will be overwritten
-        cy.loginTestUser();
     });
-    it('caches reports from `use-report`', () => {
+    it('caches reports from `use-report`', async () => {
+        cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
-
-        cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
-            force: true,
-        });
-        cy.getByTestId(`analyze-button/${cocomelonId}`)
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 60000 }).click();
+        cy.contains(`Unlock Detailed Analysis Report`)
             .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
-
         cy.intercept('/api/creators/report*', (req) => {
             req.reply({ body: cocomelon, delay: 3000 });
         });
@@ -34,10 +32,11 @@ describe('Caches SWR requests', () => {
 
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
-    it('caches searches on the dashboard', () => {
+    it('caches searches on the dashboard', async () => {
+        cy.loginTestUser();
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
                 delay: 3000,
             });
         });
@@ -48,7 +47,7 @@ describe('Caches SWR requests', () => {
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
         cy.intercept('POST', '/api/influencer-search*', (req) => {
             req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
                 delay: 10000,
             });
         });

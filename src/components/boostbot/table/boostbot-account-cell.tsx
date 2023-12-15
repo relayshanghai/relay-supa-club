@@ -1,6 +1,6 @@
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSocialProfile } from 'src/utils/analytics/events';

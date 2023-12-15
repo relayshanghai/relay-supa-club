@@ -104,6 +104,7 @@ const boostbot = {
     modal: {
         unlockDetailedReport: '解锁分析报告细节',
         topNiches: '红人擅长话题领域分析',
+        noNichesFound: '暂时未能找到该红人在此话题领域里的数据',
         audienceEngagementStats: '粉丝互动数据',
         audienceGender: '受众性别分布',
         engagedAudience: '活跃的粉丝占比',

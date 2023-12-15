@@ -1,8 +1,11 @@
 import { searchIntercepts, setupIntercepts } from './intercepts';
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
-import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearchRaw from '../../src/mocks/api/influencer-search/indexDefaultSearch';
 
 import { resetUsages, supabaseClientCypress } from './helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
+
+const defaultLandingPageInfluencerSearch = flattenInfluencerData(defaultLandingPageInfluencerSearchRaw);
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 describe('Admin mode and search usages', () => {

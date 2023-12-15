@@ -1,6 +1,6 @@
 import type { RelayDatabase } from '../types';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Json } from 'types/supabase';
 
 const createBoostbotConversation = (supabaseClient: RelayDatabase) => async (chatMessages: MessageType[]) => {

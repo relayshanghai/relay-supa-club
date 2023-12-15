@@ -2,7 +2,7 @@ import { testMount } from '../../../utils/cypress-app-wrapper';
 import boostbotGetInfluencers from '../../../mocks/api/boostbot/get-influencers.json';
 import { BoostbotFollowersCell } from './boostbot-followers-cell';
 import { numberFormatter } from 'src/utils/formatter';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Row } from '@tanstack/react-table';
 
 describe('<BoostbotFollowersCell />', () => {
