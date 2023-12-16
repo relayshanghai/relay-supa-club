@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview } from 'src/components/inbox/wip/thread-preview';
+import type { FunnelStatus } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
 
 const sequenceInfluencer: {
@@ -10,6 +11,7 @@ const sequenceInfluencer: {
     username: string;
     email: string;
     platform: CreatorPlatform;
+    funnel_status: FunnelStatus;
 } = {
     name: 'Pewds',
     avatar_url:
@@ -17,6 +19,7 @@ const sequenceInfluencer: {
     username: 'pewdiepie',
     email: 'influencer@email.com',
     platform: 'youtube',
+    funnel_status: 'Confirmed',
 };
 
 const threadInfo = [

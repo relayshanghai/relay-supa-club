@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar';
 import { Card, CardContent } from 'shadcn/components/ui/card';
-import { Clock, Instagram, Tiktok, Youtube } from 'src/components/icons';
+import { Instagram, Tiktok, Youtube } from 'src/components/icons';
+import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
+import type { FunnelStatus } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
 
 export type EmailContact = { email: string; name: string };
@@ -38,6 +40,7 @@ type ThreadPreviewProps = {
         username: string;
         email: string;
         platform: CreatorPlatform;
+        funnel_status: FunnelStatus;
     };
     threadInfo: ThreadInfo;
     currentInbox: CurrentInbox;
@@ -74,7 +77,7 @@ export const ThreadPreview = ({
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatar_url, username, platform } = sequenceInfluencer;
+    const { name, avatar_url, username, platform, funnel_status } = sequenceInfluencer;
     const { messages, unread } = threadInfo;
     const { email: currentInboxEmail } = currentInbox;
     const lastMessage = messages[messages.length - 1];
@@ -108,8 +111,8 @@ export const ThreadPreview = ({
                 </div>
             </CardContent>
             <CardContent className="mt-5">
-                <div className="relative bg-yellow-200">
-                    <Clock className="h-5 w-5 stroke-yellow-500" />
+                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
+                    {COLLAB_OPTIONS[funnel_status].icon}
                     {UnreadMarker}
                 </div>
             </CardContent>

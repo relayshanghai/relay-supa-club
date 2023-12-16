@@ -33,17 +33,19 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                 </div>
                 <div className="col-auto text-start">
                     <dd>
-                        <span className="font-semibold text-primary-700">{message.from.name}</span> {message.from.email}
-                        ;
+                        <span className="font-semibold text-primary-700">{message.from.name}</span>{' '}
+                        {`<${message.from.email}>`}
                     </dd>
                     {message.to.map((contact) => (
                         <dd key={`to-item-${contact.email}`}>
-                            <span className="font-semibold text-primary-700">{contact.name}</span> {contact.email};
+                            <span className="font-semibold text-primary-700">{contact.name}</span>{' '}
+                            {`<${contact.email}>`}
                         </dd>
                     ))}
                     {message.cc.map((contact) => (
                         <dd key={`cc-item-${contact.email}`}>
-                            <span className="font-semibold text-primary-700">{contact.name}</span> {contact.email};
+                            <span className="font-semibold text-primary-700">{contact.name}</span>{' '}
+                            {`<${contact.email}>`}
                         </dd>
                     ))}
                     <dd>{message.date?.toDateString()}</dd>
