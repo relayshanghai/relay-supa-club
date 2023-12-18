@@ -600,3 +600,37 @@ export const boostbotConversations = pgTable('boostbot_conversations', {
     chatMessages: jsonb('chat_messages'),
     searchResults: jsonb('search_results'),
 });
+
+export const threads = pgTable(
+    'threads',
+    {
+        id: uuid('id').defaultRandom().primaryKey().notNull(),
+        threadId: text('thread_id').notNull(),
+        sequenceInfluencerId: uuid('sequence_influencer_id').references(() => sequenceInfluencers.id),
+        emailEngineAccountId: text('email_engine_account_id').notNull(),
+        emailEngineId: text('email_engine_id').notNull(),
+        threadStatus: text('thread_status').default('unread').notNull(),
+        createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+        updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+    },
+    (table) => {
+        return {
+            threadsThreadIdKey: unique('threads_thread_id_key').on(table.threadId),
+        };
+    },
+);
+
+export const emails = pgTable('emails', {
+    id: uuid('id').defaultRandom().primaryKey().notNull(),
+    data: jsonb('data').notNull(),
+    sender: text('sender').notNull(),
+    recipients: text('recipients').notNull(),
+    threadId: text('thread_id')
+        .notNull()
+        .references(() => threads.threadId),
+    emailEngineMessageId: text('email_engine_message_id').notNull(),
+    emailEngineId: text('email_engine_id').notNull(),
+    emailEngineAccountId: text('email_engine_account_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+});
