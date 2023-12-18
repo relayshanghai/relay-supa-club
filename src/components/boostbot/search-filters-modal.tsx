@@ -247,14 +247,10 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
                                     </div>
                                     <input
-                                        onChange={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            togglePlatform(platform);
-                                        }}
+                                        checked={isSelected}
+                                        onChange={() => null} // handled in parent onClick
                                         type="checkbox"
                                         className="checkbox mr-0"
-                                        checked={isSelected}
                                     />
                                 </div>
                             );
@@ -307,11 +303,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
                                     </div>
                                     <input
-                                        onChange={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            toggleInfluencerSize(influencerSize);
-                                        }}
+                                        onChange={() => null}
                                         type="checkbox"
                                         className="checkbox mr-0"
                                         checked={isSelected}
