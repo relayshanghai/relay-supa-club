@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
+import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview } from 'src/components/inbox/wip/thread-preview';
 import type { FunnelStatus } from 'src/utils/api/db';
@@ -165,6 +166,10 @@ const InboxPreview = () => {
             <section className="flex flex-col gap-4 border-4 p-4">
                 Thread Header
                 <ThreadHeader currentInbox={currentInbox} threadInfo={selectedThread} />
+            </section>
+            <section className="flex flex-col gap-4 border-4 p-4">
+                WYSIWYG Editor
+                <ReplyEditor />
             </section>
         </div>
     );
