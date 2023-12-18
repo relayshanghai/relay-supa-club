@@ -45,10 +45,10 @@ export const SequencesPage = () => {
 
     const handleDeleteSequence = async () => {
         try {
+            setSelection([]);
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
             track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
-            setSelection([]);
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
