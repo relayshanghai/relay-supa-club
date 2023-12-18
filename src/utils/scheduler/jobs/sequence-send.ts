@@ -68,6 +68,11 @@ const sendAndInsertEmail = async ({
         influencer.id,
         step.id,
     );
+    crumb({
+        message: `existingSequenceEmail: ${JSON.stringify(existingSequenceEmail)}, influencer funnel_status ${
+            influencer.funnel_status
+        }`,
+    });
     if (existingSequenceEmail && existingSequenceEmail.email_delivery_status) {
         // This should not happen, but due to a previous bug, some sequence influencers were not updated to 'In Sequence' when the email was sent.
         if (influencer.funnel_status === 'To Contact') {
@@ -91,7 +96,7 @@ const sendAndInsertEmail = async ({
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
     const emailSendAt = (await calculateSendAt(wait_time_hours, scheduledEmails)).toISOString();
-
+    crumb({ message: `sendAt: ${emailSendAt}` });
     const res = await sendTemplateEmail({
         account,
         toEmail: influencer.email,
@@ -101,10 +106,10 @@ const sendAndInsertEmail = async ({
         messageId,
         references,
     });
-
     if ('error' in res) {
         throw new Error(res.error);
     }
+    crumb({ message: `res message_id ${res.messageId}` });
     await db(insertSequenceEmailCall)({
         sequence_influencer_id: influencer.id,
         sequence_id: influencer.sequence_id,
@@ -114,6 +119,7 @@ const sendAndInsertEmail = async ({
         email_send_at: emailSendAt,
         email_engine_account_id: account,
     });
+    crumb({ message: `inserted sequence email` });
 
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
 };
