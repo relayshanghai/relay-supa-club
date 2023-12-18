@@ -1,7 +1,7 @@
 import { wait } from './utils';
 
-// 2900mb max memory in bytes
-const MAX_MEMORY = 3040870400;
+// 2500mb max memory in bytes
+const MAX_MEMORY = 1024 * 1024 * 2500;
 const ERR_JOB_TIMEOUT = 2;
 const ERR_JOB_MEMORYEXCEEDED = 4;
 
@@ -11,15 +11,17 @@ export const maxExecutionTimeAndMemory = <T extends Promise<any>>(func: T, maxTi
 
         const wait = () =>
             new Promise((resolve) => {
-                // check memory usage every 10s and resolve if max_memory is exceeded
+                // check memory usage every 3s and resolve if max_memory is exceeded
                 const memCheckIntervalId = setInterval(() => {
                     memoryUsage = process.memoryUsage.rss();
 
+                    // eslint-disable-next-line no-console
+                    console.log('memoryUsage', memoryUsage);
                     if (memoryUsage > MAX_MEMORY) {
                         clearInterval(memCheckIntervalId);
                         resolve(ERR_JOB_MEMORYEXCEEDED);
                     }
-                }, 10000);
+                }, 3000);
 
                 // create a timeout that resolves in maxTime
                 setTimeout(() => {
