@@ -135,7 +135,7 @@ const sendAndInsertEmail = async ({
     if ('error' in res) {
         throw new Error(res.error);
     }
-    crumb({ message: `res message_id ${res.messageId}` });
+    crumb({ message: `res message_id ${res.messageId} step.step_number ${step.step_number}` });
 
     if (step.step_number === 0) {
         const outreachStepInsert: SequenceEmailInsert = {
@@ -170,6 +170,7 @@ const sendAndInsertEmail = async ({
                 email_message_id: '', // will be filled in later
                 email_send_at,
             });
+            crumb({ message: `followup step ${s.step_number} email_send_at: ${email_send_at}` });
             scheduledEmailsPlusNewlyScheduled.push({ email_send_at });
         });
 
