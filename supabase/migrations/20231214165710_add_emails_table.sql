@@ -7,7 +7,6 @@ CREATE TABLE "public"."emails" (
   "email_engine_message_id" text NOT NULL,
   "email_engine_id" text NOT NULL,
   "email_engine_account_id" text NOT NULL,
-  "email_engine_email_id" text NOT NULL,
   "created_at" timestamp with time zone DEFAULT now(),
   "updated_at" timestamp with time zone DEFAULT now()
 );
