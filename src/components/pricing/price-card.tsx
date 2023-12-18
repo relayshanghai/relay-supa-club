@@ -51,7 +51,7 @@ export const PriceCard = ({
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
-    const { pricesForUI: prices } = usePrices();
+    const { prices } = usePrices();
     const { subscription } = useSubscription();
     const { company } = useCompany();
     const router = useRouter();

@@ -10,7 +10,6 @@ import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -31,10 +30,11 @@ import type { analyzeInfluencerParams } from 'src/hooks/use-analyze-influencer';
 import { useAnalyzeInfluencer } from 'src/hooks/use-analyze-influencer';
 import { getJourney } from 'src/utils/analytics/journey';
 import { clientLogger } from 'src/utils/logger-client';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 
 export interface SearchResultRowProps {
-    creator: CreatorSearchAccountObject;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    creator: ClassicSearchInfluencer;
+    setSelectedCreator: (creator: ClassicSearchInfluencer) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
@@ -110,7 +110,7 @@ export const MoreResultsRows = ({
             <>
                 {results?.map((creator) => (
                     <SearchResultRow
-                        key={creator.account.user_profile.user_id}
+                        key={creator.user_id}
                         creator={creator}
                         setShowCampaignListModal={setShowCampaignListModal}
                         setSelectedCreator={setSelectedCreator}
@@ -159,7 +159,7 @@ export const SearchResultRow = ({
         engagements,
         engagement_rate,
         avg_views,
-    } = creator.account.user_profile;
+    } = creator;
     const handle = username || custom_name || fullname || '';
 
     const addToCampaign = async () => {
@@ -168,8 +168,8 @@ export const SearchResultRow = ({
 
         if (allCampaignCreators) {
             for (const campaignCreator of allCampaignCreators) {
-                if (campaignCreator?.campaign_id && creator.account.user_profile.user_id) {
-                    if (campaignCreator.creator_id === creator.account.user_profile.user_id) {
+                if (campaignCreator?.campaign_id && creator.user_id) {
+                    if (campaignCreator.creator_id === creator.user_id) {
                         isAlreadyInCampaign = true;
                         break;
                     }
@@ -270,7 +270,7 @@ export const SearchResultRow = ({
 
                     {profile?.created_at && featEmail(new Date(profile?.created_at)) ? (
                         <AddToSequenceButton
-                            creatorProfile={creator.account.user_profile}
+                            creatorProfile={creator}
                             allSequenceInfluencersIqDataIdsAndSequenceNames={
                                 allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
                             }
@@ -308,7 +308,7 @@ export const SearchResultRow = ({
                                                 <AddToSequenceButton
                                                     inMenu
                                                     active={active}
-                                                    creatorProfile={creator.account.user_profile}
+                                                    creatorProfile={creator}
                                                     allSequenceInfluencersIqDataIdsAndSequenceNames={
                                                         allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
                                                     }

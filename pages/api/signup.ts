@@ -4,7 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { CompanyDB, ProfileDB, RelayDatabase } from 'src/utils/api/db';
-import { addCompanyToUserAndMakeAdmin, deleteCompanyById, findCompaniesByName } from 'src/utils/api/db';
+import { deleteCompanyById, findCompaniesByName, insertProfileWithRole } from 'src/utils/api/db';
 import { createCompany } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
@@ -70,21 +70,32 @@ const validateCompanyName = async ({ companyName }: { companyName: string }) => 
     }
 };
 
-const createUserAndProfile = async ({
+const createProfile = async ({
+    userId,
     email,
-    password,
     firstName,
     lastName,
     phoneNumber,
     companyId,
 }: {
+    userId: string;
     email: string;
-    password: string;
     firstName: string;
     lastName: string;
     phoneNumber?: string;
     companyId: string;
-}) => {
+}) =>
+    db(insertProfileWithRole)({
+        id: userId,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone: phoneNumber,
+        user_role: 'company_owner',
+        company_id: companyId,
+    });
+
+const createSupabaseUser = async ({ email, password }: { email: string; password: string }) => {
     const { error, data } = await db(
         (supabaseClient: RelayDatabase) => () =>
             supabaseClient.auth.signUp({
@@ -99,29 +110,7 @@ const createUserAndProfile = async ({
     if (!userId) {
         throw new Error(createCompanyErrors.failedToSignUp);
     }
-
-    const { data: profile, error: profileError } = await db(
-        (supabaseClient: RelayDatabase) => () =>
-            supabaseClient
-                .from('profiles')
-                .insert({
-                    id: userId,
-                    first_name: firstName,
-                    last_name: lastName,
-                    email,
-                    phone: phoneNumber,
-                    user_role: 'company_owner',
-                    company_id: companyId,
-                })
-                .select()
-                .single(),
-    )();
-
-    if (profileError) {
-        throw profileError.message;
-    }
-
-    return profile;
+    return userId;
 };
 
 const createStripeCustomerAndSubscription = async ({
@@ -329,10 +318,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             cus_id,
         });
 
-        const user = await createUserAndProfile({ email, password, firstName, lastName, phoneNumber, companyId });
-        userId = user.id;
+        userId = await createSupabaseUser({ email, password });
 
-        const profile = await db(addCompanyToUserAndMakeAdmin)(userId, companyId);
+        const profile = await createProfile({ email, userId, firstName, lastName, phoneNumber, companyId });
 
         // these 3 calls won't throw and will just send a Sentry error
         if (category) {

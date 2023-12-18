@@ -110,3 +110,5 @@ export { default as Approved } from './Approved';
 export { default as Posted } from './Posted';
 export { default as Rejected } from './Rejected';
 export { default as Completed } from './Completed';
+export { default as Coins } from './Coins';
+export { default as TimeCrossed } from './TimeCrossed';

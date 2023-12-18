@@ -1,8 +1,7 @@
 import type { CompanyCreateInvitePostBody, CompanyCreateInvitePostResponse } from 'pages/api/invites/create';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import useSWR from 'swr';
 import { useUser } from './use-user';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { InvitesGetQueries, InvitesGetResponse } from 'pages/api/invites';
 import type {
     CompanyAcceptInviteGetQueries,
@@ -15,13 +14,22 @@ import { useCompany } from './use-company';
 export const useInvites = () => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const { data: invites, mutate: refreshUsages } = useSWR(
-        company?.id ? [company.id, 'invites'] : null,
-        ([id, path]) =>
-            nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
-                id,
-            }),
-    );
+
+    const [invites, setInvites] = useState<InvitesGetResponse>([]);
+
+    const refreshInvites = useCallback(async () => {
+        if (!company?.id) {
+            return;
+        }
+        const res = await nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>('invites', {
+            id: company?.id,
+        });
+        setInvites(res);
+    }, [company?.id]);
+
+    useEffect(() => {
+        refreshInvites();
+    }, [refreshInvites]);
 
     const createInvite = useCallback(
         async (email: string, companyOwner: boolean) => {
@@ -59,7 +67,6 @@ export const useInvites = () => {
 
     return {
         invites,
-        refreshUsages,
         createInvite,
         getInviteStatus,
         acceptInvite,

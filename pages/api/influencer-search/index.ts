@@ -2,8 +2,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandler } from 'src/utils/api-handler';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
-import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
+import {
+    type SearchInfluencersPayloadInput,
+    searchInfluencersWithContext as searchInfluencers,
+} from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
@@ -87,9 +91,23 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
-    const parameters = {
+    const parameters: SearchInfluencersPayloadInput = {
         query: { platform },
-        body,
+        body: {
+            ...body,
+            filter: {
+                followers_growth: {
+                    interval: 'i3months',
+                    operator: 'gte',
+                    value: 0,
+                },
+                lang: { code: 'en' },
+                posts_count: {
+                    left_number: 0,
+                },
+                ...body?.filter,
+            },
+        },
     };
 
     await rudderstack.identify({ req, res });
@@ -114,6 +132,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const results = await searchInfluencers(parameters, { req, res });
 
+    const structuredResults = flattenInfluencerData(results, ['search']);
+
     const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
 
     const snapshot = await createSearchSnapshot(
@@ -131,8 +151,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         snapshot_id: snapshot.id,
         parameters_id: parameter.id,
     };
-
-    return res.status(httpCodes.OK).json(results);
+    return res.status(httpCodes.OK).json(structuredResults);
 };
 
 export default ApiHandler({

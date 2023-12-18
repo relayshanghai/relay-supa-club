@@ -26,11 +26,12 @@ import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((sequence) => {
-            return sequence.id;
-        }),
+    const { sequenceInfluencers, refreshSequenceInfluencers, loading } = useSequenceInfluencers(
+        sequences?.map((sequence) => sequence.id),
     );
+    useEffect(() => {
+        refreshSequenceInfluencers([]);
+    }, [refreshSequenceInfluencers]);
 
     const { profile } = useUser();
 
@@ -209,7 +210,7 @@ const Manager = () => {
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
-                <Table influencers={influencers} onRowClick={handleRowClick} />
+                <Table loading={loading} influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
                 profile={influencer}

@@ -16,13 +16,13 @@ import type { audience_age_range, audience_gender } from 'src/utils/api/iqdata/i
 
 export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = {
-    id: string;
+    id: number;
     weight: number;
     name: string;
     type: string[];
     title: string;
     country: {
-        id: string;
+        id: number;
         code: string;
     };
 };
