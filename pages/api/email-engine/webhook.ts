@@ -55,6 +55,7 @@ import { now } from 'src/utils/datetime';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
+import { syncEmail } from 'src/utils/outreach/sync-email';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -235,6 +236,10 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
+    const result = await syncEmail(event);
+    // eslint-disable-next-line no-console
+    console.log('SYNC EMAIL', result);
+
     const trackData: Omit<EmailNewPayload, 'is_success'> = {
         account_id: event.account,
         profile_id: null,
@@ -691,6 +696,9 @@ const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) =>
     return res.status(httpCodes.OK).json({});
 };
 
+// @note
+//  messageUpdate happens on seen/unseen, "toggling a star"
+//  adding a reaction triggers messageNew and messageUpdated
 const ignoredWebhooks = ['messageUpdated'];
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
@@ -701,6 +709,9 @@ const postHandler: NextApiHandler = async (req, res) => {
     if (ignoredWebhooks.includes(body.event)) {
         return res.status(httpCodes.OK).json({});
     }
+
+    // eslint-disable-next-line no-console
+    console.log('EE Webhook', JSON.stringify(body));
 
     try {
         await identifyAccount(body?.account);
