@@ -7,11 +7,7 @@ import {
     updateCompanyUsageLimits,
     updateUserRole,
 } from 'src/utils/api/db';
-import {
-    DEFAULT_VIP_AI_EMAILS_LIMIT,
-    DEFAULT_VIP_PROFILES_LIMIT,
-    DEFAULT_VIP_SEARCHES_LIMIT,
-} from 'src/utils/api/stripe/constants';
+import { DEFAULT_VIP_PROFILES_LIMIT, DEFAULT_VIP_SEARCHES_LIMIT } from 'src/utils/api/stripe/constants';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
@@ -59,18 +55,16 @@ export const handleVIPSubscription = async (res: NextApiResponse, invoiceBody: C
     await updateUserRole(signupData.user.id, 'relay_expert');
 
     const price = invoiceBody.data.object.items.data[0].price;
-    const { profiles, searches, ai_emails } = price.metadata;
-    if (!profiles || !searches || !ai_emails) {
+    const { profiles, searches } = price.metadata;
+    if (!profiles || !searches) {
         serverLogger('Missing product metadata: ' + JSON.stringify({ price }));
         throw new Error('Missing product metadata');
     }
     const profiles_limit = price.metadata.profiles || DEFAULT_VIP_PROFILES_LIMIT;
     const searches_limit = price.metadata.searches || DEFAULT_VIP_SEARCHES_LIMIT;
-    const ai_limit = price.metadata.ai_emails || DEFAULT_VIP_AI_EMAILS_LIMIT;
     await updateCompanyUsageLimits({
         profiles_limit,
         searches_limit,
-        ai_email_generator_limit: ai_limit,
         id: company.id,
     });
 
