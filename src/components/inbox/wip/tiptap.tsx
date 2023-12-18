@@ -3,7 +3,15 @@ import StarterKit from '@tiptap/starter-kit';
 import { Toolbar } from './toolbar';
 import { Send } from 'src/components/icons';
 
-export const Tiptap = ({ description, onChange }: { description: string; onChange: (description: string) => void }) => {
+export const Tiptap = ({
+    description,
+    onChange,
+    onSubmit,
+}: {
+    description: string;
+    onChange: (description: string) => void;
+    onSubmit: () => void;
+}) => {
     const editor = useEditor({
         extensions: [StarterKit.configure()],
         content: description,
@@ -17,13 +25,19 @@ export const Tiptap = ({ description, onChange }: { description: string; onChang
         },
     });
     return (
-        <form className="min-h-[250]px flex flex-col justify-stretch">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+            }}
+            className="min-h-[250]px flex flex-col justify-stretch"
+        >
             <EditorContent editor={editor} />
             <section className="flex items-center justify-between border border-t-transparent">
                 <Toolbar editor={editor} />
-                <div className="cursor-pointer rounded-full bg-primary-500 p-2">
+                <button type="submit" className="cursor-pointer rounded-full bg-primary-500 p-2">
                     <Send className="h-4 w-4 stroke-white" />
-                </div>
+                </button>
             </section>
         </form>
     );
