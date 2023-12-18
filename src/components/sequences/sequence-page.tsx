@@ -180,11 +180,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const handleDelete = async (influencerIds: string[]) => {
         try {
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)),
+                { revalidate: false },
+            );
             await deleteSequenceInfluencers(influencerIds);
-            refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
             setSelection([]);
             toast.success(t('sequences.influencerDeleted'));
         } catch (error) {
+            refreshSequenceInfluencers(sequenceInfluencers);
             clientLogger(error, 'error');
             toast.error(t('sequences.influencerDeleteFailed'));
         }
