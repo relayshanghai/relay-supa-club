@@ -72,6 +72,12 @@ export const useGetCurrentPage = () => {
     if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index;
     }
+    if (/^\/_error\/?/.test(pathname)) {
+        return CurrentPageEvent.error;
+    }
+    if (/^\/component-preview\/?/.test(pathname)) {
+        return CurrentPageEvent.preview;
+    }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);
 };
