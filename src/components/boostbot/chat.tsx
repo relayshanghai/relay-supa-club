@@ -65,6 +65,15 @@ interface ChatProps {
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
+const defaultFilters: Filters = {
+    platforms: ['youtube', 'tiktok', 'instagram'],
+    audience_geo: [
+        { id: countriesByCode.US.id, weight: 0.15 },
+        { id: countriesByCode.CA.id, weight: 0.1 },
+    ],
+    influencerSizes: ['microinfluencer', 'nicheinfluencer'],
+};
+
 export const Chat: React.FC<ChatProps> = ({
     messages,
     setMessages,
@@ -93,31 +102,24 @@ export const Chat: React.FC<ChatProps> = ({
     allSequenceInfluencers,
     setSelectedInfluencers,
 }) => {
-    const defaultFilters: Filters = {
-        platforms: ['youtube', 'tiktok', 'instagram'],
-        audience_geo: [
-            { id: countriesByCode.US.id, weight: 0.15 },
-            { id: countriesByCode.CA.id, weight: 0.1 },
-        ],
-        influencerSizes: ['microinfluencer', 'nicheinfluencer'],
-    };
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters, (onLoadFilters) => {
-        // Fallback for users who had the old version of the filters saved in localStorage
-        if (!onLoadFilters.influencerSizes) {
-            onLoadFilters.influencerSizes = ['microinfluencer', 'nicheinfluencer'];
-        }
-        return onLoadFilters;
-    });
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
-    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers, updateConversation, refreshConversation } =
-        useBoostbot({
-            abortSignal: abortController.signal,
-        });
+    const {
+        getTopics,
+        getRelevantTopics,
+        getTopicClusters,
+        getInfluencers,
+        setInfluencers,
+        updateConversation,
+        refreshConversation,
+    } = useBoostbot({
+        abortSignal: abortController.signal,
+    });
 
     const { track } = useRudderstackTrack();
 
@@ -266,6 +268,7 @@ export const Chat: React.FC<ChatProps> = ({
 
     const clearChatHistoryAndFilters = () => {
         clearChatHistory();
+        setInfluencers([]);
         setFilters(defaultFilters);
     };
 

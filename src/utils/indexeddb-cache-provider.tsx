@@ -8,7 +8,7 @@ export const CacheProvider: FC<PropsWithChildren> = ({ children }) => {
     const { session } = useSessionContext();
 
     const cacheProvider = useCacheProvider({
-        dbName: appCacheDBKey(session?.user.id ?? ''),
+        dbName: appCacheDBKey(session?.user.id),
         storeName: appCacheStoreName,
         version: cacheVersion,
     });
