@@ -88,6 +88,11 @@ const sendAndInsertEmail = async ({
         serverLogger(error);
     }
     const existingSequenceEmail = existingSequenceEmails.find((email) => email.sequence_step_id === step.id);
+    crumb({
+        message: `existingSequenceEmail: ${JSON.stringify(existingSequenceEmail)}, influencer funnel_status ${
+            influencer.funnel_status
+        }`,
+    });
     if (
         existingSequenceEmail &&
         existingSequenceEmail.email_delivery_status &&
@@ -115,6 +120,7 @@ const sendAndInsertEmail = async ({
     const emailSendAt = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
         ? now() // send immediately
         : existingSequenceEmail?.email_send_at ?? calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
+    crumb({ message: `sendAt: ${emailSendAt}` });
 
     const res = await sendTemplateEmail({
         account,
@@ -129,6 +135,7 @@ const sendAndInsertEmail = async ({
     if ('error' in res) {
         throw new Error(res.error);
     }
+    crumb({ message: `res message_id ${res.messageId}` });
 
     if (step.step_number === 0) {
         const outreachStepInsert: SequenceEmailInsert = {
@@ -167,6 +174,7 @@ const sendAndInsertEmail = async ({
         });
 
         await db(insertSequenceEmailsCall)([outreachStepInsert, ...followupEmailInserts]);
+        crumb({ message: `inserted sequence emails` });
     } else {
         if (!existingSequenceEmail) {
             serverLogger(new Error('No existing sequence email found'));
@@ -181,6 +189,7 @@ const sendAndInsertEmail = async ({
                 email_message_id: res.messageId,
                 email_send_at: emailSendAt,
             });
+            crumb({ message: `inserted sequence email` });
             return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
         } else {
             await db(updateSequenceEmailCall)({
@@ -190,6 +199,7 @@ const sendAndInsertEmail = async ({
                 email_message_id: res.messageId,
                 email_send_at: emailSendAt,
             });
+            crumb({ message: `updated sequence email` });
         }
     }
 
