@@ -1,45 +1,35 @@
-import { useEffect, useState } from 'react';
-import { openDB } from 'idb';
+import { useCallback, useEffect, useState } from 'react';
+import { openDB, type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
-import { appCacheDBKey, persistentStateStoreName } from 'src/constants';
-import { simpleStorageHandler } from 'src/utils/cache-provider';
+import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
+import { initializeDB } from 'src/utils/cache-provider/cache-provider';
+
+const version = cacheVersion;
 
 export const usePersistentState = <T>(
     key: string,
     initialValue: T,
-    onLoadUpdate?: (currentValue: T) => T,
 ): [T, React.Dispatch<React.SetStateAction<T>>, () => void] => {
     const { profile } = useUser();
+
+    const [db, setDb] = useState<IDBPDatabase<unknown> | null>(null);
+
+    const openTheDB = useCallback(
+        () => initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version),
+        [profile?.id],
+    );
 
     const [state, setState] = useState<T>(() => {
         // Setup the database and return the initial value
         const setup = async () => {
-            const db = await openDB(appCacheDBKey(profile?.id), 2, {
-                upgrade(upgradeDb, oldVersion) {
-                    if (!oldVersion) {
-                        simpleStorageHandler.initialize(upgradeDb, persistentStateStoreName);
-                    } else {
-                        simpleStorageHandler.upgrade(upgradeDb, persistentStateStoreName, oldVersion);
-                    }
-                },
-            });
-
-            let value = await db.get(persistentStateStoreName, key);
-
-            // Backward compatibility: If value doesn't exist with user-specific key, look for old key
-            if (value === undefined && profile) {
-                value = await db.get(persistentStateStoreName, key);
-                if (value !== undefined) {
-                    // Migrate data to new key
-                    await db.put(persistentStateStoreName, value, key);
-                    await db.delete(persistentStateStoreName, key);
-                }
+            let existingDB = db;
+            if (!existingDB) {
+                existingDB = await openTheDB();
+                setDb(existingDB);
             }
+            const existing = await existingDB.get(appCacheStoreName, key);
 
-            value = value ?? initialValue;
-            value = onLoadUpdate ? onLoadUpdate(value) : value;
-
-            setState(value);
+            setState(existing ?? initialValue);
         };
 
         setup();
@@ -48,19 +38,30 @@ export const usePersistentState = <T>(
     });
 
     useEffect(() => {
-        // Update the value in the database when state changes
-        const updateDB = async () => {
-            const db = await openDB(appCacheDBKey(profile?.id), 2);
-            await db.put(persistentStateStoreName, state, key);
+        const setupDB = async () => {
+            if (!profile?.id) return;
+
+            setDb(await openTheDB());
         };
 
-        updateDB();
-    }, [key, state, profile?.id]);
+        // Update the value in the database when state changes
+        const updateDB = async () => {
+            if (!db) return;
+
+            await db.put(appCacheStoreName, state, key);
+        };
+
+        if (!db) {
+            setupDB();
+        } else {
+            updateDB();
+        }
+    }, [key, state, profile?.id, openTheDB, db]);
 
     const removeState = async () => {
         setState(initialValue);
-        const db = await openDB(appCacheDBKey(profile?.id), 2);
-        await db.delete(persistentStateStoreName, key);
+        const db = await openDB(appCacheDBKey(profile?.id), version);
+        await db.delete(appCacheStoreName, key);
     };
 
     return [state, setState, removeState];

@@ -13,6 +13,5 @@ export const IQDATA_MAINTENANCE = process.env.NEXT_PUBLIC_IQDATA_MAINTENANCE ===
 
 export const appCacheDBKey = (userId?: string) => `app-cache-${userId}`;
 export const appCacheStoreName = 'app-cache-store';
-export const persistentStateStoreName = 'persistent-state-store';
-
+export const cacheVersion = 5;
 export const isDev = () => process.env.NODE_ENV === 'development';

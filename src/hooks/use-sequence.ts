@@ -43,21 +43,27 @@ export const useSequence = (sequenceId?: string) => {
     const getInfluencersBySequenceIdsCall = useDB(getSequenceInfluencersBySequenceIdsCall);
     const deleteSequence = useCallback(
         async (ids: string[]) => {
-            const res = await deleteSequenceDBCall(ids);
-            const sequenceInfluencers = await getInfluencersBySequenceIdsCall(ids);
-            /** only delete them if they are not yet in the manager page */
-            const sequenceInfluencerTypesToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
-            const sequenceInfluencerIds = sequenceInfluencers
-                .filter(({ funnel_status }) => sequenceInfluencerTypesToDelete.includes(funnel_status))
-                .map(({ id }) => id);
-            const body: SequenceInfluencersDeleteRequestBody = { ids: sequenceInfluencerIds };
-            await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
-                method: 'POST',
-                body,
-            });
-            refreshSequence((prev) => (prev ? { ...prev, deleted: true } : prev));
-            refreshSequences((prev) => prev?.filter(({ id }) => !ids.includes(id)));
-            return res;
+            try {
+                refreshSequence((prev) => (prev ? { ...prev, deleted: true } : prev), { revalidate: false });
+                refreshSequences((prev) => prev?.filter(({ id }) => !ids.includes(id)), { revalidate: false });
+                const res = await deleteSequenceDBCall(ids);
+                const sequenceInfluencers = await getInfluencersBySequenceIdsCall(ids);
+                /** only delete them if they are not yet in the manager page */
+                const sequenceInfluencerTypesToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
+                const sequenceInfluencerIds = sequenceInfluencers
+                    .filter(({ funnel_status }) => sequenceInfluencerTypesToDelete.includes(funnel_status))
+                    .map(({ id }) => id);
+                const body: SequenceInfluencersDeleteRequestBody = { ids: sequenceInfluencerIds };
+                await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
+                    method: 'POST',
+                    body,
+                });
+
+                return res;
+            } catch (error) {
+                refreshSequence();
+                refreshSequences();
+            }
         },
         [deleteSequenceDBCall, getInfluencersBySequenceIdsCall, refreshSequence, refreshSequences],
     );
