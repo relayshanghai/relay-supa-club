@@ -4,6 +4,8 @@ import { db } from '../database';
 import { getSequenceInfluencerByMessageId, createThread, createEmail } from './db';
 import { parseContacts } from './parse-contacts';
 import type { From } from 'types/email-engine/account-account-message-get';
+import { getMessage } from '../api/email-engine';
+import { stringifyContacts } from './stringify-contacts';
 
 type SyncEmailFn = (event: WebhookMessageNew) => Promise<{
     influencer: DBQueryReturn<typeof getSequenceInfluencerByMessageId>;
@@ -15,6 +17,8 @@ export const syncEmail: SyncEmailFn = async (event) => {
     const result = await db().transaction(async (tx) => {
         const influencer = await getSequenceInfluencerByMessageId(tx)(event.data.messageId);
 
+        const emailMessage = await getMessage(event.account, event.data.id);
+
         const thread = await createThread(tx)({
             sequenceInfluencerId: influencer?.id ?? null,
             threadId: event.data.threadId,
@@ -23,7 +27,13 @@ export const syncEmail: SyncEmailFn = async (event) => {
         });
 
         const email = await createEmail(tx)({
-            event: event,
+            data: emailMessage,
+            sender: stringifyContacts(event.data.from),
+            recipients: stringifyContacts(event.data.to),
+            threadId: event.data.threadId,
+            emailEngineMessageId: event.data.messageId,
+            emailEngineId: event.data.id,
+            emailEngineAccountId: event.account,
         });
 
         if (!email) {
