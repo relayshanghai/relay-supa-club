@@ -105,13 +105,16 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     if (error) throw error;
 };
 
+/** only gets where the send at date is in the future or from the last day */
 export const getSequenceEmailsByEmailEngineAccountId =
     (supabaseClient: RelayDatabase) =>
-    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at'>[]> => {
+    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[]> => {
+        const twentyFourHoursAgo = new Date().getTime() - 24 * 60 * 60 * 1000;
         const { data, error } = await supabaseClient
             .from('sequence_emails')
-            .select('email_send_at')
-            .eq('email_engine_account_id', accountId);
+            .select('email_send_at, sequence_step_id')
+            .eq('email_engine_account_id', accountId)
+            .gt('email_send_at', new Date(twentyFourHoursAgo).toISOString());
         if (error) throw error;
         return data ?? [];
     };
