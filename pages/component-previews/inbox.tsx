@@ -78,14 +78,6 @@ const threadInfo = [
                 body: 'sample body 2',
                 date: new Date('December 18, 1995 03:24:00'),
             },
-            {
-                id: 'id2',
-                from: { email: 'current_inbox@email.com', name: 'Current' },
-                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 3',
-                date: new Date('December 19, 1995 03:24:00'),
-            },
         ],
     },
     {

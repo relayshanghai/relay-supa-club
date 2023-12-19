@@ -35,8 +35,8 @@ export const Tiptap = ({
             <EditorContent editor={editor} />
             <section className="flex items-center justify-between border border-t-transparent">
                 <Toolbar editor={editor} />
-                <button type="submit" className="cursor-pointer rounded-full bg-primary-500 p-2">
-                    <Send className="h-4 w-4 stroke-white" />
+                <button type="submit" className="mx-5 cursor-pointer">
+                    <Send className="h-5 w-5 stroke-gray-400" />
                 </button>
             </section>
         </form>

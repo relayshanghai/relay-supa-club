@@ -77,14 +77,14 @@ export const ThreadPreview = ({
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatar_url, username, platform, funnel_status } = sequenceInfluencer;
+    const { name, avatar_url, username, platform, funnel_status, email: influencerEmail } = sequenceInfluencer;
     const { messages, unread } = threadInfo;
-    const { email: currentInboxEmail } = currentInbox;
+    const { email: _currentInboxEmail } = currentInbox;
     const lastMessage = messages[messages.length - 1];
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform);
-    const UnreadMarker = getUnreadMarker(unread, currentInboxEmail === lastMessage.from.email);
+    const UnreadMarker = getUnreadMarker(unread, influencerEmail === lastMessage.from.email && unread);
 
     return (
         <Card
