@@ -94,6 +94,7 @@ Sequences are our email automation feature. You can set up your email templates,
     modal: {
         unlockDetailedReport: 'Unlock Detailed Analysis Report',
         topNiches: 'Top Niches',
+        noNichesFound: 'No niche data available for this influencer',
         audienceEngagementStats: 'Audience Engagement Stats',
         audienceGender: 'Audience Gender',
         engagedAudience: 'Audience Engagement Rate',

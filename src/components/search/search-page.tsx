@@ -1,42 +1,57 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'src/components/button';
-import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 import { IQDATA_MAINTENANCE } from 'src/constants';
-import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
-import { useCampaigns } from 'src/hooks/use-campaigns';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
-import { Search, SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
+import {
+    SearchProvider,
+    defaultAudienceGender,
+    defaultAudienceLocations,
+    useSearch,
+    useSearchResults,
+} from 'src/hooks/use-search';
+import { Search, SearchDefault } from 'src/utils/analytics/events';
 import { startJourney } from 'src/utils/analytics/journey';
 import { numberFormatter } from 'src/utils/formatter';
-import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
-import type { CreatorSearchAccountObject } from 'types';
-import { useAnalytics } from '../analytics/analytics-provider';
-import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { Layout } from '../layout';
 import { MaintenanceMessage } from '../maintenance-message';
 import ClientRoleWarning from './client-role-warning';
 import { SearchCreators } from './search-creators';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
-import { MoreResultsRows } from './search-result-row';
-import { SearchResultsTable } from './search-results-table';
 import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
-import { randomNumber } from 'src/utils/utils';
+import { getFulfilledData, randomNumber, unixEpochToISOString } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 import { FaqModal } from '../library';
 import discoveryfaq from 'i18n/en/discovery-faq';
 import { useRouter } from 'next/router';
+import { classicColumns } from '../boostbot/table/columns';
+import { InfluencersTable } from '../boostbot/table/influencers-table';
+import type { Row } from '@tanstack/react-table';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { AddToSequenceButton } from '../boostbot/add-to-sequence-button';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
+import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
+import { ModalSequenceSelector } from '../boostbot/modal-sequence-selector';
+import type { Sequence } from 'src/utils/api/db';
+import { useUser } from 'src/hooks/use-user';
+import {
+    type SendInfluencersToOutreachPayload,
+    SendInfluencersToOutreach,
+} from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
+import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { SearchExpired } from './search-expired';
+import { useUsages } from 'src/hooks/use-usages';
+import { useSubscription } from 'src/hooks/use-subscription';
 
-export const SearchPageInner = () => {
+export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
 
     const {
@@ -57,26 +72,17 @@ export const SearchPageInner = () => {
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
-    const [showCampaignListModal, setShowCampaignListModal] = useState(false);
-    const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const { campaigns } = useCampaigns({});
-    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
-    const { trackEvent } = useRudderstack();
-    const [batchId, setBatchId] = useState(() => randomNumber());
+    const [_batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);
     const {
         results: firstPageSearchResults,
         resultsTotal,
         noResults,
-        error,
-        isValidating,
         loading: resultsLoading,
         metadata,
         setOnLoad,
-    } = useSearchResults(0);
+    } = useSearchResults(page);
 
-    const { track: trackAnalytics } = useAnalytics();
     const { track } = useTrackEvent();
 
     const [rendered, setRendered] = useState(false);
@@ -93,7 +99,6 @@ export const SearchPageInner = () => {
     );
 
     const { push } = useRouter();
-
     /**
      * Handle the SearchOptions.onSearch event
      */
@@ -160,8 +165,6 @@ export const SearchPageInner = () => {
         return () => controller.abort();
     }, [track, setOnLoad, searchParams, metadata, rendered]);
 
-    const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
-
     // Automatically start a journey on render
     useEffect(() => {
         startJourney('search');
@@ -177,10 +180,14 @@ export const SearchPageInner = () => {
             text: '',
             views: [null, null],
             audience: [null, null],
+            audienceGender: defaultAudienceGender,
+            audienceLocation: defaultAudienceLocations,
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
             // only_recommended: featRecommended() ? onlyRecommended : false,
         });
     }, [platform, setSearchParams]);
+
+    const searchId = randomNumber();
 
     useEffect(() => {
         setAudience([null, null]);
@@ -191,8 +198,6 @@ export const SearchPageInner = () => {
         setContactInfo(undefined);
         setTopicTags([]);
         setInfluencerLocation([]);
-        setAudienceLocation([]);
-        setPage(0);
     }, [
         platform,
         setAudience,
@@ -205,6 +210,136 @@ export const SearchPageInner = () => {
         setTopicTags,
         setViews,
     ]);
+    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+        'classic-selected-influencers',
+        {},
+    );
+    const { profile } = useUser();
+
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+    const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
+    const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
+    const {
+        sequenceInfluencers: allSequenceInfluencers,
+        refreshSequenceInfluencers,
+        createSequenceInfluencer,
+    } = useSequenceInfluencers(sequences?.map((s) => s.id));
+    const [isOutreachLoading, setIsOutreachLoading] = useState(false);
+    const outReachDisabled = isOutreachLoading || resultsLoading;
+    const [selectedCount, setSelectedCount] = useState(0);
+    const [showSequenceSelector, setShowSequenceSelector] = useState<boolean>(false);
+
+    const { subscription } = useSubscription();
+
+    const periodStart = unixEpochToISOString(subscription?.current_period_start);
+    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+
+    const { usages } = useUsages(
+        true,
+        periodStart && periodEnd
+            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
+            : undefined,
+    );
+
+    const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
+
+    const [sequence, setSequence] = useState<Sequence | undefined>(() =>
+        sequences?.find((sequence) => sequence.name === defaultSequenceName),
+    );
+
+    const handleSelectedInfluencersToOutreach = useCallback(async () => {
+        const selectedInfluencersData =
+            // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+            firstPageSearchResults && firstPageSearchResults.length > 0
+                ? Object.keys(selectedInfluencers).map((key) => firstPageSearchResults[Number(key)])
+                : [];
+        setIsOutreachLoading(true);
+
+        const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
+            currentPage: CurrentPageEvent.dashboard,
+            influencer_ids: [],
+            sequence_influencer_ids: [],
+            topics: [],
+            is_multiple: null,
+            is_success: true,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_sequence_autostart: null,
+        };
+
+        try {
+            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+
+            if (!selectedInfluencersData) {
+                throw new Error('Error adding influencers to sequence: no valid influencers selected');
+            }
+            if (!sequence?.id) {
+                throw new Error('Error creating sequence: no sequence id selected');
+            }
+
+            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+                const creatorProfileId = influencer.user_id;
+
+                if (trackingPayload.influencer_ids !== null) {
+                    trackingPayload.influencer_ids.push(creatorProfileId);
+                }
+
+                if (trackingPayload.topics !== null) {
+                    trackingPayload.topics.push(...influencer.topics.map((v) => v));
+                }
+
+                if (!platform) {
+                    throw new Error('Error creating sequence influencer: no platform detected');
+                }
+                return createSequenceInfluencer({
+                    iqdata_id: creatorProfileId,
+                    avatar_url: influencer.picture ?? '',
+                    platform,
+                    name: influencer.fullname ?? influencer.username ?? influencer.handle ?? '',
+                    username: influencer.handle ?? influencer.username ?? '',
+
+                    url: influencer.url,
+                    sequence_id: sequence?.id,
+                });
+            });
+            const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
+
+            if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
+
+            // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
+            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
+            trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
+            trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
+        } catch (error) {
+            clientLogger(error, 'error');
+
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
+        } finally {
+            // @ts-ignore bypasses apiObject type requirement of is_multiple.
+            // Needs `null` for it to show in mixpanel without explicitly
+            // saying that it is multiple or not
+            track(SendInfluencersToOutreach.eventName, trackingPayload);
+            setIsOutreachLoading(false);
+        }
+    }, [
+        allSequenceInfluencers,
+        sequence,
+        platform,
+        selectedInfluencers,
+        createSequenceInfluencer,
+        refreshSequenceInfluencers,
+        track,
+        firstPageSearchResults,
+    ]);
+    useEffect(() => {
+        if (sequences && !sequence) {
+            setSequence(sequences[0]);
+        }
+    }, [sequence, sequences]);
+
     return (
         <div className="p-6">
             <ClientRoleWarning />
@@ -222,80 +357,77 @@ export const SearchPageInner = () => {
                 onSearchTypeChange={handleSearchTypeChange}
                 setShowNeedHelpModal={setShowNeedHelpModal}
             />
-
-            <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
-                    resultsTotal,
-                )} ${
-                    platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
-                }`}</div>
-            </div>
-            <SearchResultsTable
-                setSelectedCreator={setSelectedCreator}
-                setShowCampaignListModal={setShowCampaignListModal}
-                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                allCampaignCreators={allCampaignCreators}
-                allSequenceInfluencersIqDataIdsAndSequenceNames={allSequenceInfluencersIqDataIdsAndSequenceNames}
-                loading={resultsLoading}
-                validating={isValidating}
-                results={firstPageSearchResults}
-                error={error}
-                batchId={batchId}
-                moreResults={
-                    <>
-                        {new Array(page).fill(0).map((_, i) => (
-                            <MoreResultsRows
-                                key={i}
-                                page={i + 1}
-                                setSelectedCreator={setSelectedCreator}
-                                setShowCampaignListModal={setShowCampaignListModal}
-                                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                allCampaignCreators={allCampaignCreators}
-                                trackSearch={track}
-                                batchId={batchId}
-                                resultIndex={i}
+            <ModalSequenceSelector
+                show={showSequenceSelector}
+                setShow={setShowSequenceSelector}
+                handleAddToSequence={handleSelectedInfluencersToOutreach}
+                sequence={sequence}
+                setSequence={setSequence}
+                sequences={sequences || []}
+            />
+            {expired || usages.search.remaining === 0 ? (
+                <div className="m-8 flex w-full justify-center">
+                    <SearchExpired type={expired ? 'plan' : 'credit'} subscriptionStatus={subscription?.status} />
+                </div>
+            ) : noResults && !resultsLoading ? (
+                <p>{t('creators.noResults')}</p>
+            ) : (
+                <div className="flex w-full basis-3/4 flex-col">
+                    <div className="flex flex-row items-center justify-between">
+                        <div className="ml-4 flex gap-2 text-sm font-medium text-gray-400">
+                            {t('boostbot.table.selectedAmount', {
+                                selectedCount,
+                            })}
+                            <span className="text-black">
+                                {t('creators.results', {
+                                    resultCount: numberFormatter(resultsTotal, 0),
+                                })}
+                            </span>
+                        </div>
+                        <div className="w-fit pb-3">
+                            <AddToSequenceButton
+                                buttonText={t('boostbot.chat.outreachSelected')}
+                                outReachDisabled={outReachDisabled}
+                                handleAddToSequenceButton={() => {
+                                    setShowSequenceSelector(true);
+                                }}
+                                url="search"
                             />
-                        ))}
-                    </>
-                }
-            />
-            {!noResults && (
-                <Button
-                    onClick={async () => {
-                        const nextPage = page + 1;
-                        setPage(nextPage);
-                        trackEvent(SEARCH_RESULT('load more'));
-                    }}
-                >
-                    {t('creators.loadMore')}
-                </Button>
+                        </div>
+                    </div>
+                    <InfluencersTable
+                        columns={classicColumns}
+                        data={firstPageSearchResults || Array(10).fill({ url: 'https://www.youtube.com' })}
+                        selectedInfluencers={selectedInfluencers}
+                        setSelectedInfluencers={setSelectedInfluencers}
+                        influencerCount={resultsTotal}
+                        setPage={setPage}
+                        currentPage={page}
+                        meta={{
+                            t,
+                            searchId,
+                            setIsInfluencerDetailsModalOpen,
+                            setSelectedRow,
+                            allSequenceInfluencers,
+                            setSelectedCount,
+                            isLoading: resultsLoading,
+                        }}
+                    />
+                </div>
             )}
-
-            <AddToCampaignModal
-                show={showCampaignListModal}
-                setShow={setShowCampaignListModal}
-                platform={platform}
-                selectedCreator={selectedCreator?.account.user_profile}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-                track={(campaign: string) => {
-                    // @todo ideally we would want this to use useTrackEvent.track
-                    selectedCreator &&
-                        trackAnalytics(SearchAddToCampaign, {
-                            creator: selectedCreator.account.user_profile,
-                            campaign: campaign,
-                        });
-                }}
+            <InfluencerDetailsModal
+                selectedRow={selectedRow}
+                isOpen={isInfluencerDetailsModalOpen}
+                setIsOpen={setIsInfluencerDetailsModalOpen}
+                setShowSequenceSelector={setShowSequenceSelector}
+                outReachDisabled={
+                    (resultsLoading ||
+                        allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
+                    false
+                }
+                setSelectedInfluencers={setSelectedInfluencers}
+                url="search"
             />
-            <InfluencerAlreadyAddedModal
-                show={showAlreadyAddedModal}
-                setCampaignListModal={setShowCampaignListModal}
-                setShow={setShowAlreadyAddedModal}
-                selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-            />
-
             <SearchFiltersModal
                 show={filterModalOpen}
                 setShow={setShowFiltersModal}
@@ -337,7 +469,7 @@ export const SearchPage = () => {
             ) : (
                 <div className="flex flex-col">
                     <SearchProvider>
-                        <SearchPageInner />
+                        <SearchPageInner expired={isExpired} />
                     </SearchProvider>
                 </div>
             )}

@@ -22,8 +22,13 @@ export const useSequenceEmails = (sequenceId?: string) => {
     } = useSWR(sequenceId ? [sequenceId, 'sequence_email'] : null, ([id]) => getSequenceEmailsBySequenceDBCall(id));
 
     const getAllSequenceEmailsDBCall = useDB<typeof getAllSequenceEmailsCall>(getAllSequenceEmailsCall);
-    const { data: allSequenceEmails } = useSWR(allSequenceIds ? [allSequenceIds, 'sequence_email'] : null, ([ids]) =>
-        getAllSequenceEmailsDBCall(ids),
+    const { data: allSequenceEmails } = useSWR(
+        allSequenceIds ? [allSequenceIds, 'sequence_email'] : null,
+        ([ids]) => getAllSequenceEmailsDBCall(ids),
+        {
+            // influencer status depends on the sequence emails, so we need to refresh this somewhat often
+            refreshInterval: 1000 * 60 * 1,
+        },
     );
 
     return {

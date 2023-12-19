@@ -4,11 +4,7 @@ const creators = {
     recommendedTooltipDetail:
         'Are those which have worked with boostbot.ai brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
-    resultsPrefix: 'We found',
-    resultsPostfixKeywords:
-        'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-    resultsPostfixHashtags:
-        'influencer accounts relevant to your topics or using your hastags in recent posts, that matched your filters.',
+    results: '{{ resultCount }} influencers matching your search and filters found.',
     noResults: 'No results found',
     addFilters: 'Add filters to tailor your results',
     searchResultError: 'Failed to fetch search results',
@@ -185,6 +181,15 @@ const creators = {
         suspicious: 'Suspicious',
         influencers: 'Influencers',
         real: 'Real',
+    },
+    errorComponent: {
+        trialCreditExpired: 'No free trial credits remaining',
+        creditExpired: 'No credits remaining',
+        trialSubscriptionExpired: 'Free trial has ended',
+        subscriptionExpired: 'Subscription period has ended',
+        paidDescription: 'To discover more influencers you’ll need to upgrade your plan and get more searches',
+        trialDescription: 'To discover more influencers you’ll need to upgrade your account to one of our paid plans',
+        upgradeAccountButton: 'Upgrade my account',
     },
     cancel: 'Cancel',
     sequence: 'Sequence',

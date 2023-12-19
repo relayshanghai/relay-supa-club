@@ -3,9 +3,14 @@ import type { RelayDatabase } from '../types';
 
 export const getProfileByIdCall = (supabaseClient: RelayDatabase) => async (id: string, abortSignal?: AbortSignal) => {
     if (abortSignal) {
-        return await supabaseClient.from('profiles').select().abortSignal(abortSignal).eq('id', id).single();
+        return await supabaseClient
+            .from('profiles')
+            .select('*, company: companies(*)')
+            .abortSignal(abortSignal)
+            .eq('id', id)
+            .single();
     }
-    return await supabaseClient.from('profiles').select().eq('id', id).single();
+    return await supabaseClient.from('profiles').select('*, company: companies(*)').eq('id', id).single();
 };
 
 export const getProfileByEmailEngineAccountQuery = (supabaseClient: RelayDatabase) => async (account: string) => {
@@ -39,9 +44,12 @@ export const getFirstUserByCompanyIdCall = (supabaseClient: RelayDatabase) => as
 };
 
 export const deleteUserById = (db: RelayDatabase) => async (profileId: string) => {
+    const { error: profileDeleteError } = await db.from('profiles').delete().eq('id', profileId);
+    if (profileDeleteError) {
+        serverLogger(profileDeleteError);
+    }
     const { error } = await db.auth.admin.deleteUser(profileId);
     if (error) {
         serverLogger(error);
     }
-    return db.from('profiles').delete().eq('id', profileId);
 };

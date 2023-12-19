@@ -1,14 +1,13 @@
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
 import { useUser } from 'src/hooks/use-user';
 import { CreateSequence } from 'src/utils/analytics/events';
-import type { FunnelStatus, SequenceInsert, SequenceUpdate } from 'src/utils/api/db';
+import type { FunnelStatus, SequenceInsert, SequenceStep, SequenceUpdate } from 'src/utils/api/db';
 import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
 import { serverLogger } from 'src/utils/logger-server';
 import useSWR from 'swr';
 import { useRudderstackTrack } from './use-rudderstack';
-import { useSequenceSteps } from './use-sequence-steps';
 import { useSequences } from './use-sequences';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useTemplateVariables } from './use-template_variables';
@@ -29,7 +28,6 @@ export const useSequence = (sequenceId?: string) => {
     const { data: sequence, mutate: refreshSequence } = useSWR(sequenceId ? [sequenceId, 'sequences'] : null, ([id]) =>
         db.getSequenceById(id),
     );
-    const { sequenceSteps, refreshSequenceSteps } = useSequenceSteps(sequence?.id);
 
     const updateSequenceDBCall = useDB<typeof updateSequenceCall>(updateSequenceCall);
     const updateSequence = useCallback(
@@ -45,21 +43,27 @@ export const useSequence = (sequenceId?: string) => {
     const getInfluencersBySequenceIdsCall = useDB(getSequenceInfluencersBySequenceIdsCall);
     const deleteSequence = useCallback(
         async (ids: string[]) => {
-            const res = await deleteSequenceDBCall(ids);
-            const sequenceInfluencers = await getInfluencersBySequenceIdsCall(ids);
-            /** only delete them if they are not yet in the manager page */
-            const sequenceInfluencerTypesToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
-            const sequenceInfluencerIds = sequenceInfluencers
-                .filter(({ funnel_status }) => sequenceInfluencerTypesToDelete.includes(funnel_status))
-                .map(({ id }) => id);
-            const body: SequenceInfluencersDeleteRequestBody = { ids: sequenceInfluencerIds };
-            await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
-                method: 'POST',
-                body,
-            });
-            refreshSequence();
-            refreshSequences();
-            return res;
+            try {
+                refreshSequence((prev) => (prev ? { ...prev, deleted: true } : prev), { revalidate: false });
+                refreshSequences((prev) => prev?.filter(({ id }) => !ids.includes(id)), { revalidate: false });
+                const res = await deleteSequenceDBCall(ids);
+                const sequenceInfluencers = await getInfluencersBySequenceIdsCall(ids);
+                /** only delete them if they are not yet in the manager page */
+                const sequenceInfluencerTypesToDelete: FunnelStatus[] = ['To Contact', 'In Sequence', 'Ignored'];
+                const sequenceInfluencerIds = sequenceInfluencers
+                    .filter(({ funnel_status }) => sequenceInfluencerTypesToDelete.includes(funnel_status))
+                    .map(({ id }) => id);
+                const body: SequenceInfluencersDeleteRequestBody = { ids: sequenceInfluencerIds };
+                await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
+                    method: 'POST',
+                    body,
+                });
+
+                return res;
+            } catch (error) {
+                refreshSequence();
+                refreshSequences();
+            }
         },
         [deleteSequenceDBCall, getInfluencersBySequenceIdsCall, refreshSequence, refreshSequences],
     );
@@ -77,8 +81,7 @@ export const useSequence = (sequenceId?: string) => {
                     manager_first_name: profile.first_name,
                 };
                 const res = await createSequenceDBCall(insert);
-                refreshSequences();
-                refreshSequenceSteps();
+                refreshSequences((prev) => (prev ? [...prev, res] : prev));
                 return res;
             } catch (error) {
                 track(CreateSequence, {
@@ -90,11 +93,11 @@ export const useSequence = (sequenceId?: string) => {
                 serverLogger(error);
             }
         },
-        [profile, createSequenceDBCall, refreshSequences, refreshSequenceSteps, track],
+        [profile, createSequenceDBCall, refreshSequences, track],
     );
 
     const sendSequence = useCallback(
-        async (sequenceInfluencers: SequenceInfluencerManagerPage[]) => {
+        async (sequenceInfluencers: SequenceInfluencerManagerPage[], sequenceSteps: SequenceStep[]) => {
             if (!profile?.email_engine_account_id) {
                 throw new Error('No email account found');
             }
@@ -109,13 +112,12 @@ export const useSequence = (sequenceId?: string) => {
                 body,
             });
         },
-        [profile, sequenceSteps, templateVariables],
+        [profile, templateVariables],
     );
 
     return {
         sequence,
         refreshSequence,
-        sequenceSteps,
         updateSequence,
         deleteSequence,
         createSequence,

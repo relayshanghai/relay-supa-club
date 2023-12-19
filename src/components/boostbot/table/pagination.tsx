@@ -7,18 +7,59 @@ import { ChangePage } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import PageLink from './pagelink';
 import { getPaginationItems } from './helper';
+import { useCallback } from 'react';
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
+    count?: number;
+    currentPage?: number;
+    setPageFunction?: (page: number) => void;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({
+    table,
+    count,
+    setPageFunction,
+    currentPage,
+}: DataTablePaginationProps<TData>) {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
+    const isSearchPage = currentPage !== undefined && count !== undefined && setPageFunction !== undefined;
 
     //adjust to control the number of links in the pagination section
-    const noOfLinks = 11;
-    const pageNums = getPaginationItems(table.getState().pagination.pageIndex + 1, table.getPageCount(), noOfLinks);
+    const maxPages = Math.floor(count ?? 0 / 10);
+    const pageNums = getPaginationItems(
+        isSearchPage ? currentPage + 1 : table.getState().pagination.pageIndex + 1,
+        isSearchPage ? (maxPages > 1000 ? 1000 : maxPages) : table.getPageCount(),
+        11,
+    );
+
+    const handlePreviousPage = useCallback(() => {
+        if (isSearchPage) {
+            setPageFunction(currentPage - 1);
+            return;
+        }
+        table.previousPage();
+    }, [setPageFunction, currentPage, table, isSearchPage]);
+
+    const handleNextPage = useCallback(() => {
+        if (isSearchPage) {
+            setPageFunction(currentPage + 1);
+            return;
+        }
+        table.nextPage();
+    }, [setPageFunction, currentPage, table, isSearchPage]);
+
+    const handleSetPage = useCallback(
+        (pageNum: number) => {
+            if (isSearchPage) {
+                setPageFunction(pageNum);
+                return;
+            }
+            table.setPageIndex(pageNum);
+        },
+        [setPageFunction, table, isSearchPage],
+    );
 
     return (
         <div className="flex w-full justify-between px-0">
@@ -27,7 +68,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     variant="neutral"
                     className="flex h-8 w-32 items-center justify-center !py-0 px-2 text-sm font-medium text-primary-500 disabled:text-gray-400"
                     onClick={() => {
-                        table.previousPage();
+                        handlePreviousPage();
                         track(ChangePage, {
                             currentPage: CurrentPageEvent.boostbot,
                             from_page: table.getState().pagination.pageIndex + 1,
@@ -35,10 +76,16 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             search_id: table.options.meta?.searchId ?? null,
                         });
                     }}
-                    disabled={!table.getCanPreviousPage()}
+                    disabled={isSearchPage ? currentPage <= 0 : !table.getCanPreviousPage()}
                 >
                     <ArrowLeftIcon
-                        className={`mr-2 h-4 w-4 ${table.getCanPreviousPage() ? 'fill-primary-500' : 'fill-gray-400'}`}
+                        className={`mr-2 h-4 w-4 ${
+                            isSearchPage
+                                ? currentPage + 1 >= 0
+                                : table.getCanNextPage()
+                                ? 'fill-primary-500'
+                                : 'fill-gray-400'
+                        }`}
                     />
                     {t('manager.previous')}
                 </Button>
@@ -48,9 +95,13 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     <PageLink
                         className="mx-2 flex items-center text-sm text-primary-600"
                         key={idx}
-                        active={table.getState().pagination.pageIndex + 1 === pageNum}
-                        disabled={isNaN(pageNum)}
-                        onClick={() => table.setPageIndex(pageNum - 1)}
+                        active={
+                            isSearchPage
+                                ? currentPage + 1 === pageNum
+                                : table.getState().pagination.pageIndex + 1 === pageNum
+                        }
+                        disabled={isNaN(pageNum) || pageNum === 0}
+                        onClick={() => handleSetPage(pageNum - 1)}
                     >
                         {!isNaN(pageNum) ? pageNum : '...'}
                     </PageLink>
@@ -62,7 +113,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     variant="neutral"
                     className="flex h-8 w-32 items-center justify-center border-transparent !py-0 px-2 text-sm font-medium text-primary-500 disabled:text-gray-400"
                     onClick={() => {
-                        table.nextPage();
+                        handleNextPage();
                         track(ChangePage, {
                             currentPage: CurrentPageEvent.boostbot,
                             from_page: table.getState().pagination.pageIndex + 1,
@@ -70,11 +121,17 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                             search_id: table.options.meta?.searchId ?? null,
                         });
                     }}
-                    disabled={!table.getCanNextPage()}
+                    disabled={isSearchPage ? currentPage + 1 === Math.floor(count / 10) : !table.getCanNextPage()}
                 >
                     {t('manager.next')}
                     <ArrowRightIcon
-                        className={`ml-2 h-4 w-4 ${table.getCanNextPage() ? 'fill-primary-500' : 'fill-gray-400'}`}
+                        className={`ml-2 h-4 w-4 ${
+                            isSearchPage
+                                ? currentPage + 1 !== Math.floor(count / 10)
+                                : table.getCanNextPage()
+                                ? 'fill-primary-500'
+                                : 'fill-gray-400'
+                        }`}
                     />
                 </Button>
             </div>

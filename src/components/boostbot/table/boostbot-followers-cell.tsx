@@ -1,4 +1,4 @@
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Row, Table } from '@tanstack/react-table';
 import { numberFormatter } from 'src/utils/formatter';
 

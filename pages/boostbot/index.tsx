@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -308,6 +308,7 @@ const Boostbot = () => {
                                     buttonText={t('boostbot.chat.outreachSelected')}
                                     outReachDisabled={outReachDisabled}
                                     handleAddToSequenceButton={handleAddToSequenceButton}
+                                    url="boostbot"
                                 />
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import danniCreatorReport from '../../src/mocks/api/creators/report/danni.json';
-import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
+import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
@@ -14,9 +14,9 @@ import boostbotGetInfluencers from '../../src/mocks/api/boostbot/get-influencers
 import pricesMock from '../../src/mocks/api/subscription/prices/prices.json';
 import usagesMock from '../../src/mocks/api/usages/usages.json';
 import paymentMethodsMock from '../../src/mocks/api/subscription/payment-methods.json';
-import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
-import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
-import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
+import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR';
+import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators';
+import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { UsagesDBInsert } from 'src/utils/api/db';
@@ -24,6 +24,8 @@ import { ulid } from 'ulid';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 
 import { insertSequenceEmails, supabaseClientCypress } from './helpers';
+import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
+
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -51,7 +53,7 @@ export const setupIntercepts = (options?: InterceptOptions) => {
         req.reply({ body: cocomelon });
     });
     cy.intercept('POST', '/api/influencer-search*', {
-        body: defaultLandingPageInfluencerSearch,
+        body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
     });
     cy.intercept('/api/topics/tensor', { body: topicTensorMock });
     cy.intercept('/api/influencer-search/topics*', {
@@ -72,8 +74,8 @@ export const setupIntercepts = (options?: InterceptOptions) => {
     cy.intercept('/api/subscriptions*', (req) => {
         req.reply({
             body: {
-                name: 'DIY',
-                interval: 'annually',
+                name: 'Discovery',
+                interval: 'monthly',
                 current_period_end: oneMonthFromNow.getTime() / 1000,
                 current_period_start: twoMonthsAgo.getTime() / 1000,
                 status: 'active',
@@ -233,7 +235,7 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: influencerSearch,
+                        body: flattenInfluencerData(influencerSearch),
                     });
                 });
         } else if (body.tags && body.tags[0]?.tag === 'alligators') {
@@ -242,7 +244,7 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: keywordSearch,
+                        body: flattenInfluencerData(keywordSearch),
                     });
                 });
         } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
@@ -251,12 +253,12 @@ export const searchIntercepts = () => {
                 .insert(usage)
                 .then(() => {
                     return req.reply({
-                        body: keywordSearchMonkeys,
+                        body: flattenInfluencerData(keywordSearchMonkeys),
                     });
                 });
         } else {
             return req.reply({
-                body: defaultLandingPageInfluencerSearch,
+                body: flattenInfluencerData(defaultLandingPageInfluencerSearch),
             });
         }
     });
@@ -264,26 +266,17 @@ export const searchIntercepts = () => {
         const body = req.query as { username: string; platform: string };
         if (body.username === 'GRTR') {
             req.reply({
-                accounts: [
+                influencers: [
                     {
-                        account: {
-                            user_profile: {
-                                user_id: 'GRTR',
-                            },
-                        },
-                        match: {},
+                        user_id: 'GRTR',
                     },
                 ],
                 total: 1,
-                shown_accounts: [0],
-                cost: 0,
             });
         } else {
             req.reply({
-                accounts: [{}],
+                influencers: [{}],
                 total: 0,
-                shown_accounts: [0],
-                cost: 0,
             });
         }
     });

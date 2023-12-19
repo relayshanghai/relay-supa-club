@@ -5,6 +5,8 @@ export interface CreatorSearchResult {
     shown_accounts: any[];
 }
 
+export type SearchTableInfluencer = CreatorAccount & AudienceLikers & UserProfileMatch & { topics: string[] };
+
 /**
  * Represents a creator search result object by username.
  *
