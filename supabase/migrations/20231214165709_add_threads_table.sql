@@ -4,7 +4,8 @@ CREATE TABLE "public"."threads" (
   "sequence_influencer_id" uuid NULL,
   "email_engine_account_id" text NOT NULL,
   "email_engine_id" text NOT NULL,
-  "thread_status" text NOT NULL DEFAULT 'unread'::text,
+  "thread_status" text NOT NULL DEFAULT 'unopened'::text,
+  "deleted_at" timestamp with time zone NULL,
   "created_at" timestamp with time zone DEFAULT now(),
   "updated_at" timestamp with time zone DEFAULT now()
 );

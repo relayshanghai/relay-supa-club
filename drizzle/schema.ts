@@ -609,7 +609,8 @@ export const threads = pgTable(
         sequenceInfluencerId: uuid('sequence_influencer_id').references(() => sequenceInfluencers.id),
         emailEngineAccountId: text('email_engine_account_id').notNull(),
         emailEngineId: text('email_engine_id').notNull(),
-        threadStatus: text('thread_status').default('unread').notNull(),
+        threadStatus: text('thread_status').default('unopened').notNull(),
+        deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
         createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
         updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
     },
@@ -631,6 +632,7 @@ export const emails = pgTable('emails', {
     emailEngineMessageId: text('email_engine_message_id').notNull(),
     emailEngineId: text('email_engine_id').notNull(),
     emailEngineAccountId: text('email_engine_account_id').notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
 });
