@@ -1,5 +1,6 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Link } from '@tiptap/extension-link';
 import { Toolbar } from './toolbar';
 import { Send } from 'src/components/icons';
 
@@ -13,7 +14,7 @@ export const Tiptap = ({
     onSubmit: () => void;
 }) => {
     const editor = useEditor({
-        extensions: [StarterKit.configure()],
+        extensions: [StarterKit.configure(), Link.configure()],
         content: description,
         editorProps: {
             attributes: {
