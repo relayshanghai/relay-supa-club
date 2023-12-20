@@ -78,6 +78,9 @@ export const useGetCurrentPage = () => {
     if (/^\/component-preview\/?/.test(pathname)) {
         return CurrentPageEvent.preview;
     }
+    if (/^\/logout\/?/.test(pathname)) {
+        return CurrentPageEvent.logout;
+    }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);
 };
