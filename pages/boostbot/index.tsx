@@ -92,6 +92,12 @@ const Boostbot = () => {
     }, [influencers, refreshUsages]);
 
     useEffect(() => {
+        if (isInitialLogoScreen && influencers.length > 0) {
+            setIsInitialLogoScreen(false);
+        }
+    }, [influencers.length, isInitialLogoScreen, setIsInitialLogoScreen]);
+
+    useEffect(() => {
         if (isSearchLoading || !isUsageLoaded) return;
         if (usages.search.remaining < 5) {
             addMessage({
