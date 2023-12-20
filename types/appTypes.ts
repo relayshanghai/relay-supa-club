@@ -77,9 +77,9 @@ export type RelayAccountPlanMetadata = {
     trial_searches?: string;
     /** How many profiles are allowed during the trial period (stringified number) */
     trial_profiles?: string;
-    /** How many AI email generations are allowed in trial  period (stringified number)   */
+    /** (Deprecated) How many AI email generations are allowed in trial  period (stringified number)   */
     trial_ai_emails?: string;
-    /** How many AI email generations are allowed pre month (stringified number)   */
+    /** (Deprecated) How many AI email generations are allowed pre month (stringified number)   */
     ai_emails?: string;
 };
 export interface StripePriceWithProductMetadata extends Stripe.Price {
@@ -96,8 +96,8 @@ export type SubscriptionPlans =
     | 'DIY Max'
     | 'VIP'
     | 'Discovery(deprecated)';
-/** "profile" for creator report, "search" for creator search, "ai_email" for usage of the ai email generator */
-export type UsageType = 'profile' | 'search' | 'ai_email';
+/** "profile" for creator report, "search" for creator search, "ai_email" (Deprecated)  for usage of the ai email generator */
+export type UsageType = 'profile' | 'search';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';

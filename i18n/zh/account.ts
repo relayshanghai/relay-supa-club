@@ -46,7 +46,6 @@ const account = {
         monthlyLimit: '每月限制',
         profilesUnlocked: '解锁的KOL资料',
         searches: 'KOL搜索',
-        aiEmailGeneration: 'AI 邮件生成',
         title: '订阅方案',
         viewBillingPortal: '查看账单',
         freeTrial: '免费试用',
