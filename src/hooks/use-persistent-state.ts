@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { openDB, type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
 import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
@@ -14,34 +14,15 @@ export const usePersistentState = <T>(
 
     const [db, setDb] = useState<IDBPDatabase<unknown> | null>(null);
 
-    const openTheDB = useCallback(
-        () => initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version),
-        [profile?.id],
-    );
-
-    const [state, setState] = useState<T>(() => {
-        // Setup the database and return the initial value
-        const setup = async () => {
-            let existingDB = db;
-            if (!existingDB) {
-                existingDB = await openTheDB();
-                setDb(existingDB);
-            }
-            const existing = await existingDB.get(appCacheStoreName, key);
-
-            setState(existing ?? initialValue);
-        };
-
-        setup();
-
-        return initialValue;
-    });
+    const [state, setState] = useState<T>(initialValue);
 
     useEffect(() => {
         const setupDB = async () => {
             if (!profile?.id) return;
-
-            setDb(await openTheDB());
+            const db = await initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version);
+            setDb(db);
+            const existing = await db.get(appCacheStoreName, key);
+            setState(existing !== undefined ? existing : initialValue); // can't just check truthy cause the value could be a boolean (false)
         };
 
         // Update the value in the database when state changes
@@ -56,7 +37,7 @@ export const usePersistentState = <T>(
         } else {
             updateDB();
         }
-    }, [key, state, profile?.id, openTheDB, db]);
+    }, [key, state, profile?.id, db, initialValue]);
 
     const removeState = async () => {
         setState(initialValue);
