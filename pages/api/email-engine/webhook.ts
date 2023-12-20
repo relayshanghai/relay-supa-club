@@ -56,6 +56,8 @@ import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-ste
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 import { syncEmail } from 'src/utils/outreach/sync-email';
+import type { WebhookMessageDeleted, WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
+import { deleteEmail } from 'src/utils/outreach/delete-email';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -68,6 +70,7 @@ export type WebhookEvent =
     | WebhookMessageFailed
     | WebhookMessageNew
     | WebhookMessageSent
+    | WebhookMessageDeleted
     | WebhookTrackClick
     | WebhookTrackOpen;
 
@@ -236,7 +239,16 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
-    const result = await syncEmail(event);
+    // We sometimes receive a messageNew event when an email is trashed
+    if (event.data.specialUse === '\\Trash') {
+        return await handleMessageDeleted({ ...event, event: 'messageDeleted' }, res);
+    }
+
+    const result = await syncEmail({
+        account: event.account,
+        emailEngineId: event.data.id,
+    });
+
     // eslint-disable-next-line no-console
     console.log('SYNC EMAIL', result);
 
@@ -692,6 +704,12 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json({});
 };
 
+const handleMessageDeleted = async (event: WebhookMessageDeleted, res: NextApiResponse) => {
+    await deleteEmail(event.data.id);
+
+    return res.status(httpCodes.OK).json({ message: 'success' });
+};
+
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json({});
 };
@@ -733,6 +751,8 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleFailed(body, res);
             case 'messageSent':
                 return handleSent(body, res);
+            case 'messageDeleted':
+                return handleMessageDeleted(body, res);
             default:
                 return handleOtherWebhook(body, res);
         }

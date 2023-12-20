@@ -1,7 +1,7 @@
 import { sequenceInfluencers, sequences, templateVariables, threads } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 
 export type GetThreadsReturn = {
     threads: typeof threads.$inferSelect;
@@ -16,8 +16,8 @@ export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string) 
     const rows = await db(i)
         .select()
         .from(threads)
-        .where(eq(threads.emailEngineAccountId, account))
-        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId))
+        .where(and(eq(threads.emailEngineAccountId, account), isNull(threads.deletedAt)))
+        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId));
         .leftJoin(sequences, eq(sequences.id, sequenceInfluencers.sequenceId))
         .leftJoin(
             templateVariables,

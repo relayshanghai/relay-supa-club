@@ -621,18 +621,26 @@ export const threads = pgTable(
     },
 );
 
-export const emails = pgTable('emails', {
-    id: uuid('id').defaultRandom().primaryKey().notNull(),
-    data: jsonb('data').notNull(),
-    sender: text('sender').notNull(),
-    recipients: text('recipients').notNull(),
-    threadId: text('thread_id')
-        .notNull()
-        .references(() => threads.threadId),
-    emailEngineMessageId: text('email_engine_message_id').notNull(),
-    emailEngineId: text('email_engine_id').notNull(),
-    emailEngineAccountId: text('email_engine_account_id').notNull(),
-    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
-    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
-});
+export const emails = pgTable(
+    'emails',
+    {
+        id: uuid('id').defaultRandom().primaryKey().notNull(),
+        data: jsonb('data').notNull(),
+        sender: text('sender').notNull(),
+        recipients: text('recipients').notNull(),
+        threadId: text('thread_id')
+            .notNull()
+            .references(() => threads.threadId),
+        emailEngineMessageId: text('email_engine_message_id').notNull(),
+        emailEngineId: text('email_engine_id').notNull(),
+        emailEngineAccountId: text('email_engine_account_id').notNull(),
+        deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+        createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+        updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+    },
+    (table) => {
+        return {
+            emailsEmailEngineIdKey: unique('emails_email_engine_id_key').on(table.emailEngineId),
+        };
+    },
+);

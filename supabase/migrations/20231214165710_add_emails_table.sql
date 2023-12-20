@@ -16,7 +16,11 @@ ALTER TABLE "public"."emails" ENABLE ROW LEVEL SECURITY;
 
 CREATE UNIQUE INDEX emails_pkey ON public.emails USING btree (id);
 
+CREATE UNIQUE INDEX emails_email_engine_id_key ON public.emails USING btree (email_engine_id);
+
 ALTER TABLE "public"."emails" ADD CONSTRAINT "emails_pkey" PRIMARY KEY USING INDEX "emails_pkey";
+
+ALTER TABLE "public"."emails" ADD CONSTRAINT "emails_email_engine_id_key" UNIQUE USING INDEX "emails_email_engine_id_key";
 
 ALTER TABLE "public"."emails" ADD CONSTRAINT "emails_thread_id_fkey" FOREIGN KEY (thread_id) REFERENCES threads (thread_id) NOT VALID;
 

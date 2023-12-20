@@ -490,8 +490,8 @@ export interface Database {
         Row: {
           created_at: string | null
           data: Json
+          deleted_at: string | null
           email_engine_account_id: string
-          email_engine_email_id: string
           email_engine_id: string
           email_engine_message_id: string
           id: string
@@ -503,8 +503,8 @@ export interface Database {
         Insert: {
           created_at?: string | null
           data: Json
+          deleted_at?: string | null
           email_engine_account_id: string
-          email_engine_email_id: string
           email_engine_id: string
           email_engine_message_id: string
           id?: string
@@ -516,8 +516,8 @@ export interface Database {
         Update: {
           created_at?: string | null
           data?: Json
+          deleted_at?: string | null
           email_engine_account_id?: string
-          email_engine_email_id?: string
           email_engine_id?: string
           email_engine_message_id?: string
           id?: string
@@ -1516,6 +1516,7 @@ export interface Database {
       threads: {
         Row: {
           created_at: string | null
+          deleted_at: string | null
           email_engine_account_id: string
           email_engine_id: string
           id: string
@@ -1526,6 +1527,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string | null
+          deleted_at?: string | null
           email_engine_account_id: string
           email_engine_id: string
           id?: string
@@ -1536,6 +1538,7 @@ export interface Database {
         }
         Update: {
           created_at?: string | null
+          deleted_at?: string | null
           email_engine_account_id?: string
           email_engine_id?: string
           id?: string
