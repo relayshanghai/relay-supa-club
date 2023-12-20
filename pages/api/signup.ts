@@ -284,9 +284,15 @@ const createServiceAccount = async (company: CompanyDB) => {
 /** delete the company, the user, and cancel subscription if failed */
 const rollback = async ({ companyId, cus_id, userId }: { companyId: string; cus_id: string; userId: string }) => {
     try {
-        await db(deleteUserById)(userId);
-        await db(deleteCompanyById)(companyId);
-        await stripeClient.customers.del(cus_id);
+        if (userId) {
+            await db(deleteUserById)(userId);
+        }
+        if (companyId) {
+            await db(deleteCompanyById)(companyId);
+        }
+        if (cus_id) {
+            await stripeClient.customers.del(cus_id);
+        }
     } catch (error) {
         serverLogger(error);
     }
