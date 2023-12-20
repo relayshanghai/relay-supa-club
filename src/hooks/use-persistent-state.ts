@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { openDB, type IDBPDatabase } from 'idb';
+import { useCallback, useEffect, useState } from 'react';
+import { type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
 import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
 import { initializeDB } from 'src/utils/cache-provider/cache-provider';
@@ -39,11 +39,11 @@ export const usePersistentState = <T>(
         }
     }, [key, state, profile?.id, db, initialValue]);
 
-    const removeState = async () => {
+    const removeState = useCallback(async () => {
         setState(initialValue);
-        const db = await openDB(appCacheDBKey(profile?.id), version);
+        if (!db) return;
         await db.delete(appCacheStoreName, key);
-    };
+    }, [db, initialValue, key]);
 
     return [state, setState, removeState];
 };
