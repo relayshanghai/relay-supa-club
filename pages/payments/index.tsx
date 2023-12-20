@@ -17,11 +17,13 @@ export default function PaymentPage() {
         }
     }, [isReady]);
 
+    const priceTier = typeof plan === 'string' ? (plan as ActiveSubscriptionTier) : 'discovery';
+
     return (
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
-            left={<PlanDetails priceTier={plan as ActiveSubscriptionTier} />}
-            right={<AddPaymentsSection priceTier={plan as ActiveSubscriptionTier} />}
+            left={<PlanDetails priceTier={priceTier} />}
+            right={<AddPaymentsSection priceTier={priceTier} />}
         />
     );
 }

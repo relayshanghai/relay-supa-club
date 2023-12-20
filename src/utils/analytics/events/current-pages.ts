@@ -18,4 +18,5 @@ export enum CurrentPageEvent {
     performance = 'performance',
     error = 'error',
     preview = 'preview',
+    logout = 'logout',
 }
