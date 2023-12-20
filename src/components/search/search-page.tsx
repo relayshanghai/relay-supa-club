@@ -50,6 +50,7 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { SearchExpired } from './search-expired';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -83,7 +84,9 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         setOnLoad,
     } = useSearchResults(page);
 
-    const { track } = useTrackEvent();
+    const { track: trackEvent } = useTrackEvent();
+
+    const { track } = useRudderstackTrack();
 
     const [rendered, setRendered] = useState(false);
     const [searchType, setSearchType] = useState<string | null>(null);
@@ -109,7 +112,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             const tracker = (results: any) => {
                 setBatchId(randomNumber());
 
-                return track({
+                return trackEvent({
                     event: Search,
                     payload: {
                         event_id: results.__metadata?.event_id,
@@ -126,7 +129,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             // @note this triggers the search api call
             setSearchParams(searchParams);
         },
-        [track, setSearchParams, setOnLoad, setBatchId],
+        [trackEvent, setSearchParams, setOnLoad, setBatchId],
     );
 
     /**
@@ -142,7 +145,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         const controller = new AbortController();
 
         const tracker = async (result: any) => {
-            return track<typeof SearchDefault>({
+            return trackEvent<typeof SearchDefault>({
                 event: SearchDefault,
                 controller,
                 payload: {
@@ -163,7 +166,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         setOnLoad(() => tracker);
 
         return () => controller.abort();
-    }, [track, setOnLoad, searchParams, metadata, rendered]);
+    }, [trackEvent, setOnLoad, searchParams, metadata, rendered]);
 
     // Automatically start a journey on render
     useEffect(() => {
@@ -321,7 +324,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             // @ts-ignore bypasses apiObject type requirement of is_multiple.
             // Needs `null` for it to show in mixpanel without explicitly
             // saying that it is multiple or not
-            track(SendInfluencersToOutreach.eventName, trackingPayload);
+            track(SendInfluencersToOutreach, trackingPayload);
             setIsOutreachLoading(false);
         }
     }, [
