@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview } from 'src/components/inbox/wip/thread-preview';
 import type { FunnelStatus } from 'src/utils/api/db';
+import { nextFetch } from 'src/utils/fetcher';
 import type { CreatorPlatform } from 'types';
 
 const sequenceInfluencer: {
@@ -36,17 +37,17 @@ const threadInfo = [
         messages: [
             {
                 id: 'id1',
-                from: { email: 'current_inbox@email.com', name: 'Current' },
-                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'current_inbox@email.com', name: 'Current' },
+                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 1',
                 date: new Date('December 17, 1995 03:24:00'),
             },
             {
                 id: 'id2',
-                from: { email: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 2',
                 date: new Date('December 18, 1995 03:24:00'),
             },
@@ -64,17 +65,17 @@ const threadInfo = [
         messages: [
             {
                 id: 'id1',
-                from: { email: 'current_inbox@email.com', name: 'Current' },
-                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'current_inbox@email.com', name: 'Current' },
+                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 1',
                 date: new Date('December 17, 1995 03:24:00'),
             },
             {
                 id: 'id2',
-                from: { email: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 2',
                 date: new Date('December 18, 1995 03:24:00'),
             },
@@ -92,37 +93,45 @@ const threadInfo = [
         messages: [
             {
                 id: 'id1',
-                from: { email: 'current_inbox@email.com', name: 'Current' },
-                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'current_inbox@email.com', name: 'Current' },
+                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 1',
                 date: new Date('December 17, 1995 03:24:00'),
             },
             {
                 id: 'id2',
-                from: { email: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
 
                 body: 'sample body 2',
                 date: new Date('December 18, 1995 03:24:00'),
             },
             {
                 id: 'id3',
-                from: { email: 'current_inbox@email.com', name: 'Current' },
-                to: [{ email: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'current_inbox@email.com', name: 'Current' },
+                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
                 body: 'sample body 3',
                 date: new Date('December 19, 1995 03:24:00'),
             },
             {
                 id: 'id4',
-                from: { email: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ email: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ email: 'cc@email.com', name: 'CC Person' }],
+                from: { address: 'influencer@email.com', name: 'Influencer Name' },
+                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
 
                 body: 'sample body 4',
                 date: new Date('December 20, 1995 03:24:00'),
+            },
+            {
+                id: 'id5',
+                from: { address: 'current_inbox@email.com', name: 'Current' },
+                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
+                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
+                body: 'sample body 3',
+                date: new Date('December 21, 1995 03:24:00'),
             },
         ],
     },
@@ -134,6 +143,24 @@ const currentInbox = {
 
 const InboxPreview = () => {
     const [selectedThread, setSelectedThread] = useState(threadInfo[0]);
+    useEffect(() => {
+        const getThreads = async () => {
+            const response = await nextFetch('outreach/threads');
+            if (response && response.length > 0) {
+                const _res = await Promise.all(
+                    response.map(async (thread: any) => {
+                        const threadMessages = await nextFetch(`outreach/threads/${thread.threadInfo.threadId}`);
+                        return {
+                            ...thread,
+                            messages: threadMessages,
+                        };
+                    }),
+                );
+            }
+        };
+        getThreads();
+    }, []);
+
     return (
         <div className="space-y-4 p-4">
             <section className="flex flex-col gap-4 border-4 p-4">

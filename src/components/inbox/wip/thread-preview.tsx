@@ -6,7 +6,7 @@ import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { FunnelStatus } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
 
-export type EmailContact = { email: string; name: string };
+export type EmailContact = { address: string; name: string };
 
 export type Message = {
     id: string;
@@ -84,7 +84,7 @@ export const ThreadPreview = ({
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform);
-    const UnreadMarker = getUnreadMarker(unread, influencerEmail === lastMessage.from.email && unread);
+    const UnreadMarker = getUnreadMarker(unread, influencerEmail === lastMessage.from.address);
 
     return (
         <Card

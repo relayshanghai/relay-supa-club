@@ -14,7 +14,7 @@ interface Route {
     id: string;
 }
 
-interface Data {
+export interface Data {
     id: string;
     uid: number;
     path: string;

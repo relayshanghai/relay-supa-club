@@ -7,16 +7,16 @@ import { Collapse, Expand } from 'src/components/icons';
 export const ThreadHeader = ({ threadInfo, currentInbox }: { threadInfo: ThreadInfo; currentInbox: CurrentInbox }) => {
     const allNames = [
         ...threadInfo.messages.map((message) => {
-            return message.from.email === currentInbox.email ? 'Me' : message.from.name;
+            return message.from.address === currentInbox.email ? 'Me' : message.from.name;
         }),
         ...threadInfo.messages.flatMap((message) =>
             message.cc.map((cc) => {
-                return cc.email === currentInbox.email ? 'Me' : cc.name;
+                return cc.address === currentInbox.email ? 'Me' : cc.name;
             }),
         ),
         ...threadInfo.messages.flatMap((message) =>
             message.to.map((to) => {
-                return to.email === currentInbox.email ? 'Me' : to.name;
+                return to.address === currentInbox.email ? 'Me' : to.name;
             }),
         ),
     ];

@@ -1,11 +1,13 @@
-import { sequenceInfluencers, threads } from 'drizzle/schema';
-import type { DBQuery} from '../../database';
+import { sequenceInfluencers, sequences, templateVariables, threads } from 'drizzle/schema';
+import type { DBQuery } from '../../database';
 import { db } from '../../database';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
-type GetThreadsReturn = {
+export type GetThreadsReturn = {
     threads: typeof threads.$inferSelect;
     sequence_influencers: typeof sequenceInfluencers.$inferSelect | null;
+    sequences: typeof sequences.$inferSelect | null;
+    template_variables: typeof templateVariables.$inferSelect | null;
 }[];
 
 type GetThreadsFn = (account: string) => Promise<GetThreadsReturn>;
@@ -15,7 +17,12 @@ export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string) 
         .select()
         .from(threads)
         .where(eq(threads.emailEngineAccountId, account))
-        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId));
+        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId))
+        .leftJoin(sequences, eq(sequences.id, sequenceInfluencers.sequenceId))
+        .leftJoin(
+            templateVariables,
+            sql`${templateVariables.sequenceId} = ${sequences.id} AND ${templateVariables.key} = 'productName'`,
+        );
 
     return rows;
 };

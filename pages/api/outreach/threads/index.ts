@@ -3,7 +3,20 @@ import { profiles } from 'drizzle/schema';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { getThreads } from 'src/utils/outreach/db/get-threads';
+import { type GetThreadsReturn, getThreads } from 'src/utils/outreach/db/get-threads';
+
+const transformThreads = (threads: GetThreadsReturn) => {
+    return threads.map((thread: any) => {
+        return {
+            threadInfo: thread.threads,
+            sequenceInfluencers: thread.sequence_influencers,
+            sequenceInfo: {
+                ...thread.sequences,
+                productName: thread.template_variables?.value,
+            },
+        };
+    });
+};
 
 const getHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
@@ -24,7 +37,7 @@ const getHandler: ActionHandler = async (req, res) => {
 
     const threads = await getThreads()(profile.emailEngineAccountId);
 
-    return res.status(200).json({ threads });
+    return res.status(200).json(transformThreads(threads));
 };
 
 export default ApiHandler({

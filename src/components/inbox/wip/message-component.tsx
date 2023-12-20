@@ -34,18 +34,18 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                 <div className="col-auto text-start">
                     <dd>
                         <span className="font-semibold text-primary-700">{message.from.name}</span>{' '}
-                        {`<${message.from.email}>`}
+                        {`<${message.from.address}>`}
                     </dd>
                     {message.to.map((contact) => (
-                        <dd key={`to-item-${contact.email}`}>
+                        <dd key={`to-item-${contact.address}`}>
                             <span className="font-semibold text-primary-700">{contact.name}</span>{' '}
-                            {`<${contact.email}>`}
+                            {`<${contact.address}>`}
                         </dd>
                     ))}
                     {message.cc.map((contact) => (
-                        <dd key={`cc-item-${contact.email}`}>
+                        <dd key={`cc-item-${contact.address}`}>
                             <span className="font-semibold text-primary-700">{contact.name}</span>{' '}
-                            {`<${contact.email}>`}
+                            {`<${contact.address}>`}
                         </dd>
                     ))}
                     <dd>{message.date?.toDateString()}</dd>
@@ -83,7 +83,7 @@ const QuotedMessage = ({ quoteMessages, index }: QuoteMessageComponentProps) => 
             <div className="text-sm">
                 <p className="mt-4 text-gray-500">
                     {`On ${message.date.toDateString()} ${message.from.name} <`}
-                    <span className="text-primary-400">{`${message.from.email}`}</span> {`> wrote:`}
+                    <span className="text-primary-400">{`${message.from.address}`}</span> {`> wrote:`}
                 </p>
                 <div className="ml-2 border-l-2 border-l-gray-500 pl-3">
                     {/* Render the quoted message */}
