@@ -95,3 +95,7 @@ BREVO_NEWTRIALUSERS_LIST_ID=8
 
 # An admin user created in each company
 SERVICE_ACCOUNT_PASSWORD=
+
+# Jobs scheduler server url and token
+SCHEDULER_SERVER_URL=
+SCHEDULER_SERVER_TOKEN=
