@@ -1,26 +1,9 @@
 import { eq } from 'drizzle-orm';
-import { type emails, profiles } from 'drizzle/schema';
+import { profiles } from 'drizzle/schema';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { getEmails } from 'src/utils/outreach/db/get-emails';
-import type { Data as EmailData } from 'types/email-engine/webhook-message-new';
-
-const transformEmails = (mails: (typeof emails.$inferSelect)[]) => {
-    return mails.map((mail) => {
-        const { date, unseen, id, from, to, cc, replyTo, text } = mail.data as EmailData;
-        return {
-            date,
-            unread: unseen || false,
-            id,
-            from,
-            to,
-            cc: cc || [],
-            replyTo,
-            body: text.html,
-        };
-    });
-};
+import { getEmails } from 'src/utils/outreach/get-emails';
 
 type ApiRequest = {
     id?: string;
@@ -43,9 +26,9 @@ const getHandler: ActionHandler = async (req, res) => {
         throw new Error('Cannot get emails');
     }
 
-    const emails = await getEmails()(query.id);
+    const emails = await getEmails(query.id);
 
-    return res.status(200).json(transformEmails(emails));
+    return res.status(200).json(emails);
 };
 
 export default ApiHandler({

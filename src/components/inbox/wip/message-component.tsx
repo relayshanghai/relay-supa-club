@@ -8,6 +8,7 @@ import {
 import type { Message } from './thread-preview';
 import { useEffect, useRef, useState } from 'react';
 import { ThreeDots } from 'src/components/icons';
+import { formatDate } from 'src/utils/datetime';
 
 const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Message }) => {
     const [headerExpanded, setHeaderExpanded] = useState(false);
@@ -28,7 +29,7 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                 <div className="col-start-auto">
                     <dt className="text-right">From:</dt>
                     <dt className="text-right">To:</dt>
-                    <dt className="text-right">Cc:</dt>
+                    {message.cc.length > 0 && <dt className="text-right">Cc:</dt>}
                     <dt className="text-right" />
                 </div>
                 <div className="col-auto text-start">
@@ -48,7 +49,7 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                             {`<${contact.address}>`}
                         </dd>
                     ))}
-                    <dd>{message.date?.toDateString()}</dd>
+                    <dd>{formatDate(message.date, '[date] [monthShort] [fullYear]')}</dd>
                 </div>
             </dl>
         );
@@ -65,7 +66,8 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                     }}
                     className={`text-sm ${expanded && 'text-primary-500'} px-4`}
                 >
-                    Sent to {message.to.map((to) => to.name)} and {message.cc.map((cc) => cc.name)}
+                    Sent to {message.to.map((to) => to.name || to.address)}
+                    {message.cc.length > 0 && <span>and {message.cc.map((cc) => cc.name).join(', ')}</span>}
                 </span>
             </p>
         );
@@ -82,7 +84,7 @@ const QuotedMessage = ({ quoteMessages, index }: QuoteMessageComponentProps) => 
         return (
             <div className="text-sm">
                 <p className="mt-4 text-gray-500">
-                    {`On ${message.date.toDateString()} ${message.from.name} <`}
+                    {`On ${formatDate(message.date, '[date] [monthShort] [fullYear]')} ${message.from.name} <`}
                     <span className="text-primary-400">{`${message.from.address}`}</span> {`> wrote:`}
                 </p>
                 <div className="ml-2 border-l-2 border-l-gray-500 pl-3">
@@ -100,13 +102,6 @@ const QuotedMessage = ({ quoteMessages, index }: QuoteMessageComponentProps) => 
             </div>
         );
     else return <></>;
-};
-
-export const formatDate = (inputDate: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-        day: '2-digit',
-        month: 'short',
-    }).format(inputDate);
 };
 
 const MessageComponent = ({ message, quote }: { message: Message; quote: Message[] }) => {
@@ -140,11 +135,11 @@ const MessageComponent = ({ message, quote }: { message: Message; quote: Message
                             <DropdownMenuItem>Reply</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <span className="w-16">{formatDate(message.date)}</span>
+                    <span className="w-16">{formatDate(message.date, '[date] [monthShort]')}</span>
                 </section>
             </AccordionTrigger>
             <AccordionContent onClick={(e) => e.stopPropagation()} className="p-4 text-black">
-                {message.body}
+                <div dangerouslySetInnerHTML={{ __html: message.body }} />
                 <section className="w-full">
                     <div className="h-fit w-fit rounded-sm bg-gray-200 px-1 transition-all hover:bg-gray-100">
                         <ThreeDots

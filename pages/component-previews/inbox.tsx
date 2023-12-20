@@ -2,152 +2,24 @@ import { useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { ThreadPreview } from 'src/components/inbox/wip/thread-preview';
-import type { FunnelStatus } from 'src/utils/api/db';
+import { type ThreadInfo, ThreadPreview } from 'src/components/inbox/wip/thread-preview';
+import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
-import type { CreatorPlatform } from 'types';
-
-const sequenceInfluencer: {
-    name: string;
-    avatar_url: string;
-    username: string;
-    email: string;
-    platform: CreatorPlatform;
-    funnel_status: FunnelStatus;
-} = {
-    name: 'Pewds',
-    avatar_url:
-        'https://yt3.googleusercontent.com/Wx1limtM3-E41HLV0y6adT8Hj2dawlFLgsW4E_thJ50-JyDlMCFlxpT2j01xG_qxRQg4DiYmSQ=s480-c-k-c0x00ffffff-no-rj',
-    username: 'pewdiepie',
-    email: 'influencer@email.com',
-    platform: 'youtube',
-    funnel_status: 'Confirmed',
-};
-
-const threadInfo = [
-    {
-        id: 'id1',
-        title: 'title',
-        sequenceInfo: {
-            sequenceId: 'seq-id1',
-            sequenceName: 'Sequence Name 1',
-            product: 'Product Name 1',
-        },
-        unread: true,
-        messages: [
-            {
-                id: 'id1',
-                from: { address: 'current_inbox@email.com', name: 'Current' },
-                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 1',
-                date: new Date('December 17, 1995 03:24:00'),
-            },
-            {
-                id: 'id2',
-                from: { address: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 2',
-                date: new Date('December 18, 1995 03:24:00'),
-            },
-        ],
-    },
-    {
-        id: 'id2',
-        title: 'title',
-        sequenceInfo: {
-            sequenceId: 'seq-id2',
-            sequenceName: 'Sequence Name 2',
-            product: 'Product Name 2',
-        },
-        unread: false,
-        messages: [
-            {
-                id: 'id1',
-                from: { address: 'current_inbox@email.com', name: 'Current' },
-                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 1',
-                date: new Date('December 17, 1995 03:24:00'),
-            },
-            {
-                id: 'id2',
-                from: { address: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 2',
-                date: new Date('December 18, 1995 03:24:00'),
-            },
-        ],
-    },
-    {
-        id: 'id3',
-        title: 'title',
-        sequenceInfo: {
-            sequenceId: 'seq-id1',
-            sequenceName: 'Sequence Name 1',
-            product: 'Product Name 1',
-        },
-        unread: false,
-        messages: [
-            {
-                id: 'id1',
-                from: { address: 'current_inbox@email.com', name: 'Current' },
-                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 1',
-                date: new Date('December 17, 1995 03:24:00'),
-            },
-            {
-                id: 'id2',
-                from: { address: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-
-                body: 'sample body 2',
-                date: new Date('December 18, 1995 03:24:00'),
-            },
-            {
-                id: 'id3',
-                from: { address: 'current_inbox@email.com', name: 'Current' },
-                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 3',
-                date: new Date('December 19, 1995 03:24:00'),
-            },
-            {
-                id: 'id4',
-                from: { address: 'influencer@email.com', name: 'Influencer Name' },
-                to: [{ address: 'current_inbox@email.com', name: 'Current' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-
-                body: 'sample body 4',
-                date: new Date('December 20, 1995 03:24:00'),
-            },
-            {
-                id: 'id5',
-                from: { address: 'current_inbox@email.com', name: 'Current' },
-                to: [{ address: 'influencer@email.com', name: 'Influencer Name' }],
-                cc: [{ address: 'cc@email.com', name: 'CC Person' }],
-                body: 'sample body 3',
-                date: new Date('December 21, 1995 03:24:00'),
-            },
-        ],
-    },
-];
-
-const currentInbox = {
-    email: 'current_inbox@email.com',
-};
 
 const InboxPreview = () => {
-    const [selectedThread, setSelectedThread] = useState(threadInfo[0]);
+    const [threads, setThreads] = useState<ThreadInfo[]>([]);
+    const [selectedThread, setSelectedThread] = useState<ThreadInfo | null>(null);
+
+    const { profile } = useUser();
+    const currentInbox = {
+        email: profile?.sequence_send_email,
+    };
+
     useEffect(() => {
         const getThreads = async () => {
             const response = await nextFetch('outreach/threads');
             if (response && response.length > 0) {
-                const _res = await Promise.all(
+                const res: ThreadInfo[] = await Promise.all(
                     response.map(async (thread: any) => {
                         const threadMessages = await nextFetch(`outreach/threads/${thread.threadInfo.threadId}`);
                         return {
@@ -156,23 +28,26 @@ const InboxPreview = () => {
                         };
                     }),
                 );
+                setThreads(res);
+                setSelectedThread(res[0]);
             }
         };
         getThreads();
     }, []);
 
+    if (!selectedThread || !currentInbox.email) return <></>;
     return (
         <div className="space-y-4 p-4">
             <section className="flex flex-col gap-4 border-4 p-4">
                 Thread Previews
                 <div>
-                    {threadInfo.map((thread) => (
+                    {threads.map((thread) => (
                         <ThreadPreview
-                            key={thread.id}
-                            sequenceInfluencer={sequenceInfluencer}
+                            key={thread.threadInfo.id}
+                            sequenceInfluencer={thread.sequenceInfluencers}
                             threadInfo={thread}
-                            currentInbox={currentInbox}
-                            selected={selectedThread.id === thread.id}
+                            _currentInbox={currentInbox}
+                            selected={selectedThread.threadInfo.id === thread.threadInfo.id}
                             onClick={() => setSelectedThread(thread)}
                         />
                     ))}

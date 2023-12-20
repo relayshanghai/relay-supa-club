@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import type { CurrentInbox, ThreadInfo } from './thread-preview';
-import { formatDate } from './message-component';
 import { useState } from 'react';
 import { Collapse, Expand } from 'src/components/icons';
+import { formatDate } from 'src/utils/datetime';
 
 export const ThreadHeader = ({ threadInfo, currentInbox }: { threadInfo: ThreadInfo; currentInbox: CurrentInbox }) => {
     const allNames = [
@@ -37,21 +37,21 @@ export const ThreadHeader = ({ threadInfo, currentInbox }: { threadInfo: ThreadI
                 className="absolute right-2 top-2 h-4 w-4 cursor-pointer stroke-gray-500"
                 onClick={() => setExpanded(!expanded)}
             />
-            <span className="text-xl">Re: {threadInfo.title}</span>
+            <span className="text-xl">Re: {threadInfo.messages[0].subject}</span>
             <div className="flex flex-col justify-between sm:flex-row">
                 <div className="flex flex-col gap-2">
                     <span>
                         Sequence:{' '}
-                        <Link className="text-primary-500" href={`sequence/${threadInfo.sequenceInfo.sequenceId}`}>
-                            {threadInfo.sequenceInfo.sequenceName}
+                        <Link className="text-primary-500" href={`sequence/${threadInfo.sequenceInfo.id}`}>
+                            {threadInfo.sequenceInfo.name}
                         </Link>
                     </span>
-                    {expanded && <p>{threadInfo.sequenceInfo.product}</p>}
+                    {expanded && <p>{threadInfo.sequenceInfo.productName}</p>}
                 </div>
                 {expanded && (
                     <div className="flex flex-col gap-2">
                         <p>Participants: {uniqueNames}</p>
-                        <p>First Reply: {formatDate(threadInfo.messages[0].date)}</p>
+                        <p>First Reply: {formatDate(threadInfo.messages[0].date, '[date] [monthShort] [fullYear]')}</p>
                     </div>
                 )}
             </div>

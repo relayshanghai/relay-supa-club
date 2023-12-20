@@ -1,9 +1,9 @@
+import type { sequenceInfluencers } from 'drizzle/schema';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar';
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
-import type { FunnelStatus } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
 
 export type EmailContact = { address: string; name: string };
@@ -12,38 +12,50 @@ export type Message = {
     id: string;
     from: EmailContact;
     to: EmailContact[];
+    replyTo: EmailContact[];
     cc: EmailContact[];
     body: string;
-    date: Date;
+    date: string;
+    subject?: string;
+    unread: boolean;
 };
 
 export type ThreadInfo = {
-    id: string;
-    title: string;
-    sequenceInfo: {
-        sequenceId: string;
-        sequenceName: string;
-        product: string;
+    threadInfo: {
+        id: string;
+        threadId: string;
+        sequenceInfluencerId: string;
+        emailEngineAccountId: string;
+        emailEngineId: string;
+        threadStatus: string;
+        deletedAt: string | null;
+        createdAt: string;
+        updatedAt: string;
     };
-    unread: boolean;
     messages: Message[];
+    sequenceInfluencers: any;
+    sequenceInfo: {
+        createdAt: string;
+        updatedAt: string;
+        companyId: string;
+        name: string;
+        autoStart: boolean;
+        id: string;
+        managerFirstName: string;
+        managerId: string;
+        deleted: boolean;
+        productName: string;
+    };
 };
 
 export type CurrentInbox = {
-    email: string;
+    email?: string | null;
 };
 
 type ThreadPreviewProps = {
-    sequenceInfluencer: {
-        name: string;
-        avatar_url: string;
-        username: string;
-        email: string;
-        platform: CreatorPlatform;
-        funnel_status: FunnelStatus;
-    };
+    sequenceInfluencer: typeof sequenceInfluencers.$inferInsert;
     threadInfo: ThreadInfo;
-    currentInbox: CurrentInbox;
+    _currentInbox: CurrentInbox;
     selected: boolean;
     onClick: () => void;
 };
@@ -73,17 +85,18 @@ const getUnreadMarker = (unread: boolean, replied: boolean) => {
 export const ThreadPreview = ({
     sequenceInfluencer,
     threadInfo,
-    currentInbox,
+    _currentInbox,
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatar_url, username, platform, funnel_status, email: influencerEmail } = sequenceInfluencer;
-    const { messages, unread } = threadInfo;
-    const { email: _currentInboxEmail } = currentInbox;
+    const { name, avatarUrl, username, platform, url, funnelStatus, email: influencerEmail } = sequenceInfluencer;
+    const { messages } = threadInfo;
+    const unread = threadInfo.messages[threadInfo.messages.length - 1].unread;
+    // const { email: _currentInboxEmail } = currentInbox;
     const lastMessage = messages[messages.length - 1];
 
     // Get components conditionally
-    const Icon = getPlatformIcon(platform);
+    const Icon = getPlatformIcon(platform as CreatorPlatform);
     const UnreadMarker = getUnreadMarker(unread, influencerEmail === lastMessage.from.address);
 
     return (
@@ -97,22 +110,22 @@ export const ThreadPreview = ({
                 <div className="flex items-center gap-4">
                     <section className="relative">
                         <Avatar>
-                            <AvatarImage src={avatar_url ?? ''} />
+                            <AvatarImage src={avatarUrl ?? ''} />
                             <AvatarFallback>{name ? name[0] : 'I'}</AvatarFallback>
                         </Avatar>
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
                     </section>
                     <span>
                         <p>{name}</p>
-                        <Link className="text-primary-400" href="www.lol.com">
+                        <Link className="text-primary-400" href={url ?? ''}>
                             @{username}
                         </Link>
                     </span>
                 </div>
             </CardContent>
             <CardContent className="mt-5">
-                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
-                    {COLLAB_OPTIONS[funnel_status].icon}
+                <div className={`relative ${COLLAB_OPTIONS[funnelStatus].style} rounded-sm p-1`}>
+                    {COLLAB_OPTIONS[funnelStatus].icon}
                     {UnreadMarker}
                 </div>
             </CardContent>
