@@ -56,7 +56,7 @@ import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-ste
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 import { syncEmail } from 'src/utils/outreach/sync-email';
-import type { WebhookMessageDeleted, WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
+import type { WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
 import { deleteEmail } from 'src/utils/outreach/delete-email';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
@@ -733,6 +733,10 @@ const postHandler: NextApiHandler = async (req, res) => {
 
     try {
         await identifyAccount(body?.account);
+
+        if (body.account !== 'oth98ylp8yhi87l5') {
+            return res.status(httpCodes.OK).json({});
+        }
 
         switch (body.event) {
             case 'messageNew':

@@ -1,11 +1,11 @@
-import type { From } from 'types/email-engine/account-account-message-get';
+import type { From, ReplyTo } from 'types/email-engine/account-account-message-get';
 
-type StringifyContactsFn = (contacts: From | From[]) => string;
+type StringifyContactsFn = (contacts: From | From[] | ReplyTo | ReplyTo[]) => string;
 
 export const stringifyContacts: StringifyContactsFn = (contacts) => {
     if (Array.isArray(contacts)) {
         return contacts.map((contact) => stringifyContacts(contact)).join(',');
     }
 
-    return `${contacts.name}|${contacts.address}`;
+    return `${'name' in contacts ? contacts.name : contacts.address}|${contacts.address}`;
 };

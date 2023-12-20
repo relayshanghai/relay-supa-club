@@ -73,41 +73,18 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
         );
 };
 
-type QuoteMessageComponentProps = {
-    quoteMessages: Message[];
-    index: number;
-};
-
-const QuotedMessage = ({ quoteMessages, index }: QuoteMessageComponentProps) => {
-    const message = quoteMessages[index];
-    if (message)
-        return (
-            <div className="text-sm">
-                <p className="mt-4 text-gray-500">
-                    {`On ${formatDate(message.date, '[date] [monthShort] [fullYear]')} ${message.from.name} <`}
-                    <span className="text-primary-400">{`${message.from.address}`}</span> {`> wrote:`}
-                </p>
-                <div className="ml-2 border-l-2 border-l-gray-500 pl-3">
-                    {/* Render the quoted message */}
-                    <p className="text-gray-400">{message.body}</p>
-                    {/* Render nested quoted messages */}
-                    {quoteMessages.length > 0 && index < quoteMessages.length - 1 && (
-                        <QuotedMessage
-                            key={quoteMessages[index + 1].id}
-                            quoteMessages={quoteMessages.slice(0, quoteMessages.length)}
-                            index={index + 1}
-                        />
-                    )}
-                </div>
-            </div>
-        );
-    else return <></>;
-};
-
-const MessageComponent = ({ message, quote }: { message: Message; quote: Message[] }) => {
+const MessageComponent = ({ message }: { message: Message }) => {
     const [messageExpanded, setMessageExpanded] = useState(false);
     const [quoteExpanded, setQuoteExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
+    const parser = new DOMParser();
+    const emailDoc = parser.parseFromString(message.body, 'text/html');
+
+    // Extract the quoted part
+    const quotedPart = emailDoc.querySelector('.gmail_quote');
+    if (quotedPart) {
+        emailDoc.body.removeChild(quotedPart);
+    }
 
     useEffect(() => {
         if (messageRef.current) setMessageExpanded(messageRef.current.dataset.state === 'open');
@@ -139,7 +116,7 @@ const MessageComponent = ({ message, quote }: { message: Message; quote: Message
                 </section>
             </AccordionTrigger>
             <AccordionContent onClick={(e) => e.stopPropagation()} className="p-4 text-black">
-                <div dangerouslySetInnerHTML={{ __html: message.body }} />
+                <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 <section className="w-full">
                     <div className="h-fit w-fit rounded-sm bg-gray-200 px-1 transition-all hover:bg-gray-100">
                         <ThreeDots
@@ -147,10 +124,13 @@ const MessageComponent = ({ message, quote }: { message: Message; quote: Message
                             className="mt-4 h-4 w-4 rotate-90"
                         />
                     </div>
-                    {quoteExpanded && (
+                    {quoteExpanded && quotedPart?.innerHTML && (
                         <>
                             <div className="my-4 h-0.5 w-full bg-gray-200" />
-                            <QuotedMessage quoteMessages={quote} index={0} />
+                            <div
+                                className="font-semibold text-gray-400"
+                                dangerouslySetInnerHTML={{ __html: quotedPart?.innerHTML }}
+                            />
                         </>
                     )}
                 </section>
@@ -162,8 +142,8 @@ const MessageComponent = ({ message, quote }: { message: Message; quote: Message
 export const MessagesComponent = ({ messages }: { messages: Message[] }) => {
     return (
         <Accordion type="multiple" className="hover: w-full bg-white">
-            {messages.map((message, index) => (
-                <MessageComponent key={message.id} message={message} quote={[...messages.slice(0, index)].reverse()} />
+            {messages.map((message) => (
+                <MessageComponent key={message.id} message={message} />
             ))}
         </Accordion>
     );

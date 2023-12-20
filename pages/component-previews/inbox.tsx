@@ -5,6 +5,7 @@ import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { type ThreadInfo, ThreadPreview } from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
+import { Filter } from 'src/components/inbox/wip/filter';
 
 const InboxPreview = () => {
     const [threads, setThreads] = useState<ThreadInfo[]>([]);
@@ -64,6 +65,10 @@ const InboxPreview = () => {
             <section className="flex flex-col gap-4 border-4 p-4">
                 WYSIWYG Editor
                 <ReplyEditor />
+            </section>
+            <section className="flex flex-col gap-4 border-4 p-4">
+                Filters
+                <Filter messageCount={{ unread: 5, unreplied: 2 }} />
             </section>
         </div>
     );

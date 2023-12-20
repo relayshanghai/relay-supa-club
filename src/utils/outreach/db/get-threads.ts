@@ -17,7 +17,7 @@ export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string) 
         .select()
         .from(threads)
         .where(and(eq(threads.emailEngineAccountId, account), isNull(threads.deletedAt)))
-        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId));
+        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId))
         .leftJoin(sequences, eq(sequences.id, sequenceInfluencers.sequenceId))
         .leftJoin(
             templateVariables,
