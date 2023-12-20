@@ -32,7 +32,6 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { messages, setMessages, influencers, createNewConversation, refreshConversation, isConversationLoading } =
         useBoostbot();
-    const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
         true,
@@ -45,7 +44,6 @@ const Boostbot = () => {
     const selectedInfluencersData =
         // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
         influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
-
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
@@ -246,12 +244,11 @@ const Boostbot = () => {
     const clearChatHistory = async () => {
         await createNewConversation(profile?.first_name);
         refreshConversation();
-        setIsInitialLogoScreen(true);
         setSelectedInfluencers({});
     };
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
-
+    const isInitialLogoScreen = !isSearchLoading && influencers.length === 0 && !isConversationLoading;
     return (
         <Layout>
             {isExpired && (
@@ -267,7 +264,6 @@ const Boostbot = () => {
                         influencers={influencers}
                         allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
-                        setIsInitialLogoScreen={setIsInitialLogoScreen}
                         isOutreachLoading={isOutreachLoading}
                         isSearchLoading={isSearchLoading}
                         areChatActionsDisabled={areChatActionsDisabled}
