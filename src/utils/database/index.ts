@@ -5,6 +5,8 @@ export type DBQuery<T> = (instance?: ReturnType<typeof drizzle>) => T;
 
 export type DBQueryReturn<T extends (...args: any) => any> = Awaited<ReturnType<ReturnType<T>>>;
 
+const DB_CONN: { instance: ReturnType<typeof postgres> | null } = { instance: null };
+
 /**
  * Drizzle database
  */
@@ -17,7 +19,18 @@ export const db = (instance?: ReturnType<typeof drizzle>) => {
         throw new Error('Invalid database connection URL');
     }
 
-    const client = postgres(connectionString, { prepare: false });
+    if (DB_CONN.instance !== null) {
+        return drizzle(DB_CONN.instance);
+    }
 
-    return drizzle(client);
+    DB_CONN.instance = postgres(connectionString, {
+        prepare: false,
+        // debug: (conn) => console.log('POSTGRES', conn),
+        onclose: () => {
+            // console.log('CLOSING POSTGRES CONN', conn);
+            DB_CONN.instance = null;
+        },
+    });
+
+    return drizzle(DB_CONN.instance);
 };
