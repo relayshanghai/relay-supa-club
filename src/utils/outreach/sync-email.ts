@@ -1,4 +1,3 @@
-import type { WebhookMessageNew } from 'types/email-engine/webhook-message-new';
 import type { DBQueryReturn } from '../database';
 import { db } from '../database';
 import { getSequenceInfluencerByMessageId, createThread, createEmail } from './db';
@@ -7,7 +6,12 @@ import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
 
-type SyncEmailFn = (event: WebhookMessageNew) => Promise<{
+type SyncEmailParams = {
+    account: string;
+    emailEngineId: string;
+};
+
+type SyncEmailFn = (event: SyncEmailParams) => Promise<{
     influencer: DBQueryReturn<typeof getSequenceInfluencerByMessageId>;
     thread: any;
     email: any;
@@ -15,24 +19,24 @@ type SyncEmailFn = (event: WebhookMessageNew) => Promise<{
 
 export const syncEmail: SyncEmailFn = async (event) => {
     const result = await db().transaction(async (tx) => {
-        const influencer = await getSequenceInfluencerByMessageId(tx)(event.data.messageId);
+        const emailMessage = await getMessage(event.account, event.emailEngineId);
 
-        const emailMessage = await getMessage(event.account, event.data.id);
+        const influencer = await getSequenceInfluencerByMessageId(tx)(emailMessage.messageId);
 
         const thread = await createThread(tx)({
             sequenceInfluencerId: influencer?.id ?? null,
-            threadId: event.data.threadId,
+            threadId: emailMessage.threadId,
             emailEngineAccount: event.account,
-            emailEngineId: event.data.id,
+            emailEngineId: event.emailEngineId,
         });
 
         const email = await createEmail(tx)({
             data: emailMessage,
-            sender: stringifyContacts(event.data.from),
-            recipients: stringifyContacts(event.data.to),
-            threadId: event.data.threadId,
-            emailEngineMessageId: event.data.messageId,
-            emailEngineId: event.data.id,
+            sender: stringifyContacts(emailMessage.from),
+            recipients: stringifyContacts(emailMessage.to),
+            threadId: emailMessage.threadId,
+            emailEngineMessageId: emailMessage.messageId,
+            emailEngineId: event.emailEngineId,
             emailEngineAccountId: event.account,
         });
 

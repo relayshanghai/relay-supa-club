@@ -244,7 +244,10 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return await handleMessageDeleted({ ...event, event: 'messageDeleted' }, res);
     }
 
-    const result = await syncEmail(event);
+    const result = await syncEmail({
+        account: event.account,
+        emailEngineId: event.data.id,
+    });
 
     // eslint-disable-next-line no-console
     console.log('SYNC EMAIL', result);
