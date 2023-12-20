@@ -65,7 +65,7 @@ export const getSequenceEmailAndSequencesByMessageIdCall =
 
 export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
     update.updated_at = new Date().toISOString();
-    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id).single();
+    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id);
     if (error) throw error;
     return data;
 };
@@ -75,7 +75,7 @@ export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async 
         // This column was added later and is not 'not null', so add this check for any new ones
         throw new Error('Missing required email_engine_account_id');
     }
-    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert).single();
+    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert);
     if (error) throw error;
     return data;
 };
