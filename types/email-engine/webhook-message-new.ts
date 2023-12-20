@@ -35,6 +35,7 @@ interface Data {
     category: string;
     seemsLikeNew: boolean;
     messageSpecialUse: string;
+    specialUse: string;
     summary: Summary;
     draft?: boolean;
     cc?: From[];
