@@ -2,6 +2,7 @@ import { emails } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 import { eq } from 'drizzle-orm';
+import { now } from 'src/utils/datetime';
 
 type CreateEmailFn = (params: typeof emails.$inferInsert) => Promise<typeof emails.$inferSelect>;
 
@@ -16,6 +17,7 @@ export const createEmail: DBQuery<CreateEmailFn> = (i) => async (params) => {
             emailEngineMessageId: params.emailEngineMessageId,
             emailEngineId: params.emailEngineId,
             emailEngineAccountId: params.emailEngineAccountId,
+            createdAt: params.createdAt ?? now(),
         })
         .onConflictDoNothing({ target: emails.emailEngineId })
         .returning();

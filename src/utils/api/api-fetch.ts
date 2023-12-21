@@ -43,11 +43,11 @@ const parseResponse = async <T = any>(res: Response): Promise<T> => {
     return (await response.text()) as T;
 };
 
-const unwrapResponse = async <T = any>(res: Response): Promise<Response & { content: T }> => {
+const unwrapResponse = async <T = any>(res: Response): Promise<{ response: Response; content: T }> => {
     const content = await parseResponse<T>(res);
 
     return {
-        ...res,
+        response: res,
         content,
     };
 };

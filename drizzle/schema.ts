@@ -608,11 +608,11 @@ export const threads = pgTable(
         threadId: text('thread_id').notNull(),
         sequenceInfluencerId: uuid('sequence_influencer_id').references(() => sequenceInfluencers.id),
         emailEngineAccountId: text('email_engine_account_id').notNull(),
-        emailEngineId: text('email_engine_id').notNull(),
+        lastReplyId: text('last_reply_id'),
         threadStatus: text('thread_status').default('unopened').notNull(),
-        deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
-        createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
-        updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+        deletedAt: timestamp('deleted_at', { mode: 'string' }),
+        createdAt: timestamp('created_at', { mode: 'string' }).defaultNow(),
+        updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow(),
     },
     (table) => {
         return {
@@ -634,9 +634,9 @@ export const emails = pgTable(
         emailEngineMessageId: text('email_engine_message_id').notNull(),
         emailEngineId: text('email_engine_id').notNull(),
         emailEngineAccountId: text('email_engine_account_id').notNull(),
-        deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
-        createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
-        updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+        deletedAt: timestamp('deleted_at', { mode: 'string' }),
+        createdAt: timestamp('created_at', { mode: 'string' }).defaultNow(),
+        updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow(),
     },
     (table) => {
         return {
