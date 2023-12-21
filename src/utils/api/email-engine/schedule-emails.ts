@@ -21,11 +21,11 @@ export type EmailCountPerDayPerStep = {
     /** formatted like 2023-12-25 YYYY-MM-DD */
     date: string;
     emails_count: number;
-    sequence_step_id: string;
+    step_id: string;
 }[];
 
 const getEmailCountPerDayPerStep = (scheduledEmails: EmailCountPerDayPerStep, stepId: string, day: string) => {
-    return scheduledEmails.find(({ sequence_step_id, date }) => sequence_step_id === stepId && date === day);
+    return scheduledEmails.find(({ step_id, date }) => step_id === stepId && date === day);
 };
 
 export const scheduleEmails = (
@@ -50,7 +50,7 @@ export const scheduleEmails = (
             emailCountPerDayPerStep.emails_count++;
         } else {
             scheduledEmails.push({
-                sequence_step_id: stepId,
+                step_id: stepId,
                 date: day,
                 emails_count: 1,
             });
