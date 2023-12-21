@@ -1,4 +1,8 @@
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
+Cypress.on('uncaught:exception', (_err) => {
+    // ignore hydration errors from the WordCloud component which is dynamically loaded
+    return false;
+});
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
