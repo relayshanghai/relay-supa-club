@@ -9,5 +9,5 @@ export const stringifyContacts: StringifyContactsFn = (contacts) => {
         return contacts.map((contact) => stringifyContacts(contact)).join(',');
     }
 
-    return `${contacts.name}|${contacts.address}`;
+    return `${'name' in contacts ? contacts.name : contacts.address}|${contacts.address}`;
 };

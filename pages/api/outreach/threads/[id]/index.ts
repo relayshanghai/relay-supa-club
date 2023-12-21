@@ -3,7 +3,7 @@ import { profiles } from 'drizzle/schema';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { getEmails } from 'src/utils/outreach/db/get-emails';
+import { getEmails } from 'src/utils/outreach/get-emails';
 
 type ApiRequest = {
     id?: string;
@@ -26,9 +26,9 @@ const getHandler: ActionHandler = async (req, res) => {
         throw new Error('Cannot get emails');
     }
 
-    const emails = await getEmails()(query.id);
+    const emails = await getEmails(query.id);
 
-    return res.status(200).json({ emails });
+    return res.status(200).json(emails);
 };
 
 export default ApiHandler({
