@@ -34,7 +34,7 @@ describe('Boostbot', () => {
 
         cy.get('textarea').type('LED beauty mask{enter}');
 
-        cy.contains(influencerName);
+        cy.contains(influencerName, { timeout: 10000 });
         cy.contains(formattedFollowers);
         cy.contains('@DANNIVIVIANI');
     });

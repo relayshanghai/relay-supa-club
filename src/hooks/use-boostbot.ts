@@ -23,7 +23,6 @@ import {
 import { useDB } from 'src/utils/client-db/use-client-db';
 import type { MessageType } from 'src/components/boostbot/message';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
-import { usePersistentState } from './use-persistent-state';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -45,8 +44,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     } = useSWR(profile?.id ? [profile.id, 'get-boostbot-conversation'] : null, getBoostbotConversation);
 
     const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);
-    const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>(
-        'boostbot-search-results',
+    const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
         (conversation?.search_results as unknown as BoostbotInfluencer[]) ?? [],
     );
     // Using 'useState' and 'useEffect' here to prevent the results from flashing off and on the screen when the conversation is being revalidated (becomes null during revalidation).

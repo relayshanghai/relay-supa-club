@@ -209,45 +209,42 @@ export const Chat: React.FC<ChatProps> = ({
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             track(RecommendInfluencers, payload);
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
-            setHasSearched(true);
-            setMessages((prevMessages) => {
-                const newMessages = [...prevMessages];
+            const newMessages = [...messages];
 
-                if (influencers.length > 0) {
-                    if (isFirstTimeSearch) {
-                        setIsFirstTimeSearch(false);
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
-                        });
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
-                        });
-                    } else {
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFound',
-                            translationValues: { count: influencers.length },
-                        });
-                    }
+            if (influencers.length > 0) {
+                if (isFirstTimeSearch) {
+                    setIsFirstTimeSearch(false);
+                    newMessages.push({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
+                    });
+                    newMessages.push({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
+                    });
                 } else {
                     newMessages.push({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.noInfluencersFound',
+                        translationKey: 'boostbot.chat.influencersFound',
+                        translationValues: { count: influencers.length },
                     });
                 }
+            } else {
+                newMessages.push({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.noInfluencersFound',
+                });
+            }
 
-                const newData = { searchResults: influencers, chatMessages: newMessages };
-                const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+            const newData = { searchResults: influencers, chatMessages: newMessages };
+            const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
 
-                refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
-                return newMessages;
-            });
+            refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
+            setHasSearched(true);
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
