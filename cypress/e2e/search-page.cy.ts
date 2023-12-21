@@ -14,6 +14,7 @@ describe('Dashboard/Search page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
+        cy.contains('No credits remaining').should('not.exist');
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
             cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
