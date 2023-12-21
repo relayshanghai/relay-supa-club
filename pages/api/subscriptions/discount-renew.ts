@@ -72,15 +72,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const subscription_start_date = unixEpochToISOString(subscription.start_date);
     if (!subscription_start_date) throw new Error('Missing subscription start date');
-    const { profiles, searches, ai_emails } = product.metadata;
-    if (!profiles || !searches || !ai_emails) {
+    const { profiles, searches } = product.metadata;
+    if (!profiles || !searches) {
         serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
         throw new Error('Missing product metadata');
     }
     await updateCompanyUsageLimits({
         profiles_limit: profiles,
         searches_limit: searches,
-        ai_email_generator_limit: ai_emails,
         id: company_id,
     });
 

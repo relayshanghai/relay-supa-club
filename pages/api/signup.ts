@@ -170,7 +170,7 @@ const createCompanyWithSubscriptionLimits = async ({
     companyWebsite?: string;
     cus_id: string;
 }) => {
-    const { searches, profiles, ai_emails, trial_searches, trial_profiles, trial_ai_emails } = DISCOVERY_PLAN;
+    const { searches, profiles, trial_searches, trial_profiles } = DISCOVERY_PLAN;
 
     return await db(createCompany)({
         id: companyId,
@@ -180,10 +180,8 @@ const createCompanyWithSubscriptionLimits = async ({
         terms_accepted: true,
         profiles_limit: profiles,
         searches_limit: searches,
-        ai_email_generator_limit: ai_emails,
         trial_profiles_limit: trial_profiles,
         trial_searches_limit: trial_searches,
-        trial_ai_email_generator_limit: trial_ai_emails,
         subscription_status: 'trial',
         subscription_start_date: unixEpochToISOString(subscription.trial_start, subscription.start_date),
         subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
