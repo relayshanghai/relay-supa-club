@@ -3,7 +3,8 @@ import { profiles } from 'drizzle/schema';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { type GetThreadsReturn, getThreads } from 'src/utils/outreach/db/get-threads';
+import { type GetThreadsReturn } from 'src/utils/outreach/db/get-threads';
+import { getThreadsWithReply } from 'src/utils/outreach/db/get-threads-with-reply';
 
 const transformThreads = (threads: GetThreadsReturn) => {
     return threads.map((thread: any) => {
@@ -35,7 +36,7 @@ const getHandler: ActionHandler = async (req, res) => {
         throw new Error('Cannot get email account');
     }
 
-    const threads = await getThreads()(profile.emailEngineAccountId);
+    const threads = await getThreadsWithReply()(profile.emailEngineAccountId);
 
     return res.status(200).json(transformThreads(threads));
 };

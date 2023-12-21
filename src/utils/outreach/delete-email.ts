@@ -8,7 +8,7 @@ type DeleteEmailFn = (
 ) => Promise<{ thread: DBQueryReturn<typeof deleteThread>; email: DBQueryReturn<typeof _deleteEmail> }>;
 
 export const deleteEmail: DeleteEmailFn = async (emailId: string) => {
-    const results = db().transaction(async (tx) => {
+    const results = await db().transaction(async (tx) => {
         const email = await _deleteEmail(tx)(emailId);
         const thread = email ? await deleteThread(tx)(email.threadId) : null;
 

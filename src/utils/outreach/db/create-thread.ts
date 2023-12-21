@@ -19,6 +19,10 @@ export const createThread: DBQuery<CreateThreadFn> = (i) => async (params) => {
         updateData.lastReplyId = params.lastReplyId;
     }
 
+    if (params.sequenceInfluencerId) {
+        updateData.sequenceInfluencerId = params.sequenceInfluencerId;
+    }
+
     let result = await db(i)
         .insert(threads)
         .values({

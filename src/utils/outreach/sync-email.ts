@@ -1,11 +1,11 @@
-import type { DBQueryReturn } from '../database';
 import { db } from '../database';
-import { getSequenceInfluencerByMessageId, createThread, createEmail } from './db';
+import { createThread, createEmail } from './db';
 import { parseContacts } from './parse-contacts';
 import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
 import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
+import { getInfluencerFromMessage } from './get-influencer-from-message';
 
 type SyncEmailParams = {
     account: string;
@@ -13,20 +13,25 @@ type SyncEmailParams = {
 };
 
 type SyncEmailFn = (params: SyncEmailParams) => Promise<{
-    influencer: DBQueryReturn<typeof getSequenceInfluencerByMessageId>;
+    influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
     thread: any;
     email: any;
 }>;
 
+/**
+ * Upserts a thread and email based on the message received from Email Engine
+ */
 export const syncEmail: SyncEmailFn = async (params) => {
     const result = await db().transaction(async (tx) => {
+        // get the full message data
         const emailMessage = await getMessage(params.account, params.emailEngineId);
 
         // determine the valid repliable id for this thread
         const profile = await getProfileByEmailEngineEmail(tx)(emailMessage.from.address);
         const repliedMessageId = !profile && emailMessage.inReplyTo ? emailMessage.id : null;
 
-        const influencer = await getSequenceInfluencerByMessageId(tx)(emailMessage.messageId);
+        // @note sequence influencer is holds the data of an "influencer outreach" NOT the influencer
+        const influencer = await getInfluencerFromMessage(emailMessage);
 
         const thread = await createThread(tx)({
             threadId: emailMessage.threadId,

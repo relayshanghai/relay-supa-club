@@ -734,10 +734,6 @@ const postHandler: NextApiHandler = async (req, res) => {
     try {
         await identifyAccount(body?.account);
 
-        if (body.account !== 'oth98ylp8yhi87l5') {
-            return res.status(httpCodes.OK).json({});
-        }
-
         switch (body.event) {
             case 'messageNew':
                 return handleNewEmail(body, res);
