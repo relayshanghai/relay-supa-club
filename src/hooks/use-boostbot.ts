@@ -53,9 +53,12 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
             setMessages([]);
             setInfluencers([]);
         } else {
-            if (conversation?.chat_messages) setMessages(conversation.chat_messages as MessageType[]);
-            if (conversation?.search_results)
+            if (conversation?.chat_messages) {
+                setMessages(conversation.chat_messages as MessageType[]);
+            }
+            if (conversation?.search_results) {
                 setInfluencers(conversation.search_results as unknown as BoostbotInfluencer[]);
+            }
         }
     }, [conversation, profile?.id, setInfluencers]);
 

@@ -30,8 +30,15 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { messages, setMessages, influencers, createNewConversation, refreshConversation, isConversationLoading } =
-        useBoostbot();
+    const {
+        messages,
+        setMessages,
+        influencers,
+        setInfluencers,
+        createNewConversation,
+        refreshConversation,
+        isConversationLoading,
+    } = useBoostbot();
     const [hasSearched, setHasSearched] = useState(false);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
@@ -244,16 +251,12 @@ const Boostbot = () => {
     };
 
     const clearChatHistory = async () => {
-        await createNewConversation(profile?.first_name);
-        refreshConversation(
-            {
-                chat_messages: null,
-                search_results: null,
-            },
-            { revalidate: false },
-        );
         setHasSearched(false);
+        setMessages([]);
+        setInfluencers([]);
         setSelectedInfluencers({});
+        await createNewConversation(profile?.first_name);
+        refreshConversation();
     };
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;

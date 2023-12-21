@@ -56,9 +56,9 @@ export const deleteIndexedDbs = () => {
     new Cypress.Promise(async () => {
         if (window.indexedDB.databases) {
             const dbs = await window.indexedDB.databases();
-            dbs.forEach((db) => {
-                if (db.name) window.indexedDB.deleteDatabase(db.name);
-            });
+            for (const db of dbs) {
+                if (db.name) await window.indexedDB.deleteDatabase(db.name);
+            }
         }
     });
 };

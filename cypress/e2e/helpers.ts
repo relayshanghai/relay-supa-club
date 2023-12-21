@@ -194,3 +194,13 @@ export const randomString = (length = 8) =>
     Math.random()
         .toString(36)
         .substring(2, length + 2);
+
+export const resetBoostbotConversations = async () => {
+    const supabase = supabaseClientCypress();
+    const { data: conversations } = await supabase.from('boostbot_conversations').select('id');
+
+    if (!conversations) return;
+    for (const conversation of conversations) {
+        await supabase.from('boostbot_conversations').delete().match({ id: conversation.id });
+    }
+};
