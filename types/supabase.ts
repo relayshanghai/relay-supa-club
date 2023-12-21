@@ -1571,8 +1571,8 @@ export interface Database {
         }
         Returns: {
           date: string
-          emails_count: number
           step_id: string
+          emails_count: number
         }[]
       }
       fetch_pending_jobs: {

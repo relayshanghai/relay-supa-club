@@ -1,10 +1,8 @@
-DROP FUNCTION public.fetch_email_count_by_date;
-
 CREATE OR REPLACE FUNCTION public.fetch_email_count_per_account_by_date(account_id CHARACTER VARYING)
 RETURNS TABLE (
   date DATE,
-  emails_count BIGINT,
-  step_id UUID
+  step_id UUID,
+  emails_count BIGINT
 )
 LANGUAGE plpgsql
 AS $function$
