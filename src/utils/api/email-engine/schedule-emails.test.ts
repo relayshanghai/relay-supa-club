@@ -109,19 +109,19 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
             {
                 date: getDateStringWithoutTime(mondayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // tuesday has 3 emails scheduled
             {
                 date: getDateStringWithoutTime(tuesdayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // wednesday has 2 emails scheduled
             {
                 date: getDateStringWithoutTime(wednesdayDate, timeZone),
                 emails_count: 2,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
         ];
 
@@ -152,19 +152,19 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
             {
                 date: getDateStringWithoutTime(fridayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // monday has 3 emails scheduled
             {
                 date: getDateStringWithoutTime(mondayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // tuesday has 2 emails scheduled
             {
                 date: getDateStringWithoutTime(tuesdayDate, timeZone),
                 emails_count: 2,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
         ];
 
@@ -195,19 +195,19 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
             {
                 date: getDateStringWithoutTime(fridayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // monday has 3 emails scheduled
             {
                 date: getDateStringWithoutTime(mondayDate, timeZone),
                 emails_count: 3,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
             // tuesday has 2 emails scheduled
             {
                 date: getDateStringWithoutTime(tuesdayDate, timeZone),
                 emails_count: 2,
-                sequence_step_id: step0Id,
+                step_id: step0Id,
             },
         ];
 
@@ -237,19 +237,19 @@ describe('scheduleEmails', () => {
             // monday has 3 emails scheduled for step 0 and step 1
             {
                 date: getDateStringWithoutTime(mondayDate, timeZone),
-                sequence_step_id: step0Id,
+                step_id: step0Id,
                 emails_count: 3,
             },
 
-            { date: getDateStringWithoutTime(mondayDate, timeZone), sequence_step_id: step1Id, emails_count: 3 },
+            { date: getDateStringWithoutTime(mondayDate, timeZone), step_id: step1Id, emails_count: 3 },
 
             // tuesday has 3 emails scheduled for step 0 and 2 for step 1
-            { date: getDateStringWithoutTime(tuesdayDate, timeZone), sequence_step_id: step0Id, emails_count: 3 },
+            { date: getDateStringWithoutTime(tuesdayDate, timeZone), step_id: step0Id, emails_count: 3 },
 
-            { date: getDateStringWithoutTime(tuesdayDate, timeZone), sequence_step_id: step1Id, emails_count: 2 },
+            { date: getDateStringWithoutTime(tuesdayDate, timeZone), step_id: step1Id, emails_count: 2 },
 
             // thursday already has 3 step 1 emails scheduled
-            { date: getDateStringWithoutTime(thursdayDate, timeZone), sequence_step_id: step1Id, emails_count: 3 },
+            { date: getDateStringWithoutTime(thursdayDate, timeZone), step_id: step1Id, emails_count: 3 },
         ];
         // expect step 0 to be scheduled on Wednesday and step 1 to be scheduled on Friday
         const steps: SequenceStep[] = [
@@ -316,7 +316,7 @@ describe('scheduleEmails', () => {
                     date: getDateStringWithoutTime(addHours(initialDate, i * 24), timeZone),
                     // because each day is full, the algorithm will have to iterate through all the days
                     emails_count: 3,
-                    sequence_step_id: step.id,
+                    step_id: step.id,
                 });
             }
         }

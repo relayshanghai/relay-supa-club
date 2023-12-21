@@ -21,6 +21,7 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
+import type { EmailCountPerDayPerStep } from 'src/utils/api/email-engine/schedule-emails';
 import { scheduleEmails } from 'src/utils/api/email-engine/schedule-emails';
 
 export type SequenceStepSendArgs = {
@@ -55,11 +56,7 @@ const sendAndInsertEmail = async ({
     templateVariables: TemplateVariable[];
     messageId: string;
     references: string;
-    scheduledEmails: {
-        date: string;
-        emails_count: number;
-        sequence_step_id: string;
-    }[];
+    scheduledEmails: EmailCountPerDayPerStep;
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
