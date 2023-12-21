@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmail, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -105,13 +105,12 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     if (error) throw error;
 };
 
-export const getSequenceEmailsByEmailEngineAccountId =
-    (supabaseClient: RelayDatabase) =>
-    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at'>[]> => {
-        const { data, error } = await supabaseClient
-            .from('sequence_emails')
-            .select('email_send_at')
-            .eq('email_engine_account_id', accountId);
-        if (error) throw error;
-        return data ?? [];
-    };
+/** only gets where the send at date is in the future or from the last 24 hours. Date is calculated based on America/Chicago timezone */
+export const getSequenceEmailsByEmailEngineAccountId = (supabaseClient: RelayDatabase) => async (accountId: string) => {
+    const { data, error } = await supabaseClient.rpc('fetch_email_count_per_account_by_date', {
+        account_id: accountId,
+    });
+
+    if (error) throw error;
+    return data;
+};
