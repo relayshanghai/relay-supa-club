@@ -1565,6 +1565,16 @@ export interface Database {
         }
         Returns: undefined
       }
+      fetch_email_count_by_date: {
+        Args: {
+          account_id: string
+        }
+        Returns: {
+          date: string
+          emails_count: number
+          sequence_step_id: string
+        }[]
+      }
       fetch_pending_jobs: {
         Args: {
           job_queue: string
