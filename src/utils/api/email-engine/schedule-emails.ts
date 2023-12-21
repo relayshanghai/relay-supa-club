@@ -7,7 +7,7 @@ import {
     getDateStringWithoutTime,
     subtractHours,
 } from 'src/utils/time-zone-helpers';
-import type { SequenceEmail, SequenceEmailInsert, SequenceStep } from '../db';
+import type { SequenceEmailInsert, SequenceStep } from '../db';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
 import { crumb } from 'src/utils/logger-server';
@@ -17,55 +17,47 @@ const TARGET_TIMEZONE = 'America/Chicago';
 
 const MAX_DAILY_PER_STEP = 25;
 
-/**
- * @example  [7-17-2024]: {
- *    0: 5,     // 5 emails scheduled for step 0
- *    1: 3,     // 3 emails scheduled for step 1
- *    2: 2,     // 2 emails scheduled for step 2
- * } */
-type EmailCountPerDay = {
-    [date: string]: {
-        [step: number]: number;
-    };
-};
+export type EmailCountPerDayPerStep = {
+    /** formatted like 2023-12-25 YYYY-MM-DD */
+    date: string;
+    emails_count: number;
+    sequence_step_id: string;
+}[];
 
-const mapScheduledEmailsToCountPerDay = (
-    steps: SequenceStep[],
-    scheduledEmails: Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[],
-) => {
-    const emailCountPerDay: EmailCountPerDay = {};
-    scheduledEmails.forEach(({ email_send_at, sequence_step_id }) => {
-        if (!email_send_at) {
-            return;
-        }
-        const date = getDateStringWithoutTime(new Date(email_send_at), TARGET_TIMEZONE);
-        const step = steps.find((step) => step.id === sequence_step_id);
-        if (!step) {
-            return;
-        }
-        if (!emailCountPerDay[date]) {
-            emailCountPerDay[date] = {
-                0: 0,
-                1: 0,
-                2: 0,
-            };
-        }
-        emailCountPerDay[date][step.step_number] += 1;
-    });
-    return emailCountPerDay;
+const getEmailCountPerDayPerStep = (scheduledEmails: EmailCountPerDayPerStep, stepId: string, day: string) => {
+    return scheduledEmails.find(({ sequence_step_id, date }) => sequence_step_id === stepId && date === day);
 };
 
 export const scheduleEmails = (
     steps: SequenceStep[],
-    scheduledEmails: Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[],
+    scheduledEmails: EmailCountPerDayPerStep,
     influencer: SequenceInfluencerManagerPage,
     /** email engine account id */
     account: string,
     now = new Date(),
     maxDailyPerStep = MAX_DAILY_PER_STEP,
 ): { outreachStepInsert: SequenceEmailInsert; followupEmailInserts: SequenceEmailInsert[] } => {
+    const findPreviousStepEmailSendAt = (isOutreachEmail: boolean, stepNumber: number) =>
+        isOutreachEmail
+            ? null
+            : stepNumber == 1
+            ? outreachStepInsert?.email_send_at
+            : followupEmailInserts[followupEmailInserts.length - 1]?.email_send_at;
+
+    const incrementEmailCountPerDayPerStep = (stepId: string, day: string) => {
+        const emailCountPerDayPerStep = getEmailCountPerDayPerStep(scheduledEmails, stepId, day);
+        if (emailCountPerDayPerStep) {
+            emailCountPerDayPerStep.emails_count++;
+        } else {
+            scheduledEmails.push({
+                sequence_step_id: stepId,
+                date: day,
+                emails_count: 1,
+            });
+        }
+    };
+
     crumb({ message: `scheduledEmails.length: ${scheduledEmails.length}` });
-    const emailCountPerDay = mapScheduledEmailsToCountPerDay(steps, scheduledEmails);
     const followupEmailInserts: SequenceEmailInsert[] = [];
     let outreachStepInsert: SequenceEmailInsert | null = null;
     steps
@@ -73,31 +65,19 @@ export const scheduleEmails = (
         .forEach(({ wait_time_hours, step_number, id }) => {
             const isOutreachEmail = step_number == 0;
 
-            const previousStepEmailSendAt = isOutreachEmail
-                ? null
-                : step_number == 1
-                ? outreachStepInsert?.email_send_at
-                : followupEmailInserts[followupEmailInserts.length - 1]?.email_send_at;
+            const previousStepEmailSendAt = findPreviousStepEmailSendAt(isOutreachEmail, step_number);
 
             const sendAt = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
                 ? new Date()
                 : calculateSendAt(
-                      step_number,
+                      id,
                       wait_time_hours,
-                      emailCountPerDay,
+                      scheduledEmails,
                       maxDailyPerStep,
                       previousStepEmailSendAt ? new Date(previousStepEmailSendAt) : now,
                   );
 
-            const date = getDateStringWithoutTime(sendAt, TARGET_TIMEZONE);
-            if (!emailCountPerDay[date]) {
-                emailCountPerDay[date] = {
-                    0: 0,
-                    1: 0,
-                    2: 0,
-                };
-            }
-            emailCountPerDay[date][step_number] += 1;
+            incrementEmailCountPerDayPerStep(id, getDateStringWithoutTime(sendAt, TARGET_TIMEZONE));
 
             const email: SequenceEmailInsert = {
                 sequence_influencer_id: influencer.id,
@@ -125,35 +105,29 @@ export const scheduleEmails = (
 
 /** waitTimeHours is ideally when this email should be scheduled, but if there are more than (default) 25 emails scheduled for that step for that day, it will find the next available day with less than the max scheduled. Email send times will always be a random hour within Monday-Friday, 9am - 12am US Central Time */
 export const calculateSendAt = (
-    stepNumber: number,
+    stepId: string,
     waitTimeHours: number,
-    emailCountPerDay: EmailCountPerDay,
+    emailCountPerDay: EmailCountPerDayPerStep,
     maxDailyPerStep: number,
     now = new Date(),
+    timeZone = TARGET_TIMEZONE,
 ): Date => {
-    // console.log('calculateSendAt', stepNumber, waitTimeHours, emailCountPerDay, maxDailyPerStep, now);
     const sendAt = addHours(now, waitTimeHours);
     const targetDate = findNextBusinessDayTime(sendAt); // Get initial targetDate
-    const targetDateString = getDateStringWithoutTime(targetDate, TARGET_TIMEZONE);
-    if (!emailCountPerDay[targetDateString]) {
-        return targetDate;
-    }
-    if (emailCountPerDay[targetDateString][stepNumber] < maxDailyPerStep) {
+    const initialEmailCount =
+        getEmailCountPerDayPerStep(emailCountPerDay, stepId, getDateStringWithoutTime(targetDate, timeZone))
+            ?.emails_count || 0;
+
+    if (initialEmailCount < maxDailyPerStep) {
         return targetDate;
     }
 
-    return findNextAvailableDateIfMaxEmailsPerDayMet(
-        stepNumber,
-        emailCountPerDay,
-        targetDate,
-        maxDailyPerStep,
-        TARGET_TIMEZONE,
-    );
+    return findNextAvailableDateIfMaxEmailsPerDayMet(stepId, emailCountPerDay, targetDate, maxDailyPerStep, timeZone);
 };
 
 export const findNextAvailableDateIfMaxEmailsPerDayMet = (
-    stepNumber: number,
-    emailCountPerDay: EmailCountPerDay,
+    stepId: string,
+    emailCountPerDay: EmailCountPerDayPerStep,
     /** ISO time not Chicago time */
     passedDate: Date,
     maxDailyPerStep: number,
@@ -161,23 +135,22 @@ export const findNextAvailableDateIfMaxEmailsPerDayMet = (
 ) => {
     let targetDate = new Date(passedDate);
 
-    const getTargetDaysEmailCount = (targetDate: Date) =>
-        emailCountPerDay[getDateStringWithoutTime(targetDate, timeZone)]
-            ? emailCountPerDay[getDateStringWithoutTime(targetDate, timeZone)][stepNumber] ?? 0
-            : 0;
-
     // Check if maximum number of emails for the day has been scheduled
-    let targetDaysEmailCount = getTargetDaysEmailCount(targetDate);
+    let targetDaysEmailCount =
+        getEmailCountPerDayPerStep(emailCountPerDay, stepId, getDateStringWithoutTime(targetDate, timeZone))
+            ?.emails_count || 0;
 
     // recursively find the next business day if the max number of emails has been scheduled
     let maxTries = 0;
 
     while (targetDaysEmailCount >= maxDailyPerStep) {
-        if (maxTries > 300) {
+        if (maxTries > 1000) {
             throw new Error('Could not find next available date within 300 tries');
         }
         targetDate = findNextBusinessDayTime(addHours(targetDate, 24), timeZone);
-        targetDaysEmailCount = getTargetDaysEmailCount(targetDate);
+        targetDaysEmailCount =
+            getEmailCountPerDayPerStep(emailCountPerDay, stepId, getDateStringWithoutTime(targetDate, timeZone))
+                ?.emails_count || 0;
         maxTries++;
     }
 

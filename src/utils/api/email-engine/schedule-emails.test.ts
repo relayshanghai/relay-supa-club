@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import type { EmailCountPerDayPerStep } from './schedule-emails';
 import { findNextAvailableDateIfMaxEmailsPerDayMet, findNextBusinessDayTime, scheduleEmails } from './schedule-emails';
 import { getDateStringWithoutTime, getHours, getWeekday, isSameDay } from 'src/utils/time-zone-helpers';
-import type { SequenceEmail, SequenceStep } from '../db';
+import type { SequenceStep } from '../db';
 import { v4 } from 'uuid';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { addHours } from 'date-fns';
@@ -101,16 +102,30 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
         const mondayDate = new Date(`2023-09-25T14:00:00${chicagoOffset}`);
         const tuesdayDate = new Date(`2023-09-26T14:00:00${chicagoOffset}`);
         const wednesdayDate = new Date(`2023-09-27T14:00:00${chicagoOffset}`);
+        const step0Id = v4();
 
-        const emailCountPerDay = {
+        const emailCountPerDay: EmailCountPerDayPerStep = [
             // monday has 3 emails scheduled
-            [getDateStringWithoutTime(mondayDate, timeZone)]: { 1: 3 },
+            {
+                date: getDateStringWithoutTime(mondayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
             // tuesday has 3 emails scheduled
-            [getDateStringWithoutTime(tuesdayDate, timeZone)]: { 1: 3 },
+            {
+                date: getDateStringWithoutTime(tuesdayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
             // wednesday has 2 emails scheduled
-            [getDateStringWithoutTime(wednesdayDate, timeZone)]: { 1: 2 },
-        };
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(1, emailCountPerDay, mondayDate, 3, timeZone);
+            {
+                date: getDateStringWithoutTime(wednesdayDate, timeZone),
+                emails_count: 2,
+                sequence_step_id: step0Id,
+            },
+        ];
+
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(step0Id, emailCountPerDay, mondayDate, 3, timeZone);
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Wednesday');
 
@@ -130,16 +145,30 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
         const tuesdayDate = new Date(`2023-10-03T14:00:00${chicagoOffset}`);
         expect(getWeekday(new Date(tuesdayDate), timeZone)).toEqual('Tuesday');
 
-        const emailCountPerDay = {
-            // friday has 3 emails scheduled
-            [getDateStringWithoutTime(fridayDate, timeZone)]: { 1: 3 },
-            // monday has 3 emails scheduled
-            [getDateStringWithoutTime(mondayDate, timeZone)]: { 1: 3 },
-            // tuesday has 2 emails scheduled
-            [getDateStringWithoutTime(tuesdayDate, timeZone)]: { 1: 2 },
-        };
+        const step0Id = v4();
 
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(1, emailCountPerDay, fridayDate, 3, timeZone);
+        const emailCountPerDay: EmailCountPerDayPerStep = [
+            // friday has 3 emails scheduled
+            {
+                date: getDateStringWithoutTime(fridayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
+            // monday has 3 emails scheduled
+            {
+                date: getDateStringWithoutTime(mondayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
+            // tuesday has 2 emails scheduled
+            {
+                date: getDateStringWithoutTime(tuesdayDate, timeZone),
+                emails_count: 2,
+                sequence_step_id: step0Id,
+            },
+        ];
+
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(step0Id, emailCountPerDay, fridayDate, 3, timeZone);
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Tuesday');
 
@@ -159,17 +188,30 @@ describe('findNextAvailableDateIfMaxEmailsPerDayMet', () => {
 
         const tuesdayDate = new Date(`2029-01-02T14:00:00${chicagoOffset}`);
         expect(getWeekday(new Date(tuesdayDate), timeZone)).toEqual('Tuesday');
+        const step0Id = v4();
 
-        const emailCountPerDay = {
+        const emailCountPerDay: EmailCountPerDayPerStep = [
             // friday has 3 emails scheduled
-            [getDateStringWithoutTime(fridayDate, timeZone)]: { 1: 3 },
+            {
+                date: getDateStringWithoutTime(fridayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
             // monday has 3 emails scheduled
-            [getDateStringWithoutTime(mondayDate, timeZone)]: { 1: 3 },
+            {
+                date: getDateStringWithoutTime(mondayDate, timeZone),
+                emails_count: 3,
+                sequence_step_id: step0Id,
+            },
             // tuesday has 2 emails scheduled
-            [getDateStringWithoutTime(tuesdayDate, timeZone)]: { 1: 2 },
-        };
+            {
+                date: getDateStringWithoutTime(tuesdayDate, timeZone),
+                emails_count: 2,
+                sequence_step_id: step0Id,
+            },
+        ];
 
-        const result = findNextAvailableDateIfMaxEmailsPerDayMet(1, emailCountPerDay, fridayDate, 3, timeZone);
+        const result = findNextAvailableDateIfMaxEmailsPerDayMet(step0Id, emailCountPerDay, fridayDate, 3, timeZone);
         const dayOfWeek = getWeekday(result, timeZone);
         expect(dayOfWeek).toEqual('Tuesday');
 
@@ -186,32 +228,28 @@ describe('scheduleEmails', () => {
     it('will schedule the outreach and followup emails', () => {
         const step0Id = v4();
         const step1Id = v4();
-        const mondayDate = new Date(`2029-01-01T18:10:00${chicagoOffset}`).toISOString();
-        const tuesdayDate = new Date(`2029-01-02T18:10:00${chicagoOffset}`).toISOString();
-        const wednesdayDate = new Date(`2029-01-03T18:10:00${chicagoOffset}`).toISOString();
-        const thursdayDate = new Date(`2029-01-04T18:10:00${chicagoOffset}`).toISOString();
-        const fridayDate = new Date(`2029-01-05T18:10:00${chicagoOffset}`).toISOString();
-        const alreadyScheduledEmails: Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[] = [
+        const mondayDate = new Date(`2029-01-01T18:10:00${chicagoOffset}`);
+        const tuesdayDate = new Date(`2029-01-02T18:10:00${chicagoOffset}`);
+        const wednesdayDate = new Date(`2029-01-03T18:10:00${chicagoOffset}`);
+        const thursdayDate = new Date(`2029-01-04T18:10:00${chicagoOffset}`);
+        const fridayDate = new Date(`2029-01-05T18:10:00${chicagoOffset}`);
+        const alreadyScheduledEmails: EmailCountPerDayPerStep = [
             // monday has 3 emails scheduled for step 0 and step 1
-            { email_send_at: mondayDate, sequence_step_id: step0Id },
-            { email_send_at: mondayDate, sequence_step_id: step0Id },
-            { email_send_at: mondayDate, sequence_step_id: step0Id },
+            {
+                date: getDateStringWithoutTime(mondayDate, timeZone),
+                sequence_step_id: step0Id,
+                emails_count: 3,
+            },
 
-            { email_send_at: mondayDate, sequence_step_id: step1Id },
-            { email_send_at: mondayDate, sequence_step_id: step1Id },
-            { email_send_at: mondayDate, sequence_step_id: step1Id },
+            { date: getDateStringWithoutTime(mondayDate, timeZone), sequence_step_id: step1Id, emails_count: 3 },
+
             // tuesday has 3 emails scheduled for step 0 and 2 for step 1
-            { email_send_at: tuesdayDate, sequence_step_id: step0Id },
-            { email_send_at: tuesdayDate, sequence_step_id: step0Id },
-            { email_send_at: tuesdayDate, sequence_step_id: step0Id },
+            { date: getDateStringWithoutTime(tuesdayDate, timeZone), sequence_step_id: step0Id, emails_count: 3 },
 
-            { email_send_at: tuesdayDate, sequence_step_id: step1Id },
-            { email_send_at: tuesdayDate, sequence_step_id: step1Id },
+            { date: getDateStringWithoutTime(tuesdayDate, timeZone), sequence_step_id: step1Id, emails_count: 2 },
 
             // thursday already has 3 step 1 emails scheduled
-            { email_send_at: thursdayDate, sequence_step_id: step1Id },
-            { email_send_at: thursdayDate, sequence_step_id: step1Id },
-            { email_send_at: thursdayDate, sequence_step_id: step1Id },
+            { date: getDateStringWithoutTime(thursdayDate, timeZone), sequence_step_id: step1Id, emails_count: 3 },
         ];
         // expect step 0 to be scheduled on Wednesday and step 1 to be scheduled on Friday
         const steps: SequenceStep[] = [
@@ -249,10 +287,11 @@ describe('scheduleEmails', () => {
         ).toEqual(true);
     });
     it('should not use excessive memory', () => {
-        const testLength = 10000;
+        const testLength = 1000;
         const step0Id = v4();
         const step1Id = v4();
         const step2Id = v4();
+        const initialDate = new Date(`2029-01-01T18:00:00${chicagoOffset}`);
         const steps: SequenceStep[] = [
             {
                 id: step0Id,
@@ -266,19 +305,20 @@ describe('scheduleEmails', () => {
             } as SequenceStep,
             {
                 id: step2Id,
-                wait_time_hours: 24,
+                wait_time_hours: 48,
                 step_number: 2,
             } as SequenceStep,
         ];
-        const scheduledEmails: Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[] = [];
+        const scheduledEmails: EmailCountPerDayPerStep = [];
         for (let i = 0; i < testLength; i++) {
-            scheduledEmails.push({
-                email_send_at: addHours(
-                    new Date(`2029-01-01T18:10:00${chicagoOffset}`),
-                    i + Math.floor(Math.random() * 2),
-                ).toISOString(),
-                sequence_step_id: steps[i % 3].id,
-            });
+            for (const step of steps) {
+                scheduledEmails.push({
+                    date: getDateStringWithoutTime(addHours(initialDate, i * 24), timeZone),
+                    // because each day is full, the algorithm will have to iterate through all the days
+                    emails_count: 3,
+                    sequence_step_id: step.id,
+                });
+            }
         }
 
         const memoryBefore = process.memoryUsage().heapUsed;
@@ -294,11 +334,33 @@ describe('scheduleEmails', () => {
         const memoryAfter = process.memoryUsage().heapUsed;
 
         const memoryUsed = byteToMegabyte(memoryAfter - memoryBefore);
-        // console.log(`Memory used: ${memoryUsed} mb`);
 
-        expect(outreachStepInsert).toBeTruthy();
+        // with 1000 days all full, the scheduled day should be in the 1001th day
+
+        const isThousandthDay = isSameDay(
+            new Date(outreachStepInsert.email_send_at ?? ''),
+            addHours(initialDate, 1001 * 24),
+            timeZone,
+        );
+        expect(isThousandthDay).toEqual(true);
         expect(followupEmailInserts.length).toEqual(2);
 
-        expect(memoryUsed).toBeLessThan(20);
+        expect(
+            isSameDay(
+                new Date(followupEmailInserts[0].email_send_at ?? ''),
+                addHours(initialDate, 1002 * 24),
+                timeZone,
+            ),
+        ).toEqual(true);
+
+        expect(
+            isSameDay(
+                new Date(followupEmailInserts[1].email_send_at ?? ''),
+                addHours(initialDate, 1004 * 24),
+                timeZone,
+            ),
+        ).toEqual(true);
+
+        expect(memoryUsed).toBeLessThan(10);
     });
 });

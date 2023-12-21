@@ -55,7 +55,11 @@ const sendAndInsertEmail = async ({
     templateVariables: TemplateVariable[];
     messageId: string;
     references: string;
-    scheduledEmails: Pick<SequenceEmail, 'email_send_at' | 'sequence_step_id'>[];
+    scheduledEmails: {
+        date: string;
+        emails_count: number;
+        sequence_step_id: string;
+    }[];
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
