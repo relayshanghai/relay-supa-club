@@ -108,12 +108,12 @@ const sendAndInsertEmail = async ({
     };
 
     if (step.step_number === 0) {
-        const { outreachStepInsert, followupEmailInserts } = scheduleEmails(
+        const { outreachStepInsert, followupEmailInserts } = await scheduleEmails({
             sequenceSteps,
             scheduledEmails,
             influencer,
             account,
-        );
+        });
 
         if (!outreachStepInsert || !outreachStepInsert.email_send_at) {
             throw new Error('No outreach step insert');
