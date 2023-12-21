@@ -3,6 +3,7 @@ import { type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
 import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
 import { initializeDB } from 'src/utils/cache-provider/cache-provider';
+import { clientLogger } from 'src/utils/logger-client';
 
 const version = cacheVersion;
 
@@ -29,7 +30,19 @@ export const usePersistentState = <T>(
         const updateDB = async () => {
             if (!db) return;
 
-            await db.put(appCacheStoreName, state, key);
+            try {
+                await db.put(appCacheStoreName, state, key);
+            } catch (error: any) {
+                if (error?.message?.includes('The database connection is closing')) {
+                    // Reopen the database
+                    const reopenedDb = await initializeDB(appCacheStoreName, appCacheDBKey(profile?.id), version);
+                    setDb(reopenedDb);
+                    // Retry the operation
+                    await reopenedDb.put(appCacheStoreName, state, key);
+                } else {
+                    clientLogger(error.message, 'error');
+                }
+            }
         };
 
         if (!db) {
