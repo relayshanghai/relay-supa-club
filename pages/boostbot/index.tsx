@@ -30,9 +30,16 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { messages, setMessages, influencers, createNewConversation, refreshConversation, isConversationLoading } =
-        useBoostbot();
-    const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
+    const {
+        messages,
+        setMessages,
+        influencers,
+        createNewConversation,
+        refreshConversation,
+        isConversationLoading,
+        setInfluencers,
+    } = useBoostbot();
+    const [hasSearched, setHasSearched] = useState(false);
     const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
         'boostbot-is-first-time-add-to-sequence',
         true,
@@ -90,12 +97,6 @@ const Boostbot = () => {
     useEffect(() => {
         refreshUsages();
     }, [influencers, refreshUsages]);
-
-    useEffect(() => {
-        if (isInitialLogoScreen && influencers.length > 0) {
-            setIsInitialLogoScreen(false);
-        }
-    }, [influencers.length, isInitialLogoScreen, setIsInitialLogoScreen]);
 
     useEffect(() => {
         if (isSearchLoading || !isUsageLoaded) return;
@@ -252,11 +253,14 @@ const Boostbot = () => {
     const clearChatHistory = async () => {
         await createNewConversation(profile?.first_name);
         refreshConversation();
-        setIsInitialLogoScreen(true);
+        setInfluencers([]);
+        setHasSearched(false);
         setSelectedInfluencers({});
     };
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
+
+    const showInitialLogoScreen = !hasSearched && influencers.length === 0;
 
     return (
         <Layout>
@@ -273,7 +277,7 @@ const Boostbot = () => {
                         influencers={influencers}
                         allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
-                        setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        setHasSearched={setHasSearched}
                         isOutreachLoading={isOutreachLoading}
                         isSearchLoading={isSearchLoading}
                         areChatActionsDisabled={areChatActionsDisabled}
@@ -299,7 +303,7 @@ const Boostbot = () => {
                     />
                 </div>
 
-                {isInitialLogoScreen ? (
+                {showInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
                     <div className="flex w-full basis-3/4 flex-col">
