@@ -1,6 +1,8 @@
 import type { From, ReplyTo } from 'types/email-engine/account-account-message-get';
 
-type StringifyContactsFn = (contacts: From | From[] | ReplyTo | ReplyTo[]) => string;
+type Contact = From | ReplyTo;
+
+type StringifyContactsFn = (contacts: Contact | Contact[]) => string;
 
 export const stringifyContacts: StringifyContactsFn = (contacts) => {
     if (Array.isArray(contacts)) {

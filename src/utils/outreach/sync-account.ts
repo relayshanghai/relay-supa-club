@@ -1,3 +1,4 @@
+import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { getEmails } from '../api/email-engine';
 import { MAILBOX_PATH_ALL } from './constants';
 import { syncEmail } from './sync-email';
@@ -11,39 +12,36 @@ export const syncAccount: SyncAccountFn = async (params) => {
     const result = await getEmails(params.account, MAILBOX_PATH_ALL);
     results.push(result);
 
-    for (const email of result.messages) {
+    const _syncEmail = async (email: MessagesGetMessage) => {
+        // eslint-disable-next-line no-console
+        console.log('Syncing...', email.id, email.messageId, email.threadId, email.from, email.to);
+
         // skip drafts
         if (email.labels.includes('\\Draft')) {
-            continue;
+            return false;
         }
 
-        const _ = await syncEmail({
+        // fetched emails are sorted by newest causing
+        // re-synced threads to use the new email createdAt
+        return await syncEmail({
             account: params.account,
             emailEngineId: email.id,
         });
+    };
 
+    for (const email of result.messages) {
+        const _ = await _syncEmail(email);
         dbresult.push(_);
     }
 
     for (let page = 2; page <= result.pages; page++) {
         const result = await getEmails(params.account, MAILBOX_PATH_ALL, page);
 
-        // @todo too lazy to create function for this
         for (const email of result.messages) {
-            if (email.labels.includes('\\Draft')) {
-                continue;
-            }
-
-            const _ = await syncEmail({
-                account: params.account,
-                emailEngineId: email.id,
-            });
-
+            const _ = await _syncEmail(email);
             dbresult.push(_);
         }
     }
-
-    // const emails = await getMailboxes(params.account);
 
     return { results, dbresult };
 };

@@ -5,29 +5,35 @@ import { parseContacts } from './parse-contacts';
 import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
+import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
 
 type SyncEmailParams = {
     account: string;
     emailEngineId: string;
 };
 
-type SyncEmailFn = (event: SyncEmailParams) => Promise<{
+type SyncEmailFn = (params: SyncEmailParams) => Promise<{
     influencer: DBQueryReturn<typeof getSequenceInfluencerByMessageId>;
     thread: any;
     email: any;
 }>;
 
-export const syncEmail: SyncEmailFn = async (event) => {
+export const syncEmail: SyncEmailFn = async (params) => {
     const result = await db().transaction(async (tx) => {
-        const emailMessage = await getMessage(event.account, event.emailEngineId);
+        const emailMessage = await getMessage(params.account, params.emailEngineId);
+
+        // determine the valid repliable id for this thread
+        const profile = await getProfileByEmailEngineEmail(tx)(emailMessage.from.address);
+        const repliedMessageId = !profile && emailMessage.inReplyTo ? emailMessage.id : null;
 
         const influencer = await getSequenceInfluencerByMessageId(tx)(emailMessage.messageId);
 
         const thread = await createThread(tx)({
-            sequenceInfluencerId: influencer?.id ?? null,
             threadId: emailMessage.threadId,
-            emailEngineAccount: event.account,
-            emailEngineId: event.emailEngineId,
+            emailEngineAccount: params.account,
+            sequenceInfluencerId: influencer?.id,
+            lastReplyId: repliedMessageId,
+            createdAt: String(emailMessage.date),
         });
 
         const email = await createEmail(tx)({
@@ -36,8 +42,9 @@ export const syncEmail: SyncEmailFn = async (event) => {
             recipients: stringifyContacts(emailMessage.to),
             threadId: emailMessage.threadId,
             emailEngineMessageId: emailMessage.messageId,
-            emailEngineId: event.emailEngineId,
-            emailEngineAccountId: event.account,
+            emailEngineId: params.emailEngineId,
+            emailEngineAccountId: params.account,
+            createdAt: String(emailMessage.date),
         });
 
         if (!email) {

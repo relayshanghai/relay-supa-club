@@ -1,7 +1,7 @@
 import { sequenceInfluencers, sequences, templateVariables, threads } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql, desc } from 'drizzle-orm';
 
 export type GetThreadsReturn = {
     threads: typeof threads.$inferSelect;
@@ -22,7 +22,8 @@ export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string) 
         .leftJoin(
             templateVariables,
             sql`${templateVariables.sequenceId} = ${sequences.id} AND ${templateVariables.key} = 'productName'`,
-        );
+        )
+        .orderBy(desc(threads.updatedAt));
 
     return rows;
 };
