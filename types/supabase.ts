@@ -1518,8 +1518,8 @@ export interface Database {
           created_at: string | null
           deleted_at: string | null
           email_engine_account_id: string
-          email_engine_id: string
           id: string
+          last_reply_id: string | null
           sequence_influencer_id: string | null
           thread_id: string
           thread_status: string
@@ -1529,8 +1529,8 @@ export interface Database {
           created_at?: string | null
           deleted_at?: string | null
           email_engine_account_id: string
-          email_engine_id: string
           id?: string
+          last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id: string
           thread_status?: string
@@ -1540,8 +1540,8 @@ export interface Database {
           created_at?: string | null
           deleted_at?: string | null
           email_engine_account_id?: string
-          email_engine_id?: string
           id?: string
+          last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id?: string
           thread_status?: string
