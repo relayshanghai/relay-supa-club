@@ -22,6 +22,7 @@ export default defineConfig({
         viewportHeight: 960,
         baseUrl: 'http://localhost:3000',
         chromeWebSecurity: false,
+        watchForFileChanges: false,
     },
 
     component: {
