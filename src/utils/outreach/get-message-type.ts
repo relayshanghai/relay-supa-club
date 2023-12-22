@@ -25,7 +25,7 @@ export const getMessageType: GetMessageTypeFn = async (params) => {
         return 'Trash';
     }
 
-    if (emailMessage.specialUse === '\\Drafts') {
+    if (emailMessage.labels.includes('\\Draft')) {
         return 'Draft';
     }
 
