@@ -16,11 +16,6 @@ export const syncAccount: SyncAccountFn = async (params) => {
         // eslint-disable-next-line no-console
         console.log('Syncing...', email.id, email.messageId, email.threadId, email.from, email.to);
 
-        // skip drafts
-        if (email.labels.includes('\\Draft')) {
-            return false;
-        }
-
         // fetched emails are sorted by newest causing
         // re-synced threads to use the new email createdAt
         return await syncEmail({

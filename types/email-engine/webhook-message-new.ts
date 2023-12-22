@@ -39,6 +39,7 @@ export interface Data {
     summary: Summary;
     draft?: boolean;
     cc?: From[];
+    inReplyTo?: string;
 }
 
 interface From {

@@ -58,6 +58,7 @@ import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequen
 import { syncEmail } from 'src/utils/outreach/sync-email';
 import type { WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
 import { deleteEmail } from 'src/utils/outreach/delete-email';
+import { transformKeys } from 'src/utils/database/helpers';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -239,18 +240,24 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
-    // We sometimes receive a messageNew event when an email is trashed
-    if (event.data.specialUse === '\\Trash') {
-        return await handleMessageDeleted({ ...event, event: 'messageDeleted' }, res);
-    }
-
-    const result = await syncEmail({
+    const synced = await syncEmail({
         account: event.account,
         emailEngineId: event.data.id,
     });
 
     // eslint-disable-next-line no-console
-    console.log('SYNC EMAIL', result);
+    console.log('SYNC EMAIL', synced);
+
+    // We sometimes receive a messageNew event when an email is trashed
+    if (synced.messageType === 'Trash') {
+        return res.status(httpCodes.OK).json({ message: 'ok' });
+    }
+
+    if (synced.messageType === 'Reply' && synced.influencer) {
+        const _influencer = transformKeys<SequenceInfluencer>(synced.influencer);
+        await handleReply(_influencer, event);
+        return res.status(httpCodes.OK).json({ message: 'ok' });
+    }
 
     const trackData: Omit<EmailNewPayload, 'is_success'> = {
         account_id: event.account,
@@ -707,7 +714,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 const handleMessageDeleted = async (event: WebhookMessageDeleted, res: NextApiResponse) => {
     await deleteEmail(event.data.id);
 
-    return res.status(httpCodes.OK).json({ message: 'success' });
+    return res.status(httpCodes.OK).json({ message: 'ok' });
 };
 
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
