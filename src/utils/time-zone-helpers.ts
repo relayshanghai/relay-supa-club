@@ -12,16 +12,13 @@ export const getWeekday = (date: Date, timeZone: string) => {
 /**
  * @example getDayWithoutTime(new Date('2021-07-17T14:00:00.000Z'), 'America/New_York') // returns 2021-07-17
  */
-export const getDateStringWithoutTime = (date: Date, timeZone: string) =>
-    // return in the format YYYY-MM-DD
-    date
-        .toLocaleString('en', {
-            timeZone,
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-        })
-        .replaceAll('/', '-');
+export const getDateStringWithoutTime = (date: Date, timeZone: string) => {
+    const year = date.toLocaleString('en', { timeZone, year: 'numeric' });
+    const month = date.toLocaleString('en', { timeZone, month: '2-digit' });
+    const day = date.toLocaleString('en', { timeZone, day: '2-digit' });
+
+    return `${year}-${month}-${day}`;
+};
 
 export const weekDayAsNumber = (day: string) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
