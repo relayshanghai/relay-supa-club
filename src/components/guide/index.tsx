@@ -75,8 +75,6 @@ export const GuideComponent = () => {
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const { query } = useRouter();
-    // if query  show_video = false, dont show video
-
     const showVideo = query.show_video === 'false' ? false : true;
 
     return (
