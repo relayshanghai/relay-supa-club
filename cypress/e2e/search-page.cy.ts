@@ -1,19 +1,19 @@
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
-describe.only('Dashboard/Search page', () => {
+describe('Dashboard/Search page', () => {
     beforeEach(() => {
         setupIntercepts();
         searchIntercepts();
     });
 
-    it.only('can search for a topic', () => {
+    it('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
+            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
         });
-        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators').click();
