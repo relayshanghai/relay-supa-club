@@ -91,6 +91,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         suppressFetch: !shouldFetch,
     });
 
+    const [submittingChangeEmail, setSubmittingChangeEmail] = useState(false);
+
     useEffect(() => {
         const update = async () => {
             const result =
@@ -285,7 +287,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
     const disableSend =
-        isMissingSequenceSendEmail || !sequenceInfluencer.email || sendingEmail || missingSocialProfileInfo;
+        submittingChangeEmail ||
+        isMissingSequenceSendEmail ||
+        !sequenceInfluencer.email ||
+        sendingEmail ||
+        missingSocialProfileInfo;
 
     return (
         <>
@@ -330,10 +336,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={(emailSubmit) => {
+                                    onSubmit={async (emailSubmit) => {
                                         const trimmed = emailSubmit.trim().toLowerCase();
-                                        return handleEmailUpdate(trimmed);
+                                        await handleEmailUpdate(trimmed);
                                     }}
+                                    onSubmittingChange={setSubmittingChangeEmail}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (
