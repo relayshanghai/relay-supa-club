@@ -14,9 +14,11 @@ describe.only('Dashboard/Search page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
+        cy.getByTestId('platform-select-loading-youtube').should('exist');
+        cy.getByTestId('platform-select-loading-youtube').should('not.exist');
         cy.contains('No credits remaining').should('not.exist');
         cy.getByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators');
+            cy.get('input').should('be.visible').should('be.enabled').type('alligators');
         });
         cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
