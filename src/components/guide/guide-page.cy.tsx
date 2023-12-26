@@ -45,9 +45,9 @@ describe('GuideCards', () => {
         });
         it('should open modal and close it', () => {
             testMount(<GuideCards cardKey={`${section}` as any} />);
-            cy.contains(guidePage.learnMore).click();
+            cy.contains(guidePage.learnMore).should('be.enabled').click();
             cy.contains(sectionDetails.title);
-            cy.contains(guidePage.goBack).click();
+            cy.contains(guidePage.goBack).should('be.enabled').click();
             cy.contains(guidePage.goto + ' ' + sectionDetails.title).should('not.exist');
         });
     });
