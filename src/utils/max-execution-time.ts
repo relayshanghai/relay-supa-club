@@ -15,8 +15,6 @@ export const maxExecutionTimeAndMemory = <T extends Promise<any>>(func: T, maxTi
                 const memCheckIntervalId = setInterval(() => {
                     memoryUsage = process.memoryUsage.rss();
 
-                    // eslint-disable-next-line no-console
-                    console.log('memoryUsage', memoryUsage);
                     if (memoryUsage > MAX_MEMORY) {
                         clearInterval(memCheckIntervalId);
                         resolve(ERR_JOB_MEMORYEXCEEDED);
