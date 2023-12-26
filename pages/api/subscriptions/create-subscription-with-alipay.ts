@@ -9,16 +9,16 @@ export type SubscriptionUpgradeWithAlipayPostRequestBody = {
     companyId: string;
     cusId: string;
     priceId: string;
+    couponId?: string;
 };
 
-export interface SubscriptionUpgradeWithAlipayPostResponse extends Stripe.Response<Stripe.Subscription> {
-    clientSecret: string | null;
-    newSubscriptionId: string;
+export interface SubscriptionUpgradeWithAlipayPostResponse {
+    paymentIntent: Stripe.PaymentIntent;
     oldSubscriptionId: string;
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { cusId, priceId } = req.body as SubscriptionUpgradeWithAlipayPostRequestBody;
+    const { cusId, priceId, couponId } = req.body as SubscriptionUpgradeWithAlipayPostRequestBody;
     if (!cusId || !priceId) {
         serverLogger('Missing cusId, priceId');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing cusId, priceId' });
@@ -41,6 +41,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         items: [{ price: priceId }],
         expand: ['latest_invoice.payment_intent'],
         off_session: true,
+        coupon: couponId,
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent;
@@ -48,8 +49,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         serverLogger('Failed to get payment intent');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to get payment intent' });
     }
+    const response: SubscriptionUpgradeWithAlipayPostResponse = { paymentIntent, oldSubscriptionId };
 
-    return res.status(httpCodes.OK).json({ paymentIntent, oldSubscriptionId });
+    return res.status(httpCodes.OK).json(response);
 };
 
 export default ApiHandler({
