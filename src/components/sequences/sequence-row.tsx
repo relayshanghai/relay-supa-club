@@ -32,6 +32,8 @@ import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
+import { useAtom } from 'jotai';
+import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -90,8 +92,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
     });
-
-    const [submittingChangeEmail, setSubmittingChangeEmail] = useState(false);
 
     useEffect(() => {
         const update = async () => {
@@ -285,6 +285,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
+
+    const [submittingChangeEmail, setSubmittingChangeEmail] = useAtom(submittingChangeEmailAtom);
 
     const disableSend =
         submittingChangeEmail ||
