@@ -56,6 +56,7 @@ export const createSetupIntentForAlipay = async ({
     priceId,
     currency,
     priceTier,
+    couponId,
 }: {
     companyId: string;
     customerId: string;
@@ -71,6 +72,7 @@ export const createSetupIntentForAlipay = async ({
         priceId,
         currency,
         priceTier,
+        couponId,
     };
 
     const res = await nextFetch<CreateSetUpIntentForAlipayPostResponse>(
