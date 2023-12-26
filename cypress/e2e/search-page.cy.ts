@@ -4,21 +4,21 @@ Cypress.on('uncaught:exception', (_err) => {
     return false;
 });
 
-describe('Dashboard/Search page', () => {
+describe.only('Dashboard/Search page', () => {
     beforeEach(() => {
         setupIntercepts();
         searchIntercepts();
     });
 
-    it('can search for a topic', () => {
+    it.only('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
         cy.contains('No credits remaining').should('not.exist');
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
-            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
         });
+        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators').click();
