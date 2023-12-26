@@ -14,36 +14,29 @@ export const Default: JobQueue<typeof QUEUE_NAME> = {
     name: QUEUE_NAME,
     run: async (payload) => {
         const queueName = payload?.queue ?? QUEUE_NAME;
-        let memoryUsage = process.memoryUsage.rss();
 
-        crumb({ message: `Start queue: ${queueName} memory usage: ${memoryUsage}` });
+        crumb({ message: `Start queue: ${queueName}` });
         const jobs = await db(fetchJobs)({
             queue: queueName,
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
         });
-        memoryUsage = process.memoryUsage.rss();
-        crumb({ message: `Fetched Jobs: ${jobs.length} @ ${queueName} memory usage: ${memoryUsage}` });
+        crumb({ message: `Fetched Jobs: ${jobs.length} @ ${queueName}` });
         const runningJobs = jobs.map(async (job) => {
-            memoryUsage = process.memoryUsage.rss();
-            crumb({ message: `Start Job: ${job.id} @ ${queueName} memory usage: ${memoryUsage}` });
+            crumb({ message: `Start Job: ${job.id} @ ${queueName}` });
             const jobResult = await runJob(job);
 
-            memoryUsage = process.memoryUsage.rss();
-            crumb({ message: `Finish Job: ${job.id} @ ${queueName} memory usage: ${memoryUsage}` });
+            crumb({ message: `Finish Job: ${job.id} @ ${queueName}` });
             await finishJob(job, jobResult.status, jobResult.result);
-            memoryUsage = process.memoryUsage.rss();
-            crumb({ message: `Done Job: ${job.id} @ ${queueName} memory usage: ${memoryUsage}` });
+            crumb({ message: `Done Job: ${job.id} @ ${queueName}` });
             return { job: job.id, result: jobResult.status === JOB_STATUS.success };
         });
-        memoryUsage = process.memoryUsage.rss();
-        crumb({ message: `Settling Jobs: ${jobs.length} @ ${queueName} memory usage: ${memoryUsage}` });
+        crumb({ message: `Settling Jobs: ${jobs.length} @ ${queueName}` });
         const finishedJobs = await Promise.allSettled(runningJobs);
         const results: { job: string; result: boolean }[] = finishedJobs.map((result) =>
             result.status === 'fulfilled' ? result.value : result.reason,
         );
-        memoryUsage = process.memoryUsage.rss();
-        crumb({ message: `Done Queue: ${jobs.length} @ ${queueName} memory usage: ${memoryUsage}` });
+        crumb({ message: `Done Queue: ${jobs.length} @ ${queueName}` });
         return results;
     },
 };
