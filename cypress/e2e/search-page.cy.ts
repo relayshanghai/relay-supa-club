@@ -4,13 +4,13 @@ Cypress.on('uncaught:exception', (_err) => {
     return false;
 });
 
-describe.only('Dashboard/Search page', () => {
+describe('Dashboard/Search page', () => {
     beforeEach(() => {
         setupIntercepts();
         searchIntercepts();
     });
 
-    it.only('can search for a topic', () => {
+    it('can search for a topic', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
