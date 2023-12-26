@@ -16,12 +16,12 @@ describe('GuideComponent', () => {
         const cardDetails = guidePage.cards[section];
 
         it('should render', () => {
-            testMount(<GuideComponent />);
+            testMount(<GuideComponent showVideo={false} />);
             cy.contains(guidePage.welcome + ' BoostBot');
             cy.contains(guidePage.welcomeDescription);
         });
         it('should show section title and description', () => {
-            testMount(<GuideComponent />);
+            testMount(<GuideComponent showVideo={false} />);
 
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);

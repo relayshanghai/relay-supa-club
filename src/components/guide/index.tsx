@@ -70,14 +70,13 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     );
 };
 
-export const GuideComponent = () => {
+export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const { query } = useRouter();
-    // if query  show_video = false, dont show video
 
-    const showVideo = query.show_video === 'false' ? false : true;
+    const shouldShowVideo = query.show_video === 'false' ? false : showVideo;
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -85,7 +84,7 @@ export const GuideComponent = () => {
                 <p className="text-4xl font-bold text-gray-800">{t('guidePage.welcome')} BoostBot</p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            {showVideo ? (
+            {shouldShowVideo ? (
                 <video
                     muted={false}
                     controls={true}
