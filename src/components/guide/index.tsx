@@ -58,13 +58,13 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
             </div>
             <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>
             <p className="break-words text-gray-600">{t(`guidePage.cards.${cardKey}.description`)}</p>
-            <p
+            <button
                 data-testid={`guide-modal-${cardKey}`}
                 className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
                 onClick={handleGuideModal}
             >
                 {t('guidePage.learnMore')} <ArrowRight className="stroke-primary-700" height={18} width={18} />
-            </p>
+            </button>
             <GuideModal section={cardKey} show={guideShow} setShow={setGuideShow} />
         </div>
     );
