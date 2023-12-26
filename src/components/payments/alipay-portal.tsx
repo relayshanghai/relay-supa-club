@@ -17,9 +17,11 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export default function AlipayPortal({
     selectedPrice,
     priceTier,
+    couponId,
 }: {
     selectedPrice: NewRelayPlan;
     priceTier: ActiveSubscriptionTier;
+    couponId?: string;
 }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
@@ -52,13 +54,14 @@ export default function AlipayPortal({
         try {
             const priceId = selectedPrice.priceIds.monthly;
             const currency = selectedPrice.currency;
-            const setupIntent = await createSetupIntentForAlipay(
-                company.id,
-                company.cus_id,
+            const setupIntent = await createSetupIntentForAlipay({
+                companyId: company.id,
+                customerId: company.cus_id,
                 priceId,
                 currency,
                 priceTier,
-            );
+                couponId,
+            });
 
             await handleServerResponse(setupIntent);
         } catch (error) {
