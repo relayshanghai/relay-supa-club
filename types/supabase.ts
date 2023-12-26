@@ -1553,10 +1553,42 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      searches_per_user: {
+        Row: {
+          name: string | null
+          searches_limit: string | null
+          subscription_start_date: string | null
+          subscription_status: string | null
+          website: string | null
+        }
+        Insert: {
+          name?: string | null
+          searches_limit?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          website?: string | null
+        }
+        Update: {
+          name?: string | null
+          searches_limit?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       create_queue_worker: {
+        Args: {
+          worker_name: string
+          url: string
+          token: string
+          schedule: string
+        }
+        Returns: undefined
+      }
+      create_queue_worker_2: {
         Args: {
           worker_name: string
           url: string
