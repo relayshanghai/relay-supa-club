@@ -32,6 +32,8 @@ import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
+import { useAtom } from 'jotai';
+import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -284,8 +286,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
+    const [submittingChangeEmail, setSubmittingChangeEmail] = useAtom(submittingChangeEmailAtom);
+
     const disableSend =
-        isMissingSequenceSendEmail || !sequenceInfluencer.email || sendingEmail || missingSocialProfileInfo;
+        submittingChangeEmail ||
+        isMissingSequenceSendEmail ||
+        !sequenceInfluencer.email ||
+        sendingEmail ||
+        missingSocialProfileInfo;
 
     return (
         <>
@@ -330,10 +338,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={(emailSubmit) => {
+                                    onSubmit={async (emailSubmit) => {
                                         const trimmed = emailSubmit.trim().toLowerCase();
-                                        return handleEmailUpdate(trimmed);
+                                        await handleEmailUpdate(trimmed);
                                     }}
+                                    onSubmittingChange={setSubmittingChangeEmail}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (

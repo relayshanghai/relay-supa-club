@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AddPaymentsSection } from 'src/components/payments/add-payments-section';
 import { PlanDetails } from 'src/components/payments/plan-details';
 import LoginSignupLayout from 'src/components/SignupLayout';
@@ -11,9 +11,11 @@ export default function PaymentPage() {
         isReady,
         query: { plan },
     } = router;
+    const [routing, setRouting] = useState(true);
+
     useEffect(() => {
-        if (!isReady) {
-            throw new Error('Router is not ready');
+        if (isReady) {
+            setRouting(false);
         }
     }, [isReady]);
 
@@ -22,8 +24,8 @@ export default function PaymentPage() {
     return (
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
-            left={<PlanDetails priceTier={priceTier} />}
-            right={<AddPaymentsSection priceTier={priceTier} />}
+            left={routing ? <></> : <PlanDetails priceTier={priceTier} />}
+            right={routing ? <></> : <AddPaymentsSection priceTier={priceTier} />}
         />
     );
 }

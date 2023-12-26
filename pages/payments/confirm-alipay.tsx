@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
-    const { companyId, customerId, priceId, selectedPlan } = router.query;
+    const { companyId, customerId, priceId, selectedPlan, couponId } = router.query;
     const { t } = useTranslation();
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
         if (typeof companyId !== 'string' || typeof customerId !== 'string' || typeof priceId !== 'string') {
@@ -42,11 +42,12 @@ const ConfirmAlipayPaymentPage = () => {
                 return;
             }
             // if no setupError, create subscription with the customer
-            const { paymentIntent, oldSubscriptionId } = await upgradeSubscriptionWithAlipay(
+            const { paymentIntent, oldSubscriptionId } = await upgradeSubscriptionWithAlipay({
                 companyId,
-                customerId,
+                cusId: customerId,
                 priceId,
-            );
+                couponId: typeof couponId === 'string' ? couponId : undefined,
+            });
             if (paymentIntent.status === 'succeeded') {
                 await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
                 toast.success('Your subscription has been upgraded successfully!');
@@ -64,7 +65,7 @@ const ConfirmAlipayPaymentPage = () => {
         } finally {
             setIsProcessing(false);
         }
-    }, [companyId, customerId, priceId, router, selectedPlan, t]);
+    }, [companyId, couponId, customerId, priceId, router, selectedPlan, t]);
 
     useEffect(() => {
         handleCreateSubscriptionWithAlipay();

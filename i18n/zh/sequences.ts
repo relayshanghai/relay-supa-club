@@ -48,7 +48,7 @@ const sequences = {
     addEmail: '添加邮件',
     newSequence: '新建序列',
     status: {
-        Scheduling: '安排中',
+        Unscheduled: '未安排',
         Scheduled: '已计划',
         Delivered: '已送达',
         Opened: '已打开',

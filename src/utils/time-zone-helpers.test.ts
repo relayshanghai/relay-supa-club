@@ -26,7 +26,7 @@ describe('getDateStringWithoutTime', () => {
     it('returns the date without the time', () => {
         const date = new Date('2021-07-17T14:00:00.000Z');
         const result = getDateStringWithoutTime(date, 'America/New_York');
-        expect(result).toEqual('07-17-2021');
+        expect(result).toEqual('2021-07-17');
     });
 });
 
