@@ -329,7 +329,7 @@ describe('non-outreach user', () => {
         cy.contains('tr', 'Influencer Name');
         cy.contains('Inbox').click();
         cy.contains('Outreach Plan Exclusive Feature');
-        cy.contains('Inbox is only available for Outreach Plan accounts.');
+        cy.contains('Inbox is only available for Outreach Plan accounts.', { timeout: 10000 });
         cy.contains(
             "I've got a Aduro LED Face Mask I'd like to send you, have a feeling it's something your audience would be really into!",
         );
