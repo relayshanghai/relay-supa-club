@@ -853,6 +853,13 @@ _sequence_step_follow_up_2 := create_sequence_steps(
   2,
   48
 );
+_sequence_step_follow_up_3 := create_sequence_steps(
+  _sequence_general.id,
+  '3rd Follow-up',
+  'AAABieM1AhgAAAAF',
+  3,
+  72
+);
 
 PERFORM create_campaign_creator(
   _campaign_beauty_for_all.id,

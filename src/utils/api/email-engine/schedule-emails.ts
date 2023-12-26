@@ -12,10 +12,10 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
 import { crumb } from 'src/utils/logger-server';
 
-// const MAX_DAILY_SEND = 75; // now split into 25 per (3) steps
+// const MAX_DAILY_SEND = 75; // now split into 17 per (4) steps
 const TARGET_TIMEZONE = 'America/Chicago';
 
-const MAX_DAILY_PER_STEP = 25;
+const MAX_DAILY_PER_STEP = 17;
 
 export type EmailCountPerDayPerStep = {
     /** formatted like 2023-12-25 YYYY-MM-DD */

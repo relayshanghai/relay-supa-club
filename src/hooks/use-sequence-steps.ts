@@ -15,6 +15,7 @@ export const defaultTemplates: DefaultTemplateType[] = [
     { name: 'Outreach', id: 'AAABiYr-poEAAAAC', waitTimeHours: 0, stepNumber: 0 },
     { name: '1st Follow-up', id: 'AAABiYsMUIAAAAAD', waitTimeHours: 72, stepNumber: 1 },
     { name: '2nd Follow-up', id: 'AAABieM0bMMAAAAE', waitTimeHours: 144, stepNumber: 2 },
+    { name: '3rd Follow-up', id: 'AAABieM1AhgAAAAF', waitTimeHours: 216, stepNumber: 3 },
 ];
 
 export const useSequenceSteps = (sequenceId?: string) => {
