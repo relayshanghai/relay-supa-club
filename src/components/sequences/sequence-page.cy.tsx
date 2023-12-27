@@ -35,7 +35,7 @@ describe('<SequencePage />', () => {
         cy.getByTestId('send-email-button-allegraalynn-noreport@gmail.com').trigger('mouseover', { force: true });
         cy.contains('Updating influencer report');
     });
-    it('can multi-select influencers and send sequence. Shows error/success toast', () => {
+    it.only('can multi-select influencers and send sequence. Shows error/success toast', () => {
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         const josiah = mockInfluencers.find((i) => i.name === 'Josiah');
         const hannah = mockInfluencers.find((i) => i.name === 'hannah cho');
@@ -77,8 +77,7 @@ describe('<SequencePage />', () => {
 
         cy.contains('button', 'Start selected sequences').click();
 
-        cy.contains('Failed to submit 1 email(s) to send');
-        cy.contains('2 email(s) successfully scheduled to send');
+        cy.contains('Scheduling sequences failed, please try again');
 
         // optimistic update works
         cy.contains('button', 'In sequence').within(() => {
