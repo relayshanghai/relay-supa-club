@@ -84,7 +84,16 @@ export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) =>
                 <p className="text-4xl font-bold text-gray-800">{t('guidePage.welcome')} BoostBot</p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            {shouldShowVideo ? (
+            {!shouldShowVideo ? (
+                <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
+                    <Image
+                        src="/assets/imgs/placeholders/dashboard-current.png"
+                        alt="Description of the image"
+                        width={1200}
+                        height={800}
+                    />
+                </div>
+            ) : (
                 <video
                     muted={false}
                     controls={true}
@@ -114,15 +123,6 @@ export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) =>
                 >
                     <source src="/assets/videos/demo.mp4" />
                 </video>
-            ) : (
-                <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
-                    <Image
-                        src="/assets/imgs/placeholders/dashboard-current.png"
-                        alt="Description of the image"
-                        width={1200}
-                        height={800}
-                    />
-                </div>
             )}
             <div className="flex w-full flex-row flex-wrap justify-center md:justify-evenly md:gap-4 md:gap-y-8">
                 {Object.keys(guidePage.cards).map((card, index: number) => {
