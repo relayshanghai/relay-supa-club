@@ -43,32 +43,7 @@ const postHandler: ActionHandler = async (req, res) => {
         content: body.content,
     });
 
-    return res.status(200).json([
-        {
-            date: '2023-12-22T07:03:57.000Z',
-            unread: false,
-            id: '123',
-            from: {
-                name: 'LMNAO',
-                address: 'jiggling.potato@gmail.com',
-            },
-            to: [
-                {
-                    name: 'Suvojit Ghosh',
-                    address: 'ghoshsuvojit2012@gmail.com',
-                },
-            ],
-            cc: [],
-            replyTo: [
-                {
-                    name: 'LMNAO',
-                    address: 'jiggling.potato@gmail.com',
-                },
-            ],
-            subject: 'Re: 3rd Follow-up',
-            body: body.content,
-        },
-    ]);
+    return res.status(200).json(result);
 };
 
 export default ApiHandler({

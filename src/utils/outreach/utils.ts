@@ -1,6 +1,6 @@
 import { type GetThreadsReturn } from 'src/utils/outreach/db/get-threads';
 
-const fakeInfluencer = {
+const _fakeInfluencer = {
     name: 'Place Holder',
     avatarUrl: `https://api.dicebear.com/6.x/open-peeps/svg?seed=inbox-preview-relay&size=96`,
     username: 'placeholder',
