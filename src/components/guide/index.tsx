@@ -18,7 +18,6 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
 import { PlayTutorialVideo } from 'src/utils/analytics/events';
-import { useRouter } from 'next/router';
 
 export type GuideCardKey = keyof typeof guidePage.cards;
 
@@ -70,13 +69,10 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     );
 };
 
-export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) => {
+export const GuideComponent = ({ showVideo = false }: { showVideo?: boolean }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
-    const { query } = useRouter();
-
-    const shouldShowVideo = query.show_video === 'false' ? false : showVideo;
 
     return (
         <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
@@ -84,7 +80,7 @@ export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) =>
                 <p className="text-4xl font-bold text-gray-800">{t('guidePage.welcome')} BoostBot</p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            {!shouldShowVideo ? (
+            {!showVideo && (
                 <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
                     <Image
                         src="/assets/imgs/placeholders/dashboard-current.png"
@@ -93,7 +89,8 @@ export const GuideComponent = ({ showVideo = true }: { showVideo?: boolean }) =>
                         height={800}
                     />
                 </div>
-            ) : (
+            )}
+            {showVideo && (
                 <video
                     muted={false}
                     controls={true}
