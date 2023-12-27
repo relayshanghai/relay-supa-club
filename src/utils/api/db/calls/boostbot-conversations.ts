@@ -1,6 +1,6 @@
 import type { RelayDatabase } from '../types';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Json } from 'types/supabase';
 
 const createBoostbotConversation = (supabaseClient: RelayDatabase) => async (chatMessages: MessageType[]) => {
@@ -25,9 +25,16 @@ const createBoostbotConversation = (supabaseClient: RelayDatabase) => async (cha
 };
 
 export const getBoostbotConversationCall = (supabaseClient: RelayDatabase) => async () => {
+    const { data: userData } = await supabaseClient.auth.getUser();
+
+    if (!userData.user) {
+        throw new Error('No profile id found');
+    }
+
     const { data, error } = await supabaseClient
         .from('boostbot_conversations')
         .select('chat_messages, search_results')
+        .eq('profile_id', userData.user.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();

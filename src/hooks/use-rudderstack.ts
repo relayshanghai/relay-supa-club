@@ -9,6 +9,7 @@ import type { CurrentPageEvent } from 'src/utils/analytics/events/current-pages'
 import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/analytics/constants';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
+import { nextFetch } from 'src/utils/fetcher';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -127,11 +128,31 @@ export const profileToIdentifiable = (
     return { id, traits };
 };
 
-export const useRudderstack = () => {
-    const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
-        const rudder = await rudderInitialized();
+export const useRudder = () => {
+    const [rudder, setRudder] = useState(() => (typeof window !== 'undefined' ? window.rudder : null));
 
-        rudder.identify(userId, traits);
+    useEffect(() => {
+        rudderInitialized().then((rudder) => {
+            setRudder(rudder);
+        });
+    }, []);
+
+    return rudder;
+};
+
+export const useRudderstack = () => {
+    let deviceId = '';
+    if (typeof window !== 'undefined') {
+        deviceId = localStorage.getItem('deviceId') || '';
+    }
+    const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
+        await nextFetch('track/identify', {
+            method: 'POST',
+            body: JSON.stringify({
+                userId,
+                ...traits,
+            }),
+        });
     }, []);
 
     const pageView = useCallback(async (pageName: string, properties?: PageProperties) => {
@@ -139,14 +160,28 @@ export const useRudderstack = () => {
         rudder.page(pageName, properties);
     }, []);
 
-    const trackEvent = useCallback(async (eventName: string, properties?: apiObject) => {
-        const rudder = await rudderInitialized();
-        rudder.track(eventName, properties);
-    }, []);
+    const trackEvent = useCallback(
+        async (eventName: string, properties?: apiObject) => {
+            await nextFetch('track', {
+                method: 'POST',
+                body: {
+                    deviceId,
+                    eventName,
+                    ...properties,
+                },
+            });
+        },
+        [deviceId],
+    );
 
     const group = useCallback(async (groupId: string, traits?: apiObject) => {
-        const rudder = await rudderInitialized();
-        rudder.group(groupId, traits);
+        await nextFetch('track/group', {
+            method: 'POST',
+            body: {
+                groupId,
+                ...traits,
+            },
+        });
     }, []);
 
     const identifyFromProfile = useCallback(
@@ -173,18 +208,6 @@ export const useRudderstack = () => {
     };
 };
 
-export const useRudder = () => {
-    const [rudder, setRudder] = useState(() => (typeof window !== 'undefined' ? window.rudder : null));
-
-    useEffect(() => {
-        rudderInitialized().then((rudder) => {
-            setRudder(rudder);
-        });
-    }, []);
-
-    return rudder;
-};
-
 type RudderstackTrackResolveType = RudderstackMessageType[] | null | Error;
 type PromiseExecutor = (
     ...args: Parameters<ConstructorParameters<typeof Promise<RudderstackTrackResolveType>>[0]>
@@ -197,8 +220,40 @@ type RudderstackTrackPayload<T extends eventKeys> = Omit<payloads[T], 'currentPa
 
 export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
-    const rudder = useRudder();
     const currentPage = useGetCurrentPage();
+    let deviceId = '';
+    if (typeof window !== 'undefined') {
+        deviceId = localStorage.getItem('deviceId') || '';
+    }
+
+    const identify = useCallback((userId: string, traits: IdentityTraits, cb?: () => void) => {
+        const abort = () => {
+            isAborted.current = true;
+        };
+
+        const executor: PromiseExecutor = function (resolve) {
+            if (isAborted.current === true) {
+                return resolve(null);
+            }
+
+            nextFetch('track/identify', {
+                method: 'POST',
+                body: {
+                    userId,
+                    ...traits,
+                },
+            }).then((res) => {
+                if (res.ok) {
+                    resolve(res.json());
+                    if (cb) cb();
+                }
+            });
+        };
+
+        const request = new Promise<RudderstackTrackResolveType>(executor);
+
+        return { request, abort };
+    }, []);
 
     const track = useCallback(
         <E extends TrackedEvent>(
@@ -211,26 +266,28 @@ export const useRudderstackTrack = () => {
             };
 
             const executor: PromiseExecutor = function (resolve) {
-                if (!rudder) {
-                    return resolve(null);
-                }
-
                 if (isAborted.current === true) {
                     return resolve(null);
                 }
 
                 const { $add, ...eventPayload } = properties ?? {};
 
-                const trigger: TriggerEvent = (eventName, payload) => {
-                    rudder.track(
-                        eventName,
-                        { currentPage, ...payload, ...$add },
-                        options,
-                        (...args: RudderstackMessageType[]) => {
-                            resolve(args);
-                            return args;
+                const trigger: TriggerEvent = async (eventName, payload) => {
+                    const res = await nextFetch('track', {
+                        method: 'POST',
+                        body: {
+                            deviceId,
+                            eventName: eventName,
+                            currentPage,
+                            ...payload,
+                            ...$add,
+                            ...options,
                         },
-                    );
+                    });
+
+                    if (res.ok) {
+                        return await res.json();
+                    }
                 };
 
                 event(trigger, eventPayload);
@@ -240,8 +297,8 @@ export const useRudderstackTrack = () => {
 
             return { request, abort };
         },
-        [rudder, currentPage],
+        [currentPage, deviceId],
     );
 
-    return { track };
+    return { track, identify };
 };

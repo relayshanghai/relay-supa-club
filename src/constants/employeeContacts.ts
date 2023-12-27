@@ -36,3 +36,10 @@ export const EMPLOYEE_EMAILS = [
     'max@relay.club',
     'aloisa@relay.club',
 ];
+
+/** prod accounts listed at https://email.relay.club/admin/accounts */
+export const QUICK_SEND_EMAIL_ACCOUNTS = [
+    'egtljwhuz89pfkmj', // jacob@boostbot.ai
+    '6nitzaf4gajlnt5c', // kirsten@boostbot.ai
+    '3tsfh97079jmgnni', // anne_ulike@beauty.boostbot.ai
+];

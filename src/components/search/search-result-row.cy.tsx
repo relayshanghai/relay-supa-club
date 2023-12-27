@@ -30,8 +30,15 @@ const creator: CreatorSearchAccountObject = {
 const campaigns = [jimTestCampaign, amyTestCampaign] as any[];
 
 const setupProps = () => {
+    const creatorFlattened: ClassicSearchInfluencer = {
+        ...creator.account.user_profile,
+        ...creator.match.user_profile,
+        ...creator.match.audience_likers?.data,
+        topics: [],
+    };
+
     return {
-        creator,
+        creator: creatorFlattened,
         campaigns,
         setSelectedCreator: cy.stub(),
         setShowCampaignListModal: cy.stub(),
@@ -47,6 +54,7 @@ const setupProps = () => {
 import { SearchResultRow } from './search-result-row';
 import { worker } from '../../mocks/browser';
 import { featRecommended } from 'src/constants/feature-flags';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 describe('<CreatorPage />', () => {
     before(async () => {
         worker.start();
@@ -67,7 +75,7 @@ describe('<CreatorPage />', () => {
         it('does not show recommended tag for other accounts', () => {
             // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
             const props = setupProps();
-            props.creator.account.user_profile.user_id = 'notinstagram';
+            props.creator.user_id = 'notinstagram';
             testMount(
                 <SearchContext.Provider
                     value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
@@ -79,7 +87,7 @@ describe('<CreatorPage />', () => {
         });
         it('shows tooltip on badge hover', () => {
             const props = setupProps();
-            props.creator.account.user_profile.user_id = '25025320';
+            props.creator.user_id = '25025320';
             testMount(
                 // needs some room to show the tooltip
                 <div className="m-10 p-10">

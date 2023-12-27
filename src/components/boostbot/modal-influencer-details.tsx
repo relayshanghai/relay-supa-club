@@ -16,7 +16,6 @@ import {
 } from 'recharts';
 import StatCard from './stat-card';
 import type { Row } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -30,14 +29,20 @@ import type { GetTopicsAndRelevanceResponse } from 'pages/api/boostbot/get-topic
 import type { Dispatch, SetStateAction } from 'react';
 import { Tooltip } from '../library/tooltip';
 import { Question } from '../icons';
+import type { SearchTableInfluencer } from 'types';
+import { nextFetch } from 'src/utils/fetcher';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import toast from 'react-hot-toast';
+import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
-    selectedRow?: Row<BoostbotInfluencer>;
+    selectedRow?: Row<SearchTableInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    url: string;
 };
 
 export const InfluencerDetailsModal = ({
@@ -47,11 +52,13 @@ export const InfluencerDetailsModal = ({
     setShowSequenceSelector,
     outReachDisabled,
     setSelectedInfluencers,
+    url,
 }: InfluencerDetailsModalProps) => {
     const { t, i18n } = useTranslation();
     const { track } = useRudderstackTrack();
     const [areTopicsAndRelevanceLoading, setAreTopicsAndRelevanceLoading] = useState(true);
-    const { getTopicsAndRelevance } = useBoostbot();
+    const { getTopicsAndRelevance } = useBoostbot({});
+    const platform = selectedRow?.original.url ? extractPlatformFromURL(selectedRow?.original.url) : 'youtube';
     const [topicsAndRelevance, setTopicsAndRelevance] = useState<GetTopicsAndRelevanceResponse>([]);
     const translatedTopicsAndRelevance = areTopicsAndRelevanceLoading
         ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0 }))
@@ -59,19 +66,41 @@ export const InfluencerDetailsModal = ({
               ...topic,
               topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
           }));
-
     useEffect(() => {
-        const handleTopicsAndRelevance = async (topics: string[]) => {
-            const topicsAndRelevance = await getTopicsAndRelevance(topics);
+        const handleTopicsAndRelevance = async (handle: string) => {
+            if (!selectedRow?.original.url) {
+                throw new Error('No url found for influencer');
+            }
+            const { data: topics } = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
+                method: 'POST',
+                body: {
+                    username: handle,
+                    platform,
+                },
+            });
 
+            if (topics.length === 0) {
+                toast.error('Sorry, no topics found');
+                setAreTopicsAndRelevanceLoading(false);
+                return;
+            }
+            const topicsAndRelevance = await getTopicsAndRelevance(topics);
             setAreTopicsAndRelevanceLoading(false);
+
             setTopicsAndRelevance(topicsAndRelevance);
         };
 
         if (selectedRow && isOpen) {
-            handleTopicsAndRelevance(selectedRow.original.topics);
+            const userHandle =
+                platform === 'youtube'
+                    ? selectedRow.original.user_id
+                    : selectedRow.original.username ||
+                      selectedRow.original.handle ||
+                      selectedRow.original.custom_name ||
+                      selectedRow.original.fullname;
+            handleTopicsAndRelevance(userHandle);
         }
-    }, [getTopicsAndRelevance, selectedRow, isOpen]);
+    }, [getTopicsAndRelevance, selectedRow, isOpen, platform]);
 
     useEffect(() => {
         if (isOpen) {
@@ -97,13 +126,11 @@ export const InfluencerDetailsModal = ({
         followers: followersRaw,
         followers_growth: followersGrowthRaw,
         engagements,
-        url,
         user_id,
     } = influencer;
 
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
-    const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
     const indexScore = calculateIndexScore(influencer);
 
     // convert raw decimal numbers to string percentage
@@ -143,6 +170,62 @@ export const InfluencerDetailsModal = ({
     }
 
     const processedDemoData = processedAudienceDemoData(influencer);
+    const emptyStateChartData = [
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+        {
+            subject: '',
+            A: 0,
+            B: 0,
+            fullMark: 150,
+        },
+    ];
+    if (!platform) {
+        return (
+            <Modal
+                maxWidth="max-w-3xl"
+                visible={isOpen}
+                onClose={() => setIsOpen(false)}
+                data-testid="boostbot-influencer-detail-modal"
+            >
+                <p>{t('account.personal.oopsWentWrong')}</p>
+            </Modal>
+        );
+    }
     return (
         <Modal
             maxWidth="max-w-3xl"
@@ -212,21 +295,44 @@ export const InfluencerDetailsModal = ({
                             </Tooltip>
                         </div>
                         <div className={`w-full ${areTopicsAndRelevanceLoading ? 'animate-pulse-prominent' : ''}`}>
-                            <ResponsiveContainer width={320} height={280}>
-                                <RadarChart outerRadius={90} cx="50%" cy="50%" data={translatedTopicsAndRelevance}>
-                                    <PolarGrid stroke={areTopicsAndRelevanceLoading ? '#c1c5cb' : '#e5e7eb'} />
-                                    <PolarAngleAxis dataKey="topic" tick={CustomizedTick} />
-                                    <PolarRadiusAxis tick={false} axisLine={false} />
-                                    <Radar
-                                        name="top_niches"
-                                        dataKey="relevance"
-                                        strokeWidth={2}
-                                        stroke="#7C3AED" //text-primary-600
-                                        fill="#DDD6FE" //text-primary-200
-                                        fillOpacity={0.6}
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
+                            {topicsAndRelevance.length === 0 && !areTopicsAndRelevanceLoading ? (
+                                <div className="relative flex h-[280px] w-80 items-center justify-center">
+                                    <p className="left-[42%] top-[45%] flex text-center text-lg font-semibold">
+                                        {t('boostbot.modal.noNichesFound')}
+                                    </p>
+                                    <ResponsiveContainer className="absolute" width={320} height={280}>
+                                        <RadarChart cx="50%" cy="50%" outerRadius={90} data={emptyStateChartData}>
+                                            <PolarGrid stroke="#c1c5cb" />
+                                            <PolarAngleAxis dataKey="subject" tick={CustomizedTick} />
+                                            <PolarRadiusAxis tick={false} axisLine={false} />
+                                            <Radar
+                                                name="Mike"
+                                                dataKey="A"
+                                                strokeWidth={2}
+                                                stroke="#8884d8"
+                                                fill="#8884d8"
+                                                fillOpacity={0.6}
+                                            />
+                                        </RadarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            ) : (
+                                <ResponsiveContainer width={320} height={280}>
+                                    <RadarChart outerRadius={90} cx="50%" cy="50%" data={translatedTopicsAndRelevance}>
+                                        <PolarGrid stroke={areTopicsAndRelevanceLoading ? '#c1c5cb' : '#e5e7eb'} />
+                                        <PolarAngleAxis dataKey="topic" tick={CustomizedTick} />
+                                        <PolarRadiusAxis tick={false} axisLine={false} />
+                                        <Radar
+                                            name="top_niches"
+                                            dataKey="relevance"
+                                            strokeWidth={2}
+                                            stroke="#7C3AED" //text-primary-600
+                                            fill="#DDD6FE" //text-primary-200
+                                            fillOpacity={0.6}
+                                        />
+                                    </RadarChart>
+                                </ResponsiveContainer>
+                            )}
                         </div>
                     </div>
                     <div className="w-1/2 space-y-3">
@@ -336,6 +442,7 @@ export const InfluencerDetailsModal = ({
                         outReachDisabled={outReachDisabled}
                         handleAddToSequenceButton={handleAddToSequence}
                         textClassName="px-12"
+                        url={url}
                     />
                 </div>
             </div>

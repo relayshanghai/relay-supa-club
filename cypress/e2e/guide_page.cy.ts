@@ -1,10 +1,8 @@
-import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import guidePage from 'i18n/en/guide';
 
 describe('checks restricted to guide page', () => {
     it('check if guide page opens', async () => {
-        await deleteDB('app-cache');
         setupIntercepts();
         cy.loginTestUser();
         cy.contains('Guide').click();
@@ -13,14 +11,11 @@ describe('checks restricted to guide page', () => {
 });
 
 describe('checks restricted to guide page', () => {
-    beforeEach(() => {
-        deleteDB('app-cache');
-    });
     it('check modal functioning for every separate guide', () => {
         setupIntercepts();
         cy.loginTestUser();
         Object.keys(guidePage.modalInfo).forEach((section) => {
-            cy.visit('/guide');
+            cy.visit('/guide?show_video=false');
             const sectionData = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
             cy.get('[data-testid="guide-modal-' + section + '"]').click();
             cy.contains(sectionData.title);
@@ -32,7 +27,7 @@ describe('checks restricted to guide page', () => {
     it('check modal for every separate guide but go back', () => {
         setupIntercepts();
         cy.loginTestUser();
-        cy.visit('/guide');
+        cy.visit('/guide?show_video=false');
         Object.keys(guidePage.modalInfo).forEach((section) => {
             const sectionData = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
             cy.get('[data-testid="guide-modal-' + section + '"]').click();

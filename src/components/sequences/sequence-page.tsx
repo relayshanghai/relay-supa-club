@@ -33,13 +33,17 @@ import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/f
 import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { nextFetch } from 'src/utils/fetcher';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useAtomValue } from 'jotai';
+import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
+    const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
+    const { sequenceSteps } = useSequenceSteps(sequenceId);
     const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequence && [sequenceId],
     );
@@ -72,7 +76,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const handleStartSequence = useCallback(
         async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
             try {
-                const results = await sendSequence(sequenceInfluencersToSend);
+                if (!sequenceSteps || sequenceSteps.length === 0) {
+                    throw new Error('Sequence steps not found');
+                }
+                const results = await sendSequence(sequenceInfluencersToSend, sequenceSteps);
 
                 // handle optimistic update
                 const succeeded = results.filter((result) => !result.error);
@@ -98,7 +105,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 return [];
             }
         },
-        [refreshSequenceInfluencers, sendSequence, t],
+        [refreshSequenceInfluencers, sendSequence, sequenceSteps, t],
     );
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -176,11 +183,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const handleDelete = async (influencerIds: string[]) => {
         try {
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)),
+                { revalidate: false },
+            );
             await deleteSequenceInfluencers(influencerIds);
-            refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
             setSelection([]);
             toast.success(t('sequences.influencerDeleted'));
         } catch (error) {
+            refreshSequenceInfluencers(sequenceInfluencers);
             clientLogger(error, 'error');
             toast.error(t('sequences.influencerDeleteFailed'));
         }
@@ -349,6 +360,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const sequenceSendTooltipHighlight = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
+
+    const submittingChangeEmail = useAtomValue(submittingChangeEmailAtom);
+
+    const sendDisabled =
+        submittingChangeEmail ||
+        isMissingSequenceSendEmail ||
+        selectedInfluencers.some((i) => !i?.email) ||
+        selectedInfluencers.some((i) => !i?.influencer_social_profile_id);
     return (
         <Layout>
             {!profile?.email_engine_account_id && (
@@ -493,11 +512,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                     position="bottom-left"
                                 >
                                     <Button
-                                        disabled={
-                                            isMissingSequenceSendEmail ||
-                                            selectedInfluencers.some((i) => !i?.email) ||
-                                            selectedInfluencers.some((i) => !i?.influencer_social_profile_id)
-                                        }
+                                        disabled={sendDisabled}
                                         className={
                                             isMissingVariables
                                                 ? 'flex !border-gray-300 !bg-gray-300 !text-gray-500'

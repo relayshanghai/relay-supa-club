@@ -9,6 +9,17 @@ export const getWeekday = (date: Date, timeZone: string) => {
     });
 };
 
+/**
+ * @example getDayWithoutTime(new Date('2021-07-17T14:00:00.000Z'), 'America/New_York') // returns 2021-07-17
+ */
+export const getDateStringWithoutTime = (date: Date, timeZone: string) => {
+    const year = date.toLocaleString('en', { timeZone, year: 'numeric' });
+    const month = date.toLocaleString('en', { timeZone, month: '2-digit' });
+    const day = date.toLocaleString('en', { timeZone, day: '2-digit' });
+
+    return `${year}-${month}-${day}`;
+};
+
 export const weekDayAsNumber = (day: string) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const found = days.indexOf(day);
@@ -43,6 +54,12 @@ export const getHours = (date: Date, timeZone: string) => {
 export const addHours = (date: Date, hours: number) => {
     const newDate = new Date(date);
     newDate.setTime(newDate.getTime() + hours * 60 * 60 * 1000);
+    return newDate;
+};
+
+export const subtractHours = (date: Date, hours: number) => {
+    const newDate = new Date(date);
+    newDate.setTime(newDate.getTime() - hours * 60 * 60 * 1000);
     return newDate;
 };
 

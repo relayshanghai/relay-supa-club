@@ -3,7 +3,7 @@ import { LEGACY_RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { ApiHandler } from 'src/utils/api-handler';
-import { findCompaniesByNames, getTeammatesByCompanyId } from 'src/utils/api/db';
+import { findCompaniesByName, getTeammatesByCompanyId } from 'src/utils/api/db';
 import { db } from 'src/utils/supabase-client';
 import { z } from 'zod';
 
@@ -29,7 +29,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid Request' });
     }
 
-    const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name.toLowerCase());
+    const companies = await db<typeof findCompaniesByName>(findCompaniesByName)(name);
 
     if (companies.length > 0) {
         const owners = await getTeammatesByCompanyId(companies[0].id);

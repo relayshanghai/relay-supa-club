@@ -1,9 +1,7 @@
-import { deleteDB } from 'idb';
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
-        deleteDB('app-cache');
         setupIntercepts();
         searchIntercepts();
     });
@@ -29,12 +27,11 @@ describe('Dashboard/Search page', () => {
     it('can open analyze page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
-        cy.contains('Search by Topics', { timeout: 10000 });
-        cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
-            force: true,
-        });
 
-        cy.getByTestId(`analyze-button/${cocomelonId}`)
+        cy.contains('Search by Topics', { timeout: 10000 });
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click();
+
+        cy.contains(`Unlock Detailed Analysis Report`)
             .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
         cy.visit(`influencer/youtube/${cocomelonId}`);

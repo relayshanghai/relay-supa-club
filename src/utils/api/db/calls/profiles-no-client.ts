@@ -1,13 +1,22 @@
 // 'no-client' means that the functions are not wrapping the client in a higher order function, so that the client needs to be imported here, meaning these calls can only be used by the backend.
 import { supabase } from 'src/utils/supabase-client'; // TODO: refactor calls so that we do not need to import supabase here. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/721
 import type { AccountRole } from 'types';
-import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
+import type { ProfileDBUpdate, ProfileDBInsert, RelayDatabase } from '../types';
 
 /** inserts profile but does not allow changing of role status, automatically updates `updated_at` field */
 export const insertProfile = (insert: ProfileDBInsert) => {
     const { user_role: _filter_out, ...insertData } = insert;
     insertData.updated_at = new Date().toISOString();
     return supabase.from('profiles').insert(insertData).select().single();
+};
+
+export const insertProfileWithRole = (db: RelayDatabase) => async (insert: ProfileDBInsert) => {
+    insert.updated_at = new Date().toISOString();
+    const { data: profile, error: profileError } = await db.from('profiles').insert(insert).select().single();
+    if (profileError) {
+        throw profileError;
+    }
+    return profile;
 };
 
 /** updates profile but does not allow changing of role status, automatically updates `updated_at` field */
@@ -28,7 +37,3 @@ export const getProfileBySequenceSendEmail = (email: string) =>
     supabase.from('profiles').select().limit(1).eq('sequence_send_email', email).single();
 
 export const getProfileById = (id: string) => supabase.from('profiles').select().eq('id', id).single();
-
-export const deleteUserById = (profileId: string) => {
-    return supabase.from('profiles').delete().eq('id', profileId);
-};

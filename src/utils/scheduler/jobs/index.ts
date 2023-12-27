@@ -1,10 +1,8 @@
 import { TrackAnalyticsEvent } from './track-analytics-event';
-import { SequenceSendEvent } from './sequence-send';
 import { SequenceStepSendEvent } from './sequence-step-send';
 
 export const jobs = {
     [TrackAnalyticsEvent.name]: TrackAnalyticsEvent,
-    [SequenceSendEvent.name]: SequenceSendEvent,
     [SequenceStepSendEvent.name]: SequenceStepSendEvent,
 };
 

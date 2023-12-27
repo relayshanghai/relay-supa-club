@@ -15,6 +15,8 @@ export const createCompanyValidationErrors = {
 };
 export const createCompanyErrors = {
     companyWithSameNameExists: 'companyWithSameNameExists',
+    failedToSignUp: 'failedToSignUp',
+    unableToMakeStripeCustomer: 'unableToMakeStripeCustomer',
 };
 export const updateCompanyErrors = {
     companyWithSameNameExists: 'companyWithSameNameExists',

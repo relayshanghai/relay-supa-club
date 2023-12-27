@@ -69,12 +69,17 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.performance;
     }
 
-    if (/^\/free-trial\/?/.test(pathname)) {
-        return CurrentPageEvent['free-trial'];
-    }
-
     if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index;
+    }
+    if (/^\/_error\/?/.test(pathname)) {
+        return CurrentPageEvent.error;
+    }
+    if (/^\/component-preview\/?/.test(pathname)) {
+        return CurrentPageEvent.preview;
+    }
+    if (/^\/logout\/?/.test(pathname)) {
+        return CurrentPageEvent.logout;
     }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);

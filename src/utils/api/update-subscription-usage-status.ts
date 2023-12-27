@@ -13,8 +13,8 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
     const subscription_start_date = unixEpochToISOString(subscription.start_date);
     if (!subscription_start_date) throw new Error('Missing subscription start date');
 
-    const { profiles, searches, ai_emails } = product.metadata;
-    if (!profiles || !searches || !ai_emails) {
+    const { profiles, searches } = product.metadata;
+    if (!profiles || !searches) {
         serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
         throw new Error('Missing product metadata');
     }
@@ -29,7 +29,6 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
     await updateCompanyUsageLimits({
         profiles_limit: profiles,
         searches_limit: searches,
-        ai_email_generator_limit: ai_emails,
         id: companyId,
     });
 
@@ -40,6 +39,7 @@ const updateSubscriptionUsagesAndStatus = async (companyId: string, subscription
         subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
         id: companyId,
         subscription_plan: subscriptionPlan,
+        subscription_end_date: null, //reset subscription_end_date to null when upgrade a subscription from canceled to active
     });
 };
 

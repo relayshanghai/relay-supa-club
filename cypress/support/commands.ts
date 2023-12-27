@@ -41,6 +41,7 @@ declare global {
             loginTestUser: typeof loginTestUser;
             loginAdmin: typeof loginAdmin;
             loginExpired: typeof loginExpired;
+            loginTeammate: typeof loginTeammate;
             switchToEnglish: typeof switchToEnglish;
             mount: typeof mount;
         }
@@ -51,11 +52,23 @@ Cypress.Commands.add('getByTestId', (selector, ...args) => {
     cy.get(`[data-testid="${selector}"]`, ...args);
 });
 
+export const deleteIndexedDbs = () => {
+    new Cypress.Promise(async () => {
+        if (window.indexedDB.databases) {
+            const dbs = await window.indexedDB.databases();
+            dbs.forEach((db) => {
+                if (db.name) window.indexedDB.deleteDatabase(db.name);
+            });
+        }
+    });
+};
+
 function loginTestUser(
     role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'company_owner',
     switchLangToEnglish = true,
     expired = false,
 ) {
+    deleteIndexedDbs();
     if (switchLangToEnglish) {
         switchToEnglish();
     }
@@ -91,6 +104,10 @@ function loginExpired(switchLangToEnglish = true) {
     loginTestUser('company_owner', switchLangToEnglish, true);
 }
 Cypress.Commands.add('loginExpired', loginExpired);
+function loginTeammate(switchLangToEnglish = true) {
+    loginTestUser('company_teammate', switchLangToEnglish, true);
+}
+Cypress.Commands.add('loginTeammate', loginTeammate);
 
 function switchToEnglish() {
     localStorage.setItem('language', 'en-US');

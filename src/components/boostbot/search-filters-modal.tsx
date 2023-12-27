@@ -22,15 +22,15 @@ type SearchFiltersModalProps = {
     filters: Filters;
     setFilters: Dispatch<SetStateAction<Filters>>;
 };
+const platformIcons = {
+    youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube', label: 'Youtube' },
+    instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram', label: 'Instagram' },
+    tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok', label: 'Tiktok' },
+};
 
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
     const { t } = useTranslation();
     const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-    const platformIcons: any = {
-        youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube' },
-        instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
-        tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
-    };
     const [localFilters, setLocalFilters] = useState(filters);
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
 
@@ -246,7 +246,12 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
+                                    <input
+                                        checked={isSelected}
+                                        onChange={() => null} // handled in parent onClick
+                                        type="checkbox"
+                                        className="checkbox mr-0"
+                                    />
                                 </div>
                             );
                         })}
@@ -297,7 +302,12 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
+                                    <input
+                                        onChange={() => null}
+                                        type="checkbox"
+                                        className="checkbox mr-0"
+                                        checked={isSelected}
+                                    />
                                 </div>
                             );
                         })}
