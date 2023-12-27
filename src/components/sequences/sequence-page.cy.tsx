@@ -77,7 +77,8 @@ describe('<SequencePage />', () => {
 
         cy.contains('button', 'Start selected sequences').click();
 
-        cy.contains('Scheduling sequences failed, please try again');
+        cy.contains('Failed to submit 1 email(s) to send');
+        cy.contains('2 email(s) successfully scheduled to send');
 
         // optimistic update works
         cy.contains('button', 'In sequence').within(() => {

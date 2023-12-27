@@ -24,6 +24,9 @@ import defaultSequence from './supabase/sequences/createDefaultSequence.json';
 import defaultSocialProfile from './supabase/influencer_social_profile/default-social-profile.json';
 import sophiaCampaignSocialProfiles from './supabase/influencer_social_profile/sophias-campaign.json';
 import { flattenInfluencerData } from '../utils/api/boostbot/helper';
+import { defaultTemplates } from 'src/hooks/use-sequence-steps';
+import type { SequenceStepInsert } from 'src/utils/api/db';
+import { v4 } from 'uuid';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
@@ -115,7 +118,18 @@ const frontendHandlers = [
         return res(ctx.json([]));
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/sequence_steps`, (req, res, ctx) => {
-        return res(ctx.json([]));
+        const sequence_id = req.url.searchParams.get('sequence_id')?.split('eq.')[1] ?? v4();
+        const steps: SequenceStepInsert[] = defaultTemplates.map(({ name, id, waitTimeHours, stepNumber }) => ({
+            name,
+            sequence_id,
+            template_id: id,
+            wait_time_hours: waitTimeHours,
+            step_number: stepNumber,
+        }));
+        return res(ctx.json(steps));
+    }),
+    rest.get('/_next/image', (req, res, ctx) => {
+        return res(ctx.json({}));
     }),
 ];
 /** for use in the browser */
