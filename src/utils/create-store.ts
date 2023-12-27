@@ -20,6 +20,10 @@ const createInternalStore = <T>(initialState: T) => {
         return state;
     }
 
+    function getServerSnapshot() {
+        return initialState;
+    }
+
     function subscribe(listener: () => void) {
         listeners.add(listener);
 
@@ -31,6 +35,7 @@ const createInternalStore = <T>(initialState: T) => {
     return {
         setStore,
         getSnapshot,
+        getServerSnapshot,
         subscribe,
     };
 };
@@ -45,7 +50,7 @@ export const createStore = <T>(initialValue: T) => {
     const store = createInternalStore<T>(initialValue);
 
     const useStore = () => {
-        const externalStore = useSyncExternalStore(store.subscribe, store.getSnapshot);
+        const externalStore = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
 
         return [externalStore, store.setStore] as [T, typeof store.setStore];
     };

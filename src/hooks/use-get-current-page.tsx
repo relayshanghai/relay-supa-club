@@ -3,7 +3,10 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const useGetCurrentPage = () => {
-    const { pathname } = useRouter();
+    const { pathname, isReady } = useRouter();
+    if (!pathname || !isReady) {
+        return CurrentPageEvent.null;
+    }
 
     if (/^\/boostbot\/?/.test(pathname)) {
         return CurrentPageEvent.boostbot;

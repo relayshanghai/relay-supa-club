@@ -95,7 +95,7 @@ describe('<SequencePage />', () => {
             cy.contains('Warning: duplicate influencer could cause issues');
         });
     });
-    it.only('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
+    it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         if (!mario) throw new Error('mario not found');
         const generateRandomInfluencer = (): SequenceInfluencerManagerPage => {

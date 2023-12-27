@@ -26,7 +26,7 @@ export type CacheProvider = (globalCache: Readonly<Cache>) => Cache;
  * Use cache provider interface
  */
 export type UseCacheProvider = (
-    dbName?: string,
+    dbName?: string | null,
     storeName?: string,
     version?: number,
     storageHandler?: StorageHandler,
