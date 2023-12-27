@@ -156,9 +156,12 @@ export const MessagesComponent = ({ messages, currentInbox }: { messages: Messag
     return (
         <div className="flex-grow overflow-y-scroll">
             <Accordion type="multiple" className="hover: w-full bg-white">
-                {messages.toReversed().map((message) => (
-                    <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
-                ))}
+                {messages
+                    .slice(0) // Make shallow copy before reversing
+                    .reverse()
+                    .map((message) => (
+                        <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
+                    ))}
             </Accordion>
         </div>
     );
