@@ -1,8 +1,5 @@
-import { eq } from 'drizzle-orm';
-import { profiles } from 'drizzle/schema';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { db } from 'src/utils/database';
 import { getEmails } from 'src/utils/outreach/get-emails';
 
 type ApiRequest = {
@@ -10,13 +7,7 @@ type ApiRequest = {
 };
 
 const getHandler: ActionHandler = async (req, res) => {
-    if (!req.session) {
-        throw new Error('Cannot get user profile');
-    }
-
-    const rows = await db().select().from(profiles).where(eq(profiles.id, req.session.user.id)).limit(1);
-
-    if (rows.length !== 1) {
+    if (!req.profile) {
         throw new Error('Cannot get user profile');
     }
 
