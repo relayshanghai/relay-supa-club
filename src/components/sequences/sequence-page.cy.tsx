@@ -35,7 +35,7 @@ describe('<SequencePage />', () => {
         cy.getByTestId('send-email-button-allegraalynn-noreport@gmail.com').trigger('mouseover', { force: true });
         cy.contains('Updating influencer report');
     });
-    it.only('can multi-select influencers and send sequence. Shows error/success toast', () => {
+    it('can multi-select influencers and send sequence. Shows error/success toast', () => {
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         const josiah = mockInfluencers.find((i) => i.name === 'Josiah');
         const hannah = mockInfluencers.find((i) => i.name === 'hannah cho');
