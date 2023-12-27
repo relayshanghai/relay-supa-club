@@ -2,20 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { type ThreadInfo, ThreadPreview, Message } from 'src/components/inbox/wip/thread-preview';
+import { type ThreadInfo, ThreadPreview, type Message } from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
-import { Filter, FilterType } from 'src/components/inbox/wip/filter';
+import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
 import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
-import { now } from 'src/utils/datetime';
 import { nanoid } from 'nanoid';
 import { sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 
 const fetcher = async (url: string) => {
     const res = await nextFetch(url);
-    console.log('fetcher', res);
     return res;
 };
 
