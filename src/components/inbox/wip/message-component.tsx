@@ -5,12 +5,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
-import type { Message } from './thread-preview';
+import type { Message, CurrentInbox } from './thread-preview';
 import { useEffect, useRef, useState } from 'react';
 import { ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
 
-const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Message }) => {
+const MessageTitle = ({
+    expanded,
+    message,
+    myEmail,
+}: {
+    expanded: boolean;
+    message: Message;
+    myEmail?: string | null;
+}) => {
     const [headerExpanded, setHeaderExpanded] = useState(false);
     useEffect(() => {
         if (!expanded) {
@@ -56,7 +64,9 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
     } else
         return (
             <p>
-                <span className={`text-sm font-semibold ${expanded && 'text-primary-500'}`}>{message.from.name}</span>
+                <span className={`text-sm font-semibold ${expanded && 'text-primary-500'}`}>
+                    {message.from.address === myEmail ? 'Me' : message.from.name}
+                </span>
                 <span
                     onClick={(e) => {
                         if (expanded) {
@@ -66,14 +76,16 @@ const MessageTitle = ({ expanded, message }: { expanded: boolean; message: Messa
                     }}
                     className={`text-sm ${expanded && 'text-primary-500'} px-4`}
                 >
-                    Sent to {message.to.map((to) => to.name || to.address)}
-                    {message.cc.length > 0 && <span>and {message.cc.map((cc) => cc.name).join(', ')}</span>}
+                    {expanded && <span>Sent to {message.to.map((to) => to.name || to.address)}</span>}
+                    {expanded && message.cc.length > 0 && (
+                        <span> and {message.cc.map((cc) => cc.name || cc.address).join(', ')}</span>
+                    )}
                 </span>
             </p>
         );
 };
 
-const MessageComponent = ({ message }: { message: Message }) => {
+const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: string | null }) => {
     const [messageExpanded, setMessageExpanded] = useState(false);
     const [quoteExpanded, setQuoteExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
@@ -82,8 +94,9 @@ const MessageComponent = ({ message }: { message: Message }) => {
 
     // Extract the quoted part
     const quotedPart = emailDoc.querySelector('.gmail_quote');
+
     if (quotedPart) {
-        emailDoc.body.removeChild(quotedPart);
+        quotedPart.parentNode?.removeChild(quotedPart);
     }
 
     useEffect(() => {
@@ -101,7 +114,7 @@ const MessageComponent = ({ message }: { message: Message }) => {
                 className={`p-4 hover:no-underline ${messageExpanded && 'flex items-start bg-primary-50'}`}
                 showChevron={false}
             >
-                <MessageTitle expanded={messageExpanded} message={message} />
+                <MessageTitle expanded={messageExpanded} message={message} myEmail={myEmail} />
                 <section className="flex items-center gap-4">
                     <DropdownMenu>
                         <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
@@ -139,12 +152,14 @@ const MessageComponent = ({ message }: { message: Message }) => {
     );
 };
 
-export const MessagesComponent = ({ messages }: { messages: Message[] }) => {
+export const MessagesComponent = ({ messages, currentInbox }: { messages: Message[]; currentInbox: CurrentInbox }) => {
     return (
-        <Accordion type="multiple" className="hover: w-full bg-white">
-            {messages.map((message) => (
-                <MessageComponent key={message.id} message={message} />
-            ))}
-        </Accordion>
+        <div className="flex-grow overflow-y-scroll">
+            <Accordion type="multiple" className="hover: w-full bg-white">
+                {messages.toReversed().map((message) => (
+                    <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
+                ))}
+            </Accordion>
+        </div>
     );
 };

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
+import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 import type { CreatorPlatform } from 'types';
 
 export type EmailContact = { address: string; name: string };
@@ -73,13 +74,15 @@ const getPlatformIcon = (platform: CreatorPlatform) => {
     }
 };
 
-const getUnreadMarker = (unread: boolean, replied: boolean) => {
-    if (unread) {
-        return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />;
-    } else if (replied) {
-        return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-blue-500" />;
+const getUnreadMarker = (status: THREAD_STATUS) => {
+    switch (status) {
+        case 'unopened':
+            return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />;
+        case 'unreplied':
+            return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-blue-500" />;
+        default:
+            return <></>;
     }
-    return <></>;
 };
 
 export const ThreadPreview = ({
@@ -89,15 +92,11 @@ export const ThreadPreview = ({
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatarUrl, username, platform, url, funnelStatus, email: influencerEmail } = sequenceInfluencer;
-    const { messages } = threadInfo;
-    const unread = threadInfo.messages[threadInfo.messages.length - 1].unread;
-    // const { email: _currentInboxEmail } = currentInbox;
-    const lastMessage = messages[messages.length - 1];
+    const { name, avatarUrl, username, platform, url, funnelStatus } = sequenceInfluencer;
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform as CreatorPlatform);
-    const UnreadMarker = getUnreadMarker(unread, influencerEmail === lastMessage.from.address);
+    const UnreadMarker = getUnreadMarker(threadInfo.threadInfo.threadStatus as THREAD_STATUS);
 
     return (
         <Card

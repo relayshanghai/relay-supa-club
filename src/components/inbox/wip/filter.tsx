@@ -1,17 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Button } from 'shadcn/components/ui/button';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from 'shadcn/components/ui/popover';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { FunnelStatus } from 'src/utils/api/db';
-
-export type FilterStatusEnum = 'unread' | 'unreplied';
+import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 
 const CounterStyles: {
-    [key in FilterStatusEnum]: string;
+    [key in THREAD_STATUS]: string;
 } = {
-    unread: 'bg-pink-100 text-pink-500',
+    unopened: 'bg-pink-100 text-pink-500',
     unreplied: 'bg-blue-100 text-blue-500',
+    replied: '',
 };
 
 export type FilterSequence = {
@@ -20,87 +20,66 @@ export type FilterSequence = {
 };
 
 export type FilterType = {
-    status: FilterStatusEnum[];
-    collabStatus: FunnelStatus[];
-    sequence: FilterSequence[];
+    threadStatus: THREAD_STATUS[];
+    funnelStatus: FunnelStatus[];
+    sequences: FilterSequence[];
 };
 
 type filterStatusButtons = {
     label: string;
-    status?: FilterStatusEnum;
-    enabledCondition: (status: FilterStatusEnum[]) => boolean;
+    status?: THREAD_STATUS;
+    enabledCondition: (status: THREAD_STATUS[]) => boolean;
 };
 
 const filterStatusButtons: filterStatusButtons[] = [
     {
         label: 'Unread',
-        status: 'unread',
-        enabledCondition: (status: FilterStatusEnum[]) => status.includes('unread'),
+        status: 'unopened',
+        enabledCondition: (status: THREAD_STATUS[]) => status.includes('unopened'),
     },
     {
         label: 'Unreplied',
         status: 'unreplied',
-        enabledCondition: (status: FilterStatusEnum[]) => status.includes('unreplied'),
+        enabledCondition: (status: THREAD_STATUS[]) => status.includes('unreplied'),
     },
     {
         label: 'All',
         status: undefined, // No specific status for 'All'
-        enabledCondition: (status: FilterStatusEnum[]) => status.length === 0,
-    },
-];
-
-const allSequences: FilterSequence[] = [
-    {
-        id: '1',
-        name: 'Sequence 1',
-    },
-    {
-        id: '2',
-        name: 'Sequence 2',
+        enabledCondition: (status: THREAD_STATUS[]) => status.length === 0,
     },
 ];
 
 export const Filter = ({
     messageCount,
+    allSequences = [],
+    filters,
+    onChangeFilter,
 }: {
     messageCount: {
-        [key in FilterStatusEnum]: number;
+        [key in THREAD_STATUS]: number;
     };
+    allSequences: FilterSequence[];
+    filters: FilterType;
+    onChangeFilter: (newFilter: FilterType) => void;
 }) => {
-    const [filter, setFilter] = useState<FilterType>({
-        status: ['unread'],
-        collabStatus: ['Negotiating'],
-        sequence: allSequences,
-    });
-
-    const submitFilters = useCallback(
-        (open: boolean) => {
-            if (!open) {
-                // eslint-disable-next-line no-console
-                console.log(filter);
-            }
-        },
-        [filter],
-    );
-
     return (
-        <Popover onOpenChange={submitFilters}>
-            <PopoverTrigger>Open</PopoverTrigger>
+        <Popover>
+            <PopoverTrigger>Filter</PopoverTrigger>
             <PopoverContent className="space-y-3">
                 <FilterByStatus
-                    status={filter.status}
-                    onChange={(status: FilterStatusEnum[]) => setFilter({ ...filter, status })}
+                    status={filters.threadStatus}
+                    onChange={(threadStatus: THREAD_STATUS[]) => onChangeFilter({ ...filters, threadStatus })}
                     messageCount={messageCount}
                 />
                 <FilterByFunnelStatus
-                    status={filter.collabStatus}
-                    onChange={(collabStatus: FunnelStatus[]) => setFilter({ ...filter, collabStatus })}
+                    status={filters.funnelStatus}
+                    onChange={(funnelStatus: FunnelStatus[]) => onChangeFilter({ ...filters, funnelStatus })}
                 />
                 <FilterBySequence
                     allSequences={allSequences}
-                    selectedSequences={filter.sequence}
+                    selectedSequences={filters.sequences}
                     onChange={(selectedSequence: FilterSequence[]) =>
-                        setFilter({ ...filter, sequence: selectedSequence })
+                        onChangeFilter({ ...filters, sequences: selectedSequence })
                     }
                 />
             </PopoverContent>
@@ -113,14 +92,14 @@ const FilterByStatus = ({
     onChange,
     messageCount,
 }: {
-    status: FilterStatusEnum[];
-    onChange: (status: FilterStatusEnum[]) => void;
+    status: THREAD_STATUS[];
+    onChange: (status: THREAD_STATUS[]) => void;
     messageCount: {
-        [key in FilterStatusEnum]: number;
+        [key in THREAD_STATUS]: number;
     };
 }) => {
     const handleUpdateStatus = useCallback(
-        (buttonStatus?: FilterStatusEnum) => {
+        (buttonStatus?: THREAD_STATUS) => {
             if (!buttonStatus) {
                 onChange([]);
                 return;

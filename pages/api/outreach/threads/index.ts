@@ -1,25 +1,13 @@
 import { eq } from 'drizzle-orm';
 import { profiles } from 'drizzle/schema';
+import type { FilterType } from 'src/components/inbox/wip/filter';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { type GetThreadsReturn } from 'src/utils/outreach/db/get-threads';
-import { getThreadsWithReply } from 'src/utils/outreach/db/get-threads-with-reply';
+import { getThreadsWithReplyByFilter } from 'src/utils/outreach/db/get-threads-with-reply';
+import { transformThreads } from 'src/utils/outreach/utils';
 
-const transformThreads = (threads: GetThreadsReturn) => {
-    return threads.map((thread: any) => {
-        return {
-            threadInfo: thread.threads,
-            sequenceInfluencers: thread.sequence_influencers,
-            sequenceInfo: {
-                ...thread.sequences,
-                productName: thread.template_variables?.value,
-            },
-        };
-    });
-};
-
-const getHandler: ActionHandler = async (req, res) => {
+const postHandler: ActionHandler = async (req, res) => {
     if (!req.session) {
         throw new Error('Cannot get user profile');
     }
@@ -36,11 +24,13 @@ const getHandler: ActionHandler = async (req, res) => {
         throw new Error('Cannot get email account');
     }
 
-    const threads = await getThreadsWithReply()(profile.emailEngineAccountId);
+    const filters = req.body as FilterType;
+
+    const threads = await getThreadsWithReplyByFilter()(profile.emailEngineAccountId, filters);
 
     return res.status(200).json(transformThreads(threads));
 };
 
 export default ApiHandler({
-    getHandler: getHandler,
+    postHandler,
 });
