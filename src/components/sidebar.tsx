@@ -2,18 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
-import {
-    OldSearch,
-    Team,
-    Guide,
-    ProfilePlus,
-    BarGraph,
-    ThunderSearch,
-    FourSquare,
-    ThunderMail,
-    Inbox,
-    ChatQuestion,
-} from './icons';
+import { OldSearch, Team, Guide, ProfilePlus, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -97,7 +86,7 @@ const NavBarInner = ({
                 <Title />
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-1 flex-col gap-4">
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/boostbot'} expandedName={t('navbar.boostbot')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.boostbot')}</p>
@@ -135,14 +124,6 @@ const NavBarInner = ({
                     <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`whitespace-nowrap text-xs`}>{t('navbar.guide')}</p>
                     </ActiveLink>
-
-                    <button
-                        className="flex flex-col items-center gap-1 overflow-visible border-l-4 stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700"
-                        onClick={() => window.$chatwoot?.toggle()}
-                    >
-                        <ChatQuestion height={20} width={20} className="my-0.5 stroke-inherit" />
-                        {t('navbar.support')}
-                    </button>
 
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">

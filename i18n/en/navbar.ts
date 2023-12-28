@@ -10,7 +10,7 @@ const navbar = {
     inbox: 'Inbox',
     influencerManager: 'Manager',
     report: "{{influencerName}}'s Report",
-    support: 'Support',
+    support: 'Need Help',
 };
 
 export default navbar;
