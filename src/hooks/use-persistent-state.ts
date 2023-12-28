@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { openDB, type IDBPDatabase } from 'idb';
+import { type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
 import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
 import { initializeDB } from 'src/utils/cache-provider/cache-provider';
+import { clientLogger } from 'src/utils/logger-client';
 
 const version = cacheVersion;
 
@@ -14,41 +15,34 @@ export const usePersistentState = <T>(
 
     const [db, setDb] = useState<IDBPDatabase<unknown> | null>(null);
 
-    const openTheDB = useCallback(
-        () => initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version),
-        [profile?.id],
-    );
-
-    const [state, setState] = useState<T>(() => {
-        // Setup the database and return the initial value
-        const setup = async () => {
-            let existingDB = db;
-            if (!existingDB) {
-                existingDB = await openTheDB();
-                setDb(existingDB);
-            }
-            const existing = await existingDB.get(appCacheStoreName, key);
-
-            setState(existing ?? initialValue);
-        };
-
-        setup();
-
-        return initialValue;
-    });
+    const [state, setState] = useState<T>(initialValue);
 
     useEffect(() => {
         const setupDB = async () => {
             if (!profile?.id) return;
-
-            setDb(await openTheDB());
+            const db = await initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version);
+            setDb(db);
+            const existing = await db.get(appCacheStoreName, key);
+            setState(existing !== undefined ? existing : initialValue); // can't just check truthy cause the value could be a boolean (false)
         };
 
         // Update the value in the database when state changes
         const updateDB = async () => {
             if (!db) return;
 
-            await db.put(appCacheStoreName, state, key);
+            try {
+                await db.put(appCacheStoreName, state, key);
+            } catch (error: any) {
+                if (error?.message?.includes('The database connection is closing')) {
+                    // Reopen the database
+                    const reopenedDb = await initializeDB(appCacheStoreName, appCacheDBKey(profile?.id), version);
+                    setDb(reopenedDb);
+                    // Retry the operation
+                    await reopenedDb.put(appCacheStoreName, state, key);
+                } else {
+                    clientLogger(error.message, 'error');
+                }
+            }
         };
 
         if (!db) {
@@ -56,13 +50,13 @@ export const usePersistentState = <T>(
         } else {
             updateDB();
         }
-    }, [key, state, profile?.id, openTheDB, db]);
+    }, [key, state, profile?.id, db, initialValue]);
 
-    const removeState = async () => {
+    const removeState = useCallback(async () => {
         setState(initialValue);
-        const db = await openDB(appCacheDBKey(profile?.id), version);
+        if (!db) return;
         await db.delete(appCacheStoreName, key);
-    };
+    }, [db, initialValue, key]);
 
     return [state, setState, removeState];
 };

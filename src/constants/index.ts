@@ -11,7 +11,7 @@ export const urlRegex =
 
 export const IQDATA_MAINTENANCE = process.env.NEXT_PUBLIC_IQDATA_MAINTENANCE === 'true';
 
-export const appCacheDBKey = (userId?: string) => `app-cache-${userId}`;
+export const appCacheDBKey = (userId?: string) => (userId ? `app-cache-${userId}` : 'app-cache');
 export const appCacheStoreName = 'app-cache-store';
-export const cacheVersion = 5;
+export const cacheVersion = 6;
 export const isDev = () => process.env.NODE_ENV === 'development';

@@ -16,17 +16,13 @@ export default function useCacheProvider<Data = any, Error = any>({
     const [cacheProvider, setCacheProvider] = useState<CacheProvider>();
 
     useEffect(() => {
-        // False on mount or on dependency change
-        let isSetup = true;
-
+        if (cacheProvider || !dbName) {
+            return;
+        }
         createCacheProvider<Data, Error>({ dbName, storeName, storageHandler, version, onError }).then(
-            (cp) => isSetup && setCacheProvider(() => cp),
+            (cp) => !cacheProvider && setCacheProvider(() => cp),
         );
-
-        return () => {
-            isSetup = false;
-        };
-    }, [dbName, storeName, storageHandler, version, onError]);
+    }, [dbName, storeName, storageHandler, version, onError, cacheProvider]);
 
     return cacheProvider;
 }

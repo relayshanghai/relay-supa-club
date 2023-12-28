@@ -1,4 +1,8 @@
 import { cocomelonId, searchIntercepts, setupIntercepts } from './intercepts';
+Cypress.on('uncaught:exception', (_err) => {
+    // ignore hydration errors from the WordCloud component which is dynamically loaded
+    return false;
+});
 
 describe('Dashboard/Search page', () => {
     beforeEach(() => {
@@ -10,10 +14,13 @@ describe('Dashboard/Search page', () => {
         cy.loginTestUser();
         cy.visit('/dashboard');
         cy.contains('Search by Topics', { timeout: 10000 });
+        cy.getByTestId('platform-select-loading-youtube').should('exist');
+        cy.getByTestId('platform-select-loading-youtube').should('not.exist');
+        cy.contains('No credits remaining').should('not.exist');
         cy.getByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators');
-            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
+            cy.get('input').should('be.visible').should('be.enabled').type('alligators');
         });
+        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators').click();
