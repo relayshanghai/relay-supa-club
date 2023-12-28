@@ -1,19 +1,16 @@
 import { useEffect, useRef } from 'react';
 import type { LegacyRef } from 'react';
-import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useRudderstackTrack } from '../../hooks/use-rudderstack';
 import { LanguageToggleIcon } from '../icons';
 import { useTranslation } from 'react-i18next';
-import { ChangeLanguage } from 'src/utils/analytics/events/change-language';
-import { languageCodeToHumanReadable } from 'src/utils/utils';
-import i18n from 'i18n';
+import { ChangeLanguage } from '../../utils/analytics/events/change-language';
+import { languageCodeToHumanReadable } from '../../utils/utils';
 import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
 import { mapLangCode } from '../chatwoot/chatwoot-provider';
-import { enUS, zhCN } from 'src/constants';
-
-export const LOCAL_STORAGE_LANGUAGE_KEY = 'language';
+import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY } from '../../constants';
 
 export const useLocalization = () => {
-    const { i18n: _i18n } = useTranslation();
+    const { i18n } = useTranslation();
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -33,17 +30,17 @@ export const useLocalization = () => {
                 i18n.changeLanguage(); // triggers the language detector
             }
         }
-    }, []);
+    }, [i18n]);
 
     useEffect(() => {
-        _i18n.on('languageChanged', (l) => {
+        i18n.on('languageChanged', (l) => {
             localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
             setBirdEatsBugLanguage(l);
             window.$chatwoot?.setLocale(mapLangCode(l));
         });
 
-        return () => _i18n.on('languageChanged', () => null);
-    }, [_i18n]);
+        return () => i18n.on('languageChanged', () => null);
+    }, [i18n]);
 };
 
 export const LanguageToggle = () => {

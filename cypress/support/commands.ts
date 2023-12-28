@@ -32,8 +32,7 @@ import 'cypress-iframe';
 
 import i18n from '../../i18n';
 import { mount } from 'cypress/react18';
-import { LOCAL_STORAGE_LANGUAGE_KEY } from '../../src/components/common/language-toggle';
-import { enUS } from '../../src/constants';
+import { enUS, LOCAL_STORAGE_LANGUAGE_KEY } from '../../src/constants';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
