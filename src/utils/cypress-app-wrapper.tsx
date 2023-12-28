@@ -15,6 +15,17 @@ import './cypress-mock-router'; // loads window.useRouter
 
 i18n.changeLanguage('en-US');
 
+export interface WindowCypress {
+    setMockRouter: (options: TestMountOptions) => void;
+    useRouter: () => {
+        route: string;
+        pathname: string;
+        query: Record<string, string>;
+        asPath: string;
+        push: (path: string) => void;
+    };
+}
+
 export const TestContextsWrapper = ({
     options,
     children,

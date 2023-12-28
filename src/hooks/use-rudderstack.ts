@@ -10,6 +10,11 @@ import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/anal
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
 import { nextFetch } from 'src/utils/fetcher';
+import type rudderSDK from 'rudder-sdk-js';
+
+export interface WindowRudderstack {
+    rudder: Omit<typeof rudderSDK, 'RESIDENCY_SERVER'>;
+}
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {

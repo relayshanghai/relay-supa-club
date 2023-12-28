@@ -4,9 +4,18 @@ import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
+import type { CompanyDB, CompanyTable, ProfileDB, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 import { profileToIdentifiable, useRudder, useRudderstackTrack } from './use-rudderstack';
+
+export interface WindowSession {
+    session?: {
+        user: any;
+        profile: ProfileDB;
+        company: CompanyDB;
+        subscription: SubscriptionGetResponse;
+    };
+}
 
 type useSessionParams = {
     onClear?: () => void;

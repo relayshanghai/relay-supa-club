@@ -1,6 +1,12 @@
 import { birdEatsBugEn } from 'i18n/en/bird-eats-bug';
 import { birdEatsBugCn } from 'i18n/zh/bird-eats-bug';
 
+export interface WindowBirdEatsBug {
+    birdeatsbug?: {
+        setOptions: (options: BEGSDKOptions) => void;
+    };
+}
+
 export interface BEGSDKOptions {
     publicAppId?: string;
     instantReplay?: boolean;
