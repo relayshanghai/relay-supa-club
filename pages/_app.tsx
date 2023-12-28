@@ -12,7 +12,7 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider as JotaiProvider } from 'jotai';
-import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
+import ChatwootProvider, { mapLangCode } from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
@@ -26,7 +26,6 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    const [lang, setLang] = useState(i18n.language);
     useEffect(() => {
         rudderInitialized();
     }, []); //enable rudderstack Analytics
@@ -38,7 +37,6 @@ function MyApp({
         const storedLanguage = localStorage.getItem('language');
         if (storedLanguage !== null) {
             i18n.changeLanguage(storedLanguage);
-            setLang(storedLanguage);
         } else {
             i18n.changeLanguage(); // triggers the language detector
         }
@@ -70,8 +68,8 @@ function MyApp({
 
     useEffect(() => {
         _i18n.on('languageChanged', (l) => {
-            setLang(l);
             setBirdEatsBugLanguage(l);
+            window.$chatwoot?.setLocale(mapLangCode(l));
         });
 
         return () => _i18n.on('languageChanged', () => null);
@@ -127,7 +125,7 @@ function MyApp({
                     <CacheProvider>
                         <JotaiProvider>
                             <UserProvider>
-                                <ChatwootProvider {...chatwootConfig} locale={lang}>
+                                <ChatwootProvider {...chatwootConfig}>
                                     <CompanyProvider>
                                         <Component {...pageProps} />
                                     </CompanyProvider>

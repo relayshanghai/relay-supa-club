@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, useContext, type PropsWithChildren } from 'react';
 import { useRouter } from 'next/router';
-import type { Chatwoot, ChatwootSettings, ChatwootSDKParams, WindowChatwoot } from 'src/utils/chatwoot/types';
+import type { Chatwoot, ChatwootSettings, ChatwootSDKParams } from 'src/utils/chatwoot/types';
 import { clientLogger } from 'src/utils/logger-client';
 
 const disableChatwoot = process.env.NEXT_PUBLIC_DISABLE_CHATWOOT === 'true';
@@ -11,7 +11,7 @@ export const useChatwoot = () => useContext(ChatWootContext);
 
 type ChatwootProviderProps = PropsWithChildren<ChatwootSettings & ChatwootSDKParams>;
 
-const mapLangCode = (lang: string) => {
+export const mapLangCode = (lang: string) => {
     const codes: { [k: string]: string } = {
         'zh-CN': 'zh_CN',
         'en-US': 'en',
@@ -38,34 +38,29 @@ export default function ChatwootProvider({ children, ...chatwootOptions }: Chatw
         } else {
             chatwoot.toggleBubbleVisibility('show');
         }
-
-        if (settings.locale) {
-            chatwoot.setLocale(mapLangCode(settings.locale));
-        }
-    }, [chatwoot, settings.locale, pathname]);
+    }, [chatwoot, pathname]);
 
     useEffect(() => {
         if (disableChatwoot) return;
         if (chatwoot !== null) return;
-
-        (window as WindowChatwoot).chatwootSettings = settings || {};
+        window.chatwootSettings = settings || {};
 
         const _baseUrl = baseUrl || 'https://app.chatwoot.com';
         const element = document.createElement('script');
         element.src = _baseUrl + '/packs/js/sdk.js';
         element.async = true;
         element.onload = () => {
-            if ((window as WindowChatwoot).$chatwoot) return;
+            if (window.$chatwoot) return;
 
             window.addEventListener('chatwoot:ready', function () {
-                setChatwoot((window as WindowChatwoot).$chatwoot);
+                setChatwoot(window.$chatwoot ?? null);
             });
 
             window.addEventListener('chatwoot:error', function (error) {
                 clientLogger(error, 'error', true);
             });
 
-            (window as WindowChatwoot).chatwootSDK.run({
+            window.chatwootSDK.run({
                 websiteToken: websiteToken,
                 baseUrl: _baseUrl,
             });

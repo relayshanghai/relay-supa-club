@@ -10,5 +10,6 @@ const navbar = {
     inbox: '收件箱',
     influencerManager: 'KOL管理',
     report: '{{influencerName}} 报告',
+    support: '帮助',
 };
 export default navbar;

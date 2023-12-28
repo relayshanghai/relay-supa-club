@@ -2,7 +2,18 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
-import { OldSearch, Team, Guide, ProfilePlus, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
+import {
+    OldSearch,
+    Team,
+    Guide,
+    ProfilePlus,
+    BarGraph,
+    ThunderSearch,
+    FourSquare,
+    ThunderMail,
+    Inbox,
+    ChatQuestion,
+} from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -11,6 +22,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
+import { mapLangCode } from './chatwoot/chatwoot-provider';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <OldSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -120,9 +132,25 @@ const NavBarInner = ({
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.performance')}</p>
                         </ActiveLink>
                     )}
+
                     <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`whitespace-nowrap text-xs`}>{t('navbar.guide')}</p>
                     </ActiveLink>
+
+                    <button
+                        className="flex flex-col items-center gap-1 overflow-visible border-l-4 stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700"
+                        onClick={() => {
+                            const lang = window.localStorage.getItem('language');
+                            if (lang) {
+                                window.$chatwoot?.setLocale(mapLangCode(lang));
+                            }
+                            window.$chatwoot?.toggle();
+                        }}
+                    >
+                        <ChatQuestion height={20} width={20} className="my-0.5 stroke-inherit" />
+                        {t('navbar.support')}
+                    </button>
+
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className="text-center text-xs">ADMIN</h2>
