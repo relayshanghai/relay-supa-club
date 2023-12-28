@@ -6,7 +6,7 @@ import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 
-const fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
+const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
     // some influencers were created with sequence_step_id's from another sequence. For each influencer, pull their `sequence_steps` for the right sequence. If the influencer's `sequence_step_id` is not in the `sequence_steps` for that sequence, set the id to the corresponding `sequence_step_number` for that sequence.
     console.log('fixing fixSequenceStepDoesNotBelongToInfluencerSequence');
     // const _company_ids = ['7b0b4586-57d3-4909-8489-45b726e94510'];
@@ -776,4 +776,103 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     return res.json({ results });
 };
 
-export default fixSequenceStepDoesNotBelongToInfluencerSequence;
+const _fixStuckInSequenceWithNoEmailSent: NextApiHandler = async (_req, res) => {
+    const { data: companiesWithOutreach } = await supabase
+        .from('companies')
+        .select('id, name, cus_id')
+        .eq('subscription_plan', 'Outreach');
+    // const _company_ids = ['6ee1bd6c-100f-497f-b6ee-c38f93a29c9d'];
+    const _company_ids = companiesWithOutreach?.map((c) => c.id) ?? [];
+    const { data: allSequenceInfluencers } = await supabase
+        .from('sequence_influencers')
+        .select('id, name, company_id, sequence_step, sequence_id')
+        .eq('funnel_status', 'In Sequence')
+        .in('company_id', _company_ids);
+
+    console.log('allSequenceInfluencers', allSequenceInfluencers?.length);
+    if (!allSequenceInfluencers) return res.status(200).json({ message: 'ok' });
+    const updated: any = [];
+    const messedUpCompanies: {
+        [companyId: string]: {
+            name: string;
+            count: number;
+        };
+    } = {};
+    const sequenceIds: string[] = [];
+    allSequenceInfluencers.forEach((i) => {
+        if (!sequenceIds.includes(i.sequence_id)) sequenceIds.push(i.sequence_id);
+    });
+    console.log('sequenceIds', sequenceIds.length);
+    const { data: allSequenceEmails } = await supabase
+        .from('sequence_emails')
+        .select('*')
+        .in('sequence_id', sequenceIds);
+
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+
+    const outbox = await getOutbox();
+
+    allSequenceInfluencers.forEach(async (influencer) => {
+        const emails = allSequenceEmails?.filter((e) => e.sequence_influencer_id === influencer.id);
+        console.log('emails', emails?.length);
+        const hasAlreadyDelivered = emails?.some(
+            (e) => e.email_delivery_status && e.email_delivery_status !== 'Scheduled',
+        );
+        if (emails?.length && emails?.length !== 0) {
+            return;
+        }
+
+        if (hasAlreadyDelivered) {
+            console.log('hasAlreadyDelivered', influencer.id, influencer.company_id);
+            return;
+        }
+        if (!Object.keys(messedUpCompanies).includes(influencer.company_id)) {
+            messedUpCompanies[influencer.company_id] = {
+                name: '',
+                count: 1,
+            };
+        } else {
+            messedUpCompanies[influencer.company_id].count++;
+        }
+        const messageIds = emails?.map((e) => e.email_message_id);
+        console.log('updating, ', influencer.name, influencer.company_id);
+        const outboxToDelete = outbox.filter((e) => messageIds?.includes(e.messageId)).map((e) => e.queueId);
+        for (const email of outboxToDelete) {
+            const canceledConfirm = { deleted: null }; // await deleteEmailFromOutbox(email);
+            console.log(`canceled ${email} ${canceledConfirm.deleted}`);
+        }
+
+        // console.log('deleting', emails);
+        if (emails?.length) {
+            // const { data: deleteConfirm } = await supabase
+            //     .from('sequence_emails')
+            //     .delete()
+            //     .eq('sequence_influencer_id', influencer.id)
+            //     .select('id');
+            // console.log('deleteConfirmed', deleteConfirm?.length);
+        }
+        await supabase
+            .from('sequence_influencers')
+            .update({ funnel_status: 'To Contact', sequence_step: 0 })
+            .eq('id', influencer.id);
+        updated.push(influencer.name + ' ' + influencer.id);
+    });
+
+    console.log('messedUpCompanies', messedUpCompanies);
+    return res.status(200).json({ message: updated });
+};
+
+const findEmailInOutbox: NextApiHandler = async (_req, res) => {
+    const messageId = '<5bde7f03-4e41-4f5d-8aa4-b3b21dba18df@gmail.com>';
+    const outbox = await getOutbox();
+    outbox.sort((a, b) => {
+        return new Date(a.scheduled).getTime() - new Date(b.scheduled).getTime();
+    });
+    const found = outbox.find((e) => e.messageId === messageId);
+    console.log(found);
+    const index = outbox.findIndex((e) => e.messageId === messageId);
+    console.log(index, 'out of ', outbox.length);
+    return res.status(200).json({ message: found });
+};
+
+export default findEmailInOutbox;
