@@ -79,6 +79,12 @@ const ThreadProvider = ({
                 return true;
             }
 
+            // Update cache if fresh is empty
+            if (!fresh && cached) {
+                // console.log('NO FRESH YES CACHE', { result: true, fresh, cached });
+                return false;
+            }
+
             // Do not update cache if ids are equal
             if (cached && fresh && fresh.length === cached.length && fresh.length > 0 && cached.length > 0) {
                 // if (cached[0].id !== fresh[0].id) {
