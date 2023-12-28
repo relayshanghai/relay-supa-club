@@ -197,6 +197,7 @@ export const birdEatsBugDefaultOptions: BEGSDKOptions = {
         watermark: false,
         previewScreen: {
             title: false,
+            email: 'optional',
         },
         defaultButton: {
             icon: 'exclamation',

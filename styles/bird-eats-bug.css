@@ -47,3 +47,10 @@
     --form-input-bg-color: transparent;
     --form-input-focus-border-color: var(--gray-300);
 }
+
+#birdeatsbug-sdk .button-primary {
+    font-weight: bolder;
+}
+#birdeatsbug-sdk .button-primary > svg {
+    margin-left: 10px !important;
+}
