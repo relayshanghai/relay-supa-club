@@ -22,7 +22,6 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
-import { mapLangCode } from './chatwoot/chatwoot-provider';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <OldSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -139,13 +138,7 @@ const NavBarInner = ({
 
                     <button
                         className="flex flex-col items-center gap-1 overflow-visible border-l-4 stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700"
-                        onClick={() => {
-                            const lang = window.localStorage.getItem('language');
-                            if (lang) {
-                                window.$chatwoot?.setLocale(mapLangCode(lang));
-                            }
-                            window.$chatwoot?.toggle();
-                        }}
+                        onClick={() => window.$chatwoot?.toggle()}
                     >
                         <ChatQuestion height={20} width={20} className="my-0.5 stroke-inherit" />
                         {t('navbar.support')}
