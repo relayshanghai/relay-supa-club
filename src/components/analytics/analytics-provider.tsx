@@ -74,6 +74,11 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
         if (profile.email) {
             user.email = profile.email;
         }
+        if (window.birdeatsbug?.setOptions) {
+            window?.birdeatsbug?.setOptions({
+                user: { email: profile.email || '' },
+            });
+        }
         Sentry.setUser(user);
     }, [profile]);
 

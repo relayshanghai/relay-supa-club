@@ -2,6 +2,7 @@ import type rudderSDK from 'rudder-sdk-js';
 import type { TestMountOptions } from '../src/utils/user-test-wrapper.tsx';
 import type { CompanyDB, ProfileDB } from 'src/utils/api/db/types.js';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions/index.js';
+import type { BEGSDKOptions } from 'src/components/analytics/bird-eats-bugs.ts';
 
 declare global {
     interface Window {
@@ -26,5 +27,8 @@ declare global {
             push: (path: string) => void;
         };
         Appcues: any;
+        birdeatsbug?: {
+            setOptions: (options: BEGSDKOptions) => void;
+        };
     }
 }

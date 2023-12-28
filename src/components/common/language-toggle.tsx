@@ -5,6 +5,7 @@ import { LanguageToggleIcon } from '../icons';
 import { useTranslation } from 'react-i18next';
 import { ChangeLanguage } from 'src/utils/analytics/events/change-language';
 import { languageCodeToHumanReadable } from 'src/utils/utils';
+import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
 
 export const LanguageToggle = () => {
     const { track } = useRudderstackTrack();
@@ -17,6 +18,7 @@ export const LanguageToggle = () => {
         i18n.changeLanguage(value, () => {
             localStorage.setItem('language', value);
         });
+        setBirdEatsBugLanguage(value);
     };
 
     const languageButtonRef: LegacyRef<HTMLButtonElement> = useRef(null);

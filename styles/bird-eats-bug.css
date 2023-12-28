@@ -1,0 +1,49 @@
+#birdeatsbug-sdk {
+    --violet-600: #7c3aed;
+    --red-500: #ff6e64;
+    --gray-100: #f4faff;
+    --gray-200: #e2e8f4;
+    --gray-300: #c1cbdc;
+    --gray-400: #8c95a8;
+    --gray-500: #4b566b;
+    --gray-550: #3d485d;
+    --gray-650: #2c3443;
+    --gray-800: #1a202c;
+    --base-size-step: 4px;
+    --distance-to-window-edge: calc(6 * var(--base-size-step));
+    --distance-to-window-edge-horizontal: var(--distance-to-window-edge);
+    --distance-to-window-edge-vertical: var(--distance-to-window-edge);
+    --border-radius: var(--base-size-step);
+    --screen-box-shadow: 0px var(--base-size-step) calc(8 * var(--base-size-step)) rgba(0, 0, 0, 0.1);
+    --button-primary-bg-color: var(--violet-600);
+    --button-primary-hover-color: #5b21b6;
+    --button-primary-text-color: white;
+    --button-secondary-bg-color: #00ba771a;
+    --button-secondary-hover-color: #00ba7738;
+    --button-secondary-text-color: var(--violet-600);
+    --creation-confirmation-color: var(--violet-600);
+    --destructive-confirmation-color: var(--red-500);
+    --error-color: var(--red-500);
+}
+#birdeatsbug-sdk.dark {
+    --text-color: var(--gray-300);
+    --screen-bg-color: var(--gray-800);
+    --secondary-bg-color: var(--gray-800);
+    --media-bg-color: var(--gray-650);
+    --border-color: var(--gray-650);
+    --form-input-color: var(--gray-100);
+    --form-input-placeholder-color: var(--gray-400);
+    --form-input-bg-color: var(--gray-650);
+    --form-input-focus-border-color: var(--gray-500);
+}
+#birdeatsbug-sdk.light {
+    --text-color: var(--gray-400);
+    --screen-bg-color: white;
+    --secondary-bg-color: var(--gray-650);
+    --media-bg-color: var(--gray-200);
+    --border-color: var(--gray-200);
+    --form-input-color: black;
+    --form-input-placeholder-color: var(--gray-400);
+    --form-input-bg-color: transparent;
+    --form-input-focus-border-color: var(--gray-300);
+}

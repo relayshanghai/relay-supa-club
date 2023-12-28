@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { nanoid } from 'nanoid';
+import { setBirdEatsBugLanguage } from 'src/components/analytics/bird-eats-bugs';
 
 function MyApp({
     Component,
@@ -70,6 +71,7 @@ function MyApp({
     useEffect(() => {
         _i18n.on('languageChanged', (l) => {
             setLang(l);
+            setBirdEatsBugLanguage(l);
         });
 
         return () => _i18n.on('languageChanged', () => null);
