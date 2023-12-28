@@ -16,6 +16,7 @@ import chatwootConfig from 'chatwoot.config';
 import { AnalyticsProvider, useProductHuntReferrer } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
+import { default as _initializeTranslations } from '../i18n';
 
 function MyApp({
     Component,
