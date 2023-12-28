@@ -47,12 +47,12 @@ export const chinaFilter = (str: string) => {
  *
  * @param n is the number to be converted to currency
  * @param curr is the currency to be used
- * @param LanguageFormat is the language to be used
+ * @param language is the language to be used
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = enUS) =>
-    Intl.NumberFormat(LanguageFormat, {
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', language = enUS) =>
+    Intl.NumberFormat(language, {
         style: 'currency',
         currency: curr,
         maximumFractionDigits: maximumFractionDigits,
