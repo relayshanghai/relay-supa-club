@@ -10,26 +10,23 @@ import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
 import { mapLangCode } from '../chatwoot/chatwoot-provider';
 import { enUS, zhCN } from 'src/constants';
 
+export const LOCAL_STORAGE_LANGUAGE_KEY = 'language';
+
 export const useLocalization = () => {
     const { i18n: _i18n } = useTranslation();
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
         const setLang = urlParams.get('set_lang');
+        // if language is specified in the URL, use that, otherwise use the localStorage stored language
         if (typeof setLang === 'string') {
             if (setLang.includes('en')) {
                 i18n.changeLanguage(enUS);
-                localStorage.setItem('language', enUS);
             } else if (setLang.includes('zh')) {
                 i18n.changeLanguage(zhCN);
-                localStorage.setItem('language', zhCN);
             }
         } else {
-            const storedLanguage = localStorage.getItem('language');
+            const storedLanguage = localStorage.getItem(LOCAL_STORAGE_LANGUAGE_KEY);
             if (storedLanguage !== null) {
                 i18n.changeLanguage(storedLanguage);
             } else {
@@ -40,7 +37,7 @@ export const useLocalization = () => {
 
     useEffect(() => {
         _i18n.on('languageChanged', (l) => {
-            localStorage.setItem('language', l);
+            localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
             setBirdEatsBugLanguage(l);
             window.$chatwoot?.setLocale(mapLangCode(l));
         });
