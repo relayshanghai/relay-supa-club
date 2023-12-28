@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
-import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { type ThreadInfo, ThreadPreview, type Message } from 'src/components/inbox/wip/thread-preview';
+// import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
+import { type ThreadInfo, ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -11,10 +11,45 @@ import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
 import { nanoid } from 'nanoid';
 import { sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
+import { apiFetch } from 'src/utils/api/api-fetch';
 
 const fetcher = async (url: string) => {
-    const res = await nextFetch(url);
-    return res;
+    const res = await apiFetch(url, {});
+    return res.content;
+};
+
+type Message = BaseMessage & { isLocal?: true };
+
+/**
+ * Generate local Message object with isLocal attribute
+ */
+const generateLocalData = (params: { body: string }): Message => {
+    const localId = nanoid(10);
+    return {
+        date: '2023-12-22T07:03:57.000Z',
+        unread: false,
+        id: localId,
+        from: {
+            name: 'LMNAO',
+            address: 'jiggling.potato@gmail.com',
+        },
+        to: [
+            {
+                name: 'Suvojit Ghosh - ' + localId,
+                address: 'ghoshsuvojit2012@gmail.com',
+            },
+        ],
+        cc: [],
+        replyTo: [
+            {
+                name: 'LMNAO',
+                address: 'jiggling.potato@gmail.com',
+            },
+        ],
+        subject: 'Re: 3rd Follow-up',
+        body: params.body,
+        isLocal: true,
+    };
 };
 
 const ThreadProvider = ({
@@ -29,101 +64,74 @@ const ThreadProvider = ({
     const {
         data: messages,
         error: messagesError,
-        isLoading,
-        isValidating,
-        mutate: refreshMessages,
-    } = useSWR<Message[], any>(`outreach/threads/${threadId}`, fetcher, {
+        mutate,
+    } = useSWR<Message[], any>(`/api/outreach/threads/${threadId}`, fetcher, {
+        // Note that this is disabled globally in SWRConfig
         revalidateOnFocus: true,
-    });
+        refreshInterval: 5000,
+        // Check if cached and fresh data are NOT the same, update if equal
+        // i.e. returning FALSE updates the cache
+        // Seems like compare is ran twice switching the "fresh" and "cached" data
+        compare: (cached, fresh) => {
+            // Do not update cache if both are undefined
+            if (fresh === undefined && cached === undefined) {
+                // console.log('UNDEFINED', { result: true, fresh, cached });
+                return true;
+            }
 
-    console.log(messages);
+            // Do not update cache if ids are equal
+            if (cached && fresh && fresh.length === cached.length && fresh.length > 0 && cached.length > 0) {
+                // if (cached[0].id !== fresh[0].id) {
+                //     console.log('EQUAL', {
+                //         result: cached[0].id === fresh[0].id,
+                //         cached: cached[0].id,
+                //         fresh: fresh[0].id,
+                //     });
+                // }
 
-    const sampleFunction = useCallback(
-        async (replyBody: string) => {
-            await sendReply({
-                replyBody: replyBody,
-                threadId,
-            });
-            console.log('inside sendreply', messages);
-            return messages;
+                return cached[0].id === fresh[0].id;
+            }
+
+            // console.log('UNEQUAL', {
+            //     result: (fresh?.length ?? 0) < (cached?.length ?? 0),
+            //     cached: (cached ?? [{ id: null }])[0].id,
+            //     fresh: (fresh ?? [{ id: null }])[0].id,
+            //     cachedLen: cached?.length,
+            //     freshLen: fresh?.length,
+            // });
+
+            // Do not update the cache if fresh data has less items than the cached
+            return (fresh?.length ?? 0) < (cached?.length ?? 0);
         },
-        [messages, threadId],
-    );
+    });
 
     const handleReply = useCallback(
         (replyBody: string) => {
-            refreshMessages(
+            mutate(
                 async (cache) => {
-                    await sendReply({
+                    sendReply({
                         replyBody: replyBody,
                         threadId,
                     });
-                    console.log('inside sendreply', cache);
-                    return [
-                        {
-                            date: '2023-12-22T07:03:57.000Z',
-                            unread: false,
-                            id: nanoid(),
-                            from: {
-                                name: 'LMNAO',
-                                address: 'jiggling.potato@gmail.com',
-                            },
-                            to: [
-                                {
-                                    name: 'Suvojit Ghosh',
-                                    address: 'ghoshsuvojit2012@gmail.com',
-                                },
-                            ],
-                            cc: [],
-                            replyTo: [
-                                {
-                                    name: 'LMNAO',
-                                    address: 'jiggling.potato@gmail.com',
-                                },
-                            ],
-                            subject: 'Re: 3rd Follow-up',
-                            body: replyBody,
-                        },
-                        ...(cache ?? []),
-                    ];
+                    // Retain local data with generated data
+                    const localMessage = generateLocalData({ body: replyBody });
+                    // console.log('from mutator callback', cache, localMessage);
+                    return [localMessage, ...(cache ?? [])];
                 },
                 {
-                    optimisticData: (cached) => {
-                        const lol = [
-                            {
-                                date: '2023-12-22T07:03:57.000Z',
-                                unread: false,
-                                id: nanoid(),
-                                from: {
-                                    name: 'LMNAO',
-                                    address: 'jiggling.potato@gmail.com',
-                                },
-                                to: [
-                                    {
-                                        name: 'Suvojit Ghosh',
-                                        address: 'ghoshsuvojit2012@gmail.com',
-                                    },
-                                ],
-                                cc: [],
-                                replyTo: [
-                                    {
-                                        name: 'LMNAO',
-                                        address: 'jiggling.potato@gmail.com',
-                                    },
-                                ],
-                                subject: 'Re: 3rd Follow-up',
-                                body: replyBody,
-                            },
-                            ...(cached ?? []),
-                        ];
-                        console.log('messages opt', lol);
-                        return lol;
+                    // Optimistically update the UI
+                    // Seems like this is discarded when MutatorCallback ^ resolves
+                    optimisticData: (cache) => {
+                        const localMessage = generateLocalData({ body: replyBody });
+                        // console.log('from optimistic data', cache, localMessage);
+                        return [localMessage, ...(cache ?? [])];
                     },
                     revalidate: false,
+                    rollbackOnError: true,
                 },
             );
         },
-        [threadId, refreshMessages],
+        [threadId, mutate],
     );
 
     if (messagesError) return <div>Error loading messages</div>;
@@ -160,25 +168,25 @@ const InboxPreview = () => {
         sequences: [],
     });
 
-    console.log('filter', filters);
+    // console.log('filter', filters);
 
     const {
         data: threads,
-        error: threadsError,
+        error: _threadsError,
         isLoading: isThreadsLoading,
     } = useSWR<ThreadInfo[], any>([filters], async () => {
         const res = await nextFetch('outreach/threads', {
             method: 'POST',
             body: filters,
         });
-        console.log('threads', res);
+        // console.log('threads', res);
         return res;
     });
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
 
     useEffect(() => {
-        console.log(threads);
+        // console.log(threads);
         if (threads) setSelectedThread(threads[0]);
     }, [threads]);
 

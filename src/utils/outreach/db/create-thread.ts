@@ -42,7 +42,7 @@ export const createThread: DBQuery<CreateThreadFn> = (i) => async (params) => {
     }
 
     if (result.length !== 1) {
-        throw new Error('Error in inserting row' + result.length);
+        throw new Error('Error in inserting row');
     }
 
     return result[0];

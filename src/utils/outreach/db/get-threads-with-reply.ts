@@ -50,6 +50,7 @@ export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn>
                     eq(threads.emailEngineAccountId, account),
                     isNull(threads.deletedAt),
                     isNotNull(threads.lastReplyId),
+                    isNotNull(threads.sequenceInfluencerId),
                     filters && filters.funnelStatus.length > 0
                         ? inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus)
                         : undefined,
