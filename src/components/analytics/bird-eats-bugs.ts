@@ -1,5 +1,6 @@
 import { birdEatsBugEn } from 'i18n/en/bird-eats-bug';
 import { birdEatsBugCn } from 'i18n/zh/bird-eats-bug';
+import { useEffect, useState } from 'react';
 
 export interface WindowBirdEatsBug {
     birdeatsbug?: {
@@ -236,4 +237,21 @@ export const setBirdEatsBugLanguage = (language: string) => {
             }
         }
     }
+};
+
+export const useBirdEatsBug = () => {
+    const [loaded, setLoaded] = useState(false);
+    useEffect(() => {
+        if (typeof window === 'undefined' || loaded) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.innerHTML = birdEatsBugScript;
+        script.onload = () => {
+            setLoaded(true);
+        };
+        document.body.appendChild(script);
+    }, [loaded]);
 };

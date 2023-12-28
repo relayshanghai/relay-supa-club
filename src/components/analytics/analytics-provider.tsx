@@ -9,6 +9,7 @@ import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import * as Sentry from '@sentry/nextjs';
+import { useBirdEatsBug } from './bird-eats-bugs';
 
 export const AnalyticsContext = createContext<
     | {
@@ -39,7 +40,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
-
+    useBirdEatsBug();
     const { session, profile } = useSession();
     const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
