@@ -12,8 +12,9 @@ import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import './cypress-mock-router'; // loads window.useRouter
+import { enUS } from 'src/constants';
 
-i18n.changeLanguage('en-US');
+i18n.changeLanguage(enUS);
 
 export interface WindowCypress {
     setMockRouter: (options: TestMountOptions) => void;

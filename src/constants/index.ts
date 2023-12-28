@@ -15,3 +15,7 @@ export const appCacheDBKey = (userId?: string) => (userId ? `app-cache-${userId}
 export const appCacheStoreName = 'app-cache-store';
 export const cacheVersion = 6;
 export const isDev = () => process.env.NODE_ENV === 'development';
+
+export const enUS = 'en-US';
+export const zhCN = 'zh-CN';
+('');

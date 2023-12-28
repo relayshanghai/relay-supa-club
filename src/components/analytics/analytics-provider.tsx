@@ -10,6 +10,7 @@ import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import * as Sentry from '@sentry/nextjs';
 import { useBirdEatsBug } from './bird-eats-bugs';
+import { nanoid } from 'nanoid';
 
 export const AnalyticsContext = createContext<
     | {
@@ -19,6 +20,22 @@ export const AnalyticsContext = createContext<
       }
     | undefined
 >(undefined);
+
+export const useProductHuntReferrer = () => {
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referer = urlParams.get('ref');
+            const deviceId = urlParams.get('device_id');
+            if (deviceId) {
+                localStorage.setItem('deviceId', deviceId);
+            } else {
+                localStorage.setItem('deviceId', nanoid());
+            }
+            referer === 'producthunt' && localStorage.setItem('referer', referer);
+        }
+    }, []);
+};
 
 export const useAnalytics = () => {
     const context = useContext(AnalyticsContext);

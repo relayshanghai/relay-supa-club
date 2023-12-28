@@ -34,6 +34,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
 import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
+import { enUS } from 'src/constants';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -64,7 +65,7 @@ export const InfluencerDetailsModal = ({
         ? [...Array(7)].map((_, i) => ({ topic: String(i), relevance: 0 }))
         : topicsAndRelevance.map((topic) => ({
               ...topic,
-              topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
+              topic: i18n.language === enUS ? topic.topic_en : topic.topic_zh,
           }));
     useEffect(() => {
         const handleTopicsAndRelevance = async (handle: string) => {

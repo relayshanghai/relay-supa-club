@@ -3,22 +3,23 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import en from './en';
 import zh from './zh/index';
+import { enUS, zhCN } from 'src/constants';
 
 // the translations
 // (tip move them in a JSON file and import them,
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
-    'en-US': en,
-    'zh-CN': zh,
+    [enUS]: en,
+    [zhCN]: zh,
 };
 
 i18n.use(LanguageDetector)
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         resources,
-        supportedLngs: ['en-US', 'zh-CN'],
-        lng: 'zh-CN',
-        fallbackLng: { default: ['zh-CN'] }, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+        supportedLngs: [enUS, zhCN],
+        lng: zhCN,
+        fallbackLng: { default: [zhCN] }, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
         // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
         // if you're using a language detector, do not define the lng option
 

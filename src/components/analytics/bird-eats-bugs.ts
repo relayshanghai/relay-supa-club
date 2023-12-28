@@ -1,6 +1,7 @@
 import { birdEatsBugEn } from 'i18n/en/bird-eats-bug';
 import { birdEatsBugCn } from 'i18n/zh/bird-eats-bug';
 import { useEffect, useState } from 'react';
+import { enUS } from 'src/constants';
 
 export interface WindowBirdEatsBug {
     birdeatsbug?: {
@@ -220,13 +221,13 @@ export const setBirdEatsBugLanguage = (language: string) => {
             ...birdEatsBugDefaultOptions,
             ui: {
                 ...birdEatsBugDefaultOptions.ui,
-                text: language === 'en-US' ? birdEatsBugEn : birdEatsBugCn,
+                text: language === enUS ? birdEatsBugEn : birdEatsBugCn,
             },
         });
         const button = document.querySelector('#birdeatsbug-default-button');
         if (button) {
             const newText = document.createTextNode(
-                language === 'en-US' ? birdEatsBugEn.defaultButton : birdEatsBugCn.defaultButton,
+                language === enUS ? birdEatsBugEn.defaultButton : birdEatsBugCn.defaultButton,
             );
             // replace the text but leave the svg icon
             const oldText = button.firstChild;

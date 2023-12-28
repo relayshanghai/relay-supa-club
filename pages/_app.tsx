@@ -3,7 +3,6 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
 import { UserProvider } from 'src/hooks/use-user';
-import i18n from '../i18n';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -12,13 +11,11 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider as JotaiProvider } from 'jotai';
-import ChatwootProvider, { mapLangCode } from 'src/components/chatwoot/chatwoot-provider';
+import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
-import { useTranslation } from 'react-i18next';
-import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
+import { AnalyticsProvider, useProductHuntReferrer } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
-import { nanoid } from 'nanoid';
-import { setBirdEatsBugLanguage } from 'src/components/analytics/bird-eats-bugs';
+import { useLocalization } from 'src/components/common/language-toggle';
 
 function MyApp({
     Component,
@@ -31,49 +28,10 @@ function MyApp({
     }, []); //enable rudderstack Analytics
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
-    const { i18n: _i18n } = useTranslation();
 
-    useEffect(() => {
-        const storedLanguage = localStorage.getItem('language');
-        if (storedLanguage !== null) {
-            i18n.changeLanguage(storedLanguage);
-        } else {
-            i18n.changeLanguage(); // triggers the language detector
-        }
-    }, []);
+    useProductHuntReferrer();
+    useLocalization();
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const urlParams = new URLSearchParams(window.location.search);
-            const setLang = urlParams.get('set_lang');
-            if (typeof setLang === 'string') {
-                if (setLang.includes('en')) {
-                    i18n.changeLanguage('en-US');
-                    localStorage.setItem('language', 'en-US');
-                } else if (setLang.includes('zh')) {
-                    i18n.changeLanguage('zh-CN');
-                    localStorage.setItem('language', 'zh-CN');
-                }
-            }
-            const referer = urlParams.get('ref');
-            const deviceId = urlParams.get('device_id');
-            if (deviceId) {
-                localStorage.setItem('deviceId', deviceId);
-            } else {
-                localStorage.setItem('deviceId', nanoid());
-            }
-            referer === 'producthunt' && localStorage.setItem('referer', referer);
-        }
-    }, []);
-
-    useEffect(() => {
-        _i18n.on('languageChanged', (l) => {
-            setBirdEatsBugLanguage(l);
-            window.$chatwoot?.setLocale(mapLangCode(l));
-        });
-
-        return () => _i18n.on('languageChanged', () => null);
-    }, [_i18n]);
     const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 
     if (!GOOGLE_ANALYTICS_ID) {

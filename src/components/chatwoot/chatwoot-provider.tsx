@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState, useContext, type PropsWithCh
 import { useRouter } from 'next/router';
 import type { Chatwoot, ChatwootSettings, ChatwootSDKParams } from 'src/utils/chatwoot/types';
 import { clientLogger } from 'src/utils/logger-client';
+import { enUS, zhCN } from 'src/constants';
 
 const disableChatwoot = process.env.NEXT_PUBLIC_DISABLE_CHATWOOT === 'true';
 
@@ -13,8 +14,8 @@ type ChatwootProviderProps = PropsWithChildren<ChatwootSettings & ChatwootSDKPar
 
 export const mapLangCode = (lang: string) => {
     const codes: { [k: string]: string } = {
-        'zh-CN': 'zh_CN',
-        'en-US': 'en',
+        [zhCN]: 'zh_CN',
+        [enUS]: 'en',
     };
 
     if (lang in codes) {

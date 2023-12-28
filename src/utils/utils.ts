@@ -1,5 +1,6 @@
 // IMPORTANT: Do not put any server-side or client-side specific code in this file. It is used by both.
 
+import { enUS } from 'src/constants';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
 
@@ -50,7 +51,7 @@ export const chinaFilter = (str: string) => {
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = 'en-US') =>
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = enUS) =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
