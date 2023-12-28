@@ -1,5 +1,4 @@
 import React, { createContext, useEffect, useState, useContext, type PropsWithChildren } from 'react';
-import { useRouter } from 'next/router';
 import type { Chatwoot, ChatwootSettings, ChatwootSDKParams } from 'src/utils/chatwoot/types';
 import { clientLogger } from 'src/utils/logger-client';
 import { enUS, zhCN } from 'src/constants';
@@ -27,19 +26,7 @@ export const mapLangCode = (lang: string) => {
 
 export default function ChatwootProvider({ children, ...chatwootOptions }: ChatwootProviderProps) {
     const { baseUrl, websiteToken, ...settings } = chatwootOptions;
-    const { pathname } = useRouter();
     const [chatwoot, setChatwoot] = useState<Chatwoot | null>(null);
-
-    useEffect(() => {
-        if (!chatwoot) return;
-
-        const pathsToHideChatwootOn = ['/boostbot'];
-        if (pathsToHideChatwootOn.includes(pathname)) {
-            chatwoot.toggleBubbleVisibility('hide');
-        } else {
-            chatwoot.toggleBubbleVisibility('show');
-        }
-    }, [chatwoot, pathname]);
 
     useEffect(() => {
         if (disableChatwoot) return;
