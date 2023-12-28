@@ -8,10 +8,9 @@ import { languageCodeToHumanReadable } from '../../utils/utils';
 import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
 import { mapLangCode } from '../chatwoot/chatwoot-provider';
 import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY } from '../../constants';
+import i18n from 'i18n'; // importing this initializes i18n using i19n.init()
 
 export const useLocalization = () => {
-    const { i18n } = useTranslation();
-
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const setLang = urlParams.get('set_lang');
@@ -30,7 +29,7 @@ export const useLocalization = () => {
                 i18n.changeLanguage(); // triggers the language detector
             }
         }
-    }, [i18n]);
+    }, []);
 
     useEffect(() => {
         i18n.on('languageChanged', (l) => {
@@ -40,7 +39,7 @@ export const useLocalization = () => {
         });
 
         return () => i18n.on('languageChanged', () => null);
-    }, [i18n]);
+    }, []);
 };
 
 export const LanguageToggle = () => {
