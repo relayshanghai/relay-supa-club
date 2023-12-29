@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Loader } from 'src/components/icons';
@@ -11,36 +11,41 @@ import {
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
 import { useTranslation } from 'react-i18next';
+import { useAtom } from 'jotai';
+import { alipaySubscriptionSubmitting } from 'src/atoms/alipay-subscription-submitting';
 
 const ConfirmAlipayPaymentPage = () => {
     const router = useRouter();
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [isProcessing, setIsProcessing] = useAtom(alipaySubscriptionSubmitting);
     const { companyId, customerId, priceId, selectedPlan, couponId } = router.query;
     const { t } = useTranslation();
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
         if (
-            isProcessing ||
+            !companyId ||
             typeof companyId !== 'string' ||
+            !customerId ||
             typeof customerId !== 'string' ||
+            !priceId ||
             typeof priceId !== 'string'
         ) {
             return;
         }
-        setIsProcessing(true);
 
         try {
             // handle setupIntent authorization failure first
-            const setupIntents = await getSetupIntents(customerId);
-            if (setupIntents.length < 1) {
+            const setupIntents = (await getSetupIntents(customerId)).data;
+            // get the latest setup intent
+            setupIntents.sort((a, b) => b.created - a.created);
+
+            const latestSetupIntent = setupIntents[0];
+            if (!latestSetupIntent?.payment_method) {
                 toast.error(t('account.generalPaymentError'));
                 clientLogger(`Cannot find setupIntents from this customer - ${customerId}`, 'error');
                 router.push(`/payments?plan=${selectedPlan}`);
                 return;
             }
-            // get the latest setup intent
-            const latestSetupIntent = setupIntents.data[0];
             const { last_setup_error } = latestSetupIntent;
-            if (last_setup_error && last_setup_error.code.includes('setup_intent_authentication_failure')) {
+            if (last_setup_error && last_setup_error.code?.includes('setup_intent_authentication_failure')) {
                 toast.error(t('account.authorizationPaymentError'));
                 router.push(`/payments?plan=${selectedPlan}`);
                 clientLogger(`SetupIntent setup failed - ${customerId}`, 'error');
@@ -68,11 +73,23 @@ const ConfirmAlipayPaymentPage = () => {
                 });
             });
         }
-    }, [companyId, couponId, customerId, isProcessing, priceId, router, selectedPlan, t]);
+    }, [companyId, couponId, customerId, priceId, router, selectedPlan, t]);
 
     useEffect(() => {
+        if (
+            isProcessing ||
+            !companyId ||
+            typeof companyId !== 'string' ||
+            !customerId ||
+            typeof customerId !== 'string' ||
+            !priceId ||
+            typeof priceId !== 'string'
+        ) {
+            return;
+        }
+        setIsProcessing(true);
         handleCreateSubscriptionWithAlipay();
-    }, [handleCreateSubscriptionWithAlipay]);
+    }, [companyId, customerId, handleCreateSubscriptionWithAlipay, isProcessing, priceId, setIsProcessing]);
 
     return (
         <div className="h-screen">
@@ -92,4 +109,5 @@ const ConfirmAlipayPaymentPage = () => {
     );
 };
 
+// uses memo to avoid the page re-rendering when the query changes
 export default ConfirmAlipayPaymentPage;
