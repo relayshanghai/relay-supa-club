@@ -24,6 +24,7 @@ DATA_KEY=asdf
 
 NEXT_PUBLIC_SUPABASE_ANON_KEY=asdf
 NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
+SUPABASE_CONNECTION_URL=postgresql://postgres:postgres@localhost:54322/postgres
 
 # Send in Blue
 
