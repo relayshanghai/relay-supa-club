@@ -25,6 +25,7 @@ export const db = (instance?: ReturnType<typeof drizzle>) => {
 
     DB_CONN.instance = postgres(connectionString, {
         prepare: false,
+        idle_timeout: 60,
         // debug: (conn) => console.log('POSTGRES', conn),
         onclose: () => {
             // console.log('CLOSING POSTGRES CONN', conn);
