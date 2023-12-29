@@ -279,8 +279,8 @@ export const useRudderstackTrack = () => {
                             deviceId,
                             eventName: eventName,
                             currentPage,
+                            $add,
                             ...payload,
-                            ...$add,
                             ...options,
                         },
                     });
