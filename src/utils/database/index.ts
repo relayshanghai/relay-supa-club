@@ -5,7 +5,10 @@ export type DBQuery<T> = (instance?: ReturnType<typeof drizzle>) => T;
 
 export type DBQueryReturn<T extends (...args: any) => any> = Awaited<ReturnType<ReturnType<T>>>;
 
-const DB_CONN: { instance: ReturnType<typeof postgres> | null } = { instance: null };
+export const DB_CONN: { instance: ReturnType<typeof postgres> | null; conns: Set<number> } = {
+    instance: null,
+    conns: new Set(),
+};
 
 /**
  * Drizzle database
@@ -25,12 +28,28 @@ export const db = (instance?: ReturnType<typeof drizzle>) => {
 
     DB_CONN.instance = postgres(connectionString, {
         prepare: false,
-        // debug: (conn) => console.log('POSTGRES', conn),
-        onclose: () => {
-            // console.log('CLOSING POSTGRES CONN', conn);
+        idle_timeout: 60,
+        debug: (conn, _query) => {
+            DB_CONN.conns.add(conn);
+            // console.log('POSTGRES::OPEN', conn);
+        },
+        onclose: (conn) => {
+            DB_CONN.conns.delete(conn);
             DB_CONN.instance = null;
+            // console.log('POSTGRES::CLOSE', conn, DB_CONN.conns.entries());
         },
     });
 
     return drizzle(DB_CONN.instance);
+};
+
+/**
+ * Manually close current database connection or the passed drizzle instance
+ */
+export const close = async (i?: ReturnType<typeof drizzle>) => {
+    // @ts-expect-error session.client is not exposed
+    const instance = i?.session.client as ReturnType<typeof postgres> | null;
+
+    const conn = instance ?? DB_CONN.instance;
+    conn && (await conn.end());
 };

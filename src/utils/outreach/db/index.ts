@@ -7,3 +7,4 @@ export { createEmail } from './create-email';
 export { getSequenceInfluencerByEmail } from './get-sequence-influencer-by-email';
 export { getSequenceInfluencerByThreadId } from './get-sequence-influencer-by-thread-id';
 export { getThreadsWithReply } from './get-threads-with-reply';
+export { updateEmailByMessageId } from './update-email-by-message-id';

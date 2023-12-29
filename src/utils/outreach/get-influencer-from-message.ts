@@ -10,11 +10,11 @@ type GetInfluencerFromMessageFn = (
 ) => Promise<typeof sequenceInfluencers.$inferSelect | null>;
 
 export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, options) => {
-    const influencerByMessageId = await getSequenceInfluencerByMessageId(options?.tx)(message.messageId);
-    if (influencerByMessageId) return influencerByMessageId;
-
     const influencerByThread = await getSequenceInfluencerByThreadId(options?.tx)(message.threadId);
     if (influencerByThread) return influencerByThread;
+
+    const influencerByMessageId = await getSequenceInfluencerByMessageId(options?.tx)(message.messageId);
+    if (influencerByMessageId) return influencerByMessageId;
 
     const from = [message.from];
     const sender = [message.sender];

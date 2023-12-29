@@ -4,7 +4,6 @@ import { parseContacts } from './parse-contacts';
 import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
-import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
 import { getInfluencerFromMessage } from './get-influencer-from-message';
 import { getMessageType } from './get-message-type';
 import { deleteEmail } from './delete-email';
@@ -66,8 +65,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
         }
 
         // determine the valid repliable id for this thread
-        const profile = await getProfileByEmailEngineEmail(tx)(emailMessage.from.address);
-        const repliedMessageId = !profile && emailMessage.inReplyTo ? emailMessage.id : null;
+        const repliedMessageId = messageType === 'Reply' ? emailMessage.id : null;
 
         const thread = await createThread(tx)({
             threadId: emailMessage.threadId,
