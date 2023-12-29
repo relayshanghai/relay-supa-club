@@ -23,6 +23,7 @@ export enum MixpanelPeopleProps {
     lang = 'lang',
     paidUserSince = 'paidUserSince',
     subscriptionStatus = 'subscriptionStatus',
+    subscriptionPlan = 'subscriptionPlan',
     total_sessions = 'total_sessions',
     total_searches = 'total_searches',
     total_reports = 'total_reports',

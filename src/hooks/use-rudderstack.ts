@@ -28,6 +28,7 @@ export interface IdentityTraits extends apiObject {
     productCategory?: string;
     products?: string;
     subscriptionStatus?: string;
+    subscriptionPlan?: string;
 }
 
 type identTraits = { [k in Exclude<MixpanelPeopleProps, MixpanelPeoplePropsInc>]?: any };
@@ -121,6 +122,7 @@ export const profileToIdentifiable = (
         lang,
         paidUserSince: company?.subscription_start_date ?? '',
         subscriptionStatus: subscriptionStatus.toLowerCase(),
+        subscriptionPlan: company?.subscription_plan,
         createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : '',
         referer: referer,
     };
