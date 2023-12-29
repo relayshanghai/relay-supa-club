@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
 import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { nextFetch } from 'src/utils/fetcher';
-import WordCloud from 'react-d3-cloud';
 import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
 import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { clientLogger } from 'src/utils/logger-client';
+import dynamic from 'next/dynamic';
 
 type DistanceType = {
     text: string;
@@ -18,6 +18,8 @@ export interface Word {
     text: string;
     value: number;
 }
+
+const WordCloud = dynamic(() => import('react-d3-cloud'), { ssr: false });
 
 const getWordElements = (tag: TopicTensorData[]): any[] => {
     if (!tag) return [];

@@ -22,6 +22,7 @@ export default defineConfig({
         viewportHeight: 960,
         baseUrl: 'http://localhost:3000',
         chromeWebSecurity: false,
+        watchForFileChanges: false,
     },
 
     component: {
@@ -31,5 +32,6 @@ export default defineConfig({
         },
         viewportWidth: 1536,
         viewportHeight: 960,
+        watchForFileChanges: false,
     },
 });

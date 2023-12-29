@@ -1,4 +1,5 @@
 export enum CurrentPageEvent {
+    null = 'null',
     index = 'index',
     boostbot = 'boostbot',
     dashboard = 'dashboard',
@@ -16,4 +17,7 @@ export enum CurrentPageEvent {
     campaigns = 'campaigns',
     admin = 'admin',
     performance = 'performance',
+    error = 'error',
+    preview = 'preview',
+    logout = 'logout',
 }

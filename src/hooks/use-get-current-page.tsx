@@ -3,7 +3,10 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const useGetCurrentPage = () => {
-    const { pathname } = useRouter();
+    const { pathname, isReady } = useRouter();
+    if (!pathname || !isReady) {
+        return CurrentPageEvent.null;
+    }
 
     if (/^\/boostbot\/?/.test(pathname)) {
         return CurrentPageEvent.boostbot;
@@ -71,6 +74,15 @@ export const useGetCurrentPage = () => {
 
     if (/^\/$/.test(pathname)) {
         return CurrentPageEvent.index;
+    }
+    if (/^\/_error\/?/.test(pathname)) {
+        return CurrentPageEvent.error;
+    }
+    if (/^\/component-preview\/?/.test(pathname)) {
+        return CurrentPageEvent.preview;
+    }
+    if (/^\/logout\/?/.test(pathname)) {
+        return CurrentPageEvent.logout;
     }
 
     clientLogger(`Cannot get current page: ${pathname}`, 'error', true);

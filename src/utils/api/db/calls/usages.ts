@@ -212,44 +212,6 @@ export const recordSearchUsage = async (company_id: string, user_id: string, cou
     });
 };
 
-export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: string) => {
-    const { data: company, error: companyError } = await supabase
-        .from('companies')
-        .select(
-            'subscription_status, subscription_current_period_start, subscription_current_period_end, ai_email_generator_limit, trial_ai_email_generator_limit',
-        )
-        .eq('id', company_id)
-        .single();
-
-    if (companyError) serverLogger(companyError);
-
-    if (!company || companyError) {
-        return { error: usageErrors.noCompany };
-    }
-    const subscriptionLimit =
-        company.subscription_status === 'trial'
-            ? company.trial_ai_email_generator_limit
-            : company.ai_email_generator_limit;
-
-    if (!subscriptionLimit) {
-        return { error: usageErrors.noSubscriptionLimit };
-    }
-    if (!company.subscription_current_period_start || !company.subscription_current_period_end) {
-        return { error: usageErrors.noSubscriptionStartEndDate };
-    }
-    const startDate = new Date(company.subscription_current_period_start);
-    const endDate = new Date(company.subscription_current_period_end);
-
-    return recordUsage({
-        type: 'ai_email',
-        startDate,
-        endDate,
-        subscriptionLimit,
-        company_id,
-        user_id,
-    });
-};
-
 export const getUsagesByCompanyCall =
     (db: RelayDatabase) => async (companyId: string, startDate?: string, endDate?: string) => {
         if (!startDate || !endDate) {

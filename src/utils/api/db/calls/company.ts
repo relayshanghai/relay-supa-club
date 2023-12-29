@@ -33,30 +33,24 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
 type CompanyUsageLimitUpdate = {
     profiles_limit: string;
     searches_limit: string;
-    ai_email_generator_limit: string;
     trial_searches_limit?: string;
     trial_profiles_limit?: string;
-    trial_ai_email_generator_limit?: string;
     id: string;
 };
 
 export const updateCompanyUsageLimits = async ({
     profiles_limit,
     searches_limit,
-    ai_email_generator_limit,
     trial_searches_limit,
     trial_profiles_limit,
-    trial_ai_email_generator_limit,
     id,
 }: CompanyUsageLimitUpdate) => {
     const update: Omit<CompanyUsageLimitUpdate, 'id'> = {
         profiles_limit,
         searches_limit,
-        ai_email_generator_limit,
     };
     if (trial_profiles_limit) update.trial_profiles_limit = trial_profiles_limit;
     if (trial_searches_limit) update.trial_searches_limit = trial_searches_limit;
-    if (trial_ai_email_generator_limit) update.trial_ai_email_generator_limit = trial_ai_email_generator_limit;
 
     const { data, error } = await supabase.from('companies').update(update).eq('id', id).select().single();
 

@@ -14,6 +14,9 @@ export const PreviewCard = ({
     loadingSelectedMessages: boolean;
 }) => {
     const { i18n } = useTranslation();
+    if (!message.from || 'missingRetries' in message) {
+        return <></>;
+    }
     return (
         <div
             onClick={() => handleGetThreadEmails(message)}

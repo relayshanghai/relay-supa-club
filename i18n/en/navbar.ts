@@ -1,7 +1,6 @@
 const navbar = {
     campaigns: 'Campaigns',
     discover: 'Classic',
-    aiEmailGenerator: 'AI Email Generator',
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',

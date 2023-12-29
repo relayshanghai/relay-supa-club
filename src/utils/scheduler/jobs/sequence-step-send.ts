@@ -1,11 +1,5 @@
 import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
-import type {
-    EmailDeliveryStatus,
-    SequenceEmail,
-    SequenceEmailInsert,
-    SequenceStep,
-    TemplateVariable,
-} from 'src/utils/api/db';
+import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailsByEmailEngineAccountId,
@@ -28,9 +22,8 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { identifyAccount } from 'src/utils/api/email-engine/identify-account';
 import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
-import { calculateSendAt } from 'src/utils/api/email-engine/schedule-emails';
-import { QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
-import { now } from 'src/utils/datetime';
+import type { EmailCountPerDayPerStep } from 'src/utils/api/email-engine/schedule-emails';
+import { scheduleEmails } from 'src/utils/api/email-engine/schedule-emails';
 
 export type SequenceStepSendArgs = {
     emailEngineAccountId: string;
@@ -64,7 +57,7 @@ const sendAndInsertEmail = async ({
     templateVariables: TemplateVariable[];
     messageId: string;
     references: string;
-    scheduledEmails: Pick<SequenceEmail, 'email_send_at'>[];
+    scheduledEmails: EmailCountPerDayPerStep;
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
@@ -115,71 +108,58 @@ const sendAndInsertEmail = async ({
         recentPostTitle,
         recentPostURL,
     };
-    // add the step's waitTimeHrs to the sendAt date
-    const { template_id, wait_time_hours } = step;
-    const emailSendAt = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
-        ? now() // send immediately
-        : existingSequenceEmail?.email_send_at ?? calculateSendAt(wait_time_hours, scheduledEmails).toISOString();
-    crumb({ message: `sendAt: ${emailSendAt}` });
-
-    const res = await sendTemplateEmail({
-        account,
-        toEmail: { name: influencerAccountName, address: influencer.email },
-        template: template_id,
-        sendAt: emailSendAt,
-        params,
-        messageId,
-        references,
-    });
-
-    if ('error' in res) {
-        throw new Error(res.error);
-    }
-    crumb({ message: `res message_id ${res.messageId} step.step_number ${step.step_number}` });
 
     if (step.step_number === 0) {
-        const outreachStepInsert: SequenceEmailInsert = {
-            sequence_influencer_id: influencer.id,
-            sequence_id: influencer.sequence_id,
-            sequence_step_id: step.id,
-            email_delivery_status: 'Scheduled',
-            email_message_id: res.messageId,
-            email_send_at: emailSendAt,
-            email_engine_account_id: account,
-        };
-        const followUpSteps = sequenceSteps
-            .filter((s) => s.step_number !== 0)
-            .sort((a, b) => a.step_number - b.step_number);
-        const schedulingStatus: EmailDeliveryStatus = 'Unscheduled';
-        const scheduledEmailsPlusNewlyScheduled: Pick<SequenceEmail, 'email_send_at'>[] = [
-            ...scheduledEmails,
-            { email_send_at: emailSendAt },
-        ];
-        const followupEmailInserts: SequenceEmailInsert[] = [];
-        followUpSteps.forEach((s) => {
-            const email_send_at = QUICK_SEND_EMAIL_ACCOUNTS.includes(account)
-                ? now() // send immediately
-                : calculateSendAt(s.wait_time_hours, scheduledEmailsPlusNewlyScheduled).toISOString();
-            followupEmailInserts.push({
-                sequence_influencer_id: influencer.id,
-                sequence_id: influencer.sequence_id,
-                email_engine_account_id: account,
-                sequence_step_id: s.id,
+        const { outreachStepInsert, followupEmailInserts } = scheduleEmails(
+            sequenceSteps,
+            scheduledEmails,
+            influencer,
+            account,
+        );
 
-                email_delivery_status: schedulingStatus,
-                email_message_id: '', // will be filled in later
-                email_send_at,
-            });
-            crumb({ message: `followup step ${s.step_number} email_send_at: ${email_send_at}` });
-            scheduledEmailsPlusNewlyScheduled.push({ email_send_at });
+        if (!outreachStepInsert || !outreachStepInsert.email_send_at) {
+            throw new Error('No outreach step insert');
+        }
+
+        const res = await sendTemplateEmail({
+            account,
+            toEmail: influencer.email,
+            template: step.template_id,
+            sendAt: outreachStepInsert.email_send_at,
+            params,
+            messageId,
+            references,
         });
 
+        if ('error' in res) {
+            throw new Error(res.error);
+        }
+        crumb({ message: `sent outreach email` });
+        outreachStepInsert.email_delivery_status = 'Scheduled';
+        outreachStepInsert.email_message_id = res.messageId;
         await db(insertSequenceEmailsCall)([outreachStepInsert, ...followupEmailInserts]);
         crumb({ message: `inserted sequence emails` });
     } else {
-        if (!existingSequenceEmail) {
-            serverLogger(new Error('No existing sequence email found'));
+        if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
+            serverLogger(new Error('No existing sequence email found')); // This should eventually stop happening as all sequences use the new 'schedule all emails at once' method. Then we can remove this whole if block and just throw an error
+            const { followupEmailInserts } = scheduleEmails(sequenceSteps, scheduledEmails, influencer, account);
+            const emailSendAt = followupEmailInserts[step.step_number].email_send_at;
+            if (!emailSendAt) {
+                throw new Error('No email send at' + JSON.stringify(followupEmailInserts));
+            }
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: emailSendAt,
+                params,
+                messageId,
+                references,
+            });
 
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
             await db(insertSequenceEmailCall)({
                 sequence_influencer_id: influencer.id,
                 sequence_id: influencer.sequence_id,
@@ -193,12 +173,25 @@ const sendAndInsertEmail = async ({
             crumb({ message: `inserted sequence email` });
             return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
         } else {
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: existingSequenceEmail.email_send_at,
+                params,
+                messageId,
+                references,
+            });
+
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
+            crumb({ message: `sent followup email` });
+
             await db(updateSequenceEmailCall)({
                 id: existingSequenceEmail.id,
-
                 email_delivery_status: 'Scheduled',
                 email_message_id: res.messageId,
-                email_send_at: emailSendAt,
             });
             crumb({ message: `updated sequence email` });
         }
