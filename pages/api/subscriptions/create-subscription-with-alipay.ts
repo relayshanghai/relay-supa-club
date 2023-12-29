@@ -27,12 +27,21 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const oldSubscription = await stripeClient.subscriptions.list({
         customer: cusId,
     });
+
+    if (!Array.isArray(oldSubscription.data)) {
+        serverLogger(new Error('cannot_retrieve_customer_subscription'), (scope) => {
+            return scope.setContext('stripe_subscriptions_list', { response: oldSubscription });
+        });
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Cannot retrieve customer subscription' });
+    }
+
     if (oldSubscription.data.length > 1) {
         serverLogger('More than one subscription found for customer: ' + cusId);
         return res
             .status(httpCodes.BAD_REQUEST)
             .json({ error: 'More than one subscription found for customer: ' + cusId });
     }
+
     const oldSubscriptionId = oldSubscription.data[0].id;
 
     // create a new subscription with the attached paymentMethod
