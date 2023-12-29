@@ -4,6 +4,7 @@ import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailsByEmailEngineAccountId,
     getSequenceEmailsBySequenceInfluencerCall,
+    insertSequenceEmailCall,
     insertSequenceEmailsCall,
     updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
@@ -140,29 +141,60 @@ const sendAndInsertEmail = async ({
         crumb({ message: `inserted sequence emails` });
     } else {
         if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
-            throw new Error('No existing sequence email found');
-        }
-        const res = await sendTemplateEmail({
-            account,
-            toEmail: influencer.email,
-            template: step.template_id,
-            sendAt: existingSequenceEmail.email_send_at,
-            params,
-            messageId,
-            references,
-        });
+            serverLogger(new Error('No existing sequence email found')); // This should eventually stop happening as all sequences use the new 'schedule all emails at once' method. Then we can remove this whole if block and just throw an error
+            const { followupEmailInserts } = scheduleEmails(sequenceSteps, scheduledEmails, influencer, account);
+            const emailSendAt = followupEmailInserts[step.step_number].email_send_at;
+            if (!emailSendAt) {
+                throw new Error('No email send at' + JSON.stringify(followupEmailInserts));
+            }
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: emailSendAt,
+                params,
+                messageId,
+                references,
+            });
 
-        if ('error' in res) {
-            throw new Error(res.error);
-        }
-        crumb({ message: `sent followup email` });
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
+            await db(insertSequenceEmailCall)({
+                sequence_influencer_id: influencer.id,
+                sequence_id: influencer.sequence_id,
+                email_engine_account_id: account,
+                sequence_step_id: step.id,
 
-        await db(updateSequenceEmailCall)({
-            id: existingSequenceEmail.id,
-            email_delivery_status: 'Scheduled',
-            email_message_id: res.messageId,
-        });
-        crumb({ message: `updated sequence email` });
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+                email_send_at: emailSendAt,
+            });
+            crumb({ message: `inserted sequence email` });
+            return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
+        } else {
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: existingSequenceEmail.email_send_at,
+                params,
+                messageId,
+                references,
+            });
+
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
+            crumb({ message: `sent followup email` });
+
+            await db(updateSequenceEmailCall)({
+                id: existingSequenceEmail.id,
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+            });
+            crumb({ message: `updated sequence email` });
+        }
     }
 
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
