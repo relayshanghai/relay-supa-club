@@ -61,7 +61,10 @@ function MyApp({
             if (deviceId) {
                 localStorage.setItem('deviceId', deviceId);
             } else {
-                localStorage.setItem('deviceId', nanoid());
+                const existingDeviceId = localStorage.getItem('deviceId');
+                if (!existingDeviceId) {
+                    localStorage.setItem('deviceId', nanoid());
+                }
             }
             referer === 'producthunt' && localStorage.setItem('referer', referer);
         }
