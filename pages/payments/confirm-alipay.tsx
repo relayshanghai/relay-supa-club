@@ -109,5 +109,4 @@ const ConfirmAlipayPaymentPage = () => {
     );
 };
 
-// uses memo to avoid the page re-rendering when the query changes
 export default ConfirmAlipayPaymentPage;
