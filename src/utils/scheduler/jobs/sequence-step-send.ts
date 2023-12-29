@@ -123,7 +123,7 @@ const sendAndInsertEmail = async ({
 
         const res = await sendTemplateEmail({
             account,
-            toEmail: influencer.email,
+            toEmail: { name: influencerAccountName, address: influencer.email },
             template: step.template_id,
             sendAt: outreachStepInsert.email_send_at,
             params,
@@ -149,7 +149,7 @@ const sendAndInsertEmail = async ({
             }
             const res = await sendTemplateEmail({
                 account,
-                toEmail: influencer.email,
+                toEmail: { name: influencerAccountName, address: influencer.email },
                 template: step.template_id,
                 sendAt: emailSendAt,
                 params,
