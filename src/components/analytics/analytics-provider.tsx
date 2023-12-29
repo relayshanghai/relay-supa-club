@@ -21,18 +21,19 @@ export const AnalyticsContext = createContext<
     | undefined
 >(undefined);
 
-export const useProductHuntReferrer = () => {
+export const useDeviceId = () => {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const urlParams = new URLSearchParams(window.location.search);
-            const referer = urlParams.get('ref');
             const deviceId = urlParams.get('device_id');
             if (deviceId) {
                 localStorage.setItem('deviceId', deviceId);
             } else {
-                localStorage.setItem('deviceId', nanoid());
+                const existingDeviceId = localStorage.getItem('deviceId');
+                if (!existingDeviceId) {
+                    localStorage.setItem('deviceId', nanoid());
+                }
             }
-            referer === 'producthunt' && localStorage.setItem('referer', referer);
         }
     }, []);
 };

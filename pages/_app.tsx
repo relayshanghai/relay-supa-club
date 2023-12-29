@@ -13,7 +13,7 @@ import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider as JotaiProvider } from 'jotai';
 import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
-import { AnalyticsProvider, useProductHuntReferrer } from 'src/components/analytics/analytics-provider';
+import { AnalyticsProvider, useDeviceId } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
 
@@ -29,7 +29,7 @@ function MyApp({
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
-    useProductHuntReferrer();
+    useDeviceId();
     useLocalization();
 
     const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;

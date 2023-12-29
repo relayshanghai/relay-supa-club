@@ -231,17 +231,8 @@ export const useIdentifySession = () => {
                 // return void
             };
 
-            const referer = localStorage.getItem('referer');
-
             if (profile !== null && user !== null && company !== null && subscription && identify && rudder) {
-                const { id, traits } = profileToIdentifiable(
-                    profile,
-                    company,
-                    user,
-                    i18n.language,
-                    subscription,
-                    referer || undefined,
-                );
+                const { id, traits } = profileToIdentifiable(profile, company, user, i18n.language, subscription);
                 rudder?.identify(id, traits, cb ?? noopfn);
                 identify(id, traits, cb ?? noopfn);
                 return true;
