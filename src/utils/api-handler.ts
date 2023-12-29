@@ -50,7 +50,7 @@ type RelayApiRequest = NextApiRequest & {
     profile?: typeof profiles.$inferSelect;
 };
 
-export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes>) => void;
+export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes | ApiError>) => void;
 
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler | ActionHandler;
