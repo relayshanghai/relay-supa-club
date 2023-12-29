@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
-import { useCallback, useEffect, useState } from 'react';
-import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { HoverTooltip } from 'src/utils/analytics/events';
+import { useCallback, useState } from 'react';
 
 export type ToolTipPositionUnion =
     | 'top-right'
@@ -63,7 +61,6 @@ export const Tooltip = ({
 }: TooltipProps) => {
     // add delay to TooltipProps
     const [isHovered, setIsHovered] = useState(false);
-    const { track } = useRudderstackTrack();
     const [timer, setTimer] = useState<NodeJS.Timeout>(); // declare timer
 
     const handleMouseOver = useCallback(() => {
@@ -79,13 +76,6 @@ export const Tooltip = ({
         setIsHovered(false);
         setTimer(undefined); // cleanup timer
     }, [timer]);
-
-    useEffect(() => {
-        isHovered &&
-            track(HoverTooltip, {
-                tooltip: content,
-            });
-    }, [isHovered, track, content]);
 
     if (!content) return <>{children}</>;
     return (
