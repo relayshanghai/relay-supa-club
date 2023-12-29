@@ -1,10 +1,7 @@
 import type { Row, Table } from '@tanstack/react-table';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { HoverGenderGraph } from 'src/utils/analytics/events';
 import { convertAudienceDataToPercentage, processedAudienceDemoData } from 'src/utils/api/boostbot/helper';
-import type { CreatorPlatform } from 'types';
 
 export type BoostbotAudienceDemoCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -15,13 +12,6 @@ export const BoostbotAudienceGenderCell = ({ row, table }: BoostbotAudienceDemoC
     const influencer = row.original;
     const processedData = convertAudienceDataToPercentage(processedAudienceDemoData(influencer));
 
-    const { track } = useRudderstackTrack();
-    const platform: CreatorPlatform = influencer.url.includes('youtube')
-        ? 'youtube'
-        : influencer.url.includes('tiktok')
-        ? 'tiktok'
-        : 'instagram';
-
     const isLoading = table.options.meta?.isLoading;
 
     return (
@@ -29,16 +19,7 @@ export const BoostbotAudienceGenderCell = ({ row, table }: BoostbotAudienceDemoC
             {isLoading ? (
                 <div className="h-14 w-[200px] animate-pulse bg-gray-300" />
             ) : (
-                <div
-                    onMouseEnter={() => {
-                        track(HoverGenderGraph, {
-                            influencer_id: influencer.user_id,
-                            platform,
-                            index_position: row.index,
-                        });
-                    }}
-                    className="-mr-20 h-20 w-60"
-                >
+                <div className="-mr-20 h-20 w-60">
                     <ResponsiveContainer>
                         <BarChart
                             data={processedData}

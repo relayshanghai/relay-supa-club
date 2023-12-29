@@ -120,7 +120,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 });
 
                 if (error) throw new Error(error.message || 'Unknown error');
-                trackEvent('Log In', { email: email, total_sessions: 1 });
+                trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
                 return data;
             } catch (e: unknown) {
                 clientLogger(e, 'error');

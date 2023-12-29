@@ -156,9 +156,9 @@ describe('outreach', () => {
             "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
         );
         cy.contains('button', 'Yes, delete them').click();
-        // This delte call now relies on the super slow 'getOutbox()' call, and we don't want to wait that long in CI tests
+        // This delete call now relies on the super slow 'getOutbox()' call, and we don't want to wait that long in CI tests
         // cy.contains('Influencer(s) successfully deleted from sequence', { timeout: 10000 });
-        cy.contains('Charlie Charles').should('not.exist');
+        cy.contains('Charlie Charles').should('not.exist', { timeout: 10000 });
         cy.contains('Alice Anderson').should('not.exist');
     });
     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1009

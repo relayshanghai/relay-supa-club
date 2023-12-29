@@ -41,7 +41,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         $browser_version: browser.version,
         ...trackingPayload,
     });
-    mixpanel.people.increment(user_id, $add);
+    $add && mixpanel.people.increment(user_id, $add);
     return res.status(200).json({ success: true });
 };
 
