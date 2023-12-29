@@ -1,8 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { threads } from 'drizzle/schema';
 import { db } from 'src/utils/database';
-
-type UpdatableData = Pick<typeof threads.$inferInsert, 'threadStatus'>;
+import type { UpdatableData } from '../endpoints/update-thread';
 
 type UpdateThreadFn = (params: { threadId: string; data: UpdatableData }) => Promise<typeof threads.$inferSelect>;
 
