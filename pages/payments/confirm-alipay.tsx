@@ -18,7 +18,12 @@ const ConfirmAlipayPaymentPage = () => {
     const { companyId, customerId, priceId, selectedPlan, couponId } = router.query;
     const { t } = useTranslation();
     const handleCreateSubscriptionWithAlipay = useCallback(async () => {
-        if (typeof companyId !== 'string' || typeof customerId !== 'string' || typeof priceId !== 'string') {
+        if (
+            isProcessing ||
+            typeof companyId !== 'string' ||
+            typeof customerId !== 'string' ||
+            typeof priceId !== 'string'
+        ) {
             return;
         }
         setIsProcessing(true);
@@ -62,10 +67,8 @@ const ConfirmAlipayPaymentPage = () => {
                     customer: customerId,
                 });
             });
-        } finally {
-            setIsProcessing(false);
         }
-    }, [companyId, couponId, customerId, priceId, router, selectedPlan, t]);
+    }, [companyId, couponId, customerId, isProcessing, priceId, router, selectedPlan, t]);
 
     useEffect(() => {
         handleCreateSubscriptionWithAlipay();
