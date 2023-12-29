@@ -32,7 +32,7 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
                     job: runningJob.id,
                 });
             });
-            throw new Error(`Cannot process ${queueName} queue. A job is stuck in running`);
+            return false;
         }
 
         // Prevent blocking queues from running if a job is already running
@@ -42,7 +42,7 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
                     job: runningJob.id,
                 });
             });
-            throw new Error(`Cannot process ${queueName} queue. A job is already running`);
+            return false;
         }
 
         const jobs = await db(fetchJobs)({
