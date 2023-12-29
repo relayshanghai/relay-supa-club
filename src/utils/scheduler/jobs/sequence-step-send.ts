@@ -175,7 +175,7 @@ const sendAndInsertEmail = async ({
         } else {
             const res = await sendTemplateEmail({
                 account,
-                toEmail: influencer.email,
+                toEmail: { name: influencerAccountName, address: influencer.email },
                 template: step.template_id,
                 sendAt: existingSequenceEmail.email_send_at,
                 params,
