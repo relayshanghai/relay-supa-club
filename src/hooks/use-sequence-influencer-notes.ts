@@ -77,7 +77,7 @@ export const useSequenceInfluencerNotes = () => {
 
     const saveSequenceInfluencer = useAsync(
         async (sequence_influencer_id: string, body: z.input<typeof ProfileValue>) => {
-            return await apiFetch<SequenceInfluencerManagerPage>('/api/sequence/influencers/{id}', {
+            return await apiFetch<SequenceInfluencerManagerPage, any>('/api/sequence/influencers/{id}', {
                 path: { id: sequence_influencer_id },
                 body,
             }).then((res) => {

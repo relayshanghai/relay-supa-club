@@ -109,7 +109,7 @@ export const useSession = (params?: useSessionParams) => {
         if (company === null) return null;
 
         const query = { id: company };
-        const response = await apiFetch<SubscriptionGetResponse>('/api/subscriptions', { query });
+        const response = await apiFetch<SubscriptionGetResponse, any>('/api/subscriptions', { query });
 
         return response.content;
     }, []);

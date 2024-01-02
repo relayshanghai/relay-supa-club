@@ -14,7 +14,7 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 
 const fetcher = async (url: string) => {
-    const res = await apiFetch(url, {});
+    const res = await apiFetch<any>(url);
     return res.content;
 };
 

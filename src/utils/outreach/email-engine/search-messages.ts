@@ -31,7 +31,10 @@ export const searchMessages: SearchMessagesFn = async (account, body, query = {}
     query.documentStore = !query.path ? true : false;
     body.search = body.search ?? {};
 
-    const response = await apiFetch<SearchMessagesResponse>(`/account/${account}/search`, { query, body });
+    const response = await apiFetch<SearchMessagesResponse, { query?: SearchMessagesQuery; body: SearchMessagesBody }>(
+        `/account/${account}/search`,
+        { query, body },
+    );
 
     return response.content;
 };

@@ -4,8 +4,8 @@ const EMAIL_ENGINE_API_URL = (process.env.EMAIL_ENGINE_API_URL ?? 'http://localh
 
 const EMAIL_ENGINE_API_KEY = process.env.EMAIL_ENGINE_API_KEY;
 
-export const apiFetch: typeof baseApiFetch = (url, payload, options = {}) => {
-    return baseApiFetch(`${EMAIL_ENGINE_API_URL}${url}`, payload, {
+export const apiFetch: typeof baseApiFetch = <TRes, TReq>(url: string, payload: TReq, options: RequestInit = {}) => {
+    return baseApiFetch<TRes, TReq>(`${EMAIL_ENGINE_API_URL}${url}`, payload, {
         ...options,
         headers: {
             ...options.headers,
