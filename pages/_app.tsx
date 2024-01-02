@@ -80,8 +80,8 @@ function MyApp({
 
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <AnalyticsProvider>
-                    <CacheProvider>
-                        <JotaiProvider>
+                    <JotaiProvider>
+                        <CacheProvider>
                             <UserProvider>
                                 <ChatwootProvider {...chatwootConfig}>
                                     <CompanyProvider>
@@ -89,8 +89,8 @@ function MyApp({
                                     </CompanyProvider>
                                 </ChatwootProvider>
                             </UserProvider>
-                        </JotaiProvider>
-                    </CacheProvider>
+                        </CacheProvider>
+                    </JotaiProvider>
                 </AnalyticsProvider>
             </SessionContextProvider>
             <Toaster />
