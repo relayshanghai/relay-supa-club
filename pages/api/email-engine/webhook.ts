@@ -58,7 +58,7 @@ import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/tem
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
 import { v4 } from 'uuid';
 import { deleteJobs } from 'src/utils/scheduler/db-queries';
-import { isString } from 'cypress/types/lodash';
+import { isString } from 'src/utils/types';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
