@@ -143,9 +143,12 @@ const sendAndInsertEmail = async ({
         if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
             serverLogger(new Error('No existing sequence email found')); // This should eventually stop happening as all sequences use the new 'schedule all emails at once' method. Then we can remove this whole if block and just throw an error
             const { followupEmailInserts } = scheduleEmails(sequenceSteps, scheduledEmails, influencer, account);
-            const emailSendAt = followupEmailInserts[step.step_number].email_send_at;
+            const thisEmail = followupEmailInserts.find((e) => e.sequence_step_id === step.id);
+            const emailSendAt = thisEmail?.email_send_at;
             if (!emailSendAt) {
-                throw new Error('No email send at' + JSON.stringify(followupEmailInserts));
+                throw new Error(
+                    `No email send at for step ${step.step_number}, thisEmail ${thisEmail} followupEmailInserts ${followupEmailInserts}`,
+                );
             }
             const res = await sendTemplateEmail({
                 account,
