@@ -1127,6 +1127,7 @@ export interface Database {
           email_send_at: string | null
           email_tracking_status: string | null
           id: string
+          job_id: string | null
           sequence_id: string | null
           sequence_influencer_id: string
           sequence_step_id: string
@@ -1140,6 +1141,7 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          job_id?: string | null
           sequence_id?: string | null
           sequence_influencer_id: string
           sequence_step_id: string
@@ -1153,12 +1155,19 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          job_id?: string | null
           sequence_id?: string | null
           sequence_influencer_id?: string
           sequence_step_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_emails_job_id_fkey"
+            columns: ["job_id"]
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_emails_sequence_id_fkey"
             columns: ["sequence_id"]
