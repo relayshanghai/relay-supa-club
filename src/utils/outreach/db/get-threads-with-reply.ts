@@ -9,9 +9,9 @@ export type GetThreadsWithReplyReturn = {
     sequence_influencers: typeof sequenceInfluencers.$inferSelect | null;
     sequences: typeof sequences.$inferSelect | null;
     template_variables: typeof templateVariables.$inferSelect | null;
-}[];
+};
 
-type GetThreadsWithReplyFn = (account: string) => Promise<GetThreadsWithReplyReturn>;
+type GetThreadsWithReplyFn = (account: string) => Promise<GetThreadsWithReplyReturn[]>;
 
 export const getThreadsWithReply: DBQuery<GetThreadsWithReplyFn> = (i) => async (account: string) => {
     const rows = await db(i)
@@ -32,7 +32,7 @@ export const getThreadsWithReply: DBQuery<GetThreadsWithReplyFn> = (i) => async 
     return rows;
 };
 
-type GetThreadsWithReplyByFilterFn = (account: string, filters?: FilterType) => Promise<GetThreadsWithReplyReturn>;
+type GetThreadsWithReplyByFilterFn = (account: string, filters?: FilterType) => Promise<GetThreadsWithReplyReturn[]>;
 
 export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn> =
     (i) => async (account: string, filters?: FilterType) => {
@@ -51,13 +51,11 @@ export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn>
                     isNull(threads.deletedAt),
                     isNotNull(threads.lastReplyId),
                     isNotNull(threads.sequenceInfluencerId),
-                    filters && filters.funnelStatus.length > 0
+                    filters && filters.funnelStatus
                         ? inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus)
                         : undefined,
-                    filters && filters.threadStatus.length > 0
-                        ? inArray(threads.threadStatus, filters.threadStatus)
-                        : undefined,
-                    filters && filters.sequences.length > 0
+                    filters && filters.threadStatus ? inArray(threads.threadStatus, filters.threadStatus) : undefined,
+                    filters && filters.sequences
                         ? inArray(
                               sequences.id,
                               filters.sequences.map((sequence) => sequence.id),

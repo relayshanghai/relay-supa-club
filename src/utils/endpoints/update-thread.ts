@@ -12,11 +12,11 @@ const query = z.object({
     id: z.string(),
 });
 
-export const ApiRequest = z.object({
+export const UpdateThreadApiRequest = z.object({
     query: query.required(),
     body: updatableData.required(),
 });
 
-export type ApiRequest = z.infer<typeof ApiRequest>;
+export type UpdateThreadApiRequest = z.infer<typeof UpdateThreadApiRequest>;
 
-export type ApiResponse = { data: typeof threads.$inferSelect };
+export type UpdateThreadApiResponse = { data: typeof threads.$inferSelect };

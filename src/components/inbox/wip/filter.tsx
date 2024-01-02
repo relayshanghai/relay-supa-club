@@ -4,6 +4,7 @@ import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from 'shadcn/components/ui/popover';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { FunnelStatus } from 'src/utils/api/db';
+import type { SequenceThreadsFilter, ThreadsFilter } from 'src/utils/endpoints/get-threads';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 
 const CounterStyles: {
@@ -14,16 +15,9 @@ const CounterStyles: {
     replied: '',
 };
 
-export type FilterSequence = {
-    id: string;
-    name: string;
-};
+export type FilterSequence = SequenceThreadsFilter;
 
-export type FilterType = {
-    threadStatus: THREAD_STATUS[];
-    funnelStatus: FunnelStatus[];
-    sequences: FilterSequence[];
-};
+export type FilterType = ThreadsFilter;
 
 type filterStatusButtons = {
     label: string;
@@ -67,17 +61,17 @@ export const Filter = ({
             <PopoverTrigger>Filter</PopoverTrigger>
             <PopoverContent className="space-y-3">
                 <FilterByStatus
-                    status={filters.threadStatus}
+                    status={filters.threadStatus ?? []}
                     onChange={(threadStatus: THREAD_STATUS[]) => onChangeFilter({ ...filters, threadStatus })}
                     messageCount={messageCount}
                 />
                 <FilterByFunnelStatus
-                    status={filters.funnelStatus}
+                    status={filters.funnelStatus ?? []}
                     onChange={(funnelStatus: FunnelStatus[]) => onChangeFilter({ ...filters, funnelStatus })}
                 />
                 <FilterBySequence
                     allSequences={allSequences}
-                    selectedSequences={filters.sequences}
+                    selectedSequences={filters.sequences ?? []}
                     onChange={(selectedSequence: FilterSequence[]) =>
                         onChangeFilter({ ...filters, sequences: selectedSequence })
                     }
