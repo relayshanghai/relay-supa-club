@@ -66,6 +66,8 @@ export const finishJob = async (job: Jobs['Row'], status: Omit<JOB_STATUS, 'runn
 };
 
 export type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
+    /* must be a valid UUID */
+    id?: string;
     queue?: JOB_QUEUE;
     run_at?: string;
     payload?: Parameters<JobType<T>['run']>[0];
@@ -73,7 +75,7 @@ export type CreateJobInsert<T = unknown> = Pick<Jobs['Insert'], 'owner'> & {
 
 export const createJob = async <J extends JobNames>(jobName: J, job: CreateJobInsert<J>) => {
     const { run_at, queue } = job;
-    const id = v4();
+    const id = job.id ?? v4();
     const schedule = run_at ?? now();
 
     try {

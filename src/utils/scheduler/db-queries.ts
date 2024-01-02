@@ -102,3 +102,9 @@ export const getJobs =
         if (error) throw error;
         return data;
     };
+
+export const deleteJobs = (supabase: RelayDatabase) => async (ids: string[]) => {
+    const { data, error } = await supabase.from('jobs').delete().in('id', ids);
+    if (error) throw error;
+    return data;
+};

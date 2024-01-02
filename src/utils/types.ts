@@ -7,3 +7,7 @@ export type DBQuery = (db: SupabaseClient<DatabaseWithCustomTypes> | RelayDataba
 export type DBQueryReturn<T extends DBQuery> = Awaited<ReturnType<ReturnType<T>>>;
 
 export type DBQueryParameters<T extends DBQuery> = Awaited<Parameters<ReturnType<T>>>;
+
+export const isString = (value: unknown): value is string => {
+    return typeof value === 'string';
+};
