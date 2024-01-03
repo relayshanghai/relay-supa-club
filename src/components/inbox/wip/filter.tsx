@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Button } from 'shadcn/components/ui/button';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from 'shadcn/components/ui/popover';
+import { ChevronDown, FilterFunnel } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { FunnelStatus } from 'src/utils/api/db';
 import type { SequenceThreadsFilter, ThreadsFilter } from 'src/utils/endpoints/get-threads';
@@ -58,7 +59,15 @@ export const Filter = ({
 }) => {
     return (
         <Popover>
-            <PopoverTrigger>Filter</PopoverTrigger>
+            <PopoverTrigger>
+                <div className="flex items-center justify-between rounded border border-gray-200 bg-white px-2 py-1 text-gray-400">
+                    <div className="flex items-center gap-2">
+                        <FilterFunnel className="w-4- h-4 stroke-gray-400" />
+                        Filters
+                    </div>
+                    <ChevronDown className="h-4 w-4 stroke-gray-400" />
+                </div>
+            </PopoverTrigger>
             <PopoverContent className="space-y-3">
                 <FilterByStatus
                     status={filters.threadStatus ?? []}

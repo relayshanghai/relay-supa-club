@@ -6,9 +6,10 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
+import { SelectValue } from '@radix-ui/react-select';
 
 const MessageTitle = ({
     expanded,
@@ -152,17 +153,41 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
     );
 };
 
-export const MessagesComponent = ({ messages, currentInbox }: { messages: Message[]; currentInbox: CurrentInbox }) => {
+export const MessagesComponent = ({
+    messages,
+    currentInbox,
+    focusedMessageIds,
+}: {
+    messages: Message[];
+    currentInbox: CurrentInbox;
+    focusedMessageIds?: string[];
+}) => {
+    const [openMessage, setOpenMessage] = useState<string[]>([messages[0]?.id]);
+
+    useEffect(() => {
+        if (focusedMessageIds && focusedMessageIds.length > 0) {
+            setOpenMessage([...focusedMessageIds]);
+        } else if (messages.length > 0) {
+            setOpenMessage([messages[0]?.id]);
+        }
+    }, [messages, focusedMessageIds]);
+
     return (
-        <div className="flex-grow overflow-y-scroll">
-            <Accordion type="multiple" className="hover: w-full bg-white">
-                {messages
-                    .slice(0) // Make shallow copy before reversing
-                    .reverse()
-                    .map((message) => (
-                        <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
-                    ))}
-            </Accordion>
-        </div>
+        <Accordion
+            type="multiple"
+            id={messages[0]?.id}
+            className="w-full bg-white"
+            value={openMessage}
+            onValueChange={(value) => {
+                setOpenMessage(value);
+            }}
+        >
+            {messages
+                .slice(0) // Make shallow copy before reversing
+                .reverse()
+                .map((message) => (
+                    <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
+                ))}
+        </Accordion>
     );
 };
