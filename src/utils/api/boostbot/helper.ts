@@ -75,8 +75,12 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
     if (!audienceDemoData || !searchedGenderAudienceWeight) {
         return [];
     }
+    const genders = audienceDemoData[1];
 
-    if ('male' in audienceDemoData[1] && !('female' in audienceDemoData[1])) {
+    const searchedMale = genders && 'male' in genders && !(!genders || (genders && 'female' in genders));
+    const searchedFemale = genders && 'female' in genders && !(!genders || (genders && 'male' in genders));
+
+    if (searchedMale) {
         return processRawData(
             transformAndMergeData(audienceDemoData, 'male'),
             'male',
@@ -87,7 +91,7 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
             male: number;
             female: number;
         }[];
-    } else if ('female' in audienceDemoData[1] && !('male' in audienceDemoData[1])) {
+    } else if (searchedFemale) {
         return processRawData(
             transformAndMergeData(audienceDemoData, 'female'),
             'female',
