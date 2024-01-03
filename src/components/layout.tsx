@@ -120,7 +120,7 @@ export const Layout = ({ children }: any) => {
                     </div>
                     <div className="flex flex-row items-center space-x-4 px-8 py-4">
                         <button
-                            className="mr-6 mt-auto flex items-center gap-1 overflow-visible stroke-gray-500 py-2 font-poppins text-sm text-gray-500 transition hover:stroke-primary-700 hover:text-primary-700"
+                            className="mr-6 mt-auto flex items-center gap-1 overflow-visible stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-600 hover:text-primary-600"
                             onClick={() => window.$chatwoot?.toggle()}
                         >
                             {t('navbar.support')}

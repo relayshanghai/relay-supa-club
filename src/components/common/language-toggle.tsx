@@ -69,7 +69,7 @@ export const LanguageToggle = () => {
                     }}
                     data-testid="language-toggle"
                 >
-                    <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-500" />
+                    <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-400 hover:stroke-primary-600" />
                 </button>
             </div>
         </div>

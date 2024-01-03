@@ -200,7 +200,7 @@ export const birdEatsBugDefaultOptions: BEGSDKOptions = {
             email: 'optional',
         },
         defaultButton: {
-            icon: 'exclamation',
+            icon: false,
         },
         submitConfirmationScreen: {
             sessionLink: true,
