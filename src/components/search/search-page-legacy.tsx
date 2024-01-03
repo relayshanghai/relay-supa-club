@@ -215,7 +215,6 @@ export const SearchPageInner = () => {
                 </div>
             </div>
             <SearchOptions
-                setPage={setPage}
                 setShowFiltersModal={setShowFiltersModal}
                 onSearch={handleSearch}
                 searchType={searchType}
