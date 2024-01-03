@@ -149,7 +149,7 @@ const ThreadProvider = ({
                     rollbackOnError: true,
                 },
             );
-            markAsReplied();
+            markAsReplied(threadId);
         },
         [threadId, mutate, markAsReplied],
     );
@@ -298,8 +298,10 @@ const InboxPreview = () => {
         setSelectedThread(thread);
     };
 
-    const markAsReplied = (thread: ThreadInfo) => {
+    const markAsReplied = (threadId: string) => {
+        const thread = threads?.find((t) => t.threadInfo.threadId === threadId);
         if (!thread) return;
+
         if (thread.threadInfo.threadStatus === 'unreplied') {
             apiFetch('/api/outreach/threads/{threadId}', {
                 method: 'POST',
