@@ -115,7 +115,9 @@ const deleteScheduledEmails = async (
         const sequenceEmailIds = sequenceEmails.map((email) => email.id);
 
         const jobIds = sequenceEmails.map((email) => email.job_id).filter(isString);
-        await db(deleteJobs)(jobIds);
+        if (jobIds.length > 0) {
+            await db(deleteJobs)(jobIds);
+        }
 
         trackData.sequence_emails_pre_delete = sequenceEmailIds;
         const toDelete = sequenceEmails.filter(
