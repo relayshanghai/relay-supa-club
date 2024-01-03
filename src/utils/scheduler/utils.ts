@@ -105,7 +105,7 @@ export const createJob = async <J extends JobNames>(jobName: J, job: CreateJobIn
 export const createJobs = async <J extends JobNames>(jobName: J, jobs: CreateJobInsert<J>[]) => {
     const inserts = jobs.map((job) => {
         const { run_at, queue } = job;
-        const id = v4();
+        const id = job.id ?? v4();
         const schedule = run_at ?? now();
 
         return {
