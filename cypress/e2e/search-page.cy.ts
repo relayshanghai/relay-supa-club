@@ -36,9 +36,13 @@ describe('Dashboard/Search page', () => {
         cy.visit('/dashboard');
 
         cy.contains('Search by Topics', { timeout: 10000 });
-        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 30000 }).click();
+        cy.getByTestId('platform-select-loading-youtube').should('exist');
+        cy.getByTestId('platform-select-loading-youtube').should('not.exist');
+        cy.contains('No credits remaining').should('not.exist');
 
-        cy.contains(`Unlock Detailed Analysis Report`)
+        cy.getByTestId(`open-influencer-modal/${cocomelonId}`, { timeout: 10000 }).click();
+
+        cy.contains(`Unlock Detailed Analysis Report`, { timeout: 10000 })
             .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
         cy.visit(`influencer/youtube/${cocomelonId}`);
