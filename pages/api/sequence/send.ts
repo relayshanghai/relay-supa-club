@@ -176,7 +176,7 @@ const postHandler: NextApiHandler = async (req, res) => {
                 templateVariables,
                 jobId,
             };
-            createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
+            createJobsPayloads.push({ id: jobId, queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
         } catch (error: any) {
             serverLogger(error);
             await revertOptimisticUpdate(influencer.id);
