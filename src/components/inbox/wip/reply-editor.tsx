@@ -5,14 +5,10 @@ import type { EmailContact } from './thread-preview';
 import type { KeyboardEvent } from 'react';
 import { nanoid } from 'nanoid';
 
-export const ReplyEditor = ({ influencerEmail, onReply }: { influencerEmail: string; onReply: any }) => {
+export const ReplyEditor = ({ influencer, onReply }: { influencer: EmailContact; onReply: any }) => {
     const [replyText, setReplyText] = useState('');
-    const [sendTo, setSendTo] = useState<EmailContact[]>([
-        {
-            name: '',
-            address: influencerEmail,
-        },
-    ]);
+    console.log(influencer);
+    const [sendTo, setSendTo] = useState<EmailContact[]>([]);
     const [sendCC, setSendCC] = useState<EmailContact[]>([]);
 
     const handleSendReply = useCallback(() => {
@@ -22,7 +18,13 @@ export const ReplyEditor = ({ influencerEmail, onReply }: { influencerEmail: str
 
     return (
         <div>
-            <AddressSection sendTo={sendTo} setSendTo={setSendTo} sendCC={sendCC} setSendCC={setSendCC} />
+            <AddressSection
+                defaultTo={influencer}
+                sendTo={sendTo}
+                setSendTo={setSendTo}
+                sendCC={sendCC}
+                setSendCC={setSendCC}
+            />
             <Tiptap
                 description={replyText}
                 onChange={(text: string) => {
@@ -51,11 +53,13 @@ const validateEmail = (email: string) => {
 };
 
 const AddressSection = ({
+    defaultTo,
     sendTo,
     setSendTo,
     sendCC,
     setSendCC,
 }: {
+    defaultTo?: EmailContact;
     sendTo: EmailContact[];
     setSendTo: (contact: EmailContact[]) => void;
     sendCC: EmailContact[];
@@ -95,6 +99,15 @@ const AddressSection = ({
         <section className="flex flex-col">
             <div className="flex items-center gap-2">
                 To:{' '}
+                {defaultTo && (
+                    <AddressLabel
+                        key={defaultTo.address}
+                        onClick={() => {
+                            handleChangeTo(defaultTo);
+                        }}
+                        info={defaultTo}
+                    />
+                )}
                 {sendTo.map((contact) => (
                     <AddressLabel
                         key={contact.address}

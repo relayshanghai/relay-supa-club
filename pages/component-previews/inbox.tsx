@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
-// import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
+import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { type ThreadInfo, ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
@@ -12,6 +12,14 @@ import { nanoid } from 'nanoid';
 import { sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
+import { Input } from 'shadcn/components/ui/input';
+import { ProfileScreenProvider, useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import { ProfileScreen, ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
+import { mapProfileToFormData } from 'src/components/inbox/helpers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
+import { THREAD_STATUS } from 'src/utils/outreach/constants';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -56,10 +64,14 @@ const ThreadProvider = ({
     threadId,
     currentInbox,
     selectedThread,
+    filteredMessageIds,
+    markAsReplied,
 }: {
     threadId: string;
     currentInbox: CurrentInbox;
     selectedThread: ThreadInfo;
+    filteredMessageIds?: string[];
+    markAsReplied: () => void;
 }) => {
     const {
         data: messages,
@@ -136,21 +148,34 @@ const ThreadProvider = ({
                     rollbackOnError: true,
                 },
             );
+            markAsReplied();
         },
-        [threadId, mutate],
+        [threadId, mutate, markAsReplied],
     );
 
     if (messagesError) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
 
     return (
-        <>
-            {/*<ThreadHeader currentInbox={currentInbox} threadInfo={{ ...selectedThread, messages }} />*/}
-
-            <MessagesComponent currentInbox={currentInbox} messages={messages} />
-
-            <ReplyEditor influencerEmail={selectedThread.sequenceInfluencers.email} onReply={handleReply} />
-        </>
+        <div className="flex h-full flex-col justify-between">
+            <div className="h-full">
+                <ThreadHeader currentInbox={currentInbox} threadInfo={{ ...selectedThread, messages }} />
+                <div className="h-[50vh] overflow-scroll">
+                    <MessagesComponent
+                        currentInbox={currentInbox}
+                        messages={messages}
+                        focusedMessageIds={filteredMessageIds}
+                    />
+                </div>
+            </div>
+            <ReplyEditor
+                influencer={{
+                    name: selectedThread.sequenceInfluencers.name,
+                    address: selectedThread.sequenceInfluencers.email,
+                }}
+                onReply={handleReply}
+            />
+        </div>
     );
 };
 
@@ -174,34 +199,139 @@ const InboxPreview = () => {
         sequences: [],
     });
 
-    // console.log('filter', filters);
+    const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
+
+    const handleSearch = async (searchTerm: string) => {
+        if (!searchTerm) {
+            setSearchResults({});
+            return;
+        }
+        const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
+            '/api/outreach/search',
+            {
+                query: { searchTerm },
+            },
+        );
+        console.log(res);
+        setSearchResults(res.content);
+    };
 
     const {
-        data: threads,
+        data: threadsInfo,
         error: _threadsError,
         isLoading: isThreadsLoading,
-    } = useSWR<ThreadInfo[], any>([filters], async () => {
-        const res = await nextFetch('outreach/threads', {
-            method: 'POST',
-            body: filters,
-        });
-        // console.log('threads', res);
-        return res;
-    });
+    } = useSWR<
+        {
+            threads: ThreadInfo[];
+            totals: {
+                threadStatus: THREAD_STATUS;
+                threadStatusTotal: number;
+            }[];
+        },
+        any
+    >(
+        [filters, searchResults],
+        async () => {
+            const res = await nextFetch('outreach/threads', {
+                method: 'POST',
+                body: { filters, threadIds: Object.keys(searchResults) },
+            });
+            return { threads: res.data, totals: res.totals };
+        },
+        { refreshInterval: 500 },
+    );
+    const threads = threadsInfo?.threads;
+    const totals = {
+        unreplied: threadsInfo?.totals.find((t) => t.threadStatus === 'unreplied')?.threadStatusTotal ?? 0,
+        unopened: threadsInfo?.totals.find((t) => t.threadStatus === 'unopened')?.threadStatusTotal ?? 0,
+        replied: threadsInfo?.totals.find((t) => t.threadStatus === 'replied')?.threadStatusTotal ?? 0,
+    };
+    const [uiState, setUiState] = useUiState();
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
+    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
+    const { refreshSequenceInfluencers } = useSequenceInfluencers();
+    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
+
+    const handleNoteListOpen = useCallback(() => {
+        if (!selectedThread?.sequenceInfluencers) return;
+        getNotes.call(selectedThread?.sequenceInfluencers.id);
+    }, [getNotes, selectedThread?.sequenceInfluencers]);
+
+    const handleNoteListClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isNotesListOverlayOpen: false };
+        });
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
+
+    const handleUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!selectedThread?.sequenceInfluencers) return;
+
+            saveSequenceInfluencer.call(selectedThread?.sequenceInfluencers.id, data).then((profile) => {
+                // @note updates local state without additional query
+                //       this will cause issue showing previous state though
+                setLocalProfile(mapProfileToFormData(profile));
+                saveSequenceInfluencer.refresh();
+
+                refreshSequenceInfluencers();
+            });
+        },
+        [saveSequenceInfluencer, selectedThread?.sequenceInfluencers, refreshSequenceInfluencers, setLocalProfile],
+    );
+
+    const markThreadAsSelected = (thread: ThreadInfo) => {
+        if (thread.threadInfo.threadStatus === 'unopened') {
+            apiFetch('/api/outreach/threads/{threadId}', {
+                method: 'POST',
+                path: { threadId: thread.threadInfo.threadId },
+                query: {
+                    id: thread.threadInfo.threadId,
+                },
+                body: {
+                    threadStatus: 'unreplied',
+                },
+            });
+        }
+        setSelectedThread(thread);
+    };
+
+    const markAsReplied = (thread: ThreadInfo) => {
+        if (thread.threadInfo.threadStatus === 'unreplied') {
+            apiFetch('/api/outreach/threads/{threadId}', {
+                method: 'POST',
+                path: { threadId: thread.threadInfo.threadId },
+                query: {
+                    id: thread.threadInfo.threadId,
+                },
+                body: {
+                    threadStatus: 'replied',
+                },
+            });
+        }
+    };
 
     useEffect(() => {
         // console.log(threads);
-        if (threads) setSelectedThread(threads[0]);
+        if (threads) markThreadAsSelected(threads[0]);
     }, [threads]);
+
+    useEffect(() => {
+        if (selectedThread?.sequenceInfluencers) {
+            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencers));
+        }
+    }, [selectedThread]);
+
+    console.log(selectedThread?.sequenceInfluencers);
 
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
         <div className="grid h-full max-h-screen grid-cols-12 space-y-4 p-4">
-            <section className="col-span-3 flex flex-col overflow-scroll">
+            <section className="col-span-3 flex flex-col gap-2 overflow-scroll">
+                <SearchBar onSearch={handleSearch} />
                 <Filter
-                    messageCount={{ unopened: 4, unreplied: 1, replied: 5 }}
+                    messageCount={totals}
                     allSequences={allSequences ?? []}
                     filters={filters}
                     onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
@@ -214,7 +344,7 @@ const InboxPreview = () => {
                             threadInfo={thread}
                             _currentInbox={currentInbox}
                             selected={!!selectedThread && selectedThread.threadInfo.id === thread.threadInfo.id}
-                            onClick={() => setSelectedThread(thread)}
+                            onClick={() => markThreadAsSelected(thread)}
                         />
                     ))
                 ) : isThreadsLoading ? (
@@ -223,15 +353,58 @@ const InboxPreview = () => {
                     <>No threads here!</>
                 )}
             </section>
-            <section className="col-span-9 flex h-full flex-col">
+            <section className="col-span-5 flex h-full flex-col">
                 {selectedThread && (
                     <ThreadProvider
                         currentInbox={currentInbox}
                         threadId={selectedThread.threadInfo.threadId}
                         selectedThread={selectedThread}
+                        markAsReplied={markAsReplied}
+                        filteredMessageIds={searchResults[selectedThread.threadInfo.threadId]}
                     />
                 )}
             </section>
+            {initialValue && (
+                <section className="col-span-4">
+                    <ProfileScreenProvider initialValue={initialValue}>
+                        <ProfileScreen
+                            profile={selectedThread?.sequenceInfluencers}
+                            className="bg-white"
+                            onCancel={() => {
+                                //
+                            }}
+                            onUpdate={handleUpdate}
+                        />
+                    </ProfileScreenProvider>
+                    <NotesListOverlayScreen
+                        notes={getNotes.data}
+                        isLoading={getNotes.isLoading}
+                        isOpen={uiState.isNotesListOverlayOpen}
+                        onClose={handleNoteListClose}
+                        onOpen={handleNoteListOpen}
+                        influencerSocialProfileId={selectedThread?.sequenceInfluencers?.id}
+                    />
+                </section>
+            )}
+        </div>
+    );
+};
+
+const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    return (
+        <div className="flex w-full flex-row items-center justify-between">
+            <Input
+                className="focus:border-primary-400 focus-visible:ring-primary-400"
+                placeholder="Search something"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        onSearch(searchTerm);
+                    }
+                }}
+            />
         </div>
     );
 };

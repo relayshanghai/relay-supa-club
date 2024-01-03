@@ -102,7 +102,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
-            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id not found');
+            if (!profile.influencer_social_profile_id && !profile.influencerSocialProfileId)
+                throw new Error('Influencer social profile id not found');
 
             onUpdate && onUpdate(data);
 
@@ -146,16 +147,31 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
                     <ProfileNotesTab
                         profile={profile}
-                        onUpdate={handleNotesDetailsUpdate}
+                        onUpdateNotes={(key, value) => {
+                            handleNotesDetailsUpdate(key, value);
+                        }}
+                        onUpdateShippingDetails={(key, value) => {
+                            handleShippingUpdate(key, value);
+                        }}
+                        triggerSubmitNotes={(key, value) => {
+                            handleUpdateClick({ ...state, notes: { ...state.notes, [key]: value } });
+                        }}
+                        triggerSubmitShippingDetails={(key, value) => {
+                            handleUpdateClick({
+                                ...state,
+                                shippingDetails: { ...state.shippingDetails, [key]: value },
+                            });
+                        }}
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
                     />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab
+                    {/*<ProfileShippingDetailsTab
                         profile={profile}
                         onUpdate={handleShippingUpdate}
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
-                    />
+                    />*/}
+                    <></>
                 </div>
 
                 <div className="float-right flex pb-4">
