@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { THREAD_STATUS } from '../outreach/constants';
 
 export const updatableData = z.object({
-    threadStatus: THREAD_STATUS.optional(),
+    thread_status: THREAD_STATUS.optional(),
 });
 
 export type UpdatableData = z.infer<typeof updatableData>;

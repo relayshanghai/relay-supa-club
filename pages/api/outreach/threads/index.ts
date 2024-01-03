@@ -5,7 +5,7 @@ import { GetThreadsApiRequest } from 'src/utils/endpoints/get-threads';
 import { getThreads } from 'src/utils/outreach/get-threads';
 
 const postHandler: ActionHandler<GetThreadsApiResponse> = async (req, res) => {
-    if (!req.profile || !req.profile.emailEngineAccountId) {
+    if (!req.profile || !req.profile.email_engine_account_id) {
         throw new Error('Cannot get email account');
     }
 
@@ -18,7 +18,7 @@ const postHandler: ActionHandler<GetThreadsApiResponse> = async (req, res) => {
     }
 
     const { data, totals } = await getThreads({
-        account: req.profile.emailEngineAccountId,
+        account: req.profile.email_engine_account_id,
         filters: request.data.body,
     });
 

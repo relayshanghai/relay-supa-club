@@ -218,8 +218,8 @@ const InboxPreview = () => {
         {
             threads: ThreadInfo[];
             totals: {
-                threadStatus: THREAD_STATUS;
-                threadStatusTotal: number;
+                thread_status: THREAD_STATUS;
+                thread_status_total: number;
             }[];
         },
         any
@@ -236,9 +236,9 @@ const InboxPreview = () => {
     );
     const threads = threadsInfo?.threads;
     const totals = {
-        unreplied: threadsInfo?.totals.find((t) => t.threadStatus === 'unreplied')?.threadStatusTotal ?? 0,
-        unopened: threadsInfo?.totals.find((t) => t.threadStatus === 'unopened')?.threadStatusTotal ?? 0,
-        replied: threadsInfo?.totals.find((t) => t.threadStatus === 'replied')?.threadStatusTotal ?? 0,
+        unreplied: threadsInfo?.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
+        unopened: threadsInfo?.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
+        replied: threadsInfo?.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
     };
     const [uiState, setUiState] = useUiState();
 
@@ -277,12 +277,12 @@ const InboxPreview = () => {
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
-        if (thread.threadInfo.threadStatus === 'unopened') {
+        if (thread.threadInfo.thread_status === 'unopened') {
             apiFetch('/api/outreach/threads/{threadId}', {
                 method: 'POST',
-                path: { threadId: thread.threadInfo.threadId },
+                path: { threadId: thread.threadInfo.thread_id },
                 query: {
-                    id: thread.threadInfo.threadId,
+                    id: thread.threadInfo.thread_id,
                 },
                 body: {
                     threadStatus: 'unreplied',
@@ -293,15 +293,15 @@ const InboxPreview = () => {
     };
 
     const markAsReplied = (threadId: string) => {
-        const thread = threads?.find((t) => t.threadInfo.threadId === threadId);
+        const thread = threads?.find((t) => t.threadInfo.thread_id === threadId);
         if (!thread) return;
 
-        if (thread.threadInfo.threadStatus === 'unreplied') {
+        if (thread.threadInfo.thread_status === 'unreplied') {
             apiFetch('/api/outreach/threads/{threadId}', {
                 method: 'POST',
-                path: { threadId: thread.threadInfo.threadId },
+                path: { threadId: thread.threadInfo.thread_id },
                 query: {
-                    id: thread.threadInfo.threadId,
+                    id: thread.threadInfo.thread_id,
                 },
                 body: {
                     threadStatus: 'replied',
@@ -358,10 +358,10 @@ const InboxPreview = () => {
                 {selectedThread && (
                     <ThreadProvider
                         currentInbox={currentInbox}
-                        threadId={selectedThread.threadInfo.threadId}
+                        threadId={selectedThread.threadInfo.thread_id}
                         selectedThread={selectedThread}
                         markAsReplied={markAsReplied}
-                        filteredMessageIds={searchResults[selectedThread.threadInfo.threadId]}
+                        filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
                     />
                 )}
             </section>

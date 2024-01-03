@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm';
-import { sequenceInfluencers } from 'drizzle/schema';
+import { sequence_influencers } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 
-type GetSequenceInfluencerByEmailFn = (email: string) => Promise<typeof sequenceInfluencers.$inferSelect | null>;
+type GetSequenceInfluencerByEmailFn = (email: string) => Promise<typeof sequence_influencers.$inferSelect | null>;
 
 export const getSequenceInfluencerByEmail: DBQuery<GetSequenceInfluencerByEmailFn> = (i) => async (email: string) => {
-    const rows = await db(i).select().from(sequenceInfluencers).where(eq(sequenceInfluencers.email, email)).limit(1);
+    const rows = await db(i).select().from(sequence_influencers).where(eq(sequence_influencers.email, email)).limit(1);
 
     if (rows.length !== 1) return null;
 

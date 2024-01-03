@@ -1,13 +1,13 @@
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
 import { getSequenceInfluencerByEmail, getSequenceInfluencerByMessageId, getSequenceInfluencerByThreadId } from './db';
-import type { sequenceInfluencers } from 'drizzle/schema';
+import type { sequence_influencers } from 'drizzle/schema';
 import { getSequenceInfluencerByThreadIdAndContact } from './db/get-sequence-influencer-by-thread-id-and-contact';
 import type { db } from '../database';
 
 type GetInfluencerFromMessageFn = (
     message: AccountAccountMessageGet,
     options?: { tx: ReturnType<typeof db> },
-) => Promise<typeof sequenceInfluencers.$inferSelect | null>;
+) => Promise<typeof sequence_influencers.$inferSelect | null>;
 
 export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, options) => {
     const influencerByThread = await getSequenceInfluencerByThreadId(options?.tx)(message.threadId);

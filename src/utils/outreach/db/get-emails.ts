@@ -9,8 +9,8 @@ export const getEmails: DBQuery<GetEmailsFn> = (i) => async (threadId: string) =
     const rows = await db(i)
         .select()
         .from(emails)
-        .where(and(eq(emails.threadId, threadId), isNull(emails.deletedAt)))
-        .orderBy(desc(emails.createdAt));
+        .where(and(eq(emails.thread_id, threadId), isNull(emails.deleted_at)))
+        .orderBy(desc(emails.created_at));
 
     return rows;
 };

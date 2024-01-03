@@ -424,7 +424,7 @@ export const emails = pgTable("emails", {
 	recipients: text("recipients").notNull(),
 	thread_id: text("thread_id").notNull().references(() => threads.thread_id),
 	email_engine_message_id: text("email_engine_message_id").notNull(),
-	email_engine_id: text("email_engine_id"),
+	email_engine_id: text("email_engine_id").notNull(),
 	email_engine_account_id: text("email_engine_account_id").notNull(),
 	deleted_at: timestamp("deleted_at", { mode: 'string' }),
 	created_at: timestamp("created_at", { mode: 'string' }).defaultNow(),

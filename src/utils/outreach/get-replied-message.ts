@@ -5,7 +5,7 @@ export const getRepliedToMessage = async (account: string, messageId: string) =>
     const repliedMessage = await getEmailByMessageId()(messageId);
 
     if (repliedMessage) {
-        return repliedMessage.emailEngineId;
+        return repliedMessage.email_engine_id;
     }
 
     const body = {

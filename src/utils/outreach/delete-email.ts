@@ -10,7 +10,7 @@ type DeleteEmailFn = (
 export const deleteEmail: DeleteEmailFn = async (emailId: string) => {
     const results = await db().transaction(async (tx) => {
         const email = await baseDeleteEmail(tx)(emailId);
-        const thread = email ? await deleteThread(tx)(email.threadId) : null;
+        const thread = email ? await deleteThread(tx)(email.thread_id) : null;
 
         return { thread, email };
     });

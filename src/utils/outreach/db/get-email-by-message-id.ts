@@ -9,8 +9,8 @@ export const getEmailByMessageId: DBQuery<GetEmailByMessageIdFn> = (i) => async 
     const rows = await db(i)
         .select()
         .from(emails)
-        .where(and(eq(emails.emailEngineMessageId, messageId), isNull(emails.deletedAt)))
-        .orderBy(desc(emails.createdAt));
+        .where(and(eq(emails.email_engine_message_id, messageId), isNull(emails.deleted_at)))
+        .orderBy(desc(emails.created_at));
 
     if (rows.length !== 1) return null;
 

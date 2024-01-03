@@ -9,8 +9,8 @@ type DeleteEmailFn = (emailid: string) => Promise<typeof emails.$inferSelect | n
 export const deleteEmail: DBQuery<DeleteEmailFn> = (i) => async (emailId: string) => {
     const rows = await db(i)
         .update(emails)
-        .set({ deletedAt: now() })
-        .where(eq(emails.emailEngineId, emailId))
+        .set({ deleted_at: now() })
+        .where(eq(emails.email_engine_id, emailId))
         .returning();
 
     if (rows.length !== 1) return null;

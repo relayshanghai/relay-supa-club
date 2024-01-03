@@ -1,5 +1,5 @@
-import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { rudderstack } from 'src/utils/rudderstack';
 import type { CreateJobInsert } from 'src/utils/scheduler/utils';
@@ -74,7 +74,11 @@ const failedResults = (influencer: SequenceInfluencerManagerPage, error?: string
     },
 ];
 
-const postHandler: NextApiHandler = async (req, res) => {
+const postHandler: ActionHandler = async (req, res) => {
+    if (!req.profile || !req.profile.email_engine_account_id) {
+        throw new Error('Cannot get email account');
+    }
+
     await rudderstack.identify({ req, res });
     const { account, sequenceInfluencers } = req.body as SequenceSendPostBody;
     let { sequenceSteps, templateVariables } = req.body as SequenceSendPostBody;

@@ -79,11 +79,11 @@ export const syncEmail: SyncEmailFn = async (params) => {
             data: emailMessage,
             sender: stringifyContacts(emailMessage.from),
             recipients: stringifyContacts(emailMessage.to),
-            threadId: emailMessage.threadId,
-            emailEngineMessageId: emailMessage.messageId,
-            emailEngineId: params.emailEngineId,
-            emailEngineAccountId: params.account,
-            createdAt: String(emailMessage.date),
+            thread_id: emailMessage.threadId,
+            email_engine_message_id: emailMessage.messageId,
+            email_engine_id: params.emailEngineId,
+            email_engine_account_id: params.account,
+            created_at: String(emailMessage.date),
         });
 
         if (!email) {

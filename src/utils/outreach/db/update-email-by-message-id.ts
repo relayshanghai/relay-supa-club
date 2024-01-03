@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { now } from 'src/utils/datetime';
 
 type UpdateEmailByMessageIdParams = {
-    emailEngineMessageId: string;
+    email_engine_message_id: string;
     data: Omit<typeof emails.$inferInsert, 'emailEngineMessageId'>;
 };
 
@@ -18,12 +18,12 @@ export const updateEmailByMessageId: DBQuery<UpdateEmailByMessageIdFn> = (i) => 
             data: params.data.data,
             sender: params.data.sender,
             recipients: params.data.recipients,
-            threadId: params.data.threadId,
-            emailEngineId: params.data.emailEngineId,
-            emailEngineAccountId: params.data.emailEngineAccountId,
-            createdAt: params.data.createdAt ?? now(),
+            thread_id: params.data.thread_id,
+            email_engine_id: params.data.email_engine_id,
+            email_engine_account_id: params.data.email_engine_account_id,
+            created_at: params.data.created_at ?? now(),
         })
-        .where(eq(emails.emailEngineMessageId, params.emailEngineMessageId))
+        .where(eq(emails.email_engine_message_id, params.email_engine_message_id))
         .returning();
 
     if (result.length !== 1) throw new Error('Error in updating row');

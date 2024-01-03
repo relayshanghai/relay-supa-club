@@ -9,8 +9,8 @@ type DeleteThreadFn = (threadId: string) => Promise<typeof threads.$inferSelect 
 export const deleteThread: DBQuery<DeleteThreadFn> = (i) => async (threadId: string) => {
     const rows = await db(i)
         .update(threads)
-        .set({ deletedAt: now() })
-        .where(eq(threads.threadId, threadId))
+        .set({ deleted_at: now() })
+        .where(eq(threads.thread_id, threadId))
         .returning();
 
     if (rows.length !== 1) return null;

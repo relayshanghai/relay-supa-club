@@ -1,30 +1,30 @@
 import { and, eq, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
-import { sequenceInfluencers, sequences, templateVariables, threads } from 'drizzle/schema';
-import type { FilterType } from 'src/components/inbox/wip/filter';
+import { sequence_influencers, sequences, template_variables, threads } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
+import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
 export type CountThreadsReturn = {
-    threadStatus: string;
-    threadStatusTotal: number;
+    thread_status: string;
+    thread_status_total: number;
 };
 
-type CountThreadsFn = (account: string, filters?: FilterType) => Promise<CountThreadsReturn[]>;
+type CountThreadsFn = (account: string, filters?: ThreadsFilter) => Promise<CountThreadsReturn[]>;
 
-export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: string, filters?: FilterType) => {
+export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: string, filters?: ThreadsFilter) => {
     const queryFilters = [
-        eq(threads.emailEngineAccountId, account),
-        isNull(threads.deletedAt),
-        isNotNull(threads.lastReplyId),
-        isNotNull(threads.sequenceInfluencerId),
+        eq(threads.email_engine_account_id, account),
+        isNull(threads.deleted_at),
+        isNotNull(threads.last_reply_id),
+        isNotNull(threads.sequence_influencer_id),
     ];
 
     if (filters && filters.funnelStatus && filters.funnelStatus.length > 0) {
-        queryFilters.push(inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus));
+        queryFilters.push(inArray(sequence_influencers.funnel_status, filters.funnelStatus));
     }
 
     if (filters && filters.threadStatus && filters.threadStatus.length > 0) {
-        queryFilters.push(inArray(threads.threadStatus, filters.threadStatus));
+        queryFilters.push(inArray(threads.thread_status, filters.threadStatus));
     }
 
     if (filters && filters.sequences && filters.sequences.length > 0) {
@@ -38,18 +38,18 @@ export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: stri
 
     const rows = await db(i)
         .select({
-            threadStatus: threads.threadStatus,
-            threadStatusTotal: sql<number>`cast(count(${threads.id}) as int)`,
+            thread_status: threads.thread_status,
+            thread_status_total: sql<number>`cast(count(${threads.id}) as int)`,
         })
         .from(threads)
-        .leftJoin(sequenceInfluencers, eq(sequenceInfluencers.id, threads.sequenceInfluencerId))
-        .leftJoin(sequences, eq(sequences.id, sequenceInfluencers.sequenceId))
+        .leftJoin(sequence_influencers, eq(sequence_influencers.id, threads.sequence_influencer_id))
+        .leftJoin(sequences, eq(sequences.id, sequence_influencers.sequence_id))
         .leftJoin(
-            templateVariables,
-            sql`${templateVariables.sequenceId} = ${sequences.id} AND ${templateVariables.key} = 'productName'`,
+            template_variables,
+            sql`${template_variables.sequence_id} = ${sequences.id} AND ${template_variables.key} = 'productName'`,
         )
         .where(and(...queryFilters))
-        .groupBy(threads.threadStatus);
+        .groupBy(threads.thread_status);
 
     return rows;
 };

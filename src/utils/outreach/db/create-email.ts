@@ -13,17 +13,17 @@ export const createEmail: DBQuery<CreateEmailFn> = (i) => async (params) => {
             data: params.data,
             sender: params.sender,
             recipients: params.recipients,
-            threadId: params.threadId,
-            emailEngineMessageId: params.emailEngineMessageId,
-            emailEngineId: params.emailEngineId,
-            emailEngineAccountId: params.emailEngineAccountId,
-            createdAt: params.createdAt ?? now(),
+            thread_id: params.thread_id,
+            email_engine_message_id: params.email_engine_message_id,
+            email_engine_id: params.email_engine_id,
+            email_engine_account_id: params.email_engine_account_id,
+            created_at: params.created_at ?? now(),
         })
-        .onConflictDoNothing({ target: emails.emailEngineId })
+        .onConflictDoNothing({ target: emails.email_engine_id })
         .returning();
 
     if (result.length <= 0) {
-        result = await db(i).select().from(emails).where(eq(emails.emailEngineId, params.emailEngineId)).limit(1);
+        result = await db(i).select().from(emails).where(eq(emails.email_engine_id, params.email_engine_id)).limit(1);
     }
 
     if (result.length !== 1) throw new Error('Error in inserting row');

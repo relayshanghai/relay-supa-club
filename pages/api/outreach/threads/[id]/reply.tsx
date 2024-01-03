@@ -11,7 +11,7 @@ type ApiRequestBody = {
 };
 
 const postHandler: ActionHandler = async (req, res) => {
-    if (!req.profile || !req.profile.emailEngineAccountId) {
+    if (!req.profile || !req.profile.email_engine_account_id) {
         throw new Error('Cannot get email account');
     }
 
@@ -23,7 +23,7 @@ const postHandler: ActionHandler = async (req, res) => {
     }
 
     const result = await replyThread({
-        account: req.profile.emailEngineAccountId,
+        account: req.profile.email_engine_account_id,
         threadId: query.id,
         content: body.content,
     });

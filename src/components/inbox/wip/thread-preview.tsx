@@ -1,4 +1,4 @@
-import type { sequenceInfluencers } from 'drizzle/schema';
+import type { sequence_influencers } from 'drizzle/schema';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar';
 import { Card, CardContent } from 'shadcn/components/ui/card';
@@ -29,7 +29,7 @@ export type CurrentInbox = {
 };
 
 type ThreadPreviewProps = {
-    sequenceInfluencer: typeof sequenceInfluencers.$inferInsert;
+    sequenceInfluencer: typeof sequence_influencers.$inferInsert;
     threadInfo: ThreadInfo;
     _currentInbox: CurrentInbox;
     selected: boolean;
@@ -67,11 +67,11 @@ export const ThreadPreview = ({
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatarUrl, username, platform, url, funnelStatus } = sequenceInfluencer;
+    const { name, avatar_url, username, platform, url, funnel_status } = sequenceInfluencer;
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform as CreatorPlatform);
-    const UnreadMarker = getUnreadMarker(threadInfo.threadInfo.threadStatus as THREAD_STATUS);
+    const UnreadMarker = getUnreadMarker(threadInfo.threadInfo.thread_status as THREAD_STATUS);
 
     return (
         <Card
@@ -84,7 +84,7 @@ export const ThreadPreview = ({
                 <div className="flex items-center gap-4">
                     <section className="relative">
                         <Avatar>
-                            <AvatarImage src={avatarUrl ?? ''} />
+                            <AvatarImage src={avatar_url ?? ''} />
                             <AvatarFallback>{name ? name[0] : 'I'}</AvatarFallback>
                         </Avatar>
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
@@ -98,8 +98,8 @@ export const ThreadPreview = ({
                 </div>
             </CardContent>
             <CardContent className="mt-5">
-                <div className={`relative ${COLLAB_OPTIONS[funnelStatus].style} rounded-sm p-1`}>
-                    {COLLAB_OPTIONS[funnelStatus].icon}
+                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
+                    {COLLAB_OPTIONS[funnel_status].icon}
                     {UnreadMarker}
                 </div>
             </CardContent>
