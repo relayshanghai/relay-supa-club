@@ -25,9 +25,9 @@ export const campaign_creators = pgTable("campaign_creators", {
 	publication_date: timestamp("publication_date", { withTimezone: true, mode: 'string' }),
 	rate_currency: text("rate_currency").default('USD').notNull(),
 	payment_details: text("payment_details"),
-	payment_status: text("payment_status").default('''unpaid''::text').notNull(),
+	payment_status: text("payment_status").default(sql`'unpaid'::text`).notNull(),
 	address: text("address"),
-	sample_status: text("sample_status").default('''unsent''::text').notNull(),
+	sample_status: text("sample_status").default(sql`'unsent'::text`).notNull(),
 	tracking_details: text("tracking_details"),
 	reject_message: text("reject_message"),
 	brief_opened_by_creator: boolean("brief_opened_by_creator"),
@@ -88,7 +88,7 @@ export const invites = pgTable("invites", {
 	company_id: uuid("company_id").notNull().references(() => companies.id),
 	email: text("email").notNull(),
 	used: boolean("used").default(false).notNull(),
-	expire_at: timestamp("expire_at", { withTimezone: true, mode: 'string' }).default((now() + '30 days'::interval)),
+	expire_at: timestamp("expire_at", { withTimezone: true, mode: 'string' }).default(sql`(now() + '30 days'::interval)`),
 	updated_at: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 	company_owner: boolean("company_owner").default(false),
 });
@@ -113,7 +113,7 @@ export const usages = pgTable("usages", {
 
 export const posts_performance = pgTable("posts_performance", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
-	created_at: timestamp("created_at", { withTimezone: true, mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	created_at: timestamp("created_at", { withTimezone: true, mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	campaign_id: uuid("campaign_id").notNull().references(() => campaigns.id),
 	post_id: uuid("post_id").notNull().references(() => influencer_posts.id),
 	likes_total: numeric("likes_total"),
@@ -122,7 +122,7 @@ export const posts_performance = pgTable("posts_performance", {
 	orders_total: numeric("orders_total"),
 	sales_total: numeric("sales_total"),
 	sales_revenue: numeric("sales_revenue"),
-	updated_at: timestamp("updated_at", { withTimezone: true, mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	updated_at: timestamp("updated_at", { withTimezone: true, mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	influencer_social_profile_id: uuid("influencer_social_profile_id").references(() => influencer_social_profiles.id, { onDelete: "set null" } ),
 });
 
@@ -139,8 +139,8 @@ export const campaigns = pgTable("campaigns", {
 	budget_currency: text("budget_currency"),
 	creator_count: smallint("creator_count"),
 	date_end_creator_outreach: timestamp("date_end_creator_outreach", { withTimezone: true, mode: 'string' }),
-	date_start_campaign: timestamp("date_start_campaign", { withTimezone: true, mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
-	date_end_campaign: timestamp("date_end_campaign", { withTimezone: true, mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	date_start_campaign: timestamp("date_start_campaign", { withTimezone: true, mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
+	date_end_campaign: timestamp("date_end_campaign", { withTimezone: true, mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	slug: text("slug"),
 	product_name: text("product_name"),
 	requirements: text("requirements"),
@@ -148,12 +148,12 @@ export const campaigns = pgTable("campaigns", {
 	promo_types: text("promo_types").array(),
 	target_locations: text("target_locations").array(),
 	// TODO: failed to parse database type 'json[]'
-	media: unknown("media").array(),
+	media: json("media").array(),
 	// TODO: failed to parse database type 'json[]'
-	purge_media: unknown("purge_media").array(),
+	purge_media: json("purge_media").array(),
 	media_path: text("media_path").array(),
 	archived: boolean("archived").default(false),
-	updated_at: timestamp("updated_at", { withTimezone: true, mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	updated_at: timestamp("updated_at", { withTimezone: true, mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 });
 
 export const companies = pgTable("companies", {
@@ -173,8 +173,8 @@ export const companies = pgTable("companies", {
 	subscription_end_date: text("subscription_end_date"),
 	subscription_current_period_end: timestamp("subscription_current_period_end", { withTimezone: true, mode: 'string' }),
 	subscription_current_period_start: timestamp("subscription_current_period_start", { withTimezone: true, mode: 'string' }),
-	ai_email_generator_limit: text("ai_email_generator_limit").default(1000).notNull(),
-	trial_ai_email_generator_limit: text("trial_ai_email_generator_limit").default(10).notNull(),
+	ai_email_generator_limit: text("ai_email_generator_limit").default(sql`1000::text`).notNull(),
+	trial_ai_email_generator_limit: text("trial_ai_email_generator_limit").default(sql`10::text`).notNull(),
 	size: text("size"),
 	terms_accepted: boolean("terms_accepted"),
 	subscription_plan: text("subscription_plan"),
@@ -197,14 +197,14 @@ export const profiles = pgTable("profiles", {
 
 export const influencer_posts = pgTable("influencer_posts", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
-	created_at: timestamp("created_at", { mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	created_at: timestamp("created_at", { mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	url: text("url").notNull(),
 	is_reusable: boolean("is_reusable").default(false).notNull(),
-	publish_date: timestamp("publish_date", { mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	publish_date: timestamp("publish_date", { mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	type: text("type").notNull(),
 	campaign_id: uuid("campaign_id").references(() => campaigns.id),
 	platform: text("platform").notNull(),
-	updated_at: timestamp("updated_at", { mode: 'string' }).default((now() AT TIME ZONE 'utc'::text)),
+	updated_at: timestamp("updated_at", { mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
 	description: text("description"),
 	preview_url: text("preview_url"),
 	title: text("title"),
