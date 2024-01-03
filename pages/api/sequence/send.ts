@@ -17,6 +17,7 @@ import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/tem
 
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
+import { v4 } from 'uuid';
 
 export type SequenceSendPostBody = {
     account: string;
@@ -166,12 +167,14 @@ const postHandler: NextApiHandler = async (req, res) => {
             if (!recentPostURL) {
                 throw new Error('No recent post url');
             }
+            const jobId = v4();
             const payload: SequenceStepSendArgs = {
                 emailEngineAccountId: account,
                 sequenceInfluencer: influencer,
                 sequenceStep: firstStep,
                 sequenceSteps,
                 templateVariables,
+                jobId,
             };
             createJobsPayloads.push({ queue: SEQUENCE_STEP_SEND_QUEUE_NAME, payload });
         } catch (error: any) {
