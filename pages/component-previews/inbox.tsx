@@ -4,7 +4,6 @@ import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { type ThreadInfo, ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
-import { nextFetch } from 'src/utils/fetcher';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
 import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
@@ -20,7 +19,7 @@ import { mapProfileToFormData } from 'src/components/inbox/helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
-import type { THREAD_STATUS } from 'src/utils/outreach/constants';
+import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -201,6 +200,8 @@ const InboxPreview = () => {
             setSearchResults({});
             return;
         }
+        // @inbox-note it is easy to just put the type here but
+        // we want to validate those types in the endpoint instead of casting/inferring the type
         const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
             '/api/outreach/search',
             {
@@ -214,23 +215,13 @@ const InboxPreview = () => {
         data: threadsInfo,
         error: _threadsError,
         isLoading: isThreadsLoading,
-    } = useSWR<
-        {
-            threads: ThreadInfo[];
-            totals: {
-                thread_status: THREAD_STATUS;
-                thread_status_total: number;
-            }[];
-        },
-        any
-    >(
+    } = useSWR(
         [filters, searchResults],
         async () => {
-            const res = await nextFetch('outreach/threads', {
-                method: 'POST',
+            const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
                 body: { ...filters, threadIds: Object.keys(searchResults) },
             });
-            return { threads: res.data, totals: res.totals };
+            return { threads: content.data, totals: content.totals };
         },
         { refreshInterval: 500 },
     );
