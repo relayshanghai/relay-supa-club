@@ -653,7 +653,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             if (jobCreated && jobCreated.id) {
                 trackData.is_success = true;
                 if (nextEmailRecord?.id) {
-                    await updateSequenceEmail({ id: nextEmailRecord.id });
+                    await updateSequenceEmail({ job_id: jobId, id: nextEmailRecord.id });
                 }
             }
         } else {
