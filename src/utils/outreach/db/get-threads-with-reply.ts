@@ -2,7 +2,7 @@ import { sequence_influencers, sequences, template_variables, threads } from 'dr
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 import { and, eq, isNull, sql, desc, isNotNull, inArray } from 'drizzle-orm';
-import type { FilterType } from 'src/components/inbox/wip/filter';
+import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
 export type GetThreadsWithReplyReturn = {
     threads: typeof threads.$inferSelect;
@@ -36,10 +36,10 @@ export const getThreadsWithReply: DBQuery<GetThreadsWithReplyFn> = (i) => async 
     return rows;
 };
 
-type GetThreadsWithReplyByFilterFn = (account: string, filters?: FilterType) => Promise<GetThreadsWithReplyReturn[]>;
+type GetThreadsWithReplyByFilterFn = (account: string, filters?: ThreadsFilter) => Promise<GetThreadsWithReplyReturn[]>;
 
 export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn> =
-    (i) => async (account: string, filters?: FilterType) => {
+    (i) => async (account: string, filters?: ThreadsFilter) => {
         const queryFilters = [
             eq(threads.email_engine_account_id, account),
             isNull(threads.deleted_at),
