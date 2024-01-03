@@ -17,35 +17,31 @@ type Props = {
 
 export const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
     return {
-        collabStatus: profile?.funnel_status ?? profile?.funnelStatus ?? '', // profile.funnel_status (toLowerCase)
-        nextStep: profile?.next_step ?? profile?.nextStep ?? '', // profile.next_step
-        fee: profile?.rate_amount ?? profile?.rateAmount ?? '', // profile.rate_amount
-        videoDetails: profile?.video_details ?? profile?.videoDetails ?? '', // profile.video_details
+        collabStatus: profile?.funnel_status ?? profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
+        nextStep: profile?.next_step ?? profile?.next_step ?? '', // profile.next_step
+        fee: profile?.rate_amount ?? profile?.rate_amount ?? '', // profile.rate_amount
+        videoDetails: profile?.video_details ?? profile?.video_details ?? '', // profile.video_details
         affiliateLink: '', // ??
-        scheduledPostDate: profile?.scheduled_post_date ?? profile?.scheduledPostDate ?? '', // profile.scheduled_post_date
+        scheduledPostDate: profile?.scheduled_post_date ?? profile?.scheduled_post_date ?? '', // profile.scheduled_post_date
         notes: '', // will be filled by getNotes
     };
 };
 
-export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => {
-    return {
-        name: profile?.address?.name ?? '', // profile.real_full_name
-        phoneNumber: profile?.address?.phone_number ?? profile?.address?.phoneNumber ?? '', // ??
-        streetAddress: profile?.address?.address_line_1 ?? profile?.address?.addressLine1 ?? '', // address.address_line_1?
-        city: profile?.address?.city ?? '', // address.city
-        state: profile?.address?.state ?? '', // address.state
-        country: profile?.address?.country ?? '', // address.country
-        postalCode: profile?.address?.postal_code ?? profile?.address?.postalCode ?? '', // address.postal_code
-        trackingCode: profile?.address?.tracking_code ?? profile?.address?.trackingCode ?? '', // address.tracking_code
-        fullAddress: '', // probably combination of stuff above
-    };
-};
+export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => ({
+    name: profile?.address?.name ?? '',
+    phoneNumber: profile?.address?.phone_number ?? profile?.address?.phone_number ?? '',
+    streetAddress: profile?.address?.address_line_1 ?? profile?.address?.address_line_1 ?? '',
+    city: profile?.address?.city ?? '',
+    state: profile?.address?.state ?? '',
+    country: profile?.address?.country ?? '',
+    postalCode: profile?.address?.postal_code ?? profile?.address?.postal_code ?? '',
+    trackingCode: profile?.address?.tracking_code ?? profile?.address?.tracking_code ?? '',
+    fullAddress: '', // probably combination of stuff above
+});
 
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
-
-    console.log(profile);
 
     const mapProfileToFormData = useCallback((p: typeof profile) => {
         if (!p) return null;

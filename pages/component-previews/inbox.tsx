@@ -160,7 +160,7 @@ const ThreadProvider = ({
     return (
         <div className="flex h-full flex-col justify-between">
             <div className="h-full">
-                <ThreadHeader currentInbox={currentInbox} threadInfo={{ ...selectedThread, messages }} />
+                <ThreadHeader currentInbox={currentInbox} threadInfo={selectedThread} messages={messages} />
                 <div className="h-[50vh] overflow-scroll">
                     <MessagesComponent
                         currentInbox={currentInbox}
@@ -169,13 +169,7 @@ const ThreadProvider = ({
                     />
                 </div>
             </div>
-            <ReplyEditor
-                influencer={{
-                    name: selectedThread.sequenceInfluencers.name,
-                    address: selectedThread.sequenceInfluencers.email,
-                }}
-                onReply={handleReply}
-            />
+            <ReplyEditor influencer={selectedThread.sequenceInfluencers} onReply={handleReply} />
         </div>
     );
 };
@@ -339,16 +333,21 @@ const InboxPreview = () => {
                     onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
                 />
                 {threads ? (
-                    threads.map((thread) => (
-                        <ThreadPreview
-                            key={thread.threadInfo.id}
-                            sequenceInfluencer={thread.sequenceInfluencers}
-                            threadInfo={thread}
-                            _currentInbox={currentInbox}
-                            selected={!!selectedThread && selectedThread.threadInfo.id === thread.threadInfo.id}
-                            onClick={() => markThreadAsSelected(thread)}
-                        />
-                    ))
+                    threads
+                        .filter((thread) => thread.sequenceInfluencers)
+                        .map((thread) => (
+                            <ThreadPreview
+                                key={thread.threadInfo.id}
+                                // @note cast to a non-nullable since we already filtered null influencers
+                                sequenceInfluencer={
+                                    thread.sequenceInfluencers as NonNullable<typeof thread.sequenceInfluencers>
+                                }
+                                threadInfo={thread}
+                                _currentInbox={currentInbox}
+                                selected={!!selectedThread && selectedThread.threadInfo.id === thread.threadInfo.id}
+                                onClick={() => markThreadAsSelected(thread)}
+                            />
+                        ))
                 ) : isThreadsLoading ? (
                     <>Loading</>
                 ) : (
@@ -366,7 +365,7 @@ const InboxPreview = () => {
                     />
                 )}
             </section>
-            {initialValue && (
+            {initialValue && selectedThread && selectedThread.sequenceInfluencers && (
                 <section className="col-span-4">
                     <ProfileScreenProvider initialValue={initialValue}>
                         <ProfileScreen

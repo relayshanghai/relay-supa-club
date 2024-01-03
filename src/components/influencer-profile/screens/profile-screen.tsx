@@ -8,7 +8,7 @@ import type { ProfileNotes } from './profile-notes-tab';
 import { ProfileNotesTab } from './profile-notes-tab';
 import { useProfileScreenContext } from './profile-screen-context';
 import type { ProfileShippingDetails } from './profile-shipping-details-tab';
-import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
+// import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
 import { randomNumber } from 'src/utils/utils';
@@ -102,7 +102,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
-            if (!profile.influencer_social_profile_id && !profile.influencerSocialProfileId)
+            if (!profile.influencer_social_profile_id && !profile.influencer_social_profile_id)
                 throw new Error('Influencer social profile id not found');
 
             onUpdate && onUpdate(data);

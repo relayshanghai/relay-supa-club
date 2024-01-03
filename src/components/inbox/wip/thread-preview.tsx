@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
+import type { GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 import type { CreatorPlatform } from 'types';
 
@@ -21,33 +22,7 @@ export type Message = {
     unread: boolean;
 };
 
-export type ThreadInfo = {
-    threadInfo: {
-        id: string;
-        threadId: string;
-        sequenceInfluencerId: string;
-        emailEngineAccountId: string;
-        emailEngineId: string;
-        threadStatus: string;
-        deletedAt: string | null;
-        createdAt: string;
-        updatedAt: string;
-    };
-    messages: Message[];
-    sequenceInfluencers: any;
-    sequenceInfo: {
-        createdAt: string;
-        updatedAt: string;
-        companyId: string;
-        name: string;
-        autoStart: boolean;
-        id: string;
-        managerFirstName: string;
-        managerId: string;
-        deleted: boolean;
-        productName: string;
-    };
-};
+export type ThreadInfo = GetThreadsApiResponse['data'][0];
 
 export type CurrentInbox = {
     email?: string | null;

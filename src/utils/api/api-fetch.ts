@@ -57,6 +57,10 @@ const isApiPayload = (payload: any): payload is ApiPayload => {
     return isObject && ('path' in payload || 'query' in payload || 'body' in payload);
 };
 
+// This utility type will provide a 'API Request Type is required' literal type
+// that will throw a compiler error if an API Request type is not provided
+export type ApiPayloadParam<TReq = void> = TReq extends void ? 'API Request Type is required' : TReq;
+
 export function apiFetch<TRes = void>(
     url: string,
     payload?: null,
@@ -65,7 +69,7 @@ export function apiFetch<TRes = void>(
 
 export function apiFetch<TRes = void, TReq = void>(
     url: string,
-    payload: TReq extends void ? 'API Request Type is required' : TReq,
+    payload: ApiPayloadParam<TReq>,
     options?: RequestInit,
 ): Promise<{ response: Response; content: TRes extends void ? 'API Response Type is required' : TRes }>;
 
@@ -74,7 +78,7 @@ export function apiFetch<TRes = void, TReq = void>(
  */
 export async function apiFetch<TRes = void, TReq = void>(
     url: string,
-    payload?: TReq extends void ? 'API Request Type is required' : TReq,
+    payload?: ApiPayloadParam<TReq>,
     options?: RequestInit,
 ) {
     const _options = options ?? {};

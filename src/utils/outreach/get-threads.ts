@@ -15,10 +15,12 @@ const threadTransformer = (thread: GetThreadsWithReplyReturn) => {
     return {
         threadInfo: thread.threads,
         sequenceInfluencers: thread.sequence_influencers,
-        sequenceInfo: {
-            ...thread.sequences,
-            productName: thread.template_variables?.value,
-        },
+        sequenceInfo: thread.sequences
+            ? {
+                  ...thread.sequences,
+                  productName: thread.template_variables?.value,
+              }
+            : null,
     };
 };
 

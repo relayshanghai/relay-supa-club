@@ -124,7 +124,6 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { triggerSubmitShippingDetails } = { triggerSubmitShippingDetails: () => null, ...props };
     const { t } = useTranslation();
     const { state: data } = useProfileScreenContext();
-    console.log('data', data);
     const [_uiState, setUiState] = useUiState();
     const { getNotes, saveNote } = useSequenceInfluencerNotes();
     const { track } = useRudderstackTrack();
@@ -153,7 +152,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
     const handleCollabStatusUpate = (items: CheckboxDropdownItemData[]) => {
         if (!profile) return;
-        if (!profile.influencer_social_profile_id && !profile.influencerSocialProfileId)
+        if (!profile.influencer_social_profile_id && !profile.influencer_social_profile_id)
             throw new Error('Influencer social profile id missing');
         const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
         onUpdateNotes('collabStatus', selected);

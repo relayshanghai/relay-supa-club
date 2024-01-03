@@ -1,15 +1,24 @@
 import { useCallback, useState } from 'react';
 import { Tiptap } from './tiptap';
-import { sendReply } from './utils';
-import type { EmailContact } from './thread-preview';
+import type { EmailContact, ThreadInfo } from './thread-preview';
 import type { KeyboardEvent } from 'react';
-import { nanoid } from 'nanoid';
 
-export const ReplyEditor = ({ influencer, onReply }: { influencer: EmailContact; onReply: any }) => {
+export const ReplyEditor = ({
+    influencer,
+    onReply,
+}: {
+    influencer: ThreadInfo['sequenceInfluencers'];
+    onReply: any;
+}) => {
     const [replyText, setReplyText] = useState('');
-    console.log(influencer);
     const [sendTo, setSendTo] = useState<EmailContact[]>([]);
     const [sendCC, setSendCC] = useState<EmailContact[]>([]);
+    const [defaultTo] = useState(() => {
+        // @note unfortunately, name and email are not guaranteed
+        return influencer && influencer.name && influencer.email
+            ? { name: influencer.name, address: influencer.email }
+            : null;
+    });
 
     const handleSendReply = useCallback(() => {
         onReply(replyText);
@@ -19,7 +28,7 @@ export const ReplyEditor = ({ influencer, onReply }: { influencer: EmailContact;
     return (
         <div>
             <AddressSection
-                defaultTo={influencer}
+                defaultTo={defaultTo}
                 sendTo={sendTo}
                 setSendTo={setSendTo}
                 sendCC={sendCC}
@@ -59,7 +68,7 @@ const AddressSection = ({
     sendCC,
     setSendCC,
 }: {
-    defaultTo?: EmailContact;
+    defaultTo?: EmailContact | null;
     sendTo: EmailContact[];
     setSendTo: (contact: EmailContact[]) => void;
     sendCC: EmailContact[];
