@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { COLLAB_OPTIONS, PLATFORMS } from '../constants';
 import { InboxIcon } from 'src/components/icons';
-import { imgProxy } from 'src/utils/fetcher';
 import i18n from 'i18n';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GoToInbox } from 'src/utils/analytics/events/outreach/go-to-inbox';
 import { useUser } from 'src/hooks/use-user';
+import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
 
 export type InfluencerRowProps = {
     index: number;
@@ -65,19 +65,11 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                 <input className="appearance-none rounded border-gray-300 checked:text-primary-500" checked={checked} onChange={onCheckboxChange} type='checkbox' />
             </td> */}
             <td className="whitespace-nowrap px-6 py-2 font-medium">
-                <div className="flex flex-row items-center gap-2">
-                    <div>
-                        {avatar_url ? (
-                            <img
-                                className="inline-block h-14 w-14 bg-slate-300"
-                                src={imgProxy(avatar_url)}
-                                alt={`Avatar Icon for ${name}`}
-                            />
-                        ) : (
-                            <div className="inline-block h-14 w-14 items-center justify-center rounded-full bg-slate-300" />
-                        )}
+                <div className="flex items-center gap-2">
+                    <div className="flex-2 flex">
+                        <InfluencerAvatarWithFallback url={avatar_url || ''} name={name} size={60} />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex-1 overflow-hidden ">
                         <p className="font-semibold text-primary-600">{name}</p>
                         {url && (
                             <Link

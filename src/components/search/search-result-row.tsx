@@ -8,7 +8,6 @@ import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { featEmail, featRecommended } from 'src/constants/feature-flags';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
-import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
@@ -31,6 +30,7 @@ import { useAnalyzeInfluencer } from 'src/hooks/use-analyze-influencer';
 import { getJourney } from 'src/utils/analytics/journey';
 import { clientLogger } from 'src/utils/logger-client';
 import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 
 export interface SearchResultRowProps {
     creator: ClassicSearchInfluencer;
@@ -217,12 +217,7 @@ export const SearchResultRow = ({
         <tr className="group hover:bg-primary-100">
             <td className="flex w-full">
                 <div className="relative flex flex-row gap-x-2 px-4 py-2">
-                    <img
-                        key={picture}
-                        src={imgProxy(picture) as string}
-                        className="h-12 w-12 [min-width:3rem]"
-                        alt={handle}
-                    />
+                    <InfluencerAvatarWithFallback url={picture} name={handle} size={12} />
                     <div>
                         <div className="font-bold">{fullname}</div>
                         <Link

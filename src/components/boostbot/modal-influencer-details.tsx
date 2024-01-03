@@ -34,6 +34,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
 import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -238,10 +239,11 @@ export const InfluencerDetailsModal = ({
                 <div className="flex w-full justify-between">
                     <div className="mb-5 flex gap-3">
                         <div className="h-16 w-16 align-middle">
-                            <img
-                                className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
-                                src={picture}
-                                alt={handle ?? username}
+                            <InfluencerAvatarWithFallback
+                                url={picture}
+                                name={handle ?? username}
+                                size={64}
+                                className="rounded-full"
                             />
                         </div>
                         <div>
