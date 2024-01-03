@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
@@ -14,12 +14,13 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
 import { ProfileScreenProvider, useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
-import { ProfileScreen, ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
+import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 import { mapProfileToFormData } from 'src/components/inbox/helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
-import { THREAD_STATUS } from 'src/utils/outreach/constants';
+import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -212,7 +213,6 @@ const InboxPreview = () => {
                 query: { searchTerm },
             },
         );
-        console.log(res);
         setSearchResults(res.content);
     };
 
@@ -234,7 +234,7 @@ const InboxPreview = () => {
         async () => {
             const res = await nextFetch('outreach/threads', {
                 method: 'POST',
-                body: { filters, threadIds: Object.keys(searchResults) },
+                body: { ...filters, threadIds: Object.keys(searchResults) },
             });
             return { threads: res.data, totals: res.totals };
         },
@@ -322,8 +322,6 @@ const InboxPreview = () => {
             setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencers));
         }
     }, [selectedThread]);
-
-    console.log(selectedThread?.sequenceInfluencers);
 
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (

@@ -60,6 +60,10 @@ export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn>
             );
         }
 
+        if (filters && filters.threadIds && filters.threadIds.length > 0) {
+            queryFilters.push(inArray(threads.threadId, filters.threadIds));
+        }
+
         const rows = await db(i)
             .select()
             .from(threads)

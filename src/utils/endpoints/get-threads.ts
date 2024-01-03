@@ -13,6 +13,7 @@ export const ThreadsFilter = z.object({
     threadStatus: THREAD_STATUS.array().optional(),
     funnelStatus: FUNNEL_STATUS.array().optional(),
     sequences: SequenceThreadsFilter.array().optional(),
+    threadIds: z.string().array().optional(),
 });
 
 export type ThreadsFilter = z.infer<typeof ThreadsFilter>;
