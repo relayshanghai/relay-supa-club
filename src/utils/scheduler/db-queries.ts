@@ -102,3 +102,9 @@ export const getJobs =
         if (error) throw error;
         return data;
     };
+
+export const deleteJobs = (supabase: RelayDatabase) => async (ids: string[]) =>
+    await supabase.from('jobs').delete().in('id', ids);
+
+export const getFailedOrPendingSequenceSendJobs = (supabase: RelayDatabase) => async () =>
+    await supabase.from('jobs').select('*').in('status', ['failed', 'pending']).eq('name', 'sequence_step_send');
