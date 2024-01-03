@@ -78,6 +78,16 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     },
 ];
 
+export type ProfileNotes = {
+    collabStatus: FunnelStatus;
+    notes: string;
+    nextStep: string;
+    fee: string | number;
+    videoDetails: string;
+    affiliateLink: string;
+    scheduledPostDate: string;
+};
+
 export type CommonKeys = {
     collabStatus: FunnelStatus;
     notes: string;
@@ -168,7 +178,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     }, [getNotes, onUpdateNotes, profile]);
 
     return (
-        <>
+        <div className="overflow-scroll">
             <div className="grid grid-flow-row auto-rows-max gap-4">
                 <div className="gap-4.5 inline-flex items-center justify-between">
                     <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
@@ -424,6 +434,6 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     }}
                 />
             </section>
-        </>
+        </div>
     );
 };

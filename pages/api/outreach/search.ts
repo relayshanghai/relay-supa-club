@@ -1,9 +1,9 @@
 import { type ActionHandler, ApiHandler } from 'src/utils/api-handler';
-import { EmailSearchPostResponseBody } from './email-engine/search';
 import { searchMailbox } from 'src/utils/api/email-engine';
 import { MAILBOX_PATH_ALL } from 'src/utils/outreach/constants';
+import type { AccountAccountSearchPost } from 'types/email-engine/account-account-search-post';
 
-const transformSearchResult = (result: EmailSearchPostResponseBody) => {
+const transformSearchResult = (result: AccountAccountSearchPost) => {
     const { messages } = result;
 
     const transformedMessages: { [key: string]: string[] } = messages.reduce((acc, message) => {
@@ -16,15 +16,14 @@ const transformSearchResult = (result: EmailSearchPostResponseBody) => {
         }
 
         return acc;
-    }, {});
+    }, {} as { [key: string]: string[] });
 
     return transformedMessages;
 };
 
 const getHandler: ActionHandler = async (req, res) => {
     const { searchTerm } = req.query;
-    console.log('searchTerm', searchTerm);
-    const result: EmailSearchPostResponseBody = await searchMailbox(
+    const result: AccountAccountSearchPost = await searchMailbox(
         'oth98ylp8yhi87l5',
         {
             body: String(searchTerm),
