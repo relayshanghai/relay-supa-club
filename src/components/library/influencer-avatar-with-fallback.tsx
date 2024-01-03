@@ -22,6 +22,7 @@ export const InfluencerAvatarWithFallback = ({
         <>
             {url && avatarError <= retries ? (
                 <Image
+                    data-testid={`influencer-avatar-${name}`}
                     key={avatarError}
                     className={`inline-block bg-slate-300 ${className}`}
                     onError={() => setAvatarError(avatarError + 1)}
@@ -31,7 +32,12 @@ export const InfluencerAvatarWithFallback = ({
                     width={size}
                 />
             ) : (
-                <AvatarDefault height={size} width={size} className={`inline-block bg-slate-300 ${className}`} />
+                <AvatarDefault
+                    data-testid={`influencer-avatar-${name}`}
+                    height={size}
+                    width={size}
+                    className={`inline-block bg-slate-300 ${className}`}
+                />
             )}
         </>
     );
