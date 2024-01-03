@@ -36,6 +36,30 @@ type GetThreadsWithReplyByFilterFn = (account: string, filters?: FilterType) => 
 
 export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn> =
     (i) => async (account: string, filters?: FilterType) => {
+        const queryFilters = [
+            eq(threads.emailEngineAccountId, account),
+            isNull(threads.deletedAt),
+            isNotNull(threads.lastReplyId),
+            isNotNull(threads.sequenceInfluencerId),
+        ];
+
+        if (filters && filters.funnelStatus && filters.funnelStatus.length > 0) {
+            queryFilters.push(inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus));
+        }
+
+        if (filters && filters.threadStatus && filters.threadStatus.length > 0) {
+            queryFilters.push(inArray(threads.threadStatus, filters.threadStatus));
+        }
+
+        if (filters && filters.sequences && filters.sequences.length > 0) {
+            queryFilters.push(
+                inArray(
+                    sequences.id,
+                    filters.sequences.map((sequence) => sequence.id),
+                ),
+            );
+        }
+
         const rows = await db(i)
             .select()
             .from(threads)
@@ -45,24 +69,7 @@ export const getThreadsWithReplyByFilter: DBQuery<GetThreadsWithReplyByFilterFn>
                 templateVariables,
                 sql`${templateVariables.sequenceId} = ${sequences.id} AND ${templateVariables.key} = 'productName'`,
             )
-            .where(
-                and(
-                    eq(threads.emailEngineAccountId, account),
-                    isNull(threads.deletedAt),
-                    isNotNull(threads.lastReplyId),
-                    isNotNull(threads.sequenceInfluencerId),
-                    filters && filters.funnelStatus
-                        ? inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus)
-                        : undefined,
-                    filters && filters.threadStatus ? inArray(threads.threadStatus, filters.threadStatus) : undefined,
-                    filters && filters.sequences
-                        ? inArray(
-                              sequences.id,
-                              filters.sequences.map((sequence) => sequence.id),
-                          )
-                        : undefined,
-                ),
-            )
+            .where(and(...queryFilters))
             .orderBy(desc(threads.updatedAt));
 
         return rows;

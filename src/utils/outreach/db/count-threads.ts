@@ -19,15 +19,15 @@ export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: stri
         isNotNull(threads.sequenceInfluencerId),
     ];
 
-    if (filters && filters.funnelStatus) {
+    if (filters && filters.funnelStatus && filters.funnelStatus.length > 0) {
         queryFilters.push(inArray(sequenceInfluencers.funnelStatus, filters.funnelStatus));
     }
 
-    if (filters && filters.threadStatus) {
+    if (filters && filters.threadStatus && filters.threadStatus.length > 0) {
         queryFilters.push(inArray(threads.threadStatus, filters.threadStatus));
     }
 
-    if (filters && filters.sequences) {
+    if (filters && filters.sequences && filters.sequences.length > 0) {
         queryFilters.push(
             inArray(
                 sequences.id,
