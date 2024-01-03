@@ -65,7 +65,7 @@ export function apiFetch<TRes = void>(
 
 export function apiFetch<TRes = void, TReq = void>(
     url: string,
-    payload: TReq,
+    payload: TReq extends void ? 'API Request Type is required' : TReq,
     options?: RequestInit,
 ): Promise<{ response: Response; content: TRes extends void ? 'API Response Type is required' : TRes }>;
 
@@ -74,7 +74,7 @@ export function apiFetch<TRes = void, TReq = void>(
  */
 export async function apiFetch<TRes = void, TReq = void>(
     url: string,
-    payload?: TReq extends void ? TReq : 'API Request Type is required',
+    payload?: TReq extends void ? 'API Request Type is required' : TReq,
     options?: RequestInit,
 ) {
     const _options = options ?? {};
