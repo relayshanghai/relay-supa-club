@@ -72,7 +72,7 @@ const ThreadProvider = ({
     currentInbox: CurrentInbox;
     selectedThread: ThreadInfo;
     filteredMessageIds?: string[];
-    markAsReplied: () => void;
+    markAsReplied: (threadId: string) => void;
 }) => {
     const {
         data: messages,
@@ -282,6 +282,7 @@ const InboxPreview = () => {
     );
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
+        if (!thread) return;
         if (thread.threadInfo.threadStatus === 'unopened') {
             apiFetch('/api/outreach/threads/{threadId}', {
                 method: 'POST',
@@ -298,6 +299,7 @@ const InboxPreview = () => {
     };
 
     const markAsReplied = (thread: ThreadInfo) => {
+        if (!thread) return;
         if (thread.threadInfo.threadStatus === 'unreplied') {
             apiFetch('/api/outreach/threads/{threadId}', {
                 method: 'POST',

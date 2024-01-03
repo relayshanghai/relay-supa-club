@@ -2,7 +2,6 @@ import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { UpdateThreadApiRequest } from 'src/utils/endpoints/update-thread';
-import { serverLogger } from 'src/utils/logger-server';
 import { getEmails } from 'src/utils/outreach/get-emails';
 import { updateThread } from 'src/utils/outreach/update-thread';
 
@@ -31,8 +30,6 @@ const postHandler: ActionHandler<UpdateThreadApiResponse> = async (req, res) => 
         throw new Error('Cannot get user profile');
     }
 
-    serverLogger('randi');
-
     const request = UpdateThreadApiRequest.safeParse(req);
 
     if (!request.success) {
@@ -46,7 +43,7 @@ const postHandler: ActionHandler<UpdateThreadApiResponse> = async (req, res) => 
         data: request.data.body,
     });
 
-    return res.status(200).json({ data: request });
+    return res.status(200).json({ data: thread });
 };
 
 export default ApiHandler({
