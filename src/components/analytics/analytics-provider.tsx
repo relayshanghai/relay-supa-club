@@ -9,6 +9,8 @@ import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import * as Sentry from '@sentry/nextjs';
+import { useBirdEatsBug } from './bird-eats-bugs';
+import { nanoid } from 'nanoid';
 
 export const AnalyticsContext = createContext<
     | {
@@ -18,6 +20,23 @@ export const AnalyticsContext = createContext<
       }
     | undefined
 >(undefined);
+
+export const useDeviceId = () => {
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deviceId = urlParams.get('device_id');
+            if (deviceId) {
+                localStorage.setItem('deviceId', deviceId);
+            } else {
+                const existingDeviceId = localStorage.getItem('deviceId');
+                if (!existingDeviceId) {
+                    localStorage.setItem('deviceId', nanoid());
+                }
+            }
+        }
+    }, []);
+};
 
 export const useAnalytics = () => {
     const context = useContext(AnalyticsContext);
@@ -39,7 +58,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
-
+    useBirdEatsBug();
     const { session, profile } = useSession();
     const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
@@ -73,6 +92,11 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
         // @note for some reason profile.email is nullable
         if (profile.email) {
             user.email = profile.email;
+        }
+        if (window.birdeatsbug?.setOptions) {
+            window?.birdeatsbug?.setOptions({
+                user: { email: profile.email || '' },
+            });
         }
         Sentry.setUser(user);
     }, [profile]);

@@ -24,7 +24,7 @@ export const getSequenceEmailsBySequenceInfluencersCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencerIds: string[]) => {
         const { data, error } = await supabaseClient
             .from('sequence_emails')
-            .select('id, email_message_id')
+            .select('id, email_message_id, job_id')
             .in('sequence_influencer_id', sequenceInfluencerIds);
 
         if (error) throw error;
@@ -45,7 +45,7 @@ export const getSequenceEmailByInfluencerAndSequenceStep =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencerId: string, sequenceStepId: string) => {
         return await supabaseClient
             .from('sequence_emails')
-            .select('email_delivery_status')
+            .select('id, email_delivery_status')
             .eq('sequence_influencer_id', sequenceInfluencerId)
             .eq('sequence_step_id', sequenceStepId)
             .limit(1)

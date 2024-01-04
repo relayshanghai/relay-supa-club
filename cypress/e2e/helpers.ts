@@ -159,6 +159,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 email_delivery_status: 'Scheduled',
                 email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
                 email_engine_account_id: mockProfile.email_engine_account_id,
+                job_id: null,
             });
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }

@@ -23,8 +23,10 @@ export enum MixpanelPeopleProps {
     lang = 'lang',
     paidUserSince = 'paidUserSince',
     subscriptionStatus = 'subscriptionStatus',
+    subscriptionPlan = 'subscriptionPlan',
     total_sessions = 'total_sessions',
-    total_searches = 'total_searches',
+    total_classic_searches = 'total_classic_searches',
+    total_boostbot_searches = 'total_boostbot_searches',
     total_reports = 'total_reports',
     total_sequence_influencers = 'total_sequence_influencers',
     total_emails_sent = 'total_emails_sent',
@@ -32,7 +34,6 @@ export enum MixpanelPeopleProps {
     user_play_count = 'user_play_count',
     sequence_open_count = 'sequence_open_count',
     created_at = 'createdAt',
-    referer = 'referer',
 }
 
 /**
@@ -46,7 +47,8 @@ export enum MixpanelPeopleProps {
  */
 export type MixpanelPeoplePropsInc =
     | MixpanelPeopleProps.total_sessions
-    | MixpanelPeopleProps.total_searches
+    | MixpanelPeopleProps.total_classic_searches
+    | MixpanelPeopleProps.total_boostbot_searches
     | MixpanelPeopleProps.total_reports
     | MixpanelPeopleProps.total_sequence_influencers
     | MixpanelPeopleProps.total_emails_sent

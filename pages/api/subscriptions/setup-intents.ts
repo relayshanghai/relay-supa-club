@@ -7,7 +7,7 @@ import type Stripe from 'stripe';
 export type SetupIntentsGetQueries = {
     customerId: string;
 };
-export type SetupIntentGetResponse = Stripe.Response<Stripe.SetupIntent>;
+export type SetupIntentGetResponse = Stripe.Response<Stripe.ApiList<Stripe.SetupIntent>>;
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     const cusId = req.query.cusId;
 
@@ -19,7 +19,8 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     if (!setupIntents) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: `Coupon not find setupIntents for ${cusId}` });
     }
-    return res.status(httpCodes.OK).json(setupIntents);
+    const returnData: SetupIntentGetResponse = setupIntents;
+    return res.status(httpCodes.OK).json(returnData);
 }
 export default ApiHandler({
     getHandler,

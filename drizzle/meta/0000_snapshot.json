@@ -530,7 +530,7 @@
           "name": "campaigns_company_id_fkey",
           "tableFrom": "campaigns",
           "tableTo": "companies",
-          "columnsFrom": [
+            "columnsFrom": [
             "company_id"
           ],
           "columnsTo": [

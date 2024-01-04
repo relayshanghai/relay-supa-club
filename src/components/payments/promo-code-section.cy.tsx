@@ -37,7 +37,7 @@ describe('<PromoCodeSection />', () => {
         const setCouponId = cy.stub();
         testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
         cy.get('input').type('test');
-        cy.get('button').should('contain', 'Apply').click();
+        cy.contains('button', 'Apply').click();
         cy.get('p').should('contain', 'Invalid Promo Code');
     });
 
@@ -45,7 +45,7 @@ describe('<PromoCodeSection />', () => {
         const setCouponId = cy.stub();
         testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
         cy.get('input').type('PH2023');
-        cy.get('button').should('contain', 'Apply').click();
+        cy.contains('button', 'Apply').click();
         cy.get('p').should('contain', 'Off For next 3 months');
     });
 });

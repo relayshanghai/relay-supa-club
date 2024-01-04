@@ -11,6 +11,7 @@ import type {
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
+    getSequenceEmailByInfluencerAndSequenceStep,
     getSequenceEmailByMessageIdCall,
     getSequenceEmailsBySequenceInfluencerCall,
     updateSequenceEmailCall,
@@ -59,6 +60,9 @@ import { syncEmail } from 'src/utils/outreach/sync-email';
 import type { WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
 import { deleteEmail } from 'src/utils/outreach/delete-email';
 import { transformKeys } from 'src/utils/database/helpers';
+import { v4 } from 'uuid';
+import { deleteJobs } from 'src/utils/scheduler/db-queries';
+import { isString } from 'src/utils/types';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -112,9 +116,15 @@ const deleteScheduledEmails = async (
     sequenceInfluencer: SequenceInfluencer,
 ): Promise<EmailReplyPayload> => {
     try {
-        // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-        trackData.sequence_emails_pre_delete = sequenceEmails.map((email) => email.id);
+        const sequenceEmailIds = sequenceEmails.map((email) => email.id);
+
+        const jobIds = sequenceEmails.map((email) => email.job_id).filter(isString);
+        if (jobIds.length > 0) {
+            await db(deleteJobs)(jobIds);
+        }
+
+        trackData.sequence_emails_pre_delete = sequenceEmailIds;
         const toDelete = sequenceEmails.filter(
             (email) => email.email_delivery_status === 'Scheduled' || email.email_delivery_status === 'Unscheduled',
         );
@@ -146,7 +156,7 @@ const deleteScheduledEmails = async (
     }
 };
 
-const scheduleOutreachEmailRetry = async ({
+const _scheduleOutreachEmailRetry = async ({
     event,
     sequenceInfluencer,
     sequenceStep,
@@ -670,17 +680,43 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 throw new Error('No next sequence step found');
             }
             const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
-            const jobCreated = await scheduleOutreachEmailRetry({
-                event: event,
+            const payload: SequenceStepSendArgs = {
+                // event: event,
+                emailEngineAccountId: event.account,
                 sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
                 sequenceStep: nextStep,
                 sequenceSteps,
                 templateVariables,
-            });
+                reference: event.data.messageId,
+            };
 
-            if (jobCreated) {
-                trackData.extra_info.next_sequence_email_payload = jobCreated.payload;
-                trackData.extra_info.job_created = jobCreated;
+            trackData.extra_info.next_sequence_email_payload = payload;
+
+            const { data: nextEmailRecord, error: nextEmailError } = await db(
+                getSequenceEmailByInfluencerAndSequenceStep,
+            )(sequenceInfluencer.id, nextStep.id);
+            if (nextEmailError) {
+                serverLogger(`nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`);
+            }
+            if (!nextEmailRecord) {
+                serverLogger(
+                    `no next email record found for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`,
+                );
+            }
+
+            const jobId = v4();
+
+            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+                id: jobId,
+                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
+                payload,
+            });
+            trackData.extra_info.job_created = jobCreated;
+            if (jobCreated && jobCreated.id) {
+                trackData.is_success = true;
+                if (nextEmailRecord?.id) {
+                    await updateSequenceEmail({ job_id: jobId, id: nextEmailRecord.id });
+                }
             }
 
             trackData.is_success = jobCreated !== false;

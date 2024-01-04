@@ -29,6 +29,7 @@ import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -105,6 +106,7 @@ export const Chat: React.FC<ChatProps> = ({
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+    const { trackBoostbotSearch } = useSearchTrackers();
     const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
@@ -207,7 +209,9 @@ export const Chat: React.FC<ChatProps> = ({
             const influencers = mixArrays(searchResults).filter((i) => !!i.url);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
+            trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
             track(RecommendInfluencers, payload);
+
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             const newMessages = [...messages];
 

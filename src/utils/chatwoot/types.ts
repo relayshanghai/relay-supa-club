@@ -203,5 +203,5 @@ export type WindowChatwoot = {
     chatwootSDK: {
         run: (params: ChatwootSDKParams) => void;
     };
-    $chatwoot: Chatwoot;
-} & typeof window;
+    $chatwoot?: Chatwoot;
+};

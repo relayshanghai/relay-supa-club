@@ -34,6 +34,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         customer: customerId,
     });
 
+    // set the payment method as default
+    await stripeClient.customers.update(customerId, {
+        invoice_settings: {
+            default_payment_method: paymentMethod.id,
+        },
+    });
+
     if (!paymentMethodAttach) {
         serverLogger('Failed to attach payment method to customer');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
