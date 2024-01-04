@@ -162,7 +162,7 @@ export const OnboardPaymentSection = (props: OnboardPaymentSectionProps) => {
     const [clientSecretError, setClientSecretError] = useState<string>();
 
     const options: StripeElementsOptions = {
-        locale: i18n.language.includes('en') ? 'en' : 'zh',
+        locale: i18n.language?.includes('en') ? 'en' : 'zh',
         clientSecret,
     };
 

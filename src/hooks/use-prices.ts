@@ -58,7 +58,7 @@ export const priceDetails: PriceDetails = {
 
 export const usePrices = () => {
     const { i18n } = useTranslation();
-    const en = i18n.language.toLowerCase().includes('en');
+    const en = i18n.language?.toLowerCase().includes('en');
 
     const defaultPrices = useMemo(
         () => ({

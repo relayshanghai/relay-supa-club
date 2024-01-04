@@ -19,14 +19,12 @@ import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SearchOptions = ({
-    setPage,
     setShowFiltersModal,
     onSearch,
     searchType,
     onSearchTypeChange,
     setShowNeedHelpModal,
 }: {
-    setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
     searchType: string | null;
@@ -44,6 +42,7 @@ export const SearchOptions = ({
         hashtags,
         setHashtags,
         getSearchParams,
+        setPage,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
