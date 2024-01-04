@@ -28,7 +28,7 @@ export const ThreadHeader = ({
                 className="absolute right-2 top-2 h-4 w-4 cursor-pointer stroke-gray-500"
                 onClick={() => setExpanded(!expanded)}
             />
-            <span className="text-xl">Re: {messages[0].subject}</span>
+            <span className="text-xl">{messages[messages.length - 1].subject}</span>
             <div className="flex flex-col justify-between sm:flex-row">
                 <div className="flex flex-col gap-2">
                     {threadInfo.sequenceInfo && (

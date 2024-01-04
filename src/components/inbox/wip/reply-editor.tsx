@@ -3,6 +3,7 @@ import { Tiptap } from './tiptap';
 import type { EmailContact } from 'src/utils/outreach/types';
 import type { KeyboardEvent } from 'react';
 import { Tooltip } from 'src/components/library';
+import { nanoid } from 'nanoid';
 
 export const ReplyEditor = ({
     onReply,
@@ -147,11 +148,12 @@ const AddressSection = ({
     return (
         <section className="flex flex-col">
             <div className="flex flex-wrap items-center gap-2">
-                To:{' '}
+                To:
                 {defaultTo &&
+                    defaultTo.length > 0 &&
                     defaultTo.map((to) => (
                         <AddressLabel
-                            key={to.address}
+                            key={nanoid()}
                             onClick={() => {
                                 handleChangeTo(to);
                             }}
@@ -167,7 +169,7 @@ const AddressSection = ({
                         }}
                         info={contact}
                     />
-                ))}{' '}
+                ))}
                 <input
                     onKeyDown={handleKeyDownTo}
                     value={toInput}
@@ -176,11 +178,11 @@ const AddressSection = ({
                 />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-                Cc:{' '}
+                Cc:
                 {defaultCC &&
                     defaultCC.map((contact) => (
                         <AddressLabel
-                            key={contact.address}
+                            key={nanoid()}
                             onClick={() => {
                                 handleChangeCC(contact);
                             }}
@@ -196,7 +198,7 @@ const AddressSection = ({
                         }}
                         info={contact}
                     />
-                ))}{' '}
+                ))}
                 <input
                     onKeyDown={handleKeyDownCC}
                     value={ccInput}

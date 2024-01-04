@@ -201,10 +201,10 @@ const ThreadProvider = ({
                     // Retain local data with generated data
                     const localMessage = generateLocalData({
                         body: replyBody,
-                        from: { name: 'Me', address: currentInbox.email },
+                        from: { name: 'Me', address: currentInbox.email || '' },
                         to: toList,
                         cc: ccList,
-                        subject: messages[0].subject,
+                        subject: messages?.[messages.length - 1]?.subject ?? '',
                     });
                     // console.log('from mutator callback', cache, localMessage);
                     return [localMessage, ...(cache ?? [])];
@@ -215,10 +215,10 @@ const ThreadProvider = ({
                     optimisticData: (cache) => {
                         const localMessage = generateLocalData({
                             body: replyBody,
-                            from: { name: 'Me', address: currentInbox.email },
+                            from: { name: 'Me', address: currentInbox.email || '' },
                             to: toList,
                             cc: ccList,
-                            subject: messages[0].subject,
+                            subject: messages?.[messages.length - 1]?.subject ?? '',
                         });
                         // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
