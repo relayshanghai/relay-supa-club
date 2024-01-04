@@ -1,7 +1,7 @@
 import { birdEatsBugEn } from 'i18n/en/bird-eats-bug';
 import { birdEatsBugCn } from 'i18n/zh/bird-eats-bug';
 import { useEffect, useState } from 'react';
-import { enUS } from 'src/constants';
+import { LOCAL_STORAGE_LANGUAGE_KEY, enUS, zhCN } from 'src/constants';
 
 export interface WindowBirdEatsBug {
     birdeatsbug?: {
@@ -189,7 +189,7 @@ interface RecordedEventTypesOptions {
 export const BIRD_EATS_BUG_PUBLIC_APP_ID =
     process.env.NEXT_PUBLIC_BIRD_EATS_BUG_PUBLIC_APP_ID || 'fa42a80a-1eaf-4784-a286-41999b89c190';
 
-export const birdEatsBugDefaultOptions: BEGSDKOptions = {
+export const birdEatsBugDefaultOptions: (lang: string) => BEGSDKOptions = (lang) => ({
     publicAppId: BIRD_EATS_BUG_PUBLIC_APP_ID,
     instantReplay: true,
     ui: {
@@ -205,23 +205,24 @@ export const birdEatsBugDefaultOptions: BEGSDKOptions = {
         submitConfirmationScreen: {
             sessionLink: true,
         },
-        text: birdEatsBugCn,
+        text: lang === zhCN ? birdEatsBugCn : birdEatsBugEn,
     },
-};
+});
 
 /* Bird eats bug loading script https://docs.birdeatsbug.com/latest/sdk/installation.html */
-export const birdEatsBugScript = `
+export const birdEatsBugScript = (lang = 'zh-CN') => `
     (function(){const birdeatsbug=(window.birdeatsbug=window.birdeatsbug||[]);if(birdeatsbug.initialize)return;if(birdeatsbug.invoked){if(window.console&&console.error){console.error('birdeatsbug snippet included twice.')}return}birdeatsbug.invoked=true;birdeatsbug.methods=['setOptions','trigger','resumeSession','takeScreenshot','startRecording','stopRecording','stopSession','uploadSession','deleteSession'];birdeatsbug.factory=function(method){return function(){const args=Array.prototype.slice.call(arguments);args.unshift(method);birdeatsbug.push(args);return birdeatsbug}};for(let i=0;i<birdeatsbug.methods.length;i++){const key=birdeatsbug.methods[i];birdeatsbug[key]=birdeatsbug.factory(key)}birdeatsbug.load=function(){const script=document.createElement('script');script.type='module';script.async=true;script.src='https://sdk.birdeatsbug.com/v2/core.js';const mountJsBefore=document.getElementsByTagName('script')[0]||document.body.firstChild;mountJsBefore.parentNode.insertBefore(script,mountJsBefore);const style=document.createElement('link');style.rel='stylesheet';style.type='text/css';style.href='https://sdk.birdeatsbug.com/v2/style.css';const mountCssBefore=document.querySelector('link[rel="stylesheet"]')||mountJsBefore;mountCssBefore.parentNode.insertBefore(style,mountCssBefore)};birdeatsbug.load();window.birdeatsbug.setOptions(${JSON.stringify(
-        birdEatsBugDefaultOptions,
+        birdEatsBugDefaultOptions(lang),
     )})})();
   `;
 
 export const setBirdEatsBugLanguage = (language: string) => {
     if (window.birdeatsbug?.setOptions) {
+        const birdEatsBugOptions = birdEatsBugDefaultOptions(language);
         window.birdeatsbug.setOptions({
-            ...birdEatsBugDefaultOptions,
+            ...birdEatsBugOptions,
             ui: {
-                ...birdEatsBugDefaultOptions.ui,
+                ...birdEatsBugOptions.ui,
                 text: language === enUS ? birdEatsBugEn : birdEatsBugCn,
             },
         });
@@ -247,10 +248,16 @@ export const useBirdEatsBug = () => {
         if (typeof window === 'undefined' || loaded) {
             return;
         }
+        if (window.birdeatsbug?.setOptions || document.getElementById('birdeatsbug-script')) {
+            setLoaded(true);
+            return;
+        }
 
         const script = document.createElement('script');
+        script.id = 'birdeatsbug-script';
         script.async = true;
-        script.innerHTML = birdEatsBugScript;
+        const lang = localStorage.getItem(LOCAL_STORAGE_LANGUAGE_KEY) || 'zh-CN';
+        script.innerHTML = birdEatsBugScript(lang);
         script.onload = () => {
             setLoaded(true);
         };
