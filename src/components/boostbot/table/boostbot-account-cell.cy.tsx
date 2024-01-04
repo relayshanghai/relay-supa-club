@@ -13,7 +13,7 @@ describe('<BoostbotAccountCell />', () => {
     it('Renders influencer data correctly', () => {
         testMount(<BoostbotAccountCell row={row} table={table} />);
 
-        cy.get(`influencer-avatar-${influencer.fullname}`).should('exist');
+        cy.getByTestId(`influencer-avatar-${influencer.fullname.replaceAll(' ', '')}`).should('exist');
         cy.getByTestId('boostbot-social-profile-link').should('have.attr', 'href', influencer.url);
     });
 

@@ -21,7 +21,7 @@ describe('InfluencerDetailsModal', () => {
                 url="boostbot"
             />,
         );
-        cy.get(`influencer-avatar-${influencer.fullname}`).should('exist');
+        cy.getByTestId(`influencer-avatar-${influencer.fullname.replaceAll(' ', '')}`).should('exist');
         cy.contains(influencer.fullname);
         cy.contains(influencer.handle ?? influencer.username);
     });
