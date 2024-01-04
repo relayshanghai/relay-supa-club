@@ -5,6 +5,7 @@ import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
     // some influencers were created with sequence_step_id's from another sequence. For each influencer, pull their `sequence_steps` for the right sequence. If the influencer's `sequence_step_id` is not in the `sequence_steps` for that sequence, set the id to the corresponding `sequence_step_number` for that sequence.
@@ -862,7 +863,7 @@ const _fixStuckInSequenceWithNoEmailSent: NextApiHandler = async (_req, res) => 
     return res.status(200).json({ message: updated });
 };
 
-const findEmailInOutbox: NextApiHandler = async (_req, res) => {
+const _findEmailInOutbox: NextApiHandler = async (_req, res) => {
     const messageId = '<5bde7f03-4e41-4f5d-8aa4-b3b21dba18df@gmail.com>';
     const outbox = await getOutbox();
     outbox.sort((a, b) => {
@@ -875,4 +876,19 @@ const findEmailInOutbox: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: found });
 };
 
-export default findEmailInOutbox;
+const checkHowManyJobsCreatedPerInfluencer: NextApiHandler = async (_req, res) => {
+    console.log('checkHowManyJobsCreatedPerInfluencer');
+    const influencerId = '67413fd1-02ca-4783-8e34-63773aea19ff';
+    const { data: allJobs } = await supabase.from('jobs').select('*').eq('queue', 'sequence_step_send');
+
+    const jobsPayloads = allJobs?.map((j) => j.payload) as SequenceStepSendArgs[];
+
+    console.log('jobsPayloads', jobsPayloads?.length, jobsPayloads[0]);
+
+    const jobs = jobsPayloads.filter((j) => j.sequenceInfluencer.id === influencerId);
+
+    console.log({ jobs });
+    return res.status(200).json({ message: jobs.length });
+};
+
+export default checkHowManyJobsCreatedPerInfluencer;
