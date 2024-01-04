@@ -51,7 +51,7 @@ const threadTransformer = (thread: dbGetThreadsReturn) => {
 export const getThreads: GetThreadsFn = async (params) => {
     const threads = await dbGetThreads()(params.account);
 
-    const totals = await countThreads()(params.account, params.filters);
+    const totals = await countThreads()(params.account);
 
     const data = threads.map(threadTransformer);
 

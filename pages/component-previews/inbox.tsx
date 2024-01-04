@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { type ThreadInfo, ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
+import {
+    type ThreadInfo,
+    ThreadPreview,
+    type Message as BaseMessage,
+    type EmailContact,
+} from 'src/components/inbox/wip/thread-preview';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
@@ -58,6 +63,69 @@ const generateLocalData = (params: { body: string }): Message => {
         body: params.body,
         isLocal: true,
     };
+};
+
+const getUniqueParticipantsFromMessages = (messages: Message[]) => {
+    const allParticipants = messages.flatMap((message) => {
+        return [
+            {
+                address: message.from.address,
+                name: message.from.name,
+            },
+            ...message.cc.map((cc) => {
+                return {
+                    address: cc.address,
+                    name: cc.name,
+                };
+            }),
+            ...message.to.map((to) => {
+                return {
+                    address: to.address,
+                    name: to.name,
+                };
+            }),
+        ];
+    });
+
+    const uniqueParticipants: EmailContact[] = allParticipants
+        ? Array.from(new Set(allParticipants.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
+        : [];
+
+    return uniqueParticipants;
+};
+
+const getContactsToReply = (messages: Message[], myAddress?: string | null) => {
+    const cc = messages.flatMap((message) => {
+        return message.cc
+            .filter((cc) => cc.address !== myAddress)
+            .map((cc) => {
+                return {
+                    address: cc.address,
+                    name: cc.name,
+                };
+            });
+    });
+
+    const to = messages.flatMap((message) => {
+        return message.to
+            .filter((to) => to.address !== myAddress)
+            .map((to) => {
+                return {
+                    address: to.address,
+                    name: to.name,
+                };
+            });
+    });
+
+    const uniqueCc: EmailContact[] = cc
+        ? Array.from(new Set(cc.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
+        : [];
+
+    const uniqueTo: EmailContact[] = to
+        ? Array.from(new Set(to.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
+        : [];
+
+    return { cc: uniqueCc, to: uniqueTo };
 };
 
 const ThreadProvider = ({
@@ -124,12 +192,14 @@ const ThreadProvider = ({
     });
 
     const handleReply = useCallback(
-        (replyBody: string) => {
+        (replyBody: string, ccList: EmailContact[], toList: EmailContact[]) => {
             mutate(
                 async (cache) => {
                     sendReply({
                         replyBody: replyBody,
                         threadId,
+                        cc: ccList,
+                        to: toList,
                     });
                     // Retain local data with generated data
                     const localMessage = generateLocalData({ body: replyBody });
@@ -156,10 +226,19 @@ const ThreadProvider = ({
     if (messagesError) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
 
+    const allUniqueParticipants = getUniqueParticipantsFromMessages(messages);
+    const contactsToReply = getContactsToReply(messages, currentInbox.email);
+
     return (
         <div className="flex h-full flex-col justify-between">
             <div className="h-full">
-                <ThreadHeader currentInbox={currentInbox} threadInfo={selectedThread} messages={messages} />
+                <ThreadHeader
+                    threadInfo={selectedThread}
+                    messages={messages}
+                    participants={allUniqueParticipants.map((participant) =>
+                        participant.address === currentInbox.email ? 'Me' : participant.name,
+                    )}
+                />
                 <div className="h-[50vh] overflow-scroll">
                     <MessagesComponent
                         currentInbox={currentInbox}
@@ -168,7 +247,7 @@ const ThreadProvider = ({
                     />
                 </div>
             </div>
-            <ReplyEditor influencer={selectedThread.sequenceInfluencers} onReply={handleReply} />
+            <ReplyEditor defaultContacts={contactsToReply} onReply={handleReply} />
         </div>
     );
 };
@@ -357,7 +436,7 @@ const InboxPreview = () => {
                 )}
             </section>
             {initialValue && selectedThread && selectedThread.sequenceInfluencers && (
-                <section className="col-span-4">
+                <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
                     <ProfileScreenProvider initialValue={initialValue}>
                         <ProfileScreen
                             profile={selectedThread?.sequenceInfluencers}

@@ -1,34 +1,33 @@
 import { useCallback, useState } from 'react';
 import { Tiptap } from './tiptap';
-import type { EmailContact, ThreadInfo } from './thread-preview';
+import type { EmailContact } from './thread-preview';
 import type { KeyboardEvent } from 'react';
+import { Tooltip } from 'src/components/library';
 
 export const ReplyEditor = ({
-    influencer,
     onReply,
+    defaultContacts,
 }: {
-    influencer: ThreadInfo['sequenceInfluencers'];
     onReply: any;
+    defaultContacts: {
+        cc: EmailContact[];
+        to: EmailContact[];
+    };
 }) => {
     const [replyText, setReplyText] = useState('');
     const [sendTo, setSendTo] = useState<EmailContact[]>([]);
     const [sendCC, setSendCC] = useState<EmailContact[]>([]);
-    const [defaultTo] = useState(() => {
-        // @note unfortunately, name and email are not guaranteed
-        return influencer && influencer.name && influencer.email
-            ? { name: influencer.name, address: influencer.email }
-            : null;
-    });
 
     const handleSendReply = useCallback(() => {
-        onReply(replyText);
+        onReply(replyText, sendTo, sendCC);
         setReplyText('');
-    }, [replyText, onReply]);
+    }, [replyText, onReply, sendTo, sendCC]);
 
     return (
         <div>
             <AddressSection
-                defaultTo={defaultTo}
+                defaultTo={defaultContacts.to}
+                defaultCC={defaultContacts.cc}
                 sendTo={sendTo}
                 setSendTo={setSendTo}
                 sendCC={sendCC}
@@ -45,14 +44,31 @@ export const ReplyEditor = ({
     );
 };
 
-const AddressLabel = ({ info, onClick }: { info: EmailContact; onClick: (info: EmailContact) => void }) => {
+const AddressLabel = ({
+    info,
+    onClick,
+    defaultAddress,
+}: {
+    info: EmailContact;
+    onClick: (info: EmailContact) => void;
+    defaultAddress?: boolean;
+}) => {
+    const truncatedText = (text: string, maxLength: number) => {
+        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    };
     return (
-        <span className="flex rounded bg-primary-200 px-2 text-sm font-semibold hover:bg-primary-100">
-            {info.name || info.address}({info.address})
-            <span className="cursor-pointer pl-2" onClick={() => onClick(info)}>
-                x
+        <Tooltip delay={500} content={`${info.name}: ${info.address}`}>
+            <span className="flex rounded bg-primary-200 px-2 text-sm font-semibold hover:bg-primary-100">
+                <p className="max-w-8 overflow-hidden whitespace-break-spaces">
+                    {truncatedText(info.name || info.address, 15)}({truncatedText(info.address, 15)})
+                </p>
+                {!defaultAddress && (
+                    <span className="cursor-pointer pl-2" onClick={() => onClick(info)}>
+                        x
+                    </span>
+                )}
             </span>
-        </span>
+        </Tooltip>
     );
 };
 
@@ -63,12 +79,14 @@ const validateEmail = (email: string) => {
 
 const AddressSection = ({
     defaultTo,
+    defaultCC,
     sendTo,
     setSendTo,
     sendCC,
     setSendCC,
 }: {
-    defaultTo?: EmailContact | null;
+    defaultTo?: EmailContact[] | null;
+    defaultCC?: EmailContact[] | null;
     sendTo: EmailContact[];
     setSendTo: (contact: EmailContact[]) => void;
     sendCC: EmailContact[];
@@ -76,21 +94,27 @@ const AddressSection = ({
 }) => {
     const [toInput, setToInput] = useState('');
     const [ccInput, setCCInput] = useState('');
-    const handleChangeTo = (contact: EmailContact) => {
-        if (sendTo.some((contactTo) => contactTo.address === contact.address)) {
-            setSendTo(sendTo.filter((contactTo) => contactTo.address !== contact.address));
-            return;
-        }
-        setSendTo([...sendTo, contact]);
-    };
-    const handleChangeCC = (contact: EmailContact) => {
-        if (sendCC.some((contact) => contact.address === contact.address)) {
-            setSendCC(sendCC.filter((contact) => contact.address !== contact.address));
-            return;
-        }
-        setSendCC([...sendCC, contact]);
-    };
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const handleChangeTo = useCallback(
+        (contact: EmailContact) => {
+            if (sendTo.some((contactTo) => contactTo.address === contact.address)) {
+                setSendTo(sendTo.filter((contactTo) => contactTo.address !== contact.address));
+                return;
+            }
+            setSendTo([...sendTo, contact]);
+        },
+        [sendTo, setSendTo],
+    );
+    const handleChangeCC = useCallback(
+        (contact: EmailContact) => {
+            if (sendCC.some((contactCC) => contactCC.address === contact.address)) {
+                setSendCC(sendCC.filter((contactCC) => contactCC.address !== contact.address));
+                return;
+            }
+            setSendCC([...sendCC, contact]);
+        },
+        [sendCC, setSendCC],
+    );
+    const handleKeyDownTo = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             if (toInput === '' || !validateEmail(e.currentTarget.value)) return;
             setToInput('');
@@ -104,19 +128,35 @@ const AddressSection = ({
             }
         }
     };
+    const handleKeyDownCC = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            if (ccInput === '' || !validateEmail(e.currentTarget.value)) return;
+            setCCInput('');
+            handleChangeCC({
+                name: '',
+                address: e.currentTarget.value,
+            });
+        } else if (e.key === 'Backspace') {
+            if (ccInput === '' && sendCC.length > 0) {
+                setSendCC(sendCC.slice(0, sendCC.length - 1));
+            }
+        }
+    };
     return (
         <section className="flex flex-col">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
                 To:{' '}
-                {defaultTo && (
-                    <AddressLabel
-                        key={defaultTo.address}
-                        onClick={() => {
-                            handleChangeTo(defaultTo);
-                        }}
-                        info={defaultTo}
-                    />
-                )}
+                {defaultTo &&
+                    defaultTo.map((to) => (
+                        <AddressLabel
+                            key={to.address}
+                            onClick={() => {
+                                handleChangeTo(to);
+                            }}
+                            defaultAddress
+                            info={to}
+                        />
+                    ))}
                 {sendTo.map((contact) => (
                     <AddressLabel
                         key={contact.address}
@@ -127,14 +167,25 @@ const AddressSection = ({
                     />
                 ))}{' '}
                 <input
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={handleKeyDownTo}
                     value={toInput}
                     onChange={(e) => setToInput(e.currentTarget.value)}
-                    className="w-full rounded border-none bg-gray-50 focus-visible:outline-none"
+                    className="rounded border-none bg-gray-50 focus-visible:outline-none"
                 />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
                 Cc:{' '}
+                {defaultCC &&
+                    defaultCC.map((contact) => (
+                        <AddressLabel
+                            key={contact.address}
+                            onClick={() => {
+                                handleChangeCC(contact);
+                            }}
+                            defaultAddress
+                            info={contact}
+                        />
+                    ))}
                 {sendCC.map((contact) => (
                     <AddressLabel
                         key={contact.address}
@@ -145,10 +196,10 @@ const AddressSection = ({
                     />
                 ))}{' '}
                 <input
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={handleKeyDownCC}
                     value={ccInput}
                     onChange={(e) => setCCInput(e.currentTarget.value)}
-                    className="w-full rounded border-none bg-gray-50 focus-visible:outline-none"
+                    className="rounded border-none bg-gray-50 focus-visible:outline-none"
                 />
             </div>
         </section>

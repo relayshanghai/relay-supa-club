@@ -16,7 +16,6 @@ const postHandler: ActionHandler<GetThreadsApiResponse> = async (req, res) => {
             error: request.error.format(),
         });
     }
-
     const { data, totals } = await getThreads({
         account: req.profile.email_engine_account_id,
         filters: request.data.body,

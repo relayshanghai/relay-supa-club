@@ -177,7 +177,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     }, [getNotes, onUpdateNotes, profile]);
 
     return (
-        <div className="overflow-scroll">
+        <>
             <div className="grid grid-flow-row auto-rows-max gap-4">
                 <div className="gap-4.5 inline-flex items-center justify-between">
                     <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
@@ -196,7 +196,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                         label={t('profile.nextStep') as string}
                         placeholder={t('profile.nextStepPlaceholder')}
                         value={data.notes.nextStep}
-                        onBlur={(e) => triggerSubmitNotes('nextStep', e.currentTarget.value, 'notes')}
+                        onBlur={(e) => triggerSubmitNotes('nextStep', e.currentTarget.value)}
                         onChange={(e) => {
                             props.trackProfileFieldUpdate({
                                 influencer_id: profile.influencer_social_profile_id ?? '',
@@ -433,6 +433,6 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     }}
                 />
             </section>
-        </div>
+        </>
     );
 };
