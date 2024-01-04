@@ -32,6 +32,7 @@ import 'cypress-iframe';
 
 import i18n from '../../i18n';
 import { mount } from 'cypress/react18';
+import { enUS, LOCAL_STORAGE_LANGUAGE_KEY } from '../../src/constants';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -110,8 +111,8 @@ function loginTeammate(switchLangToEnglish = true) {
 Cypress.Commands.add('loginTeammate', loginTeammate);
 
 function switchToEnglish() {
-    localStorage.setItem('language', 'en-US');
-    i18n.changeLanguage('en-US');
+    localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, enUS);
+    i18n.changeLanguage(enUS);
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
 

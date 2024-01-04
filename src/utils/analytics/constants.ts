@@ -34,7 +34,6 @@ export enum MixpanelPeopleProps {
     user_play_count = 'user_play_count',
     sequence_open_count = 'sequence_open_count',
     created_at = 'createdAt',
-    referer = 'referer',
 }
 
 /**

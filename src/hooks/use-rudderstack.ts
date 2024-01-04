@@ -10,6 +10,11 @@ import type { MixpanelPeopleProps, MixpanelPeoplePropsInc } from 'src/utils/anal
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { formatDate } from 'src/utils/datetime';
 import { nextFetch } from 'src/utils/fetcher';
+import type rudderSDK from 'rudder-sdk-js';
+
+export interface WindowRudderstack {
+    rudder: Omit<typeof rudderSDK, 'RESIDENCY_SERVER'>;
+}
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -37,7 +42,6 @@ export interface PageProperties extends apiObject {
     path?: string;
     url?: string;
     title?: string;
-    referer?: string;
     search?: string;
 }
 
@@ -103,7 +107,6 @@ export const profileToIdentifiable = (
     user?: any,
     lang?: string,
     subscription?: SubscriptionGetResponse,
-    referer?: string,
 ): { id: string; traits: identTraits } => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const subscriptionStatus = subscription?.status ?? '';
@@ -124,7 +127,6 @@ export const profileToIdentifiable = (
         subscriptionStatus: subscriptionStatus.toLowerCase(),
         subscriptionPlan: company?.subscription_plan,
         createdAt: profile.created_at ? formatDate(profile.created_at, '[time]') : '',
-        referer: referer,
     };
 
     return { id, traits };
