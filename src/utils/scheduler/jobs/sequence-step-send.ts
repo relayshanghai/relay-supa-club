@@ -76,8 +76,6 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent post url');
     }
 
-    // @note if by this point you are not sure if there's an existing email, you shouldn't be running this function
-    // make sure there is not an existing sequence email for this influencer for this step:
     let existingSequenceEmails: SequenceEmail[] = [];
     try {
         existingSequenceEmails = await db(getSequenceEmailsBySequenceInfluencerCall)(influencer.id);
