@@ -4,8 +4,8 @@ import type { DBQueryReturn } from '../database';
 import type { ThreadsFilter } from '../endpoints/get-threads';
 import { FUNNEL_STATUS } from './constants';
 import { countThreads } from './db';
-import type { GetThreadsWithReplyReturn } from './db/get-threads-with-reply';
-import { getThreadsWithReplyByFilter } from './db/get-threads-with-reply';
+import type { GetThreadsReturn as dbGetThreadsReturn } from './db/get-threads';
+import { getThreads as dbGetThreads } from './db';
 import type { InfluencerOutreachData } from './types/influencer-outreach-data';
 import { CreatorPlatform } from 'types';
 
@@ -38,7 +38,7 @@ const sequenceTransformer = (
     };
 };
 
-const threadTransformer = (thread: GetThreadsWithReplyReturn) => {
+const threadTransformer = (thread: dbGetThreadsReturn) => {
     return {
         threadInfo: thread.threads,
         sequenceInfluencers: thread.sequence_influencers
@@ -49,7 +49,7 @@ const threadTransformer = (thread: GetThreadsWithReplyReturn) => {
 };
 
 export const getThreads: GetThreadsFn = async (params) => {
-    const threads = await getThreadsWithReplyByFilter()(params.account, params.filters);
+    const threads = await dbGetThreads()(params.account);
 
     const totals = await countThreads()(params.account, params.filters);
 

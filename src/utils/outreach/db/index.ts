@@ -6,6 +6,6 @@ export { getSequenceInfluencerByMessageId } from './get-sequence-influencer-by-m
 export { createEmail } from './create-email';
 export { getSequenceInfluencerByEmail } from './get-sequence-influencer-by-email';
 export { getSequenceInfluencerByThreadId } from './get-sequence-influencer-by-thread-id';
-export { getThreadsWithReply } from './get-threads-with-reply';
+export { getThreads } from './get-threads';
 export { updateEmailByMessageId } from './update-email-by-message-id';
 export { countThreads } from './count-threads';
