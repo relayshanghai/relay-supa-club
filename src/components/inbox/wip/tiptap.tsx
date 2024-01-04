@@ -1,8 +1,10 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
+import { BulletList } from '@tiptap/extension-bullet-list';
 import { Toolbar } from './toolbar';
 import { Send } from 'src/components/icons';
+import { HardBreak } from '@tiptap/extension-hard-break';
 
 export const Tiptap = ({
     description,
@@ -14,7 +16,33 @@ export const Tiptap = ({
     onSubmit: () => void;
 }) => {
     const editor = useEditor({
-        extensions: [StarterKit.configure(), Link.configure()],
+        extensions: [
+            StarterKit.configure(),
+            Link.configure(),
+            BulletList.configure({
+                itemTypeName: 'listItem',
+                keepAttributes: true,
+                keepMarks: true,
+                HTMLAttributes: {
+                    class: 'list-disc ml-2',
+                },
+            }),
+            HardBreak.extend({
+                addKeyboardShortcuts() {
+                    return {
+                        Enter: () => {
+                            const { state } = this.editor;
+                            const { $from } = state.selection;
+                            // console.log($from.parent.type.name);
+                            if ($from.parent.type.name === 'paragraph') {
+                                return this.editor.commands.setHardBreak();
+                            }
+                            return false;
+                        },
+                    };
+                },
+            }),
+        ],
         content: description,
         editorProps: {
             attributes: {

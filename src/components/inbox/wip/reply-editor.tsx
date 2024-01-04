@@ -19,9 +19,10 @@ export const ReplyEditor = ({
     const [sendCC, setSendCC] = useState<EmailContact[]>([]);
 
     const handleSendReply = useCallback(() => {
-        onReply(replyText, sendTo, sendCC);
+        onReply(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
+        // console.log(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
         setReplyText('');
-    }, [replyText, onReply, sendTo, sendCC]);
+    }, [replyText, onReply, sendTo, sendCC, defaultContacts]);
 
     return (
         <div>
