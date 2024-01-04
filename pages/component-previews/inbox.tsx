@@ -23,6 +23,7 @@ import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-no
 import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
+import { now } from 'src/utils/datetime';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -34,30 +35,28 @@ type Message = BaseMessage & { isLocal?: true };
 /**
  * Generate local Message object with isLocal attribute
  */
-const generateLocalData = (params: { body: string }): Message => {
+const generateLocalData = (params: {
+    body: string;
+    from: EmailContact;
+    to: EmailContact[];
+    cc: EmailContact[];
+    subject: string;
+}): Message => {
     const localId = nanoid(10);
     return {
-        date: '2023-12-22T07:03:57.000Z',
+        date: now(),
         unread: false,
         id: localId,
-        from: {
-            name: 'LMNAO',
-            address: 'jiggling.potato@gmail.com',
-        },
-        to: [
-            {
-                name: 'Suvojit Ghosh - ' + localId,
-                address: 'ghoshsuvojit2012@gmail.com',
-            },
-        ],
-        cc: [],
+        from: params.from,
+        to: params.to,
+        cc: params.cc,
         replyTo: [
             {
                 name: 'LMNAO',
                 address: 'jiggling.potato@gmail.com',
             },
         ],
-        subject: 'Re: 3rd Follow-up',
+        subject: params.subject,
         body: params.body,
         isLocal: true,
     };
@@ -200,7 +199,13 @@ const ThreadProvider = ({
                         to: toList,
                     });
                     // Retain local data with generated data
-                    const localMessage = generateLocalData({ body: replyBody });
+                    const localMessage = generateLocalData({
+                        body: replyBody,
+                        from: { name: 'Me', address: currentInbox.email },
+                        to: toList,
+                        cc: ccList,
+                        subject: messages[0].subject,
+                    });
                     // console.log('from mutator callback', cache, localMessage);
                     return [localMessage, ...(cache ?? [])];
                 },
@@ -208,7 +213,13 @@ const ThreadProvider = ({
                     // Optimistically update the UI
                     // Seems like this is discarded when MutatorCallback ^ resolves
                     optimisticData: (cache) => {
-                        const localMessage = generateLocalData({ body: replyBody });
+                        const localMessage = generateLocalData({
+                            body: replyBody,
+                            from: { name: 'Me', address: currentInbox.email },
+                            to: toList,
+                            cc: ccList,
+                            subject: messages[0].subject,
+                        });
                         // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
                     },
@@ -218,7 +229,7 @@ const ThreadProvider = ({
             );
             markAsReplied(threadId);
         },
-        [threadId, mutate, markAsReplied],
+        [threadId, mutate, markAsReplied, currentInbox, messages],
     );
 
     if (messagesError) return <div>Error loading messages</div>;
@@ -237,7 +248,7 @@ const ThreadProvider = ({
                         participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
-                <div className="h-[50vh] overflow-scroll">
+                <div className="h-[51vh] overflow-scroll">
                     <MessagesComponent
                         currentInbox={currentInbox}
                         messages={messages}
@@ -300,7 +311,7 @@ const InboxPreview = () => {
             });
             return { threads: content.data, totals: content.totals };
         },
-        { refreshInterval: 500 },
+        { refreshInterval: 5000 },
     );
     const threads = threadsInfo?.threads;
     const totals = {

@@ -61,7 +61,7 @@ const AddressLabel = ({
         <Tooltip delay={500} content={`${info.name}: ${info.address}`}>
             <span className="flex rounded bg-primary-200 px-2 text-sm font-semibold hover:bg-primary-100">
                 <p className="max-w-8 overflow-hidden whitespace-break-spaces">
-                    {truncatedText(info.name || info.address, 15)}({truncatedText(info.address, 15)})
+                    {truncatedText(info.name || info.address, 15)}
                 </p>
                 {!defaultAddress && (
                     <span className="cursor-pointer pl-2" onClick={() => onClick(info)}>
@@ -95,6 +95,7 @@ const AddressSection = ({
 }) => {
     const [toInput, setToInput] = useState('');
     const [ccInput, setCCInput] = useState('');
+
     const handleChangeTo = useCallback(
         (contact: EmailContact) => {
             if (sendTo.some((contactTo) => contactTo.address === contact.address)) {

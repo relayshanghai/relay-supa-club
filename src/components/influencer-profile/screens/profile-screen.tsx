@@ -129,7 +129,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Prop
                         selected === 'notes' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    {t('profile.notesTab')}
+                    {/*{t('profile.notesTab')}*/}
+                    Manager
                 </button>
                 <button
                     onClick={() => handleTabClick('shipping-details')}
@@ -138,7 +139,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Prop
                         selected === 'shipping-details' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    {t('profile.shippingDetailsTab')}
+                    {/*{t('profile.shippingDetailsTab')}*/}
+                    Channel [WIP]
                 </button>
             </nav>
 

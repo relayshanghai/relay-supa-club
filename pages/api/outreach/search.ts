@@ -1,6 +1,5 @@
 import { type ActionHandler, ApiHandler } from 'src/utils/api-handler';
-import { searchMailbox } from 'src/utils/api/email-engine';
-import { MAILBOX_PATH_ALL } from 'src/utils/outreach/constants';
+import { searchMessages } from 'src/utils/outreach/email-engine/search-messages';
 import type { AccountAccountSearchPost } from 'types/email-engine/account-account-search-post';
 
 const transformSearchResult = (result: AccountAccountSearchPost) => {
@@ -27,13 +26,15 @@ const getHandler: ActionHandler = async (req, res) => {
     if (!emailEngineId) {
         return res.status(400).json({ error: 'Missing email engine id' });
     }
-    const result: AccountAccountSearchPost = await searchMailbox(
-        emailEngineId,
-        {
-            body: String(searchTerm),
+
+    const body = {
+        documentQuery: {
+            query_string: {
+                query: searchTerm,
+            },
         },
-        MAILBOX_PATH_ALL,
-    );
+    };
+    const result = await searchMessages(emailEngineId, body);
 
     return res.status(200).json(transformSearchResult(result));
 };
