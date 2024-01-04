@@ -8,12 +8,12 @@ export const updatableData = z.object({
 
 export type UpdatableData = z.infer<typeof updatableData>;
 
-const query = z.object({
+const path = z.object({
     id: z.string(),
 });
 
 export const UpdateThreadApiRequest = z.object({
-    query: query.required(),
+    path: path.required(),
     body: updatableData.required(),
 });
 

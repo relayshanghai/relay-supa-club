@@ -25,6 +25,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
+import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -348,14 +349,10 @@ const InboxPreview = () => {
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
         if (thread.threadInfo.thread_status === 'unopened') {
-            apiFetch('/api/outreach/threads/{threadId}', {
-                method: 'POST',
-                path: { threadId: thread.threadInfo.thread_id },
-                query: {
-                    id: thread.threadInfo.thread_id,
-                },
+            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+                path: { id: thread.threadInfo.thread_id },
                 body: {
-                    threadStatus: 'unreplied',
+                    thread_status: 'unreplied',
                 },
             });
         }
@@ -367,14 +364,10 @@ const InboxPreview = () => {
         if (!thread) return;
 
         if (thread.threadInfo.thread_status === 'unreplied') {
-            apiFetch('/api/outreach/threads/{threadId}', {
-                method: 'POST',
-                path: { threadId: thread.threadInfo.thread_id },
-                query: {
-                    id: thread.threadInfo.thread_id,
-                },
+            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+                path: { id: thread.threadInfo.thread_id },
                 body: {
-                    threadStatus: 'replied',
+                    thread_status: 'replied',
                 },
             });
         }
