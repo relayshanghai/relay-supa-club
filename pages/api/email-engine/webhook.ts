@@ -59,7 +59,6 @@ import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequen
 import { syncEmail } from 'src/utils/outreach/sync-email';
 import type { WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
 import { deleteEmail } from 'src/utils/outreach/delete-email';
-import { transformKeys } from 'src/utils/database/helpers';
 import { v4 } from 'uuid';
 import { deleteJobs } from 'src/utils/scheduler/db-queries';
 import { isString } from 'src/utils/types';
@@ -279,17 +278,13 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         emailEngineId: event.data.id,
     });
 
-    // eslint-disable-next-line no-console
-    console.log('SYNC EMAIL', synced);
-
     // We sometimes receive a messageNew event when an email is trashed
     if (synced.messageType === 'Trash') {
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
 
     if (synced.messageType === 'Reply' && synced.influencer) {
-        const _influencer = transformKeys<SequenceInfluencer>(synced.influencer);
-        await handleReply(_influencer, event);
+        await handleReply(synced.influencer, event);
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
 
@@ -775,9 +770,6 @@ const postHandler: NextApiHandler = async (req, res) => {
     if (ignoredWebhooks.includes(body.event)) {
         return res.status(httpCodes.OK).json({});
     }
-
-    // eslint-disable-next-line no-console
-    console.log('EE Webhook', JSON.stringify(body));
 
     try {
         await identifyAccount(body?.account);

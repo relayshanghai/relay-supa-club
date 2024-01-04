@@ -4,11 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
-import type { GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
+import type { EmailContact } from 'src/utils/outreach/types';
+import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
-
-export type EmailContact = { address: string; name: string };
 
 export type Message = {
     id: string;
@@ -21,8 +20,6 @@ export type Message = {
     subject?: string;
     unread: boolean;
 };
-
-export type ThreadInfo = GetThreadsApiResponse['data'][0];
 
 export type CurrentInbox = {
     email?: string | null;

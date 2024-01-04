@@ -1,7 +1,7 @@
 import type { FunnelStatus } from 'src/utils/api/db';
 import type { ThreadMessage } from '../../Threads';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import type { EmailContact } from '../thread-preview';
+import type { EmailContact } from 'src/utils/outreach/types';
 
 export const sendReply = async (params: {
     replyBody: string;

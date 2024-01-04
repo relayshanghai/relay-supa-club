@@ -28,7 +28,6 @@ const getHandler: ActionHandler = async (req, res) => {
         return res.status(400).json({ error: 'Missing email engine id' });
     }
     const result: AccountAccountSearchPost = await searchMailbox(
-        // @inbox-note you can get the profile from `req.profile`
         emailEngineId,
         {
             body: String(searchTerm),

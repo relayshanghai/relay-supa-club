@@ -1,4 +1,4 @@
-import type { EmailContact } from 'src/components/inbox/wip/thread-preview';
+import type { EmailContact } from 'src/utils/outreach/types';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { replyThread } from 'src/utils/outreach/reply-thread';

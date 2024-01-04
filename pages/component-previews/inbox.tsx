@@ -2,12 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import {
-    type ThreadInfo,
-    ThreadPreview,
-    type Message as BaseMessage,
-    type EmailContact,
-} from 'src/components/inbox/wip/thread-preview';
+import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
+import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
@@ -237,7 +234,7 @@ const ThreadProvider = ({
                     threadInfo={selectedThread}
                     messages={messages}
                     participants={allUniqueParticipants.map((participant) =>
-                        participant.address === currentInbox.email ? 'Me' : participant.name,
+                        participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
                 <div className="h-[50vh] overflow-scroll">

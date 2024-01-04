@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import type { Message, ThreadInfo } from './thread-preview';
+import type { Message } from './thread-preview';
+import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
 import { useState } from 'react';
 import { Collapse, Expand } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';

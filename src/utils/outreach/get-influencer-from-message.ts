@@ -1,20 +1,25 @@
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
 import { getSequenceInfluencerByEmail, getSequenceInfluencerByMessageId, getSequenceInfluencerByThreadId } from './db';
-import type { sequence_influencers } from 'drizzle/schema';
 import { getSequenceInfluencerByThreadIdAndContact } from './db/get-sequence-influencer-by-thread-id-and-contact';
 import type { db } from '../database';
+import type { InfluencerOutreachData } from './types';
+import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
 
 type GetInfluencerFromMessageFn = (
     message: AccountAccountMessageGet,
     options?: { tx: ReturnType<typeof db> },
-) => Promise<typeof sequence_influencers.$inferSelect | null>;
+) => Promise<InfluencerOutreachData | null>;
 
 export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, options) => {
     const influencerByThread = await getSequenceInfluencerByThreadId(options?.tx)(message.threadId);
-    if (influencerByThread) return influencerByThread;
+    if (influencerByThread) {
+        return influencerOutreachDataTransformer(influencerByThread);
+    }
 
     const influencerByMessageId = await getSequenceInfluencerByMessageId(options?.tx)(message.messageId);
-    if (influencerByMessageId) return influencerByMessageId;
+    if (influencerByMessageId) {
+        return influencerOutreachDataTransformer(influencerByMessageId);
+    }
 
     const from = [message.from];
     const sender = [message.sender];
@@ -28,10 +33,14 @@ export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (messa
             message.threadId,
             contact.address,
         );
-        if (influencerByThreadAndEmails) return influencerByThreadAndEmails;
+        if (influencerByThreadAndEmails) {
+            return influencerOutreachDataTransformer(influencerByThreadAndEmails);
+        }
 
         const influencerByEmail = await getSequenceInfluencerByEmail(options?.tx)(contact.address);
-        if (influencerByEmail) return influencerByEmail;
+        if (influencerByEmail) {
+            return influencerOutreachDataTransformer(influencerByEmail);
+        }
     }
 
     return null;
