@@ -14,7 +14,6 @@ export interface DataTableProps<TData, TValue> {
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
     influencerCount?: number;
-    setPage?: (page: number) => void;
     currentPage?: number;
     meta: TableMeta<TData>;
 }
@@ -38,7 +37,6 @@ export function InfluencersTable<TData, TValue>({
     selectedInfluencers,
     setSelectedInfluencers,
     influencerCount,
-    setPage,
     currentPage,
     meta,
 }: DataTableProps<TData, TValue>) {
@@ -162,12 +160,7 @@ export function InfluencersTable<TData, TValue>({
                 </Table>
 
                 <div className="sticky bottom-0 left-0 right-0 z-10 w-full border bg-white p-2">
-                    <DataTablePagination
-                        table={table}
-                        count={influencerCount}
-                        setPageFunction={setPage}
-                        currentPage={currentPage}
-                    />
+                    <DataTablePagination table={table} count={influencerCount} currentPage={currentPage} />
                 </div>
             </div>
         </div>
