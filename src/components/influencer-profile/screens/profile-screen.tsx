@@ -1,7 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
 import type { ProfileNotes } from './profile-notes-tab';
@@ -42,7 +41,7 @@ const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
     };
 };
 
-export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,13 +171,6 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
                     />*/}
                     <></>
-                </div>
-
-                <div className="float-right flex pb-4">
-                    <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
-                        {t('creators.cancel')}
-                    </Button>
-                    <Button onClick={() => handleUpdateClick(state)}>{t('profile.updateProfileButton')}</Button>
                 </div>
             </div>
         </div>

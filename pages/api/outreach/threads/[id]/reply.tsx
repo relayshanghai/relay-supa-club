@@ -1,3 +1,4 @@
+import type { EmailContact } from 'src/components/inbox/wip/thread-preview';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { replyThread } from 'src/utils/outreach/reply-thread';
@@ -8,6 +9,8 @@ type ApiRequestQuery = {
 
 type ApiRequestBody = {
     content?: string;
+    cc?: EmailContact[];
+    to?: EmailContact[];
 };
 
 const postHandler: ActionHandler = async (req, res) => {

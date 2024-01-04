@@ -30,6 +30,7 @@ export const Tiptap = ({
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit();
+                editor?.commands.clearContent();
             }}
             className="min-h-[250]px flex flex-col justify-stretch"
         >
