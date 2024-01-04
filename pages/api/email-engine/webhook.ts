@@ -156,7 +156,7 @@ const deleteScheduledEmails = async (
     }
 };
 
-const _scheduleOutreachEmailRetry = async ({
+const scheduleOutreachEmailRetry = async ({
     event,
     sequenceInfluencer,
     sequenceStep,
@@ -178,10 +178,34 @@ const _scheduleOutreachEmailRetry = async ({
         reference: event.data.messageId,
     };
 
+    // Get existing sequence email retry if it exists
+    const { data, error } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
+        sequenceInfluencer.id,
+        sequenceStep.id,
+    );
+
+    if (error) {
+        serverLogger(`nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`);
+    }
+
+    if (!data) {
+        serverLogger(
+            `no next email record found for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`,
+        );
+    }
+
+    const jobId = v4();
+
     const job = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+        id: jobId,
         queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
         payload,
     });
+
+    // Update existing sequence email retry of the new job
+    if (data) {
+        await updateSequenceEmail({ job_id: jobId, id: data.id });
+    }
 
     return job;
 };
@@ -679,9 +703,10 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             if (!nextStep) {
                 throw new Error('No next sequence step found');
             }
+
             const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
-            const payload: SequenceStepSendArgs = {
-                // event: event,
+
+            trackData.extra_info.next_sequence_email_payload = {
                 emailEngineAccountId: event.account,
                 sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
                 sequenceStep: nextStep,
@@ -690,35 +715,15 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 reference: event.data.messageId,
             };
 
-            trackData.extra_info.next_sequence_email_payload = payload;
-
-            const { data: nextEmailRecord, error: nextEmailError } = await db(
-                getSequenceEmailByInfluencerAndSequenceStep,
-            )(sequenceInfluencer.id, nextStep.id);
-            if (nextEmailError) {
-                serverLogger(`nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`);
-            }
-            if (!nextEmailRecord) {
-                serverLogger(
-                    `no next email record found for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`,
-                );
-            }
-
-            const jobId = v4();
-
-            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
-                id: jobId,
-                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
-                payload,
+            const jobCreated = await scheduleOutreachEmailRetry({
+                event,
+                sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
+                sequenceStep: nextStep,
+                sequenceSteps,
+                templateVariables,
             });
-            trackData.extra_info.job_created = jobCreated;
-            if (jobCreated && jobCreated.id) {
-                trackData.is_success = true;
-                if (nextEmailRecord?.id) {
-                    await updateSequenceEmail({ job_id: jobId, id: nextEmailRecord.id });
-                }
-            }
 
+            trackData.extra_info.job_created = jobCreated;
             trackData.is_success = jobCreated !== false;
         }
     } catch (error: any) {
