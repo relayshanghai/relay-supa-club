@@ -62,18 +62,15 @@ const postHandler: NextApiHandler = async (req, res) => {
     if (!price) {
         throw new RelayError('Failed to retrieve price');
     }
-    const { trial_days, trial_profiles, trial_searches, trial_ai_emails, profiles, searches, ai_emails } =
-        price.product.metadata;
+    const { trial_days, trial_profiles, trial_searches, profiles, searches } = price.product.metadata;
 
     if (
         !trial_days ||
         Number.isNaN(Number.parseInt(trial_days)) ||
         !trial_profiles ||
         !trial_searches ||
-        !trial_ai_emails ||
         !profiles ||
-        !searches ||
-        !ai_emails
+        !searches
     ) {
         serverLogger('Missing product metadata: ' + JSON.stringify({ priceId, price }));
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR);
@@ -96,10 +93,8 @@ const postHandler: NextApiHandler = async (req, res) => {
     await updateCompanyUsageLimits({
         profiles_limit: profiles,
         searches_limit: searches,
-        ai_email_generator_limit: ai_emails,
         trial_profiles_limit: trial_profiles,
         trial_searches_limit: trial_searches,
-        trial_ai_email_generator_limit: trial_ai_emails,
         id: companyId,
     });
 

@@ -1,7 +1,6 @@
 const navbar = {
     campaigns: 'Campaigns',
     discover: 'Classic',
-    aiEmailGenerator: 'AI Email Generator',
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
@@ -11,6 +10,7 @@ const navbar = {
     inbox: 'Inbox',
     influencerManager: 'Manager',
     report: "{{influencerName}}'s Report",
+    support: 'Contact Support',
 };
 
 export default navbar;

@@ -1,23 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { validateSignupInput } from 'src/utils/validation/signup';
-import { useFields } from 'src/hooks/use-fields';
 import { StepOne, StepTwo, StepThree } from './steps';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { clientLogger } from 'src/utils/logger-client';
 import { hasCustomError } from 'src/utils/errors';
-import { useUser } from 'src/hooks/use-user';
-import { useCompany } from 'src/hooks/use-company';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
-import type { FieldValues } from 'react-hook-form';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
 import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
+import type { SignupPostBody } from 'pages/api/signup';
+import { useUser } from 'src/hooks/use-user';
+import { usePersistentState } from 'src/hooks/use-persistent-state';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -30,10 +28,29 @@ export interface SignUpValidationErrors {
     companyWebsite?: string;
 }
 
-const CompanyErrors = {
+const signupErrors = {
     ...createCompanyErrors,
     ...createCompanyValidationErrors,
 };
+
+const PROFILE_FORM_STEP = 1;
+const EMAIL_FORM_STEP = 2;
+const COMPANY_FORM_STEP = 3;
+
+const steps = [
+    {
+        title: 'signup.step1title',
+        num: PROFILE_FORM_STEP,
+    },
+    {
+        title: 'signup.step2title',
+        num: EMAIL_FORM_STEP,
+    },
+    {
+        title: 'signup.step3title',
+        num: COMPANY_FORM_STEP,
+    },
+];
 
 const SignUpPage = ({
     currentStep,
@@ -46,24 +63,80 @@ const SignUpPage = ({
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
-    const { signup, createEmployee, profile } = useUser();
-    const { createCompany } = useCompany();
+    const { login, logout, signup } = useUser();
 
-    const {
-        values: { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite },
-        setFieldValue,
-    } = useFields({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        phoneNumber: '',
-        companyName: '',
-        companyWebsite: '',
-    });
+    const [firstName, setFirstName, removeFirstName] = usePersistentState('firstName', '');
+    const [lastName, setLastName, removeLastName] = usePersistentState('lastName', '');
+    const [email, setEmail, removeEmail] = usePersistentState('email', '');
+    const [password, setPassword, removePassword] = usePersistentState('password', '');
+    const [confirmPassword, setConfirmPassword, removeConfirmPassword] = usePersistentState('confirmPassword', '');
+    const [phoneNumber, setPhoneNumber, removePhoneNumber] = usePersistentState('phoneNumber', '');
+    const [companyName, setCompanyName, removeCompanyName] = usePersistentState('companyName', '');
+    const [companyWebsite, setCompanyWebsite, removeCompanyWebsite] = usePersistentState('companyWebsite', '');
 
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const setFieldValue = useCallback(
+        (type: SignupInputTypes, value: string) => {
+            switch (type) {
+                case 'firstName':
+                    setFirstName(value);
+                    break;
+                case 'lastName':
+                    setLastName(value);
+                    break;
+                case 'email':
+                    setEmail(value);
+                    break;
+                case 'password':
+                    setPassword(value);
+                    break;
+                case 'confirmPassword':
+                    setConfirmPassword(value);
+                    break;
+                case 'phoneNumber':
+                    setPhoneNumber(value);
+                    break;
+                case 'companyName':
+                    setCompanyName(value);
+                    break;
+                case 'companyWebsite':
+                    setCompanyWebsite(value);
+                    break;
+                default:
+                    break;
+            }
+        },
+        [
+            setFirstName,
+            setLastName,
+            setEmail,
+            setPassword,
+            setConfirmPassword,
+            setPhoneNumber,
+            setCompanyName,
+            setCompanyWebsite,
+        ],
+    );
+
+    const clearForm = useCallback(() => {
+        removeFirstName();
+        removeLastName();
+        removeEmail();
+        removePassword();
+        removeConfirmPassword();
+        removePhoneNumber();
+        removeCompanyName();
+        removeCompanyWebsite();
+    }, [
+        removeCompanyName,
+        removeCompanyWebsite,
+        removeConfirmPassword,
+        removeEmail,
+        removeFirstName,
+        removeLastName,
+        removePassword,
+        removePhoneNumber,
+    ]);
+
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
         lastName: '',
@@ -74,7 +147,6 @@ const SignUpPage = ({
         companyName: '',
         companyWebsite: '',
     });
-    const [createProfileSuccess, setCreateProfileSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const formData = {
@@ -86,27 +158,7 @@ const SignUpPage = ({
         phoneNumber,
         companyName,
         companyWebsite,
-        companySize: selectedSize,
     };
-
-    const PROFILE_FORM_STEP = 1;
-    const EMAIL_FORM_STEP = 2;
-    const COMPANY_FORM_STEP = 3;
-
-    const steps = [
-        {
-            title: t('signup.step1title'),
-            num: PROFILE_FORM_STEP,
-        },
-        {
-            title: t('signup.step2title'),
-            num: EMAIL_FORM_STEP,
-        },
-        {
-            title: t('signup.step3title'),
-            num: COMPANY_FORM_STEP,
-        },
-    ];
 
     //TODO: phone validation need to be updated
     const setAndValidate = (type: SignupInputTypes, value: string) => {
@@ -119,36 +171,49 @@ const SignUpPage = ({
         }
     };
 
+    const handleSignup = useCallback(
+        async (data: SignupPostBody) => {
+            try {
+                setLoading(true);
+
+                const signupCompanyRes = await signup(data);
+                if (!signupCompanyRes?.cus_id) {
+                    throw new Error('no cus_id, error creating company');
+                } else {
+                    await login(email, password);
+                    return 'success';
+                }
+            } catch (e: any) {
+                clientLogger(e, 'error');
+                if (e?.message.includes('User already registered')) {
+                    toast.error(t('login.userAlreadyRegistered'));
+                } else if (hasCustomError(e, signupErrors)) {
+                    toast.error(t(`login.${e.message}`));
+                } else {
+                    toast.error(`${t('login.oopsSomethingWentWrong')} ${e?.message}`);
+                }
+            } finally {
+                setLoading(false);
+            }
+        },
+        [signup, email, login, password, t],
+    );
+
     const onNext = async () => {
-        let isSignupSuccess = false;
-
-        // @note log error when user failed redirecting to free-trial page
-        if (currentStep > steps.length) {
-            toast.error(t('signup.errorStartingTrial'));
-            clientLogger(`Error occured signing up: ${email}`, 'error', true);
-            return;
+        if (currentStep === PROFILE_FORM_STEP) {
+            await logout(false);
         }
-
-        // @note this depends on a useEffect below to redirect
-        if (currentStep === EMAIL_FORM_STEP && EMPLOYEE_EMAILS.includes(email)) {
-            const profileId = await handleProfileCreate(formData);
-            if (!profileId) {
-                clientLogger(`Could not create profile for employee: ${email}`, 'error', true);
-            }
-            return;
-        }
-
         if (currentStep === COMPANY_FORM_STEP) {
-            const profileId = await handleProfileCreate(formData);
-            if (profileId) {
-                const result = await handleCompanyCreate(formData, profileId);
-                isSignupSuccess = result === 'success';
+            const result = await handleSignup(formData);
+            if (result === 'success') {
+                clearForm();
+                router.push('/boostbot');
             }
+        } else {
+            setCurrentStep(currentStep + 1);
         }
 
-        setCurrentStep(currentStep + 1);
-
-        track(CompleteSignupStep, {
+        await track(CompleteSignupStep, {
             current_step: currentStep,
             firstName,
             lastName,
@@ -156,101 +221,15 @@ const SignUpPage = ({
             phoneNumber,
             companyName,
             companyWebsite,
-            companySize: selectedSize ?? '',
         });
-
-        // @note log when handleProfileCreate failed creating a user
-        if (currentStep === COMPANY_FORM_STEP && !isSignupSuccess) {
-            toast.error(t('signup.noProfileId'));
-            clientLogger(`Could not find profile id: ${email}`, 'error', true);
-        }
-
-        if (isSignupSuccess) {
-            router.push('/free-trial');
-        }
     };
-
-    const handleProfileCreate = async (formData: FieldValues) => {
-        const { firstName, lastName, phoneNumber, email, password } = formData;
-        const data = {
-            email,
-            password,
-            data: {
-                first_name: firstName,
-                last_name: lastName,
-                phone: phoneNumber,
-            },
-        };
-        try {
-            setLoading(true);
-            const signupProfileRes = await signup(data);
-            if (signupProfileRes?.session?.user.id) {
-                if (EMPLOYEE_EMAILS.includes(email)) {
-                    const employeeRes = await createEmployee(email);
-                    if (employeeRes?.id) {
-                        setCreateProfileSuccess(true);
-                    } else {
-                        throw new Error('Could not create employee');
-                    }
-                } else {
-                    setCreateProfileSuccess(true);
-                }
-                return signupProfileRes.session.user.id;
-            } else {
-                throw new Error('Could not sign up');
-            }
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            // this is a supabase provided error so we don't have our custom error handling
-            if (error?.message === 'User already registered') {
-                toast.error(t('login.userAlreadyRegistered'));
-            } else {
-                toast.error(t('login.oopsSomethingWentWrong'));
-            }
-        }
-        setLoading(false);
-    };
-
-    const handleCompanyCreate = async (formData: FieldValues, profileId: string) => {
-        const { companyName, companyWebsite, companySize } = formData;
-        const data = {
-            name: companyName,
-            website: companyWebsite,
-            size: companySize,
-            profileId: profileId,
-        };
-        try {
-            setLoading(true);
-            const signupCompanyRes = await createCompany(data);
-            if (!signupCompanyRes?.cus_id) {
-                throw new Error('no cus_id, error creating company');
-            } else {
-                return 'success';
-            }
-        } catch (e: any) {
-            clientLogger(e, 'error');
-            if (hasCustomError(e, CompanyErrors)) {
-                toast.error(t(`login.${e.message}`));
-            } else {
-                toast.error(t('login.oopsSomethingWentWrong'));
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (createProfileSuccess && profile?.id && EMPLOYEE_EMAILS.includes(email)) {
-            router.push('/boostbot');
-        }
-    }, [email, router, createProfileSuccess, profile?.id]);
 
     return (
         <div>
             {steps.map(
                 (step) =>
                     step.num === currentStep && (
-                        <FormWizard title={step.title} key={step.num} steps={steps} currentStep={currentStep}>
+                        <FormWizard title={t(step.title || '')} key={step.num} steps={steps} currentStep={currentStep}>
                             {currentStep === PROFILE_FORM_STEP && (
                                 <StepOne
                                     firstName={firstName}
@@ -279,7 +258,6 @@ const SignUpPage = ({
                                 <StepThree
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
-                                    setSelectedSize={setSelectedSize}
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
                                     loading={loading}

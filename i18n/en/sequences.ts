@@ -56,7 +56,7 @@ const sequences = {
         '4th Follow-up': '4th Follow-up',
     },
     status: {
-        Scheduling: 'Scheduling',
+        Unscheduled: 'Unscheduled',
         Scheduled: 'Scheduled',
         Delivered: 'Delivered',
         Opened: 'Opened',

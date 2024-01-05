@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useSearch } from 'src/hooks/use-search';
+import { defaultAudienceGender, defaultAudienceLocations, useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
 import { SearchLocations } from './search-locations';
@@ -146,6 +146,18 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
         }
     }, [audienceAge, setAudienceAge]);
 
+    useEffect(() => {
+        if (!audienceGender) {
+            setAudienceGender(defaultAudienceGender);
+        }
+    }, [audienceGender, setAudienceGender]);
+
+    useEffect(() => {
+        if (!audienceLocation) {
+            setAudienceLocation(defaultAudienceLocations);
+        }
+    }, [audienceLocation, setAudienceLocation]);
+
     const clearFilters = (e: any) => {
         e.preventDefault();
         setAudience([null, null]);
@@ -154,13 +166,12 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
         setEngagement(undefined);
         setLastPost(undefined);
         setContactInfo(undefined);
-        setAudienceLocation([]);
+        setAudienceLocation(defaultAudienceLocations);
         setInfluencerLocation([]);
-        setAudienceGender(undefined);
+        setAudienceGender(defaultAudienceGender);
         setAudienceAge(undefined);
         track(ClearFilters, { batch_id: batchId });
     };
-
     const isContactInfoEmail = useCallback(() => (contactInfo == 'email' ? true : false), [contactInfo]);
 
     const getAudienceGenderCode = useCallback(() => audienceGender?.code || 'ANY', [audienceGender]);
@@ -170,7 +181,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
     const getAudience = useCallback((i: number) => audience[i] ?? 'any', [audience]);
 
     const getViews = useCallback((i: number) => views[i] ?? 'any', [views]);
-
     return (
         <Modal
             maxWidth="max-w-3xl"

@@ -7,9 +7,8 @@ import { useMemo } from 'react';
 import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
-import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AvatarDefault, DeleteOutline, SendOutline } from '../icons';
+import { DeleteOutline, SendOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -32,7 +31,9 @@ import {
 import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
-import Image from 'next/image';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
+import { useAtom } from 'jotai';
+import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -56,7 +57,7 @@ interface SequenceRowProps {
 const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
     sequenceEmail?.email_delivery_status === 'Delivered'
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
-        : sequenceEmail?.email_delivery_status ?? 'Scheduling';
+        : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,
@@ -74,7 +75,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     onCheckboxChange,
     checked,
 }) => {
-    const [avatarError, setAvatarError] = useState(false);
     const {
         sequenceInfluencers,
         updateSequenceInfluencer,
@@ -286,8 +286,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
+    const [submittingChangeEmail, setSubmittingChangeEmail] = useAtom(submittingChangeEmailAtom);
+
     const disableSend =
-        isMissingSequenceSendEmail || !sequenceInfluencer.email || sendingEmail || missingSocialProfileInfo;
+        submittingChangeEmail ||
+        isMissingSequenceSendEmail ||
+        !sequenceInfluencer.email ||
+        sendingEmail ||
+        missingSocialProfileInfo;
 
     return (
         <>
@@ -309,20 +315,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        {sequenceInfluencer.avatar_url && !avatarError ? (
-                            <Image
-                                className="inline-block h-14 w-14 bg-slate-300"
-                                onError={() => setAvatarError(true)}
-                                src={imgProxy(sequenceInfluencer.avatar_url) ?? ''}
-                                alt={`Influencer avatar ${sequenceInfluencer.name}`}
-                                height={56}
-                                width={56}
-                            />
-                        ) : (
-                            <AvatarDefault height={56} width={56} />
-                        )}
+                        <InfluencerAvatarWithFallback
+                            url={sequenceInfluencer.avatar_url || ''}
+                            name={sequenceInfluencer.name}
+                        />
 
-                        <div className="flex flex-col">
+                        <div className="flex flex-col overflow-hidden">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
@@ -343,10 +341,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
-                                    onSubmit={(emailSubmit) => {
+                                    onSubmit={async (emailSubmit) => {
                                         const trimmed = emailSubmit.trim().toLowerCase();
-                                        return handleEmailUpdate(trimmed);
+                                        await handleEmailUpdate(trimmed);
                                     }}
+                                    onSubmittingChange={setSubmittingChangeEmail}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : (

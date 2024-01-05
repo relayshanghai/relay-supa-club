@@ -9,10 +9,23 @@ import { Toaster } from 'react-hot-toast';
 import type { TestMountOptions } from './user-test-wrapper';
 import { UserAndCompanyTestWrapper } from './user-test-wrapper';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
+
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import './cypress-mock-router'; // loads window.useRouter
+import { enUS } from 'src/constants';
 
-i18n.changeLanguage('en-US');
+i18n.changeLanguage(enUS);
+
+export interface WindowCypress {
+    setMockRouter: (options: TestMountOptions) => void;
+    useRouter: () => {
+        route: string;
+        pathname: string;
+        query: Record<string, string>;
+        asPath: string;
+        push: (path: string) => void;
+    };
+}
 
 export const TestContextsWrapper = ({
     options,

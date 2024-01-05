@@ -1,10 +1,11 @@
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSocialProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
 
 export type BoostbotAccountCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -29,10 +30,11 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                     <div className="h-12 w-12 animate-pulse rounded-full bg-gray-300" />
                 ) : (
                     <>
-                        <img
-                            className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
-                            src={picture}
-                            alt={handle ?? username}
+                        <InfluencerAvatarWithFallback
+                            url={picture}
+                            name={handle ?? username}
+                            size={60}
+                            className="rounded-full"
                         />
                         <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
                     </>

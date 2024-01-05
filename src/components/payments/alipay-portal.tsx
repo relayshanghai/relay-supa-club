@@ -4,7 +4,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { loadStripe } from '@stripe/stripe-js';
 import { handleError } from 'src/utils/utils';
 import type Stripe from 'stripe';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Spinner } from '../icons';
 import type { NewRelayPlan } from 'types';
 import { clientLogger } from 'src/utils/logger-client';
@@ -17,9 +17,11 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export default function AlipayPortal({
     selectedPrice,
     priceTier,
+    couponId,
 }: {
     selectedPrice: NewRelayPlan;
     priceTier: ActiveSubscriptionTier;
+    couponId?: string;
 }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
@@ -43,22 +45,23 @@ export default function AlipayPortal({
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
         // create a setup intent with payment method type alipay, and current customer id
-        if (!company?.cus_id || !company.id) return;
+        if (!company?.cus_id || !company.id || isLoading) return;
         const stripe = await stripePromise;
         if (!stripe) return;
         setIsLoading(true);
         try {
             const priceId = selectedPrice.priceIds.monthly;
             const currency = selectedPrice.currency;
-            const setupIntent = await createSetupIntentForAlipay(
-                company.id,
-                company.cus_id,
+            const setupIntent = await createSetupIntentForAlipay({
+                companyId: company.id,
+                customerId: company.cus_id,
                 priceId,
                 currency,
                 priceTier,
-            );
+                couponId,
+            });
 
             await handleServerResponse(setupIntent);
         } catch (error) {
@@ -66,12 +69,12 @@ export default function AlipayPortal({
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [company?.cus_id, company?.id, isLoading, selectedPrice, priceTier, couponId]);
 
     return (
         <>
             <div className="mb-2 p-6">
-                <Button className="w-full" onClick={handleSubmit}>
+                <Button className="w-full" onClick={handleSubmit} disabled={isLoading}>
                     {isLoading ? (
                         <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
                     ) : (

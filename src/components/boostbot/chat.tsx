@@ -1,4 +1,4 @@
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { Json } from 'types/supabase';
 import React, { useState } from 'react';
@@ -29,6 +29,7 @@ import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -45,7 +46,7 @@ interface ChatProps {
     areChatActionsDisabled: boolean;
     setIsSearchLoading: Dispatch<SetStateAction<boolean>>;
     influencers: BoostbotInfluencer[];
-    setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
+    setHasSearched: Dispatch<SetStateAction<boolean>>;
     handleSelectedInfluencersToOutreach: () => void;
     isSearchDisabled: boolean;
     isOutreachButtonDisabled: boolean;
@@ -65,6 +66,15 @@ interface ChatProps {
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
+const defaultFilters: Filters = {
+    platforms: ['youtube', 'tiktok', 'instagram'],
+    audience_geo: [
+        { id: countriesByCode.US.id, weight: 0.15 },
+        { id: countriesByCode.CA.id, weight: 0.1 },
+    ],
+    influencerSizes: ['microinfluencer', 'nicheinfluencer'],
+};
+
 export const Chat: React.FC<ChatProps> = ({
     messages,
     setMessages,
@@ -74,7 +84,7 @@ export const Chat: React.FC<ChatProps> = ({
     areChatActionsDisabled,
     setIsSearchLoading,
     influencers,
-    setIsInitialLogoScreen,
+    setHasSearched,
     handleSelectedInfluencersToOutreach,
     isSearchDisabled,
     isOutreachButtonDisabled,
@@ -93,24 +103,11 @@ export const Chat: React.FC<ChatProps> = ({
     allSequenceInfluencers,
     setSelectedInfluencers,
 }) => {
-    const defaultFilters: Filters = {
-        platforms: ['youtube', 'tiktok', 'instagram'],
-        audience_geo: [
-            { id: countriesByCode.US.id, weight: 0.15 },
-            { id: countriesByCode.CA.id, weight: 0.1 },
-        ],
-        influencerSizes: ['microinfluencer', 'nicheinfluencer'],
-    };
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters, (onLoadFilters) => {
-        // Fallback for users who had the old version of the filters saved in localStorage
-        if (!onLoadFilters.influencerSizes) {
-            onLoadFilters.influencerSizes = ['microinfluencer', 'nicheinfluencer'];
-        }
-        return onLoadFilters;
-    });
+    const { trackBoostbotSearch } = useSearchTrackers();
+    const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
     let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -122,6 +119,7 @@ export const Chat: React.FC<ChatProps> = ({
         updateConversation,
         refreshConversation,
         saveSearchResults,
+        setInfluencers,
     } = useBoostbot({
         abortSignal: abortController.signal,
     });
@@ -212,53 +210,48 @@ export const Chat: React.FC<ChatProps> = ({
             const influencers: BoostbotInfluencer[] = mixArrays(searchResults).filter((i) => !!i.url);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
+            trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
             track(RecommendInfluencers, payload);
-            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
-            setIsInitialLogoScreen(false);
-            setMessages((prevMessages) => {
-                const newMessages = [...prevMessages];
 
-                if (influencers.length > 0) {
-                    if (isFirstTimeSearch) {
-                        setIsFirstTimeSearch(false);
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
-                        });
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
-                        });
-                    } else {
-                        newMessages.push({
-                            sender: 'Bot',
-                            type: 'translation',
-                            translationKey: 'boostbot.chat.influencersFound',
-                            translationValues: { count: influencers.length },
-                        });
-                    }
+            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
+            const newMessages = [...messages];
+
+            if (influencers.length > 0) {
+                if (isFirstTimeSearch) {
+                    setIsFirstTimeSearch(false);
+                    newMessages.push({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
+                    });
+                    newMessages.push({
+                        sender: 'Bot',
+                        type: 'translation',
+                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
+                    });
                 } else {
                     newMessages.push({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.noInfluencersFound',
+                        translationKey: 'boostbot.chat.influencersFound',
+                        translationValues: { count: influencers.length },
                     });
                 }
+            } else {
+                newMessages.push({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.noInfluencersFound',
+                });
+            }
 
-                const newData = { searchResults: influencers, chatMessages: newMessages };
-                const newDataInDbFormat = {
-                    search_results: influencers as unknown as Json,
-                    chat_messages: newMessages as Json,
-                };
+            const newData = { searchResults: influencers, chatMessages: newMessages };
+            const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+        
+            saveSearchResults(influencers);
 
-                refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
-
-                saveSearchResults(influencers);
-
-                return newMessages;
-            });
+            refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
+            setHasSearched(true);
             document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -279,6 +272,7 @@ export const Chat: React.FC<ChatProps> = ({
 
     const clearChatHistoryAndFilters = () => {
         clearChatHistory();
+        setInfluencers([]);
         setFilters(defaultFilters);
     };
 
@@ -349,6 +343,7 @@ export const Chat: React.FC<ChatProps> = ({
                     false
                 }
                 setSelectedInfluencers={setSelectedInfluencers}
+                url="boostbot"
             />
 
             <ChatContent

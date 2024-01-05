@@ -5,11 +5,14 @@ import { Button } from 'src/components/button';
 import { TABLE_LIMIT, TABLE_COLUMNS, COLLAB_OPTIONS } from '../constants';
 import { useTranslation } from 'react-i18next';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { Spinner } from 'src/components/icons';
 
 export const Table = ({
     influencers,
     onRowClick,
+    loading,
 }: {
+    loading: boolean;
     influencers?: SequenceInfluencerManagerPage[];
     onRowClick?: (data: InfluencerRowProps['influencer']) => void;
 }) => {
@@ -77,7 +80,11 @@ export const Table = ({
                                 <tr>
                                     <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
                                         <div className="flex justify-center">
-                                            <p className="text-sm text-gray-500">No Influencers...</p>
+                                            {loading ? (
+                                                <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                                            ) : (
+                                                <p className="text-sm text-gray-500">No Influencers...</p>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

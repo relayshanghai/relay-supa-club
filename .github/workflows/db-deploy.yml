@@ -1,4 +1,5 @@
 run-name: Run db-deploy workflow by @${{ github.actor }}
+name: db-deploy
 
 on:
     push:

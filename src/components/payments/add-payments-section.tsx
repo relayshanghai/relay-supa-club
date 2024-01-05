@@ -40,7 +40,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                 colorPrimary: '#8B5CF6', //primary-500 see tailwind.config.js
             },
         },
-        locale: i18n.language.includes('en') ? 'en' : 'zh',
+        locale: i18n.language?.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
     };
 
@@ -99,7 +99,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                         )}
 
                         {selectedPaymentMethod === 'alipay' && (
-                            <AlipayPortal selectedPrice={selectedPrice} priceTier={priceTier} />
+                            <AlipayPortal selectedPrice={selectedPrice} priceTier={priceTier} couponId={couponId} />
                         )}
                     </>
                 ) : (

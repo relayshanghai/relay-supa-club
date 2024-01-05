@@ -114,14 +114,6 @@ export const INFLUENCER_TABLE = generateEventName('Influencer Table');
 export const CAMPAIGN_MODAL_CARD = generateEventName('Campaign Modal Card');
 // Campaign Modal Card, added creator to campaign
 
-// AI Email Generator
-export const AI_EMAIL_GENERATOR = generateEventName('AI Email Generator');
-// AI Email Generator, regenerate email
-// AI Email Generator, regenerate subject
-// AI Email Generator, generate email and subject
-// AI Email Generator, copy subject line
-// AI Email Generator, copy email
-
 // Account
 export const ACCOUNT_COMPANY_DETAILS = generateEventName('Account, CompanyDetails');
 // Account, CompanyDetails, send invite

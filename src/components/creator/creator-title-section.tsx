@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { imgProxy } from 'src/utils/fetcher';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
@@ -7,6 +6,7 @@ import { useAnalytics } from '../analytics/analytics-provider';
 import { AnalyzeOpenExternalSocialProfile } from 'src/utils/analytics/events';
 import { featEmail } from 'src/constants/feature-flags';
 import { useUser } from 'src/hooks/use-user';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 
 export const TitleSection = ({
     user_profile,
@@ -29,9 +29,10 @@ export const TitleSection = ({
         <div className="p-6">
             <div className="flex items-center">
                 <div className="relative h-28 w-28">
-                    <img
-                        src={imgProxy(user_profile.picture) as string}
-                        alt={`${user_profile.user_id}-profile-pic`}
+                    <InfluencerAvatarWithFallback
+                        url={user_profile.picture}
+                        name={user_profile.fullname}
+                        size={112}
                         className="rounded-full"
                     />
                     <div className="absolute bottom-0 right-0">

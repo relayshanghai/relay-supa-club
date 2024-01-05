@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmail, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -24,7 +24,7 @@ export const getSequenceEmailsBySequenceInfluencersCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencerIds: string[]) => {
         const { data, error } = await supabaseClient
             .from('sequence_emails')
-            .select('id, email_message_id')
+            .select('id, email_message_id, job_id')
             .in('sequence_influencer_id', sequenceInfluencerIds);
 
         if (error) throw error;
@@ -45,7 +45,7 @@ export const getSequenceEmailByInfluencerAndSequenceStep =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencerId: string, sequenceStepId: string) => {
         return await supabaseClient
             .from('sequence_emails')
-            .select('email_delivery_status')
+            .select('id, email_delivery_status')
             .eq('sequence_influencer_id', sequenceInfluencerId)
             .eq('sequence_step_id', sequenceStepId)
             .limit(1)
@@ -65,7 +65,7 @@ export const getSequenceEmailAndSequencesByMessageIdCall =
 
 export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
     update.updated_at = new Date().toISOString();
-    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id).single();
+    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id);
     if (error) throw error;
     return data;
 };
@@ -75,7 +75,17 @@ export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async 
         // This column was added later and is not 'not null', so add this check for any new ones
         throw new Error('Missing required email_engine_account_id');
     }
-    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert).single();
+    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert);
+    if (error) throw error;
+    return data;
+};
+
+export const insertSequenceEmailsCall = (supabaseClient: RelayDatabase) => async (inserts: SequenceEmailInsert[]) => {
+    if (!inserts.every((insert) => insert.email_engine_account_id)) {
+        // This column was added later and is not 'not null', so add this check for any new ones
+        throw new Error('Missing required email_engine_account_id');
+    }
+    const { data, error } = await supabaseClient.from('sequence_emails').insert(inserts);
     if (error) throw error;
     return data;
 };
@@ -95,13 +105,12 @@ export const deleteSequenceEmailsByInfluencerCall = (supabaseClient: RelayDataba
     if (error) throw error;
 };
 
-export const getSequenceEmailsByEmailEngineAccountId =
-    (supabaseClient: RelayDatabase) =>
-    async (accountId: string): Promise<Pick<SequenceEmail, 'email_send_at'>[]> => {
-        const { data, error } = await supabaseClient
-            .from('sequence_emails')
-            .select('email_send_at')
-            .eq('email_engine_account_id', accountId);
-        if (error) throw error;
-        return data ?? [];
-    };
+/** only gets where the send at date is in the future or from the last 24 hours. Date is calculated based on America/Chicago timezone */
+export const getSequenceEmailsByEmailEngineAccountId = (supabaseClient: RelayDatabase) => async (accountId: string) => {
+    const { data, error } = await supabaseClient.rpc('fetch_email_count_per_account_by_date', {
+        account_id: accountId,
+    });
+
+    if (error) throw error;
+    return data;
+};

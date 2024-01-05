@@ -116,10 +116,10 @@ describe('hasCustomSearchParams', () => {
         params.username = '';
 
         const location: LocationWeighted = {
-            id: 'test id',
+            id: 123,
             name: 'test name',
             title: 'test title',
-            country: { id: 'test country id', code: 'test code' },
+            country: { id: 123, code: 'test code' },
             weight: 1,
             type: ['test type'],
         };

@@ -1127,6 +1127,7 @@ export interface Database {
           email_send_at: string | null
           email_tracking_status: string | null
           id: string
+          job_id: string | null
           sequence_id: string | null
           sequence_influencer_id: string
           sequence_step_id: string
@@ -1140,6 +1141,7 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          job_id?: string | null
           sequence_id?: string | null
           sequence_influencer_id: string
           sequence_step_id: string
@@ -1153,12 +1155,19 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          job_id?: string | null
           sequence_id?: string | null
           sequence_influencer_id?: string
           sequence_step_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_emails_job_id_fkey"
+            columns: ["job_id"]
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_emails_sequence_id_fkey"
             columns: ["sequence_id"]
@@ -1553,7 +1562,30 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      searches_per_user: {
+        Row: {
+          name: string | null
+          searches_limit: string | null
+          subscription_start_date: string | null
+          subscription_status: string | null
+          website: string | null
+        }
+        Insert: {
+          name?: string | null
+          searches_limit?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          website?: string | null
+        }
+        Update: {
+          name?: string | null
+          searches_limit?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       create_queue_worker: {
@@ -1564,6 +1596,25 @@ export interface Database {
           schedule: string
         }
         Returns: undefined
+      }
+      create_queue_worker_2: {
+        Args: {
+          worker_name: string
+          url: string
+          token: string
+          schedule: string
+        }
+        Returns: undefined
+      }
+      fetch_email_count_per_account_by_date: {
+        Args: {
+          account_id: string
+        }
+        Returns: {
+          date: string
+          step_id: string
+          emails_count: number
+        }[]
       }
       fetch_pending_jobs: {
         Args: {

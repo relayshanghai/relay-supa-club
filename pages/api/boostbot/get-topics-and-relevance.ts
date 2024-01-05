@@ -5,7 +5,12 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
 
 const GetTopicsAndRelevanceBody = z.object({
-    topics: z.string().array(),
+    topics: z
+        .object({
+            tag: z.string(),
+            distance: z.number(),
+        })
+        .array(),
 });
 
 export type GetTopicsAndRelevanceBody = z.input<typeof GetTopicsAndRelevanceBody>;

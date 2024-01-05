@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-helpers-nextjs';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { isDev } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
@@ -43,14 +44,6 @@ const checkOnboardingStatus = async (
     supabase: RelayDatabase,
 ) => {
     const redirectUrl = req.nextUrl.clone();
-    // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/company/create') {
-        const { user_id } = JSON.parse(await req.text());
-        if (!user_id || user_id !== session.user.id) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
-        }
-        return res;
-    }
 
     // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
     if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
@@ -72,7 +65,7 @@ const checkOnboardingStatus = async (
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
-        if (req.nextUrl.pathname.includes('signup')) return res;
+        if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) return res;
         //eslint-disable-next-line
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
     } else if (
@@ -82,11 +75,7 @@ const checkOnboardingStatus = async (
         subscriptionStatus === 'paused'
     ) {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (
-            req.nextUrl.pathname === '/' ||
-            req.nextUrl.pathname === '/login' ||
-            req.nextUrl.pathname.includes('/signup')
-        ) {
+        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
             redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
@@ -95,16 +84,9 @@ const checkOnboardingStatus = async (
         return res;
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (
-            req.nextUrl.pathname.includes('/api/company') ||
-            req.nextUrl.pathname.includes('/api/subscriptions') ||
-            req.nextUrl.pathname.includes('/free-trial')
-        ) {
+        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {
             return res;
         }
-
-        redirectUrl.pathname = '/free-trial';
-        return NextResponse.redirect(redirectUrl);
     }
 
     // should never reach here.
@@ -134,6 +116,19 @@ const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
         res.headers.set('Access-Control-Allow-Origin', origin);
     }
 
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
+    return res;
+};
+
+const trakingAllowList = ['boostbot.ai', 'www.boostbot.ai', 'en.boostbot.ai', 'cn.boostbot.ai'];
+
+const allowTrackingCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    if (origin && origin.includes('localhost') && isDev()) {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && trakingAllowList.some((allowed) => origin.includes(allowed))) {
+        res.headers.set('Access-Control-Allow-Origin', origin);
+    }
     res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
 };
@@ -181,7 +176,8 @@ export async function middleware(req: NextRequest) {
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
-
+    if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
+        return allowTrackingCors(req, res);
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
 
@@ -225,7 +221,8 @@ export async function middleware(req: NextRequest) {
     // unauthenticated pages requests, send to signup
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/signup') return res;
-    redirectUrl.pathname = '/';
+    if (req.nextUrl.pathname === '/login') return res;
+    redirectUrl.pathname = '/login';
     return NextResponse.redirect(redirectUrl);
 }
 
@@ -242,7 +239,6 @@ export const config = {
          * - assets/* (assets files) (public/assets/*)
          *
          * Page routes
-         * - login*
          * - login/reset-password
          * - signup/invite*
          * - logout
@@ -250,7 +246,7 @@ export const config = {
          *
          * API routes
          * - api/invites/accept*
-         * - api/company/create-employee
+         * - api/signup
          * - api/subscriptions/webhook
          * - api/webhooks
          * - api/logs/vercel
@@ -260,7 +256,8 @@ export const config = {
          * - api/subscriptions/webhook
          * - api/company/exists
          * - api/jobs/run
+         * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login*|login/reset-password|signup/invite*|logout|pricing|api/invites/accept*|api/company/create-employee*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };

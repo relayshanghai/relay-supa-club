@@ -19,6 +19,11 @@ export const supabaseClientCypress = () => {
     });
 };
 
+export const getId = async (email: string) => {
+    const supabase = supabaseClientCypress();
+    return await supabase.from('profiles').select('id').eq('email', email).single();
+};
+
 export const reinsertAlice = async () => {
     try {
         const supabase = supabaseClientCypress();
@@ -154,6 +159,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 email_delivery_status: 'Scheduled',
                 email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
                 email_engine_account_id: mockProfile.email_engine_account_id,
+                job_id: null,
             });
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }
@@ -189,3 +195,13 @@ export const randomString = (length = 8) =>
     Math.random()
         .toString(36)
         .substring(2, length + 2);
+
+export const resetBoostbotConversations = async () => {
+    const supabase = supabaseClientCypress();
+    const { data: conversations } = await supabase.from('boostbot_conversations').select('id');
+
+    if (!conversations) return;
+    for (const conversation of conversations) {
+        await supabase.from('boostbot_conversations').delete().match({ id: conversation.id });
+    }
+};

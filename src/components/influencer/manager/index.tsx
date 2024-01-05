@@ -26,11 +26,12 @@ import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((sequence) => {
-            return sequence.id;
-        }),
+    const { sequenceInfluencers, refreshSequenceInfluencers, loading } = useSequenceInfluencers(
+        sequences?.map((sequence) => sequence.id),
     );
+    useEffect(() => {
+        refreshSequenceInfluencers([]);
+    }, [refreshSequenceInfluencers]);
 
     const { profile } = useUser();
 
@@ -69,15 +70,11 @@ const Manager = () => {
 
             track(OpenInfluencerProfile, {
                 influencer_id: influencer.influencer_social_profile_id,
-                search_id: searchTerm,
                 current_status: influencer?.funnel_status,
-                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
-                currently_searched: searchTerm !== '',
-                view_mine_enabled: onlyMe,
                 is_users_influencer: influencer.manager_first_name === profile?.first_name,
             });
         },
-        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
+        [setUiState, track, profile],
     );
 
     const handleProfileUpdate = useCallback(
@@ -213,7 +210,7 @@ const Manager = () => {
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
-                <Table influencers={influencers} onRowClick={handleRowClick} />
+                <Table loading={loading} influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
                 profile={influencer}

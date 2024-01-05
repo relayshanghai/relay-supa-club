@@ -22,7 +22,7 @@ const ResetPassword = () => {
 
     const { error_description } = supabaseQueriesObject;
 
-    const { login, supabaseClient } = useUser();
+    const { login, supabaseClient, profile } = useUser();
     const [submitting, setSubmitting] = useState(false);
     const {
         values: { password, email, confirmPassword },
@@ -81,6 +81,12 @@ const ResetPassword = () => {
             }
         });
     }, [supabaseClient]);
+
+    useEffect(() => {
+        if (profile?.id) {
+            setResetDetected(true);
+        }
+    }, [profile?.id]);
 
     const setAndValidate = (type: ResetInputTypes, value: string) => {
         setFieldValue(type, value);

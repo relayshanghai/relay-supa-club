@@ -4,7 +4,7 @@ import type { ColumnDef, RowData, TableMeta, OnChangeFn, RowSelectionState, Row 
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import Question from 'src/components/icons/Question';
 
@@ -13,6 +13,8 @@ export interface DataTableProps<TData, TValue> {
     data: TData[];
     selectedInfluencers: RowSelectionState;
     setSelectedInfluencers: OnChangeFn<RowSelectionState>;
+    influencerCount?: number;
+    currentPage?: number;
     meta: TableMeta<TData>;
 }
 
@@ -21,7 +23,7 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
-        setSelectedRow: (row: Row<BoostbotInfluencer>) => void;
+        setSelectedRow: (row: Row<TData>) => void;
         setIsInfluencerDetailsModalOpen: (open: boolean) => void;
         allSequenceInfluencers?: SequenceInfluencerManagerPage[];
         setSelectedCount: (count: number) => void;
@@ -34,6 +36,8 @@ export function InfluencersTable<TData, TValue>({
     columns,
     selectedInfluencers,
     setSelectedInfluencers,
+    influencerCount,
+    currentPage,
     meta,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
@@ -155,8 +159,8 @@ export function InfluencersTable<TData, TValue>({
                     </TableBody>
                 </Table>
 
-                <div className="sticky bottom-0 left-0 right-0 z-20 w-full border bg-white p-2">
-                    <DataTablePagination table={table} />
+                <div className="sticky bottom-0 left-0 right-0 z-10 w-full border bg-white p-2">
+                    <DataTablePagination table={table} count={influencerCount} currentPage={currentPage} />
                 </div>
             </div>
         </div>

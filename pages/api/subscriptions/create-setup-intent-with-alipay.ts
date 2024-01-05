@@ -6,19 +6,21 @@ import { serverLogger } from 'src/utils/logger-server';
 import { getHostnameFromRequest } from 'src/utils/get-host';
 import type Stripe from 'stripe';
 
-export type CreateSetUpIntentPostBody = {
+export type CreateSetUpIntentForAlipayPostBody = {
     customerId: string;
     paymentMethodTypes: string[];
     priceId: string;
     companyId: string;
     currency: string;
     priceTier: string;
+    couponId?: string;
 };
 
-export type CreateSetUpIntentPostResponse = Stripe.SetupIntent;
+export type CreateSetUpIntentForAlipayPostResponse = Stripe.SetupIntent;
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier } = req.body;
+    const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier, couponId } =
+        req.body as CreateSetUpIntentForAlipayPostBody;
     //create an payment method to confirm the setup intent
     const paymentMethod = await stripeClient.paymentMethods.create({
         type: 'alipay',
@@ -32,6 +34,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         customer: customerId,
     });
 
+    // set the payment method as default
+    await stripeClient.customers.update(customerId, {
+        invoice_settings: {
+            default_payment_method: paymentMethod.id,
+        },
+    });
+
     if (!paymentMethodAttach) {
         serverLogger('Failed to attach payment method to customer');
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
@@ -42,8 +51,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     returnUrlParams.append('priceId', priceId);
     returnUrlParams.append('companyId', companyId);
     returnUrlParams.append('selectedPlan', priceTier);
+    if (couponId) {
+        returnUrlParams.append('couponId', couponId);
+    }
     //create a setup intent
-    const response: CreateSetUpIntentPostResponse = await stripeClient.setupIntents.create(
+    const response: CreateSetUpIntentForAlipayPostResponse = await stripeClient.setupIntents.create(
         {
             customer: customerId,
             payment_method_types: paymentMethodTypes,
