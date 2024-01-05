@@ -22,7 +22,6 @@ import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import type { EmailCountPerDayPerStep } from 'src/utils/api/email-engine/schedule-emails';
 import { scheduleEmails } from 'src/utils/api/email-engine/schedule-emails';
 import { insertSequenceEmailsCall, updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
-import { transformKeys } from 'src/utils/database/helpers';
 
 export type SequenceStepSendArgs = {
     emailEngineAccountId: string;
@@ -166,16 +165,16 @@ const sendAndInsertEmail = async ({
                 throw new Error(res.error);
             }
             await insertSequenceEmailsCall([
-                transformKeys({
-                    sequence_influencer_id: influencer.id,
-                    sequence_id: influencer.sequence_id,
-                    email_engine_account_id: account,
-                    sequence_step_id: step.id,
+                {
+                    sequenceInfluencerId: influencer.id,
+                    sequenceId: influencer.sequence_id,
+                    emailEngineAccountId: account,
+                    sequenceStepId: step.id,
 
-                    email_delivery_status: 'Scheduled',
-                    email_message_id: res.messageId,
-                    email_send_at: emailSendAt,
-                }),
+                    emailDeliveryStatus: 'Scheduled',
+                    emailMessageId: res.messageId,
+                    emailSendAt,
+                },
             ]);
             crumb({ message: `inserted sequence email` });
             return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
