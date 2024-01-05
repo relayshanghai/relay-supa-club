@@ -6,6 +6,7 @@ import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
+import { wait } from 'src/utils/utils';
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
     // some influencers were created with sequence_step_id's from another sequence. For each influencer, pull their `sequence_steps` for the right sequence. If the influencer's `sequence_step_id` is not in the `sequence_steps` for that sequence, set the id to the corresponding `sequence_step_number` for that sequence.
@@ -876,7 +877,7 @@ const _findEmailInOutbox: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: found });
 };
 
-const checkHowManyJobsCreatedPerInfluencer: NextApiHandler = async (_req, res) => {
+const _checkHowManyJobsCreatedPerInfluencer: NextApiHandler = async (_req, res) => {
     console.log('checkHowManyJobsCreatedPerInfluencer');
     const influencerId = '67413fd1-02ca-4783-8e34-63773aea19ff';
     const { data: allJobs } = await supabase.from('jobs').select('*').eq('queue', 'sequence_step_send');
@@ -891,4 +892,35 @@ const checkHowManyJobsCreatedPerInfluencer: NextApiHandler = async (_req, res) =
     return res.status(200).json({ message: jobs.length });
 };
 
-export default checkHowManyJobsCreatedPerInfluencer;
+const fixOutboxEmailsHaveNoSequenceEmailRecord: NextApiHandler = async (_req, res) => {
+    console.log('fixOutboxEmailsHaveNoSequenceEmailRecord');
+    const outbox = await getOutbox();
+
+    let { data: allSequenceEmails } = await supabase.from('sequence_emails').select('*');
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+
+    // check for sequence emails that have no influencer. delete them
+
+    allSequenceEmails = (await supabase.from('sequence_emails').select('*')).data ?? [];
+    console.log('allSequenceEmails', allSequenceEmails?.length);
+
+    const results: any[] = [];
+    for (const email of outbox) {
+        const sequenceEmail = allSequenceEmails?.find((e) => e.email_message_id === email.messageId);
+        if (!sequenceEmail) {
+            try {
+                const deleted = await deleteEmailFromOutbox(email.queueId);
+                console.log('deleted', deleted.deleted, email.queueId);
+                await wait(1000);
+                results.push(email.queueId);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    console.log('results', results.length);
+    return res.status(200).json({ message: results });
+};
+
+export default fixOutboxEmailsHaveNoSequenceEmailRecord;
