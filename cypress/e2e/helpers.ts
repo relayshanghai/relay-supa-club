@@ -2,9 +2,9 @@ import type { RelayDatabase, SequenceInfluencer, SequenceInfluencerInsert } from
 import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
-import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { mockProfile } from 'src/mocks/test-user';
+
 export const bobEmail = 'bob.brown@example.com';
 export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail, 'charlie.charles@example.com'];
 
@@ -152,7 +152,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
         const sequenceSteps = await getSequenceStepsBySequenceIdCall(supabase)(sequenceInfluencer.sequence_id);
         if (!sequenceSteps) throw new Error('No sequence steps found');
         for (const step of sequenceSteps) {
-            await insertSequenceEmailCall(supabase)({
+            const { error } = await supabase.from('sequence_emails').insert({
                 sequence_influencer_id: sequenceInfluencer.id,
                 sequence_id: sequenceInfluencer.sequence_id,
                 sequence_step_id: step.id,
@@ -161,6 +161,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 email_engine_account_id: mockProfile.email_engine_account_id,
                 job_id: null,
             });
+            if (error) throw new Error(error.message);
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }
         await updateSequenceInfluencerCall(supabase)({

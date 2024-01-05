@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -62,33 +62,6 @@ export const getSequenceEmailAndSequencesByMessageIdCall =
         if (error) throw error;
         return data;
     };
-
-export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
-    update.updated_at = new Date().toISOString();
-    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id);
-    if (error) throw error;
-    return data;
-};
-
-export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async (insert: SequenceEmailInsert) => {
-    if (!insert.email_engine_account_id) {
-        // This column was added later and is not 'not null', so add this check for any new ones
-        throw new Error('Missing required email_engine_account_id');
-    }
-    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert);
-    if (error) throw error;
-    return data;
-};
-
-export const insertSequenceEmailsCall = (supabaseClient: RelayDatabase) => async (inserts: SequenceEmailInsert[]) => {
-    if (!inserts.every((insert) => insert.email_engine_account_id)) {
-        // This column was added later and is not 'not null', so add this check for any new ones
-        throw new Error('Missing required email_engine_account_id');
-    }
-    const { data, error } = await supabaseClient.from('sequence_emails').insert(inserts);
-    if (error) throw error;
-    return data;
-};
 
 export const getAllSequenceEmailsCall = (supabaseClient: RelayDatabase) => async (ids: string[]) => {
     const { data, error } = await supabaseClient.from('sequence_emails').select('*').in('sequence_id', ids);

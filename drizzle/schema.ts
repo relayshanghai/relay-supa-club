@@ -570,6 +570,7 @@ export const sequenceEmails = pgTable('sequence_emails', {
         .references(() => sequenceSteps.id),
     sequenceId: uuid('sequence_id').references(() => sequences.id),
     emailEngineAccountId: text('email_engine_account_id'),
+    jobId: uuid('job_id').references(() => jobs.id, { onDelete: 'set null' }),
 });
 
 export const templateVariables = pgTable('template_variables', {
