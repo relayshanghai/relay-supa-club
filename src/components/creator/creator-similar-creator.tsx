@@ -1,26 +1,24 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { imgProxy } from 'src/utils/fetcher';
 import { numFormatter } from 'src/utils/utils';
 import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 
 export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
-
     return (
         <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
             <div className="flex flex-1 items-center justify-between overflow-hidden">
                 <div className="mr-4 flex flex-shrink-0 items-center">
-                    <img
-                        src={imgProxy(creator.picture) || '/assets/imgs/image404.png'}
+                    <InfluencerAvatarWithFallback
+                        url={creator.picture}
+                        size={40}
+                        name={creator.fullname}
                         className="rounded-full"
-                        width={40}
-                        height={40}
-                        alt={`${creator.fullname}-avatar`}
                     />
                 </div>
                 <div className="flex-1">
@@ -41,7 +39,7 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                             platform,
                             user_id: creator.user_id,
                             // @note total_reports is an incrementable property
-                            total_reports: 1,
+                            $add: { total_reports: 1 },
                         });
                     }}
                 >

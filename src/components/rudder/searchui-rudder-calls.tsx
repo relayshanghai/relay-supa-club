@@ -8,7 +8,10 @@ export const useSearchTrackers = () => {
         // Event names:
         // - Search Options, Search
         // - Search Filters Modal, Search
-        trackEvent(`Search For Influencers`, { total_searches: 1, ...payload });
+        trackEvent(`Search For Influencers`, { $add: { total_classic_searches: 1 }, ...payload });
+    };
+    const trackBoostbotSearch = async (_modal: string, payload: any = {}) => {
+        trackEvent(`Search For Influencers`, { $add: { total_boostbot_searches: 1 }, ...payload });
     };
     const trackCloseFilterModal = async () => {
         trackEvent(SEARCH_FILTER_MODAL('Close search filter modal'));
@@ -61,6 +64,7 @@ export const useSearchTrackers = () => {
         trackHashtags,
         trackTopics,
         trackSearch,
+        trackBoostbotSearch,
         trackCloseFilterModal,
     };
 };

@@ -70,11 +70,11 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         setTopicTags,
         setInfluencerLocation,
         setAudienceLocation,
+        page,
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [_batchId, setBatchId] = useState(() => randomNumber());
-    const [page, setPage] = useState(0);
     const {
         results: firstPageSearchResults,
         resultsTotal,
@@ -353,7 +353,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                 </div>
             </div>
             <SearchOptions
-                setPage={setPage}
                 setShowFiltersModal={setShowFiltersModal}
                 onSearch={handleSearch}
                 searchType={searchType}
@@ -404,7 +403,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                         selectedInfluencers={selectedInfluencers}
                         setSelectedInfluencers={setSelectedInfluencers}
                         influencerCount={resultsTotal}
-                        setPage={setPage}
                         currentPage={page}
                         meta={{
                             t,

@@ -315,9 +315,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <InfluencerAvatarWithFallback influencer={sequenceInfluencer} />
+                        <InfluencerAvatarWithFallback
+                            url={sequenceInfluencer.avatar_url || ''}
+                            name={sequenceInfluencer.name}
+                        />
 
-                        <div className="flex flex-col">
+                        <div className="flex flex-col overflow-hidden">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"

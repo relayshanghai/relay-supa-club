@@ -15,6 +15,7 @@ import type {
     SubscriptionUpgradePostResponse,
 } from 'pages/api/subscriptions/create-subscription-with-payment-intent';
 import type { PromotionCodesListResponse } from 'pages/api/subscriptions/promo-codes';
+import type { SetupIntentGetResponse } from 'pages/api/subscriptions/setup-intents';
 import { nextFetch } from 'src/utils/fetcher';
 
 export const upgradeSubscriptionWithPaymentIntent = async (
@@ -113,7 +114,7 @@ export const upgradeSubscriptionWithAlipay = async ({
 };
 
 export const getSetupIntents = async (cusId: string) => {
-    const setupIntents = await nextFetch(`subscriptions/setup-intents?cusId=${cusId}`);
+    const setupIntents = await nextFetch<SetupIntentGetResponse>(`subscriptions/setup-intents?cusId=${cusId}`);
     return setupIntents;
 };
 

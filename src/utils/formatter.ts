@@ -1,3 +1,5 @@
+import { enUS } from 'src/constants';
+
 /** converts a decimal to a percent, assuming that the decimal is a base 100 percent, e.g. .15 -> 15%, 1.5 -> 150%. Uses two decimals by default after the zero max and rounds the last */
 export const decimalToPercent = (num?: number | string, decimals = 2) => {
     let number = num;
@@ -10,7 +12,7 @@ export const decimalToPercent = (num?: number | string, decimals = 2) => {
     if (!number || typeof number !== 'number') {
         return null;
     }
-    return Intl.NumberFormat('en-US', {
+    return Intl.NumberFormat(enUS, {
         style: 'percent',
         maximumFractionDigits: decimals,
     }).format(number);
@@ -31,7 +33,7 @@ export const numberFormatter = (num?: number | string, decimals = 2) => {
     }
 
     const formatNumber = (num: number) =>
-        new Intl.NumberFormat('en-US', {
+        new Intl.NumberFormat(enUS, {
             notation: 'compact',
             maximumFractionDigits: decimals,
         }).format(num);

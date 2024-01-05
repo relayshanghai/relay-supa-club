@@ -4,6 +4,7 @@ import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailsByEmailEngineAccountId,
     getSequenceEmailsBySequenceInfluencerCall,
+    insertSequenceEmailCall,
     insertSequenceEmailsCall,
     updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
@@ -31,6 +32,8 @@ export type SequenceStepSendArgs = {
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
     reference?: string;
+    /** only send the job id for the first step. subsequent step's job id will be added in the handleSent webhook. */
+    jobId?: string;
 };
 
 type SequenceSendEventRun = (payload: SequenceStepSendArgs) => Promise<SendResult>;
@@ -48,6 +51,7 @@ const sendAndInsertEmail = async ({
     messageId,
     references,
     scheduledEmails,
+    jobId,
 }: {
     step: SequenceStep;
     sequenceSteps: SequenceStep[];
@@ -57,6 +61,7 @@ const sendAndInsertEmail = async ({
     messageId: string;
     references: string;
     scheduledEmails: EmailCountPerDayPerStep;
+    jobId?: string;
 }): Promise<SendResult> => {
     if (!influencer.email) {
         throw new Error('No email address');
@@ -71,8 +76,6 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent post url');
     }
 
-    // @note if by this point you are not sure if there's an existing email, you shouldn't be running this function
-    // make sure there is not an existing sequence email for this influencer for this step:
     let existingSequenceEmails: SequenceEmail[] = [];
     try {
         existingSequenceEmails = await db(getSequenceEmailsBySequenceInfluencerCall)(influencer.id);
@@ -119,6 +122,7 @@ const sendAndInsertEmail = async ({
         if (!outreachStepInsert || !outreachStepInsert.email_send_at) {
             throw new Error('No outreach step insert');
         }
+        outreachStepInsert.job_id = jobId; // other job ids will be added in handleSent webhook
 
         const res = await sendTemplateEmail({
             account,
@@ -140,29 +144,63 @@ const sendAndInsertEmail = async ({
         crumb({ message: `inserted sequence emails` });
     } else {
         if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
-            throw new Error('No existing sequence email found');
-        }
-        const res = await sendTemplateEmail({
-            account,
-            toEmail: influencer.email,
-            template: step.template_id,
-            sendAt: existingSequenceEmail.email_send_at,
-            params,
-            messageId,
-            references,
-        });
+            serverLogger(new Error('No existing sequence email found')); // This should eventually stop happening as all sequences use the new 'schedule all emails at once' method. Then we can remove this whole if block and just throw an error
+            const { followupEmailInserts } = scheduleEmails(sequenceSteps, scheduledEmails, influencer, account);
+            const thisEmail = followupEmailInserts.find((e) => e.sequence_step_id === step.id);
+            const emailSendAt = thisEmail?.email_send_at;
+            if (!emailSendAt) {
+                throw new Error(
+                    `No email send at for step ${step.step_number}, thisEmail ${thisEmail} followupEmailInserts ${followupEmailInserts}`,
+                );
+            }
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: emailSendAt,
+                params,
+                messageId,
+                references,
+            });
 
-        if ('error' in res) {
-            throw new Error(res.error);
-        }
-        crumb({ message: `sent followup email` });
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
+            await db(insertSequenceEmailCall)({
+                sequence_influencer_id: influencer.id,
+                sequence_id: influencer.sequence_id,
+                email_engine_account_id: account,
+                sequence_step_id: step.id,
 
-        await db(updateSequenceEmailCall)({
-            id: existingSequenceEmail.id,
-            email_delivery_status: 'Scheduled',
-            email_message_id: res.messageId,
-        });
-        crumb({ message: `updated sequence email` });
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+                email_send_at: emailSendAt,
+            });
+            crumb({ message: `inserted sequence email` });
+            return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
+        } else {
+            const res = await sendTemplateEmail({
+                account,
+                toEmail: influencer.email,
+                template: step.template_id,
+                sendAt: existingSequenceEmail.email_send_at,
+                params,
+                messageId,
+                references,
+            });
+
+            if ('error' in res) {
+                throw new Error(res.error);
+            }
+            crumb({ message: `sent followup email` });
+
+            await db(updateSequenceEmailCall)({
+                id: existingSequenceEmail.id,
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
+            });
+            crumb({ message: `updated sequence email` });
+        }
     }
 
     return { sequenceInfluencerId: influencer.id, stepNumber: step.step_number };
@@ -175,6 +213,7 @@ const sendSequenceStep = async ({
     sequenceSteps,
     templateVariables,
     reference,
+    jobId,
 }: SequenceStepSendArgs) => {
     const trackData: SequenceSendPayload = {
         sequence_influencer_id: influencer.id,
@@ -183,6 +222,7 @@ const sendSequenceStep = async ({
         extra_info: {
             sequence_step: step.id,
             template_variables: templateVariables.map((variable) => variable.id),
+            jobId,
         },
     };
     const result: SendResult = {
@@ -222,6 +262,7 @@ const sendSequenceStep = async ({
                 references: reference ?? '',
                 messageId: messageIds[step.step_number],
                 scheduledEmails,
+                jobId,
             });
         } catch (error: any) {
             serverLogger(error);

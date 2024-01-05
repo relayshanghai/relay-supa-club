@@ -86,7 +86,7 @@ const NavBarInner = ({
                 <Title />
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-1 flex-col gap-4">
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/boostbot'} expandedName={t('navbar.boostbot')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.boostbot')}</p>
@@ -120,9 +120,11 @@ const NavBarInner = ({
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.performance')}</p>
                         </ActiveLink>
                     )}
+
                     <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`whitespace-nowrap text-xs`}>{t('navbar.guide')}</p>
                     </ActiveLink>
+
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className="text-center text-xs">ADMIN</h2>

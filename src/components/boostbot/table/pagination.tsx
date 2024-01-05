@@ -8,23 +8,19 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import PageLink from './pagelink';
 import { getPaginationItems } from './helper';
 import { useCallback } from 'react';
+import { useSearch } from 'src/hooks/use-search';
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
     count?: number;
     currentPage?: number;
-    setPageFunction?: (page: number) => void;
 }
 
-export function DataTablePagination<TData>({
-    table,
-    count,
-    setPageFunction,
-    currentPage,
-}: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table, count, currentPage }: DataTablePaginationProps<TData>) {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
-    const isSearchPage = currentPage !== undefined && count !== undefined && setPageFunction !== undefined;
+    const { setPage } = useSearch();
+    const isSearchPage = currentPage !== undefined && count !== undefined && setPage !== undefined;
 
     //adjust to control the number of links in the pagination section
     const maxPages = Math.floor(count ?? 0 / 10);
@@ -36,29 +32,29 @@ export function DataTablePagination<TData>({
 
     const handlePreviousPage = useCallback(() => {
         if (isSearchPage) {
-            setPageFunction(currentPage - 1);
+            setPage(currentPage - 1);
             return;
         }
         table.previousPage();
-    }, [setPageFunction, currentPage, table, isSearchPage]);
+    }, [setPage, currentPage, table, isSearchPage]);
 
     const handleNextPage = useCallback(() => {
         if (isSearchPage) {
-            setPageFunction(currentPage + 1);
+            setPage(currentPage + 1);
             return;
         }
         table.nextPage();
-    }, [setPageFunction, currentPage, table, isSearchPage]);
+    }, [setPage, currentPage, table, isSearchPage]);
 
     const handleSetPage = useCallback(
         (pageNum: number) => {
             if (isSearchPage) {
-                setPageFunction(pageNum);
+                setPage(pageNum);
                 return;
             }
             table.setPageIndex(pageNum);
         },
-        [setPageFunction, table, isSearchPage],
+        [setPage, table, isSearchPage],
     );
 
     return (
