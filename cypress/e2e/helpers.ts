@@ -4,8 +4,6 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { mockProfile } from 'src/mocks/test-user';
-import { insertSequenceEmailsCall } from 'src/backend/database/sequence-emails';
-import { transformKeys } from 'src/utils/database/helpers';
 
 export const bobEmail = 'bob.brown@example.com';
 export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail, 'charlie.charles@example.com'];
@@ -154,17 +152,16 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
         const sequenceSteps = await getSequenceStepsBySequenceIdCall(supabase)(sequenceInfluencer.sequence_id);
         if (!sequenceSteps) throw new Error('No sequence steps found');
         for (const step of sequenceSteps) {
-            await insertSequenceEmailsCall([
-                transformKeys({
-                    sequence_influencer_id: sequenceInfluencer.id,
-                    sequence_id: sequenceInfluencer.sequence_id,
-                    sequence_step_id: step.id,
-                    email_delivery_status: 'Scheduled',
-                    email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
-                    email_engine_account_id: mockProfile.email_engine_account_id,
-                    job_id: null,
-                }),
-            ]);
+            const { error } = await supabase.from('sequence_emails').insert({
+                sequence_influencer_id: sequenceInfluencer.id,
+                sequence_id: sequenceInfluencer.sequence_id,
+                sequence_step_id: step.id,
+                email_delivery_status: 'Scheduled',
+                email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
+                email_engine_account_id: mockProfile.email_engine_account_id,
+                job_id: null,
+            });
+            if (error) throw new Error(error.message);
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }
         await updateSequenceInfluencerCall(supabase)({
