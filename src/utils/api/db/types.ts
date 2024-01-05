@@ -11,7 +11,6 @@ import type {
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { sequenceEmails } from 'drizzle/schema';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -132,7 +131,6 @@ export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'
 
 export type SequenceEmail = SequenceEmailsTable['Row'];
 export type SequenceEmailInsert = SequenceEmailsTable['Insert'];
-export type SequenceEmailUpdate = [id: string, update: Partial<typeof sequenceEmails.$inferSelect>];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =

@@ -6,7 +6,6 @@ import {
     getSequenceEmailsBySequenceInfluencerCall,
     insertSequenceEmailCall,
     insertSequenceEmailsCall,
-    updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 
@@ -24,6 +23,7 @@ import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import type { EmailCountPerDayPerStep } from 'src/utils/api/email-engine/schedule-emails';
 import { scheduleEmails } from 'src/utils/api/email-engine/schedule-emails';
+import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
 
 export type SequenceStepSendArgs = {
     emailEngineAccountId: string;
