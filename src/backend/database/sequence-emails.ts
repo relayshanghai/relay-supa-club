@@ -31,8 +31,7 @@ export const insertSequenceEmailsCall: (
         throw new Error('Missing required email_engine_account_id');
     }
     const result = await db().insert(sequenceEmails).values(inserts).returning();
-
-    if (result.length !== 1) throw new Error('Error in inserting row');
+    if (result.length !== inserts.length) throw new Error('Error in inserting row');
 
     return result[0];
 };
