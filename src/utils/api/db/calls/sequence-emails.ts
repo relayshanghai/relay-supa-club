@@ -1,4 +1,7 @@
+import { sequenceEmails } from 'drizzle/schema';
 import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
+import { db } from 'src/utils/database';
+import { eq } from 'drizzle-orm';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -63,11 +66,21 @@ export const getSequenceEmailAndSequencesByMessageIdCall =
         return data;
     };
 
-export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
-    update.updated_at = new Date().toISOString();
-    const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id);
-    if (error) throw error;
-    return data;
+export const updateSequenceEmailCall: (
+    ...update: SequenceEmailUpdate
+) => Promise<typeof sequenceEmails.$inferSelect> = async (id, updates) => {
+    const result = await db()
+        .update(sequenceEmails)
+        .set({
+            id,
+            ...updates,
+        })
+        .where(eq(sequenceEmails.id, id))
+        .returning();
+
+    if (result.length !== 1) throw new Error('Error in updating row');
+
+    return result[0];
 };
 
 export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async (insert: SequenceEmailInsert) => {

@@ -82,7 +82,7 @@ const getSequenceEmailsBySequenceInfluencer = db<typeof getSequenceEmailsBySeque
 
 const getSequenceInfluencerById = db<typeof getSequenceInfluencerByIdCall>(getSequenceInfluencerByIdCall);
 
-const updateSequenceEmail = db<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
+const updateSequenceEmail = updateSequenceEmailCall;
 
 const getSequenceInfluencerByEmailAndCompany = db<typeof getSequenceInfluencerByEmailAndCompanyCall>(
     getSequenceInfluencerByEmailAndCompanyCall,
@@ -170,15 +170,15 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
         const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         trackData.sequence_emails_after_delete = sequenceEmails.map((email) => email.id);
 
-        const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
-            id: sequenceEmail.id,
-            email_delivery_status: 'Replied',
-        }));
-        trackData.email_updates = emailUpdates.map((update) => update.id || '');
+        const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => [
+            sequenceEmail.id,
+            { emailDeliveryStatus: 'Replied' },
+        ]);
+        trackData.email_updates = emailUpdates.map((update) => update[0] || '');
 
         for (const emailUpdate of emailUpdates) {
             try {
-                await updateSequenceEmail(emailUpdate);
+                await updateSequenceEmail(...emailUpdate);
             } catch (error: any) {
                 if (isFetchFailedError(error)) {
                     throw error;
@@ -315,8 +315,8 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
-        await updateSequenceEmail(update);
+        update = [sequenceEmail.id, { emailTrackingStatus: 'Link Clicked' }];
+        await updateSequenceEmail(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -352,10 +352,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_tracking_status: 'Opened',
-        };
+        update = [sequenceEmail.id, { emailTrackingStatus: 'Opened' }];
     } catch (error: any) {
         if (isFetchFailedError(error)) {
             throw error;
@@ -366,7 +363,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
     try {
         if (update) {
-            await updateSequenceEmail(update);
+            await updateSequenceEmail(...update);
             is_success = true;
         }
     } catch (error: any) {
@@ -397,10 +394,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
 const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Bounced',
-    };
+    const update: SequenceEmailUpdate = [sequenceEmail.id, { emailDeliveryStatus: 'Bounced' }];
     let trackData: EmailFailedPayload = {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
@@ -416,7 +410,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
     };
 
     try {
-        await updateSequenceEmail(update);
+        await updateSequenceEmail(...update);
 
         const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
         trackData.sequence_influencer_id = sequenceInfluencer.id;
@@ -465,12 +459,9 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
     let errorMessage = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Failed',
-        };
+        update = [sequenceEmail.id, { emailDeliveryStatus: 'Failed' }];
 
-        await updateSequenceEmail(update);
+        await updateSequenceEmail(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -505,12 +496,8 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Failed',
-        };
-
-        await updateSequenceEmail(update);
+        update = [sequenceEmail.id, { emailDeliveryStatus: 'Failed' }];
+        await updateSequenceEmail(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -576,13 +563,15 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
         trackData.sequence_step = sequenceInfluencer.sequence_step;
 
-        const sequenceEmailUpdate: SequenceEmailUpdate = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Delivered',
-            email_send_at: new Date().toISOString(),
-        };
+        const sequenceEmailUpdate: SequenceEmailUpdate = [
+            sequenceEmail.id,
+            {
+                emailDeliveryStatus: 'Delivered',
+                emailSendAt: new Date().toISOString(),
+            },
+        ];
 
-        await updateSequenceEmail(sequenceEmailUpdate);
+        await updateSequenceEmail(...sequenceEmailUpdate);
         trackData.extra_info.sequenceEmailUpdate = sequenceEmailUpdate;
 
         const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
@@ -653,7 +642,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             if (jobCreated && jobCreated.id) {
                 trackData.is_success = true;
                 if (nextEmailRecord?.id) {
-                    await updateSequenceEmail({ job_id: jobId, id: nextEmailRecord.id });
+                    await updateSequenceEmail(nextEmailRecord.id, { jobId });
                 }
             }
         } else {

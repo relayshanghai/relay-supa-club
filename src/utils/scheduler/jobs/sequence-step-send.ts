@@ -194,10 +194,9 @@ const sendAndInsertEmail = async ({
             }
             crumb({ message: `sent followup email` });
 
-            await db(updateSequenceEmailCall)({
-                id: existingSequenceEmail.id,
-                email_delivery_status: 'Scheduled',
-                email_message_id: res.messageId,
+            await updateSequenceEmailCall(existingSequenceEmail.id, {
+                emailDeliveryStatus: 'Scheduled',
+                emailMessageId: res.messageId,
             });
             crumb({ message: `updated sequence email` });
         }
