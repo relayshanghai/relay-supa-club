@@ -279,12 +279,12 @@ describe('scheduleEmails', () => {
         const memoryUsed = byteToMegabyte(memoryAfter - memoryBefore); // should be under 0.35
         expect(memoryUsed).toBeLessThan(0.5);
         // console.log(`Memory used: ${memoryUsed} mb`);
-        expect(isSameDay(new Date(outreachStepInsert.email_send_at ?? ''), new Date(wednesdayDate), timeZone)).toEqual(
+        expect(isSameDay(new Date(outreachStepInsert.emailSendAt ?? ''), new Date(wednesdayDate), timeZone)).toEqual(
             true,
         );
-        expect(
-            isSameDay(new Date(followupEmailInserts[0].email_send_at ?? ''), new Date(fridayDate), timeZone),
-        ).toEqual(true);
+        expect(isSameDay(new Date(followupEmailInserts[0].emailSendAt ?? ''), new Date(fridayDate), timeZone)).toEqual(
+            true,
+        );
     });
     it('should not use excessive memory', () => {
         const testLength = 1000;
@@ -338,7 +338,7 @@ describe('scheduleEmails', () => {
         // with 1000 days all full, the scheduled day should be in the 1001th day
 
         const isThousandthDay = isSameDay(
-            new Date(outreachStepInsert.email_send_at ?? ''),
+            new Date(outreachStepInsert.emailSendAt ?? ''),
             addHours(initialDate, 1001 * 24),
             timeZone,
         );
@@ -346,19 +346,11 @@ describe('scheduleEmails', () => {
         expect(followupEmailInserts.length).toEqual(2);
 
         expect(
-            isSameDay(
-                new Date(followupEmailInserts[0].email_send_at ?? ''),
-                addHours(initialDate, 1002 * 24),
-                timeZone,
-            ),
+            isSameDay(new Date(followupEmailInserts[0].emailSendAt ?? ''), addHours(initialDate, 1002 * 24), timeZone),
         ).toEqual(true);
 
         expect(
-            isSameDay(
-                new Date(followupEmailInserts[1].email_send_at ?? ''),
-                addHours(initialDate, 1004 * 24),
-                timeZone,
-            ),
+            isSameDay(new Date(followupEmailInserts[1].emailSendAt ?? ''), addHours(initialDate, 1004 * 24), timeZone),
         ).toEqual(true);
 
         expect(memoryUsed).toBeLessThan(10);

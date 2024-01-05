@@ -130,7 +130,6 @@ export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'
 };
 
 export type SequenceEmail = SequenceEmailsTable['Row'];
-export type SequenceEmailInsert = SequenceEmailsTable['Insert'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =

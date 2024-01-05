@@ -52,8 +52,8 @@ import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequen
 import { v4 } from 'uuid';
 import { deleteJobs } from 'src/utils/scheduler/db-queries';
 import { isString } from 'src/utils/types';
+import type { SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
 import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
-import type { SequenceEmailUpdate } from 'src/backend/database/types';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
