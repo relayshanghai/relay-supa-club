@@ -592,7 +592,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     <select
                                         data-testid="filter-upper-views"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                        value={getViews(0)}
+                                        value={getViews(1)}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
                                                 viewsPrevious[0],
