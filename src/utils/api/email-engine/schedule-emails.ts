@@ -42,8 +42,8 @@ export const scheduleEmails = (
         isOutreachEmail
             ? null
             : stepNumber == 1
-            ? outreachStepInsert?.emailSendAt
-            : followupEmailInserts[followupEmailInserts.length - 1]?.emailSendAt;
+            ? outreachStepInsert?.email_send_at
+            : followupEmailInserts[followupEmailInserts.length - 1]?.email_send_at;
 
     const incrementEmailCountPerDayPerStep = (stepId: string, day: string) => {
         const emailCountPerDayPerStep = getEmailCountPerDayPerStep(scheduledEmails, stepId, day);
@@ -81,14 +81,14 @@ export const scheduleEmails = (
             incrementEmailCountPerDayPerStep(id, getDateStringWithoutTime(sendAt, TARGET_TIMEZONE));
 
             const email: SequenceEmailInsert = {
-                sequenceInfluencerId: influencer.id,
-                sequenceId: influencer.sequence_id,
-                sequenceStepId: id,
-                emailEngineAccountId: account,
-                emailSendAt: sendAt.toISOString(),
+                sequence_influencer_id: influencer.id,
+                sequence_id: influencer.sequence_id,
+                sequence_step_id: id,
+                email_engine_account_id: account,
+                email_send_at: sendAt.toISOString(),
 
-                emailDeliveryStatus: 'Unscheduled',
-                emailMessageId: '',
+                email_delivery_status: 'Unscheduled',
+                email_message_id: '',
             };
             if (isOutreachEmail) {
                 outreachStepInsert = email;

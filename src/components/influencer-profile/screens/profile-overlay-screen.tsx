@@ -17,29 +17,27 @@ type Props = {
 
 export const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
     return {
-        collabStatus: profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
-        nextStep: profile?.next_step ?? '', // profile.next_step
-        fee: profile?.rate_amount ?? '', // profile.rate_amount
-        videoDetails: profile?.video_details ?? '', // profile.video_details
+        collabStatus: profile?.funnel_status ?? profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
+        nextStep: profile?.next_step ?? profile?.next_step ?? '', // profile.next_step
+        fee: profile?.rate_amount ?? profile?.rate_amount ?? '', // profile.rate_amount
+        videoDetails: profile?.video_details ?? profile?.video_details ?? '', // profile.video_details
         affiliateLink: '', // ??
-        scheduledPostDate: profile?.scheduled_post_date ?? '', // profile.scheduled_post_date
+        scheduledPostDate: profile?.scheduled_post_date ?? profile?.scheduled_post_date ?? '', // profile.scheduled_post_date
         notes: '', // will be filled by getNotes
     };
 };
 
-export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => {
-    return {
-        name: profile?.address?.name ?? '', // profile.real_full_name
-        phoneNumber: profile?.address?.phone_number ?? '', // ??
-        streetAddress: profile?.address?.address_line_1 ?? '', // address.address_line_1?
-        city: profile?.address?.city ?? '', // address.city
-        state: profile?.address?.state ?? '', // address.state
-        country: profile?.address?.country ?? '', // address.country
-        postalCode: profile?.address?.postal_code ?? '', // address.postal_code
-        trackingCode: profile?.address?.tracking_code ?? '', // address.tracking_code
-        fullAddress: '', // probably combination of stuff above
-    };
-};
+export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => ({
+    name: profile?.address?.name ?? '',
+    phoneNumber: profile?.address?.phone_number ?? profile?.address?.phone_number ?? '',
+    streetAddress: profile?.address?.address_line_1 ?? profile?.address?.address_line_1 ?? '',
+    city: profile?.address?.city ?? '',
+    state: profile?.address?.state ?? '',
+    country: profile?.address?.country ?? '',
+    postalCode: profile?.address?.postal_code ?? profile?.address?.postal_code ?? '',
+    trackingCode: profile?.address?.tracking_code ?? profile?.address?.tracking_code ?? '',
+    fullAddress: '', // probably combination of stuff above
+});
 
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
@@ -65,7 +63,6 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
 
     const handleUpdate = useCallback(
         (data: Partial<ProfileValue>) => {
-            handleClose();
             if (profile === null) return;
 
             saveSequenceInfluencer.call(profile.id, data).then((profile) => {
@@ -77,7 +74,7 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
                 props.onUpdate && props.onUpdate(data);
             });
         },
-        [profile, props, handleClose, saveSequenceInfluencer, mapProfileToFormData, setLocalProfile],
+        [profile, props, saveSequenceInfluencer, mapProfileToFormData, setLocalProfile],
     );
 
     const handleNoteListOpen = useCallback(() => {

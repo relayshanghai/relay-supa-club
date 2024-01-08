@@ -66,8 +66,12 @@
           "name": "campaign_notes_campaign_creator_id_fkey",
           "tableFrom": "campaign_notes",
           "tableTo": "campaign_creators",
-          "columnsFrom": ["campaign_creator_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "campaign_creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -75,8 +79,12 @@
           "name": "campaign_notes_influencer_social_profile_id_fkey",
           "tableFrom": "campaign_notes",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -84,8 +92,12 @@
           "name": "campaign_notes_sequence_influencer_id_fkey",
           "tableFrom": "campaign_notes",
           "tableTo": "sequence_influencers",
-          "columnsFrom": ["sequence_influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -93,8 +105,12 @@
           "name": "campaign_notes_user_id_fkey",
           "tableFrom": "campaign_notes",
           "tableTo": "profiles",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -314,8 +330,12 @@
           "name": "campaign_creators_added_by_id_fkey",
           "tableFrom": "campaign_creators",
           "tableTo": "profiles",
-          "columnsFrom": ["added_by_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "added_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -323,8 +343,12 @@
           "name": "campaign_creators_campaign_id_fkey",
           "tableFrom": "campaign_creators",
           "tableTo": "campaigns",
-          "columnsFrom": ["campaign_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "campaign_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -332,8 +356,12 @@
           "name": "campaign_creators_influencer_social_profiles_id_fkey",
           "tableFrom": "campaign_creators",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profiles_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profiles_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -502,8 +530,12 @@
           "name": "campaigns_company_id_fkey",
           "tableFrom": "campaigns",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+            "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -795,8 +827,12 @@
           "name": "profiles_company_id_fkey",
           "tableFrom": "profiles",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -869,8 +905,12 @@
           "name": "invites_company_id_fkey",
           "tableFrom": "invites",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -968,8 +1008,12 @@
           "name": "usages_company_id_fkey",
           "tableFrom": "usages",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1014,8 +1058,12 @@
           "name": "influencer_categories_influencer_id_fkey",
           "tableFrom": "influencer_categories",
           "tableTo": "influencers",
-          "columnsFrom": ["influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1141,8 +1189,12 @@
           "name": "influencer_posts_campaign_id_fkey",
           "tableFrom": "influencer_posts",
           "tableTo": "campaigns",
-          "columnsFrom": ["campaign_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "campaign_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1150,8 +1202,12 @@
           "name": "influencer_posts_influencer_social_profile_id_fkey",
           "tableFrom": "influencer_posts",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1159,8 +1215,12 @@
           "name": "influencer_posts_sequence_id_fkey",
           "tableFrom": "influencer_posts",
           "tableTo": "sequences",
-          "columnsFrom": ["sequence_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1168,8 +1228,12 @@
           "name": "influencer_posts_sequence_influencer_id_fkey",
           "tableFrom": "influencer_posts",
           "tableTo": "sequence_influencers",
-          "columnsFrom": ["sequence_influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1262,8 +1326,12 @@
           "name": "influencer_social_profiles_influencer_id_fkey",
           "tableFrom": "influencer_social_profiles",
           "tableTo": "influencers",
-          "columnsFrom": ["influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1357,8 +1425,12 @@
           "name": "posts_performance_campaign_id_fkey",
           "tableFrom": "posts_performance",
           "tableTo": "campaigns",
-          "columnsFrom": ["campaign_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "campaign_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1366,8 +1438,12 @@
           "name": "posts_performance_influencer_social_profile_id_fkey",
           "tableFrom": "posts_performance",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1375,8 +1451,12 @@
           "name": "posts_performance_post_id_fkey",
           "tableFrom": "posts_performance",
           "tableTo": "influencer_posts",
-          "columnsFrom": ["post_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "post_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1427,8 +1507,12 @@
           "name": "company_categories_company_id_fkey",
           "tableFrom": "company_categories",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1436,8 +1520,12 @@
           "name": "company_categories_product_id_fkey",
           "tableFrom": "company_categories",
           "tableTo": "products",
-          "columnsFrom": ["product_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1488,8 +1576,12 @@
           "name": "sales_campaign_id_fkey",
           "tableFrom": "sales",
           "tableTo": "campaigns",
-          "columnsFrom": ["campaign_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "campaign_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1497,8 +1589,12 @@
           "name": "sales_company_id_fkey",
           "tableFrom": "sales",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1541,8 +1637,12 @@
           "name": "influencer_contacts_influencer_id_fkey",
           "tableFrom": "influencer_contacts",
           "tableTo": "influencers",
-          "columnsFrom": ["influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1771,8 +1871,12 @@
           "name": "sequence_influencers_address_id_fkey",
           "tableFrom": "sequence_influencers",
           "tableTo": "addresses",
-          "columnsFrom": ["address_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1780,8 +1884,12 @@
           "name": "sequence_influencers_company_id_fkey",
           "tableFrom": "sequence_influencers",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1789,8 +1897,12 @@
           "name": "sequence_influencers_influencer_social_profile_id_fkey",
           "tableFrom": "sequence_influencers",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1798,8 +1910,12 @@
           "name": "sequence_influencers_sequence_id_fkey",
           "tableFrom": "sequence_influencers",
           "tableTo": "sequences",
-          "columnsFrom": ["sequence_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1871,8 +1987,12 @@
           "name": "sequence_steps_sequence_id_fkey",
           "tableFrom": "sequence_steps",
           "tableTo": "sequences",
-          "columnsFrom": ["sequence_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1916,7 +2036,9 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "search_parameters_hash_key": {
-          "columns": ["hash"],
+          "columns": [
+            "hash"
+          ],
           "nullsNotDistinct": false,
           "name": "search_parameters_hash_key"
         }
@@ -1992,8 +2114,12 @@
           "name": "sequences_company_id_fkey",
           "tableFrom": "sequences",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2001,8 +2127,12 @@
           "name": "sequences_manager_id_fkey",
           "tableFrom": "sequences",
           "tableTo": "profiles",
-          "columnsFrom": ["manager_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "manager_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2010,7 +2140,9 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "sequences1_id_key": {
-          "columns": ["id"],
+          "columns": [
+            "id"
+          ],
           "nullsNotDistinct": false,
           "name": "sequences1_id_key"
         }
@@ -2101,8 +2233,12 @@
           "name": "tracking_events_company_id_fkey",
           "tableFrom": "tracking_events",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2110,8 +2246,12 @@
           "name": "tracking_events_profile_id_fkey",
           "tableFrom": "tracking_events",
           "tableTo": "profiles",
-          "columnsFrom": ["profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2227,8 +2367,12 @@
           "name": "search_snapshots_company_id_fkey",
           "tableFrom": "search_snapshots",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2236,8 +2380,12 @@
           "name": "search_snapshots_event_id_fkey",
           "tableFrom": "search_snapshots",
           "tableTo": "tracking_events",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2245,8 +2393,12 @@
           "name": "search_snapshots_parameter_id_fkey",
           "tableFrom": "search_snapshots",
           "tableTo": "search_parameters",
-          "columnsFrom": ["parameters_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "parameters_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2254,8 +2406,12 @@
           "name": "search_snapshots_profile_id_fkey",
           "tableFrom": "search_snapshots",
           "tableTo": "profiles",
-          "columnsFrom": ["profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2312,8 +2468,12 @@
           "name": "report_snapshots_company_id_fkey",
           "tableFrom": "report_snapshots",
           "tableTo": "companies",
-          "columnsFrom": ["company_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2321,8 +2481,12 @@
           "name": "report_snapshots_event_id_fkey",
           "tableFrom": "report_snapshots",
           "tableTo": "tracking_events",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2330,8 +2494,12 @@
           "name": "report_snapshots_profile_id_fkey",
           "tableFrom": "report_snapshots",
           "tableTo": "profiles",
-          "columnsFrom": ["profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2431,8 +2599,12 @@
           "name": "addresses_influencer_social_profile_id_fkey",
           "tableFrom": "addresses",
           "tableTo": "influencer_social_profiles",
-          "columnsFrom": ["influencer_social_profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "influencer_social_profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2514,12 +2686,21 @@
       "indexes": {
         "idx_createdat_runat_status_queue": {
           "name": "idx_createdat_runat_status_queue",
-          "columns": ["queue", "run_at", "status", "created_at"],
+          "columns": [
+            "queue",
+            "run_at",
+            "status",
+            "created_at"
+          ],
           "isUnique": false
         },
         "idx_status_queue_owner": {
           "name": "idx_status_queue_owner",
-          "columns": ["queue", "status", "owner"],
+          "columns": [
+            "queue",
+            "status",
+            "owner"
+          ],
           "isUnique": false
         }
       },
@@ -2528,8 +2709,12 @@
           "name": "jobs_owner_fkey",
           "tableFrom": "jobs",
           "tableTo": "profiles",
-          "columnsFrom": ["owner"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "owner"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2617,8 +2802,12 @@
           "name": "sequence_emails_sequence_id_fkey",
           "tableFrom": "sequence_emails",
           "tableTo": "sequences",
-          "columnsFrom": ["sequence_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2626,8 +2815,12 @@
           "name": "sequence_emails_sequence_influencer_id_fkey",
           "tableFrom": "sequence_emails",
           "tableTo": "sequence_influencers",
-          "columnsFrom": ["sequence_influencer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_influencer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2635,8 +2828,12 @@
           "name": "sequence_emails_sequence_step_id_fkey",
           "tableFrom": "sequence_emails",
           "tableTo": "sequence_steps",
-          "columnsFrom": ["sequence_step_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_step_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2707,8 +2904,12 @@
           "name": "template_variables_sequence_id_fkey",
           "tableFrom": "template_variables",
           "tableTo": "sequences",
-          "columnsFrom": ["sequence_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sequence_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2759,8 +2960,12 @@
           "name": "boostbot_conversations_profile_id_fkey",
           "tableFrom": "boostbot_conversations",
           "tableTo": "profiles",
-          "columnsFrom": ["profile_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

@@ -14,7 +14,7 @@ interface Route {
     id: string;
 }
 
-interface Data {
+export interface Data {
     id: string;
     uid: number;
     path: string;
@@ -35,9 +35,11 @@ interface Data {
     category: string;
     seemsLikeNew: boolean;
     messageSpecialUse: string;
+    specialUse: string;
     summary: Summary;
     draft?: boolean;
     cc?: From[];
+    inReplyTo?: string;
 }
 
 interface From {

@@ -33,7 +33,7 @@ export type JobQueue<T> = {
     /**
      * Logic for processing a queue
      */
-    run: (payload?: JobQueueRunPayload) => Promise<JobQueueResult[]>;
+    run: (payload?: JobQueueRunPayload) => Promise<JobQueueResult[] | false>;
 };
 
 // @note we really should standardize this

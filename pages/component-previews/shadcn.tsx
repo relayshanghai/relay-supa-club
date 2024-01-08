@@ -108,9 +108,7 @@ const PreviewDialog = () => {
 };
 
 const PreviewInput = () => {
-    return (
-        <Input className=" focus:border-primary-400 focus-visible:ring-primary-400" placeholder="Placeholder Text" />
-    );
+    return <Input className="focus:border-primary-400 focus-visible:ring-primary-400" placeholder="Placeholder Text" />;
 };
 
 const PreviewSheet = () => {

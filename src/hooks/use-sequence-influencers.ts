@@ -26,7 +26,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     } = useSWR<SequenceInfluencerManagerPage[]>(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[], any>('/api/sequence/influencers', {
                 body: sequenceIds,
             });
             return allInfluencers.content;

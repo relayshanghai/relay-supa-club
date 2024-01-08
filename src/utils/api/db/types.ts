@@ -11,6 +11,7 @@ import type {
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { FUNNEL_STATUS } from 'src/utils/outreach/constants';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -132,17 +133,7 @@ export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'
 export type SequenceEmail = SequenceEmailsTable['Row'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
-export type FunnelStatus =
-    | 'To Contact'
-    | 'In Sequence'
-    | 'Ignored'
-    | 'Negotiating'
-    | 'Confirmed'
-    | 'Shipped'
-    | 'Rejected'
-    | 'Received'
-    | 'Content Approval'
-    | 'Posted';
+export type FunnelStatus = FUNNEL_STATUS;
 
 type SequenceInfluencerDetailedTypes = {
     /** 0 means either not sent or first step (outreach) sent. 1 means Follow-up 1 was sent. */

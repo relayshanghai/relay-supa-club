@@ -45,6 +45,7 @@ export const InboxPage = () => {
     const { refreshSequenceInfluencers } = useSequenceInfluencers();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
+
     const { t } = useTranslation();
 
     const { track } = useRudderstackTrack();
