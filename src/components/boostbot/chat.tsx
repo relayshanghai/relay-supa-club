@@ -116,9 +116,9 @@ export const Chat: React.FC<ChatProps> = ({
         getRelevantTopics,
         getTopicClusters,
         getInfluencers,
-        setInfluencers,
         updateConversation,
         refreshConversation,
+        setInfluencers,
     } = useBoostbot({
         abortSignal: abortController.signal,
     });

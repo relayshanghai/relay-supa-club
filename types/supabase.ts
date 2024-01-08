@@ -708,6 +708,7 @@ export interface Database {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          data: Json | null
           email: string | null
           id: string
           influencer_id: string
@@ -722,6 +723,7 @@ export interface Database {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          data?: Json | null
           email?: string | null
           id?: string
           influencer_id: string
@@ -736,6 +738,7 @@ export interface Database {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          data?: Json | null
           email?: string | null
           id?: string
           influencer_id?: string
