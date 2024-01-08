@@ -4,8 +4,13 @@ import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { SearchTableInfluencer } from 'types';
 import type { InfluencerSocialProfileInsert } from 'src/utils/api/db';
 import type { Json } from 'types/supabase';
+import type { TopicsAndRelevance } from './get-topic-relevance';
 
-export const saveSearchResults = async (influencers: SearchTableInfluencer[]) => {
+export type SavedSearchTableInfluencer = SearchTableInfluencer & {
+    influencer_niche_graph: TopicsAndRelevance[];
+};
+
+export const saveSearchResults = async (influencers: SavedSearchTableInfluencer[]) => {
     const influencersToInsert = influencers.map((i) => ({
         avatar_url: i.picture,
         name: i.fullname || i.username || i.handle || i.custom_name || '',
