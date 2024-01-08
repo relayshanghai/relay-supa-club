@@ -59,7 +59,6 @@ export interface Database {
           {
             foreignKeyName: "addresses_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           }
@@ -91,7 +90,6 @@ export interface Database {
           {
             foreignKeyName: "boostbot_conversations_profile_id_fkey"
             columns: ["profile_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -204,21 +202,18 @@ export interface Database {
           {
             foreignKeyName: "campaign_creators_added_by_id_fkey"
             columns: ["added_by_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_creators_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_creators_influencer_social_profiles_id_fkey"
             columns: ["influencer_social_profiles_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           }
@@ -259,28 +254,24 @@ export interface Database {
           {
             foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
             columns: ["campaign_creator_id"]
-            isOneToOne: false
             referencedRelation: "campaign_creators"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_notes_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_notes_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
-            isOneToOne: false
             referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_notes_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -369,7 +360,6 @@ export interface Database {
           {
             foreignKeyName: "campaigns_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           }
@@ -473,14 +463,12 @@ export interface Database {
           {
             foreignKeyName: "company_categories_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "company_categories_product_id_fkey"
             columns: ["product_id"]
-            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           }
@@ -509,7 +497,6 @@ export interface Database {
           {
             foreignKeyName: "influencer_categories_influencer_id_fkey"
             columns: ["influencer_id"]
-            isOneToOne: false
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           }
@@ -538,7 +525,6 @@ export interface Database {
           {
             foreignKeyName: "influencer_contacts_influencer_id_fkey"
             columns: ["influencer_id"]
-            isOneToOne: false
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           }
@@ -606,28 +592,24 @@ export interface Database {
           {
             foreignKeyName: "influencer_posts_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "influencer_posts_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "influencer_posts_sequence_id_fkey"
             columns: ["sequence_id"]
-            isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "influencer_posts_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
-            isOneToOne: false
             referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           }
@@ -683,7 +665,6 @@ export interface Database {
           {
             foreignKeyName: "influencer_social_profiles_influencer_id_fkey"
             columns: ["influencer_id"]
-            isOneToOne: false
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           }
@@ -754,7 +735,6 @@ export interface Database {
           {
             foreignKeyName: "invites_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           }
@@ -801,7 +781,6 @@ export interface Database {
           {
             foreignKeyName: "jobs_owner_fkey"
             columns: ["owner"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -878,21 +857,18 @@ export interface Database {
           {
             foreignKeyName: "posts_performance_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "posts_performance_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "posts_performance_post_id_fkey"
             columns: ["post_id"]
-            isOneToOne: false
             referencedRelation: "influencer_posts"
             referencedColumns: ["id"]
           }
@@ -975,14 +951,12 @@ export interface Database {
           {
             foreignKeyName: "profiles_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
-            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -1017,21 +991,18 @@ export interface Database {
           {
             foreignKeyName: "report_snapshots_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "report_snapshots_event_id_fkey"
             columns: ["event_id"]
-            isOneToOne: false
             referencedRelation: "tracking_events"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "report_snapshots_profile_id_fkey"
             columns: ["profile_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -1063,14 +1034,12 @@ export interface Database {
           {
             foreignKeyName: "sales_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sales_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           }
@@ -1129,28 +1098,24 @@ export interface Database {
           {
             foreignKeyName: "search_snapshots_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "search_snapshots_event_id_fkey"
             columns: ["event_id"]
-            isOneToOne: false
             referencedRelation: "tracking_events"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "search_snapshots_parameter_id_fkey"
             columns: ["parameters_id"]
-            isOneToOne: false
             referencedRelation: "search_parameters"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "search_snapshots_profile_id_fkey"
             columns: ["profile_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -1203,28 +1168,24 @@ export interface Database {
           {
             foreignKeyName: "sequence_emails_job_id_fkey"
             columns: ["job_id"]
-            isOneToOne: false
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_emails_sequence_id_fkey"
             columns: ["sequence_id"]
-            isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_emails_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
-            isOneToOne: false
             referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_emails_sequence_step_id_fkey"
             columns: ["sequence_step_id"]
-            isOneToOne: false
             referencedRelation: "sequence_steps"
             referencedColumns: ["id"]
           }
@@ -1316,28 +1277,24 @@ export interface Database {
           {
             foreignKeyName: "sequence_influencers_address_id_fkey"
             columns: ["address_id"]
-            isOneToOne: false
             referencedRelation: "addresses"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_influencers_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_influencers_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
-            isOneToOne: false
             referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequence_influencers_sequence_id_fkey"
             columns: ["sequence_id"]
-            isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
           }
@@ -1378,7 +1335,6 @@ export interface Database {
           {
             foreignKeyName: "sequence_steps_sequence_id_fkey"
             columns: ["sequence_id"]
-            isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
           }
@@ -1422,14 +1378,12 @@ export interface Database {
           {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sequences_manager_id_fkey"
             columns: ["manager_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -1470,7 +1424,6 @@ export interface Database {
           {
             foreignKeyName: "template_variables_sequence_id_fkey"
             columns: ["sequence_id"]
-            isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
           }
@@ -1523,21 +1476,18 @@ export interface Database {
           {
             foreignKeyName: "tracking_events_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "tracking_events_profile_id_fkey"
             columns: ["profile_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "tracking_events_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -1572,14 +1522,12 @@ export interface Database {
           {
             foreignKeyName: "usages_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "usages_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -1724,84 +1672,4 @@ export interface Database {
     }
   }
 }
-
-export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-      Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : never
-
-export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : never
-
-export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : never
-
-export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-  : never
 
