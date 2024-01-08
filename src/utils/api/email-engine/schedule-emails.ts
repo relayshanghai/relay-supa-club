@@ -7,10 +7,11 @@ import {
     getDateStringWithoutTime,
     subtractHours,
 } from 'src/utils/time-zone-helpers';
-import type { SequenceEmailInsert, SequenceStep } from '../db';
+import type { SequenceStep } from '../db';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
 import { crumb } from 'src/utils/logger-server';
+import type { SequenceEmailInsert } from 'src/backend/database/sequence-emails';
 
 // const MAX_DAILY_SEND = 75; // now split into 17 per (4) steps
 const TARGET_TIMEZONE = 'America/Chicago';
@@ -41,8 +42,8 @@ export const scheduleEmails = (
         isOutreachEmail
             ? null
             : stepNumber == 1
-            ? outreachStepInsert?.email_send_at
-            : followupEmailInserts[followupEmailInserts.length - 1]?.email_send_at;
+            ? outreachStepInsert?.emailSendAt
+            : followupEmailInserts[followupEmailInserts.length - 1]?.emailSendAt;
 
     const incrementEmailCountPerDayPerStep = (stepId: string, day: string) => {
         const emailCountPerDayPerStep = getEmailCountPerDayPerStep(scheduledEmails, stepId, day);
@@ -80,14 +81,14 @@ export const scheduleEmails = (
             incrementEmailCountPerDayPerStep(id, getDateStringWithoutTime(sendAt, TARGET_TIMEZONE));
 
             const email: SequenceEmailInsert = {
-                sequence_influencer_id: influencer.id,
-                sequence_id: influencer.sequence_id,
-                sequence_step_id: id,
-                email_engine_account_id: account,
-                email_send_at: sendAt.toISOString(),
+                sequenceInfluencerId: influencer.id,
+                sequenceId: influencer.sequence_id,
+                sequenceStepId: id,
+                emailEngineAccountId: account,
+                emailSendAt: sendAt.toISOString(),
 
-                email_delivery_status: 'Unscheduled',
-                email_message_id: '',
+                emailDeliveryStatus: 'Unscheduled',
+                emailMessageId: '',
             };
             if (isOutreachEmail) {
                 outreachStepInsert = email;
