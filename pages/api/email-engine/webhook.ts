@@ -196,7 +196,7 @@ const scheduleOutreachEmailRetry = async ({
 
     // Update existing sequence email retry of the new job
     if (data) {
-        await updateSequenceEmail({ job_id: jobId, id: data.id });
+        await updateSequenceEmailCall(data.id, { job_id: jobId });
     }
 
     return job;
@@ -223,7 +223,7 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 
         const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => [
             sequenceEmail.id,
-            { emailDeliveryStatus: 'Replied' },
+            { email_delivery_status: 'Replied' },
         ]);
         trackData.email_updates = emailUpdates.map((update) => update[0] || '');
 
@@ -381,7 +381,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = [sequenceEmail.id, { emailTrackingStatus: 'Link Clicked' }];
+        update = [sequenceEmail.id, { email_tracking_status: 'Link Clicked' }];
         await updateSequenceEmailCall(...update);
         is_success = true;
     } catch (error: any) {
@@ -418,7 +418,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = [sequenceEmail.id, { emailTrackingStatus: 'Opened' }];
+        update = [sequenceEmail.id, { email_tracking_status: 'Opened' }];
     } catch (error: any) {
         if (isFetchFailedError(error)) {
             throw error;
@@ -460,7 +460,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
 const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = [sequenceEmail.id, { emailDeliveryStatus: 'Bounced' }];
+    const update: SequenceEmailUpdate = [sequenceEmail.id, { email_delivery_status: 'Bounced' }];
     let trackData: EmailFailedPayload = {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
@@ -525,7 +525,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
     let errorMessage = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = [sequenceEmail.id, { emailDeliveryStatus: 'Failed' }];
+        update = [sequenceEmail.id, { email_delivery_status: 'Failed' }];
 
         await updateSequenceEmailCall(...update);
         is_success = true;
@@ -562,7 +562,7 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = [sequenceEmail.id, { emailDeliveryStatus: 'Failed' }];
+        update = [sequenceEmail.id, { email_delivery_status: 'Failed' }];
         await updateSequenceEmailCall(...update);
         is_success = true;
     } catch (error: any) {
@@ -634,8 +634,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         const sequenceEmailUpdate: SequenceEmailUpdate = [
             sequenceEmail.id,
             {
-                emailDeliveryStatus: 'Delivered',
-                emailSendAt: new Date().toISOString(),
+                email_delivery_status: 'Delivered',
+                email_send_at: new Date().toISOString(),
             },
         ];
 
@@ -702,12 +702,6 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
             trackData.extra_info.job_created = jobCreated;
             trackData.is_success = jobCreated !== false;
-            if (jobCreated && jobCreated.id) {
-                trackData.is_success = true;
-                if (nextEmailRecord?.id) {
-                    await updateSequenceEmailCall(nextEmailRecord.id, { jobId });
-                }
-            }
         } else {
             trackData.is_success = true;
         }

@@ -117,16 +117,16 @@ const sendAndInsertEmail = async ({
             account,
         );
 
-        if (!outreachStepInsert || !outreachStepInsert.emailSendAt) {
+        if (!outreachStepInsert || !outreachStepInsert.email_send_at) {
             throw new Error('No outreach step insert');
         }
-        outreachStepInsert.jobId = jobId; // other job ids will be added in handleSent webhook
+        outreachStepInsert.job_id = jobId; // other job ids will be added in handleSent webhook
 
         const res = await sendTemplateEmail({
             account,
             toEmail: { name: influencerAccountName, address: influencer.email },
             template: step.template_id,
-            sendAt: outreachStepInsert.emailSendAt,
+            sendAt: outreachStepInsert.email_send_at,
             params,
             messageId,
             references,
@@ -136,17 +136,17 @@ const sendAndInsertEmail = async ({
             throw new Error(res.error);
         }
         crumb({ message: `sent outreach email` });
-        outreachStepInsert.emailDeliveryStatus = 'Scheduled';
-        outreachStepInsert.emailMessageId = res.messageId;
+        outreachStepInsert.email_delivery_status = 'Scheduled';
+        outreachStepInsert.email_message_id = res.messageId;
         await insertSequenceEmailsCall([outreachStepInsert, ...followupEmailInserts]);
         crumb({ message: `inserted sequence emails` });
     } else {
         if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
             serverLogger(new Error('No existing sequence email found')); // This should eventually stop happening as all sequences use the new 'schedule all emails at once' method. Then we can remove this whole if block and just throw an error
             const { followupEmailInserts } = scheduleEmails(sequenceSteps, scheduledEmails, influencer, account);
-            const thisEmail = followupEmailInserts.find((e) => e.sequenceStepId === step.id);
-            const emailSendAt = thisEmail?.emailSendAt;
-            if (!emailSendAt) {
+            const thisEmail = followupEmailInserts.find((e) => e.sequence_step_id === step.id);
+            const email_send_at = thisEmail?.email_send_at;
+            if (!email_send_at) {
                 throw new Error(
                     `No email send at for step ${step.step_number}, thisEmail ${thisEmail} followupEmailInserts ${followupEmailInserts}`,
                 );
@@ -155,7 +155,7 @@ const sendAndInsertEmail = async ({
                 account,
                 toEmail: { name: influencerAccountName, address: influencer.email },
                 template: step.template_id,
-                sendAt: emailSendAt,
+                sendAt: email_send_at,
                 params,
                 messageId,
                 references,
@@ -166,14 +166,14 @@ const sendAndInsertEmail = async ({
             }
             await insertSequenceEmailsCall([
                 {
-                    sequenceInfluencerId: influencer.id,
-                    sequenceId: influencer.sequence_id,
-                    emailEngineAccountId: account,
-                    sequenceStepId: step.id,
+                    sequence_influencer_id: influencer.id,
+                    sequence_id: influencer.sequence_id,
+                    email_engine_account_id: account,
+                    sequence_step_id: step.id,
 
-                    emailDeliveryStatus: 'Scheduled',
-                    emailMessageId: res.messageId,
-                    emailSendAt,
+                    email_delivery_status: 'Scheduled',
+                    email_message_id: res.messageId,
+                    email_send_at,
                 },
             ]);
             crumb({ message: `inserted sequence email` });
@@ -195,8 +195,8 @@ const sendAndInsertEmail = async ({
             crumb({ message: `sent followup email` });
 
             await updateSequenceEmailCall(existingSequenceEmail.id, {
-                emailDeliveryStatus: 'Scheduled',
-                emailMessageId: res.messageId,
+                email_delivery_status: 'Scheduled',
+                email_message_id: res.messageId,
             });
             crumb({ message: `updated sequence email` });
         }
