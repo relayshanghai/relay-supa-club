@@ -2,7 +2,7 @@ import type { addresses, email_contacts, sequence_influencers, sequences, thread
 import type { FUNNEL_STATUS, THREAD_CONTACT_TYPE } from './constants';
 import type { CreatorPlatform } from 'types';
 
-export type EmailContact = { address: string; name?: string };
+export type EmailContact = { address: string; name?: string | null };
 
 // Holds the outreach data of the current influencer in that outreach
 export type InfluencerOutreachData = typeof sequence_influencers.$inferSelect & {

@@ -21,7 +21,7 @@ const postHandler: ActionHandler = async (req, res) => {
     const query: ApiRequestQuery = req.query;
     const body: ApiRequestBody = req.body;
 
-    if (!query.id || !body.content) {
+    if (!query.id || !body.content || !body.to || !body.cc) {
         throw new Error('Cannot send message');
     }
 
@@ -29,6 +29,12 @@ const postHandler: ActionHandler = async (req, res) => {
         account: req.profile.email_engine_account_id,
         threadId: query.id,
         content: body.content,
+        to: body.to.map((contact) => {
+            return { name: contact.name, address: contact.address };
+        }),
+        cc: body.cc.map((contact) => {
+            return { name: contact.name, address: contact.address };
+        }),
     });
 
     return res.status(200).json(result);

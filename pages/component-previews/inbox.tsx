@@ -3,7 +3,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -62,67 +62,22 @@ const generateLocalData = (params: {
     };
 };
 
-const getUniqueParticipantsFromMessages = (messages: Message[]) => {
-    const allParticipants = messages.flatMap((message) => {
-        return [
-            {
-                address: message.from.address,
-                name: message.from.name,
-            },
-            ...message.cc.map((cc) => {
-                return {
-                    address: cc.address,
-                    name: cc.name,
-                };
-            }),
-            ...message.to.map((to) => {
-                return {
-                    address: to.address,
-                    name: to.name,
-                };
-            }),
-        ];
+const getContactsToReply = (contacts: ThreadContact[], email?: string | null) => {
+    const account = !email ? contacts.find((contact) => contact.type === 'user') : { address: email };
+
+    if (!account) {
+        throw new Error('Thread did not originate from boostbot');
+    }
+
+    const to = contacts.filter((contact) => {
+        return contact.address !== account.address && ['cc', 'bcc'].includes(contact.type) === false;
     });
 
-    const uniqueParticipants: EmailContact[] = allParticipants
-        ? Array.from(new Set(allParticipants.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
-        : [];
-
-    return uniqueParticipants;
-};
-
-const getContactsToReply = (messages: Message[], myAddress?: string | null) => {
-    const cc = messages.flatMap((message) => {
-        return message.cc
-            .filter((cc) => cc.address !== myAddress)
-            .map((cc) => {
-                return {
-                    address: cc.address,
-                    name: cc.name,
-                };
-            });
+    const cc = contacts.filter((contact) => {
+        return contact.address !== account.address && ['cc', 'bcc'].includes(contact.type) === true;
     });
 
-    const to = messages.flatMap((message) => {
-        return message.to
-            .filter((to) => to.address !== myAddress)
-            .map((to) => {
-                return {
-                    address: to.address,
-                    name: to.name,
-                };
-            });
-    });
-
-    const uniqueCc: EmailContact[] = cc
-        ? Array.from(new Set(cc.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
-        : [];
-
-    const uniqueTo: EmailContact[] = to
-        ? Array.from(new Set(to.map((data) => JSON.stringify(data)))).map((data) => JSON.parse(data))
-        : [];
-
-    return { cc: uniqueCc, to: uniqueTo };
+    return { to, cc };
 };
 
 const ThreadProvider = ({
@@ -188,8 +143,11 @@ const ThreadProvider = ({
         },
     });
 
+    const allUniqueParticipants = selectedThread.contacts;
+    const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
+
     const handleReply = useCallback(
-        (replyBody: string, ccList: EmailContact[], toList: EmailContact[]) => {
+        (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
                 async (cache) => {
                     sendReply({
@@ -234,9 +192,6 @@ const ThreadProvider = ({
 
     if (messagesError) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
-
-    const allUniqueParticipants = getUniqueParticipantsFromMessages(messages);
-    const contactsToReply = getContactsToReply(messages, currentInbox.email);
 
     return (
         <div className="flex h-full flex-col justify-between">
