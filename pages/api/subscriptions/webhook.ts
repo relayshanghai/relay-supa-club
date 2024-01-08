@@ -138,7 +138,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
-        serverLogger('stripe caught error', { level: 'error' });
+        serverLogger('stripe caught error', (scope) => {
+            return scope.setContext('Stripe Error', { stack: error.stack, error: error.message });
+        });
         try {
             trackData.extra_info.error = error;
             track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookError, trackData);
