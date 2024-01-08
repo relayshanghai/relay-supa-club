@@ -1,5 +1,5 @@
-import type { addresses, sequence_influencers, sequences, threads } from 'drizzle/schema';
-import type { FUNNEL_STATUS } from './constants';
+import type { addresses, email_contacts, sequence_influencers, sequences, threads } from 'drizzle/schema';
+import type { FUNNEL_STATUS, THREAD_CONTACT_TYPE } from './constants';
 import type { CreatorPlatform } from 'types';
 
 export type EmailContact = { address: string; name?: string };
@@ -18,11 +18,16 @@ export type Outreach = typeof sequences.$inferSelect & {
     productName?: string | null;
 };
 
+export type ThreadContact = typeof email_contacts.$inferSelect & {
+    type: THREAD_CONTACT_TYPE;
+};
+
 /**
  * Contains Thread data
  */
 export type Thread = {
     threadInfo: typeof threads.$inferSelect;
     sequenceInfluencers: InfluencerOutreachData | null;
+    contacts: ThreadContact[];
     sequenceInfo: Outreach | null;
 };

@@ -1,5 +1,5 @@
 import { db } from '../database';
-import { createThread, createEmail } from './db';
+import { createThread, createEmail, getSequenceInfluencerByEmail } from './db';
 import { parseContacts } from './parse-contacts';
 import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
@@ -7,8 +7,14 @@ import { stringifyContacts } from './stringify-contacts';
 import { getInfluencerFromMessage } from './get-influencer-from-message';
 import { getMessageType } from './get-message-type';
 import { deleteEmail } from './delete-email';
-import type { MESSAGE_TYPES } from './constants';
+import type { MESSAGE_TYPES, THREAD_CONTACT_TYPE } from './constants';
 import type { emails, threads } from 'drizzle/schema';
+import { getMessageContacts } from './get-message-contacts';
+import { createEmailContact } from './db/create-email-contact';
+import { createThreadContact } from './db/create-thread-contact';
+import { getThreadContacts } from './db/get-thread-contacts';
+import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
+import type { ThreadContact } from './types';
 
 type SyncEmailParams = {
     account: string;
@@ -23,6 +29,7 @@ type TransformedEmail = Omit<typeof emails.$inferSelect, 'sender' | 'recipients'
 type SyncEmailFn = (params: SyncEmailParams) => Promise<{
     influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
     thread: typeof threads.$inferSelect | null;
+    contacts: ThreadContact[] | null;
     email: TransformedEmail | null;
     messageType: MESSAGE_TYPES;
 }>;
@@ -47,7 +54,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         // skip drafts
         if (messageType === 'Draft') {
-            return { influencer: null, thread: null, email: null, messageType };
+            return { influencer: null, thread: null, contacts: null, email: null, messageType };
         }
 
         // @note sequence influencer is holds the data of an "influencer outreach" NOT the influencer
@@ -59,6 +66,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
             return {
                 thread: results.thread,
                 email: results.email ? transformEmail(results.email) : null,
+                contacts: null,
                 influencer,
                 messageType,
             };
@@ -75,6 +83,38 @@ export const syncEmail: SyncEmailFn = async (params) => {
             createdAt: String(emailMessage.date),
         });
 
+        const messageContacts = await getMessageContacts(emailMessage);
+
+        // @todo move to a function createThreadContact
+        for (const contact of messageContacts) {
+            const emailContact = await createEmailContact(tx)(contact);
+
+            let contactType: THREAD_CONTACT_TYPE = 'participant';
+
+            if (await getSequenceInfluencerByEmail(tx)(contact.address)) {
+                contactType = 'influencer';
+            } else if (await getProfileByEmailEngineEmail(tx)(contact.address)) {
+                contactType = 'user';
+            } else if (contact.type === 'cc') {
+                contactType = 'cc';
+            } else if (contact.type === 'bcc') {
+                contactType = 'bcc';
+            }
+
+            await createThreadContact(tx)(thread.thread_id, emailContact.id, contactType);
+        }
+
+        // @todo move to a function getThreadContacts
+        const threadContacts = await getThreadContacts(tx)(thread.thread_id);
+        // @todo create a transformer for threadContacts
+        const contacts = threadContacts
+            .filter((contact) => contact.email_contacts !== null)
+            .map((contact) => {
+                return { ...contact.email_contacts, type: contact.thread_contacts.type };
+            }) as ThreadContact[];
+
+        // @todo move to a function createThreadContact
+
         const email = await createEmail(tx)({
             data: emailMessage,
             sender: stringifyContacts(emailMessage.from),
@@ -90,7 +130,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
             return tx.rollback();
         }
 
-        return { influencer, thread, email: transformEmail(email), messageType };
+        return { influencer, thread, contacts, email: transformEmail(email), messageType };
     });
 
     return result;

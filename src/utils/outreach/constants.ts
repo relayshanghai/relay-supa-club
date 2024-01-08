@@ -22,3 +22,16 @@ export const FUNNEL_STATUS = z.enum([
 export type FUNNEL_STATUS = z.infer<typeof FUNNEL_STATUS>;
 
 export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft';
+
+export type EMAIL_CONTACT_TYPE = 'from' | 'to' | 'cc' | 'bcc';
+
+/**
+ * The type of contact in the thread
+ *
+ * - `user`: an application user (with an email engine account)
+ * - `influencer`: the target influencer
+ * - `participant`: any other contacts in the thread
+ * - `cc`: participants that are cc'ed
+ * - `bcc`: participants that are bcc'ed
+ */
+export type THREAD_CONTACT_TYPE = 'user' | 'influencer' | 'participant' | 'cc' | 'bcc';

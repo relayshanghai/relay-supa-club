@@ -661,3 +661,24 @@ export const threads = pgTable(
         };
     },
 );
+
+export const thread_contacts = pgTable("thread_contacts", {
+    id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+    thread_id: text("thread_id").notNull().references(() => threads.thread_id),
+    email_contact_id: uuid("email_contact_id").notNull().references(() => email_contacts.id),
+    type: text("type"),
+    created_at: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    deleted_at: timestamp("deleted_at", { mode: 'string' }),
+});
+
+export const email_contacts = pgTable("email_contacts", {
+    id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+    name: varchar("name"),
+    address: varchar("address").notNull(),
+    created_at: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+},
+    (table) => {
+        return {
+            email_contacts_address_key: unique("email_contacts_address_key").on(table.address),
+        }
+    });

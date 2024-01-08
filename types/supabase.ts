@@ -486,6 +486,27 @@ export interface Database {
           }
         ]
       }
+      email_contacts: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       emails: {
         Row: {
           created_at: string | null
@@ -1250,6 +1271,7 @@ export interface Database {
           {
             foreignKeyName: "sequence_emails_job_id_fkey"
             columns: ["job_id"]
+            isOneToOne: false
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
@@ -1519,6 +1541,48 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sequences"
             referencedColumns: ["id"]
+          }
+        ]
+      }
+      thread_contacts: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          email_contact_id: string
+          id: string
+          thread_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          email_contact_id: string
+          id?: string
+          thread_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          email_contact_id?: string
+          id?: string
+          thread_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_contacts_email_contact_id_fkey"
+            columns: ["email_contact_id"]
+            isOneToOne: false
+            referencedRelation: "email_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thread_contacts_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["thread_id"]
           }
         ]
       }
