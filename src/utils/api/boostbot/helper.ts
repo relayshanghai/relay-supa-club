@@ -1,6 +1,9 @@
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { GenderPerAge } from 'types';
 import type { CreatorSearchAccountObject, CreatorSearchResult, SearchTableInfluencer } from 'types';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import type { InfluencerSocialProfileInsert } from 'src/utils/api/db';
+import type { Json } from 'types/supabase';
 
 interface InfluencerEvaluatedStats {
     [key: string]: number;
@@ -23,6 +26,19 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
         default:
             return;
     }
+};
+
+export const transformInfluencerToSocialProfile = (influencer: SearchTableInfluencer, insertedInfluencerId: string) => {
+    return {
+        avatar_url: influencer.picture,
+        influencer_id: insertedInfluencerId,
+        reference_id: `iqdata:${influencer.user_id}`,
+        name: influencer.fullname || influencer.username || influencer.handle || influencer.custom_name || '',
+        platform: extractPlatformFromURL(influencer.url),
+        url: influencer.url,
+        username: influencer.username || influencer.handle || influencer.custom_name || '',
+        data: influencer as unknown as Json,
+    } as InfluencerSocialProfileInsert;
 };
 
 export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {

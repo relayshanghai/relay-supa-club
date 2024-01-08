@@ -3,10 +3,11 @@ import {
     evaluateStat,
     flattenInfluencerData,
     processedAudienceDemoData,
+    transformInfluencerToSocialProfile,
 } from './helper';
 import boostbotGetInfluencers from 'src/mocks/api/boostbot/get-influencers.json';
 import indexDefaultSearch from 'src/mocks/api/influencer-search/indexDefaultSearch';
-import type { CreatorSearchResult } from 'types';
+import type { CreatorSearchResult, SearchTableInfluencer } from 'types';
 import { describe, test, expect } from 'vitest';
 
 describe('evaluateStat function works as intended', () => {
@@ -276,6 +277,52 @@ describe('flattenInfluencerData function works as intended', () => {
         expect(result).toEqual({
             total: 0,
             influencers: [],
+        });
+    });
+});
+
+describe.only('transformInfluencerToSocialProfile function works as intended', () => {
+    test('should return an object with all required fields when given a valid influencer object and inserted influencer ID', () => {
+        const influencer: SearchTableInfluencer = {
+            picture: 'https://example.com/avatar.jpg',
+            is_verified: true,
+            followers: 1000,
+            engagements: 100,
+            engagement_rate: 0.1,
+            user_id: '123456789',
+            fullname: 'John Doe',
+            username: 'johndoe',
+            handle: 'johndoe123',
+            custom_name: 'John',
+            url: 'https://www.youtube.com/channel/UC1234567890',
+            topics: ['fashion', 'beauty'],
+        };
+        const insertedInfluencerId = '987654321';
+
+        const result = transformInfluencerToSocialProfile(influencer, insertedInfluencerId);
+
+        expect(result).toEqual({
+            avatar_url: 'https://example.com/avatar.jpg',
+            influencer_id: '987654321',
+            reference_id: 'iqdata:123456789',
+            name: 'John Doe',
+            platform: 'youtube',
+            url: 'https://www.youtube.com/channel/UC1234567890',
+            username: 'johndoe',
+            data: {
+                picture: 'https://example.com/avatar.jpg',
+                user_id: '123456789',
+                fullname: 'John Doe',
+                username: 'johndoe',
+                handle: 'johndoe123',
+                is_verified: true,
+                followers: 1000,
+                engagements: 100,
+                engagement_rate: 0.1,
+                custom_name: 'John',
+                url: 'https://www.youtube.com/channel/UC1234567890',
+                topics: ['fashion', 'beauty'],
+            },
         });
     });
 });

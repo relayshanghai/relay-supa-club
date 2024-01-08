@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { saveSearchResults } from 'src/utils/api/boostbot/save-search-results';
+import { saveSearchResultsDbCall } from 'src/utils/api/boostbot/save-search-results';
 import { getRelevantTopicTagsByInfluencer } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { SearchTableInfluencer } from 'types';
@@ -13,10 +13,19 @@ export type SaveSearchResultsBody = {
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const influencers: SearchTableInfluencer[] = req.body.influencers;
-    if (!('user_id' in influencers[0])) {
+    if (
+        influencers.some(({ fullname, user_id, picture, topics, url }) => {
+            return (
+                user_id === undefined ||
+                fullname === undefined ||
+                picture === undefined ||
+                topics === undefined ||
+                url === undefined
+            );
+        })
+    ) {
         return res.status(httpCodes.BAD_REQUEST).end();
     }
-
     const modifiedInfluencers = await Promise.all(
         influencers.map(async (influencer) => {
             const platform = influencer.url ? extractPlatformFromURL(influencer.url) || 'youtube' : 'youtube';
@@ -39,7 +48,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         }),
     );
 
-    await saveSearchResults(modifiedInfluencers);
+    await saveSearchResultsDbCall(modifiedInfluencers);
 
     return res.status(httpCodes.OK).end();
 };
