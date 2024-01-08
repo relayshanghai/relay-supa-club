@@ -35,6 +35,7 @@ const Boostbot = () => {
         setMessages,
         influencers,
         setInfluencers,
+        saveSearchResults,
         createNewConversation,
         refreshConversation,
         isConversationLoading,
@@ -186,6 +187,9 @@ const Boostbot = () => {
                     sequence_id: sequence?.id,
                 });
             });
+
+            await saveSearchResults(selectedInfluencersData);
+
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 

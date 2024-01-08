@@ -118,7 +118,6 @@ export const Chat: React.FC<ChatProps> = ({
         getInfluencers,
         updateConversation,
         refreshConversation,
-        saveSearchResults,
         setInfluencers,
     } = useBoostbot({
         abortSignal: abortController.signal,
@@ -207,7 +206,7 @@ export const Chat: React.FC<ChatProps> = ({
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
             const searchResults = await Promise.all(parallelSearchPromises);
-            const influencers: BoostbotInfluencer[] = mixArrays(searchResults).filter((i) => !!i.url);
+            const influencers = mixArrays(searchResults).filter((i) => !!i.url);
 
             clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
             trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
@@ -247,8 +246,6 @@ export const Chat: React.FC<ChatProps> = ({
 
             const newData = { searchResults: influencers, chatMessages: newMessages };
             const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
-        
-            saveSearchResults(influencers);
 
             refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
             setHasSearched(true);
