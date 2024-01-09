@@ -3,6 +3,7 @@
 import { enUS } from 'src/constants';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
+import { serverLogger } from './logger-server';
 
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') {
@@ -130,6 +131,10 @@ export const mixArrays = (arrays: any[][]): any[] => {
  * @returns An array of the values of the fulfilled results.
  */
 export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
+    const errors = getRejectedData(results);
+    if (errors.length && errors.length > 0) {
+        serverLogger(`getFulfilledData: ${errors.length} errors. ${JSON.stringify(errors)}`, 'error');
+    }
     return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
 };
 
