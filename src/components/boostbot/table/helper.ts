@@ -1,3 +1,6 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SearchTableInfluencer } from 'types';
+
 export const getPaginationItems = (
     currentPage: number,
     lastPage: number,
@@ -69,4 +72,13 @@ export const getPaginationItems = (
     }
 
     return res;
+};
+
+export const filterOutAlreadyAddedInfluencers = (
+    allSequenceInfluencers: SequenceInfluencerManagerPage[],
+    influencers: SearchTableInfluencer[],
+) => {
+    const allSequenceInfluencersSet = new Set(allSequenceInfluencers.map((influencer) => influencer.iqdata_id));
+
+    return influencers.filter((i) => !allSequenceInfluencersSet.has(i.user_id));
 };

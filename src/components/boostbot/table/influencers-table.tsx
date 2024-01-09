@@ -7,6 +7,7 @@ import { DataTablePagination } from './pagination';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import Question from 'src/components/icons/Question';
+import { filterOutAlreadyAddedInfluencers } from './helper';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -19,7 +20,6 @@ export interface DataTableProps<TData, TValue> {
 }
 
 declare module '@tanstack/react-table' {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
@@ -31,7 +31,7 @@ declare module '@tanstack/react-table' {
     }
 }
 
-export function InfluencersTable<TData, TValue>({
+export function InfluencersTable<_T, TValue>({
     data,
     columns,
     selectedInfluencers,
@@ -39,7 +39,7 @@ export function InfluencersTable<TData, TValue>({
     influencerCount,
     currentPage,
     meta,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<BoostbotInfluencer, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
         data,
@@ -78,13 +78,10 @@ export function InfluencersTable<TData, TValue>({
 
     const selectedCount = table.getFilteredSelectedRowModel().rows.length;
     useEffect(() => {
-        const allSequenceInfluencersSet = new Set(
-            table.options.meta?.allSequenceInfluencers?.map((influencer) => influencer.iqdata_id),
-        );
-
-        const filteredCount = table
-            .getFilteredSelectedRowModel()
-            .rows.filter((row) => !allSequenceInfluencersSet.has((row.original as BoostbotInfluencer).user_id)).length;
+        const filteredCount = filterOutAlreadyAddedInfluencers(
+            table.options.meta?.allSequenceInfluencers ?? [],
+            table.getFilteredSelectedRowModel().rows.map((row) => row.original),
+        ).length;
 
         table.options.meta?.setSelectedCount(filteredCount);
     }, [table, selectedCount]);
