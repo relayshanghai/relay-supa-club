@@ -43,3 +43,5 @@ export const QUICK_SEND_EMAIL_ACCOUNTS = [
     '6nitzaf4gajlnt5c', // kirsten@boostbot.ai
     '3tsfh97079jmgnni', // anne_ulike@beauty.boostbot.ai
 ];
+
+export const QUICK_SEND_EMAIL_IDS = ['jacob@boostbot.ai', 'kirsten@boostbot.ai', 'anne_ulike@beauty.boostbot.ai'];
