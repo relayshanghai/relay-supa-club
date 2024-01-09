@@ -144,7 +144,7 @@ export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
  * @returns An array of the reasons for rejection of the rejected results.
  */
 export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
-    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason?.message);
 };
 
 export const randomNumber = (maxDigits = 8) => Math.round(Math.random() * Math.pow(10, maxDigits));
