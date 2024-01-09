@@ -40,5 +40,5 @@
     "strings": true
   },
   "Prettier-SQL.SQLFlavourOverride": "postgresql",
-  "Prettier-SQL.keywordCase": "upper",
+  "Prettier-SQL.keywordCase": "upper"
 }
