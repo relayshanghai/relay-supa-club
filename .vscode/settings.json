@@ -40,5 +40,10 @@
     "strings": true
   },
   "Prettier-SQL.SQLFlavourOverride": "postgresql",
-  "Prettier-SQL.keywordCase": "upper"
+  "Prettier-SQL.keywordCase": "upper",
+  
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+},
+"eslint.validate": ["javascript"]
 }

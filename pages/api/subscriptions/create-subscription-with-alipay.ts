@@ -51,6 +51,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         expand: ['latest_invoice.payment_intent'],
         off_session: true,
         coupon: couponId,
+        payment_settings: { save_default_payment_method: 'on_subscription', payment_method_types: ['alipay' as any] },
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent;
