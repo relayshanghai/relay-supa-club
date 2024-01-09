@@ -1,6 +1,6 @@
 import { getThread } from './db/get-thread';
 import { replyEmail } from './reply-email';
-import type { EmailContact } from './types';
+import type { AttachmentFile, EmailContact } from './types';
 
 type ReplyThreadParams = {
     account: string;
@@ -8,6 +8,7 @@ type ReplyThreadParams = {
     content: string;
     to?: EmailContact[];
     cc?: EmailContact[];
+    attachments?: AttachmentFile[] | null;
 };
 
 type ReplyThreadFn = (params: ReplyThreadParams) => Promise<any>;
@@ -25,5 +26,6 @@ export const replyThread: ReplyThreadFn = async (params) => {
         content: params.content,
         to: params.to,
         cc: params.cc,
+        attachments: params.attachments,
     });
 };

@@ -3,7 +3,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { AttachmentFile, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -24,6 +24,9 @@ import { NotesListOverlayScreen } from 'src/components/influencer-profile/screen
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { now } from 'src/utils/datetime';
+import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
+import AttachmentField from 'src/components/inbox/wip/attachment-field';
+import { serverLogger } from 'src/utils/logger-server';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -143,8 +146,15 @@ const ThreadProvider = ({
         },
     });
 
+    const [attachments, setAttachments] = useState<AttachmentFile[] | null>(null);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
+
+    const handleAttachmentSelect: AttachmentFieldProps['onChange'] = (files, error) => {
+        if (error) return serverLogger(error);
+        if (files === null) return serverLogger('No files attached');
+        setAttachments(files);
+    };
 
     const handleReply = useCallback(
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
@@ -155,6 +165,7 @@ const ThreadProvider = ({
                         threadId,
                         cc: ccList,
                         to: toList,
+                        attachments,
                     });
                     // Retain local data with generated data
                     const localMessage = generateLocalData({
@@ -187,7 +198,7 @@ const ThreadProvider = ({
             );
             markAsReplied(threadId);
         },
-        [threadId, mutate, markAsReplied, currentInbox, messages],
+        [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
     );
 
     if (messagesError) return <div>Error loading messages</div>;
@@ -211,6 +222,7 @@ const ThreadProvider = ({
                     />
                 </div>
             </div>
+            <AttachmentField onChange={handleAttachmentSelect} />
             <ReplyEditor defaultContacts={contactsToReply} onReply={handleReply} />
         </div>
     );

@@ -1,17 +1,18 @@
 import type { FunnelStatus } from 'src/utils/api/db';
 import type { ThreadMessage } from '../../Threads';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import type { EmailContact } from 'src/utils/outreach/types';
+import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 
 export const sendReply = async (params: {
     replyBody: string;
     threadId: string;
     cc: EmailContact[];
     to: EmailContact[];
+    attachments?: AttachmentFile[] | null;
 }) => {
     const { content } = await apiFetch<any, any>(`/api/outreach/threads/{threadId}/reply`, {
         path: { threadId: params.threadId },
-        body: { content: params.replyBody, cc: params.cc, to: params.to },
+        body: { content: params.replyBody, cc: params.cc, to: params.to, attachments: params.attachments },
     });
     return content;
 };
