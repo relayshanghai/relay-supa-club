@@ -16,7 +16,7 @@ import type {
 } from 'pages/api/boostbot/get-topics-and-relevance';
 import type { RelevantTopic } from 'src/utils/api/boostbot/get-topic-relevance';
 import {
-    getBoostbotConversationCall,
+    getMostRecentBoostbotConversationCall,
     createNewBoostbotConversationCall,
     updateBoostbotConversationCall,
 } from 'src/utils/api/db/calls/boostbot-conversations';
@@ -32,7 +32,7 @@ type UseBoostbotProps = {
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const getBoostbotConversation = useDB(getBoostbotConversationCall);
+    const getMostRecentBoostbotConversation = useDB(getMostRecentBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
 
@@ -43,7 +43,7 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         isLoading: isConversationLoading,
     } = useSWR(profile?.id ? [profile.id, 'get-boostbot-conversation'] : null, async () => {
         if (!profile?.id) return null;
-        return await getBoostbotConversation(profile.id);
+        return await getMostRecentBoostbotConversation(profile.id);
     });
 
     const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);

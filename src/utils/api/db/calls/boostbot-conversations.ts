@@ -23,7 +23,7 @@ const createBoostbotConversation =
         return data;
     };
 
-export const getBoostbotConversationCall = (supabaseClient: RelayDatabase) => async (profileId: string) => {
+export const getMostRecentBoostbotConversationCall = (supabaseClient: RelayDatabase) => async (profileId: string) => {
     if (!profileId) {
         throw new Error('No profile id found');
     }
