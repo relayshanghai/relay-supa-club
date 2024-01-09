@@ -27,6 +27,8 @@ import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { Row } from '@tanstack/react-table';
 import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-button';
 import { useBoostbot } from 'src/hooks/use-boostbot';
+import { useAtomValue } from 'jotai';
+import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -86,7 +88,7 @@ const Boostbot = () => {
 
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
-    const [searchId, setSearchId] = useState<string | number | null>(null);
+    const searchId = useAtomValue(boostbotSearchIdAtom);
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
@@ -255,11 +257,14 @@ const Boostbot = () => {
     };
 
     const clearChatHistory = async () => {
+        if (!profile) {
+            return;
+        }
         setHasSearched(false);
         setMessages([]);
         setInfluencers([]);
         setSelectedInfluencers({});
-        await createNewConversation(profile?.first_name);
+        await createNewConversation(profile?.id ?? '', profile?.first_name);
         refreshConversation();
     };
 
@@ -292,7 +297,6 @@ const Boostbot = () => {
                         addMessage={addMessage}
                         isSearchDisabled={isSearchDisabled}
                         isOutreachButtonDisabled={isOutreachButtonDisabled}
-                        setSearchId={setSearchId}
                         setSequence={setSequence}
                         sequence={sequence}
                         sequences={sequences}
