@@ -1,7 +1,7 @@
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { Json } from 'types/supabase';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
@@ -30,6 +30,9 @@ import type { Row } from '@tanstack/react-table';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { useUser } from 'src/hooks/use-user';
+import { useAtom } from 'jotai';
+import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -50,7 +53,6 @@ interface ChatProps {
     handleSelectedInfluencersToOutreach: () => void;
     isSearchDisabled: boolean;
     isOutreachButtonDisabled: boolean;
-    setSearchId: Dispatch<SetStateAction<string | number | null>>;
     sequence?: Sequence;
     setSequence: (sequence: Sequence | undefined) => void;
     sequences?: Sequence[];
@@ -88,7 +90,6 @@ export const Chat: React.FC<ChatProps> = ({
     handleSelectedInfluencersToOutreach,
     isSearchDisabled,
     isOutreachButtonDisabled,
-    setSearchId,
     sequence,
     setSequence,
     sequences,
@@ -108,7 +109,6 @@ export const Chat: React.FC<ChatProps> = ({
     const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
     const { trackBoostbotSearch } = useSearchTrackers();
     const [filters, setFilters] = usePersistentState<Filters>('boostbot-filters', defaultFilters);
-    let searchId: string | number | null = null;
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
     const {
@@ -122,12 +122,13 @@ export const Chat: React.FC<ChatProps> = ({
     } = useBoostbot({
         abortSignal: abortController.signal,
     });
-
+    const { profile } = useUser();
     const { track } = useRudderstackTrack();
+    const [searchId, setSearchId] = useAtom(boostbotSearchIdAtom);
 
     const shouldShowButtons = influencers.length > 0 && !isSearchLoading;
 
-    const stopBoostbot = () => {
+    const stopBoostbot = useCallback(() => {
         abortController.abort();
         setAbortController(new AbortController());
         addMessage({
@@ -143,135 +144,168 @@ export const Chat: React.FC<ChatProps> = ({
             currentPage: CurrentPageEvent.boostbot,
             search_id: searchId,
         });
-    };
+    }, [abortController, addMessage, searchId, setMessages, track]);
 
-    const updateProgress = (progress: ProgressType) =>
-        setMessages((messages) => [
-            ...messages.slice(0, -1),
-            { sender: 'Neutral', type: 'progress', progressData: progress },
-        ]);
+    const updateProgress = useCallback(
+        (progress: ProgressType) =>
+            setMessages((messages) => [
+                ...messages.slice(0, -1),
+                { sender: 'Neutral', type: 'progress', progressData: progress },
+            ]),
+        [setMessages],
+    );
 
-    const chatSelectedInfluencersToOutreach = () => {
+    const chatSelectedInfluencersToOutreach = useCallback(() => {
         addMessage({ sender: 'User', type: 'translation', translationKey: 'boostbot.chat.outreachSelected' });
         handleSelectedInfluencersToOutreach();
-    };
+    }, [addMessage, handleSelectedInfluencersToOutreach]);
 
-    const onSendMessage = async (productDescription: string) => {
-        searchId = randomNumber();
-        setSearchId(searchId);
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            { sender: 'User', type: 'text', text: productDescription },
-            { sender: 'Neutral', type: 'progress', progressData: { topics: [], isMidway: false, totalFound: null } },
-        ]);
-        setIsSearchLoading(true);
+    const onSendMessage = useCallback(
+        async (productDescription: string) => {
+            if (!profile?.id) {
+                return;
+            }
+            const generatedSearchId = randomNumber(); // name something different than parent scope
+            setSearchId(generatedSearchId);
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'User', type: 'text', text: productDescription },
+                {
+                    sender: 'Neutral',
+                    type: 'progress',
+                    progressData: { topics: [], isMidway: false, totalFound: null },
+                },
+            ]);
+            setIsSearchLoading(true);
 
-        const payload: RecommendInfluencersPayload = {
-            currentPage: CurrentPageEvent.boostbot,
-            query: productDescription,
-            topics_generated: [],
-            valid_topics: [],
-            recommended_influencers: [],
-            is_success: true,
-            search_id: searchId,
-        };
-
-        try {
-            const topics = await getTopics(productDescription);
-            payload.topics_generated = topics;
-            updateProgress({ topics, isMidway: false, totalFound: null });
-
-            // Since we are getting rid of unlocking the top 3 influencers, we instead simulate the 2nd loading step with a timer.
-            const secondStepTimeout = setTimeout(
-                () => updateProgress({ topics, isMidway: true, totalFound: null }),
-                5000,
-            );
-
-            const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
-                const relevantTopics = await getRelevantTopics({ topics, platform });
-                const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
-                const influencerPayloads = topicClusters.map((topics) =>
-                    createBoostbotInfluencerPayload({ platform, filters, topics }),
-                );
-
-                const influencers = await getInfluencers(influencerPayloads);
-
-                payload.valid_topics.push(...relevantTopics);
-                payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
-
-                return influencers;
+            const payload: RecommendInfluencersPayload = {
+                currentPage: CurrentPageEvent.boostbot,
+                query: productDescription,
+                topics_generated: [],
+                valid_topics: [],
+                recommended_influencers: [],
+                is_success: true,
+                search_id: generatedSearchId,
             };
 
-            const parallelSearchPromises = filters.platforms.map((platform) =>
-                limiter.schedule(() => getInfluencersForPlatform({ platform })),
-            );
-            const searchResults = await Promise.all(parallelSearchPromises);
-            const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+            try {
+                const topics = await getTopics(productDescription);
+                payload.topics_generated = topics;
+                updateProgress({ topics, isMidway: false, totalFound: null });
 
-            clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
-            trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
-            track(RecommendInfluencers, payload);
+                // Since we are getting rid of unlocking the top 3 influencers, we instead simulate the 2nd loading step with a timer.
+                const secondStepTimeout = setTimeout(
+                    () => updateProgress({ topics, isMidway: true, totalFound: null }),
+                    5000,
+                );
 
-            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
-            const newMessages = [...messages];
+                const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
+                    const relevantTopics = await getRelevantTopics({ topics, platform });
+                    const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
+                    const influencerPayloads = topicClusters.map((topics) =>
+                        createBoostbotInfluencerPayload({ platform, filters, topics }),
+                    );
 
-            if (influencers.length > 0) {
-                if (isFirstTimeSearch) {
-                    setIsFirstTimeSearch(false);
-                    newMessages.push({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
-                    });
-                    newMessages.push({
-                        sender: 'Bot',
-                        type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
-                    });
+                    const influencers = await getInfluencers(influencerPayloads);
+
+                    payload.valid_topics.push(...relevantTopics);
+                    payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
+
+                    return influencers;
+                };
+
+                const parallelSearchPromises = filters.platforms.map((platform) =>
+                    limiter.schedule(() => getInfluencersForPlatform({ platform })),
+                );
+                const searchResults = await Promise.all(parallelSearchPromises);
+                const influencers = mixArrays(searchResults).filter((i) => !!i.url);
+
+                clearTimeout(secondStepTimeout); // If, by any chance, the 3rd step finishes before the timed 2nd step, cancel the 2nd step timeout so it doesn't overwrite the 3rd step.
+                trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
+                track(RecommendInfluencers, payload);
+
+                updateProgress({ topics, isMidway: true, totalFound: influencers.length });
+                const newMessages = [...messages];
+
+                if (influencers.length > 0) {
+                    if (isFirstTimeSearch) {
+                        setIsFirstTimeSearch(false);
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFoundFirstTimeA',
+                        });
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFoundFirstTimeB',
+                        });
+                    } else {
+                        newMessages.push({
+                            sender: 'Bot',
+                            type: 'translation',
+                            translationKey: 'boostbot.chat.influencersFound',
+                            translationValues: { count: influencers.length },
+                        });
+                    }
                 } else {
                     newMessages.push({
                         sender: 'Bot',
                         type: 'translation',
-                        translationKey: 'boostbot.chat.influencersFound',
-                        translationValues: { count: influencers.length },
+                        translationKey: 'boostbot.chat.noInfluencersFound',
                     });
                 }
-            } else {
-                newMessages.push({
-                    sender: 'Bot',
-                    type: 'translation',
-                    translationKey: 'boostbot.chat.noInfluencersFound',
-                });
+
+                const newData = { searchResults: influencers, chatMessages: newMessages, profileId: profile.id };
+                const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+
+                refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
+                setHasSearched(true);
+                document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
+            } catch (error) {
+                if (error instanceof Error && error.name === 'AbortError') {
+                    return;
+                } else {
+                    payload.is_success = false;
+                    payload.extra_info = { error: String(error) };
+
+                    clientLogger(error, 'error');
+                    toast.error(t('boostbot.error.influencerSearch'));
+
+                    track(RecommendInfluencers, payload);
+                }
+            } finally {
+                setIsSearchLoading(false);
             }
+        },
+        [
+            filters,
+            getInfluencers,
+            getRelevantTopics,
+            getTopicClusters,
+            getTopics,
+            isFirstTimeSearch,
+            messages,
+            profile?.id,
+            refreshConversation,
+            setHasSearched,
+            setIsFirstTimeSearch,
+            setIsSearchLoading,
+            setMessages,
+            setSearchId,
+            t,
+            track,
+            trackBoostbotSearch,
+            updateConversation,
+            updateProgress,
+        ],
+    );
 
-            const newData = { searchResults: influencers, chatMessages: newMessages };
-            const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
-
-            refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
-            setHasSearched(true);
-            document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
-        } catch (error) {
-            if (error instanceof Error && error.name === 'AbortError') {
-                return;
-            } else {
-                payload.is_success = false;
-                payload.extra_info = { error: String(error) };
-
-                clientLogger(error, 'error');
-                toast.error(t('boostbot.error.influencerSearch'));
-
-                track(RecommendInfluencers, payload);
-            }
-        } finally {
-            setIsSearchLoading(false);
-        }
-    };
-
-    const clearChatHistoryAndFilters = () => {
+    const clearChatHistoryAndFilters = useCallback(() => {
         clearChatHistory();
         setInfluencers([]);
         setFilters(defaultFilters);
-    };
+    }, [clearChatHistory, setFilters, setInfluencers]);
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-500 bg-white shadow-lg">
