@@ -147,11 +147,21 @@ export const Chat: React.FC<ChatProps> = ({
     }, [abortController, addMessage, searchId, setMessages, track]);
 
     const updateProgress = useCallback(
-        (progress: ProgressType) =>
-            setMessages((messages) => [
-                ...messages.slice(0, -1),
-                { sender: 'Neutral', type: 'progress', progressData: progress },
-            ]),
+        (progress: ProgressType, messages: MessageType[]) => {
+            const lastProgressMessageIndex = messages.findLastIndex((message) => message.type === 'progress');
+            const progressMessage: MessageType = { sender: 'Neutral', type: 'progress', progressData: progress };
+
+            const newMessages = [...messages];
+            if (lastProgressMessageIndex !== -1) {
+                newMessages[lastProgressMessageIndex] = progressMessage;
+            } else {
+                newMessages.push(progressMessage);
+            }
+
+            setMessages(newMessages);
+            return newMessages;
+        },
+
         [setMessages],
     );
 
@@ -167,15 +177,17 @@ export const Chat: React.FC<ChatProps> = ({
             }
             const generatedSearchId = randomNumber(); // name something different than parent scope
             setSearchId(generatedSearchId);
-            setMessages((prevMessages) => [
-                ...prevMessages,
+            let newMessages = [...messages];
+            newMessages.push(
                 { sender: 'User', type: 'text', text: productDescription },
                 {
                     sender: 'Neutral',
                     type: 'progress',
                     progressData: { topics: [], isMidway: false, totalFound: null },
                 },
-            ]);
+            );
+
+            setMessages(newMessages);
             setIsSearchLoading(true);
 
             const payload: RecommendInfluencersPayload = {
@@ -191,13 +203,12 @@ export const Chat: React.FC<ChatProps> = ({
             try {
                 const topics = await getTopics(productDescription);
                 payload.topics_generated = topics;
-                updateProgress({ topics, isMidway: false, totalFound: null });
+                newMessages = updateProgress({ topics, isMidway: false, totalFound: null }, newMessages);
 
                 // Since we are getting rid of unlocking the top 3 influencers, we instead simulate the 2nd loading step with a timer.
-                const secondStepTimeout = setTimeout(
-                    () => updateProgress({ topics, isMidway: true, totalFound: null }),
-                    5000,
-                );
+                const secondStepTimeout = setTimeout(() => {
+                    newMessages = updateProgress({ topics, isMidway: true, totalFound: null }, newMessages);
+                }, 5000);
 
                 const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                     const relevantTopics = await getRelevantTopics({ topics, platform });
@@ -224,8 +235,7 @@ export const Chat: React.FC<ChatProps> = ({
                 trackBoostbotSearch('Search For Influencers'); // To increment total_boostbot_search count
                 track(RecommendInfluencers, payload);
 
-                updateProgress({ topics, isMidway: true, totalFound: influencers.length });
-                const newMessages = [...messages];
+                newMessages = updateProgress({ topics, isMidway: true, totalFound: influencers.length }, newMessages);
 
                 if (influencers.length > 0) {
                     if (isFirstTimeSearch) {
