@@ -12,7 +12,7 @@ type CreateThreadFn = (params: {
     createdAt?: string | null;
 }) => Promise<typeof threads.$inferSelect>;
 
-export const createThread: DBQuery<CreateThreadFn> = (i) => async (params) => {
+export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) => async (params) => {
     const updateData: Partial<typeof threads.$inferInsert> = { updated_at: now() };
 
     if (params.lastReplyId) {
@@ -23,7 +23,7 @@ export const createThread: DBQuery<CreateThreadFn> = (i) => async (params) => {
         updateData.sequence_influencer_id = params.sequenceInfluencerId;
     }
 
-    let result = await db(i)
+    let result = await db(drizzlePostgresInstance)
         .insert(threads)
         .values({
             thread_id: params.threadId,
@@ -38,7 +38,11 @@ export const createThread: DBQuery<CreateThreadFn> = (i) => async (params) => {
         .returning();
 
     if (result.length <= 0) {
-        result = await db(i).select().from(threads).where(eq(threads.thread_id, params.threadId)).limit(1);
+        result = await db(drizzlePostgresInstance)
+            .select()
+            .from(threads)
+            .where(eq(threads.thread_id, params.threadId))
+            .limit(1);
     }
 
     if (result.length !== 1) {

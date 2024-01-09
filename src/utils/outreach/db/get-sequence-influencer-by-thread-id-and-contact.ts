@@ -9,8 +9,8 @@ type GetSequenceInfluencerByThreadIdAndContactFn = (
 ) => Promise<typeof sequence_influencers.$inferSelect | null>;
 
 export const getSequenceInfluencerByThreadIdAndContact: DBQuery<GetSequenceInfluencerByThreadIdAndContactFn> =
-    (i) => async (threadId: string, contact: string) => {
-        const rows = await db(i)
+    (drizzlePostgresInstance) => async (threadId: string, contact: string) => {
+        const rows = await db(drizzlePostgresInstance)
             .select()
             .from(emails)
             .where(
@@ -23,13 +23,17 @@ export const getSequenceInfluencerByThreadIdAndContact: DBQuery<GetSequenceInflu
 
         if (rows.length !== 1) return null;
 
-        const threadrows = await db(i).select().from(threads).where(eq(threads.thread_id, threadId)).limit(1);
+        const threadrows = await db(drizzlePostgresInstance)
+            .select()
+            .from(threads)
+            .where(eq(threads.thread_id, threadId))
+            .limit(1);
 
         if (threadrows.length !== 1) return null;
 
         if (!threadrows[0].sequence_influencer_id) return null;
 
-        const results = await db(i)
+        const results = await db(drizzlePostgresInstance)
             .select()
             .from(sequence_influencers)
             .where(eq(sequence_influencers.id, threadrows[0].sequence_influencer_id))

@@ -11,8 +11,8 @@ type CreateThreadContactFn = (
 ) => Promise<typeof thread_contacts.$inferSelect>;
 
 export const createThreadContact: DBQuery<CreateThreadContactFn> =
-    (i) => async (thread_id, contact_id, contact_type) => {
-        const existing = await db(i)
+    (drizzlePostgresInstance) => async (thread_id, contact_id, contact_type) => {
+        const existing = await db(drizzlePostgresInstance)
             .select()
             .from(thread_contacts)
             .where(and(eq(thread_contacts.thread_id, thread_id), eq(thread_contacts.email_contact_id, contact_id)))
@@ -22,7 +22,7 @@ export const createThreadContact: DBQuery<CreateThreadContactFn> =
             return existing[0];
         }
 
-        const row = await db(i)
+        const row = await db(drizzlePostgresInstance)
             .insert(thread_contacts)
             .values({
                 thread_id,

@@ -11,7 +11,7 @@ export type CountThreadsReturn = {
 
 type CountThreadsFn = (account: string, filters?: ThreadsFilter) => Promise<CountThreadsReturn[]>;
 
-export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: string) => {
+export const countThreads: DBQuery<CountThreadsFn> = (drizzlePostgresInstance) => async (account: string) => {
     const queryFilters = [
         eq(threads.email_engine_account_id, account),
         isNull(threads.deleted_at),
@@ -19,7 +19,7 @@ export const countThreads: DBQuery<CountThreadsFn> = (i) => async (account: stri
         isNotNull(threads.sequence_influencer_id),
     ];
 
-    const rows = await db(i)
+    const rows = await db(drizzlePostgresInstance)
         .select({
             thread_status: threads.thread_status,
             thread_status_total: sql<number>`cast(count(${threads.id}) as int)`,

@@ -177,7 +177,14 @@ const scheduleOutreachEmailRetry = async ({
     );
 
     if (error) {
-        serverLogger(`nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`);
+        serverLogger(
+            `nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`,
+            (scope) => {
+                return scope.setContext('Error', {
+                    error,
+                });
+            },
+        );
     }
 
     if (!data) {

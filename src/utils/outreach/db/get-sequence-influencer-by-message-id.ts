@@ -8,9 +8,9 @@ type GetSequenceInfluencerByMessageIdFn = (
 ) => Promise<typeof sequence_influencers.$inferSelect | null>;
 
 export const getSequenceInfluencerByMessageId: DBQuery<GetSequenceInfluencerByMessageIdFn> =
-    (i) => async (messageId: string) => {
+    (drizzlePostgresInstance) => async (messageId: string) => {
         // @note utilize drizzle relations
-        const emails = await db(i)
+        const emails = await db(drizzlePostgresInstance)
             .select({ sequence_influencer_id: sequence_emails.sequence_influencer_id })
             .from(sequence_emails)
             .where(eq(sequence_emails.email_message_id, messageId))
@@ -20,7 +20,7 @@ export const getSequenceInfluencerByMessageId: DBQuery<GetSequenceInfluencerByMe
 
         if (email === undefined) return null;
 
-        const result = await db(i)
+        const result = await db(drizzlePostgresInstance)
             .select()
             .from(sequence_influencers)
             .where(eq(sequence_influencers.id, email.sequence_influencer_id))

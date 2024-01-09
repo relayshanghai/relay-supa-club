@@ -10,12 +10,13 @@ type GetThreadContactsFn = (threadId: string) => Promise<
     }[]
 >;
 
-export const getThreadContacts: DBQuery<GetThreadContactsFn> = (i) => async (threadId: string) => {
-    const rows = await db(i)
-        .select()
-        .from(thread_contacts)
-        .leftJoin(email_contacts, eq(email_contacts.id, thread_contacts.email_contact_id))
-        .where(and(eq(thread_contacts.thread_id, threadId), isNull(thread_contacts.deleted_at)));
+export const getThreadContacts: DBQuery<GetThreadContactsFn> =
+    (drizzlePostgresInstance) => async (threadId: string) => {
+        const rows = await db(drizzlePostgresInstance)
+            .select()
+            .from(thread_contacts)
+            .leftJoin(email_contacts, eq(email_contacts.id, thread_contacts.email_contact_id))
+            .where(and(eq(thread_contacts.thread_id, threadId), isNull(thread_contacts.deleted_at)));
 
-    return rows;
-};
+        return rows;
+    };

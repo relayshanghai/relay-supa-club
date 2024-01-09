@@ -6,8 +6,8 @@ import { now } from 'src/utils/datetime';
 
 type DeleteThreadFn = (threadId: string) => Promise<typeof threads.$inferSelect | null>;
 
-export const deleteThread: DBQuery<DeleteThreadFn> = (i) => async (threadId: string) => {
-    const rows = await db(i)
+export const deleteThread: DBQuery<DeleteThreadFn> = (drizzlePostgresInstance) => async (threadId: string) => {
+    const rows = await db(drizzlePostgresInstance)
         .update(threads)
         .set({ deleted_at: now() })
         .where(eq(threads.thread_id, threadId))

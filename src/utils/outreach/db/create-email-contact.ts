@@ -6,8 +6,8 @@ import { eq } from 'drizzle-orm';
 
 type CreateEmailContactFn = (contact: EmailContact) => Promise<typeof email_contacts.$inferSelect>;
 
-export const createEmailContact: DBQuery<CreateEmailContactFn> = (i) => async (contact) => {
-    let row = await db(i)
+export const createEmailContact: DBQuery<CreateEmailContactFn> = (drizzlePostgresInstance) => async (contact) => {
+    let row = await db(drizzlePostgresInstance)
         .insert(email_contacts)
         .values({
             name: contact.name,
@@ -19,7 +19,11 @@ export const createEmailContact: DBQuery<CreateEmailContactFn> = (i) => async (c
         .returning();
 
     if (row.length !== 1) {
-        row = await db(i).select().from(email_contacts).where(eq(email_contacts.address, contact.address)).limit(1);
+        row = await db(drizzlePostgresInstance)
+            .select()
+            .from(email_contacts)
+            .where(eq(email_contacts.address, contact.address))
+            .limit(1);
     }
 
     if (row.length !== 1) throw new Error('Error inserting row');

@@ -5,8 +5,8 @@ import { and, desc, eq, isNull } from 'drizzle-orm';
 
 type GetEmailsFn = (threadId: string) => Promise<(typeof emails.$inferSelect)[]>;
 
-export const getEmails: DBQuery<GetEmailsFn> = (i) => async (threadId: string) => {
-    const rows = await db(i)
+export const getEmails: DBQuery<GetEmailsFn> = (drizzlePostgresInstance) => async (threadId: string) => {
+    const rows = await db(drizzlePostgresInstance)
         .select()
         .from(emails)
         .where(and(eq(emails.thread_id, threadId), isNull(emails.deleted_at)))

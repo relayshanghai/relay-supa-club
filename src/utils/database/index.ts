@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 
-export type DBQuery<T> = (instance?: ReturnType<typeof drizzle>) => T;
+export type DBQuery<T> = (drizzlePostgresInstance?: ReturnType<typeof drizzle>) => T;
 
 export type DBQueryReturn<T extends (...args: any) => any> = Awaited<ReturnType<ReturnType<T>>>;
 
@@ -31,12 +31,10 @@ export const db = (instance?: ReturnType<typeof drizzle>) => {
         idle_timeout: 60,
         debug: (conn, _query) => {
             DB_CONN.conns.add(conn);
-            // console.log('POSTGRES::OPEN', conn);
         },
         onclose: (conn) => {
             DB_CONN.conns.delete(conn);
             DB_CONN.instance = null;
-            // console.log('POSTGRES::CLOSE', conn, DB_CONN.conns.entries());
         },
     });
 

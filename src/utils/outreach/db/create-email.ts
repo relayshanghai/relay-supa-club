@@ -6,8 +6,8 @@ import { now } from 'src/utils/datetime';
 
 type CreateEmailFn = (params: typeof emails.$inferInsert) => Promise<typeof emails.$inferSelect>;
 
-export const createEmail: DBQuery<CreateEmailFn> = (i) => async (params) => {
-    let result = await db(i)
+export const createEmail: DBQuery<CreateEmailFn> = (drizzlePostgresInstance) => async (params) => {
+    let result = await db(drizzlePostgresInstance)
         .insert(emails)
         .values({
             data: params.data,
@@ -23,7 +23,11 @@ export const createEmail: DBQuery<CreateEmailFn> = (i) => async (params) => {
         .returning();
 
     if (result.length <= 0) {
-        result = await db(i).select().from(emails).where(eq(emails.email_engine_id, params.email_engine_id)).limit(1);
+        result = await db(drizzlePostgresInstance)
+            .select()
+            .from(emails)
+            .where(eq(emails.email_engine_id, params.email_engine_id))
+            .limit(1);
     }
 
     if (result.length !== 1) throw new Error('Error in inserting row');

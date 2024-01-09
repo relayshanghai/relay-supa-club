@@ -5,14 +5,15 @@ import { and, desc, eq, isNull } from 'drizzle-orm';
 
 type GetEmailByMessageIdFn = (messageId: string) => Promise<typeof emails.$inferSelect | null>;
 
-export const getEmailByMessageId: DBQuery<GetEmailByMessageIdFn> = (i) => async (messageId: string) => {
-    const rows = await db(i)
-        .select()
-        .from(emails)
-        .where(and(eq(emails.email_engine_message_id, messageId), isNull(emails.deleted_at)))
-        .orderBy(desc(emails.created_at));
+export const getEmailByMessageId: DBQuery<GetEmailByMessageIdFn> =
+    (drizzlePostgresInstance) => async (messageId: string) => {
+        const rows = await db(drizzlePostgresInstance)
+            .select()
+            .from(emails)
+            .where(and(eq(emails.email_engine_message_id, messageId), isNull(emails.deleted_at)))
+            .orderBy(desc(emails.created_at));
 
-    if (rows.length !== 1) return null;
+        if (rows.length !== 1) return null;
 
-    return rows[0];
-};
+        return rows[0];
+    };

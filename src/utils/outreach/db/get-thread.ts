@@ -10,8 +10,8 @@ type GetThreadReturn = {
 
 type GetThreadFn = (threadId: string) => Promise<GetThreadReturn | null>;
 
-export const getThread: DBQuery<GetThreadFn> = (i) => async (threadId: string) => {
-    const rows = await db(i)
+export const getThread: DBQuery<GetThreadFn> = (drizzlePostgresInstance) => async (threadId: string) => {
+    const rows = await db(drizzlePostgresInstance)
         .select()
         .from(threads)
         .where(and(eq(threads.thread_id, threadId), isNull(threads.deleted_at)))
