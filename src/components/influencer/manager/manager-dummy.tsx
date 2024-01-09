@@ -141,6 +141,7 @@ const ManagerDummy = () => {
             </div>
             <ProfileOverlayScreen
                 profile={influencer}
+                influencerData={null}
                 isOpen={uiState.isProfileOverlayOpen}
                 onClose={handleProfileOverlayClose}
                 onUpdate={handleProfileUpdate}

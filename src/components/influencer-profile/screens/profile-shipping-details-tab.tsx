@@ -31,9 +31,9 @@ import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
 import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 // import { UpdateInfluencerProfilePayload } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 import { useReport } from 'src/hooks/use-report';
+import type { SearchTableInfluencer } from 'types';
 
 export type ProfileShippingDetails = {
     name: string;
@@ -48,7 +48,7 @@ export type ProfileShippingDetails = {
 };
 
 type Props = {
-    profile: SequenceInfluencerManagerPage;
+    profile: SearchTableInfluencer;
     onUpdate?: (key: keyof ProfileShippingDetails, value: any) => void;
 };
 
@@ -91,10 +91,7 @@ export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
         };
 
         if (props.profile) {
-            const userHandle =
-                platform === 'youtube'
-                    ? props.profile?.iqdata_id
-                    : props.profile?.username || props.profile?.name || props.profile?.real_full_name;
+            const userHandle = 'lol';
             if (!userHandle) {
                 throw new Error('No handle found for influencer');
             }
@@ -113,7 +110,7 @@ export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
 
     const influencer = props.profile;
     const {
-        name: _name,
+        fullname,
         picture,
         handle,
         username, // this is handle for instagram and tiktok

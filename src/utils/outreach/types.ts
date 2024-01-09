@@ -1,6 +1,6 @@
 import type { addresses, email_contacts, sequence_influencers, sequences, threads } from 'drizzle/schema';
 import type { FUNNEL_STATUS, THREAD_CONTACT_TYPE } from './constants';
-import type { CreatorPlatform } from 'types';
+import type { CreatorPlatform, SearchTableInfluencer } from 'types';
 
 export type EmailContact = { address: string; name?: string | null };
 
@@ -30,4 +30,5 @@ export type Thread = {
     sequenceInfluencers: InfluencerOutreachData | null;
     contacts: ThreadContact[];
     sequenceInfo: Outreach | null;
+    influencerSocialProfile: SearchTableInfluencer;
 };

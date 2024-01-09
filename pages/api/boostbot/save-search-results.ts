@@ -24,7 +24,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
         })
     ) {
-        return res.status(httpCodes.BAD_REQUEST).end();
+        return res.status(httpCodes.BAD_REQUEST).json({ message: 'not ok' });
     }
     const modifiedInfluencers = await Promise.all(
         influencers.map(async (influencer) => {
@@ -50,7 +50,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await saveSearchResultsDbCall(modifiedInfluencers);
 
-    return res.status(httpCodes.OK).end();
+    return res.status(httpCodes.OK).json({ message: 'ok' });
 };
 
 export default ApiHandler({ postHandler });

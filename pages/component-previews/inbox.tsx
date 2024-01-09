@@ -396,6 +396,7 @@ const InboxPreview = () => {
                     <ProfileScreenProvider initialValue={initialValue}>
                         <ProfileScreen
                             profile={selectedThread?.sequenceInfluencers}
+                            influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             onCancel={() => {
                                 //

@@ -3,7 +3,7 @@ import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-hel
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { isDev } from 'src/constants';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import { EMPLOYEE_EMAILS, QUICK_SEND_EMAIL_ACCOUNTS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
@@ -33,6 +33,34 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
     } catch (error) {
         serverLogger(error);
         return { subscriptionStatus: false, subscriptionEndDate: null };
+    }
+};
+
+const getEmailEngineId = async (supabase: RelayDatabase, userId: string) => {
+    try {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('email_engine_account_id')
+            .eq('id', userId)
+            .single();
+
+        return profile?.email_engine_account_id;
+    } catch (error) {
+        serverLogger(error);
+        return '';
+    }
+};
+
+const checkEmailEngineId = async (req: NextRequest, res: NextResponse, session: Session, supabase: RelayDatabase) => {
+    const redirectUrl = req.nextUrl.clone();
+    const emailEngineAccountId = await getEmailEngineId(supabase, session.user.id);
+    if (!emailEngineAccountId) {
+        return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
+    }
+    if (QUICK_SEND_EMAIL_ACCOUNTS.includes(emailEngineAccountId) || process.env.NODE_ENV === 'development') {
+        return res;
+    } else {
+        return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
     }
 };
 
@@ -205,6 +233,13 @@ export async function middleware(req: NextRequest) {
             return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
+    }
+
+    if (req.nextUrl.pathname.includes('component-previews')) {
+        if (!authData.session?.user?.email) {
+            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        }
+        return await checkEmailEngineId(req, res, authData.session, supabase);
     }
 
     if (authData.session?.user?.email) {

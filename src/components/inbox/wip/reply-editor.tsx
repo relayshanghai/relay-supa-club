@@ -122,7 +122,7 @@ const AddressSection = ({
             if (toInput === '' || !validateEmail(e.currentTarget.value)) return;
             setToInput('');
             handleChangeTo({
-                name: '',
+                name: e.currentTarget.value,
                 address: e.currentTarget.value,
             });
         } else if (e.key === 'Backspace') {
@@ -136,7 +136,7 @@ const AddressSection = ({
             if (ccInput === '' || !validateEmail(e.currentTarget.value)) return;
             setCCInput('');
             handleChangeCC({
-                name: '',
+                name: e.currentTarget.value,
                 address: e.currentTarget.value,
             });
         } else if (e.key === 'Backspace') {

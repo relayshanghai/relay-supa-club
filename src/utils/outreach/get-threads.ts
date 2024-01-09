@@ -7,6 +7,7 @@ import { getThreads as dbGetThreads } from './db';
 import type { Outreach, Thread, ThreadContact } from './types';
 import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
 import { getThreadContacts } from './db/get-thread-contacts';
+import type { SearchTableInfluencer } from 'types';
 
 export type GetThreadsReturn = {
     data: Thread[];
@@ -31,6 +32,7 @@ const threadTransformer = (thread: dbGetThreadsReturn, contacts: ThreadContact[]
         sequenceInfluencers: thread.sequence_influencers
             ? influencerOutreachDataTransformer(thread.sequence_influencers)
             : null,
+        influencerSocialProfile: thread.influencer_social_profiles?.data as SearchTableInfluencer,
         contacts,
         sequenceInfo: thread.sequences ? sequenceTransformer(thread.sequences, thread.template_variables) : null,
     };

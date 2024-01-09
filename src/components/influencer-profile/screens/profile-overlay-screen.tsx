@@ -6,9 +6,11 @@ import { ProfileScreen } from 'src/components/influencer-profile/screens/profile
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
+import type { SearchTableInfluencer } from 'types';
 
 type Props = {
     profile: SequenceInfluencerManagerPage | null;
+    influencerData: SearchTableInfluencer | null;
     isOpen?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
@@ -39,7 +41,7 @@ export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPa
     fullAddress: '', // probably combination of stuff above
 });
 
-export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
+export const ProfileOverlayScreen = ({ profile, influencerData, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
 
@@ -92,9 +94,14 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     return (
         <>
             <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
-                {profile && initialValue ? (
+                {profile && influencerData && initialValue ? (
                     <ProfileScreenProvider initialValue={initialValue}>
-                        <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} />
+                        <ProfileScreen
+                            influencerData={influencerData}
+                            profile={profile}
+                            onCancel={handleClose}
+                            onUpdate={handleUpdate}
+                        />
                     </ProfileScreenProvider>
                 ) : null}
             </OverlayRight>

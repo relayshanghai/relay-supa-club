@@ -6,9 +6,8 @@ import { ProfileHeader } from '../components/profile-header';
 import type { ProfileNotes } from './profile-notes-tab';
 import { ProfileNotesTab } from './profile-notes-tab';
 import { useProfileScreenContext } from './profile-screen-context';
-import type { ProfileShippingDetails } from './profile-shipping-details-tab';
+import { ProfileShippingDetailsTab, type ProfileShippingDetails } from './profile-shipping-details-tab';
 // import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
-import { useTranslation } from 'react-i18next';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
 import { randomNumber } from 'src/utils/utils';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -18,6 +17,7 @@ import {
 } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 import { SaveInfluencerProfileUpdates } from 'src/utils/analytics/events';
 import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
+import type { SearchTableInfluencer } from 'types';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -26,6 +26,7 @@ export type ProfileValue = {
 
 type Props = {
     profile: SequenceInfluencerManagerPage;
+    influencerData: SearchTableInfluencer;
     selectedTab?: 'notes' | 'shipping-details';
     onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
@@ -79,7 +80,6 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Prop
         });
         tab && setSelected(tab);
     };
-    const { t } = useTranslation();
 
     const handleNotesDetailsUpdate = useCallback(
         (k: string, v: any) => {
@@ -167,12 +167,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Prop
                     />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    {/*<ProfileShippingDetailsTab
-                        profile={profile}
-                        onUpdate={handleShippingUpdate}
-                        trackProfileFieldUpdate={trackProfileFieldUpdate}
-                    />*/}
-                    <></>
+                    <ProfileShippingDetailsTab profile={props.influencerData} onUpdate={handleShippingUpdate} />
                 </div>
             </div>
         </div>

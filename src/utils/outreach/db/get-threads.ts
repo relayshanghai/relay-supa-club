@@ -1,4 +1,10 @@
-import { sequence_influencers, sequences, template_variables, threads } from 'drizzle/schema';
+import {
+    influencer_social_profiles,
+    sequence_influencers,
+    sequences,
+    template_variables,
+    threads,
+} from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 import { and, eq, isNull, sql, desc, isNotNull, inArray } from 'drizzle-orm';
@@ -9,11 +15,12 @@ export type GetThreadsReturn = {
     sequence_influencers: typeof sequence_influencers.$inferSelect | null;
     sequences: typeof sequences.$inferSelect | null;
     template_variables: typeof template_variables.$inferSelect | null;
+    influencer_social_profiles: typeof influencer_social_profiles.$inferSelect | null;
 };
 
 type GetThreadsFn = (account: string, filters?: ThreadsFilter) => Promise<GetThreadsReturn[]>;
 
-export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string, filters?: ThreadsFilter) => {
+export const getThreads: DBQuery<GetThreadsFn> = (dbInstance) => async (account: string, filters?: ThreadsFilter) => {
     const queryFilters = [
         eq(threads.email_engine_account_id, account),
         isNull(threads.deleted_at),
@@ -42,10 +49,14 @@ export const getThreads: DBQuery<GetThreadsFn> = (i) => async (account: string, 
         queryFilters.push(inArray(threads.thread_id, filters.threadIds));
     }
 
-    const rows = await db(i)
+    const rows = await db(dbInstance)
         .select()
         .from(threads)
         .leftJoin(sequence_influencers, eq(sequence_influencers.id, threads.sequence_influencer_id))
+        .leftJoin(
+            influencer_social_profiles,
+            eq(influencer_social_profiles.id, sequence_influencers.influencer_social_profile_id),
+        )
         .leftJoin(sequences, eq(sequences.id, sequence_influencers.sequence_id))
         .leftJoin(
             template_variables,
