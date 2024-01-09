@@ -30,6 +30,7 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 import { filterOutAlreadyAddedInfluencers } from 'src/components/boostbot/table/helper';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -77,10 +78,13 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((s) => s.id),
-    );
+    const { createSequenceInfluencer } = useSequenceInfluencers();
+
+    const {
+        allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
+        refresh: refreshSequenceInfluencers,
+    } = useAllSequenceInfluencersBasicInfo();
+
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();

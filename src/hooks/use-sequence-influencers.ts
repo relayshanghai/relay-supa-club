@@ -15,6 +15,7 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
+/** If you only want to use `refresh` or `create`, no need to pass sequenceIds. If you don't pass sequenceIds it will not call the fetch */
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
 
@@ -24,7 +25,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         isLoading,
         isValidating,
     } = useSWR<SequenceInfluencerManagerPage[]>(
-        sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
+        sequenceIds && sequenceIds.length > 0 ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
                 body: sequenceIds,

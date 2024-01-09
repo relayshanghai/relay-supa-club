@@ -24,7 +24,7 @@ import { SearchResultsTable } from './search-results-table';
 import { SelectPlatform } from './search-select-platform';
 import { useTrackEvent } from './use-track-event';
 
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
@@ -61,7 +61,7 @@ export const SearchPageInner = () => {
     const [selectedCreator, setSelectedCreator] = useState<ClassicSearchInfluencer | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
+    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersBasicInfo();
     const { trackEvent } = useRudderstack();
     const [batchId, setBatchId] = useState(() => randomNumber());
     const [page, setPage] = useState(0);

@@ -27,12 +27,12 @@ import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { useUser } from 'src/hooks/use-user';
 import { useAtom } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -64,7 +64,7 @@ interface ChatProps {
     selectedRow?: Row<BoostbotInfluencer>;
     showSequenceSelector: boolean;
     setShowSequenceSelector: (show: boolean) => void;
-    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+    allSequenceInfluencers?: AllSequenceInfluencersBasicInfo[];
     setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 

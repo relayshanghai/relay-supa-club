@@ -51,6 +51,7 @@ import { SearchExpired } from './search-expired';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -224,10 +225,11 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const {
-        sequenceInfluencers: allSequenceInfluencers,
-        refreshSequenceInfluencers,
-        createSequenceInfluencer,
-    } = useSequenceInfluencers(sequences?.map((s) => s.id));
+        allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
+        refresh: refreshSequenceInfluencers,
+    } = useAllSequenceInfluencersBasicInfo();
+
+    const { createSequenceInfluencer } = useSequenceInfluencers();
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const outReachDisabled = isOutreachLoading || resultsLoading;
     const [selectedCount, setSelectedCount] = useState(0);
@@ -312,7 +314,13 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
             // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
-            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
+            refreshSequenceInfluencers([
+                ...allSequenceInfluencers,
+                ...sequenceInfluencers.map((si) => ({
+                    ...si,
+                    sequenceName: sequence?.name ?? '',
+                })),
+            ]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
         } catch (error) {

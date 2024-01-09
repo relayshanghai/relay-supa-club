@@ -5,9 +5,9 @@ import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } fro
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import Question from 'src/components/icons/Question';
 import { filterOutAlreadyAddedInfluencers } from './helper';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -25,7 +25,7 @@ declare module '@tanstack/react-table' {
         searchId: string | number | null;
         setSelectedRow: (row: Row<TData>) => void;
         setIsInfluencerDetailsModalOpen: (open: boolean) => void;
-        allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+        allSequenceInfluencers?: AllSequenceInfluencersBasicInfo[];
         setSelectedCount: (count: number) => void;
         isLoading: boolean;
     }
