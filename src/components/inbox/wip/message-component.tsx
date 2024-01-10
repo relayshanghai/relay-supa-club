@@ -6,10 +6,9 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
-import { SelectValue } from '@radix-ui/react-select';
 
 const MessageTitle = ({
     expanded,

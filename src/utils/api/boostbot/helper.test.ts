@@ -281,7 +281,7 @@ describe('flattenInfluencerData function works as intended', () => {
     });
 });
 
-describe.only('transformInfluencerToSocialProfile function works as intended', () => {
+describe('transformInfluencerToSocialProfile function works as intended', () => {
     test('should return an object with all required fields when given a valid influencer object and inserted influencer ID', () => {
         const influencer: SearchTableInfluencer = {
             picture: 'https://example.com/avatar.jpg',
