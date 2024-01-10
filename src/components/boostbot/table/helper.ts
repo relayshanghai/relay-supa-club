@@ -80,5 +80,5 @@ export const filterOutAlreadyAddedInfluencers = (
 ) => {
     const allSequenceInfluencersSet = new Set(allSequenceInfluencers.map(({ iqdata_id }) => iqdata_id));
 
-    return influencers.filter(({ user_id }) => !allSequenceInfluencersSet.has(user_id));
+    return influencers.filter((i) => i && !allSequenceInfluencersSet.has(i.user_id));
 };
