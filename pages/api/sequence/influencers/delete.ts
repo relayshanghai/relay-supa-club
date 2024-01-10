@@ -8,6 +8,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { deleteJobs, getFailedOrPendingSequenceSendJobs } from 'src/utils/scheduler/db-queries';
 import { db } from 'src/utils/supabase-client';
 import { isString } from 'src/utils/types';
+import type { OutboxGetMessage } from 'types/email-engine/outbox-get';
 
 export type SequenceInfluencersDeleteRequestBody = {
     ids: string[];
@@ -54,14 +55,22 @@ const deleteSequenceInfluencers = async (ids: string[]) => {
 
     await db(deleteSequenceInfluencersCall)(ids); // this cascade deletes the emails as well. Try to do this call as soon as possible otherwise the user could refresh the page and the influencer will still be there
 
-    const outbox = await getOutbox(); // then the slow part
-    for (const email of emails) {
-        const outboxMessage = outbox.find((e) => e.messageId === email.email_message_id);
-        if (outboxMessage) {
-            try {
-                await deleteEmailFromOutbox(outboxMessage.queueId);
-            } catch (error) {
-                serverLogger(error);
+    // then the slow part
+    let outbox: OutboxGetMessage[] = [];
+    try {
+        outbox = await getOutbox();
+    } catch (error) {
+        serverLogger(error);
+    }
+    if (outbox.length > 0) {
+        for (const email of emails) {
+            const outboxMessage = outbox.find((e) => e.messageId === email.email_message_id);
+            if (outboxMessage) {
+                try {
+                    await deleteEmailFromOutbox(outboxMessage.queueId);
+                } catch (error) {
+                    serverLogger(error);
+                }
             }
         }
     }
