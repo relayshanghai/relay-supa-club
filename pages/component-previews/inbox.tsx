@@ -276,16 +276,20 @@ const InboxPreview = () => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
                 body: { ...filters, threadIds: Object.keys(searchResults) },
             });
-            return { threads: content.data, totals: content.totals };
+
+            const totals = {
+                unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
+                unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
+                replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
+            };
+
+            return { threads: content.data, totals: totals };
         },
         { refreshInterval: 5000 },
     );
+
     const threads = threadsInfo?.threads;
-    const totals = {
-        unreplied: threadsInfo?.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
-        unopened: threadsInfo?.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
-        replied: threadsInfo?.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
-    };
+    const totals = threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 };
     const [uiState, setUiState] = useUiState();
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
