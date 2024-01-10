@@ -58,7 +58,11 @@ const deleteSequenceInfluencers = async (ids: string[]) => {
     for (const email of emails) {
         const outboxMessage = outbox.find((e) => e.messageId === email.email_message_id);
         if (outboxMessage) {
-            await deleteEmailFromOutbox(outboxMessage.queueId);
+            try {
+                await deleteEmailFromOutbox(outboxMessage.queueId);
+            } catch (error) {
+                serverLogger(error);
+            }
         }
     }
 
