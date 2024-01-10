@@ -65,7 +65,7 @@ interface ChatProps {
     showSequenceSelector: boolean;
     setShowSequenceSelector: (show: boolean) => void;
     allSequenceInfluencers?: AllSequenceInfluencersBasicInfo[];
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 const defaultFilters: Filters = {
@@ -102,7 +102,7 @@ export const Chat: React.FC<ChatProps> = ({
     showSequenceSelector,
     setShowSequenceSelector,
     allSequenceInfluencers,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -383,7 +383,7 @@ export const Chat: React.FC<ChatProps> = ({
                         allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
                     false
                 }
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 url="boostbot"
             />
 
@@ -405,7 +405,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
-                    setSelectedInfluencers={setSelectedInfluencers}
+                    setSelectedInfluencerIds={setSelectedInfluencerIds}
                 />
             </div>
         </div>

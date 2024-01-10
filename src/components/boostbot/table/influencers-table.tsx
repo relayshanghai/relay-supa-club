@@ -12,8 +12,8 @@ import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    selectedInfluencers: RowSelectionState;
-    setSelectedInfluencers: OnChangeFn<RowSelectionState>;
+    selectedInfluencerIds: RowSelectionState;
+    setSelectedInfluencerIds: OnChangeFn<RowSelectionState>;
     influencerCount?: number;
     currentPage?: number;
     meta: TableMeta<TData>;
@@ -34,8 +34,8 @@ declare module '@tanstack/react-table' {
 export function InfluencersTable<_T, TValue>({
     data,
     columns,
-    selectedInfluencers,
-    setSelectedInfluencers,
+    selectedInfluencerIds,
+    setSelectedInfluencerIds,
     influencerCount,
     currentPage,
     meta,
@@ -45,11 +45,13 @@ export function InfluencersTable<_T, TValue>({
         data,
         columns,
         meta,
-        onRowSelectionChange: setSelectedInfluencers,
+        /** row id will be the influencer's iqdata id */
+        getRowId: (row) => row.user_id,
+        onRowSelectionChange: setSelectedInfluencerIds,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
-        state: { rowSelection: selectedInfluencers },
+        state: { rowSelection: selectedInfluencerIds },
         initialState: {
             pagination: {
                 pageSize: 20,

@@ -43,7 +43,7 @@ type InfluencerDetailsModalProps = {
     selectedRow?: Row<SearchTableInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
     url: string;
 };
 
@@ -53,7 +53,7 @@ export const InfluencerDetailsModal = ({
     selectedRow,
     setShowSequenceSelector,
     outReachDisabled,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
     url,
 }: InfluencerDetailsModalProps) => {
     const { t, i18n } = useTranslation();
@@ -145,10 +145,9 @@ export const InfluencerDetailsModal = ({
     // audience engagement rate for Instagram and Tiktok is just engagmentRate see V2-1063
     const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
 
-    const handleAddToSequence = () => {
-        setSelectedInfluencers({ [selectedRow.id]: true });
+    const handleAddToSequence = (user_id: string) => {
+        setSelectedInfluencerIds({ [user_id]: true });
         setShowSequenceSelector(true);
-        // TODO: add to sequence function in V2-1029
     };
 
     // Used to break multiline labels into multiple tspans to prevent text overflow
@@ -443,7 +442,7 @@ export const InfluencerDetailsModal = ({
                     <AddToSequenceButton
                         buttonText={t('boostbot.modal.addToSequence')}
                         outReachDisabled={outReachDisabled}
-                        handleAddToSequenceButton={handleAddToSequence}
+                        handleAddToSequenceButton={() => handleAddToSequence(user_id)}
                         textClassName="px-12"
                         url={url}
                     />
