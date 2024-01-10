@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { saveSearchResultsDbCall } from 'src/utils/api/boostbot/save-search-results';
+import { type SavedSearchTableInfluencer, saveSearchResultsDbCall } from 'src/utils/api/boostbot/save-search-results';
 import { getRelevantTopicTagsByInfluencer } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { SearchTableInfluencer } from 'types';
@@ -26,7 +26,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     ) {
         return res.status(httpCodes.BAD_REQUEST).json({ message: 'not ok' });
     }
-    const modifiedInfluencers = await Promise.all(
+    const modifiedInfluencers = await Promise.allSettled(
         influencers.map(async (influencer) => {
             const platform = influencer.url ? extractPlatformFromURL(influencer.url) || 'youtube' : 'youtube';
             const userHandle =
@@ -48,7 +48,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         }),
     );
 
-    await saveSearchResultsDbCall(modifiedInfluencers);
+    const fulfilledInfluencers = modifiedInfluencers
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => (result as PromiseFulfilledResult<SavedSearchTableInfluencer>).value);
+
+    await saveSearchResultsDbCall(fulfilledInfluencers);
 
     return res.status(httpCodes.OK).json({ message: 'ok' });
 };

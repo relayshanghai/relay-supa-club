@@ -51,7 +51,7 @@ import { SearchExpired } from './search-expired';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { useBoostbot } from 'src/hooks/use-boostbot';
+import { saveSearchResults } from 'src/utils/saveSearchInfluencers';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -219,7 +219,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         {},
     );
     const { profile } = useUser();
-    const { saveSearchResults } = useBoostbot();
 
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
@@ -341,7 +340,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         refreshSequenceInfluencers,
         track,
         firstPageSearchResults,
-        saveSearchResults,
     ]);
     useEffect(() => {
         if (sequences && !sequence) {

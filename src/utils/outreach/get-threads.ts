@@ -29,7 +29,7 @@ const sequenceTransformer = (
 const threadTransformer = (thread: dbGetThreadsReturn, contacts: ThreadContact[]): Thread => {
     return {
         threadInfo: thread.threads,
-        sequenceInfluencers: thread.sequence_influencers
+        sequenceInfluencer: thread.sequence_influencers
             ? influencerOutreachDataTransformer(thread.sequence_influencers, thread.influencer_social_profiles)
             : null,
         influencerSocialProfile: thread.influencer_social_profiles?.data as SearchTableInfluencer,

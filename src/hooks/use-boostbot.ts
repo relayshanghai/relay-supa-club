@@ -5,7 +5,6 @@ import { useUser } from './use-user';
 import { useCompany } from './use-company';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SaveSearchResultsBody } from 'pages/api/boostbot/save-search-results';
 import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
@@ -84,14 +83,6 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         [abortSignal],
     );
 
-    const saveSearchResults = useCallback(
-        async (influencers: BoostbotInfluencer[]) =>
-            await performFetch<void, SaveSearchResultsBody>('save-search-results', {
-                influencers,
-            }),
-        [performFetch],
-    );
-
     const getTopics = useCallback(
         async (productDescription: string) =>
             await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
@@ -150,7 +141,6 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         updateConversation,
         refreshConversation,
         createNewConversation,
-        saveSearchResults,
         isConversationLoading,
         getTopics,
         getRelevantTopics,

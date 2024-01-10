@@ -339,9 +339,9 @@ const InboxPreview = () => {
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
 
     const handleNoteListOpen = useCallback(() => {
-        if (!selectedThread?.sequenceInfluencers) return;
-        getNotes.call(selectedThread?.sequenceInfluencers.id);
-    }, [getNotes, selectedThread?.sequenceInfluencers]);
+        if (!selectedThread?.sequenceInfluencer) return;
+        getNotes.call(selectedThread?.sequenceInfluencer.id);
+    }, [getNotes, selectedThread?.sequenceInfluencer]);
 
     const handleNoteListClose = useCallback(() => {
         setUiState((s) => {
@@ -352,9 +352,9 @@ const InboxPreview = () => {
 
     const handleUpdate = useCallback(
         (data: Partial<ProfileValue>) => {
-            if (!selectedThread?.sequenceInfluencers) return;
+            if (!selectedThread?.sequenceInfluencer) return;
 
-            saveSequenceInfluencer.call(selectedThread?.sequenceInfluencers.id, data).then((profile) => {
+            saveSequenceInfluencer.call(selectedThread?.sequenceInfluencer.id, data).then((profile) => {
                 // @note updates local state without additional query
                 //       this will cause issue showing previous state though
                 setLocalProfile(mapProfileToFormData(profile));
@@ -363,7 +363,7 @@ const InboxPreview = () => {
                 refreshSequenceInfluencers();
             });
         },
-        [saveSequenceInfluencer, selectedThread?.sequenceInfluencers, refreshSequenceInfluencers, setLocalProfile],
+        [saveSequenceInfluencer, selectedThread?.sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
     );
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
@@ -400,8 +400,8 @@ const InboxPreview = () => {
     }, [threads]);
 
     useEffect(() => {
-        if (selectedThread?.sequenceInfluencers) {
-            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencers));
+        if (selectedThread?.sequenceInfluencer) {
+            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencer));
         }
     }, [selectedThread]);
 
@@ -442,8 +442,8 @@ const InboxPreview = () => {
                                         <ThreadPreview
                                             key={thread.threadInfo.id}
                                             sequenceInfluencer={
-                                                thread.sequenceInfluencers as NonNullable<
-                                                    typeof thread.sequenceInfluencers
+                                                thread.sequenceInfluencer as NonNullable<
+                                                    typeof thread.sequenceInfluencer
                                                 >
                                             }
                                             threadInfo={thread}
@@ -475,11 +475,11 @@ const InboxPreview = () => {
                         />
                     )}
                 </section>
-                {initialValue && selectedThread && selectedThread.sequenceInfluencers && (
+                {initialValue && selectedThread && selectedThread.sequenceInfluencer && (
                     <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
                         <ProfileScreenProvider initialValue={initialValue}>
                             <ProfileScreen
-                                profile={selectedThread?.sequenceInfluencers}
+                                profile={selectedThread?.sequenceInfluencer}
                                 influencerData={selectedThread?.influencerSocialProfile}
                                 className="bg-white"
                                 onCancel={() => {
@@ -494,7 +494,7 @@ const InboxPreview = () => {
                             isOpen={uiState.isNotesListOverlayOpen}
                             onClose={handleNoteListClose}
                             onOpen={handleNoteListOpen}
-                            influencerSocialProfileId={selectedThread?.sequenceInfluencers?.id}
+                            influencerSocialProfileId={selectedThread?.sequenceInfluencer?.id}
                         />
                     </section>
                 )}

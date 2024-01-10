@@ -29,6 +29,7 @@ import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-but
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import { saveSearchResults } from 'src/utils/saveSearchInfluencers';
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -37,7 +38,6 @@ const Boostbot = () => {
         setMessages,
         influencers,
         setInfluencers,
-        saveSearchResults,
         createNewConversation,
         refreshConversation,
         isConversationLoading,

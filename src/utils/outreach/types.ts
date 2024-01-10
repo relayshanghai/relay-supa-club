@@ -29,7 +29,7 @@ export type ThreadContact = typeof email_contacts.$inferSelect & {
  */
 export type Thread = {
     threadInfo: typeof threads.$inferSelect;
-    sequenceInfluencers: InfluencerOutreachData | null;
+    sequenceInfluencer: InfluencerOutreachData | null;
     contacts: ThreadContact[];
     sequenceInfo: Outreach | null;
     influencerSocialProfile: SearchTableInfluencer;

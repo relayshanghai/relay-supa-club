@@ -4,7 +4,6 @@ import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
-import { HardBreak } from '@tiptap/extension-hard-break';
 import AttachmentField from './attachment-field';
 import type { AttachmentFile } from 'src/utils/outreach/types';
 
@@ -29,21 +28,6 @@ export const Tiptap = ({
                 keepMarks: true,
                 HTMLAttributes: {
                     class: 'list-disc ml-2',
-                },
-            }),
-            HardBreak.extend({
-                addKeyboardShortcuts() {
-                    return {
-                        Enter: () => {
-                            const { state } = this.editor;
-                            const { $from } = state.selection;
-                            // console.log($from.parent.type.name);
-                            if ($from.parent.type.name === 'paragraph') {
-                                return this.editor.commands.setHardBreak();
-                            }
-                            return false;
-                        },
-                    };
                 },
             }),
         ],
