@@ -19,6 +19,7 @@ import { useAtomValue } from 'jotai';
 import { useAnalytics } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
 import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
+import { initSmartlook, useSmartlook } from './use-smartlook';
 
 export type SignupData = {
     email: string;
@@ -84,6 +85,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const clientRoleData = useAtomValue(clientRoleAtom);
     const mixpanel = useMixpanel();
     const { analytics } = useAnalytics();
+    const { identify } = useSmartlook();
+
+    useEffect(() => {
+        initSmartlook();
+    });
 
     useEffect(() => {
         setLoading(isLoading);
@@ -106,6 +112,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger(error, 'error');
                 throw new Error(error.message || 'Unknown error');
             }
+            identify(fetchedProfile.email || '');
+
             return fetchedProfile;
         },
     );
@@ -121,6 +129,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
+                identify(data?.user?.email || '');
                 return data;
             } catch (e: unknown) {
                 clientLogger(e, 'error');
@@ -131,7 +140,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent],
+        [supabaseClient, trackEvent, identify],
     );
 
     const updateProfile = useCallback(

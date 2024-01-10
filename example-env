@@ -96,3 +96,6 @@ BREVO_NEWTRIALUSERS_LIST_ID=8
 
 # An admin user created in each company
 SERVICE_ACCOUNT_PASSWORD=
+
+#smartlook api key
+NEXT_PUBLIC_SMARTLOOK_APIKEY=
