@@ -1,5 +1,4 @@
 import type { sequence_influencers } from 'drizzle/schema';
-import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar';
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
@@ -8,12 +7,14 @@ import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 import type { EmailContact } from 'src/utils/outreach/types';
 import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
+import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 export type Message = {
     id: string;
     from: EmailContact;
     to: EmailContact[];
     replyTo: EmailContact[];
+    attachments: MessageAttachment[];
     cc: EmailContact[];
     body: string;
     date: string;
@@ -64,7 +65,7 @@ export const ThreadPreview = ({
     selected,
     onClick,
 }: ThreadPreviewProps) => {
-    const { name, avatar_url, username, platform, url, funnel_status } = sequenceInfluencer;
+    const { name, avatar_url, username, platform, funnel_status } = sequenceInfluencer;
 
     // Get components conditionally
     const Icon = getPlatformIcon(platform as CreatorPlatform);
@@ -73,9 +74,7 @@ export const ThreadPreview = ({
     return (
         <Card
             onClick={onClick}
-            className={`flex cursor-pointer rounded-none ${
-                selected && 'border-l-4 border-l-primary-700 bg-primary-200'
-            } transition-all`}
+            className={`flex cursor-pointer rounded-none ${selected && 'bg-primary-200'} transition-all`}
         >
             <CardContent className="w-full p-4">
                 <div className="flex items-center gap-4">
@@ -87,10 +86,11 @@ export const ThreadPreview = ({
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
                     </section>
                     <span>
-                        <p>{name}</p>
-                        <Link className="text-primary-400" href={url ?? ''}>
-                            @{username}
-                        </Link>
+                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>{name}</p>
+                        <p className="text-primary-400">
+                            <span className="text-primary-600">@</span>
+                            {username}
+                        </p>
                     </span>
                 </div>
             </CardContent>

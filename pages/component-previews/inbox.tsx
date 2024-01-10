@@ -23,11 +23,13 @@ import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-no
 import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
-import { now } from 'src/utils/datetime';
+import { formatDate, now } from 'src/utils/datetime';
 import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
-import AttachmentField from 'src/components/inbox/wip/attachment-field';
 import AttachmentFileItem from 'src/components/inbox/wip/attachment-file-item';
 import { serverLogger } from 'src/utils/logger-server';
+import { Search } from 'src/components/icons';
+import { Layout } from 'src/components/layout';
+import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -45,6 +47,7 @@ const generateLocalData = (params: {
     to: EmailContact[];
     cc: EmailContact[];
     subject: string;
+    attachments: MessageAttachment[];
 }): Message => {
     const localId = nanoid(10);
     return {
@@ -54,6 +57,7 @@ const generateLocalData = (params: {
         from: params.from,
         to: params.to,
         cc: params.cc,
+        attachments: params.attachments,
         replyTo: [
             {
                 name: 'LMNAO',
@@ -179,6 +183,7 @@ const ThreadProvider = ({
                         to: toList,
                         cc: ccList,
                         subject: messages?.[messages.length - 1]?.subject ?? '',
+                        attachments: [],
                     });
                     // console.log('from mutator callback', cache, localMessage);
                     return [localMessage, ...(cache ?? [])];
@@ -193,6 +198,7 @@ const ThreadProvider = ({
                             to: toList,
                             cc: ccList,
                             subject: messages?.[messages.length - 1]?.subject ?? '',
+                            attachments: [],
                         });
                         // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
@@ -226,7 +232,7 @@ const ThreadProvider = ({
                         participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
-                <div className="h-[51vh] overflow-scroll">
+                <div className="flex h-[51vh] justify-center overflow-scroll rounded bg-gray-50 shadow-inner">
                     <MessagesComponent
                         currentInbox={currentInbox}
                         messages={messages}
@@ -240,15 +246,11 @@ const ThreadProvider = ({
                     return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
                 })}
 
-            <AttachmentField
-                multiple={true}
-                onChange={handleAttachmentSelect}
-                render={({ openField }) => {
-                    return <button onClick={openField}>Add Attachment</button>;
-                }}
+            <ReplyEditor
+                defaultContacts={contactsToReply}
+                onReply={handleReply}
+                handleAttachmentSelect={handleAttachmentSelect}
             />
-
-            <ReplyEditor defaultContacts={contactsToReply} onReply={handleReply} />
         </div>
     );
 };
@@ -267,10 +269,12 @@ const InboxPreview = () => {
                 name: sequence.name,
             };
         });
+    const [page, _setPage] = useState(0);
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
         sequences: [],
+        page,
     });
 
     const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
@@ -291,15 +295,17 @@ const InboxPreview = () => {
         setSearchResults(res.content);
     };
 
+    const [threads, setThreads] = useState<ThreadInfo[]>([]);
+
     const {
         data: threadsInfo,
         error: _threadsError,
         isLoading: isThreadsLoading,
     } = useSWR(
-        [filters, searchResults],
+        [filters, page, searchResults],
         async () => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
-                body: { ...filters, threadIds: Object.keys(searchResults) },
+                body: { ...filters, threadIds: Object.keys(searchResults), page },
             });
 
             const totals = {
@@ -307,13 +313,23 @@ const InboxPreview = () => {
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
+            if (content.data.length !== 0) {
+                setThreads((prev) => {
+                    const existingThreadIds = prev.map((thread) => thread.threadInfo.thread_id);
+
+                    const uniqueThreads = content.data.filter(
+                        (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
+                    );
+
+                    return [...prev, ...uniqueThreads];
+                });
+            }
 
             return { threads: content.data, totals: totals };
         },
-        { refreshInterval: 5000 },
+        { revalidateOnFocus: true },
     );
 
-    const threads = threadsInfo?.threads;
     const totals = threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 };
     const [uiState, setUiState] = useUiState();
 
@@ -377,6 +393,8 @@ const InboxPreview = () => {
         }
     };
 
+    const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
+
     useEffect(() => {
         if (threads) markThreadAsSelected(threads[0]);
     }, [threads]);
@@ -387,84 +405,112 @@ const InboxPreview = () => {
         }
     }, [selectedThread]);
 
+    const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
+        if (!thread.threadInfo.updated_at) {
+            return acc;
+        }
+        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort] [fullYear]');
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(thread);
+        return acc;
+    }, {} as { [key: string]: ThreadInfo[] });
+
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
-        <div className="grid h-full max-h-screen grid-cols-12 space-y-4 p-4">
-            <section className="col-span-3 flex flex-col gap-2 overflow-scroll">
-                <SearchBar onSearch={handleSearch} />
-                <Filter
-                    messageCount={totals}
-                    allSequences={allSequences ?? []}
-                    filters={filters}
-                    onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
-                />
-                {threads ? (
-                    threads
-                        .filter((thread) => thread.sequenceInfluencers)
-                        .map((thread) => (
-                            <ThreadPreview
-                                key={thread.threadInfo.id}
-                                // @note cast to a non-nullable since we already filtered null influencers
-                                sequenceInfluencer={
-                                    thread.sequenceInfluencers as NonNullable<typeof thread.sequenceInfluencers>
-                                }
-                                threadInfo={thread}
-                                _currentInbox={currentInbox}
-                                selected={!!selectedThread && selectedThread.threadInfo.id === thread.threadInfo.id}
-                                onClick={() => markThreadAsSelected(thread)}
-                            />
-                        ))
-                ) : isThreadsLoading ? (
-                    <>Loading</>
-                ) : (
-                    <>No threads here!</>
-                )}
-            </section>
-            <section className="col-span-5 flex h-full flex-col">
-                {selectedThread && (
-                    <ThreadProvider
-                        currentInbox={currentInbox}
-                        threadId={selectedThread.threadInfo.thread_id}
-                        selectedThread={selectedThread}
-                        markAsReplied={markAsReplied}
-                        filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
-                    />
-                )}
-            </section>
-            {initialValue && selectedThread && selectedThread.sequenceInfluencers && (
-                <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
-                    <ProfileScreenProvider initialValue={initialValue}>
-                        <ProfileScreen
-                            profile={selectedThread?.sequenceInfluencers}
-                            influencerData={selectedThread?.influencerSocialProfile}
-                            className="bg-white"
-                            onCancel={() => {
-                                //
-                            }}
-                            onUpdate={handleUpdate}
+        <Layout>
+            <div className="grid h-full max-h-screen grid-cols-12 bg-white">
+                <section className="col-span-3 flex flex-col gap-2 overflow-scroll">
+                    <section className="flex w-full flex-col gap-4 p-2">
+                        <SearchBar onSearch={handleSearch} />
+                        <Filter
+                            messageCount={totals}
+                            allSequences={allSequences ?? []}
+                            filters={filters}
+                            onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
                         />
-                    </ProfileScreenProvider>
-                    <NotesListOverlayScreen
-                        notes={getNotes.data}
-                        isLoading={getNotes.isLoading}
-                        isOpen={uiState.isNotesListOverlayOpen}
-                        onClose={handleNoteListClose}
-                        onOpen={handleNoteListOpen}
-                        influencerSocialProfileId={selectedThread?.sequenceInfluencers?.id}
-                    />
+                    </section>
+                    {threadsGroupedByUpdatedAt ? (
+                        <div className="flex flex-col">
+                            {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
+                                <div key={date}>
+                                    <p className="px-2 py-1 text-sm font-semibold text-gray-400">
+                                        {date === today ? 'Today' : date}
+                                    </p>
+                                    {threadsGroupedByUpdatedAt[date].map((thread) => (
+                                        <ThreadPreview
+                                            key={thread.threadInfo.id}
+                                            sequenceInfluencer={
+                                                thread.sequenceInfluencers as NonNullable<
+                                                    typeof thread.sequenceInfluencers
+                                                >
+                                            }
+                                            threadInfo={thread}
+                                            _currentInbox={currentInbox}
+                                            selected={
+                                                !!selectedThread &&
+                                                selectedThread.threadInfo.id === thread.threadInfo.id
+                                            }
+                                            onClick={() => markThreadAsSelected(thread)}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    ) : isThreadsLoading ? (
+                        <>Loading</>
+                    ) : (
+                        <>No threads here!</>
+                    )}
                 </section>
-            )}
-        </div>
+                <section className="col-span-5 flex h-full flex-col">
+                    {selectedThread && (
+                        <ThreadProvider
+                            currentInbox={currentInbox}
+                            threadId={selectedThread.threadInfo.thread_id}
+                            selectedThread={selectedThread}
+                            markAsReplied={markAsReplied}
+                            filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
+                        />
+                    )}
+                </section>
+                {initialValue && selectedThread && selectedThread.sequenceInfluencers && (
+                    <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
+                        <ProfileScreenProvider initialValue={initialValue}>
+                            <ProfileScreen
+                                profile={selectedThread?.sequenceInfluencers}
+                                influencerData={selectedThread?.influencerSocialProfile}
+                                className="bg-white"
+                                onCancel={() => {
+                                    //
+                                }}
+                                onUpdate={handleUpdate}
+                            />
+                        </ProfileScreenProvider>
+                        <NotesListOverlayScreen
+                            notes={getNotes.data}
+                            isLoading={getNotes.isLoading}
+                            isOpen={uiState.isNotesListOverlayOpen}
+                            onClose={handleNoteListClose}
+                            onOpen={handleNoteListOpen}
+                            influencerSocialProfileId={selectedThread?.sequenceInfluencers?.id}
+                        />
+                    </section>
+                )}
+            </div>
+        </Layout>
     );
 };
 
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     return (
-        <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
+            <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus:border-primary-400 focus-visible:ring-primary-400"
-                placeholder="Search something"
+                className="focus-visible:ring-none border-none bg-white focus:border-none focus-visible:outline-none"
+                placeholder="Search mailbox"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {

@@ -113,3 +113,4 @@ export { default as Completed } from './Completed';
 export { default as Coins } from './Coins';
 export { default as TimeCrossed } from './TimeCrossed';
 export { default as ChatQuestion } from './ChatQuestion';
+export { default as Paperclip } from './Paperclip';

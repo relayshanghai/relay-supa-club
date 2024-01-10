@@ -5,7 +5,7 @@ import type { Data as EmailData } from 'types/email-engine/webhook-message-new';
 
 const transformEmails = (mails: (typeof emails.$inferSelect)[]) => {
     return mails.map((mail) => {
-        const { date, unseen, id, from, cc, replyTo, text, subject } = mail.data as EmailData;
+        const { date, unseen, id, from, cc, replyTo, text, subject, attachments } = mail.data as EmailData;
 
         return {
             date,
@@ -13,6 +13,7 @@ const transformEmails = (mails: (typeof emails.$inferSelect)[]) => {
             id,
             from,
             to: parseContacts(mail.recipients),
+            attachments: attachments,
             cc: cc || [],
             replyTo,
             subject,

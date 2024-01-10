@@ -6,9 +6,10 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
-import { useEffect, useRef, useState } from 'react';
-import { ThreeDots } from 'src/components/icons';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Paperclip, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
+import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 const MessageTitle = ({
     expanded,
@@ -85,18 +86,41 @@ const MessageTitle = ({
         );
 };
 
+const AttachmentTablet = ({ attachment }: { attachment: MessageAttachment }) => {
+    const handleDownloadAttachment = useCallback(() => {
+        // eslint-disable-next-line no-console
+        console.log('Attachment Clicked', attachment);
+    }, [attachment]);
+    return (
+        <button
+            type="button"
+            className="cursor-pointer rounded bg-primary-300 px-2 py-1 text-xs hover:bg-primary-100"
+            onClick={handleDownloadAttachment}
+        >
+            {attachment.filename}
+        </button>
+    );
+};
+
 const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: string | null }) => {
     const [messageExpanded, setMessageExpanded] = useState(false);
     const [quoteExpanded, setQuoteExpanded] = useState(false);
+    const [attachmentExpanded, setAttachmentExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
     const parser = new DOMParser();
     const emailDoc = parser.parseFromString(message.body, 'text/html');
 
     // Extract the quoted part
-    const quotedPart = emailDoc.querySelector('.gmail_quote');
+    const gmailQuotedPart = emailDoc.querySelector('.gmail_quote');
 
-    if (quotedPart) {
-        quotedPart.parentNode?.removeChild(quotedPart);
+    const blockQuotedPart = emailDoc.querySelector('blockquote');
+
+    if (blockQuotedPart) {
+        blockQuotedPart.parentNode?.removeChild(blockQuotedPart);
+    }
+
+    if (gmailQuotedPart) {
+        gmailQuotedPart.parentNode?.removeChild(gmailQuotedPart);
     }
 
     useEffect(() => {
@@ -106,7 +130,9 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
     return (
         <AccordionItem
             ref={messageRef}
-            className={`${messageExpanded ? 'stroke-primary-700 text-primary-700' : 'stroke-black'}`}
+            className={`${
+                messageExpanded ? 'stroke-primary-700 text-primary-700' : 'stroke-black'
+            } rounded bg-white shadow`}
             onClick={() => setMessageExpanded(!messageExpanded)}
             value={message.id}
         >
@@ -130,6 +156,27 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
             </AccordionTrigger>
             <AccordionContent onClick={(e) => e.stopPropagation()} className="p-4 text-black">
                 <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
+                {message.attachments && message.attachments.length > 0 && (
+                    <section className="w-full">
+                        <div className="h-fit w-fit rounded-sm bg-gray-200 px-1 transition-all hover:bg-gray-100">
+                            <Paperclip
+                                onClick={() => setAttachmentExpanded(!attachmentExpanded)}
+                                className="mt-4 h-4 w-4 rotate-90 stroke-gray-400"
+                            />
+                        </div>
+                        <span className="text-xs">{message.attachments.length} attachment</span>
+                        <section className="flex gap-2">
+                            {attachmentExpanded &&
+                                message.attachments
+                                    .filter(
+                                        (attachment) => attachment.embedded === false && attachment.inline === false,
+                                    )
+                                    .map((attachment) => (
+                                        <AttachmentTablet key={attachment.id} attachment={attachment} />
+                                    ))}
+                        </section>
+                    </section>
+                )}
                 <section className="w-full">
                     <div className="h-fit w-fit rounded-sm bg-gray-200 px-1 transition-all hover:bg-gray-100">
                         <ThreeDots
@@ -137,12 +184,21 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
                             className="mt-4 h-4 w-4 rotate-90"
                         />
                     </div>
-                    {quoteExpanded && quotedPart?.innerHTML && (
+                    {quoteExpanded && blockQuotedPart?.innerHTML && (
                         <>
                             <div className="my-4 h-0.5 w-full bg-gray-200" />
                             <div
                                 className="font-semibold text-gray-400"
-                                dangerouslySetInnerHTML={{ __html: quotedPart?.innerHTML }}
+                                dangerouslySetInnerHTML={{ __html: blockQuotedPart?.innerHTML }}
+                            />
+                        </>
+                    )}
+                    {quoteExpanded && gmailQuotedPart?.innerHTML && (
+                        <>
+                            <div className="my-4 h-0.5 w-full bg-gray-200" />
+                            <div
+                                className="font-semibold text-gray-400"
+                                dangerouslySetInnerHTML={{ __html: gmailQuotedPart?.innerHTML }}
                             />
                         </>
                     )}
@@ -175,7 +231,7 @@ export const MessagesComponent = ({
         <Accordion
             type="multiple"
             id={messages[0]?.id}
-            className="w-full bg-white"
+            className="w-[95%] space-y-4 bg-gray-50"
             value={openMessage}
             onValueChange={(value) => {
                 setOpenMessage(value);

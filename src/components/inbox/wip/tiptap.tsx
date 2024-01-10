@@ -3,17 +3,21 @@ import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { Toolbar } from './toolbar';
-import { Send } from 'src/components/icons';
+import { Paperclip, Send } from 'src/components/icons';
 import { HardBreak } from '@tiptap/extension-hard-break';
+import AttachmentField from './attachment-field';
+import type { AttachmentFile } from 'src/utils/outreach/types';
 
 export const Tiptap = ({
     description,
     onChange,
     onSubmit,
+    handleAttachmentSelect,
 }: {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
+    handleAttachmentSelect: (files: AttachmentFile[] | null, error?: any) => void;
 }) => {
     const editor = useEditor({
         extensions: [
@@ -64,9 +68,29 @@ export const Tiptap = ({
         >
             <EditorContent editor={editor} />
             <section className="flex items-center justify-between border border-t-transparent">
-                <Toolbar editor={editor} />
-                <button type="submit" className="mx-5 cursor-pointer">
-                    <Send className="h-5 w-5 stroke-gray-400" />
+                <div className="flex">
+                    <Toolbar editor={editor} />
+
+                    <AttachmentField
+                        multiple={true}
+                        onChange={handleAttachmentSelect}
+                        render={({ openField }) => {
+                            return (
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        openField();
+                                    }}
+                                >
+                                    <Paperclip className="h-5 w-5 stroke-gray-300" />
+                                </button>
+                            );
+                        }}
+                    />
+                </div>
+                <button type="submit" className="mx-2 cursor-pointer">
+                    <Send className="h-6 w-6 stroke-gray-400" />
                 </button>
             </section>
         </form>

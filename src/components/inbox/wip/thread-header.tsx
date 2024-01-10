@@ -14,7 +14,7 @@ export const ThreadHeader = ({
     messages: Message[];
     participants: string[];
 }) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
 
     const ToggleExpanded = expanded ? Expand : Collapse;
 

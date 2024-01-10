@@ -10,6 +10,8 @@ import { db } from '../../database';
 import { and, eq, isNull, sql, desc, isNotNull, inArray } from 'drizzle-orm';
 import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
+const THREADS_PER_PAGE = 10;
+
 export type GetThreadsReturn = {
     threads: typeof threads.$inferSelect;
     sequence_influencers: typeof sequence_influencers.$inferSelect | null;
@@ -64,7 +66,9 @@ export const getThreads: DBQuery<GetThreadsFn> =
                 sql`${template_variables.sequence_id} = ${sequences.id} AND ${template_variables.key} = 'productName'`,
             )
             .where(and(...queryFilters))
-            .orderBy(desc(threads.updated_at));
+            .orderBy(desc(threads.updated_at))
+            .limit(THREADS_PER_PAGE)
+            .offset(filters?.page || 0 * THREADS_PER_PAGE);
 
         return rows;
     };

@@ -128,7 +128,7 @@ const FilterByStatus = ({
                     key={index}
                     onClick={() => handleUpdateStatus(button.status)}
                     className={`w-full cursor-pointer justify-between ${
-                        button.enabledCondition(status) && 'bg-gray-50'
+                        button.enabledCondition(status) && 'bg-primary-100 text-primary-600'
                     }`}
                     variant="destructive"
                 >

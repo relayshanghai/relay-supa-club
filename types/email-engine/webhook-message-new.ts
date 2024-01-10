@@ -14,6 +14,16 @@ interface Route {
     id: string;
 }
 
+export interface MessageAttachment {
+    id: string;
+    contentType: string;
+    encodedSize: number;
+    embedded: boolean;
+    inline: boolean;
+    filename: string;
+    contentId: string;
+}
+
 export interface Data {
     id: string;
     uid: number;
@@ -23,6 +33,7 @@ export interface Data {
     date: string;
     flags: any[];
     labels: string[];
+    attachments: MessageAttachment[];
     unseen: boolean;
     size: number;
     subject: string;
