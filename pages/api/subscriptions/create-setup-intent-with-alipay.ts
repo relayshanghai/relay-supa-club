@@ -21,29 +21,35 @@ export type CreateSetUpIntentForAlipayPostResponse = Stripe.SetupIntent;
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier, couponId } =
         req.body as CreateSetUpIntentForAlipayPostBody;
-    //create an payment method to confirm the setup intent
-    const paymentMethod = await stripeClient.paymentMethods.create({
-        type: 'alipay',
+    const customerPaymentMethods = await stripeClient.customers.listPaymentMethods(customerId, {
+        limit: 10,
     });
+    let paymentMethod = customerPaymentMethods.data.find((payment) => payment.type === 'alipay');
     if (!paymentMethod) {
-        serverLogger('Failed to create payment method');
-        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to create payment method' });
-    }
-    //attach payment method to customer
-    const paymentMethodAttach = await stripeClient.paymentMethods.attach(paymentMethod.id, {
-        customer: customerId,
-    });
+        //create an alipay payment method to confirm the setup intent if user does not have one
+        paymentMethod = await stripeClient.paymentMethods.create({
+            type: 'alipay',
+        });
+        if (!paymentMethod) {
+            serverLogger('Failed to create payment method');
+            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to create payment method' });
+        }
+        //attach payment method to customer
+        const paymentMethodAttach = await stripeClient.paymentMethods.attach(paymentMethod.id, {
+            customer: customerId,
+        });
 
-    // set the payment method as default
-    await stripeClient.customers.update(customerId, {
-        invoice_settings: {
-            default_payment_method: paymentMethod.id,
-        },
-    });
+        // set the payment method as default
+        await stripeClient.customers.update(customerId, {
+            invoice_settings: {
+                default_payment_method: paymentMethod.id,
+            },
+        });
 
-    if (!paymentMethodAttach) {
-        serverLogger('Failed to attach payment method to customer');
-        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
+        if (!paymentMethodAttach) {
+            serverLogger('Failed to attach payment method to customer');
+            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
+        }
     }
     const { appUrl } = getHostnameFromRequest(req);
     const returnUrlParams = new URLSearchParams();
