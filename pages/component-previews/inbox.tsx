@@ -26,6 +26,7 @@ import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/
 import { now } from 'src/utils/datetime';
 import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
 import AttachmentField from 'src/components/inbox/wip/attachment-field';
+import AttachmentFileItem from 'src/components/inbox/wip/attachment-file-item';
 import { serverLogger } from 'src/utils/logger-server';
 
 const fetcher = async (url: string) => {
@@ -146,14 +147,18 @@ const ThreadProvider = ({
         },
     });
 
-    const [attachments, setAttachments] = useState<AttachmentFile[] | null>(null);
+    const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
 
     const handleAttachmentSelect: AttachmentFieldProps['onChange'] = (files, error) => {
         if (error) return serverLogger(error);
         if (files === null) return serverLogger('No files attached');
-        setAttachments(files);
+        setAttachments((attached) => {
+            const attachedPool = attached.map((a) => a.id);
+            const filtered = files.filter((f) => attachedPool.includes(f.id) === false);
+            return [...attached, ...filtered];
+        });
     };
 
     const handleReply = useCallback(
@@ -201,6 +206,13 @@ const ThreadProvider = ({
         [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
     );
 
+    const handleRemoveAttachment = useCallback(
+        (file: AttachmentFile) => {
+            setAttachments((attached) => attached && [...attached.filter((f) => f.id !== file.id)]);
+        },
+        [setAttachments],
+    );
+
     if (messagesError) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
 
@@ -222,7 +234,20 @@ const ThreadProvider = ({
                     />
                 </div>
             </div>
-            <AttachmentField onChange={handleAttachmentSelect} />
+
+            {attachments &&
+                attachments.map((file) => {
+                    return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
+                })}
+
+            <AttachmentField
+                multiple={true}
+                onChange={handleAttachmentSelect}
+                render={({ openField }) => {
+                    return <button onClick={openField}>Add Attachment</button>;
+                }}
+            />
+
             <ReplyEditor defaultContacts={contactsToReply} onReply={handleReply} />
         </div>
     );
@@ -353,7 +378,6 @@ const InboxPreview = () => {
     };
 
     useEffect(() => {
-        // console.log(threads);
         if (threads) markThreadAsSelected(threads[0]);
     }, [threads]);
 

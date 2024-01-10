@@ -36,7 +36,9 @@ const postHandler: ActionHandler = async (req, res) => {
         cc: body.cc.map((contact) => {
             return { name: contact.name, address: contact.address };
         }),
-        attachments: body.attachments,
+        attachments: (body.attachments ?? []).map((attachment) => {
+            return { filename: attachment.filename, content: attachment.content };
+        }),
     });
 
     return res.status(200).json(result);
