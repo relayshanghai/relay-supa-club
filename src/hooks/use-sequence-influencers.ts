@@ -44,7 +44,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
                 'added_by' | 'company_id' | 'sequence_step' | 'funnel_status' | 'rate_amount' | 'rate_currency'
             >,
         ) => {
-            if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
             if (!profile?.company_id) throw new Error('No profile found');
 
             const insert: SequenceInfluencerInsert = {
@@ -59,7 +58,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
             const res = await createSequenceInfluencerDBCall(insert);
             return res;
         },
-        [createSequenceInfluencerDBCall, profile?.company_id, profile?.id, sequenceIds],
+        [createSequenceInfluencerDBCall, profile?.company_id, profile?.id],
     );
 
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);
@@ -76,7 +75,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         async (ids: string[]) => {
             const body: SequenceInfluencersDeleteRequestBody = { ids };
             // optimistic update
-            refreshSequenceInfluencers((prev) => prev?.filter((i) => !ids.includes(i.id)) ?? []);
+            refreshSequenceInfluencers((prev) => prev?.filter((i) => !ids.includes(i.id)) ?? [], { revalidate: false });
             const res = await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
                 method: 'POST',
                 body,

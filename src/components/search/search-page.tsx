@@ -53,6 +53,7 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { filterOutAlreadyAddedInfluencers } from '../boostbot/table/helper';
+import { isBoostbotInfluencer } from 'pages/boostbot';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -246,10 +247,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [sequence, setSequence] = useState<Sequence | undefined>(() =>
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
-    const influencersToOutreach = filterOutAlreadyAddedInfluencers(
-        allSequenceInfluencers, // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
-        results && results.length > 0 ? Object.keys(selectedInfluencerIds).map((key) => results[Number(key)]) : [],
-    );
 
     const handleSelectedInfluencersToOutreach = useCallback(async () => {
         setIsOutreachLoading(true);
@@ -267,6 +264,17 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         };
 
         try {
+            const selectedInfluencers =
+                // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+                results && results.length > 0
+                    ? Object.keys(selectedInfluencerIds)
+                          .map((key) => results.find((i) => i.user_id === key))
+                          .filter(isBoostbotInfluencer)
+                    : [];
+            const influencersToOutreach = filterOutAlreadyAddedInfluencers(
+                allSequenceInfluencers, // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+                selectedInfluencers,
+            );
             trackingPayload.is_multiple = influencersToOutreach ? influencersToOutreach.length > 1 : null;
 
             if (!influencersToOutreach || influencersToOutreach.length === 0) {
@@ -329,11 +337,12 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             setIsOutreachLoading(false);
         }
     }, [
-        influencersToOutreach,
+        allSequenceInfluencers,
+        results,
+        selectedInfluencerIds,
         sequence?.id,
         sequence?.name,
         refreshSequenceInfluencers,
-        allSequenceInfluencers,
         platform,
         createSequenceInfluencer,
         track,
