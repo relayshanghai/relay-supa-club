@@ -276,7 +276,7 @@ describe('outreach', () => {
 
         cy.intercept(
             'GET',
-            `http://email.relay.club/v1/account/${messageNewReply.account}/message/${messageNewReply.data.id}*`,
+            `https://email.relay.club/v1/account/${messageNewReply.account}/message/${messageNewReply.data.id}*`,
             { fixture: 'email-message.json' },
         );
 
