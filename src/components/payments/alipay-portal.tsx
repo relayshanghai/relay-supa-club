@@ -18,10 +18,13 @@ export default function AlipayPortal({
     selectedPrice,
     priceTier,
     couponId,
+    paymentMethodId,
 }: {
     selectedPrice: NewRelayPlan;
     priceTier: ActiveSubscriptionTier;
     couponId?: string;
+    // if paymentMethodId is provided, user should not rescan the QR code of ALIPAY
+    paymentMethodId?: string;
 }) {
     const { company } = useCompany();
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +40,6 @@ export default function AlipayPortal({
             const { error } = await stripe.handleNextAction({
                 clientSecret: setupIntent.client_secret,
             });
-
             if (error) {
                 handleError(error);
                 return;
@@ -61,15 +63,15 @@ export default function AlipayPortal({
                 currency,
                 priceTier,
                 couponId,
+                paymentMethodId,
             });
-
             await handleServerResponse(setupIntent);
         } catch (error) {
             clientLogger(error, 'error');
         } finally {
             setIsLoading(false);
         }
-    }, [company?.cus_id, company?.id, isLoading, selectedPrice, priceTier, couponId]);
+    }, [company?.cus_id, company?.id, isLoading, selectedPrice, priceTier, couponId, paymentMethodId]);
 
     return (
         <>

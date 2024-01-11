@@ -22,7 +22,19 @@ export const useSubscription = () => {
         async ([id, path]) =>
             await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
     );
-
+    const upgradeSubscription = useCallback(
+        async (priceId: string) => {
+            const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/upgrade', {
+                method: 'post',
+                body: JSON.stringify({
+                    priceId,
+                }),
+            });
+            mutate();
+            return res;
+        },
+        [mutate],
+    );
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
             if (!company?.id) throw new Error('No company found');
@@ -78,5 +90,6 @@ export const useSubscription = () => {
         createSubscription,
         createDiscountRenew,
         cancelSubscription,
+        upgradeSubscription,
     };
 };

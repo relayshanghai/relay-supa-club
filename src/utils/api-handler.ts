@@ -14,6 +14,9 @@ import type { RelayDatabase } from './api/db';
 import { db } from './database';
 import { profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { RequestContext } from './request-context/request-context';
+import awaitToError from './await-to-error';
+import type { HttpError } from './error/http-error';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -71,7 +74,7 @@ const createErrorObject = (error: any, tag: string) => {
         message: any;
         tag: string;
     } = {
-        httpCode: httpCodes.INTERNAL_SERVER_ERROR,
+        httpCode: error.httpCode || httpCodes.INTERNAL_SERVER_ERROR,
         message: `Unknown Error - ERR:${tag}`,
         tag,
     };
@@ -126,10 +129,8 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
     const {
         data: { session },
     } = await req.supabase.auth.getSession();
-
     if (session) {
         req.session = session;
-
         setUser({
             id: session.user.id,
             email: session.user.email,
@@ -168,3 +169,35 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
         return res.status(e.httpCode).json({ error: e.message });
     }
 };
+
+export const ApiHandlerWithContext =
+    (params: ApiHandlerParams) => async (req: RelayApiRequest, res: NextApiResponse) => {
+        const handler = determineHandler(req, params);
+
+        if (handler === false) {
+            return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
+                error: 'Method not allowed',
+            });
+        }
+        req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
+        const [error, resp] = await awaitToError<HttpError>(
+            RequestContext.startContext(async () => {
+                const {
+                    data: { session },
+                } = await req.supabase.auth.getSession();
+                RequestContext.setContext({ session });
+                return await handler(req, res);
+            }),
+        );
+        if (error) {
+            const tag = nanoid(6);
+            const e = createErrorObject(error, tag);
+
+            serverLogger(error, (scope) => {
+                return scope.setTag('error_code_tag', e.tag);
+            });
+
+            return res.status(e.httpCode).json({ error: e.message });
+        }
+        return res.status(httpCodes.OK).json(resp);
+    };

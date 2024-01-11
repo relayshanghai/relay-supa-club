@@ -52,7 +52,7 @@ export const PriceCard = ({
     const { trackEvent } = useRudderstack();
 
     const { prices } = usePrices();
-    const { subscription } = useSubscription();
+    const { subscription, upgradeSubscription } = useSubscription();
     const { company } = useCompany();
     const router = useRouter();
     type PriceKey = keyof typeof prices;
@@ -62,7 +62,14 @@ export const PriceCard = ({
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
         trackEvent('Select Upgrade Plan', { plan: priceTier });
-        router.push(`/payments?plan=${priceTier}`);
+        if (subscription?.status === 'trial' || company?.subscription_status === 'canceled') {
+            router.push(`/payments?plan=${priceTier}`);
+            return;
+        }
+        if (subscription?.status === 'active') {
+            upgradeSubscription(prices[priceTier].priceIds.monthly).then();
+            return;
+        }
     };
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">

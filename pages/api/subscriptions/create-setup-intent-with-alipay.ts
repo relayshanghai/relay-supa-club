@@ -14,6 +14,7 @@ export type CreateSetUpIntentForAlipayPostBody = {
     currency: string;
     priceTier: string;
     couponId?: string;
+    paymentMethodId?: string;
 };
 
 export type CreateSetUpIntentForAlipayPostResponse = Stripe.SetupIntent;
@@ -21,13 +22,11 @@ export type CreateSetUpIntentForAlipayPostResponse = Stripe.SetupIntent;
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { companyId, customerId, paymentMethodTypes, priceId, currency, priceTier, couponId } =
         req.body as CreateSetUpIntentForAlipayPostBody;
-    const customerPaymentMethods = await stripeClient.customers.listPaymentMethods(customerId, {
-        limit: 10,
-    });
-    let paymentMethod = customerPaymentMethods.data.find((payment) => payment.type === 'alipay');
-    if (!paymentMethod) {
+    let { paymentMethodId } = req.body as CreateSetUpIntentForAlipayPostBody;
+    let createPaymentMethod = false;
+    if (!paymentMethodId) {
         //create an alipay payment method to confirm the setup intent if user does not have one
-        paymentMethod = await stripeClient.paymentMethods.create({
+        const paymentMethod = await stripeClient.paymentMethods.create({
             type: 'alipay',
         });
         if (!paymentMethod) {
@@ -50,6 +49,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             serverLogger('Failed to attach payment method to customer');
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Failed to attach payment method to customer' });
         }
+        paymentMethodId = paymentMethod.id;
+        createPaymentMethod = true;
     }
     const { appUrl } = getHostnameFromRequest(req);
     const returnUrlParams = new URLSearchParams();
@@ -60,34 +61,49 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (couponId) {
         returnUrlParams.append('couponId', couponId);
     }
-    //create a setup intent
-    const response: CreateSetUpIntentForAlipayPostResponse = await stripeClient.setupIntents.create(
-        {
-            customer: customerId,
-            payment_method_types: paymentMethodTypes,
-            confirm: true,
-            payment_method: paymentMethod.id,
-            payment_method_options: {
-                //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
-                alipay: {
-                    currency,
-                },
-            },
-            usage: 'off_session',
-            mandate_data: {
-                customer_acceptance: {
-                    type: 'online',
-                    online: {
-                        ip_address: String(req.headers['x-forwarded-for'] || req.socket.remoteAddress),
-                        user_agent: req.headers['user-agent'] ?? 'Unknown user-agent',
+    const customerSetupIntentList = await stripeClient.setupIntents.list({
+        customer: customerId,
+        payment_method: paymentMethodId,
+    });
+
+    const existedAlipaySetupIntent = customerSetupIntentList.data.find(
+        (intent) =>
+            !intent.mandate ||
+            (intent.status === 'succeeded' && intent.payment_method_types.find((type) => type === 'alipay')),
+    );
+    // do not recreate payment intent when its already have one
+    if (!existedAlipaySetupIntent || createPaymentMethod) {
+        const response: CreateSetUpIntentForAlipayPostResponse = await stripeClient.setupIntents.create(
+            {
+                customer: customerId,
+                payment_method_types: paymentMethodTypes,
+                confirm: true,
+                payment_method: paymentMethodId,
+                payment_method_options: {
+                    //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
+                    alipay: {
+                        currency,
                     },
                 },
+                usage: 'off_session',
+                mandate_data: {
+                    customer_acceptance: {
+                        type: 'online',
+                        online: {
+                            ip_address: String(req.headers['x-forwarded-for'] || req.socket.remoteAddress),
+                            user_agent: req.headers['user-agent'] ?? 'Unknown user-agent',
+                        },
+                    },
+                },
+                return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
             },
-            return_url: `${appUrl}/payments/confirm-alipay?${returnUrlParams}`,
-        },
-        undefined,
-    );
-    return res.status(httpCodes.OK).json(response);
+            undefined,
+        );
+        return res.status(httpCodes.OK).json(response);
+    }
+    // when there is already a setup intent, subscribe to the plan
+
+    return res.status(httpCodes.OK).json(existedAlipaySetupIntent);
 };
 
 export default ApiHandler({

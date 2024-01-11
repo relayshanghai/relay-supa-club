@@ -58,6 +58,7 @@ export const createSetupIntentForAlipay = async ({
     currency,
     priceTier,
     couponId,
+    paymentMethodId,
 }: {
     companyId: string;
     customerId: string;
@@ -65,6 +66,8 @@ export const createSetupIntentForAlipay = async ({
     currency: string;
     priceTier: string;
     couponId?: string;
+    // reuse existed payment method when it provided
+    paymentMethodId?: string;
 }) => {
     const body: CreateSetUpIntentForAlipayPostBody = {
         companyId,
@@ -74,6 +77,7 @@ export const createSetupIntentForAlipay = async ({
         currency,
         priceTier,
         couponId,
+        paymentMethodId,
     };
 
     const res = await nextFetch<CreateSetUpIntentForAlipayPostResponse>(
