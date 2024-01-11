@@ -10,9 +10,9 @@ export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail,
 
 export const supabaseClientCypress = () => {
     const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
-    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
+    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set for supabaseClientCypress');
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
-    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
+    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set for supabaseClientCypress');
 
     return createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
         auth: { persistSession: false },
