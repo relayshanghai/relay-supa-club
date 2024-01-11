@@ -11,9 +11,8 @@ import {
 } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
-import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { handleReply } from 'pages/api/email-engine/webhook';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencer } from 'src/utils/api/db';
 
 const setTemplateVariableDescription = (description: string) => {
     cy.contains('tr', 'General collaboration').should('not.exist');
@@ -32,7 +31,7 @@ const resetData = async () => {
 };
 
 describe('outreach', () => {
-    let sequenceInfluencer: SequenceInfluencerManagerPage | null = null;
+    let sequenceInfluencer: SequenceInfluencer | null = null;
 
     before(async () => {
         const supabase = supabaseClientCypress();
@@ -44,10 +43,14 @@ describe('outreach', () => {
             .single();
 
         if (profile) {
-            sequenceInfluencer = await getSequenceInfluencerByEmailAndCompanyCall(supabase)(
-                'bob.brown@example.com',
-                profile.company_id,
-            );
+            const { data } = await supabase
+                .from('sequence_influencers')
+                .select()
+                .limit(1)
+                .match({ email: 'bob.brown@example.com', company_id: profile.company_id })
+                .single();
+
+            sequenceInfluencer = data;
         }
     });
 
