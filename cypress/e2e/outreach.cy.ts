@@ -1,12 +1,17 @@
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { randomString, reinsertAlice, reinsertCharlie, resetBobsStatus, resetSequenceEmails } from './helpers';
+import {
+    randomString,
+    reinsertAlice,
+    reinsertCharlie,
+    resetBobsStatus,
+    resetSequenceEmails,
+    supabaseClientCypress,
+} from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
-import { getProfileByEmail } from 'src/utils/api/db';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
-import { db } from 'src/utils/supabase-client';
 import { handleReply } from 'pages/api/email-engine/webhook';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
@@ -30,9 +35,16 @@ describe('outreach', () => {
     let sequenceInfluencer: SequenceInfluencerManagerPage | null = null;
 
     before(async () => {
-        const { data: profile } = await getProfileByEmail('william.edward.douglas@blue-moonlight-stream.com');
+        const supabase = supabaseClientCypress();
+
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select()
+            .eq('email', 'william.edward.douglas@blue-moonlight-stream.com')
+            .single();
+
         if (profile) {
-            sequenceInfluencer = await db(getSequenceInfluencerByEmailAndCompanyCall)(
+            sequenceInfluencer = await getSequenceInfluencerByEmailAndCompanyCall(supabase)(
                 'bob.brown@example.com',
                 profile.company_id,
             );
