@@ -1,18 +1,9 @@
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import {
-    randomString,
-    reinsertAlice,
-    reinsertCharlie,
-    resetBobsStatus,
-    resetSequenceEmails,
-    supabaseClientCypress,
-} from './helpers';
+import { randomString, reinsertAlice, reinsertCharlie, resetBobsStatus, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
-import { handleReply } from 'pages/api/email-engine/webhook';
-import type { SequenceInfluencer } from 'src/utils/api/db';
 
 const setTemplateVariableDescription = (description: string) => {
     cy.contains('tr', 'General collaboration').should('not.exist');
@@ -31,29 +22,6 @@ const resetData = async () => {
 };
 
 describe('outreach', () => {
-    let sequenceInfluencer: SequenceInfluencer | null = null;
-
-    before(async () => {
-        const supabase = supabaseClientCypress();
-
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select()
-            .eq('email', 'william.edward.douglas@blue-moonlight-stream.com')
-            .single();
-
-        if (profile) {
-            const { data } = await supabase
-                .from('sequence_influencers')
-                .select()
-                .limit(1)
-                .match({ email: 'bob.brown@example.com', company_id: profile.company_id })
-                .single();
-
-            sequenceInfluencer = data;
-        }
-    });
-
     beforeEach(() => {
         new Cypress.Promise(resetData);
         // turn back on the real database sequence calls
@@ -306,32 +274,26 @@ describe('outreach', () => {
         });
         checkForStatus('Delivered');
 
-        // Since there's no stage for EmailEngine, mock handling reply from influencer
-        // @ts-expect-error messageNewReply shape is not fully compatible to WebhookMessageNew type
-        const replyPromise = handleReply(sequenceInfluencer, messageNewReply);
-
-        cy.wrap(replyPromise).then(() => {
-            cy.contains('CRM').click(); // click around to trigger SWR refresh
-            cy.contains('General collaboration', { timeout: 10000 }).click();
-            cy.contains('button', 'In sequence').click();
-
-            cy.contains('Manager').click();
-        });
+        cy.intercept(
+            'GET',
+            `http://localhost:4000/v1/account/${messageNewReply.account}/message/${messageNewReply.data.id}*`,
+            { fixture: 'email-message.json' },
+        );
 
         // send a replied webhook request
-        // cy.request({
-        //     method: 'POST',
-        //     url: '/api/email-engine/webhook',
-        //     body: JSON.parse(JSON.stringify(messageNewReply)),
-        //     timeout: 10000,
-        // });
-        // cy.contains('CRM').click(); // click around to trigger SWR refresh
-        // cy.contains('General collaboration', { timeout: 10000 }).click();
-        // cy.contains('button', 'In sequence').click();
+        cy.request({
+            method: 'POST',
+            url: '/api/email-engine/webhook',
+            body: JSON.parse(JSON.stringify(messageNewReply)),
+            timeout: 10000,
+        });
+        cy.contains('CRM').click(); // click around to trigger SWR refresh
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        cy.contains('button', 'In sequence').click();
 
         // influencer has been moved to the manage influencers page
         // cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 }); // works on local, but too slow on CIs
-        // cy.contains('Manager').click();
+        cy.contains('Manager').click();
 
         // TODO: new test for manager page
         // cy.contains('tr', 'Bob-Recommended Brown', { timeout: 100000 }).within(() => {
