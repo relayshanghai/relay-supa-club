@@ -42,7 +42,10 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
 
     payload.query.q = `#${payload.query.q}`;
 
-    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
+    const response = await apiFetch<
+        GetRelevantTopicTagsResponse,
+        GetRelevantTopicTagsPayload & { context?: ServerContext }
+    >('/dict/relevant-tags', { ...payload, context });
 
     if (response.content.success === true) {
         sortByDistance(response.content.data);
@@ -63,7 +66,10 @@ export const getRelevantTopicTagsByInfluencer = async (
 
     payload.query.q = `@${payload.query.q}`;
 
-    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
+    const response = await apiFetch<
+        GetRelevantTopicTagsResponse,
+        GetRelevantTopicTagsPayload & { context?: ServerContext }
+    >('/dict/relevant-tags', { ...payload, context });
 
     if (response.content.success === true) {
         sortByDistance(response.content.data);

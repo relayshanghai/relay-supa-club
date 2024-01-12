@@ -33,6 +33,7 @@ import { useUser } from 'src/hooks/use-user';
 import { useAtom } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { saveSearchResults } from 'src/utils/save-search-influencers';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -116,9 +117,9 @@ export const Chat: React.FC<ChatProps> = ({
         getRelevantTopics,
         getTopicClusters,
         getInfluencers,
-        setInfluencers,
         updateConversation,
         refreshConversation,
+        setInfluencers,
     } = useBoostbot({
         abortSignal: abortController.signal,
     });
@@ -268,6 +269,8 @@ export const Chat: React.FC<ChatProps> = ({
 
                 const newData = { searchResults: influencers, chatMessages: newMessages, profileId: profile.id };
                 const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
+
+                await saveSearchResults(influencers);
 
                 refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
                 setHasSearched(true);

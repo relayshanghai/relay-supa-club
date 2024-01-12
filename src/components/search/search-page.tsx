@@ -54,6 +54,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { filterOutAlreadyAddedInfluencers } from '../boostbot/table/helper';
 import { isBoostbotInfluencer } from 'pages/boostbot';
+import { saveSearchResults } from 'src/utils/save-search-influencers';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -309,6 +310,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                     sequence_id: sequence?.id,
                 });
             });
+
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 
@@ -347,6 +349,14 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         createSequenceInfluencer,
         track,
     ]);
+
+    useEffect(() => {
+        if (!results) {
+            return;
+        }
+        saveSearchResults(results);
+    }, [results]);
+
     useEffect(() => {
         if (sequences && !sequence) {
             setSequence(sequences[0]);

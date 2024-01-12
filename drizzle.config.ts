@@ -9,8 +9,12 @@ if (!SUPABASE_CONNECTION_URL) {
 }
 
 export default {
+    out: './drizzle',
     schema: './drizzle/*',
     driver: 'pg',
+    introspect: {
+        casing: 'preserve',
+    },
     dbCredentials: {
         connectionString: SUPABASE_CONNECTION_URL,
     },

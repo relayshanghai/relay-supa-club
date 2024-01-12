@@ -61,6 +61,7 @@ export interface Headers {
 }
 
 export interface ReplyTo {
+    name?: string;
     address: string;
 }
 

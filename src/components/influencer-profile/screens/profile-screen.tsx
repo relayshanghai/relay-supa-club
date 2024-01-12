@@ -1,15 +1,13 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
 import type { ProfileNotes } from './profile-notes-tab';
 import { ProfileNotesTab } from './profile-notes-tab';
 import { useProfileScreenContext } from './profile-screen-context';
-import type { ProfileShippingDetails } from './profile-shipping-details-tab';
-import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
-import { useTranslation } from 'react-i18next';
+import { ProfileShippingDetailsTab, type ProfileShippingDetails } from './profile-shipping-details-tab';
+// import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
 import { randomNumber } from 'src/utils/utils';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -19,6 +17,7 @@ import {
 } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 import { SaveInfluencerProfileUpdates } from 'src/utils/analytics/events';
 import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
+import type { SearchTableInfluencer } from 'types';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -27,6 +26,7 @@ export type ProfileValue = {
 
 type Props = {
     profile: SequenceInfluencerManagerPage;
+    influencerData: SearchTableInfluencer;
     selectedTab?: 'notes' | 'shipping-details';
     onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
@@ -42,7 +42,7 @@ const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
     };
 };
 
-export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +80,6 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
         });
         tab && setSelected(tab);
     };
-    const { t } = useTranslation();
 
     const handleNotesDetailsUpdate = useCallback(
         (k: string, v: any) => {
@@ -102,7 +101,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
     const handleUpdateClick = useCallback(
         (data: ProfileValue) => {
-            if (!profile.influencer_social_profile_id) throw new Error('Influencer social profile id not found');
+            if (!profile.influencer_social_profile_id && !profile.influencer_social_profile_id)
+                throw new Error('Influencer social profile id not found');
 
             onUpdate && onUpdate(data);
 
@@ -129,7 +129,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         selected === 'notes' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    {t('profile.notesTab')}
+                    {/*{t('profile.notesTab')}*/}
+                    Manager
                 </button>
                 <button
                     onClick={() => handleTabClick('shipping-details')}
@@ -138,7 +139,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         selected === 'shipping-details' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    {t('profile.shippingDetailsTab')}
+                    {/*{t('profile.shippingDetailsTab')}*/}
+                    Channel [WIP]
                 </button>
             </nav>
 
@@ -146,23 +148,26 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
                     <ProfileNotesTab
                         profile={profile}
-                        onUpdate={handleNotesDetailsUpdate}
+                        onUpdateNotes={(key, value) => {
+                            handleNotesDetailsUpdate(key, value);
+                        }}
+                        onUpdateShippingDetails={(key, value) => {
+                            handleShippingUpdate(key, value);
+                        }}
+                        triggerSubmitNotes={(key, value) => {
+                            handleUpdateClick({ ...state, notes: { ...state.notes, [key]: value } });
+                        }}
+                        triggerSubmitShippingDetails={(key, value) => {
+                            handleUpdateClick({
+                                ...state,
+                                shippingDetails: { ...state.shippingDetails, [key]: value },
+                            });
+                        }}
                         trackProfileFieldUpdate={trackProfileFieldUpdate}
                     />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab
-                        profile={profile}
-                        onUpdate={handleShippingUpdate}
-                        trackProfileFieldUpdate={trackProfileFieldUpdate}
-                    />
-                </div>
-
-                <div className="float-right flex pb-4">
-                    <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
-                        {t('creators.cancel')}
-                    </Button>
-                    <Button onClick={() => handleUpdateClick(state)}>{t('profile.updateProfileButton')}</Button>
+                    <ProfileShippingDetailsTab profile={props.influencerData} onUpdate={handleShippingUpdate} />
                 </div>
             </div>
         </div>

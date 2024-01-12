@@ -199,6 +199,7 @@ const Boostbot = () => {
                     sequence_id: sequence?.id,
                 });
             });
+
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 

@@ -1,7 +1,7 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-legacy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';

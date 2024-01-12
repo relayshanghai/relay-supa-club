@@ -3,7 +3,7 @@ import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-hel
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { isDev } from 'src/constants';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import { EMPLOYEE_EMAILS, QUICK_SEND_EMAIL_ADDRESSES } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
@@ -205,6 +205,19 @@ export async function middleware(req: NextRequest) {
             return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
+    }
+
+    if (req.nextUrl.pathname.includes('component-previews')) {
+        if (!authData.session?.user?.email) {
+            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        }
+        if (
+            QUICK_SEND_EMAIL_ADDRESSES.includes(authData.session.user.email) ||
+            process.env.NODE_ENV === 'development'
+        ) {
+            return res;
+        }
+        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
     }
 
     if (authData.session?.user?.email) {
