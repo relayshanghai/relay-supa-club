@@ -88,7 +88,7 @@ export async function apiFetch<TRes = void, TReq = void>(
         url = preparePayloadQuery(url, payload.query);
 
         if (payload.body) {
-            _options.method = 'POST';
+            _options.method = options?.method?.toUpperCase() === 'PUT' ? 'PUT' : 'POST';
             _options.body = JSON.stringify(payload.body);
             _options.headers = {
                 'content-type': 'application/json',
