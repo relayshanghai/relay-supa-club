@@ -7,9 +7,15 @@ import {
 } from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Paperclip, ThreeDots } from 'src/components/icons';
+import { Download, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
 import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
+import { getAttachmentStyle } from 'pages/component-previews/inbox';
+import { Tooltip } from 'src/components/library';
+import type { EmailContact } from 'src/utils/outreach/types';
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
+import { SingleAddressSection } from './reply-editor';
+import { Button } from 'shadcn/components/ui/button';
 
 const MessageTitle = ({
     expanded,
@@ -91,21 +97,37 @@ const AttachmentTablet = ({ attachment }: { attachment: MessageAttachment }) => 
         // eslint-disable-next-line no-console
         console.log('Attachment Clicked', attachment);
     }, [attachment]);
+    const truncatedText = (text: string, maxLength: number) => {
+        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    };
     return (
-        <button
-            type="button"
-            className="cursor-pointer rounded bg-primary-300 px-2 py-1 text-xs hover:bg-primary-100"
-            onClick={handleDownloadAttachment}
-        >
-            {attachment.filename}
-        </button>
+        <Tooltip position="right" content={attachment.filename}>
+            <button
+                type="button"
+                className={`flex cursor-pointer gap-2 rounded font-semibold ${getAttachmentStyle(
+                    attachment.filename,
+                )} px-2 py-1 text-xs`}
+                onClick={handleDownloadAttachment}
+            >
+                <Download className="h-4 w-4" />
+                {truncatedText(attachment.filename, 10)}
+            </button>
+        </Tooltip>
     );
 };
 
-const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: string | null }) => {
+const MessageComponent = ({
+    message,
+    myEmail,
+    onForward,
+}: {
+    message: Message;
+    myEmail?: string | null;
+    onForward: (message: Message, forwardedTo: EmailContact[]) => void;
+}) => {
     const [messageExpanded, setMessageExpanded] = useState(false);
+    const [forwardTo, setForwardTo] = useState<EmailContact[]>([]);
     const [quoteExpanded, setQuoteExpanded] = useState(false);
-    const [attachmentExpanded, setAttachmentExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
     const parser = new DOMParser();
     const emailDoc = parser.parseFromString(message.body, 'text/html');
@@ -143,13 +165,26 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
                 <MessageTitle expanded={messageExpanded} message={message} myEmail={myEmail} />
                 <section className="flex items-center gap-4">
                     <DropdownMenu>
-                        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                            <ThreeDots className="h-4 w-4 " />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
-                            <DropdownMenuItem>Forward</DropdownMenuItem>
-                            <DropdownMenuItem>Reply</DropdownMenuItem>
-                        </DropdownMenuContent>
+                        <Dialog>
+                            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
+                                <ThreeDots className="h-4 w-4 " />
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenuItem>
+                                    <DialogTrigger>Forward</DialogTrigger>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+
+                            <DialogContent>
+                                <SingleAddressSection sendTo={forwardTo} setSendTo={setForwardTo} />
+                                <DialogFooter>
+                                    <Button type="button" onClick={() => onForward(message, forwardTo)}>
+                                        Save changes
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </DropdownMenu>
                     <span className="w-16">{formatDate(message.date, '[date] [monthShort]')}</span>
                 </section>
@@ -157,24 +192,12 @@ const MessageComponent = ({ message, myEmail }: { message: Message; myEmail?: st
             <AccordionContent onClick={(e) => e.stopPropagation()} className="p-4 text-black">
                 <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 {message.attachments && message.attachments.length > 0 && (
-                    <section className="w-full">
-                        <div className="h-fit w-fit rounded-sm bg-gray-200 px-1 transition-all hover:bg-gray-100">
-                            <Paperclip
-                                onClick={() => setAttachmentExpanded(!attachmentExpanded)}
-                                className="mt-4 h-4 w-4 rotate-90 stroke-gray-400"
-                            />
-                        </div>
-                        <span className="text-xs">{message.attachments.length} attachment</span>
-                        <section className="flex gap-2">
-                            {attachmentExpanded &&
-                                message.attachments
-                                    .filter(
-                                        (attachment) => attachment.embedded === false && attachment.inline === false,
-                                    )
-                                    .map((attachment) => (
-                                        <AttachmentTablet key={attachment.id} attachment={attachment} />
-                                    ))}
-                        </section>
+                    <section className="flex w-full gap-2">
+                        {message.attachments
+                            .filter((attachment) => !attachment.embedded && !attachment.inline)
+                            .map((attachment) => (
+                                <AttachmentTablet key={attachment.id} attachment={attachment} />
+                            ))}
                     </section>
                 )}
                 <section className="w-full">
@@ -212,10 +235,12 @@ export const MessagesComponent = ({
     messages,
     currentInbox,
     focusedMessageIds,
+    onForward,
 }: {
     messages: Message[];
     currentInbox: CurrentInbox;
     focusedMessageIds?: string[];
+    onForward: (message: Message, forwardedTo: EmailContact[]) => void;
 }) => {
     const [openMessage, setOpenMessage] = useState<string[]>([messages[0]?.id]);
 
@@ -241,7 +266,12 @@ export const MessagesComponent = ({
                 .slice(0) // Make shallow copy before reversing
                 .reverse()
                 .map((message) => (
-                    <MessageComponent key={message.id} message={message} myEmail={currentInbox.email} />
+                    <MessageComponent
+                        key={message.id}
+                        message={message}
+                        myEmail={currentInbox.email}
+                        onForward={onForward}
+                    />
                 ))}
         </Accordion>
     );
