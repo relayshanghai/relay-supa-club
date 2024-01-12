@@ -16,10 +16,9 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
-import { useAnalytics } from 'src/components/analytics/analytics-provider';
+import { initSmartlook, useAnalytics, useSmartlook } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
 import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
-import { initSmartlook, useSmartlook } from './use-smartlook';
 
 export type SignupData = {
     email: string;
@@ -89,7 +88,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     useEffect(() => {
         initSmartlook();
-    });
+    }, []);
 
     useEffect(() => {
         setLoading(isLoading);
