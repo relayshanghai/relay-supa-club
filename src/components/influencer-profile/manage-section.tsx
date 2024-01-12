@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { serverLogger } from 'src/utils/logger-server';
 import toast from 'react-hot-toast';
@@ -17,7 +18,7 @@ import type { Address } from 'src/backend/database/addresses';
 import type { SequenceInfluencer } from 'src/backend/database/sequence-influencers';
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
-import { isAbortError, isApiError } from 'src/utils/is-api-error';
+import { isApiError } from 'src/utils/is-api-error';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
@@ -63,6 +64,14 @@ export interface ManageSectionProps {
 }
 export const manageSectionUpdatingAtom = atom(false);
 
+const processStringAsNumber = (inputValue: string) => {
+    const value = inputValue.trim();
+    if (value === '') return undefined;
+    const float = parseFloat(value);
+    if (isNaN(float)) return undefined;
+    return float;
+};
+
 export const ManageSection = ({ influencer: passedInfluencer, address: passedAddress }: ManageSectionProps) => {
     const { t } = useTranslation();
 
@@ -80,46 +89,53 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     const { name, phone_number, address_line_1, city, state, postal_code, country, tracking_code } = address ?? {};
 
     const [_updating, setUpdating] = useAtom(manageSectionUpdatingAtom);
-    const influencerController = useRef(new AbortController());
-    const addressController = useRef(new AbortController());
+    const funnelStatusController = useRef<AbortController | null>(null);
+    const rateAmountController = useRef<AbortController | null>(null);
+    const commissionRateController = useRef<AbortController | null>(null);
+    const affiliateLinkController = useRef<AbortController | null>(null);
+    const scheduledPostDateController = useRef<AbortController | null>(null);
+    const nameController = useRef<AbortController | null>(null);
+    const phoneNumberController = useRef<AbortController | null>(null);
+    const addressLine1Controller = useRef<AbortController | null>(null);
+    const cityController = useRef<AbortController | null>(null);
+    const stateController = useRef<AbortController | null>(null);
+    const postalCodeController = useRef<AbortController | null>(null);
+    const countryController = useRef<AbortController | null>(null);
+    const trackingCodeController = useRef<AbortController | null>(null);
 
     const updateInfluencer = useCallback(
-        async (body: SequenceInfluencersPutRequestBody) => {
-            influencerController.current.abort();
-            influencerController.current = new AbortController();
+        async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
+            controller.current?.abort();
+            controller.current = new AbortController();
 
             setUpdating(true);
             const { content } = await apiFetch<
                 SequenceInfluencersPutRequestResponse,
                 { body: SequenceInfluencersPutRequestBody }
-            >('/api/sequence-influencers', { body }, { method: 'PUT' });
+            >('/api/sequence-influencers', { body }, { method: 'PUT', signal: controller.current.signal });
+
             if (isApiError(content)) {
                 throw new Error(content.error);
             }
-            setInfluencer(content);
             setUpdating(false);
         },
         [setUpdating],
     );
 
     const updateAddress = useCallback(
-        async (body: AddressesPutRequestBody) => {
-            addressController.current.abort();
-            addressController.current = new AbortController();
+        async (body: AddressesPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
+            controller.current?.abort();
+            controller.current = new AbortController();
 
             setUpdating(true);
             const { content } = await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
                 '/api/addresses',
                 { body },
-                { method: 'PUT' },
+                { method: 'PUT', signal: controller.current.signal },
             );
             if (isApiError(content)) {
-                if (isAbortError(content.error)) {
-                    return;
-                }
                 throw new Error(content.error);
             }
-            setAddress(content);
             setUpdating(false);
         },
         [setUpdating],
@@ -129,7 +145,11 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     const updateAddressDebounced = debounce(updateAddress, 2000);
 
     const handleUpdateInfluencer = useCallback(
-        async (update: Partial<SequenceInfluencer>, debounce = true) => {
+        async (
+            update: Partial<SequenceInfluencer>,
+            controller: MutableRefObject<AbortController | null>,
+            debounce = true,
+        ) => {
             if (
                 !influencer ||
                 !update ||
@@ -145,9 +165,9 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             setInfluencer({ ...previous, ...update });
             try {
                 if (debounce) {
-                    await updateInfluencerDebounced({ id, ...update });
+                    await updateInfluencerDebounced({ id, ...update }, controller);
                 } else {
-                    await updateInfluencer({ id, ...update });
+                    await updateInfluencer({ id, ...update }, controller);
                 }
             } catch (error) {
                 serverLogger(error);
@@ -160,7 +180,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     );
 
     const handleUpdateAddress = useCallback(
-        async (update: Partial<Address>, debounce = true) => {
+        async (update: Partial<Address>, controller: MutableRefObject<AbortController | null>, debounce = true) => {
             if (!address || !update || Object.keys(update).length === 0 || doesObjectMatchUpdate(address, update)) {
                 return;
             }
@@ -170,9 +190,9 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             setAddress({ ...previous, ...update });
             try {
                 if (debounce) {
-                    await updateAddressDebounced({ id: address.id, ...update });
+                    await updateAddressDebounced({ id: address.id, ...update }, controller);
                 } else {
-                    await updateAddress({ id: address.id, ...update });
+                    await updateAddress({ id: address.id, ...update }, controller);
                 }
             } catch (error) {
                 serverLogger(error);
@@ -198,7 +218,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 onUpdate={(items) => {
                     const selected = items.length > 0 ? items[0].id : funnel_status;
                     if (selected === funnel_status) return;
-                    handleUpdateInfluencer({ funnel_status: selected }, false);
+                    handleUpdateInfluencer({ funnel_status: selected }, funnelStatusController, false);
                 }}
                 options={COLLAB_STATUS_OPTIONS}
                 selected={[funnel_status]}
@@ -218,18 +238,16 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     <Input
                         className="mt-2"
                         value={rate_amount ?? undefined}
-                        onInput={(e) =>
-                            handleUpdateInfluencer({
-                                rate_amount: e.currentTarget.value ? Number(e.currentTarget.value) : undefined,
-                            })
-                        }
-                        onBlur={
-                            (e) =>
-                                handleUpdateInfluencer(
-                                    { rate_amount: e.currentTarget.value ? Number(e.currentTarget.value) : undefined },
-                                    false,
-                                ) // don't debounce, update immediately
-                        }
+                        onInput={(e) => {
+                            const value = processStringAsNumber(e.currentTarget.value);
+                            if (value === undefined) return;
+                            handleUpdateInfluencer({ rate_amount: value }, rateAmountController);
+                        }}
+                        onBlur={(e) => {
+                            const value = processStringAsNumber(e.currentTarget.value);
+                            if (value === undefined) return;
+                            handleUpdateInfluencer({ rate_amount: value }, rateAmountController, false); // don't debounce, update immediately
+                        }}
                         placeholder="$250"
                     />
                 </label>
@@ -238,10 +256,23 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     <Input
                         className="mt-2"
                         value={commission_rate ?? undefined}
-                        onInput={(e) => handleUpdateInfluencer({ commission_rate: Number(e.currentTarget.value) })}
-                        onBlur={(e) =>
-                            handleUpdateInfluencer({ commission_rate: Number(e.currentTarget.value) }, false)
-                        }
+                        onInput={(e) => {
+                            const value = processStringAsNumber(e.currentTarget.value);
+                            if (value === undefined) return;
+                            handleUpdateInfluencer(
+                                { commission_rate: processStringAsNumber(e.currentTarget.value) },
+                                commissionRateController,
+                            );
+                        }}
+                        onBlur={(e) => {
+                            const value = processStringAsNumber(e.currentTarget.value);
+                            if (value === undefined) return;
+                            handleUpdateInfluencer(
+                                { commission_rate: processStringAsNumber(e.currentTarget.value) },
+                                commissionRateController,
+                                false,
+                            );
+                        }}
                         placeholder="15%"
                     />
                 </label>
@@ -251,8 +282,16 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 <Input
                     className="mb-4 mt-2"
                     value={affiliate_link ?? undefined}
-                    onInput={(e) => handleUpdateInfluencer({ affiliate_link: e.currentTarget.value })}
-                    onBlur={(e) => handleUpdateInfluencer({ affiliate_link: e.currentTarget.value }, false)}
+                    onInput={(e) =>
+                        handleUpdateInfluencer({ affiliate_link: e.currentTarget.value }, affiliateLinkController)
+                    }
+                    onBlur={(e) =>
+                        handleUpdateInfluencer(
+                            { affiliate_link: e.currentTarget.value },
+                            affiliateLinkController,
+                            false,
+                        )
+                    }
                     placeholder="chefly.shopify.com?code=2h42b2394h2"
                     type="text"
                 />
@@ -264,7 +303,12 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     <CollabScheduledPostDateInput
                         label={''}
                         value={scheduled_post_date ?? undefined}
-                        onInput={(e) => handleUpdateInfluencer({ scheduled_post_date: e.currentTarget.value })}
+                        onInput={(e) =>
+                            handleUpdateInfluencer(
+                                { scheduled_post_date: e.currentTarget.value },
+                                scheduledPostDateController,
+                            )
+                        }
                     />
                 </label>
             </div>
@@ -278,8 +322,8 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 <Input
                     className="mb-4 mt-2"
                     value={name ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ name: e.currentTarget.value })}
-                    onBlur={(e) => handleUpdateAddress({ name: e.currentTarget.value }, false)}
+                    onInput={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController)}
+                    onBlur={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController, false)}
                     placeholder="Eve Leroy"
                     type="text"
                 />
@@ -289,8 +333,10 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 <Input
                     className="mb-4 mt-2"
                     value={phone_number ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ phone_number: e.currentTarget.value })}
-                    onBlur={(e) => handleUpdateAddress({ phone_number: e.currentTarget.value }, false)}
+                    onInput={(e) => handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController)}
+                    onBlur={(e) =>
+                        handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController, false)
+                    }
                     placeholder="1-433-3453456"
                     type="text"
                 />
@@ -301,8 +347,12 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 <Input
                     className="mb-4 mt-2"
                     value={address_line_1 ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ address_line_1: e.currentTarget.value })}
-                    onBlur={(e) => handleUpdateAddress({ address_line_1: e.currentTarget.value }, false)}
+                    onInput={(e) =>
+                        handleUpdateAddress({ address_line_1: e.currentTarget.value }, addressLine1Controller)
+                    }
+                    onBlur={(e) =>
+                        handleUpdateAddress({ address_line_1: e.currentTarget.value }, addressLine1Controller, false)
+                    }
                     placeholder="755 Roosevelt Street"
                     type="text"
                 />
@@ -312,8 +362,8 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     {t('profile.city') || 'City'}
                     <Input
                         value={city ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ city: e.currentTarget.value })}
-                        onBlur={(e) => handleUpdateAddress({ city: e.currentTarget.value }, false)}
+                        onInput={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController)}
+                        onBlur={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController, false)}
                         placeholder="Chicago"
                         type="text"
                     />
@@ -322,8 +372,8 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     {t('profile.state') || 'State'}
                     <Input
                         value={state ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ state: e.currentTarget.value })}
-                        onBlur={(e) => handleUpdateAddress({ state: e.currentTarget.value }, false)}
+                        onInput={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController)}
+                        onBlur={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController, false)}
                         placeholder="Illinois"
                         type="text"
                     />
@@ -334,8 +384,12 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     {t('profile.postalCode') || 'Postal Code'}
                     <Input
                         value={postal_code ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ postal_code: e.currentTarget.value })}
-                        onBlur={(e) => handleUpdateAddress({ postal_code: e.currentTarget.value }, false)}
+                        onInput={(e) =>
+                            handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController)
+                        }
+                        onBlur={(e) =>
+                            handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController, false)
+                        }
                         placeholder="14450"
                         type="text"
                     />
@@ -344,8 +398,10 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     {t('profile.country') || 'Country'}
                     <Input
                         value={country ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ country: e.currentTarget.value })}
-                        onBlur={(e) => handleUpdateAddress({ country: e.currentTarget.value }, false)}
+                        onInput={(e) => handleUpdateAddress({ country: e.currentTarget.value }, countryController)}
+                        onBlur={(e) =>
+                            handleUpdateAddress({ country: e.currentTarget.value }, countryController, false)
+                        }
                         placeholder="United States"
                         type="text"
                     />
@@ -357,8 +413,12 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 <Input
                     className="mb-4 mt-2"
                     value={tracking_code ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ tracking_code: e.currentTarget.value })}
-                    onBlur={(e) => handleUpdateAddress({ tracking_code: e.currentTarget.value }, false)}
+                    onInput={(e) =>
+                        handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController)
+                    }
+                    onBlur={(e) =>
+                        handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController, false)
+                    }
                     placeholder="FT2349834573..."
                     type="text"
                 />
