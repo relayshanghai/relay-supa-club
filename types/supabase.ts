@@ -1305,7 +1305,9 @@ export interface Database {
         Row: {
           added_by: string
           address_id: string | null
+          affiliate_link: string | null
           avatar_url: string | null
+          commission_rate: number | null
           company_id: string
           created_at: string
           email: string | null
@@ -1332,7 +1334,9 @@ export interface Database {
         Insert: {
           added_by: string
           address_id?: string | null
+          affiliate_link?: string | null
           avatar_url?: string | null
+          commission_rate?: number | null
           company_id: string
           created_at?: string
           email?: string | null
@@ -1359,7 +1363,9 @@ export interface Database {
         Update: {
           added_by?: string
           address_id?: string | null
+          affiliate_link?: string | null
           avatar_url?: string | null
+          commission_rate?: number | null
           company_id?: string
           created_at?: string
           email?: string | null

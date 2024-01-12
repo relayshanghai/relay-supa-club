@@ -32,6 +32,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: '10cf3332-6845-4f19-ae68-303489663af4',
@@ -65,6 +67,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: '0b593031-0690-4651-ba2f-628a84710201',
@@ -98,6 +102,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:27:05.713173+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: '3327f2c1-4d5c-4852-9a1e-39e8a063a606',
@@ -131,6 +137,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: 'cc2132ee-ee00-4283-ae4d-9ec764a8fc5f',
@@ -164,6 +172,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: '1817460c-49de-43fa-af1d-98368a4d9965',
@@ -197,6 +207,8 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
     {
         id: 'db95bdb5-2fd8-4089-a57c-c542013dad93',
@@ -230,5 +242,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         social_profile_last_fetched: '2023-08-31T07:28:14.856773+00:00',
         recent_post_title: 'recent post',
         recent_post_url: 'https://example.com',
+        affiliate_link: 'https://example.com/affiliate_link',
+        commission_rate: 0.1,
     },
 ];
