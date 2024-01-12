@@ -29,6 +29,13 @@ import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-but
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import { filterOutAlreadyAddedInfluencers } from 'src/components/boostbot/table/helper';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+
+/** just a type check to satisfy .filter()'s return type */
+export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
+    return influencer?.user_id !== undefined;
+};
 
 const Boostbot = () => {
     const { t } = useTranslation();
@@ -46,14 +53,18 @@ const Boostbot = () => {
         'boostbot-is-first-time-add-to-sequence',
         true,
     );
-    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+    const [selectedInfluencerIds, setSelectedInfluencerIds] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
     );
 
-    const selectedInfluencersData =
+    const selectedInfluencers =
         // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
-        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
+        influencers.length > 0
+            ? Object.keys(selectedInfluencerIds)
+                  .map((key) => influencers.find((i) => i.user_id === key))
+                  .filter(isBoostbotInfluencer)
+            : [];
 
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
@@ -76,10 +87,13 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((s) => s.id),
-    );
+    const { createSequenceInfluencer } = useSequenceInfluencers();
+
+    const {
+        allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
+        refresh: refreshSequenceInfluencers,
+    } = useAllSequenceInfluencersBasicInfo();
+
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
@@ -127,9 +141,7 @@ const Boostbot = () => {
 
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
-    const influencersToOutreach = selectedInfluencersData.filter(
-        (i) => !allSequenceInfluencers.find((si) => si.iqdata_id === i?.user_id),
-    );
+    const influencersToOutreach = filterOutAlreadyAddedInfluencers(allSequenceInfluencers, selectedInfluencers ?? []);
 
     const isOutreachButtonDisabled = influencersToOutreach.length === 0;
 
@@ -139,7 +151,6 @@ const Boostbot = () => {
 
     const handleSelectedInfluencersToOutreach = async () => {
         setIsOutreachLoading(true);
-
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
             currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
@@ -153,16 +164,16 @@ const Boostbot = () => {
         };
 
         try {
-            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+            trackingPayload.is_multiple = influencersToOutreach ? influencersToOutreach.length > 1 : null;
 
-            if (!selectedInfluencersData) {
+            if (!influencersToOutreach) {
                 throw new Error('Error adding influencers to sequence: no valid influencers selected');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
 
-            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+            const sequenceInfluencerPromises = influencersToOutreach.map((influencer) => {
                 const creatorProfileId = influencer.user_id;
 
                 if (trackingPayload.influencer_ids !== null) {
@@ -259,7 +270,7 @@ const Boostbot = () => {
         setHasSearched(false);
         setMessages([]);
         setInfluencers([]);
-        setSelectedInfluencers({});
+        setSelectedInfluencerIds({});
         await createNewConversation(profile?.id ?? '', profile?.first_name);
         refreshConversation();
     };
@@ -283,6 +294,7 @@ const Boostbot = () => {
                         influencers={influencers}
                         allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
+                        setSelectedInfluencerIds={setSelectedInfluencerIds}
                         setHasSearched={setHasSearched}
                         isOutreachLoading={isOutreachLoading}
                         isSearchLoading={isSearchLoading}
@@ -304,7 +316,6 @@ const Boostbot = () => {
                         selectedRow={selectedRow}
                         showSequenceSelector={showSequenceSelector}
                         setShowSequenceSelector={setShowSequenceSelector}
-                        setSelectedInfluencers={setSelectedInfluencers}
                     />
                 </div>
 
@@ -330,8 +341,8 @@ const Boostbot = () => {
                         <InfluencersTable
                             columns={columns}
                             data={influencers}
-                            selectedInfluencers={selectedInfluencers}
-                            setSelectedInfluencers={setSelectedInfluencers}
+                            setSelectedInfluencerIds={setSelectedInfluencerIds}
+                            selectedInfluencerIds={selectedInfluencerIds}
                             meta={{
                                 t,
                                 searchId,

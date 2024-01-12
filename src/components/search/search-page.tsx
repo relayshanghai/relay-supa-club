@@ -51,6 +51,9 @@ import { SearchExpired } from './search-expired';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { filterOutAlreadyAddedInfluencers } from '../boostbot/table/helper';
+import { isBoostbotInfluencer } from 'pages/boostbot';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -75,14 +78,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [_batchId, setBatchId] = useState(() => randomNumber());
-    const {
-        results: firstPageSearchResults,
-        resultsTotal,
-        noResults,
-        loading: resultsLoading,
-        metadata,
-        setOnLoad,
-    } = useSearchResults(page);
+    const { results, resultsTotal, noResults, loading: resultsLoading, metadata, setOnLoad } = useSearchResults(page);
 
     const { track: trackEvent } = useTrackEvent();
 
@@ -213,7 +209,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         setTopicTags,
         setViews,
     ]);
-    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+    const [selectedInfluencerIds, setSelectedInfluencerIds] = usePersistentState<Record<string, boolean>>(
         'classic-selected-influencers',
         {},
     );
@@ -224,10 +220,11 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const {
-        sequenceInfluencers: allSequenceInfluencers,
-        refreshSequenceInfluencers,
-        createSequenceInfluencer,
-    } = useSequenceInfluencers(sequences?.map((s) => s.id));
+        allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
+        refresh: refreshSequenceInfluencers,
+    } = useAllSequenceInfluencersBasicInfo();
+
+    const { createSequenceInfluencer } = useSequenceInfluencers();
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const outReachDisabled = isOutreachLoading || resultsLoading;
     const [selectedCount, setSelectedCount] = useState(0);
@@ -252,11 +249,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     );
 
     const handleSelectedInfluencersToOutreach = useCallback(async () => {
-        const selectedInfluencersData =
-            // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
-            firstPageSearchResults && firstPageSearchResults.length > 0
-                ? Object.keys(selectedInfluencers).map((key) => firstPageSearchResults[Number(key)])
-                : [];
         setIsOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
@@ -272,16 +264,27 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         };
 
         try {
-            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+            const selectedInfluencers =
+                // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+                results && results.length > 0
+                    ? Object.keys(selectedInfluencerIds)
+                          .map((key) => results.find((i) => i.user_id === key))
+                          .filter(isBoostbotInfluencer)
+                    : [];
+            const influencersToOutreach = filterOutAlreadyAddedInfluencers(
+                allSequenceInfluencers, // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+                selectedInfluencers,
+            );
+            trackingPayload.is_multiple = influencersToOutreach ? influencersToOutreach.length > 1 : null;
 
-            if (!selectedInfluencersData) {
+            if (!influencersToOutreach || influencersToOutreach.length === 0) {
                 throw new Error('Error adding influencers to sequence: no valid influencers selected');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
 
-            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+            const sequenceInfluencerPromises = influencersToOutreach.map((influencer) => {
                 const creatorProfileId = influencer.user_id;
 
                 if (trackingPayload.influencer_ids !== null) {
@@ -312,7 +315,13 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
             // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
-            refreshSequenceInfluencers([...allSequenceInfluencers, ...sequenceInfluencers]);
+            refreshSequenceInfluencers([
+                ...allSequenceInfluencers,
+                ...sequenceInfluencers.map((si) => ({
+                    ...si,
+                    sequenceName: sequence?.name ?? '',
+                })),
+            ]);
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
         } catch (error) {
@@ -329,13 +338,14 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         }
     }, [
         allSequenceInfluencers,
-        sequence,
-        platform,
-        selectedInfluencers,
-        createSequenceInfluencer,
+        results,
+        selectedInfluencerIds,
+        sequence?.id,
+        sequence?.name,
         refreshSequenceInfluencers,
+        platform,
+        createSequenceInfluencer,
         track,
-        firstPageSearchResults,
     ]);
     useEffect(() => {
         if (sequences && !sequence) {
@@ -399,9 +409,9 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                     </div>
                     <InfluencersTable
                         columns={classicColumns}
-                        data={firstPageSearchResults || Array(10).fill({ url: 'https://www.youtube.com' })}
-                        selectedInfluencers={selectedInfluencers}
-                        setSelectedInfluencers={setSelectedInfluencers}
+                        data={results || Array(10).fill({ url: 'https://www.youtube.com' })}
+                        selectedInfluencerIds={selectedInfluencerIds}
+                        setSelectedInfluencerIds={setSelectedInfluencerIds}
                         influencerCount={resultsTotal}
                         currentPage={page}
                         meta={{
@@ -426,7 +436,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                         allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
                     false
                 }
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 url="search"
             />
             <SearchFiltersModal

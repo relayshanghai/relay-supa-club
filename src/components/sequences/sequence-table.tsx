@@ -1,4 +1,10 @@
-import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type {
+    Sequence,
+    SequenceEmail,
+    SequenceInfluencerUpdate,
+    SequenceStep,
+    TemplateVariable,
+} from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
@@ -7,10 +13,13 @@ import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
 import { isMissingSocialProfileInfo } from './helpers';
+import type { KeyedMutator } from 'swr';
 
 interface SequenceTableProps {
     sequence?: Sequence;
     sequenceInfluencers: SequenceInfluencerManagerPage[];
+    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPage>;
+    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPage[]>;
     sequenceEmails?: SequenceEmail[];
     loadingEmails: boolean;
     sequenceSteps: SequenceStep[];
@@ -81,6 +90,8 @@ const filterByPage = (
 
 const SequenceTable: React.FC<SequenceTableProps> = ({
     sequence,
+    updateSequenceInfluencer,
+    refreshSequenceInfluencers,
     sequenceInfluencers,
     sequenceEmails,
     loadingEmails,
@@ -187,6 +198,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 key={influencer.id}
                                 sequence={sequence}
                                 sequenceInfluencer={influencer}
+                                sequenceInfluencers={sequenceInfluencers}
+                                updateSequenceInfluencer={updateSequenceInfluencer}
+                                refreshSequenceInfluencers={refreshSequenceInfluencers}
                                 loadingEmails={loadingEmails}
                                 lastEmail={lastEmail}
                                 lastStep={lastStep}
