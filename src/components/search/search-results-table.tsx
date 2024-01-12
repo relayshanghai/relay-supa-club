@@ -5,7 +5,7 @@ import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
-import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { useCompany } from 'src/hooks/use-company';
 import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 
@@ -14,7 +14,7 @@ export interface SearchResultsTableProps {
     setSelectedCreator: (creator: ClassicSearchInfluencer) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersBasicInfo[];
     results?: ClassicSearchInfluencer[];
     loading: boolean;
     validating: boolean;

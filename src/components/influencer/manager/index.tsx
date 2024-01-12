@@ -27,7 +27,7 @@ import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-
 const Manager = () => {
     const { sequences } = useSequences();
     const { sequenceInfluencers, refreshSequenceInfluencers, loading } = useSequenceInfluencers(
-        sequences?.map((sequence) => sequence.id),
+        sequences && sequences.map((sequence) => sequence.id),
     );
     useEffect(() => {
         refreshSequenceInfluencers([]);

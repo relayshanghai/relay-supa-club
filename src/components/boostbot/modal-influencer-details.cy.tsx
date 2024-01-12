@@ -16,7 +16,7 @@ describe('InfluencerDetailsModal', () => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 outReachDisabled={false}
-                setSelectedInfluencers={cy.stub()}
+                setSelectedInfluencerIds={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
                 url="boostbot"
             />,
@@ -37,7 +37,7 @@ describe('InfluencerDetailsModal', () => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 outReachDisabled={false}
-                setSelectedInfluencers={cy.stub()}
+                setSelectedInfluencerIds={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
                 url="boostbot"
             />,
