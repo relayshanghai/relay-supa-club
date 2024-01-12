@@ -626,7 +626,7 @@ const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => 
         <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus-visible:ring-none border-none bg-white focus:border-none focus-visible:outline-none"
+                className="focus-visible:ring-none border-none bg-white text-xs placeholder:text-gray-400 focus:border-none focus-visible:outline-none"
                 placeholder="Search mailbox"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
