@@ -274,6 +274,12 @@ describe('outreach', () => {
         });
         checkForStatus('Delivered');
 
+        cy.intercept(
+            'GET',
+            `https://email.relay.club/v1/account/${messageNewReply.account}/message/${messageNewReply.data.id}*`,
+            { fixture: 'email-message.json' },
+        );
+
         // send a replied webhook request
         cy.request({
             method: 'POST',
