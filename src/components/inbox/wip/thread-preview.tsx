@@ -57,13 +57,7 @@ const getUnreadMarker = (status: THREAD_STATUS) => {
     }
 };
 
-export const ThreadPreview = ({
-    sequenceInfluencer,
-    threadInfo,
-    _currentInbox,
-    selected,
-    onClick,
-}: ThreadPreviewProps) => {
+export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClick }: ThreadPreviewProps) => {
     const { name, avatar_url, username, platform, funnel_status } = sequenceInfluencer;
 
     // Get components conditionally
