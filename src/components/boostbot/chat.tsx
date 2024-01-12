@@ -27,12 +27,13 @@ import { ModalSequenceSelector } from './modal-sequence-selector';
 import type { Sequence } from 'src/utils/api/db';
 import { InfluencerDetailsModal } from './modal-influencer-details';
 import type { Row } from '@tanstack/react-table';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Settings, BoostbotSelected as Logo } from 'src/components/icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { useUser } from 'src/hooks/use-user';
 import { useAtom } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { saveSearchResults } from 'src/utils/save-search-influencers';
 
 export type Filters = {
     platforms: CreatorPlatform[];
@@ -64,8 +65,8 @@ interface ChatProps {
     selectedRow?: Row<BoostbotInfluencer>;
     showSequenceSelector: boolean;
     setShowSequenceSelector: (show: boolean) => void;
-    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    allSequenceInfluencers?: AllSequenceInfluencersBasicInfo[];
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 const defaultFilters: Filters = {
@@ -102,7 +103,7 @@ export const Chat: React.FC<ChatProps> = ({
     showSequenceSelector,
     setShowSequenceSelector,
     allSequenceInfluencers,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
 }) => {
     const [isClearChatHistoryModalOpen, setIsClearChatHistoryModalOpen] = useState(false);
     const [isFirstTimeSearch, setIsFirstTimeSearch] = usePersistentState('boostbot-is-first-time-search', true);
@@ -269,6 +270,8 @@ export const Chat: React.FC<ChatProps> = ({
                 const newData = { searchResults: influencers, chatMessages: newMessages, profileId: profile.id };
                 const newDataInDbFormat = { search_results: influencers as Json, chat_messages: newMessages as Json };
 
+                await saveSearchResults(influencers);
+
                 refreshConversation(updateConversation(newData), { optimisticData: newDataInDbFormat });
                 setHasSearched(true);
                 document.dispatchEvent(new Event('influencerTableLoadInfluencers'));
@@ -383,7 +386,7 @@ export const Chat: React.FC<ChatProps> = ({
                         allSequenceInfluencers?.some((i) => i.iqdata_id === selectedRow?.original.user_id)) ??
                     false
                 }
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 url="boostbot"
             />
 
@@ -405,7 +408,7 @@ export const Chat: React.FC<ChatProps> = ({
                     isDisabled={isSearchDisabled}
                     isLoading={isSearchLoading || isOutreachLoading}
                     onSendMessage={onSendMessage}
-                    setSelectedInfluencers={setSelectedInfluencers}
+                    setSelectedInfluencerIds={setSelectedInfluencerIds}
                 />
             </div>
         </div>

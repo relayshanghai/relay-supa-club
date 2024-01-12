@@ -6,16 +6,21 @@ import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
 import AttachmentField from './attachment-field';
 import type { AttachmentFile } from 'src/utils/outreach/types';
+import AttachmentFileItem from './attachment-file-item';
 
 export const Tiptap = ({
     description,
     onChange,
     onSubmit,
+    attachments,
+    handleRemoveAttachment,
     handleAttachmentSelect,
 }: {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
+    attachments: AttachmentFile[] | null;
+    handleRemoveAttachment: (file: AttachmentFile) => void;
     handleAttachmentSelect: (files: AttachmentFile[] | null, error?: any) => void;
 }) => {
     const editor = useEditor({
@@ -48,15 +53,22 @@ export const Tiptap = ({
                 onSubmit();
                 editor?.commands.clearContent();
             }}
-            className="min-h-[250]px flex flex-col justify-stretch"
+            className="min-h-[250]px flex flex-col justify-stretch gap-2"
         >
             <EditorContent editor={editor} />
+            <div className="flex gap-2">
+                {attachments &&
+                    attachments.map((file) => {
+                        return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
+                    })}
+            </div>
             <section className="flex items-center justify-between border border-t-transparent">
                 <div className="flex">
                     <Toolbar editor={editor} />
 
                     <AttachmentField
                         multiple={true}
+                        accept="image/*,.pdf,.rar,.zip,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv,video/*"
                         onChange={handleAttachmentSelect}
                         render={({ openField }) => {
                             return (
@@ -73,6 +85,7 @@ export const Tiptap = ({
                         }}
                     />
                 </div>
+
                 <button type="submit" className="mx-2 cursor-pointer">
                     <Send className="h-6 w-6 stroke-gray-400" />
                 </button>

@@ -4,16 +4,16 @@ import { ChatInput } from './chat-input';
 
 describe('<ChatInput />', () => {
     let onSendMessage: (message: string) => void;
-    let setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    let setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
     beforeEach(() => {
         onSendMessage = cy.stub();
-        setSelectedInfluencers = cy.stub();
+        setSelectedInfluencerIds = cy.stub();
     });
 
     it('Enables button when isLoading and isDisabled are false', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={false}
                 isDisabled={false}
@@ -26,7 +26,7 @@ describe('<ChatInput />', () => {
     it('Disables textarea, button and send action when isLoading is true', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={true}
                 isDisabled={false}
@@ -42,7 +42,7 @@ describe('<ChatInput />', () => {
     it('Disables textarea and button when isDisabled is true', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={false}
                 isDisabled={true}
@@ -58,7 +58,7 @@ describe('<ChatInput />', () => {
     it('Handles text input and sends message correctly when clicking button', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={false}
                 isDisabled={false}
@@ -75,7 +75,7 @@ describe('<ChatInput />', () => {
     it('Handles text input and sends message correctly when pressing enter', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={false}
                 isDisabled={false}
@@ -90,7 +90,7 @@ describe('<ChatInput />', () => {
     it('Clears textarea after sending message', () => {
         testMount(
             <ChatInput
-                setSelectedInfluencers={setSelectedInfluencers}
+                setSelectedInfluencerIds={setSelectedInfluencerIds}
                 onSendMessage={onSendMessage}
                 isLoading={false}
                 isDisabled={false}

@@ -12,7 +12,8 @@ export type SaveSearchResultsBody = {
 };
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const influencers: SearchTableInfluencer[] = req.body.influencers;
+    const influencers: SearchTableInfluencer[] = req.body;
+
     if (
         influencers.some(({ fullname, user_id, picture, topics, url }) => {
             return (

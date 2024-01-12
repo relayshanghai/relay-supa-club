@@ -10,7 +10,7 @@ import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
 import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
 import { nanoid } from 'nanoid';
-import { sendReply } from 'src/components/inbox/wip/utils';
+import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
@@ -25,11 +25,9 @@ import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endp
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
 import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
-import AttachmentFileItem from 'src/components/inbox/wip/attachment-file-item';
 import { serverLogger } from 'src/utils/logger-server';
 import { Search } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
-import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -37,6 +35,26 @@ const fetcher = async (url: string) => {
 };
 
 type Message = BaseMessage & { isLocal?: true };
+
+const fileExtensionRegex = /.[^.\\/]*$/;
+
+export const getAttachmentStyle = (filename: string) => {
+    const extension = filename.match(fileExtensionRegex)?.[0].replace('.', '');
+    switch (extension) {
+        case 'pdf':
+            return 'bg-red-100 hover:bg-red-50 text-red-400 stroke-red-400';
+        case 'xls' || 'xlsx' || 'csv':
+            return 'bg-green-100 hover:bg-green-50 text-green-400 stroke-green-400';
+        case 'doc' || 'docx':
+            return 'bg-blue-100 hover:bg-blue-50 text-blue-400 stroke-blue-400';
+        case 'ppt' || 'pptx':
+            return 'bg-yellow-100 hover:bg-yellow-50 text-yellow-400 stroke-yellow-400';
+        case 'png' || 'jpeg' || 'jpg' || 'svg' || 'webp':
+            return 'bg-violet-100 hover:bg-violet-50 text-violet-400 stroke-violet-400';
+        default:
+            return 'bg-gray-100 hover:bg-gray-50 text-gray-400 stroke-gray-400';
+    }
+};
 
 /**
  * Generate local Message object with isLocal attribute
@@ -47,7 +65,7 @@ const generateLocalData = (params: {
     to: EmailContact[];
     cc: EmailContact[];
     subject: string;
-    attachments: MessageAttachment[];
+    attachments: AttachmentFile[];
 }): Message => {
     const localId = nanoid(10);
     return {
@@ -58,12 +76,7 @@ const generateLocalData = (params: {
         to: params.to,
         cc: params.cc,
         attachments: params.attachments,
-        replyTo: [
-            {
-                name: 'LMNAO',
-                address: 'jiggling.potato@gmail.com',
-            },
-        ],
+        replyTo: params.to,
         subject: params.subject,
         body: params.body,
         isLocal: true,
@@ -152,6 +165,7 @@ const ThreadProvider = ({
     });
 
     const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+    const [replyClicked, setReplyClicked] = useState(false);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
 
@@ -164,6 +178,11 @@ const ThreadProvider = ({
             return [...attached, ...filtered];
         });
     };
+
+    useEffect(() => {
+        setAttachments([]);
+        setReplyClicked(false);
+    }, [threadId]);
 
     const handleReply = useCallback(
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
@@ -212,6 +231,46 @@ const ThreadProvider = ({
         [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
     );
 
+    const handleForward = useCallback(
+        (message: Message, forwardedTo: EmailContact[]) => {
+            mutate(
+                async (cache) => {
+                    sendForward(message, forwardedTo);
+                    // Retain local data with generated data
+                    const localMessage = generateLocalData({
+                        body: message.body,
+                        from: { name: 'Me', address: currentInbox.email || '' },
+                        to: message.to,
+                        cc: message.cc,
+                        subject: messages?.[messages.length - 1]?.subject ?? '',
+                        attachments: message.attachments,
+                    });
+                    // console.log('from mutator callback', cache, localMessage);
+                    return [localMessage, ...(cache ?? [])];
+                },
+                {
+                    // Optimistically update the UI
+                    // Seems like this is discarded when MutatorCallback ^ resolves
+                    optimisticData: (cache) => {
+                        const localMessage = generateLocalData({
+                            body: message.body,
+                            from: { name: 'Me', address: currentInbox.email || '' },
+                            to: message.to,
+                            cc: message.cc,
+                            subject: messages?.[messages.length - 1]?.subject ?? '',
+                            attachments: message.attachments,
+                        });
+                        // console.log('from optimistic data', cache, localMessage);
+                        return [localMessage, ...(cache ?? [])];
+                    },
+                    revalidate: false,
+                    rollbackOnError: true,
+                },
+            );
+        },
+        [mutate, currentInbox, messages],
+    );
+
     const handleRemoveAttachment = useCallback(
         (file: AttachmentFile) => {
             setAttachments((attached) => attached && [...attached.filter((f) => f.id !== file.id)]);
@@ -232,25 +291,36 @@ const ThreadProvider = ({
                         participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
-                <div className="flex h-[51vh] justify-center overflow-scroll rounded bg-gray-50 shadow-inner">
+                <div
+                    className={`flex ${
+                        replyClicked ? 'h-[51vh]' : 'h-[75vh]'
+                    } justify-center overflow-scroll rounded bg-gray-50 shadow-inner`}
+                >
                     <MessagesComponent
                         currentInbox={currentInbox}
                         messages={messages}
                         focusedMessageIds={filteredMessageIds}
+                        onForward={handleForward}
                     />
                 </div>
             </div>
 
-            {attachments &&
-                attachments.map((file) => {
-                    return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
-                })}
-
-            <ReplyEditor
-                defaultContacts={contactsToReply}
-                onReply={handleReply}
-                handleAttachmentSelect={handleAttachmentSelect}
-            />
+            {replyClicked ? (
+                <ReplyEditor
+                    defaultContacts={contactsToReply}
+                    onReply={handleReply}
+                    attachments={attachments}
+                    handleRemoveAttachment={handleRemoveAttachment}
+                    handleAttachmentSelect={handleAttachmentSelect}
+                />
+            ) : (
+                <div
+                    onClick={() => setReplyClicked(true)}
+                    className="cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300"
+                >
+                    Reply to thread
+                </div>
+            )}
         </div>
     );
 };
@@ -396,8 +466,8 @@ const InboxPreview = () => {
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
     useEffect(() => {
-        if (threads) markThreadAsSelected(threads[0]);
-    }, [threads]);
+        if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+    }, [threads, selectedThread]);
 
     useEffect(() => {
         if (selectedThread?.sequenceInfluencer) {

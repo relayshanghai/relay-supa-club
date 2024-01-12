@@ -1,7 +1,7 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-legacy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -27,7 +27,7 @@ import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-
 const Manager = () => {
     const { sequences } = useSequences();
     const { sequenceInfluencers, refreshSequenceInfluencers, loading } = useSequenceInfluencers(
-        sequences?.map((sequence) => sequence.id),
+        sequences && sequences.map((sequence) => sequence.id),
     );
     useEffect(() => {
         refreshSequenceInfluencers([]);
@@ -214,7 +214,6 @@ const Manager = () => {
             </div>
             <ProfileOverlayScreen
                 profile={influencer}
-                influencerData={null}
                 isOpen={uiState.isProfileOverlayOpen}
                 onClose={handleProfileOverlayClose}
                 onUpdate={handleProfileUpdate}

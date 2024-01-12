@@ -43,9 +43,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { profile } = useUser();
     const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
     const { sequenceSteps } = useSequenceSteps(sequenceId);
-    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequence && [sequenceId],
-    );
+    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers, updateSequenceInfluencer } =
+        useSequenceInfluencers(sequence && [sequenceId]);
 
     const { sequenceEmails, isLoading: loadingEmails } = useSequenceEmails(sequenceId);
     const { templateVariables, refreshTemplateVariables } = useTemplateVariables(sequenceId);
@@ -526,6 +525,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             <SequenceTable
                                 sequence={sequence}
                                 sequenceInfluencers={currentTabInfluencers}
+                                updateSequenceInfluencer={updateSequenceInfluencer}
+                                refreshSequenceInfluencers={refreshSequenceInfluencers}
                                 sequenceEmails={sequenceEmails}
                                 loadingEmails={loadingEmails}
                                 sequenceSteps={sequenceSteps}

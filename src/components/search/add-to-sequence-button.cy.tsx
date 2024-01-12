@@ -8,9 +8,9 @@ import type * as types from '../../../types';
 
 const props: AddToSequenceButtonProps = {
     allSequenceInfluencersIqDataIdsAndSequenceNames: [
-        { iqdata_id: '123', sequenceName: 'test' },
-        { iqdata_id: '456', sequenceName: 'test2' },
-        { iqdata_id: '789', sequenceName: 'test3' },
+        { iqdata_id: '123', sequenceName: 'test', id: '1', email: '' },
+        { iqdata_id: '456', sequenceName: 'test2', id: '2', email: '' },
+        { iqdata_id: '789', sequenceName: 'test3', id: '3', email: '' },
     ],
     creatorProfile: {
         user_id: 'xxx',

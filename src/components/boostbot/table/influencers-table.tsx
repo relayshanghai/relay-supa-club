@@ -5,51 +5,53 @@ import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } fro
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tooltip } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import Question from 'src/components/icons/Question';
+import { filterOutAlreadyAddedInfluencers } from './helper';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    selectedInfluencers: RowSelectionState;
-    setSelectedInfluencers: OnChangeFn<RowSelectionState>;
+    selectedInfluencerIds: RowSelectionState;
+    setSelectedInfluencerIds: OnChangeFn<RowSelectionState>;
     influencerCount?: number;
     currentPage?: number;
     meta: TableMeta<TData>;
 }
 
 declare module '@tanstack/react-table' {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
         t: TFunction<'translation', undefined, 'translation'>;
         searchId: string | number | null;
         setSelectedRow: (row: Row<TData>) => void;
         setIsInfluencerDetailsModalOpen: (open: boolean) => void;
-        allSequenceInfluencers?: SequenceInfluencerManagerPage[];
+        allSequenceInfluencers?: AllSequenceInfluencersBasicInfo[];
         setSelectedCount: (count: number) => void;
         isLoading: boolean;
     }
 }
 
-export function InfluencersTable<TData, TValue>({
+export function InfluencersTable<_T, TValue>({
     data,
     columns,
-    selectedInfluencers,
-    setSelectedInfluencers,
+    selectedInfluencerIds,
+    setSelectedInfluencerIds,
     influencerCount,
     currentPage,
     meta,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<BoostbotInfluencer, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
     const table = useReactTable({
         data,
         columns,
         meta,
-        onRowSelectionChange: setSelectedInfluencers,
+        /** row id will be the influencer's iqdata id */
+        getRowId: (row) => row.user_id,
+        onRowSelectionChange: setSelectedInfluencerIds,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
-        state: { rowSelection: selectedInfluencers },
+        state: { rowSelection: selectedInfluencerIds },
         initialState: {
             pagination: {
                 pageSize: 20,
@@ -78,13 +80,10 @@ export function InfluencersTable<TData, TValue>({
 
     const selectedCount = table.getFilteredSelectedRowModel().rows.length;
     useEffect(() => {
-        const allSequenceInfluencersSet = new Set(
-            table.options.meta?.allSequenceInfluencers?.map((influencer) => influencer.iqdata_id),
-        );
-
-        const filteredCount = table
-            .getFilteredSelectedRowModel()
-            .rows.filter((row) => !allSequenceInfluencersSet.has((row.original as BoostbotInfluencer).user_id)).length;
+        const filteredCount = filterOutAlreadyAddedInfluencers(
+            table.options.meta?.allSequenceInfluencers ?? [],
+            table.getFilteredSelectedRowModel().rows.map((row) => row.original),
+        ).length;
 
         table.options.meta?.setSelectedCount(filteredCount);
     }, [table, selectedCount]);

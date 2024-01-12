@@ -209,7 +209,7 @@ const scheduleOutreachEmailRetry = async ({
     return job;
 };
 
-const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
+export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     let trackData: EmailReplyPayload = {
         account_id: event.account,
         sequence_influencer_id: sequenceInfluencer.id,

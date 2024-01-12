@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
 import { useEffect, useState } from 'react';
 import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
-import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import type { CreatorAccount, CreatorPlatform } from 'types';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
 import { useReport } from 'src/hooks/use-report';
@@ -17,7 +17,7 @@ import { useSequences } from 'src/hooks/use-sequences';
 export interface AddToSequenceButtonProps {
     inMenu?: boolean;
     active?: boolean;
-    allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersBasicInfo[];
     creatorProfile: CreatorAccount;
     platform: CreatorPlatform;
     setShowMenu?: (show: boolean) => void;
@@ -57,7 +57,7 @@ export const AddToSequenceButton = ({
         creator_id: creatorProfile.user_id || '',
         suppressFetch: suppressReportFetch,
     });
-    const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    const { updateSequenceInfluencer } = useSequenceInfluencers();
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencer | null>(null);
 
     useEffect(() => {
