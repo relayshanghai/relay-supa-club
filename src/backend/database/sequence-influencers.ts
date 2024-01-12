@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { sequence_influencers } from 'drizzle/schema';
+import type { DBQuery } from 'src/utils/database';
 import { db } from 'src/utils/database';
 import { z } from 'zod';
 
@@ -16,8 +17,10 @@ export const sequenceInfluencersUpdateSchema = sequenceInfluencersInsertSchema.p
 });
 export type SequenceInfluencersUpdate = z.infer<typeof sequenceInfluencersUpdateSchema>;
 
-export const updateSequenceInfluencerCall = async (update: SequenceInfluencersUpdate): Promise<SequenceInfluencer> => {
-    const result = await db()
+export const updateSequenceInfluencerCall: DBQuery<
+    (update: SequenceInfluencersUpdate) => Promise<SequenceInfluencer>
+> = (databaseInstance) => async (update) => {
+    const result = await db(databaseInstance)
         .update(sequence_influencers)
         .set(update)
         .where(eq(sequence_influencers.id, update.id))

@@ -14,7 +14,7 @@ const putHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
     const update = validated.data;
-    const result: Address = await updateAddressCall(update);
+    const result: Address = await updateAddressCall()(update);
     return res.status(httpCodes.OK).json(result);
 };
 

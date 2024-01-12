@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import type { CheckboxDropdownItemData } from './components/checkbox-dropdown-item';
 import { Input } from 'shadcn/components/ui/input';
 import { debounce } from 'src/utils/debounce';
-import { wait } from 'src/utils/utils';
 import { CollabScheduledPostDateInput } from './components/collab-scheduled-post-date-input';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type {
@@ -18,6 +17,7 @@ import type { Address } from 'src/backend/database/addresses';
 import type { SequenceInfluencer } from 'src/backend/database/sequence-influencers';
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
+import { isAbortError, isApiError } from 'src/utils/is-api-error';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
@@ -89,14 +89,14 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             influencerController.current = new AbortController();
 
             setUpdating(true);
-            const res = (
-                await apiFetch<SequenceInfluencersPutRequestResponse, { body: SequenceInfluencersPutRequestBody }>(
-                    '/api/sequence-influencers',
-                    { body },
-                    { method: 'PUT' },
-                )
-            ).content;
-            setInfluencer(res);
+            const { content } = await apiFetch<
+                SequenceInfluencersPutRequestResponse,
+                { body: SequenceInfluencersPutRequestBody }
+            >('/api/sequence-influencers', { body }, { method: 'PUT' });
+            if (isApiError(content)) {
+                throw new Error(content.error);
+            }
+            setInfluencer(content);
             setUpdating(false);
         },
         [setUpdating],
@@ -108,15 +108,18 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             addressController.current = new AbortController();
 
             setUpdating(true);
-            await wait(3000);
-            const res = (
-                await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
-                    '/api/addresses',
-                    { body },
-                    { method: 'PUT' },
-                )
-            ).content;
-            setAddress(res);
+            const { content } = await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
+                '/api/addresses',
+                { body },
+                { method: 'PUT' },
+            );
+            if (isApiError(content)) {
+                if (isAbortError(content.error)) {
+                    return;
+                }
+                throw new Error(content.error);
+            }
+            setAddress(content);
             setUpdating(false);
         },
         [setUpdating],
@@ -131,28 +134,20 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 !influencer ||
                 !update ||
                 Object.keys(update).length === 0 ||
+                // if no changes to the values in each of the keys, return
                 doesObjectMatchUpdate(influencer, update)
             ) {
                 return;
             }
 
-            // optimistic update
             const previous = { ...influencer };
-            setInfluencer({
-                ...previous,
-                ...update,
-            });
+            // optimistic update
+            setInfluencer({ ...previous, ...update });
             try {
                 if (debounce) {
-                    await updateInfluencerDebounced({
-                        id,
-                        ...update,
-                    });
+                    await updateInfluencerDebounced({ id, ...update });
                 } else {
-                    await updateInfluencer({
-                        id,
-                        ...update,
-                    });
+                    await updateInfluencer({ id, ...update });
                 }
             } catch (error) {
                 serverLogger(error);
@@ -170,12 +165,9 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                 return;
             }
 
-            // optimistic update
             const previous = { ...address };
-            setAddress({
-                ...previous,
-                ...update,
-            });
+            // optimistic update
+            setAddress({ ...previous, ...update });
             try {
                 if (debounce) {
                     await updateAddressDebounced({ id: address.id, ...update });
@@ -347,7 +339,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                         placeholder="14450"
                         type="text"
                     />
-                </label>{' '}
+                </label>
                 <label className="text-grey-600 text-xs font-semibold">
                     {t('profile.country') || 'Country'}
                     <Input

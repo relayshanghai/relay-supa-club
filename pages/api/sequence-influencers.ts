@@ -16,7 +16,7 @@ const putHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
     const update = validated.data;
-    const result: SequenceInfluencer = await updateSequenceInfluencerCall(update);
+    const result: SequenceInfluencer = await updateSequenceInfluencerCall()(update);
     return res.status(httpCodes.OK).json(result);
 };
 
