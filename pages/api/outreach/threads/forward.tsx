@@ -1,39 +1,36 @@
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
-import { replyThread } from 'src/utils/outreach/reply-thread';
+import { forwardThread } from 'src/utils/outreach/forward-thread';
+import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 
-type ApiRequestQuery = {
-    id?: string;
+export type ForwardRequestBody = {
+    messageId: string;
+    content: string;
+    to: EmailContact[];
+    cc: EmailContact[];
+    attachments: AttachmentFile[];
 };
 
-type ApiRequestBody = {
-    content?: string;
-    cc?: EmailContact[];
-    to?: EmailContact[];
-    attachments?: AttachmentFile[] | null;
-};
+type ApiRequestBody = ForwardRequestBody;
 
 const postHandler: ActionHandler = async (req, res) => {
     if (!req.profile || !req.profile.email_engine_account_id) {
         throw new Error('Cannot get email account');
     }
 
-    const query: ApiRequestQuery = req.query;
     const body: ApiRequestBody = req.body;
-
-    if (!query.id || !body.content || !body.to || !body.cc) {
+    if (!body.messageId) {
         throw new Error('Cannot send message');
     }
 
-    const result = await replyThread({
+    const result = await forwardThread({
         account: req.profile.email_engine_account_id,
-        threadId: query.id,
+        messageId: body.messageId,
         content: body.content,
-        to: body.to.map((contact) => {
+        to: (body.to ?? []).map((contact) => {
             return { name: contact.name, address: contact.address };
         }),
-        cc: body.cc.map((contact) => {
+        cc: (body.cc ?? []).map((contact) => {
             return { name: contact.name, address: contact.address };
         }),
         attachments: (body.attachments ?? []).map((attachment) => {

@@ -53,7 +53,7 @@ const Boostbot = () => {
     );
 
     const selectedInfluencersData =
-        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
+        // Check if influencers have loaded from indexedDb, otherwise could return an array of undefined
         influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
 
     const { trackEvent: track } = useRudderstack();

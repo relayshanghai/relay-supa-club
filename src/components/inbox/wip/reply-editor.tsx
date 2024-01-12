@@ -8,6 +8,8 @@ import { nanoid } from 'nanoid';
 export const ReplyEditor = ({
     onReply,
     defaultContacts,
+    attachments,
+    handleRemoveAttachment,
     handleAttachmentSelect,
 }: {
     onReply: any;
@@ -15,6 +17,8 @@ export const ReplyEditor = ({
         cc: EmailContact[];
         to: EmailContact[];
     };
+    attachments: AttachmentFile[] | null;
+    handleRemoveAttachment: (file: AttachmentFile) => void;
     handleAttachmentSelect: (files: AttachmentFile[] | null, error?: any) => void;
 }) => {
     const [replyText, setReplyText] = useState('');
@@ -43,6 +47,8 @@ export const ReplyEditor = ({
                     setReplyText(text);
                 }}
                 onSubmit={handleSendReply}
+                attachments={attachments}
+                handleRemoveAttachment={handleRemoveAttachment}
                 handleAttachmentSelect={handleAttachmentSelect}
             />
         </div>
@@ -63,7 +69,7 @@ const AddressLabel = ({
     };
     return (
         <Tooltip delay={500} content={`${info.name}: ${info.address}`}>
-            <span className="flex rounded bg-primary-200 px-2 text-sm font-semibold hover:bg-primary-100">
+            <span className="flex rounded bg-primary-200 px-2 py-1 text-sm font-semibold text-primary-500 hover:bg-primary-100">
                 <p className="max-w-8 overflow-hidden whitespace-break-spaces">
                     {truncatedText(info.name || info.address, 15)}
                 </p>
@@ -80,6 +86,63 @@ const AddressLabel = ({
 const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
+};
+
+export const SingleAddressSection = ({
+    sendTo,
+    setSendTo,
+}: {
+    sendTo: EmailContact[];
+    setSendTo: (contact: EmailContact[]) => void;
+}) => {
+    const [toInput, setToInput] = useState('');
+    const handleChangeTo = useCallback(
+        (contact: EmailContact) => {
+            if (sendTo.some((contactTo) => contactTo.address === contact.address)) {
+                setSendTo(sendTo.filter((contactTo) => contactTo.address !== contact.address));
+                return;
+            }
+            setSendTo([...sendTo, contact]);
+        },
+        [sendTo, setSendTo],
+    );
+    const handleKeyDownTo = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            if (toInput === '' || !validateEmail(e.currentTarget.value)) return;
+            setToInput('');
+            handleChangeTo({
+                name: e.currentTarget.value,
+                address: e.currentTarget.value,
+            });
+        } else if (e.key === 'Backspace') {
+            if (toInput === '' && sendTo.length > 0) {
+                setSendTo(sendTo.slice(0, sendTo.length - 1));
+            }
+        }
+    };
+
+    return (
+        <section className="flex flex-col">
+            <div className="flex flex-wrap items-center gap-2">
+                To:
+                {sendTo.map((contact) => (
+                    <AddressLabel
+                        key={contact.address}
+                        onClick={() => {
+                            handleChangeTo(contact);
+                        }}
+                        info={contact}
+                    />
+                ))}
+                <input
+                    onKeyDown={handleKeyDownTo}
+                    value={toInput}
+                    onChange={(e) => setToInput(e.currentTarget.value)}
+                    className="rounded border-none bg-white focus-visible:outline-none"
+                />
+            </div>
+        </section>
+    );
 };
 
 const AddressSection = ({
@@ -177,7 +240,7 @@ const AddressSection = ({
                     onKeyDown={handleKeyDownTo}
                     value={toInput}
                     onChange={(e) => setToInput(e.currentTarget.value)}
-                    className="rounded border-none bg-gray-50 focus-visible:outline-none"
+                    className="rounded border-none bg-white focus-visible:outline-none"
                 />
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -206,7 +269,7 @@ const AddressSection = ({
                     onKeyDown={handleKeyDownCC}
                     value={ccInput}
                     onChange={(e) => setCCInput(e.currentTarget.value)}
-                    className="rounded border-none bg-gray-50 focus-visible:outline-none"
+                    className="rounded border-none bg-white focus-visible:outline-none"
                 />
             </div>
         </section>
