@@ -9,14 +9,14 @@ type Props = {
 export const CollabScheduledPostDateInput = (props: Props) => {
     return (
         <>
-            <label className="flex w-full flex-col text-sm text-gray-500">
+            <label className="flex w-full flex-col">
                 <div className="font-semibold">{props.label}</div>
                 <div>
                     <input
                         value={dateFormat(String(props.value ?? ''), 'isoDate', true, true)}
                         type="date"
                         name="collab-scheduled-post-date"
-                        className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
+                        className="block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-1 text-sm font-medium text-gray-600 placeholder-gray-400 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         {...props}
                     />
                 </div>

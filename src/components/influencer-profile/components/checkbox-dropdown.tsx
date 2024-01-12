@@ -135,7 +135,7 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
                 open={isDropdownOpen}
                 onClick={handleDropdownOpen}
                 onBlur={handleBlur}
-                className="relative flex w-full cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
+                className="relative z-50 flex w-full cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
             >
                 <summary
                     tabIndex={0} // <- make this element focusable
