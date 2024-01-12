@@ -19,6 +19,8 @@ import type { SequenceInfluencer } from 'src/backend/database/sequence-influence
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
 import { isApiError } from 'src/utils/is-api-error';
+import { OutreachNotesInput } from './components/outreach-notes-input';
+import { NotesListOverlayScreen } from './screens/notes-list-overlay';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
@@ -208,231 +210,250 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
         country ?? ''
     }`;
 
+    const [notesOverlayOpen, setNotesOverlayOpen] = useState(false);
+
     return (
-        <div className="p-4 text-gray-600">
-            <h2 className="font-semibold ">{t('profile.collab')}</h2>
-            <hr className="mb-4 mt-1 border-gray-200" />
+        <>
+            <NotesListOverlayScreen isOpen={notesOverlayOpen} onClose={() => setNotesOverlayOpen(false)} notes={[]} />
+            <div className="p-4 text-gray-600">
+                <h2 className="font-semibold ">{t('profile.collab')}</h2>
+                <hr className="mb-4 mt-1 border-gray-200" />
 
-            <OutreachCollabStatusInput
-                label={t('profile.collabStatus') as string}
-                onUpdate={(items) => {
-                    const selected = items.length > 0 ? items[0].id : funnel_status;
-                    if (selected === funnel_status) return;
-                    handleUpdateInfluencer({ funnel_status: selected }, funnelStatusController, false);
-                }}
-                options={COLLAB_STATUS_OPTIONS}
-                selected={[funnel_status]}
-            />
-            {/* notes */}
-            {/* <textarea /> */}
-            <div>
-                {/* view all notes button */}
-                {/* add note button */}
-            </div>
-
-            <h2 className="mt-10 font-semibold">{t('profile.compAndDeliverables') || 'Compensation & Deliverables'}</h2>
-            <hr className="mb-4 mt-1 border-gray-200" />
-            <div className="mb-4 flex justify-between space-x-4">
-                <label className="text-grey-600 text-xs font-semibold">
-                    {t('profile.fee') || 'Fixed Fee (USD)'}
-                    <Input
-                        className="mt-2"
-                        value={rate_amount ?? undefined}
-                        onInput={(e) => {
-                            const value = processStringAsNumber(e.currentTarget.value);
-                            if (value === undefined) return;
-                            handleUpdateInfluencer({ rate_amount: value }, rateAmountController);
-                        }}
-                        onBlur={(e) => {
-                            const value = processStringAsNumber(e.currentTarget.value);
-                            if (value === undefined) return;
-                            handleUpdateInfluencer({ rate_amount: value }, rateAmountController, false); // don't debounce, update immediately
-                        }}
-                        placeholder="$250"
-                    />
-                </label>
-                <label className="text-grey-600 text-xs font-semibold">
-                    {t('profile.commissionRate') || 'Commission Rate'}
-                    <Input
-                        className="mt-2"
-                        value={commission_rate ?? undefined}
-                        onInput={(e) => {
-                            const value = processStringAsNumber(e.currentTarget.value);
-                            if (value === undefined) return;
-                            handleUpdateInfluencer(
-                                { commission_rate: processStringAsNumber(e.currentTarget.value) },
-                                commissionRateController,
-                            );
-                        }}
-                        onBlur={(e) => {
-                            const value = processStringAsNumber(e.currentTarget.value);
-                            if (value === undefined) return;
-                            handleUpdateInfluencer(
-                                { commission_rate: processStringAsNumber(e.currentTarget.value) },
-                                commissionRateController,
-                                false,
-                            );
-                        }}
-                        placeholder="15%"
-                    />
-                </label>
-            </div>
-            <label className="text-grey-600 text-xs font-semibold">
-                {t('profile.affiliateLink') || 'Affiliate Link'}
-                <Input
-                    className="mb-4 mt-2"
-                    value={affiliate_link ?? undefined}
-                    onInput={(e) =>
-                        handleUpdateInfluencer({ affiliate_link: e.currentTarget.value }, affiliateLinkController)
-                    }
-                    onBlur={(e) =>
-                        handleUpdateInfluencer(
-                            { affiliate_link: e.currentTarget.value },
-                            affiliateLinkController,
-                            false,
-                        )
-                    }
-                    placeholder="chefly.shopify.com?code=2h42b2394h2"
-                    type="text"
+                <OutreachCollabStatusInput
+                    label={t('profile.collabStatus') as string}
+                    onUpdate={(items) => {
+                        const selected = items.length > 0 ? items[0].id : funnel_status;
+                        if (selected === funnel_status) return;
+                        handleUpdateInfluencer({ funnel_status: selected }, funnelStatusController, false);
+                    }}
+                    options={COLLAB_STATUS_OPTIONS}
+                    selected={[funnel_status]}
                 />
-            </label>
-            <div className="mb-4 mt-1">
-                <label className="text-grey-600 pt-4 text-xs font-semibold">
-                    {t('profile.scheduledPostDate') || 'Scheduled Post Date'}
-                    {/* TODO: Migrate to shadcn */}
-                    <CollabScheduledPostDateInput
-                        label={''}
-                        value={scheduled_post_date ?? undefined}
+                <OutreachNotesInput
+                    label={t('profile.notes')}
+                    placeholder={t('profile.notesPlaceholder') as string}
+                    buttonText={t('profile.addNoteButton')}
+                    // disabled={updating}
+                    value={''}
+                    // onUpdate={(value) => onUpdateNotes('notes', value)}
+                    // onSave={handleSaveNotes}
+                    onOpenList={() => setNotesOverlayOpen(true)}
+                />
+
+                <h2 className="mt-10 font-semibold">
+                    {t('profile.compAndDeliverables') || 'Compensation & Deliverables'}
+                </h2>
+                <hr className="mb-4 mt-1 border-gray-200" />
+                <div className="mb-4 flex justify-between space-x-4">
+                    <label className="text-grey-600 text-xs font-semibold">
+                        {t('profile.fee') || 'Fixed Fee (USD)'}
+                        <Input
+                            className="mt-2"
+                            value={rate_amount ?? undefined}
+                            onInput={(e) => {
+                                const value = processStringAsNumber(e.currentTarget.value);
+                                if (value === undefined) return;
+                                handleUpdateInfluencer({ rate_amount: value }, rateAmountController);
+                            }}
+                            onBlur={(e) => {
+                                const value = processStringAsNumber(e.currentTarget.value);
+                                if (value === undefined) return;
+                                handleUpdateInfluencer({ rate_amount: value }, rateAmountController, false); // don't debounce, update immediately
+                            }}
+                            placeholder="$250"
+                        />
+                    </label>
+                    <label className="text-grey-600 text-xs font-semibold">
+                        {t('profile.commissionRate') || 'Commission Rate'}
+                        <Input
+                            className="mt-2"
+                            value={commission_rate ?? undefined}
+                            onInput={(e) => {
+                                const value = processStringAsNumber(e.currentTarget.value);
+                                if (value === undefined) return;
+                                handleUpdateInfluencer(
+                                    { commission_rate: processStringAsNumber(e.currentTarget.value) },
+                                    commissionRateController,
+                                );
+                            }}
+                            onBlur={(e) => {
+                                const value = processStringAsNumber(e.currentTarget.value);
+                                if (value === undefined) return;
+                                handleUpdateInfluencer(
+                                    { commission_rate: processStringAsNumber(e.currentTarget.value) },
+                                    commissionRateController,
+                                    false,
+                                );
+                            }}
+                            placeholder="15%"
+                        />
+                    </label>
+                </div>
+                <label className="text-grey-600 text-xs font-semibold">
+                    {t('profile.affiliateLink') || 'Affiliate Link'}
+                    <Input
+                        className="mb-4 mt-2"
+                        value={affiliate_link ?? undefined}
                         onInput={(e) =>
+                            handleUpdateInfluencer({ affiliate_link: e.currentTarget.value }, affiliateLinkController)
+                        }
+                        onBlur={(e) =>
                             handleUpdateInfluencer(
-                                { scheduled_post_date: e.currentTarget.value },
-                                scheduledPostDateController,
+                                { affiliate_link: e.currentTarget.value },
+                                affiliateLinkController,
+                                false,
                             )
                         }
+                        placeholder="chefly.shopify.com?code=2h42b2394h2"
+                        type="text"
                     />
                 </label>
-            </div>
+                <div className="mb-4 mt-1">
+                    <label className="text-grey-600 pt-4 text-xs font-semibold">
+                        {t('profile.scheduledPostDate') || 'Scheduled Post Date'}
+                        {/* TODO: Migrate to shadcn */}
+                        <CollabScheduledPostDateInput
+                            label={''}
+                            value={scheduled_post_date ?? undefined}
+                            onInput={(e) =>
+                                handleUpdateInfluencer(
+                                    { scheduled_post_date: e.currentTarget.value },
+                                    scheduledPostDateController,
+                                )
+                            }
+                        />
+                    </label>
+                </div>
 
-            <h2 className="mt-10 font-semibold">
-                {t('profile.shippingAndPersonalInfo') || 'Shipping & Personal Info'}
-            </h2>
-            <hr className="mb-4 mt-1 border-gray-200" />
-            <label className="text-grey-600 text-xs font-semibold">
-                {t('profile.name') || 'Name'}
-                <Input
-                    className="mb-4 mt-2"
-                    value={name ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController)}
-                    onBlur={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController, false)}
-                    placeholder="Eve Leroy"
-                    type="text"
-                />
-            </label>
-            <label className="text-grey-600 text-xs font-semibold">
-                {t('profile.phoneNumber') || 'Name'}
-                <Input
-                    className="mb-4 mt-2"
-                    value={phone_number ?? undefined}
-                    onInput={(e) => handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController)}
-                    onBlur={(e) =>
-                        handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController, false)
-                    }
-                    placeholder="1-433-3453456"
-                    type="text"
-                />
-            </label>
-            <hr className="mb-4 mt-1 border-gray-200" />
-            <label className="text-grey-600  text-xs font-semibold">
-                {t('profile.streetAddress') || 'Street Address'}
-                <Input
-                    className="mb-4 mt-2"
-                    value={address_line_1 ?? undefined}
-                    onInput={(e) =>
-                        handleUpdateAddress({ address_line_1: e.currentTarget.value }, addressLine1Controller)
-                    }
-                    onBlur={(e) =>
-                        handleUpdateAddress({ address_line_1: e.currentTarget.value }, addressLine1Controller, false)
-                    }
-                    placeholder="755 Roosevelt Street"
-                    type="text"
-                />
-            </label>
-            <div className="mb-4 mt-2 flex justify-between space-x-4">
-                <label className="text-grey-600  text-xs font-semibold">
-                    {t('profile.city') || 'City'}
+                <h2 className="mt-10 font-semibold">
+                    {t('profile.shippingAndPersonalInfo') || 'Shipping & Personal Info'}
+                </h2>
+                <hr className="mb-4 mt-1 border-gray-200" />
+                <label className="text-grey-600 text-xs font-semibold">
+                    {t('profile.name') || 'Name'}
                     <Input
-                        value={city ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController)}
-                        onBlur={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController, false)}
-                        placeholder="Chicago"
+                        className="mb-4 mt-2"
+                        value={name ?? undefined}
+                        onInput={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController)}
+                        onBlur={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController, false)}
+                        placeholder="Eve Leroy"
                         type="text"
                     />
                 </label>
                 <label className="text-grey-600 text-xs font-semibold">
-                    {t('profile.state') || 'State'}
+                    {t('profile.phoneNumber') || 'Name'}
                     <Input
-                        value={state ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController)}
-                        onBlur={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController, false)}
-                        placeholder="Illinois"
-                        type="text"
-                    />
-                </label>
-            </div>
-            <div className="mb-6 mt-2 flex justify-between space-x-4">
-                <label className="text-grey-600 text-xs font-semibold">
-                    {t('profile.postalCode') || 'Postal Code'}
-                    <Input
-                        value={postal_code ?? undefined}
+                        className="mb-4 mt-2"
+                        value={phone_number ?? undefined}
                         onInput={(e) =>
-                            handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController)
+                            handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController)
                         }
                         onBlur={(e) =>
-                            handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController, false)
+                            handleUpdateAddress({ phone_number: e.currentTarget.value }, phoneNumberController, false)
                         }
-                        placeholder="14450"
+                        placeholder="1-433-3453456"
+                        type="text"
+                    />
+                </label>
+                <hr className="mb-4 mt-1 border-gray-200" />
+                <label className="text-grey-600  text-xs font-semibold">
+                    {t('profile.streetAddress') || 'Street Address'}
+                    <Input
+                        className="mb-4 mt-2"
+                        value={address_line_1 ?? undefined}
+                        onInput={(e) =>
+                            handleUpdateAddress({ address_line_1: e.currentTarget.value }, addressLine1Controller)
+                        }
+                        onBlur={(e) =>
+                            handleUpdateAddress(
+                                { address_line_1: e.currentTarget.value },
+                                addressLine1Controller,
+                                false,
+                            )
+                        }
+                        placeholder="755 Roosevelt Street"
+                        type="text"
+                    />
+                </label>
+                <div className="mb-4 mt-2 flex justify-between space-x-4">
+                    <label className="text-grey-600  text-xs font-semibold">
+                        {t('profile.city') || 'City'}
+                        <Input
+                            value={city ?? undefined}
+                            onInput={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController)}
+                            onBlur={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController, false)}
+                            placeholder="Chicago"
+                            type="text"
+                        />
+                    </label>
+                    <label className="text-grey-600 text-xs font-semibold">
+                        {t('profile.state') || 'State'}
+                        <Input
+                            value={state ?? undefined}
+                            onInput={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController)}
+                            onBlur={(e) =>
+                                handleUpdateAddress({ state: e.currentTarget.value }, stateController, false)
+                            }
+                            placeholder="Illinois"
+                            type="text"
+                        />
+                    </label>
+                </div>
+                <div className="mb-6 mt-2 flex justify-between space-x-4">
+                    <label className="text-grey-600 text-xs font-semibold">
+                        {t('profile.postalCode') || 'Postal Code'}
+                        <Input
+                            value={postal_code ?? undefined}
+                            onInput={(e) =>
+                                handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController)
+                            }
+                            onBlur={(e) =>
+                                handleUpdateAddress({ postal_code: e.currentTarget.value }, postalCodeController, false)
+                            }
+                            placeholder="14450"
+                            type="text"
+                        />
+                    </label>
+                    <label className="text-grey-600 text-xs font-semibold">
+                        {t('profile.country') || 'Country'}
+                        <Input
+                            value={country ?? undefined}
+                            onInput={(e) => handleUpdateAddress({ country: e.currentTarget.value }, countryController)}
+                            onBlur={(e) =>
+                                handleUpdateAddress({ country: e.currentTarget.value }, countryController, false)
+                            }
+                            placeholder="United States"
+                            type="text"
+                        />
+                    </label>
+                </div>
+                <hr className="mb-4 border-gray-200" />
+                <label className="text-grey-600 text-xs font-semibold">
+                    {t('profile.trackingCode') || 'Tracking Code'}
+                    <Input
+                        className="mb-4 mt-2"
+                        value={tracking_code ?? undefined}
+                        onInput={(e) =>
+                            handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController)
+                        }
+                        onBlur={(e) =>
+                            handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController, false)
+                        }
+                        placeholder="FT2349834573..."
                         type="text"
                     />
                 </label>
                 <label className="text-grey-600 text-xs font-semibold">
-                    {t('profile.country') || 'Country'}
+                    {t('profile.fullAddress') || 'Full Address'}
                     <Input
-                        value={country ?? undefined}
-                        onInput={(e) => handleUpdateAddress({ country: e.currentTarget.value }, countryController)}
-                        onBlur={(e) =>
-                            handleUpdateAddress({ country: e.currentTarget.value }, countryController, false)
-                        }
-                        placeholder="United States"
+                        className="mb-4 mt-2"
+                        readOnly
+                        value={fullAddress}
+                        placeholder="755 Roosevelt Street, New York, New York, 14..."
                         type="text"
                     />
                 </label>
             </div>
-            <hr className="mb-4 border-gray-200" />
-            <label className="text-grey-600 text-xs font-semibold">
-                {t('profile.trackingCode') || 'Tracking Code'}
-                <Input
-                    className="mb-4 mt-2"
-                    value={tracking_code ?? undefined}
-                    onInput={(e) =>
-                        handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController)
-                    }
-                    onBlur={(e) =>
-                        handleUpdateAddress({ tracking_code: e.currentTarget.value }, trackingCodeController, false)
-                    }
-                    placeholder="FT2349834573..."
-                    type="text"
-                />
-            </label>
-            <label className="text-grey-600 text-xs font-semibold">
-                {t('profile.fullAddress') || 'Full Address'}
-                <Input
-                    className="mb-4 mt-2"
-                    readOnly
-                    value={fullAddress}
-                    placeholder="755 Roosevelt Street, New York, New York, 14..."
-                    type="text"
-                />
-            </label>
-        </div>
+        </>
     );
 };
