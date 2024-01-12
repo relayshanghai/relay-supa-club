@@ -4,17 +4,16 @@ import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
-import type { EmailContact } from 'src/utils/outreach/types';
+import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
-import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 export type Message = {
     id: string;
     from: EmailContact;
     to: EmailContact[];
     replyTo: EmailContact[];
-    attachments: MessageAttachment[];
+    attachments: AttachmentFile[];
     cc: EmailContact[];
     body: string;
     date: string;

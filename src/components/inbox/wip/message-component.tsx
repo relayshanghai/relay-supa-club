@@ -9,10 +9,9 @@ import type { Message, CurrentInbox } from './thread-preview';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Download, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
-import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
-import type { EmailContact } from 'src/utils/outreach/types';
+import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
@@ -92,7 +91,7 @@ const MessageTitle = ({
         );
 };
 
-const AttachmentTablet = ({ attachment }: { attachment: MessageAttachment }) => {
+const AttachmentTablet = ({ attachment }: { attachment: AttachmentFile }) => {
     const handleDownloadAttachment = useCallback(() => {
         // eslint-disable-next-line no-console
         console.log('Attachment Clicked', attachment);
@@ -193,11 +192,9 @@ const MessageComponent = ({
                 <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 {message.attachments && message.attachments.length > 0 && (
                     <section className="flex w-full gap-2">
-                        {message.attachments
-                            .filter((attachment) => !attachment.embedded && !attachment.inline)
-                            .map((attachment) => (
-                                <AttachmentTablet key={attachment.id} attachment={attachment} />
-                            ))}
+                        {message.attachments.map((attachment) => (
+                            <AttachmentTablet key={attachment.id} attachment={attachment} />
+                        ))}
                     </section>
                 )}
                 <section className="w-full">

@@ -29,7 +29,7 @@ import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-but
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
-import { saveSearchResults } from 'src/utils/saveSearchInfluencers';
+import { saveSearchResults } from 'src/utils/save-search-influencers';
 
 const Boostbot = () => {
     const { t } = useTranslation();

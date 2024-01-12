@@ -28,7 +28,6 @@ import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-f
 import { serverLogger } from 'src/utils/logger-server';
 import { Search } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
-import type { MessageAttachment } from 'types/email-engine/webhook-message-new';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -44,7 +43,7 @@ export const getAttachmentStyle = (filename: string) => {
     switch (extension) {
         case 'pdf':
             return 'bg-red-100 hover:bg-red-50 text-red-400 stroke-red-400';
-        case 'xls' || 'xlsx':
+        case 'xls' || 'xlsx' || 'csv':
             return 'bg-green-100 hover:bg-green-50 text-green-400 stroke-green-400';
         case 'doc' || 'docx':
             return 'bg-blue-100 hover:bg-blue-50 text-blue-400 stroke-blue-400';
@@ -66,7 +65,7 @@ const generateLocalData = (params: {
     to: EmailContact[];
     cc: EmailContact[];
     subject: string;
-    attachments: MessageAttachment[];
+    attachments: AttachmentFile[];
 }): Message => {
     const localId = nanoid(10);
     return {
@@ -77,12 +76,7 @@ const generateLocalData = (params: {
         to: params.to,
         cc: params.cc,
         attachments: params.attachments,
-        replyTo: [
-            {
-                name: 'LMNAO',
-                address: 'jiggling.potato@gmail.com',
-            },
-        ],
+        replyTo: params.to,
         subject: params.subject,
         body: params.body,
         isLocal: true,
@@ -472,8 +466,8 @@ const InboxPreview = () => {
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
     useEffect(() => {
-        if (threads) markThreadAsSelected(threads[0]);
-    }, [threads]);
+        if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+    }, [threads, selectedThread]);
 
     useEffect(() => {
         if (selectedThread?.sequenceInfluencer) {

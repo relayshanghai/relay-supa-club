@@ -68,6 +68,7 @@ export const Tiptap = ({
 
                     <AttachmentField
                         multiple={true}
+                        accept="image/*,.pdf,.rar,.zip,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv,video/*"
                         onChange={handleAttachmentSelect}
                         render={({ openField }) => {
                             return (
