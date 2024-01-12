@@ -11,6 +11,7 @@ import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-s
 import * as Sentry from '@sentry/nextjs';
 import { useBirdEatsBug } from './bird-eats-bugs';
 import { nanoid } from 'nanoid';
+import Smartlook from 'smartlook-client';
 
 export const AnalyticsContext = createContext<
     | {
@@ -106,4 +107,23 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             <AnalyticsContext.Provider value={{ analytics, session, track }}>{children}</AnalyticsContext.Provider>
         </BaseAnalyticsProvider>
     );
+};
+
+const NEXT_PUBLIC_APIKEY = process.env.NEXT_PUBLIC_SMARTLOOK_APIKEY;
+export const initSmartlook = () => {
+    if (!NEXT_PUBLIC_APIKEY) {
+        return false;
+    }
+    if (!Smartlook.initialized()) {
+        return Smartlook.init(NEXT_PUBLIC_APIKEY);
+    }
+    return true;
+};
+
+export const useSmartlook = () => {
+    const identify = (userId: string, props: Record<string, any> = {}) => {
+        if (!initSmartlook()) return;
+        Smartlook.identify(userId, props);
+    };
+    return { identify };
 };
