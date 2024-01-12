@@ -1,45 +1,45 @@
 {
-    "id": "AAAAAQAAAF0",
-    "to": [
-      {
-        "name": "test@example.com",
-        "address": "test@example.com"
-      }
-    ],
-    "uid": 93,
-    "date": "2023-08-21T04:27:50.000Z",
-    "from": {
+  "id": "AAAAAQAAAF0",
+  "to": [
+    {
+      "name": "test@example.com",
+      "address": "test@example.com"
+    }
+  ],
+  "uid": 93,
+  "date": "2023-08-21T04:27:50.000Z",
+  "from": {
+    "name": "tech",
+    "address": "bob.brown@example.com"
+  },
+  "path": "[Gmail]/All Mail",
+  "size": 16800,
+  "text": {
+    "id": "AAAAAQAAAF2TkaExkaEykA",
+    "encodedSize": {
+      "html": 4480,
+      "plain": 1220
+    }
+  },
+  "flags": [],
+  "labels": ["\\Important", "\\Inbox"],
+  "sender": {
+    "name": "tech",
+    "address": "bob.brown@example.com"
+  },
+  "unseen": true,
+  "emailId": "1774811427591030037",
+  "replyTo": [
+    {
       "name": "tech",
       "address": "bob.brown@example.com"
-    },
-    "path": "[Gmail]/All Mail",
-    "size": 16800,
-    "text": {
-      "id": "AAAAAQAAAF2TkaExkaEykA",
-      "encodedSize": {
-        "html": 4480,
-        "plain": 1220
-      }
-    },
-    "flags": [],
-    "labels": ["\\Important", "\\Inbox"],
-    "sender": {
-      "name": "tech",
-      "address": "bob.brown@example.com"
-    },
-    "unseen": true,
-    "emailId": "1774811427591030037",
-    "replyTo": [
-      {
-        "name": "tech",
-        "address": "bob.brown@example.com"
-      }
-    ],
-    "subject": "Re: Paid Collab with Rolex 🤝",
-    "threadId": "1774811334851446278",
-    "inReplyTo": "<66945873-ae25-8adc-e305-615c2ec9fc39@gmail.com>",
-    "messageId": "<PH0PR14MB42931E403B0CFD8CFBCF72ADB51EA@PH0PR14MB4293.namprd14.prod.outlook.com>",
-    "specialUse": "\\All",
-    "seemsLikeNew": true,
-    "messageSpecialUse": "\\Inbox"
+    }
+  ],
+  "subject": "Re: Paid Collab with Rolex 🤝",
+  "threadId": "1774811334851446278",
+  "inReplyTo": "<66945873-ae25-8adc-e305-615c2ec9fc39@gmail.com>",
+  "messageId": "<PH0PR14MB42931E403B0CFD8CFBCF72ADB51EA@PH0PR14MB4293.namprd14.prod.outlook.com>",
+  "specialUse": "\\All",
+  "seemsLikeNew": true,
+  "messageSpecialUse": "\\Inbox"
 }
