@@ -14,11 +14,9 @@ import type {
     SequenceInfluencersPutRequestBody,
     SequenceInfluencersPutRequestResponse,
 } from 'pages/api/sequence-influencers';
-import { sequenceInfluencersEndpointPath } from 'pages/api/sequence-influencers';
 import type { Address } from 'src/backend/database/addresses';
 import type { SequenceInfluencer } from 'src/backend/database/sequence-influencers';
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
-import { addressesEndpointPath } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
@@ -93,7 +91,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             setUpdating(true);
             const res = (
                 await apiFetch<SequenceInfluencersPutRequestResponse, { body: SequenceInfluencersPutRequestBody }>(
-                    sequenceInfluencersEndpointPath,
+                    '/api/sequence-influencers',
                     { body },
                     { method: 'PUT' },
                 )
@@ -113,7 +111,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             await wait(3000);
             const res = (
                 await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
-                    addressesEndpointPath,
+                    '/api/addresses',
                     { body },
                     { method: 'PUT' },
                 )

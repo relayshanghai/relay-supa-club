@@ -9,7 +9,6 @@ import { ApiHandler } from 'src/utils/api-handler';
 
 export type SequenceInfluencersPutRequestBody = SequenceInfluencersUpdate;
 export type SequenceInfluencersPutRequestResponse = SequenceInfluencer;
-export const sequenceInfluencersEndpointPath = '/api/sequence-influencers';
 
 const putHandler: NextApiHandler = async (req, res) => {
     const validated = sequenceInfluencersUpdateSchema.safeParse(req.body);

@@ -7,7 +7,6 @@ import { ApiHandler } from 'src/utils/api-handler';
 
 export type AddressesPutRequestBody = AddressesUpdate;
 export type AddressesPutRequestResponse = Address;
-export const addressesEndpointPath = '/api/addresses';
 
 const putHandler: NextApiHandler = async (req, res) => {
     const validated = addressesUpdateSchema.safeParse(req.body);
