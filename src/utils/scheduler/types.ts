@@ -1,4 +1,4 @@
-import type { JobNames } from './jobs';
+import type { JobNames, JobType } from './jobs';
 import type { JOB_QUEUE } from './queues';
 
 export const SCHEDULER_TOKEN_HEADER = 'x-scheduler-token';
@@ -33,15 +33,15 @@ export type JobQueue<T> = {
     /**
      * Logic for processing a queue
      */
-    run: (payload?: JobQueueRunPayload) => Promise<JobQueueResult[]>;
+    run: (payload?: JobQueueRunPayload) => Promise<JobQueueResult[] | false>;
 };
 
 // @note we really should standardize this
-export type CreateJobRequest = {
+export type CreateJobRequest<T = unknown> = {
     body: {
         name: JobNames;
         run_at: string;
-        payload?: Record<string, any>;
+        payload?: T extends JobNames ? Parameters<JobType<T>['run']>[0] : never;
         queue?: JOB_QUEUE;
     };
 };

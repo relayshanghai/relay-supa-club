@@ -97,7 +97,7 @@ export const getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall =
     (supabaseClient: RelayDatabase) => async (companyId: string) => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select('iqdata_id, sequences(name)')
+            .select('id, iqdata_id, email, sequences(name)')
             .eq('company_id', companyId);
 
         if (error) throw error;
@@ -115,6 +115,17 @@ export const getSequenceInfluencerByEmailAndCompanyCall =
             .single();
         if (error) throw error;
         return unpackSocialProfile(data);
+    };
+
+export const upsertSequenceInfluencersFunnelStatusCall =
+    (supabaseClient: RelayDatabase) => async (influencers: SequenceInfluencerInsert[]) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .upsert(influencers, { ignoreDuplicates: false })
+            .select();
+
+        if (error) throw error;
+        return data;
     };
 
 /**

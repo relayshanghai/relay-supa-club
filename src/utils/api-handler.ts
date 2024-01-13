@@ -11,6 +11,9 @@ import type { Session, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { RelayError } from 'src/errors/relay-error';
 import type { RelayDatabase } from './api/db';
+import { db } from './database';
+import { profiles } from 'drizzle/schema';
+import { eq } from 'drizzle-orm';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -44,9 +47,10 @@ export type ApiResponse<T> = T | ApiError;
 type RelayApiRequest = NextApiRequest & {
     supabase: SupabaseClient<RelayDatabase>;
     session?: Session;
+    profile?: typeof profiles.$inferSelect;
 };
 
-export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes>) => void;
+export type ActionHandler<TRes = unknown> = (req: RelayApiRequest, res: NextApiResponse<TRes | ApiError>) => void;
 
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler | ActionHandler;
@@ -94,11 +98,6 @@ const createErrorObject = (error: any, tag: string) => {
         e.message = `${message} - ERR:${tag}`;
     }
 
-    // Hide server errors if not in development
-    if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
-        e.message = `Error occurred - ERR:${tag}`;
-    }
-
     return e;
 };
 
@@ -135,6 +134,17 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             id: session.user.id,
             email: session.user.email,
         });
+
+        const rows = await db().select().from(profiles).where(eq(profiles.id, req.session.user.id)).limit(1);
+
+        if (rows.length !== 1) {
+            const context = { id: req.session.user.id };
+            serverLogger('Cannot get profile from session', (scope) => {
+                return scope.setContext('User', context);
+            });
+        }
+
+        req.profile = rows[0];
     }
 
     const handler = determineHandler(req, params);

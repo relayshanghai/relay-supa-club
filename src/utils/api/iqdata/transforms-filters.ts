@@ -17,7 +17,7 @@ import { createClient } from 'src/utils/rudderstack/rudderstack';
 
 type NullStringTuple = [null | string, null | string];
 
-export const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
+export const locationTransform = ({ id, weight }: { id: number; weight: number | string }) => ({
     id: Number(id),
     weight: weight ? Number(weight) / 100 : 0.5,
 });

@@ -32,16 +32,19 @@ import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useAtomValue } from 'jotai';
+import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequence && [sequenceId],
-    );
+    const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
+    const { sequenceSteps } = useSequenceSteps(sequenceId);
+    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers, updateSequenceInfluencer } =
+        useSequenceInfluencers(sequence && [sequenceId]);
 
     const { sequenceEmails, isLoading: loadingEmails } = useSequenceEmails(sequenceId);
     const { templateVariables, refreshTemplateVariables } = useTemplateVariables(sequenceId);
@@ -70,27 +73,37 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const handleStartSequence = useCallback(
         async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
-            const results = await sendSequence(sequenceInfluencersToSend);
+            try {
+                if (!sequenceSteps || sequenceSteps.length === 0) {
+                    throw new Error('Sequence steps not found');
+                }
+                const results = await sendSequence(sequenceInfluencersToSend, sequenceSteps);
 
-            // handle optimistic update
-            const succeeded = results.filter((result) => !result.error);
-            const failed = results.filter((result) => result.error);
-            refreshSequenceInfluencers((influencers) =>
-                influencers?.map(
-                    (influencer) => ({
-                        ...influencer,
-                        funnel_status: succeeded.some((i) => i.sequenceInfluencerId === influencer.id)
-                            ? 'In Sequence'
-                            : failed.some((i) => i.sequenceInfluencerId === influencer.id)
-                            ? 'To Contact'
-                            : influencer.funnel_status,
-                    }),
-                    { revalidate: false },
-                ),
-            );
-            return results;
+                // handle optimistic update
+                const succeeded = results.filter((result) => !result.error);
+                const failed = results.filter((result) => result.error);
+                refreshSequenceInfluencers((influencers) =>
+                    influencers?.map(
+                        (influencer) => ({
+                            ...influencer,
+                            funnel_status: succeeded.some((i) => i.sequenceInfluencerId === influencer.id)
+                                ? 'In Sequence'
+                                : failed.some((i) => i.sequenceInfluencerId === influencer.id)
+                                ? 'To Contact'
+                                : influencer.funnel_status,
+                        }),
+                        { revalidate: false },
+                    ),
+                );
+                return results;
+            } catch (error) {
+                clientLogger(error, 'error');
+                toast.error(t('sequences.sequenceScheduleFailed'));
+
+                return [];
+            }
         },
-        [refreshSequenceInfluencers, sendSequence],
+        [refreshSequenceInfluencers, sendSequence, sequenceSteps, t],
     );
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -168,11 +181,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const handleDelete = async (influencerIds: string[]) => {
         try {
+            refreshSequenceInfluencers(
+                sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)),
+                { revalidate: false },
+            );
             await deleteSequenceInfluencers(influencerIds);
-            refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
             setSelection([]);
             toast.success(t('sequences.influencerDeleted'));
         } catch (error) {
+            refreshSequenceInfluencers(sequenceInfluencers);
             clientLogger(error, 'error');
             toast.error(t('sequences.influencerDeleteFailed'));
         }
@@ -341,6 +358,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const sequenceSendTooltipHighlight = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
+
+    const submittingChangeEmail = useAtomValue(submittingChangeEmailAtom);
+
+    const sendDisabled =
+        submittingChangeEmail ||
+        isMissingSequenceSendEmail ||
+        selectedInfluencers.some((i) => !i?.email) ||
+        selectedInfluencers.some((i) => !i?.influencer_social_profile_id);
     return (
         <Layout>
             {!profile?.email_engine_account_id && (
@@ -468,7 +493,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             >
                                 <DeleteOutline className="h-4 w-4 stroke-red-500" />
                             </button>
-                            {selection.length > 0 && (
+                            {currentTab === 'To Contact' && selection.length > 0 && (
                                 <Tooltip
                                     content={sequenceSendTooltipTitle}
                                     detail={sequenceSendTooltipDescription}
@@ -476,11 +501,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                     position="bottom-left"
                                 >
                                     <Button
-                                        disabled={
-                                            isMissingSequenceSendEmail ||
-                                            selectedInfluencers.some((i) => !i?.email) ||
-                                            selectedInfluencers.some((i) => !i?.influencer_social_profile_id)
-                                        }
+                                        disabled={sendDisabled}
                                         className={
                                             isMissingVariables
                                                 ? 'flex !border-gray-300 !bg-gray-300 !text-gray-500'
@@ -504,6 +525,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             <SequenceTable
                                 sequence={sequence}
                                 sequenceInfluencers={currentTabInfluencers}
+                                updateSequenceInfluencer={updateSequenceInfluencer}
+                                refreshSequenceInfluencers={refreshSequenceInfluencers}
                                 sequenceEmails={sequenceEmails}
                                 loadingEmails={loadingEmails}
                                 sequenceSteps={sequenceSteps}

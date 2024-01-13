@@ -7,6 +7,17 @@ import simpleStorageHandler from './storage-handler/simple';
 // Unlinke what SWR types suggest, key is always a serialized string
 type Key = string;
 
+export const initializeDB = async (dbName: string, storeName: string, version: number) =>
+    await openDB(dbName, version, {
+        upgrade(upgradeDb, oldVersion) {
+            if (!oldVersion) {
+                simpleStorageHandler.initialize(upgradeDb, storeName);
+            } else {
+                simpleStorageHandler.upgrade(upgradeDb, storeName, oldVersion);
+            }
+        },
+    });
+
 /**
  * Cache provider factory
  */
@@ -20,16 +31,7 @@ export default async function createCacheProvider<Data = any, Error = any>({
     type Cache = SWRCache<Data>;
     type State = SWRState<Data, Error>;
 
-    // Initialize database
-    const db = await openDB(dbName, version, {
-        upgrade(upgradeDb, oldVersion) {
-            if (!oldVersion) {
-                storageHandler.initialize(upgradeDb, storeName);
-            } else {
-                storageHandler.upgrade(upgradeDb, storeName, oldVersion);
-            }
-        },
-    });
+    const db = await initializeDB(dbName, storeName, version);
 
     // Get storage snapshot
     const map = new Map<Key, State>();

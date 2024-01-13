@@ -1,5 +1,9 @@
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { GenderPerAge } from 'types';
+import type { CreatorSearchAccountObject, CreatorSearchResult, SearchTableInfluencer } from 'types';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import type { InfluencerSocialProfileInsert } from 'src/utils/api/db';
+import type { Json } from 'types/supabase';
 
 interface InfluencerEvaluatedStats {
     [key: string]: number;
@@ -24,25 +28,32 @@ export const evaluateStat = (stat: InfluencerEvaluatedStats) => {
     }
 };
 
+export const transformInfluencerToSocialProfile = (influencer: SearchTableInfluencer, insertedInfluencerId: string) => {
+    return {
+        avatar_url: influencer.picture,
+        influencer_id: insertedInfluencerId,
+        reference_id: `iqdata:${influencer.user_id}`,
+        name: influencer.fullname || influencer.username || influencer.handle || influencer.custom_name || '',
+        platform: extractPlatformFromURL(influencer.url),
+        url: influencer.url,
+        username: influencer.username || influencer.handle || influencer.custom_name || '',
+        data: influencer as unknown as Json,
+    } as InfluencerSocialProfileInsert;
+};
+
 export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
     const { audience_genders_per_age: audienceDemoData, audience_genders } = influencer;
-    const maleAudienceWeight = audience_genders && audience_genders[0].weight;
-    const WEIGHT_TO_PERCENTAGE = 10000;
 
-    if (!audienceDemoData || !maleAudienceWeight) {
-        return [];
-    }
-
-    const transformAndMergeData = (rawData: GenderPerAge[]): GenderPerAge[] => {
+    const transformAndMergeData = (rawData: GenderPerAge[], searchedGender: 'male' | 'female'): GenderPerAge[] => {
         return rawData.some((audienceData) => audienceData.code === '65-')
             ? rawData.reduce((acc: GenderPerAge[], audienceCategory, index) => {
                   if (audienceCategory.code !== '65-') {
                       acc.push({
                           code: audienceCategory.code === '45-64' ? '45+' : audienceCategory.code,
-                          male:
+                          [searchedGender]:
                               audienceCategory.code === '45-64'
-                                  ? (audienceCategory.male ?? 0) + (rawData[index + 1]?.male ?? 0)
-                                  : audienceCategory.male,
+                                  ? audienceCategory[searchedGender] ?? 0 + (rawData[index + 1][searchedGender] ?? 0)
+                                  : audienceCategory[searchedGender],
                       });
                   }
                   return acc;
@@ -53,23 +64,62 @@ export const processedAudienceDemoData = (influencer: BoostbotInfluencer) => {
               }));
     };
 
-    const processRawData = (rawData: GenderPerAge[], maleAudienceWeight: number) => {
-        const totalMale = rawData.reduce((sum, item) => sum + (item.male ?? 0), 0);
-        const femaleAudienceWeight = 1 - maleAudienceWeight;
+    const processRawData = (
+        rawData: GenderPerAge[],
+        searchedGender: 'male' | 'female',
+        calculateGender: 'male' | 'female',
+        searchedGenderAudienceWeight: number,
+    ) => {
+        const totalSearchedGender = rawData.reduce((sum, item) => sum + (item[searchedGender] ?? 0), 0);
+        const calculateAudienceWeight = 1 - searchedGenderAudienceWeight;
 
         return rawData.map((item) => {
             return {
                 category: item.code,
-                male: (item.male ?? 0) * maleAudienceWeight * WEIGHT_TO_PERCENTAGE,
-                female:
-                    totalMale === 0 || item.male === undefined
+                [searchedGender]: (item[searchedGender] ?? 0) * searchedGenderAudienceWeight * WEIGHT_TO_PERCENTAGE,
+                [calculateGender]:
+                    totalSearchedGender === 0 || item[searchedGender] === undefined
                         ? 0
-                        : (item.male / totalMale) * femaleAudienceWeight * 10000,
+                        : ((item[searchedGender] ?? 0) / totalSearchedGender) * calculateAudienceWeight * 10000,
             };
         });
     };
 
-    return processRawData(transformAndMergeData(audienceDemoData), maleAudienceWeight);
+    const searchedGenderAudienceWeight = audience_genders && audience_genders[0].weight;
+    const WEIGHT_TO_PERCENTAGE = 10000;
+
+    if (!audienceDemoData || !searchedGenderAudienceWeight) {
+        return [];
+    }
+    const genders = audienceDemoData[1];
+
+    const searchedMale = genders && 'male' in genders && !(!genders || (genders && 'female' in genders));
+    const searchedFemale = genders && 'female' in genders && !(!genders || (genders && 'male' in genders));
+
+    if (searchedMale) {
+        return processRawData(
+            transformAndMergeData(audienceDemoData, 'male'),
+            'male',
+            'female',
+            searchedGenderAudienceWeight,
+        ) as {
+            category: string;
+            male: number;
+            female: number;
+        }[];
+    } else if (searchedFemale) {
+        return processRawData(
+            transformAndMergeData(audienceDemoData, 'female'),
+            'female',
+            'male',
+            searchedGenderAudienceWeight,
+        ) as {
+            category: string;
+            male: number;
+            female: number;
+        }[];
+    }
+    return [];
 };
 
 export const convertAudienceDataToPercentage = (
@@ -86,3 +136,23 @@ export const convertAudienceDataToPercentage = (
         female: (item.female / totalAudience) * 100,
     }));
 };
+
+export function flattenInfluencerData(influencersData: CreatorSearchResult, topics: string[] = []) {
+    if (!influencersData.accounts)
+        return {
+            total: 0,
+            influencers: [],
+        };
+    const structuredResults: SearchTableInfluencer[] = influencersData.accounts
+        .map((creator: CreatorSearchAccountObject) => ({
+            ...creator.account?.user_profile,
+            ...creator.match?.user_profile,
+            ...creator.match?.audience_likers?.data,
+            topics,
+        }))
+        .flat();
+    return {
+        total: influencersData.total,
+        influencers: structuredResults,
+    };
+}

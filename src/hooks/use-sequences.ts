@@ -12,7 +12,9 @@ export const useSequences = () => {
     const { data: sequences, mutate: refreshSequences } = useSWR(
         company?.id ? [company.id, 'sequences'] : null,
         ([companyId]) => getSequencesByCompanyId(companyId),
-        { revalidateOnFocus: false, revalidateIfStale: false },
+        {
+            revalidateOnFocus: true,
+        },
     );
     const allSequenceIds = useMemo(
         () => (Array.isArray(sequences) ? sequences.map((sequence) => sequence.id) : []),

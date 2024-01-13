@@ -32,7 +32,7 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
                     job: runningJob.id,
                 });
             });
-            throw new Error(`Cannot process ${queueName} queue. A job is stuck in running`);
+            return false;
         }
 
         // Prevent blocking queues from running if a job is already running
@@ -42,7 +42,7 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
                     job: runningJob.id,
                 });
             });
-            throw new Error(`Cannot process ${queueName} queue. A job is already running`);
+            return false;
         }
 
         const jobs = await db(fetchJobs)({
@@ -50,21 +50,16 @@ export const Blocking: JobQueue<typeof QUEUE_NAME> = {
             status: payload?.status ?? JOB_STATUS.pending,
             limit: payload?.limit ?? 1,
         });
-
-        const runningJobs = jobs.map(async (job) => {
-            const res = await runJob(job);
+        const results: { job: string; result: boolean }[] = [];
+        for (const job of jobs) {
+            const jobResult = await runJob(job);
 
             // set status to pending if failed so that we can retry
-            const status = res.status === JOB_STATUS.success ? JOB_STATUS.success : JOB_STATUS.pending;
-            await finishJob(job, status, res.result);
+            const status = jobResult.status === JOB_STATUS.success ? JOB_STATUS.success : JOB_STATUS.pending;
+            await finishJob(job, status, jobResult.result);
 
-            return { job: job.id, result: res.status === JOB_STATUS.success };
-        });
-
-        const finishedJobs = await Promise.allSettled(runningJobs);
-        const results: { job: string; result: boolean }[] = finishedJobs.map((result) =>
-            result.status === 'fulfilled' ? result.value : result.reason,
-        );
+            results.push({ job: job.id, result: jobResult.status === JOB_STATUS.success });
+        }
 
         return results;
     },

@@ -9,6 +9,9 @@ import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import * as Sentry from '@sentry/nextjs';
+import { useBirdEatsBug } from './bird-eats-bugs';
+import { nanoid } from 'nanoid';
+import Smartlook from 'smartlook-client';
 
 export const AnalyticsContext = createContext<
     | {
@@ -18,6 +21,23 @@ export const AnalyticsContext = createContext<
       }
     | undefined
 >(undefined);
+
+export const useDeviceId = () => {
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deviceId = urlParams.get('device_id');
+            if (deviceId) {
+                localStorage.setItem('deviceId', deviceId);
+            } else {
+                const existingDeviceId = localStorage.getItem('deviceId');
+                if (!existingDeviceId) {
+                    localStorage.setItem('deviceId', nanoid());
+                }
+            }
+        }
+    }, []);
+};
 
 export const useAnalytics = () => {
     const context = useContext(AnalyticsContext);
@@ -39,7 +59,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
-
+    useBirdEatsBug();
     const { session, profile } = useSession();
     const { identifySession } = useIdentifySession();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
@@ -74,6 +94,11 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
         if (profile.email) {
             user.email = profile.email;
         }
+        if (window.birdeatsbug?.setOptions) {
+            window?.birdeatsbug?.setOptions({
+                user: { email: profile.email || '' },
+            });
+        }
         Sentry.setUser(user);
     }, [profile]);
 
@@ -82,4 +107,23 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             <AnalyticsContext.Provider value={{ analytics, session, track }}>{children}</AnalyticsContext.Provider>
         </BaseAnalyticsProvider>
     );
+};
+
+const NEXT_PUBLIC_APIKEY = process.env.NEXT_PUBLIC_SMARTLOOK_APIKEY;
+export const initSmartlook = () => {
+    if (!NEXT_PUBLIC_APIKEY) {
+        return false;
+    }
+    if (!Smartlook.initialized()) {
+        return Smartlook.init(NEXT_PUBLIC_APIKEY);
+    }
+    return true;
+};
+
+export const useSmartlook = () => {
+    const identify = (userId: string, props: Record<string, any> = {}) => {
+        if (!initSmartlook()) return;
+        Smartlook.identify(userId, props);
+    };
+    return { identify };
 };

@@ -38,8 +38,7 @@ export const AddToSequenceModal = ({
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
     const [submitting, setSubmitting] = useState<boolean>(false);
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const { createSequenceInfluencer } = useSequenceInfluencers();
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {

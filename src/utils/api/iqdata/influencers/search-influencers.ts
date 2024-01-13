@@ -17,7 +17,7 @@ export type SearchInfluencersListPayloadQuery = {
     limit: string;
 };
 
-type SearchInfluencersPayloadInput = z.input<typeof SearchInfluencersPayload>;
+export type SearchInfluencersPayloadInput = z.input<typeof SearchInfluencersPayload>;
 
 export const searchInfluencers = async (payload: SearchInfluencersPayloadInput, context?: ServerContext) => {
     // set type since passthrough breaks the typing

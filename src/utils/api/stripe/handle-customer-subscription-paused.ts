@@ -1,5 +1,5 @@
 import type { NextApiResponse } from 'next';
-import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
+import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-webhook';
 import { getCompanyByCusId, updateCompanySubscriptionStatus } from '../db';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';

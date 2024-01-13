@@ -6,11 +6,9 @@ export const useSequenceEmail = (messageId?: string) => {
     const getSequenceEmailAndSequencesByMessageIdDBCall = useDB<typeof getSequenceEmailAndSequencesByMessageIdCall>(
         getSequenceEmailAndSequencesByMessageIdCall,
     );
-    if (!messageId) {
-        throw new Error('No message id found');
-    }
-    const { data: sequenceEmail } = useSWR('sequence_email', () =>
-        getSequenceEmailAndSequencesByMessageIdDBCall(messageId),
+
+    const { data: sequenceEmail } = useSWR(messageId ? [messageId, 'sequence_email'] : null, ([id]) =>
+        getSequenceEmailAndSequencesByMessageIdDBCall(id),
     );
     return {
         sequenceEmail,

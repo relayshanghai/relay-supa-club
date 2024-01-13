@@ -15,9 +15,13 @@ import { getFirstUserByCompanyIdCall } from 'src/utils/api/db/calls/profiles';
 import { db } from 'src/utils/supabase-client';
 import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import { StripeWebhookError } from 'src/utils/analytics/events/stripe/stripe-webhook-error';
+import type { SetupIntentSucceeded } from 'types/stripe/setup-intent-succeeded-webhook';
+import { handleSetupIntentSucceeded } from 'src/utils/api/stripe/handle-setup-intent-succeeded-webhook';
 import type { InvoicePaymentSucceeded } from 'types/stripe/invoice-payment-succeeded-webhook';
 import { handleInvoicePaymentSucceeded } from 'src/utils/api/stripe/handle-invoice-payment-succeeded';
-import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-wenhook';
+import type { SetupIntentFailed } from 'types/stripe/setup-intent-failed-webhook';
+import { handleSetupIntentFailed } from 'src/utils/api/stripe/handle-setup-intent-failed-webhook';
+import type { CustomerSubscriptionPaused } from 'types/stripe/customer-subscription-paused-webhook';
 import { handleCustomerSubscriptionPaused } from 'src/utils/api/stripe/handle-customer-subscription-paused';
 import { ApiHandler } from 'src/utils/api-handler';
 
@@ -25,6 +29,8 @@ const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
     invoicePaymentFailed: 'invoice.payment_failed',
     invoicePaymentSucceeded: 'invoice.payment_succeeded',
+    setupIntentSucceeded: 'setup_intent.succeeded',
+    setupIntentFailed: 'setup_intent.setup_failed',
     customerSubscriptionPaused: 'customer.subscription.paused',
 };
 
@@ -32,10 +38,18 @@ export type HandledEvent =
     | CustomerSubscriptionCreated
     | InvoicePaymentFailed
     | InvoicePaymentSucceeded
+    | SetupIntentSucceeded
+    | SetupIntentFailed
     | CustomerSubscriptionPaused;
 
 const identifyWebhook = async (
-    event: CustomerSubscriptionCreated | InvoicePaymentFailed | InvoicePaymentSucceeded | CustomerSubscriptionPaused,
+    event:
+        | CustomerSubscriptionCreated
+        | InvoicePaymentFailed
+        | InvoicePaymentSucceeded
+        | SetupIntentSucceeded
+        | SetupIntentFailed
+        | CustomerSubscriptionPaused,
 ) => {
     const customerId = event.data?.object?.customer;
     if (!customerId) {
@@ -52,8 +66,13 @@ const identifyWebhook = async (
     }
     rudderstack.identifyWithProfile(profile.id);
 };
+
 const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) => {
     switch (event.type) {
+        case handledWebhooks.setupIntentFailed:
+            return await handleSetupIntentFailed(res, event as SetupIntentFailed);
+        case handledWebhooks.setupIntentSucceeded:
+            return await handleSetupIntentSucceeded(res, event as SetupIntentSucceeded);
         case handledWebhooks.invoicePaymentSucceeded:
             return await handleInvoicePaymentSucceeded(res, event as InvoicePaymentSucceeded);
         case handledWebhooks.customerSubscriptionCreated:
@@ -61,11 +80,6 @@ const handleStripeWebhook = async (event: HandledEvent, res: NextApiResponse) =>
             const productID = price.product;
             if (productID === STRIPE_PRODUCT_ID_VIP) {
                 return await handleVIPSubscription(res, event as CustomerSubscriptionCreated);
-            } else {
-                serverLogger('stripe productID does not match handled projectIDs', { level: 'error' });
-                return res
-                    .status(httpCodes.NO_CONTENT)
-                    .json({ message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP' });
             }
         case handledWebhooks.invoicePaymentFailed:
             return await handleInvoicePaymentFailed(res, event as InvoicePaymentFailed);
@@ -101,9 +115,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
             serverLogger('stripe signatures do not match', { level: 'error' });
             return res.status(httpCodes.FORBIDDEN).json({ message: 'signatures do not match' });
         }
-
         // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
-
         if (!event || !event.type) {
             serverLogger('stripe no event or event type', { level: 'error' });
             return res.status(httpCodes.BAD_REQUEST).json({ message: 'no body or body.type' });
@@ -126,7 +138,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
         track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookIncoming, trackData);
         return await handleStripeWebhook(event as HandledEvent, res);
     } catch (error: any) {
-        serverLogger('stripe caught error', { level: 'error' });
+        serverLogger('stripe caught error', (scope) => {
+            return scope.setContext('Stripe Error', { stack: error.stack, error: error.message });
+        });
         try {
             trackData.extra_info.error = error;
             track(rudderstack.getClient(), rudderstack.getIdentity())(StripeWebhookError, trackData);

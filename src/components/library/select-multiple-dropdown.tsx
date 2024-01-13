@@ -8,6 +8,7 @@ export type MultipleDropdownObject = {
     [key: string]: {
         value?: number;
         style?: string;
+        icon?: JSX.Element;
     };
 };
 

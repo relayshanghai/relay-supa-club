@@ -11,6 +11,7 @@ import type {
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { FUNNEL_STATUS } from 'src/utils/outreach/constants';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -104,7 +105,14 @@ export type SequenceStep = SequenceStepsTable['Row'];
 export type SequenceStepInsert = SequenceStepsTable['Insert'];
 export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
-export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
+/**
+ * Unscheduled means we've created a `sequence_email` record, but haven't sent it to Email Engine.
+ *
+ * Scheduled means we've sent it to Email Engine, but it hasn't been sent yet.
+ *
+ * Delivered means it has triggered the `messageSent` webhook from Email Engine.
+ */
+export type EmailDeliveryStatus = 'Unscheduled' | 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
@@ -123,21 +131,9 @@ export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'
 };
 
 export type SequenceEmail = SequenceEmailsTable['Row'];
-export type SequenceEmailInsert = SequenceEmailsTable['Insert'];
-export type SequenceEmailUpdate = SequenceEmailsTable['Update'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
-export type FunnelStatus =
-    | 'To Contact'
-    | 'In Sequence'
-    | 'Ignored'
-    | 'Negotiating'
-    | 'Confirmed'
-    | 'Shipped'
-    | 'Rejected'
-    | 'Received'
-    | 'Content Approval'
-    | 'Posted';
+export type FunnelStatus = FUNNEL_STATUS;
 
 type SequenceInfluencerDetailedTypes = {
     /** 0 means either not sent or first step (outreach) sent. 1 means Follow-up 1 was sent. */

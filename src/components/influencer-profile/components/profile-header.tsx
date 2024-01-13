@@ -2,8 +2,8 @@ import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { imgProxy } from 'src/utils/fetcher';
 import Link from 'next/link';
+import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
 
 // @note probably exists already
 export type Profile = {
@@ -34,18 +34,13 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
     return (
         <div {...props}>
             <div className="inline-flex items-center justify-start gap-2">
-                <div className="flex items-center justify-center rounded-full bg-gray-200 bg-opacity-50">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full">
-                        {profile.avatar_url ? (
-                            <img className="rounded-full" src={imgProxy(profile.avatar_url)} alt="Photo" />
-                        ) : (
-                            <img
-                                className="rounded-full"
-                                src={`https://api.dicebear.com/6.x/open-peeps/svg?seed=${profile.username}&size=96`}
-                                alt="Photo"
-                            />
-                        )}
-                    </div>
+                <div className="flex flex-1">
+                    <InfluencerAvatarWithFallback
+                        url={profile.avatar_url || ''}
+                        size={150}
+                        name={profile.username}
+                        className="rounded-full"
+                    />
                 </div>
                 <div className="flex shrink grow basis-0 items-center justify-start self-stretch">
                     <div className="flex h-20 shrink grow basis-0 items-center justify-start gap-6">

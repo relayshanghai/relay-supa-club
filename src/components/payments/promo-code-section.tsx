@@ -25,7 +25,7 @@ export const PromoCodeSection = ({
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
     const [loading, setLoading] = useState<boolean>(false);
-    const en = i18n.language.toLowerCase().includes('en');
+    const en = i18n.language?.toLowerCase().includes('en');
     const { track } = useRudderstackTrack();
 
     const handleSubmit = async (promoCode: string) => {

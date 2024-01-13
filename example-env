@@ -24,6 +24,7 @@ DATA_KEY=asdf
 
 NEXT_PUBLIC_SUPABASE_ANON_KEY=asdf
 NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
+SUPABASE_CONNECTION_URL=postgresql://postgres:postgres@localhost:54322/postgres
 
 # Send in Blue
 
@@ -92,3 +93,9 @@ SCHEDULER_WORKER_TOKEN=
 
 # Brevo List ID for the new signups that will be funneled to an marketing automation
 BREVO_NEWTRIALUSERS_LIST_ID=8
+
+# An admin user created in each company
+SERVICE_ACCOUNT_PASSWORD=
+
+#smartlook api key
+NEXT_PUBLIC_SMARTLOOK_APIKEY=

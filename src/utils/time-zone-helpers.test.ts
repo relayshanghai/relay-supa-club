@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { getWeekday, isWeekend, getHours, addHours, isSameDay, weekDayAsNumber } from './time-zone-helpers';
+import {
+    getWeekday,
+    isWeekend,
+    getHours,
+    addHours,
+    isSameDay,
+    weekDayAsNumber,
+    getDateStringWithoutTime,
+} from './time-zone-helpers';
 
 describe('getWeekday', () => {
     it('gets the weekday based on the passed in timezone', () => {
@@ -11,6 +19,14 @@ describe('getWeekday', () => {
         const saturday_1_am_chicago_time = new Date('2023-09-30T01:00:00-05:00');
         const weekday2 = getWeekday(saturday_1_am_chicago_time, 'America/Chicago');
         expect(weekday2).toEqual('Saturday');
+    });
+});
+
+describe('getDateStringWithoutTime', () => {
+    it('returns the date without the time', () => {
+        const date = new Date('2021-07-17T14:00:00.000Z');
+        const result = getDateStringWithoutTime(date, 'America/New_York');
+        expect(result).toEqual('2021-07-17');
     });
 });
 

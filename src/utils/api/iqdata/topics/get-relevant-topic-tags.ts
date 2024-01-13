@@ -22,7 +22,7 @@ export type TopicTensorData = {
     tag_cnt: number;
 };
 
-type GetRelevantTopicTagsResponse = {
+export type GetRelevantTopicTagsResponse = {
     success: boolean;
     data: TopicTensorData[];
 };
@@ -42,7 +42,34 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
 
     payload.query.q = `#${payload.query.q}`;
 
-    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
+    const response = await apiFetch<
+        GetRelevantTopicTagsResponse,
+        GetRelevantTopicTagsPayload & { context?: ServerContext }
+    >('/dict/relevant-tags', { ...payload, context });
+
+    if (response.content.success === true) {
+        sortByDistance(response.content.data);
+    } else {
+        throw new RelayError('Error fetching relevant topic tags', 400);
+    }
+
+    return response.content;
+};
+
+export const getRelevantTopicTagsByInfluencer = async (
+    payload: GetRelevantTopicTagsPayload,
+    context?: ServerContext,
+) => {
+    if (!payload.query.q) {
+        throw new RelayError(`q in payload query is required`);
+    }
+
+    payload.query.q = `@${payload.query.q}`;
+
+    const response = await apiFetch<
+        GetRelevantTopicTagsResponse,
+        GetRelevantTopicTagsPayload & { context?: ServerContext }
+    >('/dict/relevant-tags', { ...payload, context });
 
     if (response.content.success === true) {
         sortByDistance(response.content.data);

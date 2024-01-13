@@ -70,7 +70,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     }, [redirect, router]);
 
     useEffect(() => {
-        if (subscription?.status === 'trialing' || subscription?.status === 'active') {
+        if (subscription?.status === 'trial' || subscription?.status === 'active') {
             return handleSuccess();
         }
     }, [subscription?.status, handleSuccess]);
@@ -162,7 +162,7 @@ export const OnboardPaymentSection = (props: OnboardPaymentSectionProps) => {
     const [clientSecretError, setClientSecretError] = useState<string>();
 
     const options: StripeElementsOptions = {
-        locale: i18n.language.includes('en') ? 'en' : 'zh',
+        locale: i18n.language?.includes('en') ? 'en' : 'zh',
         clientSecret,
     };
 

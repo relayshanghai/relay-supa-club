@@ -51,7 +51,7 @@ export const PriceCard = ({
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
-    const prices = usePrices();
+    const { prices } = usePrices();
     const { subscription } = useSubscription();
     const { company } = useCompany();
     const router = useRouter();
@@ -59,7 +59,6 @@ export const PriceCard = ({
     const key: PriceKey = priceTier;
     const price = prices[key];
     const currency = price.currency;
-
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
         trackEvent('Select Upgrade Plan', { plan: priceTier });

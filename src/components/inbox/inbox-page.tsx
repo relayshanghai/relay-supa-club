@@ -8,10 +8,7 @@ import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { ChangeInboxFolder, OpenEmailThread, OpenInfluencerProfile, SearchInbox } from 'src/utils/analytics/events';
-import {
-    getSequenceInfluencerByEmailAndCompanyCall,
-    getSequenceInfluencerByIdCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
@@ -27,19 +24,19 @@ import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
-import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
-import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
+import { type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { mapProfileToFormData } from './helpers';
+import { findOtherPeopleInThread, mapProfileToFormData } from './helpers';
 import inboxTranslation from 'i18n/en/inbox';
+import { ProfileScreen } from '../influencer-profile/screens/profile-screen-legacy';
+import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
     const [searchResults, setSearchResults] = useState<MessagesGetMessage[]>([]);
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
-    const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
@@ -49,16 +46,10 @@ export const InboxPage = () => {
     const { refreshSequenceInfluencers } = useSequenceInfluencers();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
+
     const { t } = useTranslation();
 
     const { track } = useRudderstackTrack();
-
-    useEffect(() => {
-        if (!inboxMessages) {
-            return;
-        }
-        setMessages(inboxMessages);
-    }, [inboxMessages]);
 
     const filteredMessages = useMemo(() => {
         if (selectedTab === 'new') {
@@ -68,6 +59,133 @@ export const InboxPage = () => {
     }, [messages, selectedTab]);
     const { profile } = useUser();
 
+    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
+
+    const handleGetThreadEmails = useCallback(
+        async (message: MessagesGetMessage) => {
+            setSequenceInfluencer(null);
+            setSelectedMessages([]);
+            setLoadingSelectedMessages(true);
+            try {
+                if (!profile?.email_engine_account_id) {
+                    throw new Error('No email account');
+                }
+                const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
+                const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
+                const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
+
+                if (threadMessages.length === 0) {
+                    setLoadingSelectedMessages(false);
+                    return;
+                }
+
+                threadMessages.sort((a, b) => {
+                    return new Date(a.date).getTime() - new Date(b.date).getTime();
+                });
+                setSelectedMessages(threadMessages);
+                setLoadingSelectedMessages(false);
+
+                const potentialInfluencerEmails = findOtherPeopleInThread(
+                    threadMessages,
+                    profile.email_engine_account_id,
+                );
+
+                const findInfluencer = async (emails: string[]) => {
+                    let influencer: SequenceInfluencerManagerPage | null = null;
+                    for (const email of emails) {
+                        try {
+                            const foundInfluencer = await getSequenceInfluencerByEmailAndCompany(
+                                email,
+                                profile.company_id,
+                            );
+                            if (foundInfluencer) {
+                                influencer = foundInfluencer;
+                                break;
+                            }
+                        } catch (error) {
+                            // ignore
+                        }
+                    }
+                    return influencer;
+                };
+
+                if (potentialInfluencerEmails.length > 0) {
+                    const influencer = await findInfluencer(potentialInfluencerEmails);
+                    setSequenceInfluencer(influencer);
+                }
+                track(OpenEmailThread, {
+                    sequence_email_address: profile?.sequence_send_email ?? '',
+                    email_thread_id: threadMessages[0].threadId,
+                    selected_email_id: threadMessages[0].emailId,
+                    sender: threadMessages[0].from,
+                    recipient: threadMessages[0].to,
+                    open_when_clicked: true,
+                });
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                toast(error.message);
+            }
+            setLoadingSelectedMessages(false);
+        },
+        [
+            getSequenceInfluencerByEmailAndCompany,
+            profile?.company_id,
+            profile?.email_engine_account_id,
+            profile?.sequence_send_email,
+            track,
+        ],
+    );
+
+    const [uiState, setUiState] = useUiState();
+
+    const handleUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencer) return;
+
+            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
+                // @note updates local state without additional query
+                //       this will cause issue showing previous state though
+                setLocalProfile(mapProfileToFormData(profile));
+                saveSequenceInfluencer.refresh();
+
+                refreshSequenceInfluencers();
+            });
+        },
+        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
+    );
+
+    const handleSelectedTabChange = useCallback(
+        (tab: { value: string; name: string }) => {
+            if (!profile || !profile.sequence_send_email) return;
+            track(ChangeInboxFolder, {
+                sequence_email_address: profile.sequence_send_email,
+                current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
+                selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
+                total_unread_emails: messages.filter((message) => message.unseen).length,
+            });
+            setSelectedTab(tab.value);
+        },
+        [profile, selectedTab, messages, track],
+    );
+    const handleNoteListOpen = useCallback(() => {
+        if (!sequenceInfluencer) return;
+        getNotes.call(sequenceInfluencer.id);
+    }, [getNotes, sequenceInfluencer]);
+
+    const handleNoteListClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isNotesListOverlayOpen: false };
+        });
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
+
+    useEffect(() => {
+        if (!inboxMessages) {
+            return;
+        }
+        setMessages(inboxMessages);
+    }, [inboxMessages]);
+
     useEffect(() => {
         if (!sequenceInfluencer) return;
         if (!sequenceInfluencer.influencer_social_profile_id) {
@@ -76,14 +194,10 @@ export const InboxPage = () => {
         setLocalProfile(mapProfileToFormData(sequenceInfluencer));
         track(OpenInfluencerProfile, {
             influencer_id: sequenceInfluencer.influencer_social_profile_id,
-            search_id: searchTerm,
             current_status: sequenceInfluencer?.funnel_status,
-            currently_filtered: false,
-            currently_searched: searchTerm !== '',
-            view_mine_enabled: false,
             is_users_influencer: false,
         });
-    }, [sequenceInfluencer, searchTerm, track]);
+    }, [searchTerm, sequenceInfluencer, track]);
 
     useEffect(() => {
         if (!profile || !profile.sequence_send_email) {
@@ -103,108 +217,7 @@ export const InboxPage = () => {
             search_query: searchTerm,
             total_results: results.length,
         });
-    }, [filteredMessages, searchTerm, profile, track]);
-
-    const handleGetThreadEmails = useCallback(
-        async (message: MessagesGetMessage) => {
-            setSelectedMessages([]);
-
-            setLoadingSelectedMessages(true);
-            setGetSelectedMessagesError('');
-            try {
-                if (!profile?.email_engine_account_id) {
-                    throw new Error('No email account');
-                }
-                const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
-                const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
-                const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
-
-                if (threadMessages.length === 0) {
-                    setLoadingSelectedMessages(false);
-                    throw new Error('No thread messages found');
-                }
-
-                threadMessages.sort((a, b) => {
-                    return new Date(a.date).getTime() - new Date(b.date).getTime();
-                });
-                setSelectedMessages(threadMessages);
-                track(OpenEmailThread, {
-                    sequence_email_address: profile?.sequence_send_email ?? '',
-                    email_thread_id: threadMessages[0].threadId,
-                    selected_email_id: threadMessages[0].emailId,
-                    sender: threadMessages[0].from,
-                    recipient: threadMessages[0].to,
-                    open_when_clicked: true,
-                });
-                setLoadingSelectedMessages(false);
-            } catch (error: any) {
-                clientLogger(error, 'error');
-                setGetSelectedMessagesError(error.message);
-                toast(getSelectedMessagesError);
-            }
-            setLoadingSelectedMessages(false);
-        },
-        [getSelectedMessagesError, profile?.email_engine_account_id, profile?.sequence_send_email, track],
-    );
-
-    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
-    const getSequenceInfluencer = useDB(getSequenceInfluencerByIdCall);
-    const [uiState, setUiState] = useUiState();
-
-    const handleUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!sequenceInfluencer) return;
-
-            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
-                // @note updates local state without additional query
-                //       this will cause issue showing previous state though
-                setLocalProfile(mapProfileToFormData(profile));
-                saveSequenceInfluencer.refresh();
-
-                refreshSequenceInfluencers();
-            });
-        },
-        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
-    );
-
-    const handleSelectedTabChange = (tab: { value: string; name: string }) => {
-        if (!profile || !profile.sequence_send_email) return;
-        track(ChangeInboxFolder, {
-            sequence_email_address: profile.sequence_send_email,
-            current_email_folder: selectedTab === 'new' ? inboxTranslation.unread : inboxTranslation.inbox,
-            selected_email_folder: selectedTab === 'new' ? inboxTranslation.inbox : inboxTranslation.unread,
-            total_unread_emails: messages.filter((message) => message.unseen).length,
-        });
-        setSelectedTab(tab.value);
-    };
-
-    const handleSelectPreviewCard = useCallback(
-        async (message: MessagesGetMessage) => {
-            if (!profile) return;
-            try {
-                const influencer = await getSequenceInfluencerByEmailAndCompany(
-                    message.from.address,
-                    profile.company_id,
-                );
-                const influencerFull = await getSequenceInfluencer(influencer.id);
-                setSequenceInfluencer(influencerFull);
-                // @note avoid try..catch hell. influencer should have been a monad
-            } catch (error) {}
-        },
-        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
-    );
-
-    const handleNoteListOpen = useCallback(() => {
-        if (!sequenceInfluencer) return;
-        getNotes.call(sequenceInfluencer.id);
-    }, [getNotes, sequenceInfluencer]);
-
-    const handleNoteListClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isNotesListOverlayOpen: false };
-        });
-        getNotes.refresh();
-    }, [getNotes, setUiState]);
+    }, [filteredMessages, profile, searchTerm, track]);
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -222,13 +235,14 @@ export const InboxPage = () => {
         });
     }, [refreshInboxMessages, selectedMessages, profile?.email_engine_account_id]);
 
-    //Show the first message in the list when the page loads by default
+    // Show the first message in the list when the page loads by default and messages are ready. only do once
     useEffect(() => {
-        if (!selectedMessages && messages.length > 0) {
-            handleGetThreadEmails(messages[0]);
-            handleSelectPreviewCard(messages[0]);
+        if (isLoading || !messages || messages.length === 0 || selectedMessages) {
+            // selectedMessages is null initially, and set to an empty array once handleGetThreadEmails is called. so this should ensure it only runs once
+            return;
         }
-    }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
+        handleGetThreadEmails(messages[0]);
+    }, [handleGetThreadEmails, isLoading, messages, selectedMessages]);
 
     return (
         <Layout>
@@ -240,7 +254,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="col-span-3 h-full w-full overflow-auto">
+                        <div className="col-span-3 flex h-full w-full flex-1 flex-col overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -249,30 +263,20 @@ export const InboxPage = () => {
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
                                     />
-                                    {searchResults.length > 0 ? (
-                                        <PreviewSection
-                                            messages={searchResults}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    ) : (
-                                        <PreviewSection
-                                            messages={filteredMessages}
-                                            selectedMessages={selectedMessages}
-                                            handleGetThreadEmails={handleGetThreadEmails}
-                                            loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
-                                        />
-                                    )}
+
+                                    <PreviewSection
+                                        messages={searchResults.length > 0 ? searchResults : filteredMessages}
+                                        selectedMessages={selectedMessages}
+                                        handleGetThreadEmails={handleGetThreadEmails}
+                                        loadingSelectedMessages={loadingSelectedMessages}
+                                    />
                                 </>
                             )}
                         </div>
                         <div
                             className={`${
                                 sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
-                            } h-full w-full overflow-auto`}
+                            } h-full w-full flex-1 overflow-auto`}
                         >
                             {selectedMessages && (
                                 <CorrespondenceSection
@@ -283,7 +287,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                            <div className="col-span-4 h-full w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}
