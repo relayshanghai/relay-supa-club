@@ -1,53 +1,89 @@
 import type { Row, Table } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
+import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
+import type { CreatorPlatform } from 'types';
 
 export type BoostbotScoreCellProps = {
     row: Row<BoostbotInfluencer>;
     table: Table<BoostbotInfluencer>;
 };
 
-export const calculateIndexScore = (influencer: BoostbotInfluencer) => {
-    const { relevance, engagement_rate, avg_views, avg_reels_plays, followers, engagements, posts_count } = influencer;
+const engagementRateModifier = (ER: number) => {
+    const lowerBound = 0.007;
+    const upperBound = 0.18;
 
+    if (lowerBound <= ER && ER <= upperBound) {
+        return Math.min(0.99, 0.85 + ER);
+    } else if (ER < lowerBound) {
+        return Math.max(0, ER / lowerBound);
+    } else {
+        return Math.max(0, 0.8 - ((ER - upperBound) * 0.3) / (upperBound - lowerBound));
+    }
+};
+
+const sigmoidIndex = (score: number, platform: CreatorPlatform) =>
+    platform === 'youtube'
+        ? 55 * (1 / (1 + Math.exp(-5 * (score - 0.48)))) + 45
+        : 50 * (1 / (1 + Math.exp(-8 * (score - 0.55)))) + 50;
+
+export const calculateIndexScore = (influencer: BoostbotInfluencer) => {
+    const {
+        relevance = 0.98,
+        engagement_rate,
+        avg_views,
+        avg_reels_plays,
+        followers,
+        posts_count = 500,
+        url,
+    } = influencer;
+
+    const platform = extractPlatformFromURL(url) ?? 'instagram';
+    const isYoutube = platform === 'youtube';
     const averageViews = avg_views || avg_reels_plays || 0;
 
-    const MF = Math.exp(-Math.pow((followers - 75000) / 46619.5, 2));
-    const MER = Math.exp(-Math.pow((engagement_rate - 0.02) / 0.0127, 2));
-    const MV = averageViews / followers;
+    let MF, MV, ME;
+    if (isYoutube) {
+        MF = followers >= 150_000 ? (200_000 - 20_000) / 150_000 : (followers - 3_000) / 100_000;
+        MV = averageViews / followers + engagement_rate - 0.005 / 0.395;
+        ME = 0;
+    } else {
+        MF = followers >= 180_000 ? (200_000 - 20_000) / 180_000 : (followers - 15_000) / 180_000;
+        MV = Math.log(averageViews / followers + engagement_rate + 1);
+        ME = (engagement_rate + (averageViews * 0.5) / followers) / 0.9;
+    }
 
-    const wR = 0.3;
-    const wER = 0.25;
-    const wV = 0.2;
-    const wE = 0.1;
-    const wF = 0.1;
-    const wP = 0.05;
+    MF = Math.min(Math.max(MF, 0), 1);
+    MV = Math.min(Math.max(MV, 0), 1);
+    ME = Math.min(1, ME);
+
+    // Weights
+    const WR = isYoutube ? 0.2 : 0.05;
+    const WER = isYoutube ? 0.3 : 0.4;
+    const WMV = isYoutube ? 0.25 : 0.15;
+    const WMF = isYoutube ? 0.2 : 0.05;
+    const WP = 0.05; // Same for both platforms
+    const WME = isYoutube ? 0 : 0.3;
 
     const score =
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        wR * relevance! +
-        wER * MER * engagement_rate +
-        wV * MV +
-        wE * (engagements / followers) +
-        wF * MF +
-        // We know that posts_count exist for Boostbot influencers because we are fetching for it in the src/utils/api/boostbot/index.ts
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        wP * posts_count!;
+        WR * relevance +
+        WER * engagementRateModifier(engagement_rate) +
+        WMV * MV +
+        WMF * MF +
+        WME * ME +
+        WP * Math.min(1, posts_count / (isYoutube ? 100 : 500));
 
-    // I found that tweaking these 2 values has visible impact
-    const slope = 0.1;
-    const inflectionPoint = 0.5;
+    const indexScore = Math.ceil(sigmoidIndex(score, platform));
 
-    const indexScore = 88 / (1 + Math.exp(-slope * (score - inflectionPoint))) + 10;
+    // If the score is 99, make it a random value between 93 and 99
+    const finalScore = indexScore === 99 ? Math.floor(Math.random() * (99 - 93 + 1) + 93) : indexScore;
 
-    return Math.ceil(indexScore);
+    return finalScore;
 };
 
 export const BoostbotScoreCell = ({ row, table }: BoostbotScoreCellProps) => {
     const influencer = row.original;
     const indexScore = calculateIndexScore(influencer);
-
     const isLoading = table.options.meta?.isLoading;
-
     const bgColorClass =
         indexScore >= 70
             ? 'bg-green-100 text-green-700 border-green-50'
@@ -59,7 +95,7 @@ export const BoostbotScoreCell = ({ row, table }: BoostbotScoreCellProps) => {
                 <div className="h-11 w-11 animate-pulse rounded-full bg-gray-300 p-2" />
             ) : (
                 <div
-                    className={`inline-block rounded-full border-4 p-2 text-center text-sm font-semibold ${bgColorClass}`}
+                    className={`inline-block h-11 w-11 rounded-full border-4 p-2 text-center text-sm font-semibold ${bgColorClass}`}
                 >
                     {indexScore}
                 </div>

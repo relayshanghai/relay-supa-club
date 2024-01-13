@@ -1,21 +1,21 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
-import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { useCompany } from 'src/hooks/use-company';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setSelectedCreator: (creator: ClassicSearchInfluencer) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
-    results?: CreatorSearchAccountObject[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersBasicInfo[];
+    results?: ClassicSearchInfluencer[];
     loading: boolean;
     validating: boolean;
     moreResults?: JSX.Element;
@@ -110,7 +110,7 @@ export const SearchResultsTable = ({
                         <>
                             {results.map((creator, i) => (
                                 <SearchResultRow
-                                    key={`${creator.account.user_profile.username}-${creator.account.user_profile.user_id}`}
+                                    key={`${creator.username}-${creator.user_id}`}
                                     creator={creator}
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}

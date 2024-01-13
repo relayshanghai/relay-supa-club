@@ -23,6 +23,7 @@ const MockComponent = ({
                 buttonText={t('boostbot.chat.outreachSelected')}
                 handleAddToSequenceButton={handleSelectedInfluencersToOutreach}
                 outReachDisabled={outReachDisabled}
+                url="boostbot"
             />
         </>
     );

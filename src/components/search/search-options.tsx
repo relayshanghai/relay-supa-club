@@ -19,14 +19,12 @@ import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 export const SearchOptions = ({
-    setPage,
     setShowFiltersModal,
     onSearch,
     searchType,
     onSearchTypeChange,
     setShowNeedHelpModal,
 }: {
-    setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
     searchType: string | null;
@@ -44,6 +42,7 @@ export const SearchOptions = ({
         hashtags,
         setHashtags,
         getSearchParams,
+        setPage,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
@@ -238,19 +237,20 @@ export const SearchOptions = ({
                         </div>
                     )}
                     <div className="flex w-full justify-end">
-                        <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
-                            <button
+                        <div className="my-4 grid w-fit grid-cols-3 items-end gap-4">
+                            <Button
+                                variant="secondary"
+                                className="col-span-2 h-12 items-center justify-self-end"
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
                                 }}
-                                className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
                                 <p className="w-full p-1">{t('creators.addFilters')}</p>
-                            </button>
+                            </Button>
                             <Button
                                 data-testid="search-button"
-                                className="col-span-1 h-full"
+                                className="h-12 w-full items-center justify-self-end"
                                 onClick={(e) => {
                                     if (isExpired) {
                                         return;

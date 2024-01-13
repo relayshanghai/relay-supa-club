@@ -14,7 +14,17 @@ interface Route {
     id: string;
 }
 
-interface Data {
+export interface MessageAttachment {
+    id: string;
+    contentType: string;
+    encodedSize: number;
+    embedded: boolean;
+    inline: boolean;
+    filename: string;
+    contentId: string;
+}
+
+export interface Data {
     id: string;
     uid: number;
     path: string;
@@ -23,6 +33,7 @@ interface Data {
     date: string;
     flags: any[];
     labels: string[];
+    attachments: MessageAttachment[];
     unseen: boolean;
     size: number;
     subject: string;
@@ -35,8 +46,11 @@ interface Data {
     category: string;
     seemsLikeNew: boolean;
     messageSpecialUse: string;
+    specialUse: string;
     summary: Summary;
     draft?: boolean;
+    cc?: From[];
+    inReplyTo?: string;
 }
 
 interface From {

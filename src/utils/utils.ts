@@ -1,21 +1,9 @@
 // IMPORTANT: Do not put any server-side or client-side specific code in this file. It is used by both.
 
+import { enUS } from 'src/constants';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
-
-export const parseError = (error: any) => {
-    if (!error) {
-        return new Error('undefined error');
-    }
-    if (error.message) {
-        if ('stack' in error) return error;
-        return error.message;
-    }
-    if (typeof error === 'string') {
-        return error;
-    }
-    return JSON.stringify(error);
-};
+import { serverLogger } from './logger-server';
 
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') {
@@ -60,12 +48,12 @@ export const chinaFilter = (str: string) => {
  *
  * @param n is the number to be converted to currency
  * @param curr is the currency to be used
- * @param LanguageFormat is the language to be used
+ * @param language is the language to be used
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = 'en-US') =>
-    Intl.NumberFormat(LanguageFormat, {
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', language = enUS) =>
+    Intl.NumberFormat(language, {
         style: 'currency',
         currency: curr,
         maximumFractionDigits: maximumFractionDigits,
@@ -143,6 +131,10 @@ export const mixArrays = (arrays: any[][]): any[] => {
  * @returns An array of the values of the fulfilled results.
  */
 export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
+    const errors = getRejectedData(results);
+    if (errors.length && errors.length > 0) {
+        serverLogger(`getFulfilledData: ${errors.length} errors. ${JSON.stringify(errors)}`, 'error');
+    }
     return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
 };
 
@@ -152,7 +144,7 @@ export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
  * @returns An array of the reasons for rejection of the rejected results.
  */
 export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
-    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason);
+    return results.filter((r): r is PromiseRejectedResult => r.status === 'rejected').map((r) => r.reason?.message);
 };
 
 export const randomNumber = (maxDigits = 8) => Math.round(Math.random() * Math.pow(10, maxDigits));

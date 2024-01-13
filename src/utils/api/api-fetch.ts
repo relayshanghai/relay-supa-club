@@ -43,36 +43,61 @@ const parseResponse = async <T = any>(res: Response): Promise<T> => {
     return (await response.text()) as T;
 };
 
-const unwrapResponse = async <T = any>(res: Response): Promise<Response & { content: T }> => {
+const unwrapResponse = async <T = any>(res: Response): Promise<{ response: Response; content: T }> => {
     const content = await parseResponse<T>(res);
 
     return {
-        ...res,
+        response: res,
         content,
     };
 };
 
+const isApiPayload = (payload: any): payload is ApiPayload => {
+    const isObject = typeof payload === 'object' && payload !== null && !Array.isArray(payload);
+    return isObject && ('path' in payload || 'query' in payload || 'body' in payload);
+};
+
+// This utility type will provide a 'API Request Type is required' literal type
+// that will throw a compiler error if an API Request type is not provided
+export type ApiPayloadParam<TReq = void> = TReq extends void ? 'API Request Type is required' : TReq;
+
+export function apiFetch<TRes = void>(
+    url: string,
+    payload?: null,
+    options?: RequestInit,
+): Promise<{ response: Response; content: TRes extends void ? 'API Response Type is required' : TRes }>;
+
+export function apiFetch<TRes = void, TReq = void>(
+    url: string,
+    payload: ApiPayloadParam<TReq>,
+    options?: RequestInit,
+): Promise<{ response: Response; content: TRes extends void ? 'API Response Type is required' : TRes }>;
+
 /**
  * For fetching API's externally or internally
  */
-export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
+export async function apiFetch<TRes = void, TReq = void>(
     url: string,
-    payload: TReq,
-    options: RequestInit = {},
-) => {
-    url = parsePayloadPath(url, payload.path);
-    url = preparePayloadQuery(url, payload.query);
+    payload?: ApiPayloadParam<TReq>,
+    options?: RequestInit,
+) {
+    const _options = options ?? {};
 
-    if (payload.body) {
-        options.method = 'POST';
-        options.body = JSON.stringify(payload.body);
-        options.headers = {
-            'content-type': 'application/json',
-            ...options.headers,
-        };
+    if (isApiPayload(payload)) {
+        url = parsePayloadPath(url, payload.path);
+        url = preparePayloadQuery(url, payload.query);
+
+        if (payload.body) {
+            _options.method = 'POST';
+            _options.body = JSON.stringify(payload.body);
+            _options.headers = {
+                'content-type': 'application/json',
+                ..._options.headers,
+            };
+        }
     }
 
-    const response = await fetch(url, options).catch((err) => {
+    const response = await fetch(url, _options).catch((err) => {
         if (err instanceof Error) return err;
         return new Error(err);
     });
@@ -84,4 +109,4 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
     const unwrapped = await unwrapResponse<TRes>(response);
 
     return unwrapped;
-};
+}

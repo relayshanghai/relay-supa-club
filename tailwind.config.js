@@ -1,16 +1,36 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: ['class'],
     mode: 'jit',
-    content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}', './styles/**/*.css'],
-
+    content: [
+        './pages/**/*.{js,jsx,ts,tsx}',
+        './shadcn/**/*.{ts,tsx}',
+        './app/**/*.{ts,tsx}',
+        './src/**/*.{js,ts,jsx,tsx}',
+        './styles/**/*.css',
+    ],
     theme: {
+        container: {
+            center: true,
+            padding: '2rem',
+            screens: {
+                '2xl': '1400px',
+            },
+        },
         extend: {
             fontFamily: {
                 poppins: ['Poppins', 'sans-serif'],
                 sans: ['Poppins', 'sans-serif'],
             },
             colors: {
+                border: 'hsl(var(--border))',
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
                 primary: {
+                    DEFAULT: '#7C3AED',
+                    foreground: '#F4F8FF',
                     50: '#F5F3FF',
                     100: '#E9E8FC',
                     200: '#DDD6FE',
@@ -23,11 +43,15 @@ module.exports = {
                     900: '#4C1D95',
                 },
                 secondary: {
+                    DEFAULT: '#599CC9',
+                    foreground: '#F4F8FF',
                     50: '#f8faff',
                     100: '#F4F7FF',
                     500: '#599CC9',
                 },
                 tertiary: {
+                    DEFAULT: '#4b5563',
+                    foreground: '#F4F8FF',
                     50: '#f9fafb',
                     100: '#f3f4f6',
                     200: '#e5e7eb',
@@ -39,20 +63,44 @@ module.exports = {
                     800: '#1f2937',
                     900: '#111827',
                 },
+                muted: {
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
+                },
+                accent: {
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))',
+                },
+                popover: {
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
+                },
+                card: {
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))',
+                },
                 'relay-purple': '#6B65AD',
             },
             backgroundImage: {
                 boostbotbackground:
                     'var(--boostbot-gradient, linear-gradient(165deg, #EE46BC 0%, #7839EE 50%, #43CBFF 100%));',
+                carouselbackground:
+                    'var(--carousel-gradient, linear-gradient(135deg, #EE46BC 0%, #7839EE 50%, #43CBFF 100%));',
             },
-            animation: {
-                float: 'float 2s ease-in-out infinite',
-                'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
-                'fade-in-from-left': 'fade-in-from-left 0.7s ease-in-out',
-                'fade-in-from-top': 'fade-in-from-top 0.7s ease-in-out',
-                'pulse-prominent': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;',
+            borderRadius: {
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
             },
             keyframes: {
+                'accordion-down': {
+                    from: { height: 0 },
+                    to: { height: 'var(--radix-accordion-content-height)' },
+                },
+                'accordion-up': {
+                    from: { height: 'var(--radix-accordion-content-height)' },
+                    to: { height: 0 },
+                },
                 float: {
                     '0%, 100%': { transform: 'translateY(5)' },
                     '50%': { transform: 'translateY(-5px)' },
@@ -74,12 +122,21 @@ module.exports = {
                     '50%': { opacity: '0.2' },
                 },
             },
+            animation: {
+                'accordion-down': 'accordion-down 0.2s ease-out',
+                'accordion-up': 'accordion-up 0.2s ease-out',
+                float: 'float 2s ease-in-out infinite',
+                'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
+                'fade-in-from-left': 'fade-in-from-left 0.7s ease-in-out',
+                'fade-in-from-top': 'fade-in-from-top 0.7s ease-in-out',
+                'pulse-prominent': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;',
+            },
+            variants: {
+                extend: {
+                    fontFamily: ['hover', 'focus'],
+                },
+            },
         },
     },
-    variants: {
-        extend: {
-            fontFamily: ['hover', 'focus'],
-        },
-    },
-    plugins: [require('@tailwindcss/forms')],
+    plugins: [require('tailwindcss-animate'), require('@tailwindcss/forms')],
 };

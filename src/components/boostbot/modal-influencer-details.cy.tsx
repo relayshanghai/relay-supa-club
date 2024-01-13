@@ -2,7 +2,7 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { InfluencerDetailsModal } from 'src/components/boostbot/modal-influencer-details';
 import boostbotGetInfluencers from '../../mocks/api/boostbot/get-influencers.json';
 import type { Row } from '@tanstack/react-table';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 
 describe('InfluencerDetailsModal', () => {
     const influencer = boostbotGetInfluencers[0];
@@ -16,11 +16,12 @@ describe('InfluencerDetailsModal', () => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 outReachDisabled={false}
-                setSelectedInfluencers={cy.stub()}
+                setSelectedInfluencerIds={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
+                url="boostbot"
             />,
         );
-        cy.get('img').should('have.attr', 'src', influencer.picture);
+        cy.getByTestId(`influencer-avatar-${influencer.fullname.replaceAll(' ', '')}`).should('exist');
         cy.contains(influencer.fullname);
         cy.contains(influencer.handle ?? influencer.username);
     });
@@ -36,8 +37,9 @@ describe('InfluencerDetailsModal', () => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 outReachDisabled={false}
-                setSelectedInfluencers={cy.stub()}
+                setSelectedInfluencerIds={cy.stub()}
                 setShowSequenceSelector={cy.stub()}
+                url="boostbot"
             />,
         );
         cy.getByTestId('boostbot-modal-open-report-link').should('have.attr', 'target', '_blank');

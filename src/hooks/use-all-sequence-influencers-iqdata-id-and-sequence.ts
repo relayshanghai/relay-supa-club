@@ -7,12 +7,22 @@ import { useUser } from './use-user';
 /**
  * Because our search page only uses these two bits of information to determine if an influencer has already been added to a sequence, we don't need to get the full influencer and sequence objects
  */
-export type AllSequenceInfluencersIqDataIdsAndSequenceNames = {
+export type AllSequenceInfluencersBasicInfo = {
+    id: string;
     iqdata_id: string;
     sequenceName?: string;
+    email: string | null;
+};
+type DBResponseInfluencer = {
+    id: string;
+    iqdata_id: string;
+    email: string | null;
+    sequences: {
+        name: string;
+    } | null;
 };
 
-export const useAllSequenceInfluencersIqDataIdAndSequenceName = () => {
+export const useAllSequenceInfluencersBasicInfo = () => {
     const { profile } = useUser();
     const fetchCall = useDB<typeof getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall>(
         getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall,
@@ -21,13 +31,21 @@ export const useAllSequenceInfluencersIqDataIdAndSequenceName = () => {
         profile?.company_id ? [profile.company_id, 'allSequenceInfluencersIqDataIdsAndSequenceNames'] : null,
         ([companyId]) => fetchCall(companyId),
     );
-    const allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersIqDataIdsAndSequenceNames[] =
-        data?.map((influencer) => ({
-            iqdata_id: influencer.iqdata_id,
-            sequenceName: influencer.sequences?.name,
+    const allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersBasicInfo[] =
+        data?.map(({ sequences, ...influencer }) => ({
+            sequenceName: sequences?.name,
+            ...influencer,
         })) ?? [];
+    const refresher = (data: AllSequenceInfluencersBasicInfo[]) => {
+        const formattedData: DBResponseInfluencer[] = data.map(({ sequenceName, ...influencer }) => ({
+            sequences: sequenceName ? { name: sequenceName } : null,
+            ...influencer,
+        }));
+        refresh(formattedData);
+    };
+
     return {
         allSequenceInfluencersIqDataIdsAndSequenceNames,
-        refresh,
+        refresh: refresher,
     };
 };

@@ -41,7 +41,7 @@ const ActiveLink = ({ href, children, expandedName }: { href: string; children: 
     const { track } = useRudderstackTrack();
 
     return (
-        <Tooltip content={expandedName} position="inset-right" contentSize="small" delay={500} enabled={true}>
+        <Tooltip content={expandedName} position="inset-right" contentSize="small" delay={500} enabled={false}>
             <Link
                 onMouseOver={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
@@ -64,7 +64,6 @@ const NavBarInner = ({
     setAccountMenuOpen,
     accountMenuButtonRef,
     accountMenuRef,
-    logout,
     loggedIn,
     profileFirstName,
     isRelayEmployee,
@@ -73,7 +72,6 @@ const NavBarInner = ({
     accountMenuButtonRef: MutableRefObject<null>;
     accountMenuRef: MutableRefObject<null>;
     setAccountMenuOpen: (menu: boolean) => void;
-    logout: () => void;
     loggedIn: boolean | null;
     profileFirstName?: string;
     isRelayEmployee: boolean;
@@ -88,7 +86,7 @@ const NavBarInner = ({
                 <Title />
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-1 flex-col gap-4">
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={'/boostbot'} expandedName={t('navbar.boostbot')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.boostbot')}</p>
@@ -122,9 +120,11 @@ const NavBarInner = ({
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.performance')}</p>
                         </ActiveLink>
                     )}
+
                     <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                         <p className={`whitespace-nowrap text-xs`}>{t('navbar.guide')}</p>
                     </ActiveLink>
+
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className="text-center text-xs">ADMIN</h2>
@@ -162,7 +162,10 @@ const NavBarInner = ({
                                     <Button
                                         className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                         variant="neutral"
-                                        onClick={logout}
+                                        onClick={() => {
+                                            window.stop(); // cancel any inflight requests
+                                            window.location.href = '/logout';
+                                        }}
                                     >
                                         {t('navbar.logout')}
                                     </Button>
@@ -181,7 +184,6 @@ export const Sidebar = ({
     accountMenuButtonRef,
     accountMenuRef,
     setAccountMenuOpen,
-    logout,
     loggedIn,
     profileFirstName,
 }: {
@@ -189,7 +191,6 @@ export const Sidebar = ({
     accountMenuButtonRef: MutableRefObject<null>;
     accountMenuRef: MutableRefObject<null>;
     setAccountMenuOpen: (menu: boolean) => void;
-    logout: () => void;
     loggedIn: boolean | null;
     profileFirstName?: string;
 }) => {
@@ -214,7 +215,6 @@ export const Sidebar = ({
                     accountMenuButtonRef={accountMenuButtonRef}
                     accountMenuRef={accountMenuRef}
                     setAccountMenuOpen={setAccountMenuOpen}
-                    logout={logout}
                     profileFirstName={profileFirstName}
                     loggedIn={loggedIn}
                     isRelayEmployee={profile?.user_role === 'relay_employee'}

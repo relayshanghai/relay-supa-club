@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MessageType } from 'src/components/boostbot/message';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -9,7 +9,6 @@ import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
 import { Layout } from 'src/components/layout';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
@@ -27,19 +26,45 @@ import { useCompany } from 'src/hooks/use-company';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import type { Row } from '@tanstack/react-table';
 import { AddToSequenceButton } from 'src/components/boostbot/add-to-sequence-button';
+import { useBoostbot } from 'src/hooks/use-boostbot';
+import { useAtomValue } from 'jotai';
+import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import { filterOutAlreadyAddedInfluencers } from 'src/components/boostbot/table/helper';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+
+/** just a type check to satisfy .filter()'s return type */
+export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
+    return influencer?.user_id !== undefined;
+};
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const [isInitialLogoScreen, setIsInitialLogoScreen] = usePersistentState('boostbot-initial-logo-screen', true);
-    const [influencers, setInfluencers] = usePersistentState<BoostbotInfluencer[]>('boostbot-influencers', []);
-    const [selectedInfluencers, setSelectedInfluencers] = usePersistentState<Record<string, boolean>>(
+    const {
+        messages,
+        setMessages,
+        influencers,
+        setInfluencers,
+        createNewConversation,
+        refreshConversation,
+        isConversationLoading,
+    } = useBoostbot();
+    const [hasSearched, setHasSearched] = useState(false);
+    const [isFirstTimeAddToSequence, setIsFirstTimeAddToSequence] = usePersistentState(
+        'boostbot-is-first-time-add-to-sequence',
+        true,
+    );
+    const [selectedInfluencerIds, setSelectedInfluencerIds] = usePersistentState<Record<string, boolean>>(
         'boostbot-selected-influencers',
         {},
     );
 
-    const selectedInfluencersData =
+    const selectedInfluencers =
         // Check if influencers have loaded from indexedDb, otherwise could return an array of undefineds
-        influencers.length > 0 ? Object.keys(selectedInfluencers).map((key) => influencers[Number(key)]) : [];
+        influencers.length > 0
+            ? Object.keys(selectedInfluencerIds)
+                  .map((key) => influencers.find((i) => i.user_id === key))
+                  .filter(isBoostbotInfluencer)
+            : [];
 
     const { trackEvent: track } = useRudderstack();
     const { sequences: allSequences } = useSequences();
@@ -62,11 +87,13 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sequenceInfluencers: allSequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((s) => s.id),
-    );
-    const { sendSequence } = useSequence(sequence?.id);
+    const { createSequenceInfluencer } = useSequenceInfluencers();
+
+    const {
+        allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
+        refresh: refreshSequenceInfluencers,
+    } = useAllSequenceInfluencersBasicInfo();
+
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
@@ -74,7 +101,7 @@ const Boostbot = () => {
 
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
-    const [searchId, setSearchId] = useState<string | number | null>(null);
+    const searchId = useAtomValue(boostbotSearchIdAtom);
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
         true,
@@ -112,29 +139,9 @@ const Boostbot = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading, isUsageLoaded, subscription]);
 
-    const [messages, setMessages] = usePersistentState<MessageType[]>(
-        'boostbot-messages',
-        [
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessage',
-            },
-        ],
-        (onLoadMessages) => {
-            const isErrorMessage = (message: MessageType) =>
-                message.type === 'translation' && message.translationKey.includes('error');
-            const isUnfinishedLoading = (message: MessageType) =>
-                message.type === 'progress' && message.progressData.totalFound === null;
-            return onLoadMessages.filter((message) => !isErrorMessage(message) && !isUnfinishedLoading(message));
-        },
-    );
-
     const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
-    const influencersToOutreach = selectedInfluencersData.filter(
-        (i) => !allSequenceInfluencers.find((si) => si.iqdata_id === i?.user_id),
-    );
+    const influencersToOutreach = filterOutAlreadyAddedInfluencers(allSequenceInfluencers, selectedInfluencers ?? []);
 
     const isOutreachButtonDisabled = influencersToOutreach.length === 0;
 
@@ -144,7 +151,6 @@ const Boostbot = () => {
 
     const handleSelectedInfluencersToOutreach = async () => {
         setIsOutreachLoading(true);
-
         const trackingPayload: SendInfluencersToOutreachPayload & { $add?: any } = {
             currentPage: CurrentPageEvent.boostbot,
             influencer_ids: [],
@@ -158,16 +164,16 @@ const Boostbot = () => {
         };
 
         try {
-            trackingPayload.is_multiple = selectedInfluencersData ? selectedInfluencersData.length > 1 : null;
+            trackingPayload.is_multiple = influencersToOutreach ? influencersToOutreach.length > 1 : null;
 
-            if (!selectedInfluencersData) {
+            if (!influencersToOutreach) {
                 throw new Error('Error adding influencers to sequence: no valid influencers selected');
             }
             if (!sequence?.id) {
                 throw new Error('Error creating sequence: no sequence id selected');
             }
 
-            const sequenceInfluencerPromises = selectedInfluencersData.map((influencer) => {
+            const sequenceInfluencerPromises = influencersToOutreach.map((influencer) => {
                 const creatorProfileId = influencer.user_id;
 
                 if (trackingPayload.influencer_ids !== null) {
@@ -193,6 +199,7 @@ const Boostbot = () => {
                     sequence_id: sequence?.id,
                 });
             });
+
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
 
@@ -203,15 +210,34 @@ const Boostbot = () => {
             trackingPayload.sequence_influencer_ids = sequenceInfluencers.map((si) => si.id);
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
 
-            addMessage({
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.outreachDone',
-                translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
-                translationValues: {
-                    sequenceName: sequence.name,
-                },
-            });
+            if (isFirstTimeAddToSequence) {
+                setIsFirstTimeAddToSequence(false);
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneFirstTime',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+            } else {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneA',
+                    translationLink: `/sequences/${encodeURIComponent(sequence.id)}`,
+                    translationValues: {
+                        sequenceName: sequence.name,
+                    },
+                });
+                addMessage({
+                    sender: 'Bot',
+                    type: 'translation',
+                    translationKey: 'boostbot.chat.outreachDoneB',
+                    translationValues: { count: influencers.length },
+                });
+            }
 
             // addMessage({
             //     sender: 'Bot',
@@ -219,11 +245,6 @@ const Boostbot = () => {
             //     videoUrl: '/assets/videos/sequence-guide.mp4',
             //     eventToTrack: OpenVideoGuideModal.eventName,
             // });
-
-            if (sequence?.auto_start) {
-                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-                await Promise.all(sendSequencePromises);
-            }
         } catch (error) {
             clientLogger(error, 'error');
             addMessage({
@@ -243,20 +264,21 @@ const Boostbot = () => {
         }
     };
 
-    const clearChatHistory = () => {
-        setMessages([
-            {
-                sender: 'Bot',
-                type: 'translation',
-                translationKey: 'boostbot.chat.introMessage',
-            },
-        ]);
-        setIsInitialLogoScreen(true);
+    const clearChatHistory = async () => {
+        if (!profile) {
+            return;
+        }
+        setHasSearched(false);
+        setMessages([]);
         setInfluencers([]);
-        setSelectedInfluencers({});
+        setSelectedInfluencerIds({});
+        await createNewConversation(profile?.id ?? '', profile?.first_name);
+        refreshConversation();
     };
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
+
+    const showInitialLogoScreen = !hasSearched && influencers.length === 0;
 
     return (
         <Layout>
@@ -271,10 +293,10 @@ const Boostbot = () => {
                 <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
                     <Chat
                         influencers={influencers}
-                        setInfluencers={setInfluencers}
                         allSequenceInfluencers={allSequenceInfluencers}
                         handleSelectedInfluencersToOutreach={handleSelectedInfluencersToOutreach}
-                        setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        setSelectedInfluencerIds={setSelectedInfluencerIds}
+                        setHasSearched={setHasSearched}
                         isOutreachLoading={isOutreachLoading}
                         isSearchLoading={isSearchLoading}
                         areChatActionsDisabled={areChatActionsDisabled}
@@ -284,7 +306,6 @@ const Boostbot = () => {
                         addMessage={addMessage}
                         isSearchDisabled={isSearchDisabled}
                         isOutreachButtonDisabled={isOutreachButtonDisabled}
-                        setSearchId={setSearchId}
                         setSequence={setSequence}
                         sequence={sequence}
                         sequences={sequences}
@@ -296,11 +317,10 @@ const Boostbot = () => {
                         selectedRow={selectedRow}
                         showSequenceSelector={showSequenceSelector}
                         setShowSequenceSelector={setShowSequenceSelector}
-                        setSelectedInfluencers={setSelectedInfluencers}
                     />
                 </div>
 
-                {isInitialLogoScreen ? (
+                {showInitialLogoScreen ? (
                     <InitialLogoScreen />
                 ) : (
                     <div className="flex w-full basis-3/4 flex-col">
@@ -315,14 +335,15 @@ const Boostbot = () => {
                                     buttonText={t('boostbot.chat.outreachSelected')}
                                     outReachDisabled={outReachDisabled}
                                     handleAddToSequenceButton={handleAddToSequenceButton}
+                                    url="boostbot"
                                 />
                             </div>
                         </div>
                         <InfluencersTable
                             columns={columns}
                             data={influencers}
-                            selectedInfluencers={selectedInfluencers}
-                            setSelectedInfluencers={setSelectedInfluencers}
+                            setSelectedInfluencerIds={setSelectedInfluencerIds}
+                            selectedInfluencerIds={selectedInfluencerIds}
                             meta={{
                                 t,
                                 searchId,
@@ -330,7 +351,7 @@ const Boostbot = () => {
                                 setSelectedRow,
                                 allSequenceInfluencers,
                                 setSelectedCount,
-                                isLoading: isSearchLoading,
+                                isLoading: isSearchLoading || isConversationLoading,
                             }}
                         />
                     </div>

@@ -33,8 +33,12 @@ const account = {
         oopsWentWrong: 'Oops, something went wrong',
     },
     subscription: {
-        plan: 'Plan',
+        plan: 'Current Plan',
         renewsOn: 'Renews on',
+        expirationDate: 'Expiration Date',
+        subscriptionStatus: 'Subscription Status',
+        pausedMessage: `Your trial has expired. Please update your account to continue using BoostBot.`,
+        canceledMessage: `Your subscription is canceled. Your account will remain active until {{expirationDate}}.`,
         paymentCycle: 'Payment cycle',
         usageLimits: 'Usage limits',
         used: 'Used',
@@ -42,17 +46,19 @@ const account = {
         monthlyLimit: 'Monthly limit',
         profilesUnlocked: 'Profiles unlocked',
         searches: 'Searches',
-        aiEmailGeneration: 'AI email generation',
         title: 'Subscription',
         viewBillingPortal: 'View billing portal',
         freeTrial: 'Free trial',
-        canceled: 'Canceled',
+        trialExpired: 'Trial expired',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: 'You have no active subscription. Please purchase one below.',
         beforePurchasingYouNeedPaymentMethod: 'Before purchasing a subscription, you need to add a payment method.',
         addPaymentMethod: 'Add payment method',
         availablePlans: 'Available plans',
         planName: 'Name',
         active: 'Active',
+        canceled: 'Canceled',
+        paused: 'Paused',
+        trial: 'Trial',
         upgradeSubscription: 'Upgrade subscription',
         cancelSubscription: 'Cancel subscription',
         monthly: 'monthly',
@@ -95,8 +101,8 @@ const account = {
     cancelModal: {
         title: 'Cancel subscription',
         areYouSureYouWantToCancelYourSubscription: 'Are you sure you want to cancel your subscription?',
-        youWillLoseAccessToAllData:
-            'You will lose access to all your projects and data once the current billing period expires.',
+        youWillLoseAccessToAllFeature: `You will no longer have access to Boostbot features after {{expirationDate}}.`,
+        currentPeriodEnd: 'current period end',
         cancelSubscription: 'Cancel subscription',
         orRenewAtDiscount_percentage: 'Or renew now at {{percentage}}% discount',
         renewNow: 'Renew now',
@@ -119,6 +125,17 @@ const account = {
         offEn: 'Off',
         offCn: '',
     },
+    plans: {
+        discovery: 'Discovery',
+        outreach: 'Outreach',
+    },
+    enableAlipay: 'Enable Alipay Agreement',
+    processingMessage: `We are currently processing your payment.
+
+Thank you for your patience.`,
+    generalPaymentError: 'Something went wrong in the process, please try again or use another payment method.',
+    authorizationPaymentError:
+        'Your Alipay payment authorization failed, please try again or use another payment method.',
 };
 
 export default account;

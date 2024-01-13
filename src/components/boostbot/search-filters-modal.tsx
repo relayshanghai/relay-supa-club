@@ -1,12 +1,12 @@
 import { type Dispatch, type SetStateAction, useState, useMemo, useEffect } from 'react';
-import { AdjustmentsVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, InfluencerSize } from 'types';
 import { influencerSizes } from 'types';
 import type { Filters } from 'src/components/boostbot/chat';
 import { Modal } from 'src/components/modal';
 import { Button } from 'src/components/button';
-import { Question, Sparkles } from 'src/components/icons';
+import { Question, Sparkles, MicroInfluencer, NicheInfluencer, Settings } from 'src/components/icons';
 import { countries, countriesByFlag } from 'src/utils/api/iqdata/dictionaries/geolocations';
 import { InputWithSuggestions } from 'src/components/library/input-with-suggestions';
 import { randomNumber } from 'src/utils/utils';
@@ -14,8 +14,6 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenBoostbotFiltersModal } from 'src/utils/analytics/events/boostbot/open-filters-modal';
 import { SetBoostbotFilter } from 'src/utils/analytics/events/boostbot/set-filter';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
-import MicroInfluencer from '../icons/MicroInfluencer';
-import NicheInfluencer from '../icons/NicheInfluencer';
 import { Tooltip } from '../library/tooltip';
 
 type SearchFiltersModalProps = {
@@ -24,15 +22,15 @@ type SearchFiltersModalProps = {
     filters: Filters;
     setFilters: Dispatch<SetStateAction<Filters>>;
 };
+const platformIcons = {
+    youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube', label: 'Youtube' },
+    instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram', label: 'Instagram' },
+    tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok', label: 'Tiktok' },
+};
 
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
     const { t } = useTranslation();
     const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-    const platformIcons: any = {
-        youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube' },
-        instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram' },
-        tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok' },
-    };
     const [localFilters, setLocalFilters] = useState(filters);
     const [shouldShowGeoInput, setShouldShowGeoInput] = useState(false);
 
@@ -201,7 +199,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
             <div className="mb-6 flex flex-1 space-x-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100">
-                        <AdjustmentsVerticalIcon className="h-6 w-6 fill-none stroke-primary-600 group-disabled:stroke-primary-200" />
+                        <Settings className="h-5 w-5 stroke-primary-600 group-disabled:stroke-primary-200" />{' '}
                     </div>
                 </div>
                 {/* TO DO CLose button */}
@@ -248,7 +246,12 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
+                                    <input
+                                        checked={isSelected}
+                                        onChange={() => null} // handled in parent onClick
+                                        type="checkbox"
+                                        className="checkbox mr-0"
+                                    />
                                 </div>
                             );
                         })}
@@ -299,7 +302,12 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="checkbox" className="checkbox mr-0" checked={isSelected} />
+                                    <input
+                                        onChange={() => null}
+                                        type="checkbox"
+                                        className="checkbox mr-0"
+                                        checked={isSelected}
+                                    />
                                 </div>
                             );
                         })}
@@ -319,26 +327,30 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                             </Tooltip>
                         </div>
 
-                        <div className="flex w-full flex-row rounded-md border-none bg-white px-3.5 py-2.5 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                            <div className="flex flex-row justify-center gap-1">
-                                {localFilters['audience_geo'].map((geo) => (
-                                    <button
-                                        key={geo.id}
-                                        data-testid={`boostbot-filter-geo-${geo.id}`}
-                                        className="bg-white-50 flex items-center gap-1 rounded-md border border-tertiary-300 px-2 text-tertiary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
-                                        onClick={() => removeGeo(geo.id)}
-                                    >
-                                        <p>{getFlagCountry(geo.id)[0].emoji}</p>
-                                        {getTranslatedCountryName(geo.id)}
-                                        <XMarkIcon className="h-3 w-3" />
-                                    </button>
-                                ))}
+                        <div className="flex w-full flex-row rounded-md border bg-white px-3.5 py-2 text-xs ring-2 ring-gray-200 hover:ring-primary-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            <div className="h-5 w-full" data-testid="boostbot-geo-container">
+                                <InputWithSuggestions
+                                    suggestions={geoSuggestions}
+                                    onSelect={addNewGeo}
+                                    hideInput={!shouldShowGeoInput}
+                                    content={
+                                        <div className="flex flex-row justify-center gap-1">
+                                            {localFilters['audience_geo'].map((geo) => (
+                                                <button
+                                                    key={geo.id}
+                                                    data-testid={`boostbot-filter-geo-${geo.id}`}
+                                                    className="bg-white-50 flex items-center gap-1 rounded-md border border-tertiary-300 px-2 text-tertiary-500 shadow-md transition-all hover:border-primary-300 hover:text-primary-300"
+                                                    onClick={() => removeGeo(geo.id)}
+                                                >
+                                                    <p>{getFlagCountry(geo.id)[0].emoji}</p>
+                                                    {getTranslatedCountryName(geo.id)}
+                                                    <XMarkIcon className="h-3 w-3" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    }
+                                />
                             </div>
-                            {shouldShowGeoInput && (
-                                <div className="w-fit" data-testid="boostbot-geo-container">
-                                    <InputWithSuggestions suggestions={geoSuggestions} onSelect={addNewGeo} />
-                                </div>
-                            )}
                         </div>
                         <p className="font-regular mt-1 text-xs text-tertiary-400">
                             {' '}

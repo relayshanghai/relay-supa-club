@@ -26,21 +26,19 @@ import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
 import { updateSequenceInfluencerIfSocialProfileAvailable } from '../sequences/helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useCompany } from 'src/hooks/use-company';
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { sequences } = useSequences();
     const { company } = useCompany();
-    const {
-        allSequenceInfluencersIqDataIdsAndSequenceNames,
-        refresh: refreshAllSequenceInfluencersIqDataIdsAndSequenceNames,
-    } = useAllSequenceInfluencersIqDataIdAndSequenceName();
+    const { allSequenceInfluencersIqDataIdsAndSequenceNames, refresh: refreshAllSequenceInfluencersBasicInfo } =
+        useAllSequenceInfluencersBasicInfo();
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
 
-    const { updateSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
+    const { updateSequenceInfluencer } = useSequenceInfluencers();
     const { loading, report, socialProfile, reportCreatedAt, errorMessage } = useReport({
         platform,
         creator_id,
@@ -88,15 +86,17 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
             return;
         }
         const sequenceName = sequences?.find((sequence) => sequence.id === sequenceInfluencer.sequence_id)?.name;
-        refreshAllSequenceInfluencersIqDataIdsAndSequenceNames([
+        refreshAllSequenceInfluencersBasicInfo([
             ...allSequenceInfluencersIqDataIdsAndSequenceNames.map((influencer) => ({
-                iqdata_id: influencer.iqdata_id,
+                ...influencer,
                 sequences: {
                     name: sequenceName ?? '',
                 },
             })),
             {
                 iqdata_id: sequenceInfluencer.iqdata_id,
+                id: sequenceInfluencer.id,
+                email: sequenceInfluencer.email,
                 sequences: {
                     name: sequenceName ?? '',
                 },

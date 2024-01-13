@@ -45,10 +45,10 @@ export const SequencesPage = () => {
 
     const handleDeleteSequence = async () => {
         try {
+            setSelection([]);
             await deleteSequence(selection);
             toast.success(t('sequences.deleteSuccess'));
             track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
-            setSelection([]);
         } catch (error) {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
@@ -89,10 +89,10 @@ export const SequencesPage = () => {
                 showCreateSequenceModal={showCreateSequenceModal}
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
-            <div className="mx-8 my-4 flex flex-col space-y-4 px-8 py-6">
+            <div className=" mx-6 flex flex-col space-y-4 py-6">
                 <div className="flex w-full justify-between">
-                    <div className="md:w-1/2 xl:w-1/3">
-                        <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
+                    <div className="md:w-1/2">
+                        <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">
                             {t('sequences.sequences')}
                         </h1>
                         <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>

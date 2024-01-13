@@ -1,18 +1,16 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { SendInfluencersToOutreach, StartSequenceForInfluencer } from 'src/utils/analytics/events';
-import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
+import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
+
 import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { Button } from './button';
 import { Info } from './icons';
 import { Modal } from './modal';
-import { randomNumber } from 'src/utils/utils';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 
 // eslint-disable-next-line complexity
@@ -40,10 +38,7 @@ export const AddToSequenceModal = ({
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
     const [submitting, setSubmitting] = useState<boolean>(false);
-    const { sendSequence } = useSequence(sequence?.id);
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const batchId = useMemo(() => randomNumber(), [show]);
+    const { createSequenceInfluencer } = useSequenceInfluencers();
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -117,53 +112,6 @@ export const AddToSequenceModal = ({
             setSubmitting(false);
             return;
         }
-        const startSequencePayload: StartSequenceForInfluencerPayload = {
-            influencer_id: null,
-            sequence_id: null,
-            sequence_name: sequence.name,
-            sequence_influencer_id: null,
-            is_success: true,
-            batch_id: batchId,
-        };
-
-        try {
-            if (newSequenceInfluencer && newSequenceInfluencer.email && sequence.auto_start) {
-                startSequencePayload.influencer_id = newSequenceInfluencer.influencer_social_profile_id;
-                startSequencePayload.sequence_id = newSequenceInfluencer.sequence_id;
-                startSequencePayload.sequence_influencer_id = newSequenceInfluencer.id;
-
-                const results = await sendSequence([newSequenceInfluencer]);
-                const failed = results.filter((result) => result.error);
-                const succeeded = results.filter((result) => !result.error);
-
-                track(StartSequenceForInfluencer, {
-                    ...startSequencePayload,
-                    sent_success: succeeded,
-                    sent_success_count: succeeded.length,
-                    sent_failed: failed,
-                    sent_failed_count: failed.length,
-                });
-                if (succeeded.length > 0) {
-                    toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
-                }
-                if (failed.length > 0) {
-                    toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
-                }
-            }
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
-            track(StartSequenceForInfluencer, {
-                ...startSequencePayload,
-                is_success: false,
-                extra_info: { error: errorMessageAndStack },
-            });
-
-            toast.error(error?.message ?? 'Unknown error auto-starting sequence');
-        } finally {
-            setSubmitting(false);
-            setShow(false);
-        }
     }, [
         createSequenceInfluencer,
         creatorProfile.fullname,
@@ -173,14 +121,11 @@ export const AddToSequenceModal = ({
         creatorProfile.username,
         creatorProfile.handle,
         platform,
-        sendSequence,
         sequence,
         setSequenceInfluencer,
-        setShow,
         setSuppressReportFetch,
         t,
         track,
-        batchId,
     ]);
 
     return (

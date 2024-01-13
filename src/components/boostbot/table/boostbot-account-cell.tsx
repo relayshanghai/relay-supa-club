@@ -1,10 +1,13 @@
 import type { Row, Table } from '@tanstack/react-table';
 import Link from 'next/link';
-import type { BoostbotInfluencer } from 'pages/api/boostbot/get-influencers';
+import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSocialProfile } from 'src/utils/analytics/events';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
+import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
+import { useAtomValue } from 'jotai';
+import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 
 export type BoostbotAccountCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -17,6 +20,8 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
     const handle = username || custom_name || fullname || '';
     const Icon = url.includes('youtube') ? Youtube : url.includes('tiktok') ? Tiktok : Instagram;
     const { track } = useRudderstackTrack();
+    const searchId = useAtomValue(boostbotSearchIdAtom);
+
     const isLoading = table.options.meta?.isLoading;
     // @note get platform from url for now
     //       `influencer` was supposed to be `UserProfile` type which contains `type` for platform but it's not there on runtime
@@ -24,15 +29,16 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
 
     return (
         <div className="flex max-w-[240px] items-center gap-6">
-            <div className="relative h-12 w-12">
+            <div className="relative h-12 w-12 flex-shrink-0">
                 {isLoading ? (
                     <div className="h-12 w-12 animate-pulse rounded-full bg-gray-300" />
                 ) : (
                     <>
-                        <img
-                            className="h-full w-full rounded-full border border-gray-200 bg-gray-100 object-cover"
-                            src={picture}
-                            alt={handle ?? username}
+                        <InfluencerAvatarWithFallback
+                            url={picture}
+                            name={handle ?? username}
+                            size={60}
+                            className="rounded-full"
                         />
                         <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
                     </>
@@ -61,7 +67,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                                     kol_id: user_id,
                                     platform,
                                     social_url: influencer.url,
-                                    search_id: table.options.meta?.searchId ?? null,
+                                    search_id: searchId,
                                 });
                             }}
                         >

@@ -2,12 +2,12 @@ import type { NextApiHandler } from 'next';
 import { emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createInviteErrors } from 'src/errors/company';
-import { getProfileByEmail, getExistingInvite, insertInvite } from 'src/utils/api/db';
+import { sendInviteEmail } from 'src/utils/api/brevo/send-template-transac-email';
+import { getProfileByEmail, getExistingInvite, insertInvite, getCompanyById } from 'src/utils/api/db';
 import type { InvitesDB } from 'src/utils/api/db/types';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { getHostnameFromRequest } from 'src/utils/get-host';
 import { serverLogger } from 'src/utils/logger-server';
-import { sendEmail } from 'src/utils/send-in-blue-client';
 
 export interface CompanyCreateInvitePostBody {
     email: string;
@@ -17,21 +17,10 @@ export interface CompanyCreateInvitePostBody {
 }
 export type CompanyCreateInvitePostResponse = InvitesDB;
 
-const formatEmail = (name: string, token: string, appUrl: string) => {
-    const link = `${appUrl}/signup/invite?${new URLSearchParams({
+const formatLink = (companyName: string, token: string, appUrl: string) => {
+    return `${appUrl}/signup/invite?${new URLSearchParams({
         token,
     })}`;
-    return `
-    <div style="padding: 5px; line-height: 2.5rem">
-        <h1>Hi ${name},</h1>
-        <p>You have been invited to join a company on BoostBot雷宝</p>
-        <p>Click the button below to accept the invite.</p>
-        <a href="${link}" style="background-color: #8B5CF6; color: white; margin: 5px; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Accept Invite</a>
-        <p>If you did not request this invite, you can safely ignore this email.</p>
-        <p>Thanks,</p>
-        <p style="margin-top: 16px">The Relay Team</p>
-    </div>
-    `;
 };
 const handler: NextApiHandler = async (req, res) => {
     if (req.method !== 'POST') {
@@ -39,8 +28,26 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     const { email, company_id, name, companyOwner } = req.body as CompanyCreateInvitePostBody;
+
     if (!email || !company_id)
         return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.missingRequiredFields });
+
+    let company = null;
+
+    try {
+        company = await getCompanyById(company_id);
+    } catch (error) {
+        serverLogger(error, (scope) => {
+            return scope.setContext('Error', {
+                error: 'Cannot get company',
+                company_id,
+            });
+        });
+    }
+
+    if (!company || !company.name) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.missingRequiredFields });
+    }
 
     if (!emailRegex.test(email))
         return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.invalidEmail });
@@ -48,6 +55,7 @@ const handler: NextApiHandler = async (req, res) => {
     if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
         return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
     }
+
     try {
         const { data: existingAccount } = await getProfileByEmail(email);
         if (existingAccount) {
@@ -70,12 +78,7 @@ const handler: NextApiHandler = async (req, res) => {
     const { appUrl } = getHostnameFromRequest(req);
 
     try {
-        await sendEmail({
-            email,
-            name,
-            subject: 'You have been invited to join a company on boostbot.ai',
-            html: formatEmail(name, insertData.id, appUrl),
-        });
+        await sendInviteEmail(email, name, company.name, formatLink(company.name, insertData.id, appUrl));
     } catch (error) {
         serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});

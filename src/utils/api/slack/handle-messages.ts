@@ -7,6 +7,9 @@ import type { SlackMessage } from '.';
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as InsertProfilePayload;
     const { first_name: firstName, last_name: lastName, phone, email } = data.record;
+    if (email?.includes('support+cus_')) {
+        return;
+    }
     if (data.table === 'profiles' && data.type === 'INSERT') {
         //For how to format Slack message body, see more at https://api.slack.com/messaging/composing/layouts
         const reqBody: SlackMessage = {
@@ -83,26 +86,11 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
 //Send a message to the slack channel when a company has updated its subscription status
 export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as UpdateCompanyPayload;
-    const {
-        name: companyName,
-        subscription_status: subscriptionStatus,
-        subscription_current_period_end: subScriptionCurrentPeriodEndDate,
-    } = data.record;
+    const { name: companyName, subscription_status: subscriptionStatus } = data.record;
     if (!data.old_record) return; //If the old_record is not present, it means the record is being created for the first time (handled in handleNewCompanyMessage
     const { subscription_status: oldSubscriptionStatus } = data.old_record;
 
     if (data.table === 'companies' && data.type === 'UPDATE' && oldSubscriptionStatus !== subscriptionStatus) {
-        let newSubscriptionStatus;
-        const currentDate = new Date();
-        if (
-            subScriptionCurrentPeriodEndDate &&
-            new Date(subScriptionCurrentPeriodEndDate) < currentDate &&
-            subscriptionStatus === 'canceled'
-        ) {
-            newSubscriptionStatus = 'expired';
-        } else {
-            newSubscriptionStatus = subscriptionStatus;
-        }
         const reqBody: SlackMessage = {
             blocks: [
                 {
@@ -131,7 +119,7 @@ export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: strin
                         },
                         {
                             type: 'mrkdwn',
-                            text: `To:\n*${newSubscriptionStatus}*`,
+                            text: `To:\n*${subscriptionStatus}*`,
                         },
                     ],
                 },

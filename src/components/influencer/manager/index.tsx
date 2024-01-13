@@ -1,7 +1,7 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-legacy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -26,11 +26,12 @@ import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((sequence) => {
-            return sequence.id;
-        }),
+    const { sequenceInfluencers, refreshSequenceInfluencers, loading } = useSequenceInfluencers(
+        sequences && sequences.map((sequence) => sequence.id),
     );
+    useEffect(() => {
+        refreshSequenceInfluencers([]);
+    }, [refreshSequenceInfluencers]);
 
     const { profile } = useUser();
 
@@ -69,15 +70,11 @@ const Manager = () => {
 
             track(OpenInfluencerProfile, {
                 influencer_id: influencer.influencer_social_profile_id,
-                search_id: searchTerm,
                 current_status: influencer?.funnel_status,
-                currently_filtered: filterStatuses.length > 0 || onlyMe || searchTerm !== '',
-                currently_searched: searchTerm !== '',
-                view_mine_enabled: onlyMe,
                 is_users_influencer: influencer.manager_first_name === profile?.first_name,
             });
         },
-        [setUiState, searchTerm, track, filterStatuses, onlyMe, profile],
+        [setUiState, track, profile],
     );
 
     const handleProfileUpdate = useCallback(
@@ -176,10 +173,10 @@ const Manager = () => {
                 getMoreInfoButtonAction={() => push('/guide')}
                 source="Influencer Manager"
             />
-            <div className="mx-8 my-6 flex flex-col px-8">
+            <div className="mx-6 my-6 flex flex-col">
                 <section className="flex w-full flex-row justify-between">
-                    <div className="my-4 md:w-1/2">
-                        <h1 className="text-2xl font-semibold">{t('manager.title')}</h1>
+                    <div className="md:w-1/2">
+                        <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{t('manager.title')}</h1>
                         <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
                     </div>
                     <div>
@@ -213,7 +210,7 @@ const Manager = () => {
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
-                <Table influencers={influencers} onRowClick={handleRowClick} />
+                <Table loading={loading} influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
                 profile={influencer}

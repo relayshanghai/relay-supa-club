@@ -20,8 +20,9 @@ export const defaultTemplates: DefaultTemplateType[] = [
 
 export const useSequenceSteps = (sequenceId?: string) => {
     const db = useClientDb();
-    const { data: sequenceSteps, mutate: refreshSequenceSteps } = useSWR(sequenceId ? 'sequence_steps' : null, () =>
-        db.getSequenceStepsBySequenceId(sequenceId ?? ''),
+    const { data: sequenceSteps, mutate: refreshSequenceSteps } = useSWR(
+        sequenceId ? [sequenceId, 'sequence_steps'] : null,
+        () => db.getSequenceStepsBySequenceId(sequenceId ?? ''),
     );
 
     const createSequenceStepDBCall = useDB<typeof insertSequenceStepsCall>(insertSequenceStepsCall);

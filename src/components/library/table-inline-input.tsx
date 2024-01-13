@@ -8,10 +8,11 @@ export interface TableInlineInputProps {
     textPromptForMissingValue: string;
     onSubmit: (value: string) => Promise<void>;
     type?: InputHTMLAttributes<HTMLInputElement>['type'];
+    onSubmittingChange?: (submitting: boolean) => void;
 }
 
 const TableInlineInputWithRef = (
-    { value, type = 'text', onSubmit, textPromptForMissingValue }: TableInlineInputProps,
+    { value, type = 'text', onSubmit, textPromptForMissingValue, onSubmittingChange }: TableInlineInputProps,
     ref: ForwardedRef<any>,
 ) => {
     const [inputValue, setInputValue] = useState('');
@@ -22,12 +23,14 @@ const TableInlineInputWithRef = (
     const [submitting, setSubmitting] = useState(false);
     const handleSubmit = async (value: string) => {
         setSubmitting(true);
+        if (onSubmittingChange) onSubmittingChange(true);
         try {
             await onSubmit(value);
         } catch (error) {
             clientLogger(error, 'error');
         }
         setSubmitting(false);
+        if (onSubmittingChange) onSubmittingChange(false);
     };
     return (
         <button

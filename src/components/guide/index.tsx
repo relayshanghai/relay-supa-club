@@ -19,7 +19,6 @@ import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 import { OpenGuideSectionModal } from 'src/utils/analytics/events/guide/open-guide-section-modal';
 import { PlayTutorialVideo } from 'src/utils/analytics/events';
 
-const featVideo = true;
 export type GuideCardKey = keyof typeof guidePage.cards;
 
 export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
@@ -58,19 +57,19 @@ export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
             </div>
             <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardKey}.title`)}</p>
             <p className="break-words text-gray-600">{t(`guidePage.cards.${cardKey}.description`)}</p>
-            <p
+            <button
                 data-testid={`guide-modal-${cardKey}`}
                 className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
                 onClick={handleGuideModal}
             >
                 {t('guidePage.learnMore')} <ArrowRight className="stroke-primary-700" height={18} width={18} />
-            </p>
+            </button>
             <GuideModal section={cardKey} show={guideShow} setShow={setGuideShow} />
         </div>
     );
 };
 
-export const GuideComponent = () => {
+export const GuideComponent = ({ showVideo = false }: { showVideo?: boolean }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
@@ -81,7 +80,17 @@ export const GuideComponent = () => {
                 <p className="text-4xl font-bold text-gray-800">{t('guidePage.welcome')} BoostBot</p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            {featVideo ? (
+            {!showVideo && (
+                <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
+                    <Image
+                        src="/assets/imgs/placeholders/dashboard-current.png"
+                        alt="Description of the image"
+                        width={1200}
+                        height={800}
+                    />
+                </div>
+            )}
+            {showVideo && (
                 <video
                     muted={false}
                     controls={true}
@@ -111,15 +120,6 @@ export const GuideComponent = () => {
                 >
                     <source src="/assets/videos/demo.mp4" />
                 </video>
-            ) : (
-                <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
-                    <Image
-                        src="/assets/imgs/placeholders/dashboard-current.png"
-                        alt="Description of the image"
-                        width={1200}
-                        height={800}
-                    />
-                </div>
             )}
             <div className="flex w-full flex-row flex-wrap justify-center md:justify-evenly md:gap-4 md:gap-y-8">
                 {Object.keys(guidePage.cards).map((card, index: number) => {

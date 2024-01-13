@@ -81,8 +81,8 @@ export const getMailboxes = async (account: string) =>
 export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
     await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });
 
-export const getEmails = async (account: string, mailboxPath: string) =>
-    await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
+export const getEmails = async (account: string, mailboxPath: string, page = 0) =>
+    await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath, page));
 
 export const getMessage = async (account: string, messageId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountMessageGet>(getEmailPath(account, messageId, textType));

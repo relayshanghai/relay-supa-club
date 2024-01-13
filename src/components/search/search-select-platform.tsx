@@ -32,7 +32,10 @@ export const SelectPlatform = () => {
                     }}
                 >
                     {loading && platform === id ? (
-                        <Spinner className="h-6 w-6 fill-primary-600 text-white" />
+                        <Spinner
+                            data-testid={`platform-select-loading-${platform}`}
+                            className="h-6 w-6 fill-primary-600 text-white"
+                        />
                     ) : (
                         <img src={icon} height={32} width={32} alt={label} />
                     )}

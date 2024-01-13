@@ -7,14 +7,14 @@ interface ChatInputProps {
     onSendMessage: (message: string) => void;
     isLoading: boolean;
     isDisabled: boolean;
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
     onSendMessage,
     isLoading,
     isDisabled,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
 }) => {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null);
     const optionsMenuRef = useRef<null | HTMLDivElement>(null);
@@ -29,7 +29,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
 
-        setSelectedInfluencers({});
+        setSelectedInfluencerIds({});
 
         onSendMessage(message.trim());
         setMessage('');
@@ -56,7 +56,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             <textarea
                 ref={textareaRef}
                 rows={2}
-                className="h-10 flex-grow resize-none rounded-[6px] border-none p-3 text-xs ring-1 ring-tertiary-200 placeholder:text-tertiary-300 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                className="h-10 flex-grow resize-none rounded-[6px] border-none p-3 text-xs font-medium ring-1 ring-tertiary-200 placeholder:text-gray-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300 2xl:pb-2.5 2xl:pt-2.5 2xl:text-sm"
                 placeholder={t('boostbot.chat.sendPlaceholder') ?? 'Send a product description...'}
                 value={message}
                 onChange={handleTextInput}

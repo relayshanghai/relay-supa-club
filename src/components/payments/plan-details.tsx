@@ -4,7 +4,7 @@ import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 export const PlanDetails = ({ priceTier }: { priceTier: ActiveSubscriptionTier }) => {
     const { t, i18n } = useTranslation();
-    const en = i18n.language.includes('en');
+    const en = i18n.language?.includes('en');
 
     return (
         <div className="flex min-h-[450px] max-w-sm flex-col rounded-lg border-2 border-gray-300 bg-white p-6">

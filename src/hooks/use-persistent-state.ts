@@ -1,62 +1,62 @@
-import { useEffect, useState } from 'react';
-import { openDB } from 'idb';
+import { useCallback, useEffect, useState } from 'react';
+import { type IDBPDatabase } from 'idb';
 import { useUser } from 'src/hooks/use-user';
+import { appCacheDBKey, appCacheStoreName, cacheVersion } from 'src/constants';
+import { initializeDB } from 'src/utils/cache-provider/cache-provider';
+import { clientLogger } from 'src/utils/logger-client';
+
+const version = cacheVersion;
 
 export const usePersistentState = <T>(
     key: string,
     initialValue: T,
-    onLoadUpdate?: (currentValue: T) => T,
-): [T, React.Dispatch<React.SetStateAction<T>>, (key: string) => void] => {
+): [T, React.Dispatch<React.SetStateAction<T>>, () => void] => {
     const { profile } = useUser();
-    const userSpecificKey = profile ? `${profile.id}-${key}` : key;
 
-    const [state, setState] = useState<T>(() => {
-        // Setup the database and return the initial value
-        const setup = async () => {
-            const db = await openDB('app-store', 1, {
-                upgrade(db) {
-                    db.createObjectStore('app-data');
-                },
-            });
+    const [db, setDb] = useState<IDBPDatabase<unknown> | null>(null);
 
-            let value = await db.get('app-data', userSpecificKey);
-
-            // Backward compatibility: If value doesn't exist with user-specific key, look for old key
-            if (value === undefined && profile) {
-                value = await db.get('app-data', key);
-                if (value !== undefined) {
-                    // Migrate data to new key
-                    await db.put('app-data', value, userSpecificKey);
-                    await db.delete('app-data', key);
-                }
-            }
-
-            value = value ?? initialValue;
-            value = onLoadUpdate ? onLoadUpdate(value) : value;
-
-            setState(value);
-        };
-
-        setup();
-
-        return initialValue;
-    });
+    const [state, setState] = useState<T>(initialValue);
 
     useEffect(() => {
-        // Update the value in the database when state changes
-        const updateDB = async () => {
-            const db = await openDB('app-store', 1);
-            await db.put('app-data', state, userSpecificKey);
+        const setupDB = async () => {
+            if (!profile?.id) return;
+            const db = await initializeDB(appCacheDBKey(profile?.id), appCacheStoreName, version);
+            setDb(db);
+            const existing = await db.get(appCacheStoreName, key);
+            setState(existing !== undefined ? existing : initialValue); // can't just check truthy cause the value could be a boolean (false)
         };
 
-        updateDB();
-    }, [userSpecificKey, state]);
+        // Update the value in the database when state changes
+        const updateDB = async () => {
+            if (!db) return;
 
-    const removeState = async () => {
+            try {
+                await db.put(appCacheStoreName, state, key);
+            } catch (error: any) {
+                if (error?.message?.includes('The database connection is closing')) {
+                    // Reopen the database
+                    const reopenedDb = await initializeDB(appCacheStoreName, appCacheDBKey(profile?.id), version);
+                    setDb(reopenedDb);
+                    // Retry the operation
+                    await reopenedDb.put(appCacheStoreName, state, key);
+                } else {
+                    clientLogger(error.message, 'error');
+                }
+            }
+        };
+
+        if (!db) {
+            setupDB();
+        } else {
+            updateDB();
+        }
+    }, [key, state, profile?.id, db, initialValue]);
+
+    const removeState = useCallback(async () => {
         setState(initialValue);
-        const db = await openDB('app-store', 1);
-        await db.delete('app-data', userSpecificKey);
-    };
+        if (!db) return;
+        await db.delete(appCacheStoreName, key);
+    }, [db, initialValue, key]);
 
     return [state, setState, removeState];
 };

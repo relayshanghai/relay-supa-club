@@ -9,9 +9,12 @@ import { useAsync } from './use-async';
 
 export const useInfluencers = () => {
     const getPosts = useAsync(async (id: string) => {
-        return await apiFetch<InfluencerPostResponse>(`/api/influencer/{sequence_influencer_id}/posts-by-influencer`, {
-            path: { sequence_influencer_id: id },
-        }).then((res) => {
+        return await apiFetch<InfluencerPostResponse, any>(
+            `/api/influencer/{sequence_influencer_id}/posts-by-influencer`,
+            {
+                path: { sequence_influencer_id: id },
+            },
+        ).then((res) => {
             if (isApiError(res.content)) {
                 throw new Error(res.content.error);
             }
@@ -21,7 +24,7 @@ export const useInfluencers = () => {
     });
 
     const savePosts = useAsync(async (id: string, posts: PostUrl[]) => {
-        return await apiFetch<InfluencerPostPostResponse>(
+        return await apiFetch<InfluencerPostPostResponse, any>(
             `/api/influencer/{sequence_influencer_id}/posts-by-influencer`,
             {
                 path: { sequence_influencer_id: id },

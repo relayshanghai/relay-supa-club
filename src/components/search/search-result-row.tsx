@@ -8,9 +8,7 @@ import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { featEmail, featRecommended } from 'src/constants/feature-flags';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
-import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -24,21 +22,23 @@ import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 import type { track } from './use-track-event';
 
-import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import { useUser } from 'src/hooks/use-user';
 import type { analyzeInfluencerParams } from 'src/hooks/use-analyze-influencer';
 import { useAnalyzeInfluencer } from 'src/hooks/use-analyze-influencer';
 import { getJourney } from 'src/utils/analytics/journey';
 import { clientLogger } from 'src/utils/logger-client';
+import type { SearchTableInfluencer as ClassicSearchInfluencer } from 'types';
+import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 
 export interface SearchResultRowProps {
-    creator: CreatorSearchAccountObject;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    creator: ClassicSearchInfluencer;
+    setSelectedCreator: (creator: ClassicSearchInfluencer) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersBasicInfo[];
     trackSearch?: track;
     batchId: number;
     page: number;
@@ -110,7 +110,7 @@ export const MoreResultsRows = ({
             <>
                 {results?.map((creator) => (
                     <SearchResultRow
-                        key={creator.account.user_profile.user_id}
+                        key={creator.user_id}
                         creator={creator}
                         setShowCampaignListModal={setShowCampaignListModal}
                         setSelectedCreator={setSelectedCreator}
@@ -159,7 +159,7 @@ export const SearchResultRow = ({
         engagements,
         engagement_rate,
         avg_views,
-    } = creator.account.user_profile;
+    } = creator;
     const handle = username || custom_name || fullname || '';
 
     const addToCampaign = async () => {
@@ -168,8 +168,8 @@ export const SearchResultRow = ({
 
         if (allCampaignCreators) {
             for (const campaignCreator of allCampaignCreators) {
-                if (campaignCreator?.campaign_id && creator.account.user_profile.user_id) {
-                    if (campaignCreator.creator_id === creator.account.user_profile.user_id) {
+                if (campaignCreator?.campaign_id && creator.user_id) {
+                    if (campaignCreator.creator_id === creator.user_id) {
                         isAlreadyInCampaign = true;
                         break;
                     }
@@ -217,12 +217,7 @@ export const SearchResultRow = ({
         <tr className="group hover:bg-primary-100">
             <td className="flex w-full">
                 <div className="relative flex flex-row gap-x-2 px-4 py-2">
-                    <img
-                        key={picture}
-                        src={imgProxy(picture) as string}
-                        className="h-12 w-12 [min-width:3rem]"
-                        alt={handle}
-                    />
+                    <InfluencerAvatarWithFallback url={picture} name={handle} size={12} />
                     <div>
                         <div className="font-bold">{fullname}</div>
                         <Link
@@ -270,7 +265,7 @@ export const SearchResultRow = ({
 
                     {profile?.created_at && featEmail(new Date(profile?.created_at)) ? (
                         <AddToSequenceButton
-                            creatorProfile={creator.account.user_profile}
+                            creatorProfile={creator}
                             allSequenceInfluencersIqDataIdsAndSequenceNames={
                                 allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
                             }
@@ -308,7 +303,7 @@ export const SearchResultRow = ({
                                                 <AddToSequenceButton
                                                     inMenu
                                                     active={active}
-                                                    creatorProfile={creator.account.user_profile}
+                                                    creatorProfile={creator}
                                                     allSequenceInfluencersIqDataIdsAndSequenceNames={
                                                         allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
                                                     }

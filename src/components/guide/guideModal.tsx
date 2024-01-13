@@ -61,7 +61,7 @@ export const GuideModal = ({
                     })}
                 </div>
                 <div className="mt-8 flex justify-end gap-4">
-                    <p
+                    <button
                         className="flex cursor-pointer flex-row items-center gap-2 text-sm font-medium text-primary-700"
                         onClick={() => {
                             track(CloseHelpModal, {
@@ -73,7 +73,7 @@ export const GuideModal = ({
                         }}
                     >
                         {t('guidePage.goBack')}
-                    </p>
+                    </button>
                     <Link
                         onClick={() => {
                             trackEvent(GUIDE_PAGE('navigate to page'), { guideSection: section });

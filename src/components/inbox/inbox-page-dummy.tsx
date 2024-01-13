@@ -12,18 +12,16 @@ import { CorrespondenceSection } from './correspondence-section-dummy';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
 import { dummyData, dummyMessages } from './dummy_data';
-import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
-import { ProfileScreenProvider } from '../influencer-profile/screens/profile-screen-context';
+import { type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import {
     mapProfileToNotes,
     mapProfileToShippingDetails,
 } from 'src/components/influencer-profile/screens/profile-overlay-screen';
-import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 import { Banner } from '../library/banner';
 
-const dummyNote = {
+const _dummyNote = {
     author: {
         id: '1',
         name: 'Jim',
@@ -44,7 +42,7 @@ export const InboxPageDummy = () => {
     const [_getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [uiState, setUiState] = useUiState();
+    const [_uiState, setUiState] = useUiState();
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | undefined | null>(
         null,
     );
@@ -57,7 +55,7 @@ export const InboxPageDummy = () => {
         };
     }, []);
 
-    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(() =>
+    const [_initialValue, setLocalProfile] = useState<ProfileValue | null>(() =>
         mapProfileToFormData(sequenceInfluencer),
     );
     useEffect(() => {
@@ -128,7 +126,7 @@ export const InboxPageDummy = () => {
         [profile],
     );
 
-    const handleUpdate = () => {
+    const _handleUpdate = () => {
         return;
     };
 
@@ -156,11 +154,11 @@ export const InboxPageDummy = () => {
         }
     }, [messages, handleSelectPreviewCard, selectedMessages]);
 
-    const handleNoteListOpen = () => {
+    const _handleNoteListOpen = () => {
         return;
     };
 
-    const handleNoteListClose = () => {
+    const _handleNoteListClose = () => {
         setUiState((s) => {
             return { ...s, isNotesListOverlayOpen: false };
         });
@@ -196,7 +194,6 @@ export const InboxPageDummy = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
                                         />
                                     ) : (
                                         <PreviewSection
@@ -204,7 +201,6 @@ export const InboxPageDummy = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
-                                            onSelect={handleSelectPreviewCard}
                                         />
                                     )}
                                 </>
@@ -219,7 +215,7 @@ export const InboxPageDummy = () => {
                                 />
                             )}
                         </div>
-                        {sequenceInfluencer && initialValue && (
+                        {/* {sequenceInfluencer && initialValue && (
                             <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
@@ -239,7 +235,7 @@ export const InboxPageDummy = () => {
                                     onOpen={handleNoteListOpen}
                                 />
                             </div>
-                        )}
+                        )} */}
                     </>
                 )}
             </div>
