@@ -311,7 +311,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         type="checkbox"
                     />
                 </td>
-                <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
+                <td className="min-w-[350px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
                         <InfluencerAvatarWithFallback
                             url={sequenceInfluencer.avatar_url || ''}
