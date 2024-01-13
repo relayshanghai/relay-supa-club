@@ -46,7 +46,7 @@ const TableInlineInputWithRef = (
                     className="group z-[10] flex h-full w-full flex-row items-center"
                 >
                     <form
-                        className="flex h-full w-full items-center"
+                        className="flex h-full w-full items-center gap-2"
                         onSubmit={(e) => {
                             e.preventDefault();
                             setEditing(false);
@@ -59,9 +59,9 @@ const TableInlineInputWithRef = (
                             type={type}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            className="rounded border border-gray-300 py-[7px] pl-4 text-xs text-gray-600 outline-none"
+                            className="w-full rounded border border-gray-300 py-[7px] pl-4 text-xs text-gray-600 outline-none"
                         />
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
                             <button
                                 disabled={submitting}
                                 type="submit"
