@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
@@ -401,7 +401,7 @@ const InboxPreview = () => {
         { revalidateOnFocus: true },
     );
 
-    const totals = threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 };
+    const totals = useMemo(() => threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 }, [threadsInfo]);
     const [uiState, setUiState] = useUiState();
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
@@ -471,19 +471,19 @@ const InboxPreview = () => {
 
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
-        setPage((prevPage) => prevPage + 1);
-    }, [setPage]);
+        const totalThreads = totals.replied + totals.unopened + totals.unreplied;
+        if (threads && threads.length > 0 && threads.length < totalThreads && !isThreadsLoading) {
+            setPage(Math.floor(threads.length / totalThreads) + 1);
+        }
+    }, [setPage, threads, totals, isThreadsLoading]);
 
     useEffect(() => {
         if (!threadsInfo) return;
 
-        const totalThreads = threadsInfo.totals.replied + threadsInfo.totals.unopened + threadsInfo.totals.unreplied;
-        if (threadsInfo.threads.length === totalThreads) return;
-
         const currentThread = lastThreadRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting) {
+                if (entries[0].isIntersecting && !isThreadsLoading) {
                     loadMoreThreads();
                 }
             },
@@ -501,7 +501,7 @@ const InboxPreview = () => {
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loadMoreThreads, lastThreadRef.current, threadsInfo]);
+    }, [loadMoreThreads, lastThreadRef.current, threadsInfo, isThreadsLoading]);
 
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
