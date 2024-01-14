@@ -1,7 +1,7 @@
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import SubscriptionDomain from 'src/backend/domain/subscription';
+import SubscriptionDomain from 'src/backend/domain/subscription/subscription';
 
 export type UpgradeSubscription = {
     priceId: string;

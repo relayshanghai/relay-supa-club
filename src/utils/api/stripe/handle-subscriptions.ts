@@ -52,16 +52,12 @@ export const cancelSubscriptionWithSubscriptionId = async (subscriptionId: strin
 };
 
 export const createSetupIntentForAlipay = async ({
-    companyId,
-    customerId,
     priceId,
     currency,
     priceTier,
     couponId,
     paymentMethodId,
 }: {
-    companyId: string;
-    customerId: string;
     priceId: string;
     currency: string;
     priceTier: string;
@@ -70,8 +66,6 @@ export const createSetupIntentForAlipay = async ({
     paymentMethodId?: string;
 }) => {
     const body: CreateSetUpIntentForAlipayPostBody = {
-        companyId,
-        customerId,
         paymentMethodTypes: ['alipay'],
         priceId,
         currency,

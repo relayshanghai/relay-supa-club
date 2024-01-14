@@ -2,9 +2,13 @@ import * as UUID from 'uuid';
 import { AsyncLocalStorage } from 'async_hooks';
 import type { Session } from '@supabase/supabase-js';
 import awaitToError from '../await-to-error';
+import type { NextApiRequest } from 'next';
 
 export interface Context {
     session?: Session | null;
+    customerId?: string | null;
+    companyId?: string | null;
+    request?: NextApiRequest;
 }
 export class RequestContext {
     static contextMap: Map<string, Context> = new Map();
