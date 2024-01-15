@@ -21,7 +21,7 @@ export const FUNNEL_STATUS = z.enum([
 
 export type FUNNEL_STATUS = z.infer<typeof FUNNEL_STATUS>;
 
-export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft';
+export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft' | 'Warmup';
 
 export type EMAIL_CONTACT_TYPE = 'from' | 'to' | 'cc' | 'bcc';
 
