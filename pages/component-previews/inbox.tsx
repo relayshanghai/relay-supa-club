@@ -384,22 +384,26 @@ const InboxPreview = () => {
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
-            if (content.data.length !== 0) {
-                setThreads((prev) => {
-                    const existingThreadIds = prev.map((thread) => thread.threadInfo.thread_id);
-
-                    const uniqueThreads = content.data.filter(
-                        (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
-                    );
-
-                    return [...prev, ...uniqueThreads];
-                });
-            }
 
             return { threads: content.data, totals: totals };
         },
         { revalidateOnFocus: true },
     );
+
+    // merge and dedupe previous threads to the newly fetched ones
+    useEffect(() => {
+        if (!threadsInfo || threadsInfo.threads.length <= 0) return;
+
+        setThreads((previousThreads) => {
+            const existingThreadIds = previousThreads.map((thread) => thread.threadInfo.thread_id);
+
+            const uniqueThreads = threadsInfo.threads.filter(
+                (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
+            );
+
+            return [...previousThreads, ...uniqueThreads];
+        });
+    }, [threadsInfo]);
 
     const totals = useMemo(() => threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 }, [threadsInfo]);
     const [uiState, setUiState] = useUiState();
