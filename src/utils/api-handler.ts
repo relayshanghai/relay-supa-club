@@ -12,8 +12,11 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { RelayError } from 'src/errors/relay-error';
 import type { RelayDatabase } from './api/db';
 import { db } from './database';
-import { profiles } from 'drizzle/schema';
+import { companies, profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { RequestContext } from './request-context/request-context';
+import awaitToError from './await-to-error';
+import type { HttpError } from './error/http-error';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -71,7 +74,7 @@ const createErrorObject = (error: any, tag: string) => {
         message: any;
         tag: string;
     } = {
-        httpCode: httpCodes.INTERNAL_SERVER_ERROR,
+        httpCode: error.httpCode || httpCodes.INTERNAL_SERVER_ERROR,
         message: `Unknown Error - ERR:${tag}`,
         tag,
     };
@@ -121,15 +124,18 @@ const determineHandler = (req: NextApiRequest, params: ApiHandlerParams) => {
     return false;
 };
 
+/**
+ * Replace this with APIHandlerWithContext instead
+ * @deprecated
+ * @returns
+ */
 export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequest, res: NextApiResponse) => {
     req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
     const {
         data: { session },
     } = await req.supabase.auth.getSession();
-
     if (session) {
         req.session = session;
-
         setUser({
             id: session.user.id,
             email: session.user.email,
@@ -168,3 +174,60 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
         return res.status(e.httpCode).json({ error: e.message });
     }
 };
+/**
+ * handle data of request flow to support request context
+ * @param params
+ * @returns
+ */
+export const ApiHandlerWithContext =
+    (params: ApiHandlerParams) => async (req: RelayApiRequest, res: NextApiResponse) => {
+        const handler = determineHandler(req, params);
+
+        if (handler === false) {
+            return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
+                error: 'Method not allowed',
+            });
+        }
+        req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
+        const [error, resp] = await awaitToError<HttpError>(
+            RequestContext.startContext(async () => {
+                RequestContext.setContext({ request: req });
+                const {
+                    data: { session },
+                } = await req.supabase.auth.getSession();
+                if (session) {
+                    const [row] = await db()
+                        .select()
+                        .from(profiles)
+                        .fullJoin(companies, eq(companies.id, profiles.company_id))
+                        .where(eq(profiles.id, session.user.id))
+                        .limit(1);
+
+                    RequestContext.setContext({
+                        session,
+                        customerId: row?.companies?.cus_id,
+                        companyId: row?.companies?.id,
+                    });
+                    if (!row) {
+                        const context = { id: session.user.id };
+                        serverLogger('Cannot get profile from session', (scope) => {
+                            return scope.setContext('User', context);
+                        });
+                    }
+                }
+
+                return await handler(req, res);
+            }),
+        );
+        if (error) {
+            const tag = nanoid(6);
+            const e = createErrorObject(error, tag);
+
+            serverLogger(error, (scope) => {
+                return scope.setTag('error_code_tag', e.tag);
+            });
+
+            return res.status(e.httpCode).json({ error: e.message });
+        }
+        return res.status(httpCodes.OK).json(resp);
+    };
