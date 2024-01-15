@@ -278,7 +278,7 @@ const ThreadProvider = ({
         [setAttachments],
     );
 
-    if (messagesError) return <div>Error loading messages</div>;
+    if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
 
     return (
