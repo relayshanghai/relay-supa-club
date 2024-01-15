@@ -19,8 +19,9 @@ import type { SequenceInfluencer } from 'src/backend/database/sequence-influence
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
 import { isApiError } from 'src/utils/is-api-error';
-import { OutreachNotesInput } from './components/outreach-notes-input';
-import { NotesListOverlayScreen } from './screens/notes-list-overlay';
+// TODO: https://linear.app/boostbot/issue/BB-232/notes-section
+// import { OutreachNotesInput } from './components/outreach-notes-input';
+// import { NotesListOverlayScreen } from './screens/notes-list-overlay';
 
 export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
@@ -107,7 +108,6 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
 
     const updateInfluencer = useCallback(
         async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
-            controller.current?.abort();
             controller.current = new AbortController();
 
             setUpdating(true);
@@ -126,7 +126,6 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
 
     const updateAddress = useCallback(
         async (body: AddressesPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
-            controller.current?.abort();
             controller.current = new AbortController();
 
             setUpdating(true);
@@ -191,6 +190,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             // optimistic update
             setAddress({ ...previous, ...update });
             try {
+                controller.current?.abort();
                 if (debounce) {
                     await updateAddressDebounced({ id: address.id, ...update }, controller);
                 } else {
@@ -210,11 +210,14 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
         country ?? ''
     }`;
 
-    const [notesOverlayOpen, setNotesOverlayOpen] = useState(false);
+    // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
+    // const [notesOverlayOpen, setNotesOverlayOpen] = useState(false);
 
     return (
         <>
-            <NotesListOverlayScreen isOpen={notesOverlayOpen} onClose={() => setNotesOverlayOpen(false)} notes={[]} />
+            {/*     // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
+             */}
+            {/* <NotesListOverlayScreen isOpen={notesOverlayOpen} onClose={() => setNotesOverlayOpen(false)} notes={[]} /> */}
             <div className="p-4 text-gray-600">
                 <h2 className="font-semibold ">{t('profile.collab')}</h2>
                 <hr className="mb-4 mt-1 border-gray-200" />
@@ -229,7 +232,9 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     options={COLLAB_STATUS_OPTIONS}
                     selected={[funnel_status]}
                 />
-                <OutreachNotesInput
+                {/*     // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
+                 */}
+                {/* <OutreachNotesInput
                     label={t('profile.notes')}
                     placeholder={t('profile.notesPlaceholder') as string}
                     buttonText={t('profile.addNoteButton')}
@@ -238,7 +243,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                     // onUpdate={(value) => onUpdateNotes('notes', value)}
                     // onSave={handleSaveNotes}
                     onOpenList={() => setNotesOverlayOpen(true)}
-                />
+                /> */}
 
                 <h2 className="mt-10 font-semibold">
                     {t('profile.compAndDeliverables') || 'Compensation & Deliverables'}
@@ -304,7 +309,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
                                 false,
                             )
                         }
-                        placeholder="chefly.shopify.com?code=2h42b2394h2"
+                        placeholder="https://chefly.shopify.com?code=2h42b2394h2"
                         type="text"
                     />
                 </label>
