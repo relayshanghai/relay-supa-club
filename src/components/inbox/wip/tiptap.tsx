@@ -2,6 +2,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
+import { Underline } from '@tiptap/extension-underline';
 import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
 import AttachmentField from './attachment-field';
@@ -26,7 +27,19 @@ export const Tiptap = ({
     const editor = useEditor({
         extensions: [
             StarterKit.configure(),
-            Link.configure(),
+            Link.configure({
+                openOnClick: false,
+                linkOnPaste: true,
+                validate: (href) => /^https?:\/\//.test(href),
+                HTMLAttributes: {
+                    class: 'text-primary-500 hover:underline cursor-pointer',
+                },
+            }),
+            Underline.configure({
+                HTMLAttributes: {
+                    class: 'my-custom-class',
+                },
+            }),
             BulletList.configure({
                 itemTypeName: 'listItem',
                 keepAttributes: true,
@@ -55,14 +68,14 @@ export const Tiptap = ({
             }}
             className="min-h-[250]px flex flex-col justify-stretch gap-2"
         >
-            <EditorContent editor={editor} />
+            <EditorContent spellCheck="false" editor={editor} />
             <div className="flex gap-2">
                 {attachments &&
                     attachments.map((file) => {
                         return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
                     })}
             </div>
-            <section className="flex items-center justify-between border border-t-transparent">
+            <section className="flex items-center justify-between rounded border p-1">
                 <div className="flex">
                     <Toolbar editor={editor} />
 

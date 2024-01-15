@@ -61,8 +61,8 @@ export const Filter = ({
         <Popover>
             <PopoverTrigger>
                 <div className="flex items-center justify-between rounded border border-gray-200 bg-white px-2 py-1 text-gray-400">
-                    <div className="flex items-center gap-2">
-                        <FilterFunnel className="w-4- h-4 stroke-gray-400" />
+                    <div className="flex items-center gap-3 px-0.5 py-1 text-xs">
+                        <FilterFunnel className="h-4 w-4 stroke-gray-400" />
                         Filters
                     </div>
                     <ChevronDown className="h-4 w-4 stroke-gray-400" />
@@ -128,7 +128,9 @@ const FilterByStatus = ({
                     key={index}
                     onClick={() => handleUpdateStatus(button.status)}
                     className={`w-full cursor-pointer justify-between ${
-                        button.enabledCondition(status) && 'bg-primary-100 text-primary-600'
+                        button.enabledCondition(status)
+                            ? 'bg-primary-100 text-primary-600'
+                            : index % 2 !== 0 && 'bg-gray-50'
                     }`}
                     variant="destructive"
                 >
@@ -173,21 +175,22 @@ const FilterByFunnelStatus = ({
     return (
         <div className="flex flex-col gap-2">
             <p className="text-xs font-medium text-gray-400">Filter by status</p>
-            {Object.keys(COLLAB_OPTIONS).map((option) => (
-                <div key={option} className="flex items-center gap-2">
-                    <Checkbox
-                        value={option}
-                        checked={status.includes(option as FunnelStatus)}
-                        onCheckedChange={() => {
-                            handleUpdateFunnelStatus(option as FunnelStatus);
-                        }}
-                    />
-                    <span
-                        className={`${COLLAB_OPTIONS[option].style} flex items-center gap-2 rounded px-2 py-1 text-sm`}
-                    >
-                        {COLLAB_OPTIONS[option].icon}
-                        {option}
-                    </span>
+            {Object.keys(COLLAB_OPTIONS).map((option, index) => (
+                <div key={option}>
+                    <div className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                        <Checkbox
+                            checked={status.includes(option as FunnelStatus)}
+                            onCheckedChange={() => {
+                                handleUpdateFunnelStatus(option as FunnelStatus);
+                            }}
+                        />
+                        <span
+                            className={`${COLLAB_OPTIONS[option].style} flex items-center gap-2 rounded px-2 py-1 text-sm`}
+                        >
+                            {COLLAB_OPTIONS[option].icon}
+                            {option}
+                        </span>
+                    </div>
                 </div>
             ))}
         </div>
@@ -225,15 +228,17 @@ const FilterBySequence = ({
     return (
         <div className="flex flex-col gap-2">
             <p className="text-xs font-medium text-gray-400">Filter by sequence</p>
-            {allSequences.map((sequence) => (
-                <div key={sequence.id} className="flex items-center gap-2">
-                    <Checkbox
-                        checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}
-                        onCheckedChange={() => {
-                            handleUpdateFunnelStatus(sequence);
-                        }}
-                    />
-                    <span className="flex items-center gap-2 rounded px-2 py-1 text-sm">{sequence.name}</span>
+            {allSequences.map((sequence, index) => (
+                <div key={sequence.id}>
+                    <div className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                        <Checkbox
+                            checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}
+                            onCheckedChange={() => {
+                                handleUpdateFunnelStatus(sequence);
+                            }}
+                        />
+                        <span className="flex items-center gap-2 rounded px-2 py-1 text-sm">{sequence.name}</span>
+                    </div>
                 </div>
             ))}
         </div>

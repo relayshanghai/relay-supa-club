@@ -29,5 +29,9 @@ export const getMessageType: GetMessageTypeFn = async (params) => {
         return 'Draft';
     }
 
+    if (emailMessage.specialUse === '\\All' && emailMessage.labels.includes('Warmup')) {
+        return 'Warmup';
+    }
+
     throw new Error('Unknown message type');
 };

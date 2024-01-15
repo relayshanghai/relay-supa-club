@@ -10,6 +10,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { randomNumber } from 'src/utils/utils';
 import { PromoCodeSection } from './promo-code-section';
 import AlipayPortal from './alipay-portal';
+import { useUser } from 'src/hooks/use-user';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -26,6 +27,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
     const { i18n, t } = useTranslation();
     const { prices } = usePrices();
     const { trackEvent } = useRudderstack();
+    const { paymentMethods, refreshPaymentMethods } = useUser();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
@@ -47,7 +49,9 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
     useEffect(() => {
         localStorage.setItem('selectedPlan', priceTier);
     }, [priceTier]);
-
+    useEffect(() => {
+        refreshPaymentMethods();
+    }, [refreshPaymentMethods]);
     return (
         <div className="w-80 lg:w-[28rem]">
             <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />
@@ -99,7 +103,12 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                         )}
 
                         {selectedPaymentMethod === 'alipay' && (
-                            <AlipayPortal selectedPrice={selectedPrice} priceTier={priceTier} couponId={couponId} />
+                            <AlipayPortal
+                                paymentMethodId={paymentMethods['alipay']?.id}
+                                selectedPrice={selectedPrice}
+                                priceTier={priceTier}
+                                couponId={couponId}
+                            />
                         )}
                     </>
                 ) : (

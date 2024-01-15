@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
@@ -26,7 +26,7 @@ import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/
 import { formatDate, now } from 'src/utils/datetime';
 import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
 import { serverLogger } from 'src/utils/logger-server';
-import { Search } from 'src/components/icons';
+import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 
 const fetcher = async (url: string) => {
@@ -278,7 +278,7 @@ const ThreadProvider = ({
         [setAttachments],
     );
 
-    if (messagesError) return <div>Error loading messages</div>;
+    if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
 
     return (
@@ -339,7 +339,8 @@ const InboxPreview = () => {
                 name: sequence.name,
             };
         });
-    const [page, _setPage] = useState(0);
+    const [page, setPage] = useState(0);
+
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
@@ -383,24 +384,28 @@ const InboxPreview = () => {
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
-            if (content.data.length !== 0) {
-                setThreads((prev) => {
-                    const existingThreadIds = prev.map((thread) => thread.threadInfo.thread_id);
-
-                    const uniqueThreads = content.data.filter(
-                        (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
-                    );
-
-                    return [...prev, ...uniqueThreads];
-                });
-            }
 
             return { threads: content.data, totals: totals };
         },
         { revalidateOnFocus: true },
     );
 
-    const totals = threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 };
+    // merge and dedupe previous threads to the newly fetched ones
+    useEffect(() => {
+        if (!threadsInfo || threadsInfo.threads.length <= 0) return;
+
+        setThreads((previousThreads) => {
+            const existingThreadIds = previousThreads.map((thread) => thread.threadInfo.thread_id);
+
+            const uniqueThreads = threadsInfo.threads.filter(
+                (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
+            );
+
+            return [...previousThreads, ...uniqueThreads];
+        });
+    }, [threadsInfo]);
+
+    const totals = useMemo(() => threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 }, [threadsInfo]);
     const [uiState, setUiState] = useUiState();
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
@@ -465,6 +470,43 @@ const InboxPreview = () => {
 
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
+    // Create a ref for the last thread element
+    const lastThreadRef = useRef<HTMLDivElement>(null);
+
+    // Callback function to load more items when the last one is observed
+    const loadMoreThreads = useCallback(() => {
+        const totalThreads = totals.replied + totals.unopened + totals.unreplied;
+        if (threads && threads.length > 0 && threads.length < totalThreads && !isThreadsLoading) {
+            setPage(Math.floor(threads.length / totalThreads) + 1);
+        }
+    }, [setPage, threads, totals, isThreadsLoading]);
+
+    useEffect(() => {
+        if (!threadsInfo) return;
+
+        const currentThread = lastThreadRef.current;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !isThreadsLoading) {
+                    loadMoreThreads();
+                }
+            },
+            { threshold: 1.0 },
+        );
+
+        if (lastThreadRef.current) {
+            observer.observe(lastThreadRef.current);
+        }
+
+        // Clean up observer on component unmount
+        return () => {
+            if (currentThread) {
+                observer.unobserve(currentThread);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loadMoreThreads, lastThreadRef.current, threadsInfo, isThreadsLoading]);
+
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
     }, [threads, selectedThread]);
@@ -491,7 +533,7 @@ const InboxPreview = () => {
     return (
         <Layout>
             <div className="grid h-full max-h-screen grid-cols-12 bg-white">
-                <section className="col-span-3 flex flex-col gap-2 overflow-scroll">
+                <section className="col-span-3 flex w-full flex-col items-center gap-2 overflow-y-auto">
                     <section className="flex w-full flex-col gap-4 p-2">
                         <SearchBar onSearch={handleSearch} />
                         <Filter
@@ -502,37 +544,46 @@ const InboxPreview = () => {
                         />
                     </section>
                     {threadsGroupedByUpdatedAt ? (
-                        <div className="flex flex-col">
+                        <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
                                 <div key={date}>
                                     <p className="px-2 py-1 text-sm font-semibold text-gray-400">
                                         {date === today ? 'Today' : date}
                                     </p>
-                                    {threadsGroupedByUpdatedAt[date].map((thread) => (
-                                        <ThreadPreview
+                                    {threadsGroupedByUpdatedAt[date].map((thread, index) => (
+                                        <div
                                             key={thread.threadInfo.id}
-                                            sequenceInfluencer={
-                                                thread.sequenceInfluencer as NonNullable<
-                                                    typeof thread.sequenceInfluencer
-                                                >
+                                            ref={
+                                                index === threadsGroupedByUpdatedAt[date].length - 1
+                                                    ? lastThreadRef
+                                                    : null
                                             }
-                                            threadInfo={thread}
-                                            _currentInbox={currentInbox}
-                                            selected={
-                                                !!selectedThread &&
-                                                selectedThread.threadInfo.id === thread.threadInfo.id
-                                            }
-                                            onClick={() => markThreadAsSelected(thread)}
-                                        />
+                                        >
+                                            <ThreadPreview
+                                                sequenceInfluencer={
+                                                    thread.sequenceInfluencer as NonNullable<
+                                                        typeof thread.sequenceInfluencer
+                                                    >
+                                                }
+                                                threadInfo={thread}
+                                                _currentInbox={currentInbox}
+                                                selected={
+                                                    !!selectedThread &&
+                                                    selectedThread.threadInfo.id === thread.threadInfo.id
+                                                }
+                                                onClick={() => markThreadAsSelected(thread)}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             ))}
                         </div>
                     ) : isThreadsLoading ? (
-                        <>Loading</>
+                        <Spinner className="h-6 w-6 fill-primary-400" />
                     ) : (
                         <>No threads here!</>
                     )}
+                    {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
                 <section className="col-span-5 flex h-full flex-col">
                     {selectedThread && (
@@ -579,7 +630,7 @@ const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => 
         <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus-visible:ring-none border-none bg-white focus:border-none focus-visible:outline-none"
+                className="focus-visible:ring-none border-none bg-white text-xs placeholder:text-gray-400 focus:border-none focus-visible:outline-none"
                 placeholder="Search mailbox"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
