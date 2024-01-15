@@ -26,7 +26,9 @@ export const Tiptap = ({
 }) => {
     const editor = useEditor({
         extensions: [
-            StarterKit.configure(),
+            StarterKit.configure({
+                hardBreak: false,
+            }),
             Link.configure({
                 openOnClick: false,
                 linkOnPaste: true,
@@ -52,7 +54,7 @@ export const Tiptap = ({
         content: description,
         editorProps: {
             attributes: {
-                class: 'flex min-h-[150px] w-full rounded-md border border-input bg-transparent p-3 transition-all text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-400 focus-visible:ring-primary-400 focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                class: `min-h-[150px] w-full rounded-md border border-input bg-transparent p-3 transition-all text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-400 focus-visible:ring-primary-400 focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50`,
             },
         },
         onUpdate: ({ editor }) => {
