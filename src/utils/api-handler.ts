@@ -74,7 +74,7 @@ const createErrorObject = (error: any, tag: string) => {
         message: any;
         tag: string;
     } = {
-        httpCode: error.httpCode || httpCodes.INTERNAL_SERVER_ERROR,
+        httpCode: httpCodes.INTERNAL_SERVER_ERROR,
         message: `Unknown Error - ERR:${tag}`,
         tag,
     };
