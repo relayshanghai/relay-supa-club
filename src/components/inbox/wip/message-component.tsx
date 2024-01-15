@@ -15,6 +15,7 @@ import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
+import { useRouter } from 'next/router';
 
 const MessageTitle = ({
     expanded,
@@ -92,10 +93,20 @@ const MessageTitle = ({
 };
 
 const AttachmentTablet = ({ attachment }: { attachment: AttachmentFile }) => {
-    const handleDownloadAttachment = useCallback(() => {
-        // eslint-disable-next-line no-console
-        console.log('Attachment Clicked', attachment);
-    }, [attachment]);
+    const router = useRouter();
+    const handleDownloadAttachment = useCallback(async () => {
+        if (!attachment.id) return;
+        const baseUrl = '/api/outreach/attachments';
+        const downloadParams = new URLSearchParams({
+            id: attachment.id,
+            filename: attachment.filename,
+        });
+
+        router.push(`${baseUrl}?${new URLSearchParams(downloadParams)}`, undefined, {
+            shallow: true,
+        });
+    }, [attachment, router]);
+
     const truncatedText = (text: string, maxLength: number) => {
         return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
     };
