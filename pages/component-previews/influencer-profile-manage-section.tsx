@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import i18n from 'i18n';
 
 const influencer: InfluencerOutreachData = {
-    id: '965072d5-2b89-4854-b50d-f20d22d1df98',
+    id: '9b778d64-496e-41a9-a6dd-c741ae40227b',
     created_at: '2023-09-06T05:16:32.072089+00:00',
     updated_at: '2023-09-06T06:06:11.909+00:00',
     added_by: mockProfile?.id,

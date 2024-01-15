@@ -1,5 +1,5 @@
 import type { MutableRefObject } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { serverLogger } from 'src/utils/logger-server';
 import toast from 'react-hot-toast';
 import { atom, useAtom } from 'jotai';
@@ -19,6 +19,10 @@ import type { SequenceInfluencer } from 'src/backend/database/sequence-influence
 import type { AddressesPutRequestBody, AddressesPutRequestResponse } from 'pages/api/addresses';
 import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
 import { isApiError } from 'src/utils/is-api-error';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+
+import { randomNumber } from 'src/utils/utils';
+import { UpdateInfluencerOrAddress } from 'src/utils/analytics/events/outreach/update-sequence-influencer-or-address';
 // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
 // import { OutreachNotesInput } from './components/outreach-notes-input';
 // import { NotesListOverlayScreen } from './screens/notes-list-overlay';
@@ -77,6 +81,7 @@ const processStringAsNumber = (inputValue: string) => {
 
 export const ManageSection = ({ influencer: passedInfluencer, address: passedAddress }: ManageSectionProps) => {
     const { t } = useTranslation();
+    const { track } = useRudderstackTrack();
 
     const [influencer, setInfluencer] = useState<SequenceInfluencer>(passedInfluencer);
     useEffect(() => {
@@ -106,40 +111,58 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     const countryController = useRef<AbortController | null>(null);
     const trackingCodeController = useRef<AbortController | null>(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const batchId = useMemo(() => randomNumber(), [influencer.id]);
+
     const updateInfluencer = useCallback(
         async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
-            controller.current = new AbortController();
-
             setUpdating(true);
+            controller.current?.abort();
+            controller.current = new AbortController();
             const { content } = await apiFetch<
                 SequenceInfluencersPutRequestResponse,
                 { body: SequenceInfluencersPutRequestBody }
-            >('/api/sequence-influencers', { body }, { method: 'PUT', signal: controller.current.signal });
+            >('/api/sequence-influencers', { body }, { method: 'PUT', signal: controller.current?.signal });
 
             if (isApiError(content)) {
                 throw new Error(content.error);
             }
+            const updatedKey = Object.keys(body).filter((key) => key !== 'id')[0] as keyof SequenceInfluencer;
+            track(UpdateInfluencerOrAddress, {
+                influencer_id: influencer.id,
+                batch_id: batchId,
+                updated_field: updatedKey,
+                updated_value: updatedKey in body ? body[updatedKey]?.toString() ?? '' : '',
+            });
+
             setUpdating(false);
         },
-        [setUpdating],
+        [batchId, influencer.id, setUpdating, track],
     );
 
     const updateAddress = useCallback(
         async (body: AddressesPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
-            controller.current = new AbortController();
-
             setUpdating(true);
+            controller.current?.abort();
+            controller.current = new AbortController();
             const { content } = await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
                 '/api/addresses',
                 { body },
-                { method: 'PUT', signal: controller.current.signal },
+                { method: 'PUT', signal: controller.current?.signal },
             );
             if (isApiError(content)) {
                 throw new Error(content.error);
             }
+            const updatedKey = Object.keys(body).filter((key) => key !== 'id')[0] as keyof Address;
+            track(UpdateInfluencerOrAddress, {
+                influencer_id: influencer.id,
+                batch_id: batchId,
+                updated_field: `address.${updatedKey}`,
+                updated_value: updatedKey in body ? body[updatedKey]?.toString() ?? '' : '',
+            });
             setUpdating(false);
         },
-        [setUpdating],
+        [batchId, influencer.id, setUpdating, track],
     );
 
     const updateInfluencerDebounced = debounce(updateInfluencer, 2000);
@@ -160,7 +183,6 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             ) {
                 return;
             }
-
             const previous = { ...influencer };
             // optimistic update
             setInfluencer({ ...previous, ...update });
@@ -185,12 +207,10 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             if (!address || !update || Object.keys(update).length === 0 || doesObjectMatchUpdate(address, update)) {
                 return;
             }
-
             const previous = { ...address };
             // optimistic update
             setAddress({ ...previous, ...update });
             try {
-                controller.current?.abort();
                 if (debounce) {
                     await updateAddressDebounced({ id: address.id, ...update }, controller);
                 } else {
