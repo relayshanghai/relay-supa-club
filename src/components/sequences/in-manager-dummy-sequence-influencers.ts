@@ -1,6 +1,6 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 
-export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
+export const inManagerDummyInfluencers: SequenceInfluencerManagerPageWithChannelData[] = [
     {
         id: '570c72ba-33c1-4ac7-a237-ced1634a9cd5',
         created_at: '2023-08-31T07:01:13.487913+00:00',
@@ -34,6 +34,77 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: '10cf3332-6845-4f19-ae68-303489663af4',
@@ -69,6 +140,77 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: '0b593031-0690-4651-ba2f-628a84710201',
@@ -104,6 +246,77 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: '3327f2c1-4d5c-4852-9a1e-39e8a063a606',
@@ -139,6 +352,76 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: 'cc2132ee-ee00-4283-ae4d-9ec764a8fc5f',
@@ -174,6 +457,77 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: '1817460c-49de-43fa-af1d-98368a4d9965',
@@ -209,6 +563,76 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
     {
         id: 'db95bdb5-2fd8-4089-a57c-c542013dad93',
@@ -244,5 +668,75 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         recent_post_url: 'https://example.com',
         affiliate_link: 'https://example.com/affiliate_link',
         commission_rate: 0.1,
+        channel_data: {
+            url: 'https://www.youtube.com/channel/UC253fmoYoUyUbu6uPsY1EqA',
+            handle: 'krw',
+            topics: ['memes', 'humor', 'comedy'],
+            picture:
+                'https://yt3.googleusercontent.com/T47un8lOxDNIhTmNcjZmV9gZOUkcJTMr_HHk-IsTY7jSaPQDoNCvbxIHYSZT33YWTKBu9qalCg=s480-c-k-c0x00ffffff-no-rj',
+            user_id: 'UC253fmoYoUyUbu6uPsY1EqA',
+            distance: 0.45979762077331543,
+            fullname: 'Krow',
+            language: {
+                code: 'en',
+                name: 'English',
+            },
+            avg_views: 25133,
+            followers: 131000,
+            relevance: 0.9793921632736344,
+            engagements: 1564,
+            is_verified: true,
+            posts_count: 839,
+            audience_geo: {
+                countries: [
+                    {
+                        id: 148838,
+                        code: 'US',
+                        name: 'United States',
+                        weight: 0.46118192352259557,
+                    },
+                    {
+                        id: 1428125,
+                        code: 'CA',
+                        name: 'Canada',
+                        weight: 0.06488991888760139,
+                    },
+                ],
+            },
+            engagement_rate: 0.011938931297709924,
+            audience_genders: [
+                {
+                    code: 'MALE',
+                    weight: 0.6191222570532917,
+                },
+            ],
+            followers_growth: 0,
+            audience_genders_per_age: [
+                {
+                    code: '13-17',
+                    male: 0.06840160913619936,
+                },
+                {
+                    code: '18-24',
+                    male: 0.2700986617173,
+                },
+                {
+                    code: '25-34',
+                    male: 0.17246559568528894,
+                },
+                {
+                    code: '35-44',
+                    male: 0.08009419189452402,
+                },
+                {
+                    code: '45-64',
+                    male: 0.02806219861997922,
+                },
+                {
+                    code: '65-',
+                    male: 0,
+                },
+            ],
+        },
     },
 ];

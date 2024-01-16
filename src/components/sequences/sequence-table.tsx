@@ -10,16 +10,19 @@ import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
 import { type SetStateAction, useCallback, useState, useEffect } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
 import { isMissingSocialProfileInfo } from './helpers';
 import type { KeyedMutator } from 'swr';
 
 interface SequenceTableProps {
     sequence?: Sequence;
-    sequenceInfluencers: SequenceInfluencerManagerPage[];
-    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPage>;
-    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPage[]>;
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[];
+    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPageWithChannelData>;
+    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPageWithChannelData[]>;
     sequenceEmails?: SequenceEmail[];
     loadingEmails: boolean;
     sequenceSteps: SequenceStep[];
@@ -30,7 +33,9 @@ interface SequenceTableProps {
     templateVariables: TemplateVariable[];
     selection: string[];
     setSelection: (selection: string[]) => void;
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
+    handleStartSequence: (
+        sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
+    ) => Promise<SequenceSendPostResponse>;
 }
 
 const sortInfluencers = (

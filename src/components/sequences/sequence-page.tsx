@@ -16,7 +16,10 @@ import { useTranslation } from 'react-i18next';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPageWithChannelData,
+    SequenceInfluencerManagerPage,
+} from 'pages/api/sequence/influencers';
 import { useUser } from 'src/hooks/use-user';
 import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 import toast from 'react-hot-toast';
@@ -57,7 +60,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-    const influencers = useMemo<SequenceInfluencerManagerPage[]>(() => {
+    const influencers = useMemo<SequenceInfluencerManagerPageWithChannelData[]>(() => {
         if (!sequenceInfluencers) {
             return [];
         }
@@ -72,7 +75,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
     const handleStartSequence = useCallback(
-        async (sequenceInfluencersToSend: SequenceInfluencerManagerPage[]) => {
+        async (sequenceInfluencersToSend: SequenceInfluencerManagerPageWithChannelData[]) => {
             try {
                 if (!sequenceSteps || sequenceSteps.length === 0) {
                     throw new Error('Sequence steps not found');
@@ -264,7 +267,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     );
 
     const handleBatchSend = useCallback(
-        async (batchSendInfluencers: SequenceInfluencerManagerPage[]) => {
+        async (batchSendInfluencers: SequenceInfluencerManagerPageWithChannelData[]) => {
             if (selection.length === 0) {
                 return;
             }
