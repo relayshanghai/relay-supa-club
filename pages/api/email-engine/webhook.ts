@@ -57,6 +57,7 @@ import { deleteJobs } from 'src/utils/scheduler/db-queries';
 import { isString } from 'src/utils/types';
 import type { SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
 import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
+import { saveAddressByInfluencer as saveAddressByInfluencerCall } from 'src/utils/api/db/calls/addresses';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -90,6 +91,8 @@ const updateSequenceInfluencer = db<typeof updateSequenceInfluencerCall>(updateS
 const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdCall>(
     deleteSequenceEmailByMessageIdCall,
 );
+
+const saveAddressByInfluencer = db<typeof saveAddressByInfluencerCall>(saveAddressByInfluencerCall);
 
 export const getScheduledMessages = (outbox: OutboxGet['messages'], sequenceEmails: SequenceEmail[]) => {
     return outbox.filter((message) =>
@@ -249,6 +252,23 @@ export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event:
         }
 
         const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
+
+        if (sequenceInfluencer.influencer_social_profile_id && sequenceInfluencer.username) {
+            try {
+                await saveAddressByInfluencer(sequenceInfluencer.influencer_social_profile_id, {
+                    name:
+                        sequenceInfluencer.real_full_name ||
+                        sequenceInfluencer.name ||
+                        sequenceInfluencer.username ||
+                        '',
+                    influencer_social_profile_id: sequenceInfluencer.influencer_social_profile_id,
+                });
+            } catch (error: any) {
+                if (isFetchFailedError(error)) {
+                    serverLogger(error);
+                }
+            }
+        }
 
         const update = await updateSequenceInfluencer(influencerUpdate);
         trackData.extra_info.influencer_update = update;

@@ -379,7 +379,7 @@ export const sequence_influencers = pgTable('sequence_influencers', {
     email: text('email'),
     sequence_step: smallint('sequence_step').default(0).notNull(),
     funnel_status: text('funnel_status').notNull(),
-    tags: text('tags').default('{}').array().notNull(),
+    tags: text('tags').default('[]').array().notNull(),
     next_step: text('next_step'),
     scheduled_post_date: timestamp('scheduled_post_date', { withTimezone: true, mode: 'string' }),
     video_details: text('video_details'),
@@ -401,6 +401,8 @@ export const sequence_influencers = pgTable('sequence_influencers', {
     social_profile_last_fetched: timestamp('social_profile_last_fetched', { withTimezone: true, mode: 'string' }),
     url: text('url'),
     username: text('username'),
+    affiliate_link: text('affiliate_link'),
+    commission_rate: doublePrecision('commission_rate'),
 });
 
 export const products = pgTable('products', {

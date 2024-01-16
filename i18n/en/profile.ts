@@ -2,12 +2,12 @@ const profile = {
     outreach: 'Outreach',
     nextStep: 'Next Step',
     nextStepPlaceholder: 'Next thing you need to do for collab',
-    collabStatus: 'Collab Status',
+    collabStatus: 'Collab Stage',
     notes: 'Notes',
     notesPlaceholder: 'Write a note about this KOL to save for later',
     collab: 'Collab',
     addNoteButton: 'Add Note',
-    fee: 'Fee (USD)',
+    fee: 'Fixed Fee (USD)',
     videoDetails: 'Video Details',
     videoDetailsPlaceholder: 'Details about video content or style',
     scheduledPostDate: 'Scheduled Post Date',
@@ -28,6 +28,9 @@ const profile = {
     trackingCode: 'Tracking Code',
     fullAddress: 'Full Address',
     updateProfileButton: 'Update Influencer Profile',
+    compAndDeliverables: 'Compensation & Deliverables',
+    commissionRate: 'Commission Rate (%)',
+    shippingAndPersonalInfo: 'Shipping & Personal Info',
 };
 
 export default profile;

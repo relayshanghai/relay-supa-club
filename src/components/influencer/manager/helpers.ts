@@ -1,9 +1,13 @@
 import Fuse from 'fuse.js';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import type { CommonStatusType } from 'src/components/library';
 import type { ProfileDB, Sequence } from 'src/utils/api/db';
 
-export const filterByMe = (influencers: SequenceInfluencerManagerPage[], profile: ProfileDB, sequences: Sequence[]) => {
+export const filterByMe = (
+    influencers: SequenceInfluencerManagerPageWithChannelData[],
+    profile: ProfileDB,
+    sequences: Sequence[],
+) => {
     return influencers.filter((influencer) => {
         const sequence = sequences?.find((sequence) => sequence.id === influencer.sequence_id);
         if (!sequence) {
@@ -18,7 +22,7 @@ export const filterInfluencers = (
     onlyMe: boolean,
     filterStatuses: CommonStatusType[],
     profile: ProfileDB,
-    sequenceInfluencers: SequenceInfluencerManagerPage[],
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
     sequences?: Sequence[],
 ) => {
     let influencers = sequenceInfluencers;
