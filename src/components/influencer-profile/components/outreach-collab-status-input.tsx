@@ -8,7 +8,7 @@ type Props = {
 
 export const OutreachCollabStatusInput = (props: Props) => {
     return (
-        <div className="col-span-1 w-full">
+        <div className="z-10 col-span-1 w-full">
             <CheckboxDropdown
                 {...props}
                 multiple={false}

@@ -9,7 +9,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import useSWR from 'swr';
 import { useRudderstackTrack } from './use-rudderstack';
 import { useSequences } from './use-sequences';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import { useTemplateVariables } from './use-template_variables';
 import { getSequenceInfluencersBySequenceIdsCall } from 'src/utils/api/db/calls/sequence-influencers';
 import type {
@@ -97,7 +97,7 @@ export const useSequence = (sequenceId?: string) => {
     );
 
     const sendSequence = useCallback(
-        async (sequenceInfluencers: SequenceInfluencerManagerPage[], sequenceSteps: SequenceStep[]) => {
+        async (sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[], sequenceSteps: SequenceStep[]) => {
             if (!profile?.email_engine_account_id) {
                 throw new Error('No email account found');
             }
