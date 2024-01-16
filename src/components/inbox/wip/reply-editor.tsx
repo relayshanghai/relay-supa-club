@@ -27,14 +27,13 @@ export const ReplyEditor = ({
 
     const handleSendReply = useCallback(() => {
         onReply(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
-        // console.log(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
         setReplyText('');
     }, [replyText, onReply, sendTo, sendCC, defaultContacts]);
     const getNameOrAddressContact = (contact: EmailContact) => contact.name || contact.address;
     const replyCaption = () => {
         const to = sendTo.map(getNameOrAddressContact);
         const cc = sendCC.map(getNameOrAddressContact);
-        return `Reply all to ${to.join(', ')}${cc.length > 0 ? `, ${cc.map(r => `${r} (CC)`).join(', ')}` : ''}`;
+        return `Reply all to ${to.join(', ')}${cc.length > 0 ? `, ${cc.map((r) => `${r} (CC)`).join(', ')}` : ''}`;
     };
     return (
         <div className="grid grid-cols-1 divide-y">
