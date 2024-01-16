@@ -3,7 +3,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, Thread, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { AttachmentFile, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -25,7 +25,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useAddress } from 'src/hooks/use-address
+import { useAddress } from 'src/hooks/use-address';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -75,7 +75,7 @@ const emptyMessage: Message = {
     body: "<p>Make sure to contact some influencers from your <a href='/sequences'>Sequences</a> and come check your inbox in a day or two!</p>",
 };
 
-const emptyThread: Thread = {
+const emptyThread = {
     threadInfo: {
         id: 'f770bc12-d10d-467b-880b-43b43ea24412',
         thread_id: '1788228375458170330',
@@ -89,33 +89,8 @@ const emptyThread: Thread = {
     },
     sequenceInfluencer: {
         id: '99257908-639b-4725-b62f-70f4581de67b',
-        created_at: '2024-01-16T06:17:08.814Z',
-        updated_at: '2024-01-16T06:54:04.984Z',
-        added_by: '591a6cba-301e-5690-81ef-4d1742d41871',
-        email: 'suvo.suvojitghosh@gmail.com',
-        sequence_step: 3,
-        funnel_status: 'Rejected',
-        tags: ['memes', 'meme', 'funny meme'],
-        next_step: null,
-        scheduled_post_date: null,
-        video_details: null,
-        rate_amount: 212,
-        rate_currency: 'USD',
-        real_full_name: null,
-        company_id: 'd7326229-dbeb-41aa-8b9b-4baeb63d0d7f',
-        sequence_id: '055870b7-1d6a-46ed-b205-9b32b34bfd83',
-        address_id: null,
-        influencer_social_profile_id: '257c78f9-f1ca-41b1-aeb6-d66397284e80',
-        iqdata_id: 'UCWrb1i7uEh5cDhTFAweiLww',
-        avatar_url:
-            'https://yt3.googleusercontent.com/-nUzg1mFprJAhEeyg_ImM3wW5Vl1Il08XnWuBwbWdR_swOxy7XmeSB2AK11OQ3dfuQp7-xBg=s480-c-k-c0x00ffffff-no-rj',
-        name: 'Austinjpg',
-        platform: 'youtube',
-        social_profile_last_fetched: '2024-01-16T06:17:18.251Z',
-        url: 'https://www.youtube.com/channel/UCWrb1i7uEh5cDhTFAweiLww',
-        username: 'austinjpg',
-        recent_post_title: 'Real',
-        recent_post_url: 'https://www.youtube.com/watch?v=brhZ0h1g3NQ',
+        name: 'No messages yet',
+        username: 'Check again later',
     },
     influencerSocialProfile: undefined,
     contacts: [
@@ -650,6 +625,7 @@ const InboxPreview = () => {
                     ) : (
                         <ThreadPreview
                             sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
+                            // @ts-ignore
                             threadInfo={emptyThread}
                             _currentInbox={currentInbox}
                             selected={false}
@@ -673,6 +649,7 @@ const InboxPreview = () => {
                         <div className="flex h-full flex-col bg-zinc-50">
                             <div className="flex-none bg-zinc-50 p-1">
                                 <ThreadHeader
+                                    // @ts-ignore
                                     threadInfo={emptyThread}
                                     messages={[emptyMessage]}
                                     participants={['Me']}
@@ -702,6 +679,7 @@ const InboxPreview = () => {
                 <section className="col-span-4 overflow-y-auto">
                     {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
                         <ProfileScreen
+                            // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
