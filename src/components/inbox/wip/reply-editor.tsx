@@ -30,27 +30,37 @@ export const ReplyEditor = ({
         // console.log(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
         setReplyText('');
     }, [replyText, onReply, sendTo, sendCC, defaultContacts]);
-
+    const getNameOrAddressContact = (contact: EmailContact) => contact.name || contact.address;
+    const replyCaption = () => {
+        const to = sendTo.map(getNameOrAddressContact);
+        const cc = sendCC.map(getNameOrAddressContact);
+        return `Reply all to ${to.join(', ')}${cc.length > 0 ? `, ${cc.map(r => `${r} (CC)`).join(', ')}` : ''}`;
+    };
     return (
-        <div>
-            <AddressSection
-                defaultTo={defaultContacts.to}
-                defaultCC={defaultContacts.cc}
-                sendTo={sendTo}
-                setSendTo={setSendTo}
-                sendCC={sendCC}
-                setSendCC={setSendCC}
-            />
-            <Tiptap
-                description={replyText}
-                onChange={(text: string) => {
-                    setReplyText(text);
-                }}
-                onSubmit={handleSendReply}
-                attachments={attachments}
-                handleRemoveAttachment={handleRemoveAttachment}
-                handleAttachmentSelect={handleAttachmentSelect}
-            />
+        <div className="grid grid-cols-1 divide-y">
+            <div className="p-2">
+                <AddressSection
+                    defaultTo={defaultContacts.to}
+                    defaultCC={defaultContacts.cc}
+                    sendTo={sendTo}
+                    setSendTo={setSendTo}
+                    sendCC={sendCC}
+                    setSendCC={setSendCC}
+                />
+            </div>
+            <div className="p-2">
+                <Tiptap
+                    description={replyText}
+                    onChange={(text: string) => {
+                        setReplyText(text);
+                    }}
+                    placeholder={replyCaption()}
+                    onSubmit={handleSendReply}
+                    attachments={attachments}
+                    handleRemoveAttachment={handleRemoveAttachment}
+                    handleAttachmentSelect={handleAttachmentSelect}
+                />
+            </div>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { Underline } from '@tiptap/extension-underline';
@@ -8,6 +9,7 @@ import { Paperclip, Send } from 'src/components/icons';
 import AttachmentField from './attachment-field';
 import type { AttachmentFile } from 'src/utils/outreach/types';
 import AttachmentFileItem from './attachment-file-item';
+import { useEffect } from 'react';
 
 export const Tiptap = ({
     description,
@@ -16,6 +18,7 @@ export const Tiptap = ({
     attachments,
     handleRemoveAttachment,
     handleAttachmentSelect,
+    placeholder,
 }: {
     description: string;
     onChange: (description: string) => void;
@@ -23,11 +26,20 @@ export const Tiptap = ({
     attachments: AttachmentFile[] | null;
     handleRemoveAttachment: (file: AttachmentFile) => void;
     handleAttachmentSelect: (files: AttachmentFile[] | null, error?: any) => void;
+    placeholder?: string;
 }) => {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
                 hardBreak: false,
+            }),
+            Placeholder.configure({
+                showOnlyWhenEditable: false,
+                emptyNodeClass:
+                    'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
+                placeholder: () => {
+                    return placeholder || 'Write something...';
+                } 
             }),
             Link.configure({
                 openOnClick: false,
@@ -54,13 +66,24 @@ export const Tiptap = ({
         content: description,
         editorProps: {
             attributes: {
-                class: `min-h-[150px] w-full rounded-md border border-input bg-transparent p-3 transition-all text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-400 focus-visible:ring-primary-400 focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50`,
+                class: 'min-h-[150px] w-full bg-transparent p-3 transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
             },
         },
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
         },
     });
+    useEffect(() => {
+    
+
+        const placeholderExtension = editor?.extensionManager.extensions.find(
+            (extension) => extension.name === "placeholder"
+        );
+        if (placeholderExtension) {
+            placeholderExtension.options['placeholder'] = placeholder;
+        }
+        editor?.view.dispatch(editor?.state.tr)
+    }, [placeholder, editor])
     return (
         <form
             onSubmit={(e) => {
@@ -70,14 +93,15 @@ export const Tiptap = ({
             }}
             className="min-h-[250]px flex flex-col justify-stretch gap-2"
         >
-            <EditorContent spellCheck="false" editor={editor} />
+            <EditorContent spellCheck="false" placeholder={placeholder} editor={editor} />
             <div className="flex gap-2">
+
                 {attachments &&
                     attachments.map((file) => {
                         return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
                     })}
             </div>
-            <section className="flex items-center justify-between rounded border p-1">
+            <section className="flex items-center justify-between rounded border-t-2 border-slate-50 p-1">
                 <div className="flex">
                     <Toolbar editor={editor} />
 
