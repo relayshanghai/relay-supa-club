@@ -264,7 +264,7 @@ export const MessagesComponent = ({
         <Accordion
             type="multiple"
             id={messages[0]?.id}
-            className="w-[95%] space-y-4 bg-gray-50"
+            className="space-y-4 bg-gray-50"
             value={openMessage}
             onValueChange={(value) => {
                 setOpenMessage(value);
@@ -274,12 +274,14 @@ export const MessagesComponent = ({
                 .slice(0) // Make shallow copy before reversing
                 .reverse()
                 .map((message) => (
-                    <MessageComponent
-                        key={message.id}
-                        message={message}
-                        myEmail={currentInbox.email}
-                        onForward={onForward}
-                    />
+                    <>
+                        <MessageComponent
+                            key={message.id}
+                            message={message}
+                            myEmail={currentInbox.email}
+                            onForward={onForward}
+                        />
+                    </>
                 ))}
         </Accordion>
     );

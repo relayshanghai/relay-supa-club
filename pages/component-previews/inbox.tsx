@@ -279,8 +279,8 @@ const ThreadProvider = ({
     if (!messages) return <div>Loading messages...</div>;
 
     return (
-        <div className="flex h-full flex-col justify-between">
-            <div className="h-full">
+        <div className="flex h-full flex-col bg-zinc-50">
+            <div className="flex-none bg-zinc-50 p-1">
                 <ThreadHeader
                     threadInfo={selectedThread}
                     messages={messages}
@@ -288,36 +288,35 @@ const ThreadProvider = ({
                         participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
-                <div
-                    className={`flex ${
-                        replyClicked ? 'h-[51vh]' : 'h-[75vh]'
-                    } justify-center overflow-scroll rounded bg-gray-50 shadow-inner`}
-                >
-                    <MessagesComponent
-                        currentInbox={currentInbox}
-                        messages={messages}
-                        focusedMessageIds={filteredMessageIds}
-                        onForward={handleForward}
-                    />
-                </div>
             </div>
 
-            {replyClicked ? (
-                <ReplyEditor
-                    defaultContacts={contactsToReply}
-                    onReply={handleReply}
-                    attachments={attachments}
-                    handleRemoveAttachment={handleRemoveAttachment}
-                    handleAttachmentSelect={handleAttachmentSelect}
+            <div style={{ height: 10 }} className="m-5 flex-auto justify-center overflow-auto bg-zinc-50">
+                <MessagesComponent
+                    currentInbox={currentInbox}
+                    messages={messages}
+                    focusedMessageIds={filteredMessageIds}
+                    onForward={handleForward}
                 />
-            ) : (
-                <div
-                    onClick={() => setReplyClicked(true)}
-                    className="cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300"
-                >
-                    Reply to thread
-                </div>
-            )}
+            </div>
+
+            <div className="m-2 flex-none bg-white">
+                {replyClicked ? (
+                    <ReplyEditor
+                        defaultContacts={contactsToReply}
+                        onReply={handleReply}
+                        attachments={attachments}
+                        handleRemoveAttachment={handleRemoveAttachment}
+                        handleAttachmentSelect={handleAttachmentSelect}
+                    />
+                ) : (
+                    <div
+                        onClick={() => setReplyClicked(true)}
+                        className="w-full cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300"
+                    >
+                        Reply to thread
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
