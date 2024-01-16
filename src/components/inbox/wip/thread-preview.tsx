@@ -49,9 +49,9 @@ const getPlatformIcon = (platform: CreatorPlatform) => {
 const getUnreadMarker = (status: THREAD_STATUS) => {
     switch (status) {
         case 'unopened':
-            return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />;
+            return <span className="absolute -right-1 -top-1 aspect-square h-2 w-2 rounded-full bg-red-500" />;
         case 'unreplied':
-            return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-blue-500" />;
+            return <span className="absolute -right-1 -top-1 aspect-square h-2 w-2 rounded-full bg-blue-500" />;
         default:
             return <></>;
     }
@@ -67,7 +67,9 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
     return (
         <Card
             onClick={onClick}
-            className={`flex cursor-pointer rounded-none ${selected && 'bg-primary-200'} transition-all`}
+            className={`flex cursor-pointer rounded-none ${
+                selected && 'border-l-4 border-l-primary-500 bg-primary-200'
+            } transition-all`}
         >
             <CardContent className="w-full p-4">
                 <div className="flex items-center gap-4">
@@ -88,7 +90,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                 </div>
             </CardContent>
             <CardContent className="mt-5">
-                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
+                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} aspect-square rounded-sm p-1`}>
                     {COLLAB_OPTIONS[funnel_status].icon}
                     {UnreadMarker}
                 </div>

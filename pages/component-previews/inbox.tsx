@@ -117,6 +117,7 @@ const ThreadProvider = ({
     const {
         data: messages,
         error: messagesError,
+        isLoading: isMessagesLoading,
         mutate,
     } = useSWR<Message[], any>(`/api/outreach/threads/${threadId}`, fetcher, {
         // Note that this is disabled globally in SWRConfig
@@ -278,8 +279,11 @@ const ThreadProvider = ({
         [setAttachments],
     );
 
-    if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
-    if (!messages) return <div>Loading messages...</div>;
+    if (!messages || isMessagesLoading) return <div>Loading messages...</div>;
+    if (messagesError || !Array.isArray(messages)) {
+        console.log(messages);
+        return <div>Error loading messages</div>;
+    }
 
     return (
         <div className="flex h-full flex-col bg-zinc-50">
@@ -532,7 +536,7 @@ const InboxPreview = () => {
     return (
         <Layout>
             <div className="grid h-full max-h-screen grid-cols-12 bg-white">
-                <section className="col-span-3 flex w-full flex-col items-center gap-2 overflow-y-auto">
+                <section className="col-span-2 flex w-full flex-col items-center gap-2 overflow-y-auto">
                     <section className="flex w-full flex-col gap-4 p-2">
                         <SearchBar onSearch={handleSearch} />
                         <Filter
@@ -546,7 +550,7 @@ const InboxPreview = () => {
                         <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
                                 <div key={date}>
-                                    <p className="px-2 py-1 text-sm font-semibold text-gray-400">
+                                    <p className="px-2 py-1 text-xs font-semibold text-gray-400">
                                         {date === today ? 'Today' : date}
                                     </p>
                                     {threadsGroupedByUpdatedAt[date].map((thread, index) => (
@@ -584,7 +588,7 @@ const InboxPreview = () => {
                     )}
                     {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
-                <section className="col-span-5 flex h-full flex-col">
+                <section className="col-span-6 flex h-full flex-col">
                     {selectedThread && (
                         <ThreadProvider
                             currentInbox={currentInbox}
@@ -626,10 +630,10 @@ const InboxPreview = () => {
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     return (
-        <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
+        <div className="flex w-full flex-row items-center justify-between rounded-lg border border-gray-200 bg-white px-2">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus-visible:ring-none border-none bg-white text-xs placeholder:text-gray-400 focus:border-none focus-visible:outline-none"
+                className="focus-visible:ring-none border-none bg-white text-sm placeholder:text-gray-400 focus:border-none focus-visible:outline-none"
                 placeholder="Search mailbox"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
