@@ -117,7 +117,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     const updateInfluencer = useCallback(
         async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
             setUpdating(true);
-            controller.current?.abort();
+            // controller.current?.abort();
             controller.current = new AbortController();
             const { content } = await apiFetch<
                 SequenceInfluencersPutRequestResponse,
@@ -143,7 +143,7 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
     const updateAddress = useCallback(
         async (body: AddressesPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
             setUpdating(true);
-            controller.current?.abort();
+            // controller.current?.abort();
             controller.current = new AbortController();
             const { content } = await apiFetch<AddressesPutRequestResponse, { body: AddressesPutRequestBody }>(
                 '/api/addresses',

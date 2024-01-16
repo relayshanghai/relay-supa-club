@@ -8,6 +8,14 @@ import { z } from 'zod';
 
 export type Address = typeof addresses.$inferSelect;
 
+export const addressesGet = z.object({
+    query: z.object({
+        id: z.string().uuid(),
+    }),
+});
+
+export type AddressesGet = z.infer<typeof addressesGet>;
+
 export const addressesInsertSchema = createInsertSchema(addresses);
 export type AddressesInsert = typeof addressesInsertSchema._type;
 
@@ -26,3 +34,14 @@ export const updateAddressCall: DBQuery<(update: AddressesUpdate) => Promise<Add
 
         return result[0];
     };
+
+export const getAddressCall: DBQuery<(id: string) => Promise<Address>> = (databaseInstance) => async (id) => {
+    const result = await db(databaseInstance)
+        .select()
+        .from(addresses)
+        .where(eq(addresses.influencer_social_profile_id, id));
+
+    if (result.length !== 1) throw new Error('Error in getting row');
+
+    return result[0];
+};

@@ -15,14 +15,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const influencers: SearchTableInfluencer[] = req.body;
 
     if (
-        influencers.some(({ fullname, user_id, picture, topics, url }) => {
-            return (
-                user_id === undefined ||
-                fullname === undefined ||
-                picture === undefined ||
-                topics === undefined ||
-                url === undefined
-            );
+        influencers.some(({ user_id, picture, topics, url, username, handle, custom_name, fullname }) => {
+            const userHandle = user_id || username || handle || custom_name || fullname;
+            if (!userHandle) return true;
+            return user_id === undefined || picture === undefined || topics === undefined || url === undefined;
         })
     ) {
         return res.status(httpCodes.BAD_REQUEST).json({ message: 'not ok' });
@@ -36,7 +32,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     : influencer.username || influencer.handle || influencer.custom_name || influencer.fullname;
             const topicTags = await getRelevantTopicTagsByInfluencer(
                 {
-                    query: { q: userHandle, limit: 60, platform },
+                    query: { q: userHandle ?? influencer.user_id, limit: 60, platform },
                 },
                 { req, res },
             );

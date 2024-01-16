@@ -14,13 +14,9 @@ import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
-import { ProfileScreenProvider, useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 import { mapProfileToFormData } from 'src/components/inbox/helpers';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
@@ -28,6 +24,7 @@ import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-f
 import { serverLogger } from 'src/utils/logger-server';
 import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
+import { useAddress } from 'src/hooks/use-address';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -406,40 +403,9 @@ const InboxPreview = () => {
     }, [threadsInfo]);
 
     const totals = useMemo(() => threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 }, [threadsInfo]);
-    const [uiState, setUiState] = useUiState();
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
     const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
-    const { refreshSequenceInfluencers } = useSequenceInfluencers();
-    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
-
-    const handleNoteListOpen = useCallback(() => {
-        if (!selectedThread?.sequenceInfluencer) return;
-        getNotes.call(selectedThread?.sequenceInfluencer.id);
-    }, [getNotes, selectedThread?.sequenceInfluencer]);
-
-    const handleNoteListClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isNotesListOverlayOpen: false };
-        });
-        getNotes.refresh();
-    }, [getNotes, setUiState]);
-
-    const handleUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!selectedThread?.sequenceInfluencer) return;
-
-            saveSequenceInfluencer.call(selectedThread?.sequenceInfluencer.id, data).then((profile) => {
-                // @note updates local state without additional query
-                //       this will cause issue showing previous state though
-                setLocalProfile(mapProfileToFormData(profile));
-                saveSequenceInfluencer.refresh();
-
-                refreshSequenceInfluencers();
-            });
-        },
-        [saveSequenceInfluencer, selectedThread?.sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
-    );
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
@@ -480,6 +446,8 @@ const InboxPreview = () => {
             setPage(Math.floor(threads.length / totalThreads) + 1);
         }
     }, [setPage, threads, totals, isThreadsLoading]);
+
+    const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
     useEffect(() => {
         if (!threadsInfo) return;
@@ -581,11 +549,15 @@ const InboxPreview = () => {
                     ) : isThreadsLoading ? (
                         <Spinner className="h-6 w-6 fill-primary-400" />
                     ) : (
-                        <>No threads here!</>
+                        <>Nothing to show</>
                     )}
                     {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
-                <section className="col-span-5 flex h-full flex-col">
+                <section
+                    className={`${
+                        selectedThread?.sequenceInfluencer ? 'col-span-5' : 'col-span-9'
+                    } flex h-full flex-col`}
+                >
                     {selectedThread && (
                         <ThreadProvider
                             currentInbox={currentInbox}
@@ -596,29 +568,16 @@ const InboxPreview = () => {
                         />
                     )}
                 </section>
-                {initialValue && selectedThread && selectedThread.sequenceInfluencer && (
-                    <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
-                        <ProfileScreenProvider initialValue={initialValue}>
-                            <ProfileScreen
-                                profile={selectedThread?.sequenceInfluencer}
-                                influencerData={selectedThread?.influencerSocialProfile}
-                                className="bg-white"
-                                onCancel={() => {
-                                    //
-                                }}
-                                onUpdate={handleUpdate}
-                            />
-                        </ProfileScreenProvider>
-                        <NotesListOverlayScreen
-                            notes={getNotes.data}
-                            isLoading={getNotes.isLoading}
-                            isOpen={uiState.isNotesListOverlayOpen}
-                            onClose={handleNoteListClose}
-                            onOpen={handleNoteListOpen}
-                            influencerSocialProfileId={selectedThread?.sequenceInfluencer?.id}
+                <section className="col-span-4 overflow-y-auto">
+                    {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
+                        <ProfileScreen
+                            profile={selectedThread?.sequenceInfluencer}
+                            influencerData={selectedThread?.influencerSocialProfile}
+                            className="bg-white"
+                            address={address}
                         />
-                    </section>
-                )}
+                    )}
+                </section>
             </div>
         </Layout>
     );

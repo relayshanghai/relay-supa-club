@@ -48,7 +48,7 @@ export interface CreatorAccount {
     handle?: string;
     url: string;
     picture: string;
-    fullname: string;
+    fullname?: string;
     is_verified: boolean;
     account_type?: number;
     followers: number;

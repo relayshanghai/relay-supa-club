@@ -4,7 +4,7 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { rudderstack } from 'src/utils/rudderstack';
 import type { CreateJobInsert } from 'src/utils/scheduler/utils';
 import { createJobs } from 'src/utils/scheduler/utils';
-import type { SequenceInfluencerManagerPage } from './influencers';
+import type { SequenceInfluencerManagerPage, SequenceInfluencerManagerPageWithChannelData } from './influencers';
 import {
     updateSequenceInfluencerCall,
     upsertSequenceInfluencersFunnelStatusCall,
@@ -21,7 +21,7 @@ import { v4 } from 'uuid';
 
 export type SequenceSendPostBody = {
     account: string;
-    sequenceInfluencers: SequenceInfluencerManagerPage[];
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[];
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
 };
@@ -109,6 +109,7 @@ const postHandler: ActionHandler = async (req, res) => {
                 address: _filterOut2,
                 recent_post_title: _filterOut3,
                 recent_post_url: _filterOut4,
+                channel_data: _filterOut5,
                 ...influencer
             }) => {
                 const upsert: SequenceInfluencerInsert = {

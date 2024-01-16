@@ -7,20 +7,21 @@ import type {
     SequenceInfluencerInsert,
     SequenceInfluencerUpdate,
 } from '../types';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
+import type { SearchTableInfluencer } from 'types';
 
 const sequenceInfluencerSocialProfileAndAddressJoinQuery =
-    '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name), address: addresses (*)';
+    '*, socialProfile: influencer_social_profiles (recent_post_title, recent_post_url, avatar_url, url, username, name, data), address: addresses (*)';
 
 const unpackSocialProfile = (
     influencer: SequenceInfluencer & {
         socialProfile: Pick<
             InfluencerSocialProfileRow,
-            'recent_post_title' | 'recent_post_url' | 'avatar_url' | 'url' | 'username' | 'name'
+            'recent_post_title' | 'recent_post_url' | 'avatar_url' | 'url' | 'username' | 'name' | 'data'
         > | null;
         address: Addresses['Row'] | null;
     },
-) => {
+): SequenceInfluencerManagerPageWithChannelData => {
     const { socialProfile, ...rest } = influencer;
     return {
         ...rest,
@@ -31,6 +32,7 @@ const unpackSocialProfile = (
         url: socialProfile?.url ?? rest.url,
         username: socialProfile?.username ?? rest.username,
         name: socialProfile?.name ?? rest.name,
+        channel_data: socialProfile?.data as unknown as SearchTableInfluencer,
     };
 };
 /**
@@ -38,7 +40,7 @@ const unpackSocialProfile = (
  */
 export const getSequenceInfluencerByIdCall =
     (supabaseClient: RelayDatabase) =>
-    async (id: string): Promise<SequenceInfluencerManagerPage> => {
+    async (id: string): Promise<SequenceInfluencerManagerPageWithChannelData> => {
         if (!id) {
             throw new Error('No id provided');
         }
@@ -54,7 +56,7 @@ export const getSequenceInfluencerByIdCall =
 
 export const getSequenceInfluencersBySequenceIdCall =
     (supabaseClient: RelayDatabase) =>
-    async (sequenceId: string): Promise<SequenceInfluencerManagerPage[]> => {
+    async (sequenceId: string): Promise<SequenceInfluencerManagerPageWithChannelData[]> => {
         if (!sequenceId) {
             throw new Error('No sequenceId provided');
         }
@@ -69,7 +71,7 @@ export const getSequenceInfluencersBySequenceIdCall =
 
 export const getSequenceInfluencersBySequenceIdsCall =
     (supabaseClient: RelayDatabase) =>
-    async (sequenceIds: string[]): Promise<SequenceInfluencerManagerPage[]> => {
+    async (sequenceIds: string[]): Promise<SequenceInfluencerManagerPageWithChannelData[]> => {
         if (!sequenceIds) {
             throw new Error('No sequenceIds provided');
         }
@@ -106,7 +108,7 @@ export const getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall =
 
 export const getSequenceInfluencerByEmailAndCompanyCall =
     (supabaseClient: RelayDatabase) =>
-    async (email: string, companyId?: string | null): Promise<SequenceInfluencerManagerPage> => {
+    async (email: string, companyId?: string | null): Promise<SequenceInfluencerManagerPageWithChannelData> => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .select(sequenceInfluencerSocialProfileAndAddressJoinQuery)
@@ -133,7 +135,7 @@ export const upsertSequenceInfluencersFunnelStatusCall =
  */
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) =>
-    async (update: SequenceInfluencerUpdate): Promise<SequenceInfluencerManagerPage> => {
+    async (update: SequenceInfluencerUpdate): Promise<SequenceInfluencerManagerPageWithChannelData> => {
         if (Object.keys(update).includes('platform') && !update.platform) {
             serverLogger(`strange update ${update}`);
         }

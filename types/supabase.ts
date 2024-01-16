@@ -11,47 +11,47 @@ export interface Database {
     Tables: {
       addresses: {
         Row: {
-          address_line_1: string
+          address_line_1: string | null
           address_line_2: string | null
-          city: string
-          country: string
+          city: string | null
+          country: string | null
           created_at: string
           id: string
           influencer_social_profile_id: string | null
-          name: string
+          name: string | null
           phone_number: string | null
-          postal_code: string
-          state: string
+          postal_code: string | null
+          state: string | null
           tracking_code: string | null
           updated_at: string
         }
         Insert: {
-          address_line_1: string
+          address_line_1?: string | null
           address_line_2?: string | null
-          city: string
-          country: string
+          city?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           influencer_social_profile_id?: string | null
-          name: string
+          name?: string | null
           phone_number?: string | null
-          postal_code: string
-          state: string
+          postal_code?: string | null
+          state?: string | null
           tracking_code?: string | null
           updated_at?: string
         }
         Update: {
-          address_line_1?: string
+          address_line_1?: string | null
           address_line_2?: string | null
-          city?: string
-          country?: string
+          city?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           influencer_social_profile_id?: string | null
-          name?: string
+          name?: string | null
           phone_number?: string | null
-          postal_code?: string
-          state?: string
+          postal_code?: string | null
+          state?: string | null
           tracking_code?: string | null
           updated_at?: string
         }
