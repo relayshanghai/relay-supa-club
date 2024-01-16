@@ -19,7 +19,6 @@ export const replyThread: ReplyThreadFn = async (params) => {
     if (!thread || !thread.thread.last_reply_id) {
         return false;
     }
-
     return await replyEmail({
         account: params.account,
         emailEngineId: thread.thread.last_reply_id,

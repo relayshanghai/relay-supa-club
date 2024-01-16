@@ -15,6 +15,7 @@ export const FUNNEL_STATUS = z.enum([
     'Shipped',
     'Rejected',
     'Received',
+    'Completed',
     'Content Approval',
     'Posted',
 ]);

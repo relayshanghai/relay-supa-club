@@ -15,8 +15,8 @@ export const TABLE_COLUMNS = [
 
 export const COLLAB_OPTIONS: MultipleDropdownObject = {
     Negotiating: {
-        style: 'bg-yellow-100 text-yellow-500',
-        icon: <Negotiating className="h-4 w-4 stroke-yellow-500" />,
+        style: 'bg-blue-100 text-blue-500',
+        icon: <Negotiating className="h-4 w-4 stroke-blue-500" />,
     },
     Confirmed: {
         style: 'bg-blue-100 text-blue-500',
