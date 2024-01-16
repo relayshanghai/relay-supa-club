@@ -26,7 +26,7 @@ export type ProfileValue = {
 
 type Props = {
     profile: SequenceInfluencerManagerPage;
-    influencerData: SearchTableInfluencer;
+    influencerData?: SearchTableInfluencer;
     selectedTab?: 'notes' | 'shipping-details';
     onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
@@ -167,7 +167,9 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Prop
                     />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab profile={props.influencerData} onUpdate={handleShippingUpdate} />
+                    {props.influencerData && (
+                        <ProfileShippingDetailsTab profile={props.influencerData} onUpdate={handleShippingUpdate} />
+                    )}
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { AttachmentFile, Thread, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -28,6 +28,7 @@ import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-f
 import { serverLogger } from 'src/utils/logger-server';
 import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -54,6 +55,100 @@ export const getAttachmentStyle = (filename: string) => {
         default:
             return 'bg-gray-100 hover:bg-gray-50 text-gray-400 stroke-gray-400';
     }
+};
+
+const emptyMessage: Message = {
+    date: '2024-01-16T06:46:00.000Z',
+    unread: false,
+    id: 'empty-message-1',
+    from: {
+        name: 'No messages yet',
+        address: 'sample@boostbot.ai',
+    },
+    to: [
+        {
+            name: 'You',
+            address: 'you@example.com',
+        },
+    ],
+    cc: [],
+    replyTo: [],
+    attachments: [],
+    subject: 'Nothing to show here... yet',
+    body: "<p>Make sure to contact some influencers from your <a href='/sequences'>Sequences</a> and come check your inbox in a day or two!</p>",
+};
+
+const emptyThread: Thread = {
+    threadInfo: {
+        id: 'f770bc12-d10d-467b-880b-43b43ea24412',
+        thread_id: '1788228375458170330',
+        sequence_influencer_id: '99257908-639b-4725-b62f-70f4581de67b',
+        email_engine_account_id: 'oth98ylp8yhi87l5',
+        last_reply_id: 'AAAAAQAAAsU',
+        thread_status: 'unreplied',
+        deleted_at: null,
+        created_at: '2024-01-16T01:14:30.000Z',
+        updated_at: '2024-01-16T01:24:04.443Z',
+    },
+    sequenceInfluencer: {
+        id: '99257908-639b-4725-b62f-70f4581de67b',
+        created_at: '2024-01-16T06:17:08.814Z',
+        updated_at: '2024-01-16T06:54:04.984Z',
+        added_by: '591a6cba-301e-5690-81ef-4d1742d41871',
+        email: 'suvo.suvojitghosh@gmail.com',
+        sequence_step: 3,
+        funnel_status: 'Rejected',
+        tags: ['memes', 'meme', 'funny meme'],
+        next_step: null,
+        scheduled_post_date: null,
+        video_details: null,
+        rate_amount: 212,
+        rate_currency: 'USD',
+        real_full_name: null,
+        company_id: 'd7326229-dbeb-41aa-8b9b-4baeb63d0d7f',
+        sequence_id: '055870b7-1d6a-46ed-b205-9b32b34bfd83',
+        address_id: null,
+        influencer_social_profile_id: '257c78f9-f1ca-41b1-aeb6-d66397284e80',
+        iqdata_id: 'UCWrb1i7uEh5cDhTFAweiLww',
+        avatar_url:
+            'https://yt3.googleusercontent.com/-nUzg1mFprJAhEeyg_ImM3wW5Vl1Il08XnWuBwbWdR_swOxy7XmeSB2AK11OQ3dfuQp7-xBg=s480-c-k-c0x00ffffff-no-rj',
+        name: 'Austinjpg',
+        platform: 'youtube',
+        social_profile_last_fetched: '2024-01-16T06:17:18.251Z',
+        url: 'https://www.youtube.com/channel/UCWrb1i7uEh5cDhTFAweiLww',
+        username: 'austinjpg',
+        recent_post_title: 'Real',
+        recent_post_url: 'https://www.youtube.com/watch?v=brhZ0h1g3NQ',
+    },
+    influencerSocialProfile: undefined,
+    contacts: [
+        {
+            id: 'dcb43606-66e8-4074-845f-2c077713f908',
+            name: 'LMNAO',
+            address: 'jiggling.potato@gmail.com',
+            created_at: '2024-01-16T06:43:41.651Z',
+            type: 'user',
+        },
+        {
+            id: '7e49423c-af84-4dcc-85ac-8eeb6883ff6e',
+            name: 'Austinjpg',
+            address: 'suvo.suvojitghosh@gmail.com',
+            created_at: '2024-01-16T06:44:46.440Z',
+            type: 'influencer',
+        },
+    ],
+    sequenceInfo: {
+        created_at: '2024-01-16T06:15:41.107Z',
+        updated_at: '2024-01-16T06:15:41.107Z',
+        company_id: 'd7326229-dbeb-41aa-8b9b-4baeb63d0d7f',
+        name: 'General collaboration',
+        auto_start: false,
+        id: '055870b7-1d6a-46ed-b205-9b32b34bfd83',
+        manager_first_name: 'William Edward X',
+        manager_id: '591a6cba-301e-5690-81ef-4d1742d41871',
+        deleted: false,
+        productName: 'Widget X',
+    },
 };
 
 /**
@@ -117,6 +212,7 @@ const ThreadProvider = ({
     const {
         data: messages,
         error: messagesError,
+        isLoading: isMessageLoading,
         mutate,
     } = useSWR<Message[], any>(`/api/outreach/threads/${threadId}`, fetcher, {
         // Note that this is disabled globally in SWRConfig
@@ -278,8 +374,8 @@ const ThreadProvider = ({
         [setAttachments],
     );
 
+    if (!messages && isMessageLoading) return <div>Loading messages...</div>;
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
-    if (!messages) return <div>Loading messages...</div>;
 
     return (
         <div className="flex h-full flex-col bg-zinc-50">
@@ -348,24 +444,26 @@ const InboxPreview = () => {
     });
 
     const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
-
-    const handleSearch = async (searchTerm: string) => {
-        if (!searchTerm) {
-            setSearchResults({});
-            return;
-        }
-        // @inbox-note it is easy to just put the type here but
-        // we want to validate those types in the endpoint instead of casting/inferring the type
-        const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
-            '/api/outreach/search',
-            {
-                query: { searchTerm },
-            },
-        );
-        setSearchResults(res.content);
-    };
-
     const [threads, setThreads] = useState<ThreadInfo[]>([]);
+
+    const handleSearch = useCallback(
+        async (searchTerm: string) => {
+            if (!searchTerm || threads.length === 0) {
+                setSearchResults({});
+                return;
+            }
+            // @inbox-note it is easy to just put the type here but
+            // we want to validate those types in the endpoint instead of casting/inferring the type
+            const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
+                '/api/outreach/search',
+                {
+                    query: { searchTerm },
+                },
+            );
+            setSearchResults(res.content);
+        },
+        [threads],
+    );
 
     const {
         data: threadsInfo,
@@ -539,7 +637,9 @@ const InboxPreview = () => {
                             messageCount={totals}
                             allSequences={allSequences ?? []}
                             filters={filters}
-                            onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
+                            onChangeFilter={(newFilter: FilterType) => {
+                                threadsGroupedByUpdatedAt && setFilters(newFilter);
+                            }}
                         />
                     </section>
                     {threadsGroupedByUpdatedAt ? (
@@ -580,12 +680,20 @@ const InboxPreview = () => {
                     ) : isThreadsLoading ? (
                         <Spinner className="h-6 w-6 fill-primary-400" />
                     ) : (
-                        <>No threads here!</>
+                        <ThreadPreview
+                            sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
+                            threadInfo={emptyThread}
+                            _currentInbox={currentInbox}
+                            selected={false}
+                            onClick={() => {
+                                //
+                            }}
+                        />
                     )}
                     {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
                 <section className="col-span-5 flex h-full flex-col">
-                    {selectedThread && (
+                    {selectedThread ? (
                         <ThreadProvider
                             currentInbox={currentInbox}
                             threadId={selectedThread.threadInfo.thread_id}
@@ -593,6 +701,34 @@ const InboxPreview = () => {
                             markAsReplied={markAsReplied}
                             filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
                         />
+                    ) : (
+                        <div className="flex h-full flex-col bg-zinc-50">
+                            <div className="flex-none bg-zinc-50 p-1">
+                                <ThreadHeader
+                                    threadInfo={emptyThread}
+                                    messages={[emptyMessage]}
+                                    participants={['Me']}
+                                />
+                            </div>
+
+                            <div
+                                style={{ height: 10 }}
+                                className="m-5 flex-auto justify-center overflow-auto bg-zinc-50"
+                            >
+                                <MessagesComponent
+                                    currentInbox={currentInbox}
+                                    messages={[emptyMessage]}
+                                    focusedMessageIds={['empty-message-1']}
+                                    onForward={() => {
+                                        //
+                                    }}
+                                />
+                            </div>
+
+                            <div className="w-full cursor-text rounded-lg border-2 border-gray-100 bg-white px-4 py-2 text-gray-300">
+                                No conversation to reply to yet
+                            </div>
+                        </div>
                     )}
                 </section>
                 {initialValue && selectedThread && selectedThread.sequenceInfluencer && (
