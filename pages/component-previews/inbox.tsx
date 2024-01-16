@@ -3,8 +3,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
-import type { EmailContact } from 'src/utils/outreach/types';
+import type { AttachmentFile, ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWR from 'swr';
@@ -125,36 +124,18 @@ const ThreadProvider = ({
         compare: (cached, fresh) => {
             // Do not update cache if both are undefined
             if (fresh === undefined && cached === undefined) {
-                // console.log('UNDEFINED', { result: true, fresh, cached });
                 return true;
             }
 
             // Update cache if fresh is empty
             if (!fresh && cached) {
-                // console.log('NO FRESH YES CACHE', { result: true, fresh, cached });
                 return false;
             }
 
             // Do not update cache if ids are equal
             if (cached && fresh && fresh.length === cached.length && fresh.length > 0 && cached.length > 0) {
-                // if (cached[0].id !== fresh[0].id) {
-                //     console.log('EQUAL', {
-                //         result: cached[0].id === fresh[0].id,
-                //         cached: cached[0].id,
-                //         fresh: fresh[0].id,
-                //     });
-                // }
-
                 return cached[0].id === fresh[0].id;
             }
-
-            // console.log('UNEQUAL', {
-            //     result: (fresh?.length ?? 0) < (cached?.length ?? 0),
-            //     cached: (cached ?? [{ id: null }])[0].id,
-            //     fresh: (fresh ?? [{ id: null }])[0].id,
-            //     cachedLen: cached?.length,
-            //     freshLen: fresh?.length,
-            // });
 
             // Do not update the cache if fresh data has less items than the cached
             return (fresh?.length ?? 0) < (cached?.length ?? 0);
@@ -201,7 +182,7 @@ const ThreadProvider = ({
                         subject: messages?.[messages.length - 1]?.subject ?? '',
                         attachments: [],
                     });
-                    // console.log('from mutator callback', cache, localMessage);
+                    setAttachments([]);
                     return [localMessage, ...(cache ?? [])];
                 },
                 {
@@ -216,7 +197,6 @@ const ThreadProvider = ({
                             subject: messages?.[messages.length - 1]?.subject ?? '',
                             attachments: [],
                         });
-                        // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
                     },
                     revalidate: false,
@@ -242,7 +222,6 @@ const ThreadProvider = ({
                         subject: messages?.[messages.length - 1]?.subject ?? '',
                         attachments: message.attachments,
                     });
-                    // console.log('from mutator callback', cache, localMessage);
                     return [localMessage, ...(cache ?? [])];
                 },
                 {
@@ -257,7 +236,6 @@ const ThreadProvider = ({
                             subject: messages?.[messages.length - 1]?.subject ?? '',
                             attachments: message.attachments,
                         });
-                        // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
                     },
                     revalidate: false,
@@ -277,7 +255,6 @@ const ThreadProvider = ({
 
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
     if (!messages) return <div>Loading messages...</div>;
-
     return (
         <div className="flex h-full flex-col bg-zinc-50">
             <div className="flex-none bg-zinc-50 p-1">
@@ -299,8 +276,8 @@ const ThreadProvider = ({
                 />
             </div>
 
-            <div className="m-2 flex-none bg-white">
-                {replyClicked ? (
+            <div className="m-5 bg-white">
+                <div className={`${replyClicked ? 'block' : 'hidden'}`}>
                     <ReplyEditor
                         defaultContacts={contactsToReply}
                         onReply={handleReply}
@@ -308,14 +285,15 @@ const ThreadProvider = ({
                         handleRemoveAttachment={handleRemoveAttachment}
                         handleAttachmentSelect={handleAttachmentSelect}
                     />
-                ) : (
-                    <div
-                        onClick={() => setReplyClicked(true)}
-                        className="w-full cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300"
-                    >
-                        Reply to thread
-                    </div>
-                )}
+                </div>
+                <div
+                    onClick={() => setReplyClicked(true)}
+                    className={`w-full cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300 ${
+                        !replyClicked ? 'block' : 'hidden'
+                    }`}
+                >
+                    Reply to thread
+                </div>
             </div>
         </div>
     );
@@ -392,7 +370,6 @@ const InboxPreview = () => {
 
         setThreads((previousThreads) => {
             const existingThreadIds = previousThreads.map((thread) => thread.threadInfo.thread_id);
-
             const uniqueThreads = threadsInfo.threads.filter(
                 (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
             );
@@ -450,7 +427,6 @@ const InboxPreview = () => {
 
     useEffect(() => {
         if (!threadsInfo) return;
-
         const currentThread = lastThreadRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
@@ -499,8 +475,8 @@ const InboxPreview = () => {
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
         <Layout>
-            <div className="grid h-full max-h-screen grid-cols-12 bg-white">
-                <section className="col-span-3 flex w-full flex-col items-center gap-2 overflow-y-auto">
+            <div className="flex h-full max-h-screen bg-white">
+                <section className="w-[280px] flex-col items-center gap-2 overflow-y-auto">
                     <section className="flex w-full flex-col gap-4 p-2">
                         <SearchBar onSearch={handleSearch} />
                         <Filter
@@ -514,9 +490,11 @@ const InboxPreview = () => {
                         <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
                                 <div key={date}>
-                                    <p className="px-2 py-1 text-sm font-semibold text-gray-400">
-                                        {date === today ? 'Today' : date}
-                                    </p>
+                                    <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                        <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                            {date === today ? 'Today' : date}
+                                        </div>
+                                    </div>
                                     {threadsGroupedByUpdatedAt[date].map((thread, index) => (
                                         <div
                                             key={thread.threadInfo.id}
@@ -533,7 +511,7 @@ const InboxPreview = () => {
                                                     >
                                                 }
                                                 threadInfo={thread}
-                                                _currentInbox={currentInbox}
+                                                currentInbox={currentInbox}
                                                 selected={
                                                     !!selectedThread &&
                                                     selectedThread.threadInfo.id === thread.threadInfo.id
@@ -552,11 +530,7 @@ const InboxPreview = () => {
                     )}
                     {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
-                <section
-                    className={`${
-                        selectedThread?.sequenceInfluencer ? 'col-span-5' : 'col-span-9'
-                    } flex h-full flex-col`}
-                >
+                <section className={`h-full flex-auto flex-col`}>
                     {selectedThread && (
                         <ThreadProvider
                             currentInbox={currentInbox}
@@ -567,7 +541,7 @@ const InboxPreview = () => {
                         />
                     )}
                 </section>
-                <section className="col-span-4 overflow-y-auto">
+                <section className="w-[360px] overflow-y-auto">
                     {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
                         <ProfileScreen
                             profile={selectedThread?.sequenceInfluencer}
@@ -585,10 +559,10 @@ const InboxPreview = () => {
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     return (
-        <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
+        <div className="flex h-9 w-full flex-row items-center items-center justify-start justify-between rounded-md border border-gray-200 bg-white bg-white px-2 shadow">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus-visible:ring-none border-none bg-white text-xs placeholder:text-gray-400 focus:border-none focus-visible:outline-none"
+                className="focus:ring-none focus-visible:ring-none border-none text-xs shadow-none placeholder:text-gray-400 focus-visible:ring-0"
                 placeholder="Search mailbox"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

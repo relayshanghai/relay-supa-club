@@ -63,7 +63,7 @@ export const Tiptap = ({
         content: description,
         editorProps: {
             attributes: {
-                class: 'min-h-[150px] w-full bg-transparent p-3 transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                class: 'w-full bg-transparent p-3 transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
             },
         },
         onUpdate: ({ editor }) => {

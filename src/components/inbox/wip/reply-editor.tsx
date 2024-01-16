@@ -29,11 +29,14 @@ export const ReplyEditor = ({
         onReply(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
         setReplyText('');
     }, [replyText, onReply, sendTo, sendCC, defaultContacts]);
-    const getNameOrAddressContact = (contact: EmailContact) => contact.name || contact.address;
+    const getNameOrAddressContact = (contact: EmailContact, postfix = '') =>
+        `${contact.name ?? contact.address}${postfix}`;
     const replyCaption = () => {
-        const to = sendTo.map(getNameOrAddressContact);
-        const cc = sendCC.map(getNameOrAddressContact);
-        return `Reply all to ${to.join(', ')}${cc.length > 0 ? `, ${cc.map((r) => `${r} (CC)`).join(', ')}` : ''}`;
+        const defaultTo = defaultContacts.to.map((contact) => getNameOrAddressContact(contact));
+        const defaultCC = defaultContacts.cc.map((contact) => getNameOrAddressContact(contact, '(CC)'));
+        const to = sendTo.map((contact) => getNameOrAddressContact(contact));
+        const cc = sendCC.map((contact) => getNameOrAddressContact(contact, '(CC)'));
+        return `Reply all to ${[...defaultTo, ...defaultCC, ...to, ...cc].join(', ')}`;
     };
     return (
         <div className="grid grid-cols-1 divide-y">
@@ -80,7 +83,7 @@ const AddressLabel = ({
         <Tooltip delay={500} content={`${info.name}: ${info.address}`}>
             <span className="flex rounded bg-primary-200 px-2 py-1 text-sm font-semibold text-primary-500 hover:bg-primary-100">
                 <p className="max-w-8 overflow-hidden whitespace-break-spaces">
-                    {truncatedText(info.name || info.address, 15)}
+                    {truncatedText(info.name ?? info.address, 15)}
                 </p>
                 {!defaultAddress && (
                     <span className="cursor-pointer pl-2" onClick={() => onClick(info)}>
@@ -104,7 +107,7 @@ export const SingleAddressSection = ({
     sendTo: EmailContact[];
     setSendTo: (contact: EmailContact[]) => void;
 }) => {
-    const [toInput, setToInput] = useState('');
+    const [toInputState, setToInputState] = useState('');
     const handleChangeTo = useCallback(
         (contact: EmailContact) => {
             if (sendTo.some((contactTo) => contactTo.address === contact.address)) {
@@ -117,14 +120,14 @@ export const SingleAddressSection = ({
     );
     const handleKeyDownTo = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            if (toInput === '' || !validateEmail(e.currentTarget.value)) return;
-            setToInput('');
+            if (toInputState === '' || !validateEmail(e.currentTarget.value)) return;
+            setToInputState('');
             handleChangeTo({
                 name: e.currentTarget.value,
                 address: e.currentTarget.value,
             });
         } else if (e.key === 'Backspace') {
-            if (toInput === '' && sendTo.length > 0) {
+            if (toInputState === '' && sendTo.length > 0) {
                 setSendTo(sendTo.slice(0, sendTo.length - 1));
             }
         }
@@ -145,8 +148,8 @@ export const SingleAddressSection = ({
                 ))}
                 <input
                     onKeyDown={handleKeyDownTo}
-                    value={toInput}
-                    onChange={(e) => setToInput(e.currentTarget.value)}
+                    value={toInputState}
+                    onChange={(e) => setToInputState(e.currentTarget.value)}
                     className="rounded border-none bg-white focus-visible:outline-none"
                 />
             </div>

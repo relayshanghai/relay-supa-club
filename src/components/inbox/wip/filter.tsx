@@ -60,7 +60,7 @@ export const Filter = ({
     return (
         <Popover>
             <PopoverTrigger>
-                <div className="flex items-center justify-between rounded border border-gray-200 bg-white px-2 py-1 text-gray-400">
+                <div className="flex h-9 w-full flex-row items-center justify-between rounded rounded-md border border border-gray-200 bg-white bg-white bg-white px-2 px-2 py-1 text-gray-400 shadow">
                     <div className="flex items-center gap-3 px-0.5 py-1 text-xs">
                         <FilterFunnel className="h-4 w-4 stroke-gray-400" />
                         Filters
