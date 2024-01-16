@@ -16,3 +16,7 @@ export const isUnknownError = (value: any): value is unknown => {
     // Consider all other objects as "unknown errors"
     return typeof value === 'object' && value !== null;
 };
+
+export const isAbortError = (error: any): error is DOMException => {
+    return error?.name === 'AbortError' || error.message.includes('The user aborted a request');
+};

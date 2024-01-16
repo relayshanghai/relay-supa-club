@@ -24,7 +24,7 @@ import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import { useReport } from 'src/hooks/use-report';
 import type { SearchTableInfluencer } from 'types';
 
-export type ProfileShippingDetails = {
+export type ProfileChannelSection = {
     name: string;
     phoneNumber: string;
     streetAddress: string;
@@ -38,10 +38,10 @@ export type ProfileShippingDetails = {
 
 type Props = {
     profile: SearchTableInfluencer;
-    onUpdate?: (key: keyof ProfileShippingDetails, value: any) => void;
+    onUpdate?: (key: keyof ProfileChannelSection, value: any) => void;
 };
 
-export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
+export const ChannelSection = ({ ...props }: Props) => {
     const { t, i18n } = useTranslation();
     const platform = props.profile?.url ? extractPlatformFromURL(props.profile?.url) : 'youtube';
     const { report: _report } = useReport({ platform: platform ?? 'youtube', creator_id: props.profile?.iqdata_id });
@@ -83,7 +83,7 @@ export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
     // Used to break multiline labels into multiple tspans to prevent text overflow
     function CustomizedTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
         return (
-            <text x={x} y={y} dy={-4} fill={'transparent'} fontSize={10} textAnchor="middle">
+            <text x={x} y={y} dy={-4} fill={'gray'} fontSize={10} textAnchor="middle">
                 {payload.value.split(' ').map((word: string, index: number) => (
                     <tspan key={index} x={x} dy={index ? '1.2em' : 0}>
                         {word}
@@ -152,7 +152,7 @@ export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
     }
 
     return (
-        <>
+        <section className="p-6">
             <div className="flex flex-col items-center justify-center gap-4">
                 {/* stats - top niches and audience engagement */}
                 <div className="w-full space-y-3">
@@ -313,6 +313,6 @@ export const ProfileShippingDetailsTab = ({ ...props }: Props) => {
                     </div>
                 </div>
             </div>
-        </>
+        </section>
     );
 };

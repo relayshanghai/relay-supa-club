@@ -25,7 +25,10 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from 'pages/api/sequence/influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
@@ -44,10 +47,10 @@ import type { KeyedMutator } from 'swr';
 
 interface SequenceRowProps {
     sequence?: Sequence;
-    sequenceInfluencer: SequenceInfluencerManagerPage;
-    sequenceInfluencers: SequenceInfluencerManagerPage[];
-    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPage>;
-    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPage[]>;
+    sequenceInfluencer: SequenceInfluencerManagerPageWithChannelData;
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[];
+    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPageWithChannelData>;
+    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPageWithChannelData[]>;
     loadingEmails: boolean;
     lastEmail?: SequenceEmail;
     lastStep?: SequenceStep;
@@ -60,7 +63,9 @@ interface SequenceRowProps {
     templateVariables: TemplateVariable[];
     onCheckboxChange?: (id: string) => void;
     checked?: boolean;
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
+    handleStartSequence: (
+        sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
+    ) => Promise<SequenceSendPostResponse>;
 }
 
 /** use the tracking status if it is delivered */

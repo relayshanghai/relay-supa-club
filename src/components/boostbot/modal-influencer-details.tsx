@@ -69,9 +69,12 @@ export const InfluencerDetailsModal = ({
               topic: i18n.language === enUS ? topic.topic_en : topic.topic_zh,
           }));
     useEffect(() => {
-        const handleTopicsAndRelevance = async (handle: string) => {
+        const handleTopicsAndRelevance = async (handle?: string) => {
             if (!selectedRow?.original.url) {
                 throw new Error('No url found for influencer');
+            }
+            if (!handle) {
+                throw new Error('No handle found for influencer');
             }
             const { data: topics } = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
                 method: 'POST',

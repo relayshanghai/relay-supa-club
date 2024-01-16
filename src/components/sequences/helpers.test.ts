@@ -268,6 +268,8 @@ describe('wasFetchedWithinMinutes', () => {
         url: 'https://www.instagram.com/allegraalynn',
         platform: 'instagram',
         social_profile_last_fetched: '2022-01-01T00:00:00.000Z',
+        affiliate_link: 'https://relay.club/affiliates/allegraalynn',
+        commission_rate: 0.2,
     };
     test('should return true if social profile was fetched within the given time difference', () => {
         const now = new Date('2022-01-01T00:00:00.000Z').getTime();

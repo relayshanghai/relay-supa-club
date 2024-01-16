@@ -4,7 +4,7 @@ import type { InfluencerRowProps } from './influencer-row';
 import { Button } from 'src/components/button';
 import { TABLE_LIMIT, TABLE_COLUMNS, COLLAB_OPTIONS } from '../constants';
 import { useTranslation } from 'react-i18next';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { type SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import { Spinner } from 'src/components/icons';
 
 export const Table = ({
@@ -13,7 +13,7 @@ export const Table = ({
     loading,
 }: {
     loading: boolean;
-    influencers?: SequenceInfluencerManagerPage[];
+    influencers?: SequenceInfluencerManagerPageWithChannelData[];
     onRowClick?: (data: InfluencerRowProps['influencer']) => void;
 }) => {
     const [page, setPage] = useState(0);
@@ -27,7 +27,7 @@ export const Table = ({
     const { t } = useTranslation();
 
     const handleRowClick = useCallback(
-        (influencer: SequenceInfluencerManagerPage) => {
+        (influencer: SequenceInfluencerManagerPageWithChannelData) => {
             onRowClick && onRowClick(influencer);
         },
         [onRowClick],
@@ -93,8 +93,8 @@ export const Table = ({
                             ?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT)
                             .map((influencer, index) => (
                                 <InfluencerRow
-                                    onRowClick={handleRowClick}
                                     key={influencer.id}
+                                    onRowClick={handleRowClick}
                                     influencer={influencer}
                                     index={index}
                                 />

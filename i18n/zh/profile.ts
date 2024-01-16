@@ -28,6 +28,9 @@ const profile = {
     trackingCode: '物流编号',
     fullAddress: '完整地址',
     updateProfileButton: '完整地址',
+    compAndDeliverables: 'Compensation & Deliverables',
+    commissionRate: 'Commission Rate (%)',
+    shippingAndPersonalInfo: 'Shipping & Personal Info',
 };
 
 export default profile;

@@ -1,8 +1,8 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useState } from 'react';
 import { OverlayRight } from 'src/components/influencer-profile/components/overlay-right';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
-import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen-legacy';
+import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen-legacy';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
@@ -96,12 +96,7 @@ export const ProfileOverlayScreen = ({ profile, influencerData, onOpen, ...props
             <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
                 {profile && influencerData && initialValue ? (
                     <ProfileScreenProvider initialValue={initialValue}>
-                        <ProfileScreen
-                            influencerData={influencerData}
-                            profile={profile}
-                            onCancel={handleClose}
-                            onUpdate={handleUpdate}
-                        />
+                        <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} />
                     </ProfileScreenProvider>
                 ) : null}
             </OverlayRight>
