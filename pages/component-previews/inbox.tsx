@@ -278,7 +278,6 @@ const ThreadProvider = ({
 
     if (!messages || isMessagesLoading) return <div>Loading messages...</div>;
     if (messagesError || !Array.isArray(messages)) {
-        console.log(messages);
         return <div>Error loading messages</div>;
     }
 
