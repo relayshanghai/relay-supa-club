@@ -37,9 +37,6 @@ export const Tiptap = ({
                 showOnlyWhenEditable: false,
                 emptyNodeClass:
                     'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
-                placeholder: () => {
-                    return placeholder || 'Write something...';
-                } 
             }),
             Link.configure({
                 openOnClick: false,
@@ -74,16 +71,14 @@ export const Tiptap = ({
         },
     });
     useEffect(() => {
-    
-
         const placeholderExtension = editor?.extensionManager.extensions.find(
-            (extension) => extension.name === "placeholder"
+            (extension) => extension.name === 'placeholder',
         );
         if (placeholderExtension) {
             placeholderExtension.options['placeholder'] = placeholder;
         }
-        editor?.view.dispatch(editor?.state.tr)
-    }, [placeholder, editor])
+        editor?.view.dispatch(editor?.state.tr);
+    }, [placeholder, editor]);
     return (
         <form
             onSubmit={(e) => {
@@ -95,7 +90,6 @@ export const Tiptap = ({
         >
             <EditorContent spellCheck="false" placeholder={placeholder} editor={editor} />
             <div className="flex gap-2">
-
                 {attachments &&
                     attachments.map((file) => {
                         return <AttachmentFileItem key={file.id} file={file} onRemove={handleRemoveAttachment} />;
@@ -104,7 +98,6 @@ export const Tiptap = ({
             <section className="flex items-center justify-between rounded border-t-2 border-slate-50 p-1">
                 <div className="flex">
                     <Toolbar editor={editor} />
-
                     <AttachmentField
                         multiple={true}
                         accept="image/*,.pdf,.rar,.zip,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv,video/*"
@@ -124,7 +117,6 @@ export const Tiptap = ({
                         }}
                     />
                 </div>
-
                 <button type="submit" className="mx-2 cursor-pointer">
                     <Send className="h-6 w-6 stroke-gray-400" />
                 </button>

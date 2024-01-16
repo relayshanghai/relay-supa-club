@@ -528,7 +528,7 @@ const InboxPreview = () => {
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
 
-    // if (!currentInbox.email) return <>Nothing to see here</>;
+    if (!currentInbox.email) return <>Nothing to see here</>;
     return (
         <Layout>
             <div className="grid h-full max-h-screen grid-cols-12 bg-white">
