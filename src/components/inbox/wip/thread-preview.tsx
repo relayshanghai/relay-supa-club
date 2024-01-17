@@ -4,6 +4,7 @@ import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
+import { truncatedText } from 'src/utils/outreach/helpers';
 import type { AttachmentFile, EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
 
@@ -80,7 +81,9 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
                     </section>
                     <span>
-                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>{sequenceInfluencer?.name}</p>
+                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>
+                            {truncatedText(sequenceInfluencer?.name ?? '', 10)}
+                        </p>
                         <p className="text-primary-400">
                             <span className="text-primary-600">@</span>
                             {sequenceInfluencer?.username}

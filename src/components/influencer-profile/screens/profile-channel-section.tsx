@@ -152,7 +152,7 @@ export const ChannelSection = ({ ...props }: Props) => {
     }
 
     return (
-        <section className="p-6">
+        <section className="overflow-clip p-6">
             <div className="flex flex-col items-center justify-center gap-4">
                 {/* stats - top niches and audience engagement */}
                 <div className="w-full space-y-3">
@@ -234,7 +234,7 @@ export const ChannelSection = ({ ...props }: Props) => {
                         </Tooltip>
                     </div>
 
-                    <ResponsiveContainer width={550} height={160}>
+                    <ResponsiveContainer width={300} height={160}>
                         <BarChart
                             data={processedDemoData}
                             margin={{
@@ -286,7 +286,7 @@ export const ChannelSection = ({ ...props }: Props) => {
                                 </ResponsiveContainer>
                             </div>
                         ) : (
-                            <ResponsiveContainer width={550} height={300}>
+                            <ResponsiveContainer width={300} height={300}>
                                 <RadarChart
                                     outerRadius={100}
                                     cx="50%"

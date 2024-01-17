@@ -13,6 +13,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { ManageSection, manageSectionUpdatingAtom } from '../manage-section';
 import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -54,8 +55,10 @@ export const ProfileScreen = ({ profile, influencerData, address }: Props) => {
                     />
                     <Icon className="absolute bottom-0 right-1 h-6 w-6" />
                 </section>
-                <div className="z-10 flex h-[100px] flex-col justify-between gap-2">
-                    <h1 className="text-2xl font-semibold text-white">{profile.name}</h1>
+                <div className="z-10 flex flex-col justify-between gap-2">
+                    <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
+                        {truncatedText(profile.name ?? profile.username ?? '', 10)}
+                    </h1>
                     <div className="flex flex-col">
                         {profile.url ? (
                             <Link href={profile.url} className="text-lg font-medium text-primary-500">
@@ -74,7 +77,7 @@ export const ProfileScreen = ({ profile, influencerData, address }: Props) => {
                         </Link>
                     </div>
                 </div>
-                <div className="absolute left-0 top-0 z-0 h-1/2 w-full bg-boostbotbackground" />
+                <div className="absolute left-0 top-0 z-0 h-[50%] w-full bg-boostbotbackground" />
             </section>
             <Tabs defaultValue="manage" className="">
                 <TabsList className="grid w-full grid-cols-2">
