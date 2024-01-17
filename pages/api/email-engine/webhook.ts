@@ -759,7 +759,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 };
 
 const handleMessageDeleted = async (event: WebhookMessageDeleted, res: NextApiResponse) => {
-    await deleteEmail(event.data.id);
+    await deleteEmail(event.account, event.data.id);
 
     return res.status(httpCodes.OK).json({ message: 'ok' });
 };

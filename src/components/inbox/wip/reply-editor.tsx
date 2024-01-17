@@ -4,6 +4,7 @@ import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
 import type { KeyboardEvent } from 'react';
 import { Tooltip } from 'src/components/library';
 import { nanoid } from 'nanoid';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 export const ReplyEditor = ({
     onReply,
@@ -76,9 +77,6 @@ const AddressLabel = ({
     onClick: (info: EmailContact) => void;
     defaultAddress?: boolean;
 }) => {
-    const truncatedText = (text: string, maxLength: number) => {
-        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-    };
     return (
         <Tooltip delay={500} content={`${info.name}: ${info.address}`}>
             <span className="flex rounded bg-primary-200 px-2 py-1 text-sm font-semibold text-primary-500 hover:bg-primary-100">

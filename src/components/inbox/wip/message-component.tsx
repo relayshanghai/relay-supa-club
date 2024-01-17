@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/compo
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
 import { useRouter } from 'next/router';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 const MessageTitle = ({
     expanded,
@@ -107,9 +108,6 @@ const AttachmentTablet = ({ attachment }: { attachment: AttachmentFile }) => {
         });
     }, [attachment, router]);
 
-    const truncatedText = (text: string, maxLength: number) => {
-        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-    };
     return (
         <Tooltip position="right" content={attachment.filename}>
             <button

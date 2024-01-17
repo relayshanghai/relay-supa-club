@@ -21,7 +21,7 @@ export const updateEmailByMessageId: DBQuery<UpdateEmailByMessageIdFn> =
                 sender: data.sender,
                 recipients: data.recipients,
                 thread_id: data.thread_id,
-                email_engine_id: data.email_engine_id,
+                email_engine_id: `${data.email_engine_account_id}:${data.email_engine_id}`,
                 email_engine_account_id: data.email_engine_account_id,
                 created_at: data.created_at ?? now(),
             })
