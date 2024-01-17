@@ -4,8 +4,7 @@ import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
-import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { AttachmentFile, EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
 
 export type Message = {
@@ -28,7 +27,7 @@ export type CurrentInbox = {
 type ThreadPreviewProps = {
     sequenceInfluencer: typeof sequence_influencers.$inferInsert | null;
     threadInfo: ThreadInfo;
-    _currentInbox: CurrentInbox;
+    currentInbox: CurrentInbox;
     selected: boolean;
     onClick: () => void;
 };
@@ -65,7 +64,9 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
     return (
         <Card
             onClick={onClick}
-            className={`flex w-full cursor-pointer rounded-none ${selected && 'bg-primary-200'} transition-all`}
+            className={`flex cursor-pointer rounded-none ${
+                selected && 'border-l-4 border-violet-600 bg-primary-200'
+            } transition-all`}
         >
             <CardContent className="w-full p-4">
                 <div className="flex items-center gap-4">
@@ -88,14 +89,12 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                 </div>
             </CardContent>
             {sequenceInfluencer?.funnel_status && (
-                <CardContent className="mt-5">
-                    <div
-                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status].style} rounded-sm p-1`}
-                    >
-                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
+                <div className="mr-2 mt-3">
+                    <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
+                        {COLLAB_OPTIONS[funnel_status].icon}
                         {UnreadMarker}
                     </div>
-                </CardContent>
+                </div>
             )}
         </Card>
     );
