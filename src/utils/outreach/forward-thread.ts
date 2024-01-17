@@ -13,9 +13,11 @@ type ForwardThreadParams = {
 type ForwardThreadFn = (params: ForwardThreadParams) => Promise<any>;
 
 export const forwardThread: ForwardThreadFn = async (params) => {
+    const [_account, emailEngineId] = params.messageId.split(':');
+
     return await forwardEmail({
         account: params.account,
-        emailEngineId: params.messageId,
+        emailEngineId: emailEngineId,
         content: params.content,
         to: params.to,
         cc: params.cc,

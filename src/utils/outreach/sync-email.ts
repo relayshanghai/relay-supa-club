@@ -62,7 +62,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         // Mark emails deleted
         if (messageType === 'Trash') {
-            const results = await deleteEmail(params.emailEngineId);
+            const results = await deleteEmail(params.account, params.emailEngineId);
             return {
                 thread: results.thread,
                 email: results.email ? transformEmail(results.email) : null,

@@ -15,7 +15,7 @@ export const createEmail: DBQuery<CreateEmailFn> = (drizzlePostgresInstance) => 
             recipients: params.recipients,
             thread_id: params.thread_id,
             email_engine_message_id: params.email_engine_message_id,
-            email_engine_id: params.email_engine_id,
+            email_engine_id: `${params.email_engine_account_id}:${params.email_engine_id}`,
             email_engine_account_id: params.email_engine_account_id,
             created_at: params.created_at ?? now(),
         })
@@ -26,7 +26,7 @@ export const createEmail: DBQuery<CreateEmailFn> = (drizzlePostgresInstance) => 
         result = await db(drizzlePostgresInstance)
             .select()
             .from(emails)
-            .where(eq(emails.email_engine_id, params.email_engine_id))
+            .where(eq(emails.email_engine_id, `${params.email_engine_account_id}:${params.email_engine_id}`))
             .limit(1);
     }
 
