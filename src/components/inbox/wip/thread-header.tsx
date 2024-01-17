@@ -20,7 +20,7 @@ export const ThreadHeader = ({
 
     return (
         <div
-            className={`flex w-full justify-between bg-white px-4 py-8 shadow-lg ${
+            className={`flex w-full justify-between bg-white px-2 py-3 shadow-lg ${
                 expanded && 'flex-col'
             } relative gap-4`}
         >
@@ -28,16 +28,22 @@ export const ThreadHeader = ({
                 className="absolute right-2 top-2 h-4 w-4 cursor-pointer stroke-gray-500"
                 onClick={() => setExpanded(!expanded)}
             />
-            <span className="font-['Poppins'] text-lg font-bold tracking-tight text-gray-700">
-                {messages[messages.length - 1].subject}
-            </span>
+            <div className="flex flex-col gap-2">
+                <div className="inline-flex h-14 items-center justify-start gap-3">
+                    <span className="flex-col justify-center justify-between font-['Poppins'] text-lg font-bold tracking-tight text-gray-700">
+                        {messages[messages.length - 1].subject}
+                    </span>
+                </div>
+            </div>
             <div className="flex flex-col justify-between sm:flex-row">
                 <div className="flex flex-col gap-2">
                     <div className="inline-flex h-14 items-center justify-start gap-3">
                         <div className="inline-flex flex-col items-start justify-center gap-2">
-                            <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
-                                Product:
-                            </div>
+                            {expanded && (
+                                <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
+                                    Product:
+                                </div>
+                            )}
                             <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
                                 Sequence:
                             </div>
@@ -45,9 +51,11 @@ export const ThreadHeader = ({
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-2">
                             {threadInfo.sequenceInfo && (
                                 <>
-                                    <div className="font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-gray-700">
-                                        {threadInfo.sequenceInfo.productName}
-                                    </div>
+                                    {expanded && (
+                                        <div className="font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-gray-700">
+                                            {threadInfo.sequenceInfo.productName}
+                                        </div>
+                                    )}
                                     <div className="font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-gray-700 underline">
                                         <Link
                                             className="text-primary-500"

@@ -335,7 +335,7 @@ const ThreadProvider = ({
 
     return (
         <div className="flex h-full flex-col bg-zinc-50">
-            <div className="flex-none bg-zinc-50 p-1">
+            <div className="flex-none bg-zinc-50">
                 <ThreadHeader
                     threadInfo={selectedThread}
                     messages={messages}
@@ -434,7 +434,6 @@ const InboxPreview = () => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
                 body: { ...filters, threadIds: Object.keys(searchResults), page },
             });
-
             const totals = {
                 unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
@@ -660,7 +659,7 @@ const InboxPreview = () => {
                         />
                     ) : (
                         <div className="flex h-full flex-col bg-zinc-50">
-                            <div className="flex-none bg-zinc-50 p-1">
+                            <div className="flex-none bg-zinc-50">
                                 <ThreadHeader
                                     // @ts-ignore
                                     threadInfo={emptyThread}
