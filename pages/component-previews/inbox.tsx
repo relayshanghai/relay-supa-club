@@ -81,7 +81,6 @@ const generateLocalData = (params: {
 
 const getContactsToReply = (contacts: ThreadContact[], email?: string | null) => {
     const account = !email ? contacts.find((contact) => contact.type === 'user') : { address: email };
-
     if (!account) {
         throw new Error('Thread did not originate from boostbot');
     }
@@ -93,7 +92,6 @@ const getContactsToReply = (contacts: ThreadContact[], email?: string | null) =>
     const cc = contacts.filter((contact) => {
         return contact.address !== account.address && ['cc', 'bcc'].includes(contact.type) === true;
     });
-
     return { to, cc };
 };
 

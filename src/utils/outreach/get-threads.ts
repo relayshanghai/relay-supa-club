@@ -48,7 +48,11 @@ export const getThreads: GetThreadsFn = async (params) => {
         contacts[thread.threads.thread_id] = threadContacts
             .filter((contact) => contact.email_contacts !== null)
             .map((contact) => {
-                return { ...contact.email_contacts, type: contact.thread_contacts.type };
+                return {
+                    ...contact.email_contacts,
+                    name: contact.email_contacts?.name || contact.email_contacts?.address,
+                    type: contact.thread_contacts.type,
+                };
             }) as ThreadContact[];
     }
 
