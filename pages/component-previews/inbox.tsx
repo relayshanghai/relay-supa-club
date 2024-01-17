@@ -416,6 +416,7 @@ const InboxPreview = () => {
     const {
         data: threadsInfo,
         error: _threadsError,
+        mutate: refreshThreads,
         isLoading: isThreadsLoading,
     } = useSWR(
         [filters, page, searchResults],
@@ -440,12 +441,32 @@ const InboxPreview = () => {
         if (!threadsInfo || threadsInfo.threads.length <= 0) return;
 
         setThreads((previousThreads) => {
-            const existingThreadIds = previousThreads.map((thread) => thread.threadInfo.thread_id);
-            const uniqueThreads = threadsInfo.threads.filter(
-                (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
-            );
+            const updatedThreads = previousThreads.map((existingThread) => {
+                const matchingThreadIndex = threadsInfo.threads.findIndex(
+                    (newThread) => newThread.threadInfo.thread_id === existingThread.threadInfo.thread_id,
+                );
 
-            return [...previousThreads, ...uniqueThreads];
+                if (matchingThreadIndex !== -1) {
+                    // Merge and update the existing thread
+                    const mergedThread = {
+                        ...existingThread,
+                        ...threadsInfo.threads[matchingThreadIndex],
+                    };
+                    return mergedThread;
+                }
+
+                return existingThread;
+            });
+
+            return [
+                ...updatedThreads,
+                ...threadsInfo.threads.filter(
+                    (newThread) =>
+                        !updatedThreads.some(
+                            (thread) => thread.threadInfo.thread_id === newThread.threadInfo.thread_id,
+                        ),
+                ),
+            ];
         });
     }, [threadsInfo]);
 
@@ -456,6 +477,7 @@ const InboxPreview = () => {
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
+        refreshThreads();
         if (thread.threadInfo.thread_status === 'unopened') {
             apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
@@ -467,18 +489,20 @@ const InboxPreview = () => {
         setSelectedThread(thread);
     };
 
-    const markAsReplied = (threadId: string) => {
+    const markAsReplied = async (threadId: string) => {
         const thread = threads?.find((t) => t.threadInfo.thread_id === threadId);
         if (!thread) return;
 
         if (thread.threadInfo.thread_status === 'unreplied') {
-            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+            await apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
                 body: {
                     thread_status: 'replied',
                 },
             });
         }
+
+        refreshThreads();
     };
 
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
@@ -523,6 +547,7 @@ const InboxPreview = () => {
 
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
     useEffect(() => {
@@ -555,6 +580,9 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
+                                setPage(0);
+                                setThreads([]);
+                                refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
                         />
@@ -660,6 +688,9 @@ const InboxPreview = () => {
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
+                            onUpdate={() => {
+                                refreshThreads();
+                            }}
                         />
                     )}
                 </section>
