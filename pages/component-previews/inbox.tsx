@@ -321,9 +321,18 @@ const ThreadProvider = ({
         },
         [setAttachments],
     );
-
+    const messageContainerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            // scroll to bottom of messages container when new messages are loaded and rendered
+            setTimeout(() => {
+                messageContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+    }, [messages]);
     if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
+
     return (
         <div className="flex h-full flex-col bg-zinc-50">
             <div className="flex-none bg-zinc-50 p-1">
@@ -343,6 +352,7 @@ const ThreadProvider = ({
                     focusedMessageIds={filteredMessageIds}
                     onForward={handleForward}
                 />
+                <div ref={messageContainerRef} />
             </div>
 
             <div className="m-5 bg-white">
@@ -567,12 +577,11 @@ const InboxPreview = () => {
         acc[key].push(thread);
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
-
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
         <Layout>
             <div className="flex h-full max-h-screen bg-white">
-                <section className="w-[280px] flex-col items-center gap-2 overflow-y-auto">
+                <section className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto">
                     <section className="flex w-full flex-col gap-4 p-2">
                         <SearchBar onSearch={handleSearch} />
                         <Filter
@@ -660,10 +669,7 @@ const InboxPreview = () => {
                                 />
                             </div>
 
-                            <div
-                                style={{ height: 10 }}
-                                className="m-5 flex-auto justify-center overflow-auto bg-zinc-50"
-                            >
+                            <div style={{ height: 10 }} className="m-5 flex-auto justify-center bg-zinc-50">
                                 <MessagesComponent
                                     currentInbox={currentInbox}
                                     messages={[emptyMessage]}
@@ -680,7 +686,7 @@ const InboxPreview = () => {
                         </div>
                     )}
                 </section>
-                <section className="w-[360px] overflow-y-auto">
+                <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
                     {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
                         <ProfileScreen
                             // @ts-ignore
