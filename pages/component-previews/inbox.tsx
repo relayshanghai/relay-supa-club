@@ -324,7 +324,7 @@ const ThreadProvider = ({
         [setAttachments],
     );
 
-    if (!messages && isMessageLoading) return <div>Loading messages...</div>;
+    if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
     return (
         <div className="flex h-full flex-col bg-zinc-50">
@@ -599,7 +599,7 @@ const InboxPreview = () => {
                             ))}
                         </div>
                     ) : isThreadsLoading ? (
-                        <Spinner className="h-6 w-6 fill-primary-400" />
+                        <div className="h-16 animate-pulse bg-gray-400" />
                     ) : (
                         <ThreadPreview
                             sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
@@ -614,7 +614,7 @@ const InboxPreview = () => {
                     )}
                     {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
-                <section className="col-span-5 flex h-full flex-col">
+                <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (
                         <ThreadProvider
                             currentInbox={currentInbox}
@@ -673,7 +673,7 @@ const InboxPreview = () => {
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     return (
-        <div className="flex h-9 w-full flex-row items-center items-center justify-start justify-between rounded-md border border-gray-200 bg-white bg-white px-2 shadow">
+        <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 shadow">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
                 className="focus:ring-none focus-visible:ring-none border-none text-xs shadow-none placeholder:text-gray-400 focus-visible:ring-0"
