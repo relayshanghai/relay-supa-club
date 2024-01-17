@@ -1,7 +1,7 @@
 import { db } from '../database';
 import { createThread, createEmail, getSequenceInfluencerByEmail } from './db';
 import { parseContacts } from './parse-contacts';
-import type { From } from 'types/email-engine/account-account-message-get';
+import type { AccountAccountMessageGet, From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
 import { getInfluencerFromMessage } from './get-influencer-from-message';
@@ -15,10 +15,14 @@ import { createThreadContact } from './db/create-thread-contact';
 import { getThreadContacts } from './db/get-thread-contacts';
 import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
 import type { ThreadContact } from './types';
+import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 
 type SyncEmailParams = {
     account: string;
     emailEngineId: string;
+    emailMessage?: MessagesGetMessage;
+    dryRun?: boolean;
+    skipMissingKol?: boolean;
 };
 
 type TransformedEmail = Omit<typeof emails.$inferSelect, 'sender' | 'recipients'> & {
@@ -26,13 +30,16 @@ type TransformedEmail = Omit<typeof emails.$inferSelect, 'sender' | 'recipients'
     recipients: From[];
 };
 
-type SyncEmailFn = (params: SyncEmailParams) => Promise<{
-    influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
-    thread: typeof threads.$inferSelect | null;
-    contacts: ThreadContact[] | null;
-    email: TransformedEmail | null;
-    messageType: MESSAGE_TYPES;
-}>;
+type SyncEmailFn = (params: SyncEmailParams) => Promise<
+    | {
+          influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
+          thread: typeof threads.$inferSelect | null;
+          contacts: ThreadContact[] | null;
+          email: TransformedEmail | null;
+          messageType: { type: MESSAGE_TYPES; weight: number };
+      }
+    | false
+>;
 
 // @todo use drizzle mapWith?
 const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => {
@@ -48,20 +55,33 @@ const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => 
  */
 export const syncEmail: SyncEmailFn = async (params) => {
     const result = await db().transaction(async (tx) => {
+        let influencer = null;
+
+        if (params.emailMessage) {
+            influencer = await getInfluencerFromMessage(params.emailMessage as AccountAccountMessageGet);
+            if (params.skipMissingKol && !influencer) return false;
+        }
+
         // get the full message data
         const emailMessage = await getMessage(params.account, params.emailEngineId);
         const messageType = await getMessageType({ message: emailMessage });
 
         // skip drafts
-        if (messageType === 'Draft') {
+        if (messageType.type === 'Draft') {
             return { influencer: null, thread: null, contacts: null, email: null, messageType };
         }
 
+        const messageContacts = await getMessageContacts(emailMessage);
+
         // @note sequence influencer is holds the data of an "influencer outreach" NOT the influencer
-        const influencer = await getInfluencerFromMessage(emailMessage);
+        influencer = await getInfluencerFromMessage(emailMessage);
+
+        if (params.skipMissingKol && !influencer) {
+            return false;
+        }
 
         // Mark emails deleted
-        if (messageType === 'Trash') {
+        if (messageType.type === 'Trash') {
             const results = await deleteEmail(params.emailEngineId);
             return {
                 thread: results.thread,
@@ -73,7 +93,16 @@ export const syncEmail: SyncEmailFn = async (params) => {
         }
 
         // determine the valid repliable id for this thread
-        const repliedMessageId = messageType === 'Reply' ? emailMessage.id : null;
+        const repliedMessageId = messageType.type === 'Reply' ? emailMessage.id : null;
+
+        if (params.dryRun) {
+            return {
+                email: emailMessage,
+                contacts: messageContacts,
+                influencer,
+                messageType,
+            };
+        }
 
         const thread = await createThread(tx)({
             threadId: emailMessage.threadId,
@@ -82,8 +111,6 @@ export const syncEmail: SyncEmailFn = async (params) => {
             lastReplyId: repliedMessageId,
             createdAt: String(emailMessage.date),
         });
-
-        const messageContacts = await getMessageContacts(emailMessage);
 
         // @todo move to a function createThreadContact
         for (const contact of messageContacts) {

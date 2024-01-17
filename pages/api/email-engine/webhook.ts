@@ -299,11 +299,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     });
 
     // We sometimes receive a messageNew event when an email is trashed
-    if (synced.messageType === 'Trash') {
+    if (synced.messageType.type === 'Trash') {
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
 
-    if (synced.messageType === 'Reply' && synced.influencer) {
+    if (synced.messageType.type === 'Reply' && synced.influencer) {
         await handleReply(synced.influencer, event);
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
