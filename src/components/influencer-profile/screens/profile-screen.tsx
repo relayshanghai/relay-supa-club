@@ -73,7 +73,7 @@ export const ProfileScreen = ({ profile, influencerData, address }: Props) => {
                         )}
 
                         <Link href={`/sequences/${profile.sequence_id}`} className="text-sm text-gray-400 underline">
-                            {sequence?.name ?? 'Sequence Name'}
+                            {truncatedText(sequence?.name ?? 'Sequence Name', 10)}
                         </Link>
                     </div>
                 </div>
