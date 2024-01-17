@@ -4,6 +4,7 @@ import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
+import { truncatedText } from 'src/utils/outreach/helpers';
 import type { AttachmentFile, EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
 
@@ -25,14 +26,14 @@ export type CurrentInbox = {
 };
 
 type ThreadPreviewProps = {
-    sequenceInfluencer: typeof sequence_influencers.$inferInsert;
+    sequenceInfluencer: typeof sequence_influencers.$inferInsert | null;
     threadInfo: ThreadInfo;
     currentInbox: CurrentInbox;
     selected: boolean;
     onClick: () => void;
 };
 
-const getPlatformIcon = (platform: CreatorPlatform) => {
+const getPlatformIcon = (platform?: CreatorPlatform) => {
     switch (platform) {
         case 'youtube':
             return Youtube;
@@ -45,7 +46,7 @@ const getPlatformIcon = (platform: CreatorPlatform) => {
     }
 };
 
-const getUnreadMarker = (status: THREAD_STATUS) => {
+const getUnreadMarker = (status?: THREAD_STATUS) => {
     switch (status) {
         case 'unopened':
             return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />;
@@ -57,11 +58,9 @@ const getUnreadMarker = (status: THREAD_STATUS) => {
 };
 
 export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClick }: ThreadPreviewProps) => {
-    const { name, avatar_url, username, platform, funnel_status } = sequenceInfluencer;
-
     // Get components conditionally
-    const Icon = getPlatformIcon(platform as CreatorPlatform);
-    const UnreadMarker = getUnreadMarker(threadInfo.threadInfo.thread_status as THREAD_STATUS);
+    const Icon = getPlatformIcon(sequenceInfluencer?.platform as CreatorPlatform);
+    const UnreadMarker = getUnreadMarker(threadInfo?.threadInfo?.thread_status as THREAD_STATUS);
 
     return (
         <Card
@@ -74,26 +73,34 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                 <div className="flex items-center gap-4">
                     <section className="relative">
                         <Avatar>
-                            <AvatarImage src={avatar_url ?? ''} />
-                            <AvatarFallback>{name ? name[0] : 'I'}</AvatarFallback>
+                            <AvatarImage src={sequenceInfluencer?.avatar_url ?? ''} />
+                            <AvatarFallback>
+                                {sequenceInfluencer?.name ? sequenceInfluencer?.name[0] : 'I'}
+                            </AvatarFallback>
                         </Avatar>
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
                     </section>
                     <span>
-                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>{name}</p>
+                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>
+                            {truncatedText(sequenceInfluencer?.name ?? '', 10)}
+                        </p>
                         <p className="text-primary-400">
                             <span className="text-primary-600">@</span>
-                            {username}
+                            {sequenceInfluencer?.username}
                         </p>
                     </span>
                 </div>
             </CardContent>
-            <div className="mr-2 mt-3">
-                <div className={`relative ${COLLAB_OPTIONS[funnel_status].style} rounded-sm p-1`}>
-                    {COLLAB_OPTIONS[funnel_status].icon}
-                    {UnreadMarker}
+            {sequenceInfluencer?.funnel_status && (
+                <div className="mr-2 mt-3">
+                    <div
+                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status].style} rounded-sm p-1`}
+                    >
+                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
+                        {UnreadMarker}
+                    </div>
                 </div>
-            </div>
+            )}
         </Card>
     );
 };

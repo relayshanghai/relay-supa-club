@@ -32,5 +32,5 @@ export type Thread = {
     sequenceInfluencer: InfluencerOutreachData | null;
     contacts: ThreadContact[];
     sequenceInfo: Outreach | null;
-    influencerSocialProfile: SearchTableInfluencer;
+    influencerSocialProfile?: SearchTableInfluencer;
 };

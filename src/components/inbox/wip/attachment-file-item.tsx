@@ -1,6 +1,7 @@
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
 import type { AttachmentFile } from 'src/utils/outreach/types';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 type AttachmentFileItemProps = {
     file: AttachmentFile;
@@ -8,9 +9,6 @@ type AttachmentFileItemProps = {
 };
 
 const AttachmentFileItem = ({ file, onRemove }: AttachmentFileItemProps) => {
-    const truncatedText = (text: string, maxLength: number) => {
-        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-    };
     return (
         <Tooltip content={file.filename} position="top-right">
             <span
