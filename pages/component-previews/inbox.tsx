@@ -477,6 +477,7 @@ const InboxPreview = () => {
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
+        refreshThreads();
         if (thread.threadInfo.thread_status === 'unopened') {
             apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
@@ -488,18 +489,20 @@ const InboxPreview = () => {
         setSelectedThread(thread);
     };
 
-    const markAsReplied = (threadId: string) => {
+    const markAsReplied = async (threadId: string) => {
         const thread = threads?.find((t) => t.threadInfo.thread_id === threadId);
         if (!thread) return;
 
         if (thread.threadInfo.thread_status === 'unreplied') {
-            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+            await apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
                 body: {
                     thread_status: 'replied',
                 },
             });
         }
+
+        refreshThreads();
     };
 
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
@@ -544,6 +547,7 @@ const InboxPreview = () => {
 
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
     useEffect(() => {
