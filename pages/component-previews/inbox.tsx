@@ -13,9 +13,7 @@ import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
-import { mapProfileToFormData } from 'src/components/inbox/helpers';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
@@ -420,6 +418,8 @@ const InboxPreview = () => {
                     query: { searchTerm },
                 },
             );
+            setPage(0);
+            setThreads([]);
             setSearchResults(res.content);
         },
         [threads],
@@ -443,7 +443,7 @@ const InboxPreview = () => {
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
-            return { threads: content.data, totals: totals };
+            return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
         { revalidateOnFocus: true },
     );
@@ -458,6 +458,11 @@ const InboxPreview = () => {
             totals.unreplied !== threadsInfo.totals.unreplied
         ) {
             setTotals(threadsInfo.totals);
+        }
+
+        if (page === 0) {
+            setThreads(threadsInfo.threads);
+            return;
         }
 
         setThreads((previousThreads) => {
@@ -488,10 +493,9 @@ const InboxPreview = () => {
                 ),
             ];
         });
-    }, [threadsInfo, totals]);
+    }, [threadsInfo, totals, page]);
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
-    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
@@ -531,10 +535,15 @@ const InboxPreview = () => {
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
         const totalThreads = totals.replied + totals.unopened + totals.unreplied;
-        if (threads && threads.length > 0 && threads.length < totalThreads && !isThreadsLoading) {
+        if (
+            threads &&
+            threads.length > 0 &&
+            threads.length < (threadsInfo?.totalFiltered || totalThreads) &&
+            !isThreadsLoading
+        ) {
             setPage((prev) => prev + 1);
         }
-    }, [setPage, threads, totals, isThreadsLoading]);
+    }, [setPage, threads, totals, isThreadsLoading, threadsInfo?.totalFiltered]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
@@ -546,6 +555,7 @@ const InboxPreview = () => {
                 unopened: number;
                 replied: number;
             };
+            totalFiltered: number;
         },
         newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
     ) => {
@@ -599,12 +609,6 @@ const InboxPreview = () => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
-
-    useEffect(() => {
-        if (selectedThread?.sequenceInfluencer) {
-            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencer));
-        }
-    }, [selectedThread]);
 
     const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
         if (!thread.threadInfo.updated_at) {
@@ -729,7 +733,7 @@ const InboxPreview = () => {
                     )}
                 </section>
                 <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
-                    {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
+                    {selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
                         <ProfileScreen
                             // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
