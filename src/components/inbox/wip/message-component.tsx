@@ -11,12 +11,13 @@ import { Download, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
+import type { EmailContact } from 'src/utils/outreach/types';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
 import { useRouter } from 'next/router';
 import { truncatedText } from 'src/utils/outreach/helpers';
+import type { Attachment } from 'types/email-engine/account-account-message-get';
 
 const MessageTitle = ({
     expanded,
@@ -84,7 +85,11 @@ const MessageTitle = ({
                     }}
                     className={`text-sm ${expanded && 'text-primary-500'} px-4`}
                 >
-                    {expanded && <span>Sent to {message.to.map((to) => to.name || to.address)}</span>}
+                    {expanded && (
+                        <span>
+                            Sent to {message.to.map((to) => (to.address === myEmail ? 'Me' : to.name || to.address))}
+                        </span>
+                    )}
                     {expanded && message.cc.length > 0 && (
                         <span> and {message.cc.map((cc) => cc.name || cc.address).join(', ')}</span>
                     )}
@@ -93,8 +98,9 @@ const MessageTitle = ({
         );
 };
 
-const AttachmentTablet = ({ attachment }: { attachment: AttachmentFile }) => {
+const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
     const router = useRouter();
+
     const handleDownloadAttachment = useCallback(async () => {
         if (!attachment.id) return;
         const baseUrl = '/api/outreach/attachments';
@@ -201,9 +207,14 @@ const MessageComponent = ({
                 <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 {message.attachments && message.attachments.length > 0 && (
                     <section className="flex w-full gap-2">
-                        {message.attachments.map((attachment) => (
-                            <AttachmentTablet key={attachment.id} attachment={attachment} />
-                        ))}
+                        {message.attachments
+                            .filter((attachment) => {
+                                // @note there are some attachments that does not have complete data (e.g. no filename)
+                                return attachment.contentType.startsWith('message/') === false;
+                            })
+                            .map((attachment) => (
+                                <AttachmentTablet key={attachment.id} attachment={attachment} />
+                            ))}
                     </section>
                 )}
                 <section className="w-full">

@@ -5,15 +5,16 @@ import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import type { THREAD_STATUS } from 'src/utils/outreach/constants';
 import { truncatedText } from 'src/utils/outreach/helpers';
-import type { AttachmentFile, EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
+import type { EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
+import type { Attachment } from 'types/email-engine/account-account-message-get';
 
 export type Message = {
     id: string;
     from: EmailContact;
     to: EmailContact[];
     replyTo: EmailContact[];
-    attachments: AttachmentFile[];
+    attachments: Attachment[];
     cc: EmailContact[];
     body: string;
     date: string;
@@ -94,7 +95,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
             {sequenceInfluencer?.funnel_status && (
                 <div className="mr-2 mt-3">
                     <div
-                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status].style} rounded-sm p-1`}
+                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status]?.style} rounded-sm p-1`}
                     >
                         {COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
                         {UnreadMarker}

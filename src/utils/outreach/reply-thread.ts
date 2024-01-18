@@ -20,11 +20,9 @@ export const replyThread: ReplyThreadFn = async (params) => {
         return false;
     }
 
-    const [_account, last_reply_id] = thread.thread.last_reply_id.split(':');
-
     return await replyEmail({
         account: params.account,
-        emailEngineId: last_reply_id,
+        emailEngineId: thread.thread.last_reply_id,
         content: params.content,
         to: params.to,
         cc: params.cc,

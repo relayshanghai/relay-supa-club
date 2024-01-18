@@ -4,8 +4,8 @@ import { getSequenceInfluencerByThreadIdAndContact } from './db/get-sequence-inf
 import type { db } from '../database';
 import type { InfluencerOutreachData } from './types';
 import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
-import type { profiles } from 'drizzle/schema';
 import { getSequenceInfluencerByEmailAndCompanyId } from './db/get-sequence-influencer-by-email-and-company-id';
+import type { profiles } from 'drizzle/schema';
 
 type GetInfluencerFromMessageFn = (
     message: AccountAccountMessageGet,
@@ -40,10 +40,6 @@ export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (messa
 
         queries.push(influencerByThreadAndEmails);
 
-        // if (influencerByThreadAndEmails) {
-        //     return influencerOutreachDataTransformer(influencerByThreadAndEmails);
-        // }
-
         if (profile?.company_id) {
             const influencerByEmail = getSequenceInfluencerByEmailAndCompanyId(options?.tx)(
                 contact,
@@ -51,10 +47,6 @@ export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (messa
             );
             queries.push(influencerByEmail);
         }
-
-        // if (influencerByEmail) {
-        //     return influencerOutreachDataTransformer(influencerByEmail);
-        // }
     }
 
     const results = await Promise.allSettled(queries);
