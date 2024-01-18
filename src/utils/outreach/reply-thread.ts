@@ -24,7 +24,8 @@ export const replyThread: ReplyThreadFn = async (params) => {
 
     return await replyEmail({
         account: params.account,
-        emailEngineId: last_reply_id,
+        // last_reply_id can be null
+        emailEngineId: last_reply_id || _account,
         content: params.content,
         to: params.to,
         cc: params.cc,

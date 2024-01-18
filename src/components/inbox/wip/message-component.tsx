@@ -85,7 +85,11 @@ const MessageTitle = ({
                     }}
                     className={`text-sm ${expanded && 'text-primary-500'} px-4`}
                 >
-                    {expanded && <span>Sent to {message.to.map((to) => to.name || to.address)}</span>}
+                    {expanded && (
+                        <span>
+                            Sent to {message.to.map((to) => (to.address === myEmail ? 'Me' : to.name || to.address))}
+                        </span>
+                    )}
                     {expanded && message.cc.length > 0 && (
                         <span> and {message.cc.map((cc) => cc.name || cc.address).join(', ')}</span>
                     )}

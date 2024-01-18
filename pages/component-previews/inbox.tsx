@@ -322,12 +322,21 @@ const ThreadProvider = ({
         },
         [setAttachments],
     );
-
+    const messageContainerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            // scroll to bottom of messages container when new messages are loaded and rendered
+            setTimeout(() => {
+                messageContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+    }, [messages]);
     if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
+
     return (
         <div className="flex h-full flex-col bg-zinc-50">
-            <div className="flex-none bg-zinc-50 p-1">
+            <div className="flex-none bg-zinc-50">
                 <ThreadHeader
                     threadInfo={selectedThread}
                     messages={messages}
@@ -344,6 +353,7 @@ const ThreadProvider = ({
                     focusedMessageIds={filteredMessageIds}
                     onForward={handleForward}
                 />
+                <div ref={messageContainerRef} />
             </div>
 
             <div className="m-5 bg-white">
@@ -417,6 +427,7 @@ const InboxPreview = () => {
     const {
         data: threadsInfo,
         error: _threadsError,
+        mutate: refreshThreads,
         isLoading: isThreadsLoading,
     } = useSWR(
         [filters, page, searchResults],
@@ -424,7 +435,6 @@ const InboxPreview = () => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
                 body: { ...filters, threadIds: Object.keys(searchResults), page },
             });
-
             const totals = {
                 unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
@@ -441,12 +451,32 @@ const InboxPreview = () => {
         if (!threadsInfo || threadsInfo.threads.length <= 0) return;
 
         setThreads((previousThreads) => {
-            const existingThreadIds = previousThreads.map((thread) => thread.threadInfo.thread_id);
-            const uniqueThreads = threadsInfo.threads.filter(
-                (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
-            );
+            const updatedThreads = previousThreads.map((existingThread) => {
+                const matchingThreadIndex = threadsInfo.threads.findIndex(
+                    (newThread) => newThread.threadInfo.thread_id === existingThread.threadInfo.thread_id,
+                );
 
-            return [...previousThreads, ...uniqueThreads];
+                if (matchingThreadIndex !== -1) {
+                    // Merge and update the existing thread
+                    const mergedThread = {
+                        ...existingThread,
+                        ...threadsInfo.threads[matchingThreadIndex],
+                    };
+                    return mergedThread;
+                }
+
+                return existingThread;
+            });
+
+            return [
+                ...updatedThreads,
+                ...threadsInfo.threads.filter(
+                    (newThread) =>
+                        !updatedThreads.some(
+                            (thread) => thread.threadInfo.thread_id === newThread.threadInfo.thread_id,
+                        ),
+                ),
+            ];
         });
     }, [threadsInfo]);
 
@@ -457,6 +487,7 @@ const InboxPreview = () => {
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
+        refreshThreads();
         if (thread.threadInfo.thread_status === 'unopened') {
             apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
@@ -468,18 +499,20 @@ const InboxPreview = () => {
         setSelectedThread(thread);
     };
 
-    const markAsReplied = (threadId: string) => {
+    const markAsReplied = async (threadId: string) => {
         const thread = threads?.find((t) => t.threadInfo.thread_id === threadId);
         if (!thread) return;
 
         if (thread.threadInfo.thread_status === 'unreplied') {
-            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+            await apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
                 body: {
                     thread_status: 'replied',
                 },
             });
         }
+
+        refreshThreads();
     };
 
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
@@ -524,6 +557,7 @@ const InboxPreview = () => {
 
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
     useEffect(() => {
@@ -543,12 +577,11 @@ const InboxPreview = () => {
         acc[key].push(thread);
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
-
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
         <Layout>
             <div className="flex h-full max-h-screen bg-white">
-                <section className="w-[280px] flex-col items-center gap-2 overflow-y-auto">
+                <section className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto">
                     <section className="flex w-full flex-col gap-4 p-2">
                         <SearchBar onSearch={handleSearch} />
                         <Filter
@@ -556,6 +589,9 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
+                                setPage(0);
+                                setThreads([]);
+                                refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
                         />
@@ -624,7 +660,7 @@ const InboxPreview = () => {
                         />
                     ) : (
                         <div className="flex h-full flex-col bg-zinc-50">
-                            <div className="flex-none bg-zinc-50 p-1">
+                            <div className="flex-none bg-zinc-50">
                                 <ThreadHeader
                                     // @ts-ignore
                                     threadInfo={emptyThread}
@@ -633,10 +669,7 @@ const InboxPreview = () => {
                                 />
                             </div>
 
-                            <div
-                                style={{ height: 10 }}
-                                className="m-5 flex-auto justify-center overflow-auto bg-zinc-50"
-                            >
+                            <div style={{ height: 10 }} className="m-5 flex-auto justify-center bg-zinc-50">
                                 <MessagesComponent
                                     currentInbox={currentInbox}
                                     messages={[emptyMessage]}
@@ -653,7 +686,7 @@ const InboxPreview = () => {
                         </div>
                     )}
                 </section>
-                <section className="w-[360px] overflow-y-auto">
+                <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
                     {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
                         <ProfileScreen
                             // @ts-ignore
@@ -661,6 +694,9 @@ const InboxPreview = () => {
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
+                            onUpdate={() => {
+                                refreshThreads();
+                            }}
                         />
                     )}
                 </section>

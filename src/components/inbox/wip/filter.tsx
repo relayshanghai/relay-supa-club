@@ -177,7 +177,7 @@ const FilterByFunnelStatus = ({
             <p className="text-xs font-medium text-gray-400">Filter by status</p>
             {Object.keys(COLLAB_OPTIONS).map((option, index) => (
                 <div key={option}>
-                    <div className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                    <label className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
                         <Checkbox
                             checked={status.includes(option as FunnelStatus)}
                             onCheckedChange={() => {
@@ -190,7 +190,7 @@ const FilterByFunnelStatus = ({
                             {COLLAB_OPTIONS[option].icon}
                             {option}
                         </span>
-                    </div>
+                    </label>
                 </div>
             ))}
         </div>
@@ -230,7 +230,7 @@ const FilterBySequence = ({
             <p className="text-xs font-medium text-gray-400">Filter by sequence</p>
             {allSequences.map((sequence, index) => (
                 <div key={sequence.id}>
-                    <div className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                    <label className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
                         <Checkbox
                             checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}
                             onCheckedChange={() => {
@@ -238,7 +238,7 @@ const FilterBySequence = ({
                             }}
                         />
                         <span className="flex items-center gap-2 rounded px-2 py-1 text-sm">{sequence.name}</span>
-                    </div>
+                    </label>
                 </div>
             ))}
         </div>

@@ -1,5 +1,5 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import type { DetailedHTMLProps, HTMLAttributes } from 'react';
+import { type DetailedHTMLProps, type HTMLAttributes, useEffect } from 'react';
 import { cls } from 'src/utils/classnames';
 import type { ProfileNotes } from './profile-notes-tab';
 import { ChannelSection, type ProfileChannelSection } from './profile-channel-section';
@@ -24,18 +24,24 @@ type Props = {
     profile: SequenceInfluencerManagerPage;
     address: Address;
     influencerData?: SearchTableInfluencer | null;
-    onUpdate?: (data: ProfileValue) => void;
+    onUpdate?: () => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
-export const ProfileScreen = ({ profile, influencerData, address }: Props) => {
+export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Props) => {
     const Icon = profile.platform == 'youtube' ? Youtube : profile.platform === 'tiktok' ? Tiktok : Instagram;
 
     const { sequence } = useSequence(profile.sequence_id);
 
     const [updating, _setUpdating] = useAtom(manageSectionUpdatingAtom);
+
+    useEffect(() => {
+        if (!updating) {
+            onUpdate?.();
+        }
+    }, [updating, onUpdate]);
 
     return (
         <div className="relative">
