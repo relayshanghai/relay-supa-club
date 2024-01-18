@@ -11,20 +11,25 @@ export const getSequenceInfluencerByMessageId: DBQuery<GetSequenceInfluencerByMe
     (drizzlePostgresInstance) => async (messageId: string) => {
         // @note utilize drizzle relations
         const emails = await db(drizzlePostgresInstance)
-            .select({ sequence_influencer_id: sequence_emails.sequence_influencer_id })
+            .select()
             .from(sequence_emails)
+            .leftJoin(sequence_influencers, eq(sequence_influencers.id, sequence_emails.sequence_influencer_id))
             .where(eq(sequence_emails.email_message_id, messageId))
             .limit(1);
 
-        const email = emails.shift();
+        if (emails.length !== 1) return null;
 
-        if (email === undefined) return null;
+        return emails[0].sequence_influencers;
 
-        const result = await db(drizzlePostgresInstance)
-            .select()
-            .from(sequence_influencers)
-            .where(eq(sequence_influencers.id, email.sequence_influencer_id))
-            .limit(1);
+        // const email = emails.shift();
 
-        return result.shift() ?? null;
+        // if (email === undefined) return null;
+
+        // const result = await db(drizzlePostgresInstance)
+        //     .select()
+        //     .from(sequence_influencers)
+        //     .where(eq(sequence_influencers.id, email.sequence_influencer_id))
+        //     .limit(1);
+
+        // return result.shift() ?? null;
     };

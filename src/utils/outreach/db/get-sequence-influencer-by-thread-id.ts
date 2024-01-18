@@ -10,20 +10,23 @@ export const getSequenceInfluencerByThreadId: DBQuery<GetSequenceInfluencerByThr
         const rows = await db(drizzlePostgresInstance)
             .select()
             .from(threads)
+            .leftJoin(sequence_influencers, eq(sequence_influencers.id, threads.sequence_influencer_id))
             .where(eq(threads.thread_id, threadId))
             .limit(1);
 
         if (rows.length !== 1) return null;
 
-        if (!rows[0].sequence_influencer_id) return null;
+        return rows[0].sequence_influencers;
 
-        const results = await db(drizzlePostgresInstance)
-            .select()
-            .from(sequence_influencers)
-            .where(eq(sequence_influencers.id, rows[0].sequence_influencer_id))
-            .limit(1);
+        // if (!rows[0].sequence_influencer_id) return null;
 
-        if (results.length !== 1) return null;
+        // const results = await db(drizzlePostgresInstance)
+        //     .select()
+        //     .from(sequence_influencers)
+        //     .where(eq(sequence_influencers.id, rows[0].sequence_influencer_id))
+        //     .limit(1);
 
-        return results[0];
+        // if (results.length !== 1) return null;
+
+        // return results[0];
     };

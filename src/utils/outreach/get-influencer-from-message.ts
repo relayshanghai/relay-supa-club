@@ -1,16 +1,19 @@
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
-import { getSequenceInfluencerByEmail, getSequenceInfluencerByMessageId, getSequenceInfluencerByThreadId } from './db';
+import { getSequenceInfluencerByMessageId, getSequenceInfluencerByThreadId } from './db';
 import { getSequenceInfluencerByThreadIdAndContact } from './db/get-sequence-influencer-by-thread-id-and-contact';
 import type { db } from '../database';
 import type { InfluencerOutreachData } from './types';
 import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
+import type { profiles } from 'drizzle/schema';
+import { getSequenceInfluencerByEmailAndCompanyId } from './db/get-sequence-influencer-by-email-and-company-id';
 
 type GetInfluencerFromMessageFn = (
     message: AccountAccountMessageGet,
+    profile: typeof profiles.$inferSelect,
     options?: { tx: ReturnType<typeof db> },
 ) => Promise<InfluencerOutreachData | null>;
 
-export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, options) => {
+export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, profile, options) => {
     const influencerByThread = await getSequenceInfluencerByThreadId(options?.tx)(message.threadId);
     if (influencerByThread) {
         return influencerOutreachDataTransformer(influencerByThread);
@@ -23,24 +26,41 @@ export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (messa
 
     const from = [message.from];
     const sender = [message.sender];
-    const to = message.to;
+    const to = message.to ?? [];
     const cc = message.cc ?? [];
-    const replyTo = message.replyTo;
-    const includedContacts = [...from, ...sender, ...to, ...cc, ...replyTo];
+    const replyTo = message.replyTo ?? [];
+    const includedContacts = Array.from(new Set([...from, ...sender, ...to, ...cc, ...replyTo].map((e) => e.address)));
+    const queries = [];
 
     for (const contact of includedContacts) {
-        const influencerByThreadAndEmails = await getSequenceInfluencerByThreadIdAndContact(options?.tx)(
+        const influencerByThreadAndEmails = getSequenceInfluencerByThreadIdAndContact(options?.tx)(
             message.threadId,
-            contact.address,
+            contact,
         );
-        if (influencerByThreadAndEmails) {
-            return influencerOutreachDataTransformer(influencerByThreadAndEmails);
+
+        queries.push(influencerByThreadAndEmails);
+
+        // if (influencerByThreadAndEmails) {
+        //     return influencerOutreachDataTransformer(influencerByThreadAndEmails);
+        // }
+
+        if (profile?.company_id) {
+            const influencerByEmail = getSequenceInfluencerByEmailAndCompanyId(options?.tx)(
+                contact,
+                profile.company_id,
+            );
+            queries.push(influencerByEmail);
         }
 
-        const influencerByEmail = await getSequenceInfluencerByEmail(options?.tx)(contact.address);
-        if (influencerByEmail) {
-            return influencerOutreachDataTransformer(influencerByEmail);
-        }
+        // if (influencerByEmail) {
+        //     return influencerOutreachDataTransformer(influencerByEmail);
+        // }
+    }
+
+    const results = await Promise.allSettled(queries);
+
+    for (const result of results) {
+        if (result.status === 'fulfilled' && result.value) return influencerOutreachDataTransformer(result.value);
     }
 
     return null;

@@ -1,26 +1,27 @@
+import type { DBInstance } from '../database';
 import { db } from '../database';
-import { createThread, createEmail, getSequenceInfluencerByEmail } from './db';
+import { createThread, createEmail } from './db';
 import { parseContacts } from './parse-contacts';
-import type { AccountAccountMessageGet, From } from 'types/email-engine/account-account-message-get';
+import type { From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
 import { getInfluencerFromMessage } from './get-influencer-from-message';
 import { getMessageType } from './get-message-type';
 import { deleteEmail } from './delete-email';
-import type { MESSAGE_TYPES, THREAD_CONTACT_TYPE } from './constants';
-import type { emails, threads } from 'drizzle/schema';
+import type { EMAIL_CONTACT_TYPE, MESSAGE_TYPES, THREAD_CONTACT_TYPE } from './constants';
+import type { emails, profiles, threads } from 'drizzle/schema';
 import { getMessageContacts } from './get-message-contacts';
 import { createEmailContact } from './db/create-email-contact';
 import { createThreadContact } from './db/create-thread-contact';
-import { getThreadContacts } from './db/get-thread-contacts';
-import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
-import type { ThreadContact } from './types';
-import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
+import type { EmailContact, ThreadContact } from './types';
+import { getProfileByEmailEngineAccount } from './db/get-profile-by-email-engine-account';
+import { getSequenceInfluencerByEmailAndCompanyId } from './db/get-sequence-influencer-by-email-and-company-id';
 
 type SyncEmailParams = {
     account: string;
     emailEngineId: string;
-    emailMessage?: MessagesGetMessage;
+    // for heavy account syncing
+    profile?: typeof profiles.$inferSelect | null;
     dryRun?: boolean;
     skipMissingKol?: boolean;
 };
@@ -56,10 +57,14 @@ const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => 
 export const syncEmail: SyncEmailFn = async (params) => {
     const result = await db().transaction(async (tx) => {
         let influencer = null;
+        let profile = params.profile;
 
-        if (params.emailMessage) {
-            influencer = await getInfluencerFromMessage(params.emailMessage as AccountAccountMessageGet);
-            if (params.skipMissingKol && !influencer) return false;
+        if (!profile) {
+            profile = params.profile ?? (await getProfileByEmailEngineAccount(tx)(params.account));
+        }
+
+        if (!profile) {
+            throw new Error(`No profile associated to account: ${params.account}`);
         }
 
         // get the full message data
@@ -73,8 +78,10 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         const messageContacts = await getMessageContacts(emailMessage);
 
-        // @note sequence influencer is holds the data of an "influencer outreach" NOT the influencer
-        influencer = await getInfluencerFromMessage(emailMessage);
+        // @note sequence influencer holds the data of an "influencer outreach" NOT the influencer
+        if (!influencer) {
+            influencer = await getInfluencerFromMessage(emailMessage, profile);
+        }
 
         if (params.skipMissingKol && !influencer) {
             return false;
@@ -97,8 +104,9 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         if (params.dryRun) {
             return {
+                thread: null,
                 email: emailMessage,
-                contacts: messageContacts,
+                contacts: messageContacts as THREAD_CONTACT_TYPE,
                 influencer,
                 messageType,
             };
@@ -113,34 +121,46 @@ export const syncEmail: SyncEmailFn = async (params) => {
         });
 
         // @todo move to a function createThreadContact
+        const createThreadContactX =
+            (tx: DBInstance) =>
+            async (contact: EmailContact & { type: EMAIL_CONTACT_TYPE }, profile: typeof profiles.$inferSelect) => {
+                const emailContact = await createEmailContact(tx)(contact);
+
+                let contactType: THREAD_CONTACT_TYPE = 'participant';
+
+                if (contact.type === 'cc') {
+                    contactType = 'cc';
+                } else if (contact.type === 'bcc') {
+                    contactType = 'bcc';
+                } else if (profile?.sequence_send_email === contact.address) {
+                    contactType = 'user';
+                } else if (
+                    profile?.company_id &&
+                    (await getSequenceInfluencerByEmailAndCompanyId(tx)(contact.address, profile.company_id))
+                ) {
+                    contactType = 'influencer';
+                }
+
+                const threadContact = await createThreadContact(tx)(thread.thread_id, emailContact.id, contactType);
+
+                return { ...emailContact, type: threadContact.type as THREAD_CONTACT_TYPE };
+            };
+
+        const emailContacts = [];
         for (const contact of messageContacts) {
-            const emailContact = await createEmailContact(tx)(contact);
-
-            let contactType: THREAD_CONTACT_TYPE = 'participant';
-
-            if (await getSequenceInfluencerByEmail(tx)(contact.address)) {
-                contactType = 'influencer';
-            } else if (await getProfileByEmailEngineEmail(tx)(contact.address)) {
-                contactType = 'user';
-            } else if (contact.type === 'cc') {
-                contactType = 'cc';
-            } else if (contact.type === 'bcc') {
-                contactType = 'bcc';
-            }
-
-            await createThreadContact(tx)(thread.thread_id, emailContact.id, contactType);
+            emailContacts.push(createThreadContactX(tx)(contact, profile));
         }
 
-        // @todo move to a function getThreadContacts
-        const threadContacts = await getThreadContacts(tx)(thread.thread_id);
-        // @todo create a transformer for threadContacts
-        const contacts = threadContacts
-            .filter((contact) => contact.email_contacts !== null)
-            .map((contact) => {
-                return { ...contact.email_contacts, type: contact.thread_contacts.type };
-            }) as ThreadContact[];
+        const contacts = await Promise.all(emailContacts);
 
-        // @todo move to a function createThreadContact
+        // @todo move to a function getThreadContacts
+        // const threadContacts = await getThreadContacts(tx)(thread.thread_id);
+        // @todo create a transformer for threadContacts
+        // const contacts = threadContacts
+        // .filter((contact) => contact.email_contacts !== null)
+        // .map((contact) => {
+        // return { ...contact.email_contacts, type: contact.thread_contacts.type };
+        // }) as ThreadContact[];
 
         const email = await createEmail(tx)({
             data: emailMessage,
