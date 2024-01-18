@@ -25,6 +25,7 @@ import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
+import type { Attachment } from 'types/email-engine/account-account-message-get';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -131,7 +132,7 @@ const generateLocalData = (params: {
     to: EmailContact[];
     cc: EmailContact[];
     subject: string;
-    attachments: AttachmentFile[];
+    attachments: Attachment[];
 }): Message => {
     const localId = nanoid(10);
     return {
