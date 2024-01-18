@@ -26,6 +26,7 @@ import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -537,6 +538,38 @@ const InboxPreview = () => {
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
+    const updateSequenceInfluencer = (
+        currentData: {
+            threads: ThreadInfo[];
+            totals: {
+                unreplied: number;
+                unopened: number;
+                replied: number;
+            };
+        },
+        newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
+    ) => {
+        // Find the index of the thread that needs updating
+        const threadIndex = currentData.threads.findIndex(
+            (thread) => thread.sequenceInfluencer?.id === newSequenceInfluencerData.id,
+        );
+        if (threadIndex === -1) return currentData; // Thread not found
+
+        // Create a new threads array with the updated sequenceInfluencer
+        const newThreads = [...currentData.threads];
+        newThreads[threadIndex] = {
+            ...newThreads[threadIndex],
+            // @ts-ignore
+            sequenceInfluencer: {
+                ...newThreads[threadIndex]?.sequenceInfluencer,
+                ...newSequenceInfluencerData,
+            },
+        };
+
+        // Return the new data object with the updated threads array
+        return { ...currentData, threads: newThreads };
+    };
+
     useEffect(() => {
         if (!threadsInfo) return;
         const currentThread = lastThreadRef.current;
@@ -696,15 +729,15 @@ const InboxPreview = () => {
                     )}
                 </section>
                 <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
-                    {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && (
+                    {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
                         <ProfileScreen
                             // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
-                            onUpdate={() => {
-                                refreshThreads();
+                            onUpdate={(data) => {
+                                refreshThreads(updateSequenceInfluencer(threadsInfo, data));
                             }}
                         />
                     )}
