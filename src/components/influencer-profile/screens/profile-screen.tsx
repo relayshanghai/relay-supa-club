@@ -64,12 +64,12 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                         {profile.url ? (
                             <Link href={profile.url} className="text-lg font-medium text-primary-500">
                                 <span className="text-pink-500">@</span>
-                                {profile.username}
+                                {truncatedText(profile.username ?? '', 10)}
                             </Link>
                         ) : (
                             <p className="text-lg font-medium text-primary-500">
                                 <span className="text-pink-500">@</span>
-                                {profile.username}
+                                {truncatedText(profile.username ?? '', 10)}
                             </p>
                         )}
 
