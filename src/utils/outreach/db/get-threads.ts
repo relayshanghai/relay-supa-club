@@ -7,7 +7,7 @@ import {
 } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
-import { and, eq, isNull, sql, desc, isNotNull, inArray } from 'drizzle-orm';
+import { and, eq, isNull, sql, desc, isNotNull, inArray, ne } from 'drizzle-orm';
 import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
 const THREADS_PER_PAGE = 10;
@@ -29,6 +29,7 @@ export const getThreads: DBQuery<GetThreadsFn> =
             isNull(threads.deleted_at),
             isNotNull(threads.last_reply_id),
             isNotNull(threads.sequence_influencer_id),
+            ne(sequence_influencers.funnel_status, 'In Sequence'),
         ];
 
         if (filters && filters.funnelStatus && filters.funnelStatus.length > 0) {
