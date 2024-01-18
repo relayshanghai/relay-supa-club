@@ -68,6 +68,7 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
 export interface ManageSectionProps {
     influencer: SequenceInfluencer;
     address: Address;
+    onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
 }
 export const manageSectionUpdatingAtom = atom(false);
 
@@ -79,7 +80,11 @@ const processStringAsNumber = (inputValue: string) => {
     return float;
 };
 
-export const ManageSection = ({ influencer: passedInfluencer, address: passedAddress }: ManageSectionProps) => {
+export const ManageSection = ({
+    influencer: passedInfluencer,
+    address: passedAddress,
+    onUpdate,
+}: ManageSectionProps) => {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
 
@@ -136,7 +141,9 @@ export const ManageSection = ({ influencer: passedInfluencer, address: passedAdd
             });
 
             setUpdating(false);
+            onUpdate && onUpdate(body);
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [batchId, influencer.id, setUpdating, track],
     );
 
