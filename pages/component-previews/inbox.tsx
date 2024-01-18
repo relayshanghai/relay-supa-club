@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
@@ -424,6 +424,7 @@ const InboxPreview = () => {
         [threads],
     );
 
+    const [totals, setTotals] = useState({ unopened: 0, unreplied: 0, replied: 0 });
     const {
         data: threadsInfo,
         error: _threadsError,
@@ -449,6 +450,14 @@ const InboxPreview = () => {
     // merge and dedupe previous threads to the newly fetched ones
     useEffect(() => {
         if (!threadsInfo || threadsInfo.threads.length <= 0) return;
+
+        if (
+            totals.replied !== threadsInfo.totals.replied ||
+            totals.unopened !== threadsInfo.totals.unopened ||
+            totals.unreplied !== threadsInfo.totals.unreplied
+        ) {
+            setTotals(threadsInfo.totals);
+        }
 
         setThreads((previousThreads) => {
             const updatedThreads = previousThreads.map((existingThread) => {
@@ -478,9 +487,7 @@ const InboxPreview = () => {
                 ),
             ];
         });
-    }, [threadsInfo]);
-
-    const totals = useMemo(() => threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 }, [threadsInfo]);
+    }, [threadsInfo, totals]);
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
     const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
@@ -570,7 +577,7 @@ const InboxPreview = () => {
         if (!thread.threadInfo.updated_at) {
             return acc;
         }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort] [fullYear]');
+        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
         if (!acc[key]) {
             acc[key] = [];
         }
@@ -658,6 +665,8 @@ const InboxPreview = () => {
                             markAsReplied={markAsReplied}
                             filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
                         />
+                    ) : isThreadsLoading ? (
+                        <div className="h-16 w-full animate-pulse bg-gray-100" />
                     ) : (
                         <div className="flex h-full flex-col bg-zinc-50">
                             <div className="flex-none bg-zinc-50">
