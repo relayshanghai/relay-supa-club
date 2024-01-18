@@ -531,7 +531,7 @@ const InboxPreview = () => {
     const loadMoreThreads = useCallback(() => {
         const totalThreads = totals.replied + totals.unopened + totals.unreplied;
         if (threads && threads.length > 0 && threads.length < totalThreads && !isThreadsLoading) {
-            setPage(Math.floor(threads.length / totalThreads) + 1);
+            setPage(Math.round(threads.length / totalThreads) + 1);
         }
     }, [setPage, threads, totals, isThreadsLoading]);
 
@@ -616,7 +616,7 @@ const InboxPreview = () => {
                                         <div
                                             key={thread.threadInfo.id}
                                             ref={
-                                                index === threadsGroupedByUpdatedAt[date].length - 1
+                                                index === threadsGroupedByUpdatedAt[date].length - 4
                                                     ? lastThreadRef
                                                     : null
                                             }
