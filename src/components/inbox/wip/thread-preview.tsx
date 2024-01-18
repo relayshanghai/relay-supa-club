@@ -95,9 +95,13 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
             {sequenceInfluencer?.funnel_status && (
                 <div className="mr-2 mt-3">
                     <div
-                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status]?.style} rounded-sm p-1`}
+                        className={`relative ${
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status] &&
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status]?.style
+                        } rounded-sm p-1`}
                     >
-                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
+                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status] &&
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
                         {UnreadMarker}
                     </div>
                 </div>
