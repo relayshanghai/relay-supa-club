@@ -51,11 +51,9 @@ export const QUICK_SEND_EMAIL_ADDRESSES = [
     // fvovl2wcvqd95cq9
     'b.mcbride@live.ca',
     '78916347@qq.com',
-    'support+cus_oud44sdk1m5avr@boostbot.ai',
     // n1as8g25a8et32mm
     'support+cus_oud44sdk1m5avr@boostbot.ai',
     // v1v4t0yhlra1g1mi
-    'support+cus_oud44sdk1m5avr@boostbot.ai',
     'info@acebott.com',
     // znyrkk4q5g7gebsv
     'yguo@finalroundai.com',
