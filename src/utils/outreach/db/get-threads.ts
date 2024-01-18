@@ -10,7 +10,7 @@ import { db } from '../../database';
 import { and, eq, isNull, sql, desc, isNotNull, inArray, ne } from 'drizzle-orm';
 import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
-const THREADS_PER_PAGE = 2;
+const THREADS_PER_PAGE = 10;
 
 export type GetThreadsReturn = {
     threads: typeof threads.$inferSelect;
