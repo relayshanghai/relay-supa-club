@@ -13,9 +13,7 @@ import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
-import { mapProfileToFormData } from 'src/components/inbox/helpers';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
@@ -498,7 +496,6 @@ const InboxPreview = () => {
     }, [threadsInfo, totals, page]);
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
-    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
@@ -612,12 +609,6 @@ const InboxPreview = () => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
-
-    useEffect(() => {
-        if (selectedThread?.sequenceInfluencer) {
-            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencer));
-        }
-    }, [selectedThread]);
 
     const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
         if (!thread.threadInfo.updated_at) {
@@ -742,7 +733,7 @@ const InboxPreview = () => {
                     )}
                 </section>
                 <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
-                    {initialValue && selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
+                    {selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
                         <ProfileScreen
                             // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
