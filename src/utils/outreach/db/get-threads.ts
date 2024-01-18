@@ -21,6 +21,7 @@ export type GetThreadsReturn = {
 };
 
 type GetThreadsFn = (account: string, filters?: ThreadsFilter) => Promise<GetThreadsReturn[]>;
+type GetThreadCountFn = (account: string, filters?: ThreadsFilter) => Promise<number>;
 
 export const getThreads: DBQuery<GetThreadsFn> =
     (drizzlePostgresInstance) => async (account: string, filters?: ThreadsFilter) => {
@@ -72,4 +73,53 @@ export const getThreads: DBQuery<GetThreadsFn> =
             .offset(filters?.page || 0 * THREADS_PER_PAGE);
 
         return rows;
+    };
+
+export const getFilteredThreadCount: DBQuery<GetThreadCountFn> =
+    (drizzlePostgresInstance) => async (account: string, filters?: ThreadsFilter) => {
+        const queryFilters = [
+            eq(threads.email_engine_account_id, account),
+            isNull(threads.deleted_at),
+            isNotNull(threads.last_reply_id),
+            isNotNull(threads.sequence_influencer_id),
+            ne(sequence_influencers.funnel_status, 'In Sequence'),
+        ];
+
+        if (filters && filters.funnelStatus && filters.funnelStatus.length > 0) {
+            queryFilters.push(inArray(sequence_influencers.funnel_status, filters.funnelStatus));
+        }
+
+        if (filters && filters.threadStatus && filters.threadStatus.length > 0) {
+            queryFilters.push(inArray(threads.thread_status, filters.threadStatus));
+        }
+
+        if (filters && filters.sequences && filters.sequences.length > 0) {
+            queryFilters.push(
+                inArray(
+                    sequences.id,
+                    filters.sequences.map((sequence) => sequence.id),
+                ),
+            );
+        }
+
+        if (filters && filters.threadIds && filters.threadIds.length > 0) {
+            queryFilters.push(inArray(threads.thread_id, filters.threadIds));
+        }
+
+        const rows = await db(drizzlePostgresInstance)
+            .select()
+            .from(threads)
+            .leftJoin(sequence_influencers, eq(sequence_influencers.id, threads.sequence_influencer_id))
+            .leftJoin(
+                influencer_social_profiles,
+                eq(influencer_social_profiles.id, sequence_influencers.influencer_social_profile_id),
+            )
+            .leftJoin(sequences, eq(sequences.id, sequence_influencers.sequence_id))
+            .leftJoin(
+                template_variables,
+                sql`${template_variables.sequence_id} = ${sequences.id} AND ${template_variables.key} = 'productName'`,
+            )
+            .where(and(...queryFilters));
+
+        return rows.length;
     };

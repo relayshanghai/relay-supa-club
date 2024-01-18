@@ -420,6 +420,8 @@ const InboxPreview = () => {
                     query: { searchTerm },
                 },
             );
+            setPage(0);
+            setThreads([]);
             setSearchResults(res.content);
         },
         [threads],
@@ -443,7 +445,7 @@ const InboxPreview = () => {
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
-            return { threads: content.data, totals: totals };
+            return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
         { revalidateOnFocus: true },
     );
@@ -458,6 +460,11 @@ const InboxPreview = () => {
             totals.unreplied !== threadsInfo.totals.unreplied
         ) {
             setTotals(threadsInfo.totals);
+        }
+
+        if (page === 0) {
+            setThreads(threadsInfo.threads);
+            return;
         }
 
         setThreads((previousThreads) => {
@@ -488,7 +495,7 @@ const InboxPreview = () => {
                 ),
             ];
         });
-    }, [threadsInfo, totals]);
+    }, [threadsInfo, totals, page]);
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
     const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
@@ -531,10 +538,15 @@ const InboxPreview = () => {
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
         const totalThreads = totals.replied + totals.unopened + totals.unreplied;
-        if (threads && threads.length > 0 && threads.length < totalThreads && !isThreadsLoading) {
+        if (
+            threads &&
+            threads.length > 0 &&
+            threads.length < (threadsInfo?.totalFiltered || totalThreads) &&
+            !isThreadsLoading
+        ) {
             setPage((prev) => prev + 1);
         }
-    }, [setPage, threads, totals, isThreadsLoading]);
+    }, [setPage, threads, totals, isThreadsLoading, threadsInfo?.totalFiltered]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
@@ -546,6 +558,7 @@ const InboxPreview = () => {
                 unopened: number;
                 replied: number;
             };
+            totalFiltered: number;
         },
         newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
     ) => {
