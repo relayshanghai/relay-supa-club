@@ -36,7 +36,6 @@ export const apiFetch: typeof baseApiFetch = async <TRes, TReq>(
             });
         }
     }
-
     // @note refactor. content should return the Response object itself
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {

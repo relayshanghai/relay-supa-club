@@ -31,7 +31,7 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
         id: 'Negotiating',
         label: 'Negotiating',
-        style: 'bg-blue-100 text-blue-500',
+        style: 'bg-yellow-100 text-yellow-500',
     },
     {
         id: 'Confirmed',
@@ -41,22 +41,27 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
     {
         id: 'Shipped',
         label: 'Shipped',
-        style: 'bg-yellow-100 text-yellow-500',
+        style: 'bg-orange-100 text-orange-500',
     },
     {
         id: 'Received',
         label: 'Received',
-        style: 'bg-green-100 text-green-500',
+        style: 'bg-fuchsia-100 text-fuchsia-500',
     },
     {
         id: 'Content Approval',
         label: 'Content Approval',
-        style: 'bg-pink-100 text-pink-500',
+        style: 'bg-cyan-100 text-cyan-500',
+    },
+    {
+        id: 'Completed',
+        label: 'Completed',
+        style: 'bg-green-100 text-green-500',
     },
     {
         id: 'Posted',
         label: 'Posted',
-        style: 'bg-cyan-100 text-cyan-500',
+        style: 'bg-primary-100 text-primary-500',
     },
     {
         id: 'Rejected',

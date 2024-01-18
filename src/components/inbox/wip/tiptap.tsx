@@ -105,6 +105,8 @@ export const Tiptap = ({
                         render={({ openField }) => {
                             return (
                                 <button
+                                    // TODO: fix the attachment size limit and remove the hidden class
+                                    className="invisible"
                                     type="button"
                                     onClick={(e) => {
                                         e.preventDefault();

@@ -60,7 +60,7 @@ export const Filter = ({
     return (
         <Popover>
             <PopoverTrigger>
-                <div className="flex h-9 w-full flex-row items-center justify-between rounded rounded-md border border border-gray-200 bg-white bg-white bg-white px-2 px-2 py-1 text-gray-400 shadow">
+                <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-400 shadow">
                     <div className="flex items-center gap-3 px-0.5 py-1 text-xs">
                         <FilterFunnel className="h-4 w-4 stroke-gray-400" />
                         Filters
@@ -68,7 +68,7 @@ export const Filter = ({
                     <ChevronDown className="h-4 w-4 stroke-gray-400" />
                 </div>
             </PopoverTrigger>
-            <PopoverContent className="space-y-3">
+            <PopoverContent className="max-h-[300px] space-y-3 overflow-y-auto">
                 <FilterByStatus
                     status={filters.threadStatus ?? []}
                     onChange={(threadStatus: THREAD_STATUS[]) => onChangeFilter({ ...filters, threadStatus })}
@@ -107,17 +107,9 @@ const FilterByStatus = ({
                 onChange([]);
                 return;
             }
-            if (status.length === 0) {
-                onChange([buttonStatus]);
-            } else {
-                if (status.includes(buttonStatus)) {
-                    onChange(status.filter((s) => s !== buttonStatus));
-                } else {
-                    onChange([...status, buttonStatus]);
-                }
-            }
+            onChange([buttonStatus]);
         },
-        [status, onChange],
+        [onChange],
     );
 
     return (
@@ -130,7 +122,7 @@ const FilterByStatus = ({
                     className={`w-full cursor-pointer justify-between ${
                         button.enabledCondition(status)
                             ? 'bg-primary-100 text-primary-600'
-                            : index % 2 !== 0 && 'bg-gray-50'
+                            : index % 2 === 0 && 'bg-gray-50'
                     }`}
                     variant="destructive"
                 >
@@ -173,12 +165,23 @@ const FilterByFunnelStatus = ({
     );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3 overflow-y-auto">
             <p className="text-xs font-medium text-gray-400">Filter by status</p>
             {Object.keys(COLLAB_OPTIONS).map((option, index) => (
-                <div key={option}>
-                    <label className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                <div
+                    key={option}
+                    onClick={(e) => {
+                        if ((e.target as HTMLInputElement).type !== 'checkbox') {
+                            const checkbox = e.currentTarget.querySelector(
+                                'input[type="checkbox"]',
+                            ) as HTMLInputElement;
+                            checkbox && checkbox.click();
+                        }
+                    }}
+                >
+                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
                         <Checkbox
+                            className="border-gray-300"
                             checked={status.includes(option as FunnelStatus)}
                             onCheckedChange={() => {
                                 handleUpdateFunnelStatus(option as FunnelStatus);
@@ -229,9 +232,20 @@ const FilterBySequence = ({
         <div className="flex flex-col gap-2">
             <p className="text-xs font-medium text-gray-400">Filter by sequence</p>
             {allSequences.map((sequence, index) => (
-                <div key={sequence.id}>
-                    <label className={`flex items-center gap-2 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}>
+                <div
+                    key={sequence.id}
+                    onClick={(e) => {
+                        if ((e.target as HTMLInputElement).type !== 'checkbox') {
+                            const checkbox = e.currentTarget.querySelector(
+                                'input[type="checkbox"]',
+                            ) as HTMLInputElement;
+                            checkbox && checkbox.click();
+                        }
+                    }}
+                >
+                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
                         <Checkbox
+                            className="border-gray-300"
                             checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}
                             onCheckedChange={() => {
                                 handleUpdateFunnelStatus(sequence);

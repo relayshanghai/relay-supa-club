@@ -49,7 +49,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                 <section className="relative z-10">
                     <InfluencerAvatarWithFallback
                         bordered
-                        url={profile.avatar_url}
+                        url={profile.avatar_url ?? influencerData?.picture}
                         name={profile.username}
                         size={100}
                         className="rounded-full"
