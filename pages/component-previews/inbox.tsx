@@ -577,7 +577,7 @@ const InboxPreview = () => {
         if (!thread.threadInfo.updated_at) {
             return acc;
         }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort] [fullYear]');
+        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
         if (!acc[key]) {
             acc[key] = [];
         }
@@ -665,6 +665,8 @@ const InboxPreview = () => {
                             markAsReplied={markAsReplied}
                             filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
                         />
+                    ) : isThreadsLoading ? (
+                        <div className="h-16 w-full animate-pulse bg-gray-100" />
                     ) : (
                         <div className="flex h-full flex-col bg-zinc-50">
                             <div className="flex-none bg-zinc-50">
