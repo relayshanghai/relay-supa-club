@@ -22,8 +22,8 @@ type SyncEmailParams = {
     emailEngineId: string;
     // for heavy account syncing
     profile?: typeof profiles.$inferSelect | null;
-    dryRun?: boolean;
-    skipMissingKol?: boolean;
+    // dryRun?: boolean;
+    // skipMissingKol?: boolean;
 };
 
 type TransformedEmail = Omit<typeof emails.$inferSelect, 'sender' | 'recipients'> & {
@@ -31,16 +31,13 @@ type TransformedEmail = Omit<typeof emails.$inferSelect, 'sender' | 'recipients'
     recipients: From[];
 };
 
-type SyncEmailFn = (params: SyncEmailParams) => Promise<
-    | {
-          influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
-          thread: typeof threads.$inferSelect | null;
-          contacts: ThreadContact[] | null;
-          email: TransformedEmail | null;
-          messageType: { type: MESSAGE_TYPES; weight: number };
-      }
-    | false
->;
+type SyncEmailFn = (params: SyncEmailParams) => Promise<{
+    influencer: Awaited<ReturnType<typeof getInfluencerFromMessage>>;
+    thread: typeof threads.$inferSelect | null;
+    contacts: ThreadContact[] | null;
+    email: TransformedEmail | null;
+    messageType: { type: MESSAGE_TYPES; weight: number };
+}>;
 
 // @todo use drizzle mapWith?
 const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => {
@@ -83,10 +80,6 @@ export const syncEmail: SyncEmailFn = async (params) => {
             influencer = await getInfluencerFromMessage(emailMessage, profile);
         }
 
-        if (params.skipMissingKol && !influencer) {
-            return false;
-        }
-
         // Mark emails deleted
         if (messageType.type === 'Trash') {
             const results = await deleteEmail(params.account, params.emailEngineId);
@@ -101,16 +94,6 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         // determine the valid repliable id for this thread
         const repliedMessageId = messageType.type === 'Reply' ? emailMessage.id : null;
-
-        if (params.dryRun) {
-            return {
-                thread: null,
-                email: emailMessage,
-                contacts: messageContacts as THREAD_CONTACT_TYPE,
-                influencer,
-                messageType,
-            };
-        }
 
         const thread = await createThread(tx)({
             threadId: emailMessage.threadId,
@@ -153,6 +136,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         const contacts = await Promise.all(emailContacts);
 
+        // @note this chunk loads all the contacts not just the created ones
         // @todo move to a function getThreadContacts
         // const threadContacts = await getThreadContacts(tx)(thread.thread_id);
         // @todo create a transformer for threadContacts
