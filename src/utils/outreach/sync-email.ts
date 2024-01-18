@@ -15,6 +15,7 @@ import { createThreadContact } from './db/create-thread-contact';
 import { getThreadContacts } from './db/get-thread-contacts';
 import { getProfileByEmailEngineEmail } from './db/get-profile-by-email-engine-email';
 import type { ThreadContact } from './types';
+import { getProfileByEmailEngineAccount } from './db/get-profile-by-email-engine-account';
 
 type SyncEmailParams = {
     account: string;
@@ -48,6 +49,12 @@ const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => 
  */
 export const syncEmail: SyncEmailFn = async (params) => {
     const result = await db().transaction(async (tx) => {
+        const profile = await getProfileByEmailEngineAccount(tx)(params.account);
+
+        if (!profile) {
+            throw new Error(`No profile associated to account: ${params.account}`);
+        }
+
         // get the full message data
         const emailMessage = await getMessage(params.account, params.emailEngineId);
         const messageType = await getMessageType({ message: emailMessage });
@@ -58,7 +65,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
         }
 
         // @note sequence influencer is holds the data of an "influencer outreach" NOT the influencer
-        const influencer = await getInfluencerFromMessage(emailMessage);
+        const influencer = await getInfluencerFromMessage(emailMessage, profile);
 
         // Mark emails deleted
         if (messageType === 'Trash') {
