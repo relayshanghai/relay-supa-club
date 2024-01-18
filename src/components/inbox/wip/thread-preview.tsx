@@ -87,7 +87,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                         </p>
                         <p className="text-sm font-medium text-primary-400">
                             <span className="text-primary-600">@</span>
-                            {sequenceInfluencer?.username}
+                            {truncatedText(sequenceInfluencer?.username ?? '', 10)}
                         </p>
                     </span>
                 </div>
