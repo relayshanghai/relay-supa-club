@@ -1,10 +1,4 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Download, Forward, ThreeDots } from 'src/components/icons';
