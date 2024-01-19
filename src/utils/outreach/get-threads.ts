@@ -44,7 +44,7 @@ export const getThreads: GetThreadsFn = async (params) => {
 
     for (const thread of threads) {
         // @todo move to a function getThreadContacts
-        const threadContacts = await getThreadContacts()(thread.threads.thread_id);
+        const threadContacts = await getThreadContacts()(params.account, thread.threads.thread_id);
         contacts[thread.threads.thread_id] = threadContacts
             .filter((contact) => contact.email_contacts !== null)
             .map((contact) => {

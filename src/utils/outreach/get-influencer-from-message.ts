@@ -1,49 +1,53 @@
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
 import { getSequenceInfluencerByMessageId, getSequenceInfluencerByThreadId } from './db';
 import { getSequenceInfluencerByThreadIdAndContact } from './db/get-sequence-influencer-by-thread-id-and-contact';
-import type { db } from '../database';
+import type { DBInstance } from '../database';
 import type { InfluencerOutreachData } from './types';
 import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
 import { getSequenceInfluencerByEmailAndCompanyId } from './db/get-sequence-influencer-by-email-and-company-id';
 import type { profiles } from 'drizzle/schema';
 
-type GetInfluencerFromMessageFn = (
-    message: AccountAccountMessageGet,
-    profile: typeof profiles.$inferSelect,
-    options?: { tx: ReturnType<typeof db> },
-) => Promise<InfluencerOutreachData | null>;
+type GetInfluencerFromMessageFn = (params: {
+    message: AccountAccountMessageGet;
+    account: string; // EE account id
+    profile: typeof profiles.$inferSelect;
+    tx?: DBInstance;
+}) => Promise<InfluencerOutreachData | null>;
 
-export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (message, profile, options) => {
-    const influencerByThread = await getSequenceInfluencerByThreadId(options?.tx)(message.threadId);
+export const getInfluencerFromMessage: GetInfluencerFromMessageFn = async (params) => {
+    const influencerByThread = await getSequenceInfluencerByThreadId(params.tx)(
+        params.account,
+        params.message.threadId,
+    );
     if (influencerByThread) {
         return influencerOutreachDataTransformer(influencerByThread);
     }
 
-    const influencerByMessageId = await getSequenceInfluencerByMessageId(options?.tx)(message.messageId);
+    const influencerByMessageId = await getSequenceInfluencerByMessageId(params.tx)(params.message.messageId);
     if (influencerByMessageId) {
         return influencerOutreachDataTransformer(influencerByMessageId);
     }
 
-    const from = [message.from];
-    const sender = [message.sender];
-    const to = message.to ?? [];
-    const cc = message.cc ?? [];
-    const replyTo = message.replyTo ?? [];
+    const from = [params.message.from];
+    const sender = [params.message.sender];
+    const to = params.message.to ?? [];
+    const cc = params.message.cc ?? [];
+    const replyTo = params.message.replyTo ?? [];
     const includedContacts = Array.from(new Set([...from, ...sender, ...to, ...cc, ...replyTo].map((e) => e.address)));
     const queries = [];
 
     for (const contact of includedContacts) {
-        const influencerByThreadAndEmails = getSequenceInfluencerByThreadIdAndContact(options?.tx)(
-            message.threadId,
+        const influencerByThreadAndEmails = getSequenceInfluencerByThreadIdAndContact(params.tx)(
+            params.message.threadId,
             contact,
         );
 
         queries.push(influencerByThreadAndEmails);
 
-        if (profile?.company_id) {
-            const influencerByEmail = getSequenceInfluencerByEmailAndCompanyId(options?.tx)(
+        if (params.profile?.company_id) {
+            const influencerByEmail = getSequenceInfluencerByEmailAndCompanyId(params.tx)(
                 contact,
-                profile.company_id,
+                params.profile.company_id,
             );
             queries.push(influencerByEmail);
         }

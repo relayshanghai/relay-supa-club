@@ -77,7 +77,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
 
         // @note sequence influencer holds the data of an "influencer outreach" NOT the influencer
         if (!influencer) {
-            influencer = await getInfluencerFromMessage(emailMessage, profile);
+            influencer = await getInfluencerFromMessage({ account: params.account, message: emailMessage, profile });
         }
 
         // Mark emails deleted

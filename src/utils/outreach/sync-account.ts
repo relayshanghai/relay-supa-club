@@ -35,6 +35,8 @@ export const syncAccount: SyncAccountFn = async (params) => {
 
     const profile = await getProfileByEmailEngineAccount()(params.account);
 
+    if (!profile) throw new Error('Cannot sync a non EE account');
+
     // @note modify getEmailsPath pageSize to 1000 (max)
     const result = await getEmails(params.account, MAILBOX_PATH_ALL);
 
@@ -77,11 +79,15 @@ export const syncAccount: SyncAccountFn = async (params) => {
                 totalSynced,
             };
 
-            // @ts-expect-error
-            // emailMessage is expected to not fit the shape since it is incomplete
-            // we try to guess the influencer if emailMessage is provided so we can
-            // quickly skip if not found
-            const influencer = await getInfluencerFromMessage(email, profile);
+            const influencer = await getInfluencerFromMessage({
+                account: params.account,
+                // @ts-expect-error
+                // emailMessage is expected to not fit the shape since it is incomplete
+                // we try to guess the influencer if emailMessage is provided so we can
+                // quickly skip if not found
+                email,
+                profile,
+            });
             if (!influencer) return skippedReturn;
 
             const syncedEmail = await syncEmail({
@@ -105,7 +111,6 @@ export const syncAccount: SyncAccountFn = async (params) => {
                 contacts: (syncedEmail.contacts ?? []).map((c) => `${c.name} <${c.address}>`),
                 totalSynced,
             };
-
             // eslint-disable-next-line no-console
             // console.log('Syncing...', logg);
             return logg;
@@ -116,10 +121,10 @@ export const syncAccount: SyncAccountFn = async (params) => {
                 subject: email.subject,
                 labels: email.labels,
                 flags: email.flags,
+                // @ts-expect-error thrown error can be anything
                 error: error.message ? error.message : error,
                 totalSynced,
             };
-            // AAAAAQAAAEI
             // eslint-disable-next-line no-console
             // console.log('Sync error...', logg);
             return logg;
