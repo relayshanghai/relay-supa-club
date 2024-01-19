@@ -7,6 +7,9 @@ const inbox = {
     searchPlaceholder: 'Search inbox',
     threadHeader: {
         sequence: 'Sequence',
+        product: 'Product',
+        firstReply: 'First Reply',
+        participants: 'Participants',
     },
     filters: {
         title: 'Filter threads',

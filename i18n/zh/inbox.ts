@@ -7,9 +7,12 @@ const inbox = {
     searchPlaceholder: '在收件箱搜索',
     threadHeader: {
         sequence: '邮件进程',
+        product: '产品',
+        firstReply: '首次答复',
+        participants: '参与人',
     },
     filters: {
-        title: '按信息状态筛选',
+        title: '过滤邮件',
         byMessageStatus: {
             title: '按信息状态筛选',
             All: '全部信息',

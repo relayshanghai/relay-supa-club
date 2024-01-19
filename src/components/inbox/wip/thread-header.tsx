@@ -44,7 +44,7 @@ export const ThreadHeader = ({
                         <div className="inline-flex flex-col items-start justify-center gap-2">
                             {expanded && (
                                 <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
-                                    Product:
+                                    {t('inbox.threadHeader.product')}:
                                 </div>
                             )}
                             <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
@@ -77,10 +77,10 @@ export const ThreadHeader = ({
                         <div className="inline-flex h-14 items-end justify-start gap-3">
                             <div className="inline-flex flex-col items-end justify-center gap-2">
                                 <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
-                                    Participants:
+                                    {t('inbox.threadHeader.participants')}:
                                 </div>
                                 <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
-                                    First reply:
+                                    {t('inbox.threadHeader.firstReply')}:
                                 </div>
                             </div>
                             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-2">
