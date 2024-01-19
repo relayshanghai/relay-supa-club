@@ -42,6 +42,7 @@ export const QUICK_SEND_EMAIL_ACCOUNTS = [
     'egtljwhuz89pfkmj', // jacob@boostbot.ai
     '6nitzaf4gajlnt5c', // kirsten@boostbot.ai
     '3tsfh97079jmgnni', // anne_ulike@beauty.boostbot.ai
+    'm9cxoxn96dk5viwz', // support+cus_obskepogcl3egn@boostbot.ai
 ];
 
 export const QUICK_SEND_EMAIL_ADDRESSES = [
@@ -55,6 +56,7 @@ export const QUICK_SEND_EMAIL_ADDRESSES = [
     'support+cus_oud44sdk1m5avr@boostbot.ai',
     // v1v4t0yhlra1g1mi
     'support+cus_p2vdkam3afpdeg@boostbot.ai',
+    'support+cus_obskepogcl3egn@boostbot.ai',
     'info@acebott.com',
     // znyrkk4q5g7gebsv
     'yguo@finalroundai.com',

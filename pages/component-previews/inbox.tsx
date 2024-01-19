@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
@@ -6,6 +6,7 @@ import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox
 import type { AttachmentFile, ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
+import useSWRInfinite from 'swr/infinite';
 import useSWR from 'swr';
 import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
 import { nanoid } from 'nanoid';
@@ -402,40 +403,45 @@ const InboxPreview = () => {
     });
 
     const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
-    const [threads, setThreads] = useState<ThreadInfo[]>([]);
 
-    const handleSearch = useCallback(
-        async (searchTerm: string) => {
-            if (!searchTerm || threads.length === 0) {
-                setSearchResults({});
-                return;
-            }
-            // @inbox-note it is easy to just put the type here but
-            // we want to validate those types in the endpoint instead of casting/inferring the type
-            const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
-                '/api/outreach/search',
-                {
-                    query: { searchTerm },
-                },
-            );
-            setPage(0);
-            setThreads([]);
-            setSearchResults(res.content);
+    const getKey = useCallback(
+        (
+            page: number,
+            previousPageData: {
+                threads: ThreadInfo[];
+                totals: {
+                    unreplied: number;
+                    unopened: number;
+                    replied: number;
+                };
+                totalFiltered: number;
+            },
+        ) => {
+            // If the previous page data is empty, we've reached the end and should not fetch more
+            if (previousPageData && !previousPageData.threads.length) return null;
+
+            // This function should return an array with the arguments for the fetcher
+            // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
+            return {
+                url: '/api/outreach/threads',
+                params: { ...filters, threadIds: Object.keys(searchResults), page },
+            };
         },
-        [threads],
+        [filters, searchResults],
     );
 
-    const [totals, setTotals] = useState({ unopened: 0, unreplied: 0, replied: 0 });
     const {
-        data: threadsInfo,
+        data,
         error: _threadsError,
         mutate: refreshThreads,
+        size,
+        setSize,
         isLoading: isThreadsLoading,
-    } = useSWR(
-        [filters, page, searchResults],
-        async () => {
-            const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
-                body: { ...filters, threadIds: Object.keys(searchResults), page },
+    } = useSWRInfinite(
+        getKey,
+        async ({ url, params }) => {
+            const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
+                body: params,
             });
             const totals = {
                 unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
@@ -448,52 +454,44 @@ const InboxPreview = () => {
         { revalidateOnFocus: true },
     );
 
-    // merge and dedupe previous threads to the newly fetched ones
-    useEffect(() => {
-        if (!threadsInfo || threadsInfo.threads.length <= 0) return;
+    const threadsInfo = useMemo(() => {
+        return {
+            threads: data && data.flatMap((page) => page.threads),
+            totals: data && data[0].totals,
+            totalFiltered: data && data[0].totalFiltered,
+        };
+    }, [data]);
 
-        if (
-            totals.replied !== threadsInfo.totals.replied ||
-            totals.unopened !== threadsInfo.totals.unopened ||
-            totals.unreplied !== threadsInfo.totals.unreplied
-        ) {
-            setTotals(threadsInfo.totals);
-        }
+    const threads = data && data.flatMap((page) => page.threads);
+    const totals = useMemo(() => {
+        return threadsInfo
+            ? {
+                  unopened: threadsInfo.totals?.unopened || 0,
+                  unreplied: threadsInfo.totals?.unreplied || 0,
+                  replied: threadsInfo.totals?.replied || 0,
+              }
+            : { unopened: 0, unreplied: 0, replied: 0 };
+    }, [threadsInfo]);
 
-        if (page === 0) {
-            setThreads(threadsInfo.threads);
-            return;
-        }
-
-        setThreads((previousThreads) => {
-            const updatedThreads = previousThreads.map((existingThread) => {
-                const matchingThreadIndex = threadsInfo.threads.findIndex(
-                    (newThread) => newThread.threadInfo.thread_id === existingThread.threadInfo.thread_id,
-                );
-
-                if (matchingThreadIndex !== -1) {
-                    // Merge and update the existing thread
-                    const mergedThread = {
-                        ...existingThread,
-                        ...threadsInfo.threads[matchingThreadIndex],
-                    };
-                    return mergedThread;
-                }
-
-                return existingThread;
-            });
-
-            return [
-                ...updatedThreads,
-                ...threadsInfo.threads.filter(
-                    (newThread) =>
-                        !updatedThreads.some(
-                            (thread) => thread.threadInfo.thread_id === newThread.threadInfo.thread_id,
-                        ),
-                ),
-            ];
-        });
-    }, [threadsInfo, totals, page]);
+    const handleSearch = useCallback(
+        async (searchTerm: string) => {
+            if (!searchTerm || threads?.length === 0) {
+                setSearchResults({});
+                return;
+            }
+            // @inbox-note it is easy to just put the type here but
+            // we want to validate those types in the endpoint instead of casting/inferring the type
+            const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
+                '/api/outreach/search',
+                {
+                    query: { searchTerm },
+                },
+            );
+            setPage(0);
+            setSearchResults(res.content);
+        },
+        [threads],
+    );
 
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
 
@@ -534,20 +532,17 @@ const InboxPreview = () => {
 
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
-        const totalThreads = totals.replied + totals.unopened + totals.unreplied;
-        if (
-            threads &&
-            threads.length > 0 &&
-            threads.length < (threadsInfo?.totalFiltered || totalThreads) &&
-            !isThreadsLoading
-        ) {
-            setPage((prev) => prev + 1);
-        }
-    }, [setPage, threads, totals, isThreadsLoading, threadsInfo?.totalFiltered]);
+        // If there are no more items to load, return
+        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered) return;
+
+        // Increase the page number
+        setPage((prevPage) => prevPage + 1);
+        setSize(size + 1);
+    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
-    const updateSequenceInfluencer = (
+    const _updateSequenceInfluencer = (
         currentData: {
             threads: ThreadInfo[];
             totals: {
@@ -559,6 +554,7 @@ const InboxPreview = () => {
         },
         newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
     ) => {
+        if (!currentData) return;
         // Find the index of the thread that needs updating
         const threadIndex = currentData.threads.findIndex(
             (thread) => thread.sequenceInfluencer?.id === newSequenceInfluencerData.id,
@@ -634,7 +630,6 @@ const InboxPreview = () => {
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
                                 setPage(0);
-                                setThreads([]);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
@@ -740,8 +735,8 @@ const InboxPreview = () => {
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
-                            onUpdate={(data) => {
-                                refreshThreads(updateSequenceInfluencer(threadsInfo, data));
+                            onUpdate={(_data) => {
+                                // refreshThreads(updateSequenceInfluencer(threadsInfo, data));
                             }}
                         />
                     )}
