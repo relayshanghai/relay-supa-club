@@ -9,7 +9,7 @@ const inbox = {
         sequence: 'Sequence',
     },
     filters: {
-        title: 'Filter threads by status',
+        title: 'Filter threads',
         byMessageStatus: {
             All: 'All',
             Unread: 'Unread',
