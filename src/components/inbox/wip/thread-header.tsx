@@ -4,6 +4,7 @@ import type { Thread as ThreadInfo } from 'src/utils/outreach/types';
 import { useState } from 'react';
 import { Collapse, Expand } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
+import { useTranslation } from 'react-i18next';
 
 export const ThreadHeader = ({
     threadInfo,
@@ -14,6 +15,8 @@ export const ThreadHeader = ({
     messages: Message[];
     participants: string[];
 }) => {
+    const { t } = useTranslation();
+
     const [expanded, setExpanded] = useState(false);
 
     const ToggleExpanded = expanded ? Collapse : Expand;
@@ -45,7 +48,7 @@ export const ThreadHeader = ({
                                 </div>
                             )}
                             <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-700">
-                                Sequence:
+                                {t('inbox.threadHeader.sequence')}:
                             </div>
                         </div>
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-2">
