@@ -5,6 +5,8 @@ export type DBQuery<T> = (drizzlePostgresInstance?: ReturnType<typeof drizzle>) 
 
 export type DBQueryReturn<T extends (...args: any) => any> = Awaited<ReturnType<ReturnType<T>>>;
 
+export type DBInstance = ReturnType<typeof drizzle>;
+
 export const DB_CONN: { instance: ReturnType<typeof postgres> | null; conns: Set<number> } = {
     instance: null,
     conns: new Set(),

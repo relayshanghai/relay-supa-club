@@ -23,7 +23,7 @@ const getHandler: ActionHandler = async (req, res) => {
 };
 
 const postHandler: ActionHandler<UpdateThreadApiResponse> = async (req, res) => {
-    if (!req.profile) {
+    if (!req.profile || !req.profile.email_engine_account_id) {
         throw new Error('Cannot get user profile');
     }
 
@@ -36,6 +36,7 @@ const postHandler: ActionHandler<UpdateThreadApiResponse> = async (req, res) => 
     }
 
     const thread = await updateThread({
+        account: req.profile.email_engine_account_id,
         threadId: request.data.path.id,
         data: request.data.body,
     });
