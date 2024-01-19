@@ -648,7 +648,7 @@ const InboxPreview = () => {
                                         <div
                                             key={thread.threadInfo.id}
                                             ref={
-                                                index === threadsGroupedByUpdatedAt[date].length - 1
+                                                index === threadsGroupedByUpdatedAt[date].length - 4
                                                     ? lastThreadRef
                                                     : null
                                             }
