@@ -1,5 +1,5 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { type DetailedHTMLProps, type HTMLAttributes, useEffect } from 'react';
+import { type DetailedHTMLProps, type HTMLAttributes } from 'react';
 import { cls } from 'src/utils/classnames';
 import type { ProfileNotes } from './profile-notes-tab';
 import { ChannelSection, type ProfileChannelSection } from './profile-channel-section';
@@ -14,6 +14,7 @@ import { ManageSection, manageSectionUpdatingAtom } from '../manage-section';
 import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
 import { truncatedText } from 'src/utils/outreach/helpers';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -24,7 +25,7 @@ type Props = {
     profile: SequenceInfluencerManagerPage;
     address: Address;
     influencerData?: SearchTableInfluencer | null;
-    onUpdate?: () => void;
+    onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -37,12 +38,6 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
 
     const [updating, _setUpdating] = useAtom(manageSectionUpdatingAtom);
 
-    useEffect(() => {
-        if (!updating) {
-            onUpdate?.();
-        }
-    }, [updating, onUpdate]);
-
     return (
         <div className="relative">
             {updating ? (
@@ -54,7 +49,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                 <section className="relative z-10">
                     <InfluencerAvatarWithFallback
                         bordered
-                        url={profile.avatar_url}
+                        url={profile.avatar_url ?? influencerData?.picture}
                         name={profile.username}
                         size={100}
                         className="rounded-full"
@@ -69,12 +64,12 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                         {profile.url ? (
                             <Link href={profile.url} className="text-lg font-medium text-primary-500">
                                 <span className="text-pink-500">@</span>
-                                {profile.username}
+                                {truncatedText(profile.username ?? '', 10)}
                             </Link>
                         ) : (
                             <p className="text-lg font-medium text-primary-500">
                                 <span className="text-pink-500">@</span>
-                                {profile.username}
+                                {truncatedText(profile.username ?? '', 10)}
                             </p>
                         )}
 
@@ -91,7 +86,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                     <TabsTrigger value="channel">Channel</TabsTrigger>
                 </TabsList>
                 <TabsContent value="manage">
-                    <ManageSection influencer={profile} address={address} />
+                    <ManageSection influencer={profile} address={address} onUpdate={onUpdate} />
                 </TabsContent>
                 <TabsContent value="channel">
                     {influencerData && <ChannelSection profile={influencerData} />}

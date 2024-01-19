@@ -66,7 +66,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
     return (
         <Card
             onClick={onClick}
-            className={`flex cursor-pointer rounded-none ${
+            className={`flex cursor-pointer rounded-none border-x-0 border-y-[1px] border-y-gray-100 shadow-none ${
                 selected && 'border-l-4 border-violet-600 bg-primary-200'
             } transition-all`}
         >
@@ -82,12 +82,12 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                         <Icon className="absolute -right-2 -top-1 h-5 w-5" />
                     </section>
                     <span>
-                        <p className={`font-semibold ${selected && 'text-primary-600'}`}>
+                        <p className={`text-sm font-medium ${selected && 'text-primary-600'}`}>
                             {truncatedText(sequenceInfluencer?.name ?? '', 10)}
                         </p>
-                        <p className="text-primary-400">
+                        <p className="text-sm font-medium text-primary-400">
                             <span className="text-primary-600">@</span>
-                            {sequenceInfluencer?.username}
+                            {truncatedText(sequenceInfluencer?.username ?? '', 10)}
                         </p>
                     </span>
                 </div>
@@ -95,9 +95,13 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
             {sequenceInfluencer?.funnel_status && (
                 <div className="mr-2 mt-3">
                     <div
-                        className={`relative ${COLLAB_OPTIONS[sequenceInfluencer.funnel_status]?.style} rounded-sm p-1`}
+                        className={`relative ${
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status] &&
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status]?.style
+                        } rounded-sm p-1`}
                     >
-                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
+                        {COLLAB_OPTIONS[sequenceInfluencer.funnel_status] &&
+                            COLLAB_OPTIONS[sequenceInfluencer.funnel_status].icon}
                         {UnreadMarker}
                     </div>
                 </div>

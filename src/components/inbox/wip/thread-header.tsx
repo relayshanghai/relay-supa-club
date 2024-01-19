@@ -30,7 +30,7 @@ export const ThreadHeader = ({
             />
             <div className="flex flex-col gap-2">
                 <div className="inline-flex h-14 items-center justify-start gap-3">
-                    <span className="flex-col justify-center justify-between font-['Poppins'] text-lg font-bold tracking-tight text-gray-700">
+                    <span className="flex-col justify-between font-['Poppins'] text-lg font-bold tracking-tight text-gray-700">
                         {messages[messages.length - 1].subject}
                     </span>
                 </div>
