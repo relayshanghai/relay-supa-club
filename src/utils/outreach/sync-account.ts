@@ -89,10 +89,8 @@ export const syncAccount: SyncAccountFn = async (params) => {
                 emailEngineId: email.id,
                 profile: profile,
                 // dryRun: true,
-                skipMissingKol: true,
+                // skipMissingKol: true,
             });
-
-            if (syncedEmail === false) return skippedReturn;
 
             const logg = {
                 id: email.id,
