@@ -25,4 +25,8 @@ export const GetThreadsApiRequest = z.object({
 
 export type GetThreadsApiRequest = z.infer<typeof GetThreadsApiRequest>;
 
-export type GetThreadsApiResponse = { data: GetThreadsReturn['data']; totals: GetThreadsReturn['totals'] };
+export type GetThreadsApiResponse = {
+    data: GetThreadsReturn['data'];
+    totals: GetThreadsReturn['totals'];
+    totalFiltered: number;
+};

@@ -2,7 +2,7 @@ import { threads } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 import { now } from 'src/utils/datetime';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 type CreateThreadFn = (params: {
     threadId: string;
@@ -41,7 +41,12 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
         result = await db(drizzlePostgresInstance)
             .select()
             .from(threads)
-            .where(eq(threads.thread_id, params.threadId))
+            .where(
+                and(
+                    eq(threads.email_engine_account_id, params.emailEngineAccount),
+                    eq(threads.thread_id, params.threadId),
+                ),
+            )
             .limit(1);
     }
 

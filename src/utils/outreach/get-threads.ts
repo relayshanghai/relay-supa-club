@@ -2,7 +2,7 @@ import type { sequences, template_variables } from 'drizzle/schema';
 import type { DBQueryReturn } from '../database';
 import type { ThreadsFilter } from '../endpoints/get-threads';
 import { countThreads } from './db';
-import type { GetThreadsReturn as dbGetThreadsReturn } from './db/get-threads';
+import { getFilteredThreadCount, type GetThreadsReturn as dbGetThreadsReturn } from './db/get-threads';
 import { getThreads as dbGetThreads } from './db';
 import type { Outreach, Thread, ThreadContact } from './types';
 import { influencerOutreachDataTransformer } from './transformers/influencer-outreach-data-transformer';
@@ -12,6 +12,7 @@ import type { SearchTableInfluencer } from 'types';
 export type GetThreadsReturn = {
     data: Thread[];
     totals: DBQueryReturn<typeof countThreads>;
+    totalFiltered: number;
 };
 
 type GetThreadsFn = (params: { account: string; filters?: ThreadsFilter }) => Promise<GetThreadsReturn>;
@@ -44,7 +45,7 @@ export const getThreads: GetThreadsFn = async (params) => {
 
     for (const thread of threads) {
         // @todo move to a function getThreadContacts
-        const threadContacts = await getThreadContacts()(thread.threads.thread_id);
+        const threadContacts = await getThreadContacts()(params.account, thread.threads.thread_id);
         contacts[thread.threads.thread_id] = threadContacts
             .filter((contact) => contact.email_contacts !== null)
             .map((contact) => {
@@ -58,9 +59,11 @@ export const getThreads: GetThreadsFn = async (params) => {
 
     const totals = await countThreads()(params.account);
 
+    const totalFiltered = await getFilteredThreadCount()(params.account, params.filters);
+
     const data = threads.map((thread) => {
         return threadTransformer(thread, contacts[thread.threads.thread_id]);
     });
 
-    return { data, totals };
+    return { data, totals, totalFiltered };
 };
