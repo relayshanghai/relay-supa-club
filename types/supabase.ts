@@ -1601,6 +1601,7 @@ export interface Database {
           deleted_at: string | null
           email_engine_account_id: string
           id: string
+          last_reply_date: string | null
           last_reply_id: string | null
           sequence_influencer_id: string | null
           thread_id: string
@@ -1612,6 +1613,7 @@ export interface Database {
           deleted_at?: string | null
           email_engine_account_id: string
           id?: string
+          last_reply_date?: string | null
           last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id: string
@@ -1623,6 +1625,7 @@ export interface Database {
           deleted_at?: string | null
           email_engine_account_id?: string
           id?: string
+          last_reply_date?: string | null
           last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id?: string

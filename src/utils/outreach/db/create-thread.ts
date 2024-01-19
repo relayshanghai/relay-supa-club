@@ -13,10 +13,11 @@ type CreateThreadFn = (params: {
 }) => Promise<typeof threads.$inferSelect>;
 
 export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) => async (params) => {
-    const updateData: Partial<typeof threads.$inferInsert> = { updated_at: now() };
+    const updateData: Partial<typeof threads.$inferInsert> = {};
 
     if (params.lastReplyId) {
         updateData.last_reply_id = params.lastReplyId;
+        updateData.last_reply_date = params.createdAt;
     }
 
     if (params.sequenceInfluencerId) {
@@ -30,6 +31,8 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
             sequence_influencer_id: params.sequenceInfluencerId,
             email_engine_account_id: params.emailEngineAccount,
             created_at: params.createdAt,
+            updated_at: now(),
+            last_reply_date: params.createdAt,
         })
         .onConflictDoUpdate({
             target: threads.thread_id,
