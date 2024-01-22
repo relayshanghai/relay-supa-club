@@ -118,14 +118,14 @@ const FilterByStatus = ({
 
     return (
         <div className="flex flex-col">
-            <p className="text-xs font-medium text-gray-400">{t('inbox.filters.byMessageStatus.title')}</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byMessageStatus.title')}</p>
             {filterStatusButtons.map((button, index) => (
                 <Button
                     key={index}
                     onClick={() => handleUpdateStatus(button.status)}
-                    className={`w-full cursor-pointer justify-between ${
+                    className={`w-full cursor-pointer justify-between hover:bg-primary-50 ${
                         button.enabledCondition(status)
-                            ? 'bg-primary-100 text-primary-600'
+                            ? 'bg-primary-100 text-primary-600 hover:bg-primary-100'
                             : index % 2 === 0 && 'bg-gray-50'
                     }`}
                     variant="destructive"
@@ -172,7 +172,7 @@ const FilterByFunnelStatus = ({
 
     return (
         <div className="flex flex-col gap-3 overflow-y-auto">
-            <p className="text-xs font-medium text-gray-400">{t('inbox.filters.byCollabStatus')}</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byCollabStatus')}</p>
             {Object.keys(COLLAB_OPTIONS).map((option, index) => (
                 <div
                     key={option}
@@ -185,7 +185,9 @@ const FilterByFunnelStatus = ({
                         }
                     }}
                 >
-                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
+                    <label
+                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+                    >
                         <Checkbox
                             className="border-gray-300"
                             checked={status.includes(option as FunnelStatus)}
@@ -238,7 +240,7 @@ const FilterBySequence = ({
 
     return (
         <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
             {allSequences.map((sequence, index) => (
                 <div
                     key={sequence.id}
@@ -251,7 +253,9 @@ const FilterBySequence = ({
                         }
                     }}
                 >
-                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
+                    <label
+                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+                    >
                         <Checkbox
                             className="border-gray-300"
                             checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}
