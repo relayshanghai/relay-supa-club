@@ -1,13 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Download, ThreeDots } from 'src/components/icons';
+import { Download, Forward, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
@@ -178,28 +172,20 @@ const MessageComponent = ({
             >
                 <MessageTitle expanded={messageExpanded} message={message} myEmail={myEmail} />
                 <section className="flex items-center gap-4">
-                    <DropdownMenu>
-                        <Dialog>
-                            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                                <ThreeDots className="h-4 w-4 " />
-                            </DropdownMenuTrigger>
+                    <Dialog>
+                        <DialogTrigger>
+                            <Forward className="h-4 w-4" />
+                        </DialogTrigger>
 
-                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
-                                <DropdownMenuItem>
-                                    <DialogTrigger>Forward</DialogTrigger>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-
-                            <DialogContent>
-                                <SingleAddressSection sendTo={forwardTo} setSendTo={setForwardTo} />
-                                <DialogFooter>
-                                    <Button type="button" onClick={() => onForward(message, forwardTo)}>
-                                        Save changes
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </DropdownMenu>
+                        <DialogContent>
+                            <SingleAddressSection sendTo={forwardTo} setSendTo={setForwardTo} />
+                            <DialogFooter>
+                                <Button type="button" onClick={() => onForward(message, forwardTo)}>
+                                    Save changes
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                     <span className="w-16">{formatDate(message.date, '[date] [monthShort]')}</span>
                 </section>
             </AccordionTrigger>
