@@ -83,7 +83,7 @@ export const ChannelSection = ({ ...props }: Props) => {
     // Used to break multiline labels into multiple tspans to prevent text overflow
     function CustomizedTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
         return (
-            <text x={x} y={y} dy={-4} fill={'gray'} fontSize={10} textAnchor="middle">
+            <text x={x} y={y} dy={-4} fill={'black'} fontSize={10} textAnchor="middle">
                 {payload.value.split(' ').map((word: string, index: number) => (
                     <tspan key={index} x={x} dy={index ? '1.2em' : 0}>
                         {word}

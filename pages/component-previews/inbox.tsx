@@ -26,6 +26,7 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
+import { useTranslation } from 'react-i18next';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -748,12 +749,13 @@ const InboxPreview = () => {
 
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const { t } = useTranslation();
     return (
         <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 shadow">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
                 className="focus:ring-none focus-visible:ring-none border-none text-xs shadow-none placeholder:text-gray-400 focus-visible:ring-0"
-                placeholder="Search mailbox"
+                placeholder={t('inbox.searchPlaceholder') || 'Search inbox'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
