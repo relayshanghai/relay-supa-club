@@ -5,6 +5,7 @@ on:
     push:
         branches:
             - main
+            - staging
     workflow_dispatch:
 
 env:
@@ -44,7 +45,7 @@ jobs:
     staging:
         runs-on: ubuntu-22.04
         environment: staging
-
+        if: github.ref_name == 'staging'
         steps:
             - uses: actions/checkout@v3
 
@@ -72,8 +73,10 @@ jobs:
               run: supabase db push --include-all --include-seed
 
     deploy:
+
         runs-on: ubuntu-22.04
         environment: production
+        if: github.ref_name == 'main'
         steps:
             - uses: actions/checkout@v3
 
