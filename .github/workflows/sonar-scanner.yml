@@ -1,0 +1,24 @@
+name: SonarScanner
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    sonar-scanner:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+                uses: actions/checkout@v2
+
+            - name: SonarScanner
+                uses: sonarsource/sonar-scan-action@v1
+                with:
+                    sonar-organization: ${{ secrets.SONAR_ORGANIZATION }}
+                    sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
+                    sonar-login: ${{ secrets.SONAR_LOGIN }}
