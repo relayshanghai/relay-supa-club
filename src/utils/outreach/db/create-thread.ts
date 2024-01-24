@@ -13,7 +13,7 @@ type CreateThreadFn = (params: {
 }) => Promise<typeof threads.$inferSelect>;
 
 export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) => async (params) => {
-    const updateData: Partial<typeof threads.$inferInsert> = {};
+    const updateData: Partial<typeof threads.$inferInsert> = { updated_at: now() };
 
     if (params.lastReplyId) {
         updateData.last_reply_id = params.lastReplyId;
