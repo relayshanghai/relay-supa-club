@@ -1,0 +1,55 @@
+name: Master
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASE_UPDATE: ${{ steps.check.outputs.RELEASE_UPDATE }}
+      TAG: ${{ steps.generated.outputs.TAG }}
+    env:
+      GITHUB_REGISTRY_URL: npm.pkg.github.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ secrets.CI_GITHUB_TOKEN }}
+      - name: get last tag
+        id: releases
+        run: |
+          echo "LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/yarn.lock') }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "lts/*"
+      - name: install dependencies
+        run: yarn
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          semantic_version: 18
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+      - name: Get generated Tag
+        id: generated
+        run: |
+          echo "TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+
+      - name: Check generated Tag is Updated
+        id: check
+        if: ${{ steps.generated.outputs.TAG != steps.releases.outputs.LAST_TAG }}
+        # return error there is no releases
+        run: |
+          echo ${{ steps.generated.outputs.TAG }} && echo ${{ steps.releases.outputs.LAST_TAG }} && 
+          echo "RELEASE_UPDATE=1" >> $GITHUB_OUTPUT
