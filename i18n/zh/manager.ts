@@ -15,6 +15,7 @@ const manager = {
     Negotiating: '谈判中',
     Confirmed: '已确认',
     Shipped: '已发货',
+    Completed: '合作完成',
     Rejected: '已拒绝',
     'Content Approval': '内容已审批',
     Received: '已收货',

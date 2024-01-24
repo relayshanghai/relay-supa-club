@@ -16,6 +16,7 @@ const manager = {
     Negotiating: 'Negotiating',
     Confirmed: 'Confirmed',
     Shipped: 'Shipped',
+    Completed: 'Completed',
     Rejected: 'Rejected',
     'Content Approval': 'Content Approval',
     Received: 'Received',

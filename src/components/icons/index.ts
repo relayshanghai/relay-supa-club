@@ -116,3 +116,4 @@ export { default as ChatQuestion } from './ChatQuestion';
 export { default as Paperclip } from './Paperclip';
 export { default as Download } from './Download';
 export { default as BorderedTick } from './BorderedTick';
+export { default as Forward } from './Forward';

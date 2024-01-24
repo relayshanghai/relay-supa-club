@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from 'shadcn/components/ui/popover';
@@ -57,13 +58,14 @@ export const Filter = ({
     filters: FilterType;
     onChangeFilter: (newFilter: FilterType) => void;
 }) => {
+    const { t } = useTranslation();
     return (
         <Popover>
             <PopoverTrigger>
                 <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-400 shadow">
                     <div className="flex items-center gap-3 px-0.5 py-1 text-xs">
                         <FilterFunnel className="h-4 w-4 stroke-gray-400" />
-                        Filters
+                        {t('inbox.filters.title')}
                     </div>
                     <ChevronDown className="h-4 w-4 stroke-gray-400" />
                 </div>
@@ -101,6 +103,8 @@ const FilterByStatus = ({
         [key in THREAD_STATUS]: number;
     };
 }) => {
+    const { t } = useTranslation();
+
     const handleUpdateStatus = useCallback(
         (buttonStatus?: THREAD_STATUS) => {
             if (!buttonStatus) {
@@ -114,19 +118,19 @@ const FilterByStatus = ({
 
     return (
         <div className="flex flex-col">
-            <p className="text-xs font-medium text-gray-400">Filter by status</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byMessageStatus.title')}</p>
             {filterStatusButtons.map((button, index) => (
                 <Button
                     key={index}
                     onClick={() => handleUpdateStatus(button.status)}
-                    className={`w-full cursor-pointer justify-between ${
+                    className={`w-full cursor-pointer justify-between hover:bg-primary-50 ${
                         button.enabledCondition(status)
-                            ? 'bg-primary-100 text-primary-600'
+                            ? 'bg-primary-100 text-primary-600 hover:bg-primary-100'
                             : index % 2 === 0 && 'bg-gray-50'
                     }`}
                     variant="destructive"
                 >
-                    <span>{button.label}</span>
+                    <span>{t(`inbox.filters.byMessageStatus.${button.label}`)}</span>
                     {button.status && (
                         <div className={`aspect-square h-5 w-5 rounded-full ${CounterStyles[button.status]}`}>
                             {messageCount[button.status]}
@@ -145,6 +149,8 @@ const FilterByFunnelStatus = ({
     status: FunnelStatus[];
     onChange: (status: FunnelStatus[]) => void;
 }) => {
+    const { t } = useTranslation();
+
     const handleUpdateFunnelStatus = useCallback(
         (checkStatus: FunnelStatus) => {
             if (!checkStatus) {
@@ -166,7 +172,7 @@ const FilterByFunnelStatus = ({
 
     return (
         <div className="flex flex-col gap-3 overflow-y-auto">
-            <p className="text-xs font-medium text-gray-400">Filter by status</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byCollabStatus')}</p>
             {Object.keys(COLLAB_OPTIONS).map((option, index) => (
                 <div
                     key={option}
@@ -179,7 +185,9 @@ const FilterByFunnelStatus = ({
                         }
                     }}
                 >
-                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
+                    <label
+                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+                    >
                         <Checkbox
                             className="border-gray-300"
                             checked={status.includes(option as FunnelStatus)}
@@ -191,7 +199,7 @@ const FilterByFunnelStatus = ({
                             className={`${COLLAB_OPTIONS[option].style} flex items-center gap-2 rounded px-2 py-1 text-sm`}
                         >
                             {COLLAB_OPTIONS[option].icon}
-                            {option}
+                            {t(`manager.${option}`)}
                         </span>
                     </label>
                 </div>
@@ -209,6 +217,8 @@ const FilterBySequence = ({
     selectedSequences: FilterSequence[];
     onChange: (status: FilterSequence[]) => void;
 }) => {
+    const { t } = useTranslation();
+
     const handleUpdateFunnelStatus = useCallback(
         (checkSequence: FilterSequence) => {
             if (!checkSequence) {
@@ -230,7 +240,7 @@ const FilterBySequence = ({
 
     return (
         <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-gray-400">Filter by sequence</p>
+            <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
             {allSequences.map((sequence, index) => (
                 <div
                     key={sequence.id}
@@ -243,7 +253,9 @@ const FilterBySequence = ({
                         }
                     }}
                 >
-                    <label className={`flex items-center gap-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}>
+                    <label
+                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+                    >
                         <Checkbox
                             className="border-gray-300"
                             checked={selectedSequences.some((selectedSequence) => selectedSequence.id === sequence.id)}

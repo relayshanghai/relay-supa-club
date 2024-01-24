@@ -15,6 +15,7 @@ import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
+import { useTranslation } from 'react-i18next';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -35,6 +36,8 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
     const Icon = profile.platform == 'youtube' ? Youtube : profile.platform === 'tiktok' ? Tiktok : Instagram;
 
     const { sequence } = useSequence(profile.sequence_id);
+
+    const { t } = useTranslation();
 
     const [updating, _setUpdating] = useAtom(manageSectionUpdatingAtom);
 
@@ -82,8 +85,8 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
             </section>
             <Tabs defaultValue="manage" className="">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="manage">Manage</TabsTrigger>
-                    <TabsTrigger value="channel">Channel</TabsTrigger>
+                    <TabsTrigger value="manage">{t('profile.manageTab')}</TabsTrigger>
+                    <TabsTrigger value="channel">{t('profile.channelTab')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="manage">
                     <ManageSection influencer={profile} address={address} onUpdate={onUpdate} />
