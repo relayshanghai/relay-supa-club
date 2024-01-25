@@ -14,8 +14,8 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: SonarScanner
-              uses: sonarsource/sonar-scan-action@v1
-              with:
-                sonar-organization: ${{ secrets.SONAR_ORGANIZATION }}
-                sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-                sonar-login: ${{ secrets.SONAR_LOGIN }}
+              uses: sonarsource/sonarqube-scan-action@master
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_LOGIN }}
+                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+                SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
