@@ -653,6 +653,7 @@ export const threads = pgTable(
         sequence_influencer_id: uuid('sequence_influencer_id').references(() => sequence_influencers.id),
         email_engine_account_id: text('email_engine_account_id').notNull(),
         last_reply_id: text('last_reply_id'),
+        last_reply_date: timestamp('last_reply_date', { mode: 'string' }),
         thread_status: text('thread_status').default('unopened').notNull(),
         deleted_at: timestamp('deleted_at', { mode: 'string' }),
         created_at: timestamp('created_at', { mode: 'string' }).defaultNow(),
