@@ -1,4 +1,4 @@
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
+import type { EmailContact } from 'src/utils/outreach/types';
 import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { replyThread } from 'src/utils/outreach/reply-thread';
@@ -11,7 +11,7 @@ type ApiRequestBody = {
     content?: string;
     cc?: EmailContact[];
     to?: EmailContact[];
-    attachments?: AttachmentFile[] | null;
+    attachments?: string[] | null;
 };
 
 const postHandler: ActionHandler = async (req, res) => {
@@ -25,7 +25,6 @@ const postHandler: ActionHandler = async (req, res) => {
     if (!query.id || !body.content || !body.to || !body.cc) {
         throw new Error('Cannot send message');
     }
-
     const result = await replyThread({
         account: req.profile.email_engine_account_id,
         threadId: query.id,
@@ -35,9 +34,6 @@ const postHandler: ActionHandler = async (req, res) => {
         }),
         cc: body.cc.map((contact) => {
             return { name: contact.name, address: contact.address };
-        }),
-        attachments: (body.attachments ?? []).map((attachment) => {
-            return { filename: attachment.filename, content: attachment.content };
         }),
     });
 
