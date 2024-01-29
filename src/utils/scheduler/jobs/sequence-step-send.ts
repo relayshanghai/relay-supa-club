@@ -121,11 +121,7 @@ const sendAndInsertEmail = async ({
             throw new Error('No outreach step insert');
         }
         outreachStepInsert.job_id = jobId; // other job ids will be added in handleSent webhook
-        const sendAt: Date = new Date(outreachStepInsert.email_send_at);
-        // if sendAt is in the past, make it undefined so it sends immediately, EE will not send the email if it is in the past
-        if (sendAt.getTime() < new Date().getTime()) {
-            outreachStepInsert.email_send_at = undefined;
-        }
+
         const res = await sendTemplateEmail({
             account,
             toEmail: { name: influencerAccountName, address: influencer.email },
