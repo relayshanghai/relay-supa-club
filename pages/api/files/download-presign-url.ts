@@ -8,4 +8,4 @@ const getHandler: NextApiHandler = async (req, res) => {
     res.redirect(signedUrl);
 };
 
-export default ApiHandlerWithContext({ getHandler });
+export default ApiHandlerWithContext({ getHandler, requireAuth: false });

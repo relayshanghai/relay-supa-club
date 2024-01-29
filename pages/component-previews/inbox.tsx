@@ -213,7 +213,7 @@ const ThreadProvider = ({
             return (fresh?.length ?? 0) < (cached?.length ?? 0);
         },
     });
-    const company = useCompany();
+    const { company } = useCompany();
     const [attachments, setAttachments] = useState<string[]>([]);
     const [replyClicked, setReplyClicked] = useState(false);
     const allUniqueParticipants = selectedThread.contacts;
@@ -237,7 +237,7 @@ const ThreadProvider = ({
                 async (cache) => {
                     if (attachments) {
                         const htmlAttachments = attachments.map((attachment) => {
-                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company.company?.id}/attachments/${attachment}">${attachment}</a>`;
+                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
                         });
                         // attach link of attachments to the html body content of the email
                         replyBody = `${replyBody}
