@@ -1,4 +1,4 @@
-import SupabaseStorageService from 'src/backend/integration/supabase-storage';
+import SupabaseStorageService, { STORAGE_URL } from 'src/backend/integration/supabase-storage';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import * as path from 'path';
 export default class StorageService {
@@ -9,7 +9,8 @@ export default class StorageService {
     async createUploadSignUrl(filepath: string): Promise<string> {
         const companyId = RequestContext.getContext().companyId as string;
         const url = await SupabaseStorageService.getService().createUploadSignUrl(path.join(companyId, filepath));
-        return url;
+        const requestUrl = RequestContext.getContext().requestUrl;
+        return url.replace(STORAGE_URL, requestUrl);
     }
     async createDownloadSignUrl(filepath: string): Promise<string> {
         const companyId = RequestContext.getContext().companyId as string;

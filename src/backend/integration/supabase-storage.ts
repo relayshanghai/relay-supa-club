@@ -1,6 +1,6 @@
 import { StorageClient } from '@supabase/storage-js';
 
-const STORAGE_URL = process.env.SUPABASE_STORAGE_URL || '';
+export const STORAGE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 const BUCKET_NAME = process.env.SUPABASE_STORAGE_BUCKET || '';
 const DOWNLOAD_URL_EXPIRY = 60; // 1 minute
@@ -11,7 +11,7 @@ export default class SupabaseStorageService {
     }
     private storageClient: StorageClient;
     constructor() {
-        this.storageClient = new StorageClient(STORAGE_URL, {
+        this.storageClient = new StorageClient(`${STORAGE_URL}/storage/v1`, {
             apiKey: SERVICE_KEY,
             Authorization: `Bearer ${SERVICE_KEY}`,
         });

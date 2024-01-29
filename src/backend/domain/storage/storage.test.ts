@@ -15,6 +15,7 @@ describe('src/backend/domain/storage/storage.ts', () => {
             RequestContext.getContext = getContextMock;
             getContextMock.mockReturnValue({
                 companyId: 'company_1',
+                requestUrl: 'https://example.com',
             });
             StorageClient.prototype.from = vi.fn().mockReturnValue({
                 createSignedUploadUrl: supabaseStorageCreateSignedUploadUrlMock,
