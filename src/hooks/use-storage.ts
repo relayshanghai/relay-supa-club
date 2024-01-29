@@ -14,7 +14,7 @@ export const useStorage = (directory: string) => {
                 const data = new FormData();
 
                 data.append('file', file.content);
-                await fetch(content.url, {
+                await apiFetch(content.url, undefined, {
                     method: 'PUT',
                     body: data,
                 });
@@ -22,7 +22,7 @@ export const useStorage = (directory: string) => {
         ).finally(() => setUploadingStatus(false));
     };
     const remove = async (filename: string) => {
-        await fetch(`/api/files/${directory}/${filename}`, {
+        await apiFetch(`/api/files/${directory}/${filename}`, undefined, {
             method: 'DELETE',
         });
     };

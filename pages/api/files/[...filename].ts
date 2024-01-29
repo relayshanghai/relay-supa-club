@@ -6,7 +6,7 @@ import { ApiHandlerWithContext } from 'src/utils/api-handler';
 const deleteHandler: NextApiHandler = async (req, res) => {
     const filename = req.query.filename as string[];
     await StorageService.getService().remove(filename.join('/'));
-    res.status(httpCodes.NO_CONTENT);
+    res.status(httpCodes.OK).send({ message: 'deleted' });
 };
 
 export default ApiHandlerWithContext({ deleteHandler, requireAuth: true });
