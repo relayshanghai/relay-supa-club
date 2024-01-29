@@ -25,14 +25,13 @@ import { useUser } from 'src/hooks/use-user';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences, refreshSequences } = useSequences();
+    const { sequences, refreshSequences } = useSequences({ filterDeleted: true });
     const { deleteSequence } = useSequence();
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
     const { profile } = useUser();
 
     const { push } = useRouter();
@@ -155,7 +154,7 @@ export const SequencesPage = () => {
                     </Button>
                 </div>
 
-                <SequencesTable sequences={sequencesWithoutDeleted} selection={selection} setSelection={setSelection} />
+                <SequencesTable sequences={sequences} selection={selection} setSelection={setSelection} />
             </div>
         </Layout>
     );
