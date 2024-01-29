@@ -20,32 +20,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     ) {
         return res.status(httpCodes.BAD_REQUEST).json({ message: 'not ok' });
     }
-    // todo: fix in https://linear.app/boostbot/issue/BB-285/only-fetch-and-save-relevant-tags-iq-radar-chart-data-openai-when-a
-    // const modifiedInfluencers = await Promise.allSettled(
-    //     influencers.map(async (influencer) => {
-    //         const platform = influencer.url ? extractPlatformFromURL(influencer.url) || 'youtube' : 'youtube';
-    //         const userHandle =
-    //             platform === 'youtube'
-    //                 ? influencer.user_id
-    //                 : influencer.username || influencer.handle || influencer.custom_name || influencer.fullname;
-    //         const topicTags = await getRelevantTopicTagsByInfluencer(
-    //             {
-    //                 query: { q: userHandle ?? influencer.user_id, limit: 60, platform },
-    //             },
-    //             { req, res },
-    //         );
-    //         const generatedTagRelevance =
-    //             topicTags.data.length === 0 ? [] : await getTopicsAndRelevance(topicTags.data);
-    //         return {
-    //             ...influencer,
-    //             influencer_niche_graph: generatedTagRelevance,
-    //         };
-    //     }),
-    // );
-
-    // const fulfilledInfluencers = modifiedInfluencers
-    //     .filter((result) => result.status === 'fulfilled')
-    //     .map((result) => (result as PromiseFulfilledResult<SavedSearchTableInfluencer>).value);
 
     await saveSearchResultsDbCall(influencers);
 
