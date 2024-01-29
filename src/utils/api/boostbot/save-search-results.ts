@@ -5,7 +5,7 @@ import type { TopicsAndRelevance } from './get-topic-relevance';
 import { transformInfluencerToSocialProfile } from './helper';
 
 export type SavedSearchTableInfluencer = SearchTableInfluencer & {
-    influencer_niche_graph: TopicsAndRelevance[];
+    influencer_niche_graph?: TopicsAndRelevance[];
 };
 
 export const saveSearchResultsDbCall = async (influencers: SavedSearchTableInfluencer[]) => {
