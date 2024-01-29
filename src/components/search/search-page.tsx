@@ -409,7 +409,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                         <div className="w-fit pb-3">
                             <AddToSequenceButton
                                 buttonText={t('boostbot.chat.outreachSelected')}
-                                outReachDisabled={outReachDisabled}
+                                outReachDisabled={outReachDisabled || Object.keys(selectedInfluencerIds).length === 0}
                                 handleAddToSequenceButton={() => {
                                     setShowSequenceSelector(true);
                                 }}
