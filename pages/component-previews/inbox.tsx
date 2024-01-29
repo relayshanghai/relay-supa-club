@@ -235,7 +235,7 @@ const ThreadProvider = ({
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
                 async (cache) => {
-                    if (attachments) {
+                    if (attachments && attachments.length > 0) {
                         const htmlAttachments = attachments.map((attachment) => {
                             return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
                         });

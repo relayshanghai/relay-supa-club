@@ -9,16 +9,18 @@ export interface Context {
     customerId?: string | null;
     companyId?: string | null;
     request?: NextApiRequest;
+    requestUrl: string;
 }
+const initialContext = (): Context => ({
+    session: undefined,
+    requestUrl: '',
+});
 export class RequestContext {
     static contextMap: Map<string, Context> = new Map();
     static asyncLocalStorage = new AsyncLocalStorage<string>();
     static async startContext<T>(handler: () => void | Promise<T>) {
         const contextId = UUID.v4();
-        const initialContext: Context = {
-            session: undefined,
-        };
-        RequestContext.contextMap.set(contextId, initialContext);
+        RequestContext.contextMap.set(contextId, initialContext());
         const [err, res] = await awaitToError(RequestContext.asyncLocalStorage.run(contextId, handler) as Promise<T>);
         RequestContext.contextMap.delete(contextId);
         if (err) throw err;
@@ -27,9 +29,9 @@ export class RequestContext {
     static getContext(): Context {
         const id = RequestContext.asyncLocalStorage.getStore();
         if (!id) {
-            return {};
+            return initialContext();
         }
-        return RequestContext.contextMap.get(id) || {};
+        return RequestContext.contextMap.get(id) || initialContext();
     }
     static setContext(data: Partial<Context>): void {
         const id = RequestContext.asyncLocalStorage.getStore();
