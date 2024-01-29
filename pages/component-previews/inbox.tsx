@@ -1,3 +1,4 @@
+import type { UIEventHandler } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
@@ -395,6 +396,7 @@ const InboxPreview = () => {
             };
         });
     const [page, setPage] = useState(0);
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
@@ -402,8 +404,6 @@ const InboxPreview = () => {
         sequences: [],
         page,
     });
-
-    const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
 
     const getKey = useCallback(
         (
@@ -425,10 +425,10 @@ const InboxPreview = () => {
             // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
             return {
                 url: '/api/outreach/threads',
-                params: { ...filters, threadIds: Object.keys(searchResults), page },
+                params: { ...filters, searchTerm, page },
             };
         },
-        [filters, searchResults],
+        [filters, searchTerm],
     );
 
     const {
@@ -473,27 +473,6 @@ const InboxPreview = () => {
               }
             : { unopened: 0, unreplied: 0, replied: 0 };
     }, [threadsInfo]);
-
-    const handleSearch = useCallback(
-        async (searchTerm: string) => {
-            if (!searchTerm || threads?.length === 0) {
-                setSearchResults({});
-                return;
-            }
-            // @inbox-note it is easy to just put the type here but
-            // we want to validate those types in the endpoint instead of casting/inferring the type
-            const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
-                '/api/outreach/search',
-                {
-                    query: { searchTerm },
-                },
-            );
-            setPage(0);
-            setSearchResults(res.content);
-        },
-        [threads],
-    );
-
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
@@ -576,32 +555,13 @@ const InboxPreview = () => {
         // Return the new data object with the updated threads array
         return { ...currentData, threads: newThreads };
     };
-
-    useEffect(() => {
-        if (!threadsInfo) return;
-        const currentThread = lastThreadRef.current;
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && !isThreadsLoading) {
-                    loadMoreThreads();
-                }
-            },
-            { threshold: 1.0 },
-        );
-
-        if (lastThreadRef.current) {
-            observer.observe(lastThreadRef.current);
+    const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight > scrollHeight - 5 && !isThreadsLoading) {
+            loadMoreThreads();
         }
-
-        // Clean up observer on component unmount
-        return () => {
-            if (currentThread) {
-                observer.unobserve(currentThread);
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loadMoreThreads, lastThreadRef.current, threadsInfo, isThreadsLoading]);
-
+    };
+    const onThreadListContainerScroll = useCallback(onThreadContainerScroll, [isThreadsLoading, loadMoreThreads]);
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -622,9 +582,12 @@ const InboxPreview = () => {
     return (
         <Layout>
             <div className="flex h-full max-h-screen bg-white">
-                <section className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto">
+                <section
+                    className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
+                    onScroll={onThreadListContainerScroll}
+                >
                     <section className="flex w-full flex-col gap-4 p-2">
-                        <SearchBar onSearch={handleSearch} />
+                        <SearchBar onSearch={(term) => setSearchTerm(term)} />
                         <Filter
                             messageCount={totals}
                             allSequences={allSequences ?? []}
@@ -691,13 +654,14 @@ const InboxPreview = () => {
                 </section>
                 <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (
-                        <ThreadProvider
-                            currentInbox={currentInbox}
-                            threadId={selectedThread.threadInfo.thread_id}
-                            selectedThread={selectedThread}
-                            markAsReplied={markAsReplied}
-                            filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
-                        />
+                        <>
+                            <ThreadProvider
+                                currentInbox={currentInbox}
+                                threadId={selectedThread.threadInfo.thread_id}
+                                selectedThread={selectedThread}
+                                markAsReplied={markAsReplied}
+                            />
+                        </>
                     ) : isThreadsLoading ? (
                         <div className="h-16 w-full animate-pulse bg-gray-100" />
                     ) : (
@@ -763,6 +727,7 @@ const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => 
                         onSearch(searchTerm);
                     }
                 }}
+                onBlur={() => onSearch(searchTerm)}
             />
         </div>
     );

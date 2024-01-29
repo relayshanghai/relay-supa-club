@@ -14,6 +14,7 @@ export const ThreadsFilter = z.object({
     funnelStatus: FUNNEL_STATUS.array().optional(),
     sequences: SequenceThreadsFilter.array().optional(),
     threadIds: z.string().array().optional(),
+    searchTerm: z.string().optional(),
     page: z.number(),
 });
 
