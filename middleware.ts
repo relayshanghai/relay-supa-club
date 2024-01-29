@@ -226,6 +226,10 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
+        // download-presign-url is a public endpoint
+        if (req.nextUrl.pathname.includes('download-presign-url')) {
+            return res;
+        }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 

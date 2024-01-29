@@ -20,3 +20,9 @@ export class BadRequestError extends HttpError {
         super(message, httpCodes.BAD_REQUEST, originError);
     }
 }
+
+export class UnauthorizedError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.UNAUTHORIZED, originError);
+    }
+}

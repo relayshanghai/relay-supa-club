@@ -4,7 +4,7 @@ import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
+import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWRInfinite from 'swr/infinite';
@@ -19,7 +19,6 @@ import { ProfileScreen } from 'src/components/influencer-profile/screens/profile
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
-import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
 import { serverLogger } from 'src/utils/logger-server';
 import { Search, Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
@@ -28,6 +27,7 @@ import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
+import { useCompany } from 'src/hooks/use-company';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -213,19 +213,16 @@ const ThreadProvider = ({
             return (fresh?.length ?? 0) < (cached?.length ?? 0);
         },
     });
-
-    const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+    const { company } = useCompany();
+    const [attachments, setAttachments] = useState<string[]>([]);
     const [replyClicked, setReplyClicked] = useState(false);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
 
-    const handleAttachmentSelect: AttachmentFieldProps['onChange'] = (files, error) => {
-        if (error) return serverLogger(error);
-        if (files === null) return serverLogger('No files attached');
+    const handleAttachmentSelect = (files: string[]) => {
+        if (!files) return serverLogger('No files attached');
         setAttachments((attached) => {
-            const attachedPool = attached.map((a) => a.id);
-            const filtered = files.filter((f) => attachedPool.includes(f.id) === false);
-            return [...attached, ...filtered];
+            return [...attached, ...files];
         });
     };
 
@@ -238,12 +235,21 @@ const ThreadProvider = ({
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
                 async (cache) => {
+                    if (attachments) {
+                        const htmlAttachments = attachments.map((attachment) => {
+                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
+                        });
+                        // attach link of attachments to the html body content of the email
+                        replyBody = `${replyBody}
+                            <br/><br/>
+                            <b>Attachments:</b><br/>
+                            ${htmlAttachments.join('<br/>')}`;
+                    }
                     sendReply({
                         replyBody: replyBody,
                         threadId,
                         cc: ccList,
                         to: toList,
-                        attachments,
                     });
                     // Retain local data with generated data
                     const localMessage = generateLocalData({
@@ -277,7 +283,7 @@ const ThreadProvider = ({
             );
             markAsReplied(threadId);
         },
-        [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
+        [threadId, mutate, markAsReplied, currentInbox, messages, attachments, company],
     );
 
     const handleForward = useCallback(
@@ -319,8 +325,8 @@ const ThreadProvider = ({
     );
 
     const handleRemoveAttachment = useCallback(
-        (file: AttachmentFile) => {
-            setAttachments((attached) => attached && [...attached.filter((f) => f.id !== file.id)]);
+        (file: string) => {
+            setAttachments((attached) => attached && [...attached.filter((f) => f !== file)]);
         },
         [setAttachments],
     );

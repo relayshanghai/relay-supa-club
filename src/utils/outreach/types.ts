@@ -4,7 +4,7 @@ import type { CreatorPlatform, SearchTableInfluencer } from 'types';
 
 export type EmailContact = { address: string; name?: string | null };
 
-export type AttachmentFile = { id?: string; filename: string; content: string };
+export type AttachmentFile = { id?: string; filename: string; content: string | File };
 
 // Holds the outreach data of the current influencer in that outreach
 export type InfluencerOutreachData = typeof sequence_influencers.$inferSelect & {

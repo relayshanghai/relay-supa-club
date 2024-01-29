@@ -1,22 +1,21 @@
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
-import type { AttachmentFile } from 'src/utils/outreach/types';
 import { truncatedText } from 'src/utils/outreach/helpers';
 
 type AttachmentFileItemProps = {
-    file: AttachmentFile;
-    onRemove: (file: AttachmentFile) => void;
+    file: string;
+    onRemove: (file: string) => void;
 };
 
 const AttachmentFileItem = ({ file, onRemove }: AttachmentFileItemProps) => {
     return (
-        <Tooltip content={file.filename} position="top-right">
+        <Tooltip content={file} position="top-right">
             <span
                 className={`flex w-fit gap-2 whitespace-nowrap px-2 py-1 text-xs font-semibold ${getAttachmentStyle(
-                    file.filename,
+                    file,
                 )}`}
             >
-                <span>{truncatedText(file.filename, 10)}</span>
+                <span>{truncatedText(file, 10)}</span>
                 <span className="cursor-pointer text-xs" onClick={() => onRemove(file)}>
                     x
                 </span>

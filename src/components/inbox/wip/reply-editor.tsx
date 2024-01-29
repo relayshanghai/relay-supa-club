@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Tiptap } from './tiptap';
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
+import type { EmailContact } from 'src/utils/outreach/types';
 import type { KeyboardEvent } from 'react';
 import { Tooltip } from 'src/components/library';
 import { nanoid } from 'nanoid';
@@ -18,9 +18,9 @@ export const ReplyEditor = ({
         cc: EmailContact[];
         to: EmailContact[];
     };
-    attachments: AttachmentFile[] | null;
-    handleRemoveAttachment: (file: AttachmentFile) => void;
-    handleAttachmentSelect: (files: AttachmentFile[] | null, error?: any) => void;
+    attachments: string[];
+    handleRemoveAttachment: (file: string) => void;
+    handleAttachmentSelect: (files: string[]) => void;
 }) => {
     const [replyText, setReplyText] = useState('');
     const [sendTo, setSendTo] = useState<EmailContact[]>([]);
