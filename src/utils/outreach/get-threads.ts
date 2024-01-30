@@ -53,6 +53,15 @@ export const getThreads: GetThreadsFn = async (params) => {
         params.filters.threadIds = result.messages.map((message) => message.threadId);
     }
     const threads = await dbGetThreads()(params.account, params.filters);
+
+    // no threads data
+    if (threads.length === 0) {
+        return {
+            data: [],
+            totalFiltered: 0,
+            totals: [],
+        };
+    }
     const threadContacts = await getThreadContacts()(
         params.account,
         ...threads.map((thread) => thread.threads.thread_id),

@@ -20,7 +20,7 @@ import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endp
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
 import { serverLogger } from 'src/utils/logger-server';
-import { Search, Spinner } from 'src/components/icons';
+import { Search } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
@@ -656,7 +656,6 @@ const InboxPreview = () => {
                             }}
                         />
                     )}
-                    {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
                 <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (
