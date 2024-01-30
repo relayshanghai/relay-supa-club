@@ -349,6 +349,8 @@ export const influencer_social_profiles = pgTable('influencer_social_profiles', 
     recent_post_title: text('recent_post_title'),
     recent_post_url: text('recent_post_url'),
     data: jsonb('data'),
+    topic_tags: jsonb('topic_tags'),
+    topics_relevances: jsonb('topics_relevances'),
 });
 
 export const sales = pgTable('sales', {
