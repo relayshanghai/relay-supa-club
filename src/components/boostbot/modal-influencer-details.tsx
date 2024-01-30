@@ -30,12 +30,12 @@ import type { Dispatch, SetStateAction } from 'react';
 import { Tooltip } from '../library/tooltip';
 import { Question } from '../icons';
 import type { SearchTableInfluencer } from 'types';
-import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
-import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 import { enUS } from 'src/constants';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { TopicTensorByUsernamePost, TopicTensorByUsernameResponse } from 'pages/api/topics/username';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -76,20 +76,25 @@ export const InfluencerDetailsModal = ({
             if (!handle) {
                 throw new Error('No handle found for influencer');
             }
-            const { data: topics } = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
-                method: 'POST',
-                body: {
-                    username: handle,
-                    platform,
-                },
-            });
+            if (!platform) {
+                throw new Error('No platform found for influencer');
+            }
+            const body: TopicTensorByUsernamePost = {
+                username: handle,
+                platform,
+                iqdata_id: selectedRow.original.user_id,
+            };
+            const { content: topics } = await apiFetch<
+                TopicTensorByUsernameResponse,
+                { body: TopicTensorByUsernamePost }
+            >('/api/topics/username', { body }, { method: 'POST' });
 
-            if (topics.length === 0) {
+            if (topics.data.length === 0) {
                 toast.error('Sorry, no topics found');
                 setAreTopicsAndRelevanceLoading(false);
                 return;
             }
-            const topicsAndRelevance = await getTopicsAndRelevance(topics);
+            const topicsAndRelevance = await getTopicsAndRelevance(topics.data, selectedRow.original.user_id);
             setAreTopicsAndRelevanceLoading(false);
 
             setTopicsAndRelevance(topicsAndRelevance);

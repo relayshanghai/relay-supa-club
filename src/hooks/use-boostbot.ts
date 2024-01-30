@@ -123,10 +123,10 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
 
     const getTopicsAndRelevance = useCallback(
-        async (topics: RelevantTopic[]) => {
+        async (topics: RelevantTopic[], reference_id: string) => {
             const topicsAndRelevance = await performFetch<GetTopicsAndRelevanceResponse, GetTopicsAndRelevanceBody>(
                 'get-topics-and-relevance',
-                { topics },
+                { topics, reference_id },
             );
 
             return topicsAndRelevance;
