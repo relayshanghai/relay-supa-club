@@ -336,7 +336,7 @@ export const Chat: React.FC<ChatProps> = ({
                 </div>
 
                 <h1 className="text-md self-center px-[10px] font-semibold text-white drop-shadow-md">
-                    BoostBot AI Search
+                    {t('boostbot.chat.title')}
                 </h1>
             </div>
             <div className="b-6 flex justify-between border-b-2 border-tertiary-200 px-4 py-1">

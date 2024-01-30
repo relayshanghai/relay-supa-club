@@ -67,8 +67,7 @@ const Boostbot = () => {
             : [];
 
     const { trackEvent: track } = useRudderstack();
-    const { sequences: allSequences } = useSequences();
-    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+    const { sequences } = useSequences({ filterDeleted: true });
     const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const { profile } = useUser();
