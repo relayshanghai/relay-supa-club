@@ -330,6 +330,6 @@ describe('calculateReplyRate', () => {
         ];
 
         const res = calculateReplyRate(sequenceInfluencers as any, sequenceEmails as any);
-        expect(res).toBe(0.6); // 3 replied out of 5 that were not 'To Contact' or 'Ignored' or not unsent.
+        expect(res).toBe(0.75); // 3 replied out of 4 that were not 'To Contact' or 'Ignored' or not unsent.
     });
 });

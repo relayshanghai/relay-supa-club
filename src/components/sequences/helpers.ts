@@ -129,7 +129,7 @@ export const calculateReplyRate = (
     const unsentDeliverStatuses = ['Unscheduled', 'Scheduled'];
     const hasAlreadySentEmailInfluencers = sequenceInfluencers.filter(({ funnel_status, id }) => {
         // if the influencer is in the "To Contact" status, they should not be counted in the reply rate denominator
-        if (funnel_status === 'To Contact') {
+        if (funnel_status === 'To Contact' || funnel_status === 'Ignored') {
             return false;
         }
         if (funnel_status === 'In Sequence') {
