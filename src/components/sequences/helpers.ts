@@ -1,6 +1,10 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from 'pages/api/sequence/influencers';
 import type {
     InfluencerSocialProfileRow,
+    SequenceEmail,
     SequenceInfluencer,
     SequenceInfluencerUpdate,
     TemplateVariableInsert,
@@ -113,3 +117,48 @@ export const isMissingSocialProfileInfo = (sequenceInfluencer: SequenceInfluence
     !sequenceInfluencer.influencer_social_profile_id ||
     !sequenceInfluencer.tags ||
     sequenceInfluencer.tags.length === 0;
+
+export const calculateReplyRate = (
+    sequenceInfluencers?: SequenceInfluencerManagerPageWithChannelData[],
+    sequenceEmails?: SequenceEmail[],
+) => {
+    if (!sequenceInfluencers || sequenceInfluencers.length === 0 || !sequenceEmails || sequenceEmails.length === 0) {
+        return 0;
+    }
+
+    const unsentDeliverStatuses = ['Unscheduled', 'Scheduled'];
+    const hasAlreadySentEmailInfluencers = sequenceInfluencers.filter(({ funnel_status, id }) => {
+        // if the influencer is in the "To Contact" status, they should not be counted in the reply rate denominator
+        if (funnel_status === 'To Contact') {
+            return false;
+        }
+        if (funnel_status === 'In Sequence') {
+            // only count influencers that have been sent an email
+            return sequenceEmails?.some(
+                ({ sequence_influencer_id, email_delivery_status }) =>
+                    sequence_influencer_id === id &&
+                    email_delivery_status &&
+                    !unsentDeliverStatuses.includes(email_delivery_status),
+            );
+        }
+        return true;
+    }).length;
+
+    const repliedInfluencers = sequenceInfluencers.filter(({ funnel_status, id }) => {
+        if (funnel_status === 'To Contact' || funnel_status === 'Ignored') {
+            return false;
+        }
+        if (funnel_status === 'In Sequence') {
+            return sequenceEmails?.some(
+                ({ sequence_influencer_id, email_delivery_status }) =>
+                    sequence_influencer_id === id && email_delivery_status === 'Replied',
+            );
+        }
+        return true;
+    }).length;
+    if (repliedInfluencers === 0 || hasAlreadySentEmailInfluencers === 0) {
+        return 0;
+    }
+
+    return repliedInfluencers / hasAlreadySentEmailInfluencers;
+};

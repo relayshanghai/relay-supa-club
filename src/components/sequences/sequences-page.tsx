@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -22,12 +22,16 @@ import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
 import { Banner } from '../library/banner';
 import { useUser } from 'src/hooks/use-user';
+import { calculateReplyRate } from './helpers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
     const { sequences, refreshSequences } = useSequences({ filterDeleted: true });
     const { deleteSequence } = useSequence();
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
+    const { sequenceInfluencers } = useSequenceInfluencers(sequences?.map((sequence) => sequence.id) || []);
+
     const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -56,6 +60,11 @@ export const SequencesPage = () => {
     };
 
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
+
+    const replyRate = useMemo(
+        () => calculateReplyRate(sequenceInfluencers, allSequenceEmails),
+        [sequenceInfluencers, allSequenceEmails],
+    );
 
     return (
         <Layout>
@@ -122,12 +131,7 @@ export const SequencesPage = () => {
                             ).length) ||
                             0) / (allSequenceEmails?.length || 1)
                     }
-                    replyRate={
-                        ((allSequenceEmails &&
-                            allSequenceEmails.length > 0 &&
-                            allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length) ||
-                            0) / (allSequenceEmails?.length || 1)
-                    }
+                    replyRate={replyRate}
                     bounceRate={
                         ((allSequenceEmails &&
                             allSequenceEmails.length > 0 &&

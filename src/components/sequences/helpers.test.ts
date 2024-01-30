@@ -1,8 +1,10 @@
 import { describe, test, expect, vi } from 'vitest';
-import type { SequenceInfluencer, TemplateVariable } from '../../utils/api/db';
-import { wasFetchedWithinMinutes } from './helpers';
+import type { SequenceEmail, SequenceInfluencer, TemplateVariable } from '../../utils/api/db';
+import { calculateReplyRate, wasFetchedWithinMinutes } from './helpers';
 import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 import { fillInTemplateVariables, getRelevantTags, updateSequenceInfluencerIfSocialProfileAvailable } from './helpers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
+
 const emailText =
     'Hey {{ params.influencerAccountName }},\r\n\r\n{{ params.marketingManagerName }} here from {{ params.brandName }}. I watched your "{{ params.recentPostTitle }}" video, and love your content style!! 🤩\r\n\r\nEver thought about introducing your fans to {{ params.productName }}? I\'ve got a feeling it\'s right up their alley. \r\n\r\n{{  params.productDescription }} is available for just ${{ params.productPrice }}! You can check it out here {{ params.productLink }}\r\n\r\nWe’re looking to partner with 8 or so influencers in the {{ params.influencerNiche }} space to get the word out about the {{ params.productName }} over the next couple weeks, and would love for you to be apart of it!\r\n\r\nWe’d send you a free sample to make some content about and share with your audience, fully compensated of course.\r\n\r\nLet me know what you think! \r\n\r\nBest,  \r\n\r\n{{ params.marketingManagerName }}';
 
@@ -287,5 +289,47 @@ describe('wasFetchedWithinMinutes', () => {
         const result = wasFetchedWithinMinutes(now, sequenceInfluencer, timeDifference);
 
         expect(result).toBe(false);
+    });
+});
+
+describe('calculateReplyRate', () => {
+    test('calculates the reply rate', () => {
+        const sequenceInfluencers: {
+            funnel_status: SequenceInfluencerManagerPageWithChannelData['funnel_status'];
+            id: number;
+        }[] = [
+            // excluded
+            { funnel_status: 'To Contact', id: 1 },
+            { funnel_status: 'Ignored', id: 2 },
+            { funnel_status: 'In Sequence', id: 3 }, // no email record, not sent
+            { funnel_status: 'In Sequence', id: 4 }, // not sent
+
+            // sent and not replied
+            { funnel_status: 'In Sequence', id: 5 },
+
+            // replied
+            { funnel_status: 'Negotiating', id: 6 },
+            { funnel_status: 'Negotiating', id: 7 },
+            { funnel_status: 'Shipped', id: 8 },
+        ];
+
+        const sequenceEmails: {
+            sequence_influencer_id: number;
+            email_delivery_status: SequenceEmail['email_delivery_status'];
+        }[] = [
+            { sequence_influencer_id: 4, email_delivery_status: 'Scheduled' },
+            { sequence_influencer_id: 4, email_delivery_status: 'Unscheduled' },
+
+            // an influencer can have multiple emails, only one as delivered should count as sent
+            { sequence_influencer_id: 5, email_delivery_status: 'Scheduled' },
+            { sequence_influencer_id: 5, email_delivery_status: 'Delivered' },
+
+            { sequence_influencer_id: 6, email_delivery_status: 'Replied' },
+            { sequence_influencer_id: 7, email_delivery_status: 'Replied' },
+            { sequence_influencer_id: 8, email_delivery_status: 'Replied' },
+        ];
+
+        const res = calculateReplyRate(sequenceInfluencers as any, sequenceEmails as any);
+        expect(res).toBe(0.6); // 3 replied out of 5 that were not 'To Contact' or 'Ignored' or not unsent.
     });
 });
