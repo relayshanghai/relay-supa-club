@@ -717,6 +717,8 @@ export interface Database {
           recent_post_title: string | null
           recent_post_url: string | null
           reference_id: string
+          topic_tags: Json | null
+          topics_relevances: Json | null
           url: string
           username: string
         }
@@ -732,6 +734,8 @@ export interface Database {
           recent_post_title?: string | null
           recent_post_url?: string | null
           reference_id: string
+          topic_tags?: Json | null
+          topics_relevances?: Json | null
           url: string
           username: string
         }
@@ -747,6 +751,8 @@ export interface Database {
           recent_post_title?: string | null
           recent_post_url?: string | null
           reference_id?: string
+          topic_tags?: Json | null
+          topics_relevances?: Json | null
           url?: string
           username?: string
         }

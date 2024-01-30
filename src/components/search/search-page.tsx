@@ -216,8 +216,8 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     );
     const { profile } = useUser();
 
-    const { sequences: allSequences } = useSequences();
-    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+    const { sequences } = useSequences({ filterDeleted: true });
+
     const [selectedRow, setSelectedRow] = useState<Row<ClassicSearchInfluencer>>();
     const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
     const {
@@ -409,7 +409,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                         <div className="w-fit pb-3">
                             <AddToSequenceButton
                                 buttonText={t('boostbot.chat.outreachSelected')}
-                                outReachDisabled={outReachDisabled}
+                                outReachDisabled={outReachDisabled || Object.keys(selectedInfluencerIds).length === 0}
                                 handleAddToSequenceButton={() => {
                                     setShowSequenceSelector(true);
                                 }}

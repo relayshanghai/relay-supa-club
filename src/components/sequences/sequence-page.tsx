@@ -38,6 +38,7 @@ import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-st
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
+import { calculateReplyRate } from './helpers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -369,6 +370,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         isMissingSequenceSendEmail ||
         selectedInfluencers.some((i) => !i?.email) ||
         selectedInfluencers.some((i) => !i?.influencer_social_profile_id);
+
+    const replyRate = useMemo(
+        () => calculateReplyRate(sequenceInfluencers, sequenceEmails),
+        [sequenceInfluencers, sequenceEmails],
+    );
+
     return (
         <Layout>
             {!profile?.email_engine_account_id && (
@@ -438,10 +445,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                 email.email_tracking_status === 'Opened',
                         ).length || 0) / (sequenceEmails?.length || 1)
                     }
-                    replyRate={
-                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (sequenceEmails?.length || 1)
-                    }
+                    replyRate={replyRate}
                     bounceRate={
                         (sequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
                         (sequenceEmails?.length || 1)

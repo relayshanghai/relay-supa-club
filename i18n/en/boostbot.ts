@@ -24,6 +24,7 @@ const boostbot = {
         },
     },
     chat: {
+        title: 'BoostBot AI Search',
         introMessage: `Hey {{ username }}, what are we trying to sell today? 😄`,
         introMessageFirstTimeA: `Hi I'm BoostBot, your AI Influencer Marketing Assistant! 😄`,
         introMessageFirstTimeB: `Describe your product or brand for me below and I'll work my magic to find you great influencers to collab with.`,

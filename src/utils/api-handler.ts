@@ -127,7 +127,7 @@ const determineHandler = (req: NextApiRequest, params: ApiHandlerParams) => {
 };
 
 /**
- * Replace this with APIHandlerWithContext instead
+ * Replace this with ApiHandlerWithContext instead
  * @deprecated
  * @returns
  */
