@@ -3,7 +3,7 @@ import {
     getInfluencerSocialProfileTopicTags,
     saveInfluencerSocialProfileTopicTags,
 } from 'src/backend/database/influencer-social-profiles';
-import { BAD_REQUEST } from 'src/constants/httpCodes';
+import { BAD_REQUEST, OK } from 'src/constants/httpCodes';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { createInfluencerReferenceId } from 'src/utils/api/iqdata/extract-influencer';
 import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
@@ -70,7 +70,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
         serverLogger(error);
     }
-    return res.status(200).json({ success: true, data: cleanedTopics });
+    return res.status(OK).json({ success: true, data: cleanedTopics });
 };
 
 export default ApiHandlerWithContext({
