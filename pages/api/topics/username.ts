@@ -6,7 +6,7 @@ import {
 import { BAD_REQUEST, OK } from 'src/constants/httpCodes';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { createInfluencerReferenceId } from 'src/utils/api/iqdata/extract-influencer';
-import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
+import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { getRelevantTopicTagsByInfluencer } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { serverLogger } from 'src/utils/logger-server';
 import { IQDATA_GET_RELEVANT_TOPIC_TAGS, rudderstack } from 'src/utils/rudderstack';
@@ -22,7 +22,7 @@ const topicTensorByUsernamePost = z.object({
 
 export type TopicTensorByUsernamePost = z.infer<typeof topicTensorByUsernamePost>;
 
-export type TopicTensorByUsernameResponse = GetRelevantTopicTagsResponse;
+export type TopicTensorByUsernameResponse = TopicTensorData[];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const validated = topicTensorByUsernamePost.safeParse(req.body);
@@ -70,7 +70,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
         serverLogger(error);
     }
-    return res.status(OK).json({ success: true, data: cleanedTopics });
+    return res.status(OK).json(cleanedTopics);
 };
 
 export default ApiHandlerWithContext({

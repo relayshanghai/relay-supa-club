@@ -69,10 +69,18 @@ export const InfluencerDetailsModal = ({
               topic: i18n.language === enUS ? topic.topic_en : topic.topic_zh,
           }));
     useEffect(() => {
-        const handleTopicsAndRelevance = async (handle?: string) => {
-            if (!selectedRow?.original.url) {
-                throw new Error('No url found for influencer');
+        const handleTopicsAndRelevance = async () => {
+            if (!selectedRow?.original.user_id) {
+                throw new Error('No user_id found for influencer');
             }
+            const handle =
+                platform === 'youtube'
+                    ? selectedRow.original.user_id
+                    : selectedRow.original.username ||
+                      selectedRow.original.handle ||
+                      selectedRow.original.custom_name ||
+                      selectedRow.original.fullname;
+
             if (!handle) {
                 throw new Error('No handle found for influencer');
             }
@@ -89,26 +97,18 @@ export const InfluencerDetailsModal = ({
                 { body: TopicTensorByUsernamePost }
             >('/api/topics/username', { body }, { method: 'POST' });
 
-            if (topics.data.length === 0) {
+            if (!topics || topics.length === 0) {
                 toast.error('Sorry, no topics found');
                 setAreTopicsAndRelevanceLoading(false);
                 return;
             }
-            const topicsAndRelevance = await getTopicsAndRelevance(topics.data, selectedRow.original.user_id);
+            const topicsAndRelevance = await getTopicsAndRelevance(topics, selectedRow.original.user_id);
             setAreTopicsAndRelevanceLoading(false);
-
             setTopicsAndRelevance(topicsAndRelevance);
         };
 
         if (selectedRow && isOpen) {
-            const userHandle =
-                platform === 'youtube'
-                    ? selectedRow.original.user_id
-                    : selectedRow.original.username ||
-                      selectedRow.original.handle ||
-                      selectedRow.original.custom_name ||
-                      selectedRow.original.fullname;
-            handleTopicsAndRelevance(userHandle);
+            handleTopicsAndRelevance();
         }
     }, [getTopicsAndRelevance, selectedRow, isOpen, platform]);
 
