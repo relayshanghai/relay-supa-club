@@ -10,12 +10,16 @@ type DefaultTemplateType = {
     waitTimeHours: number;
     stepNumber: number;
 };
+const templateIdOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_OUTREACH || '';
+const templateId1stFollowUp = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_1ST_FOLLOW_UP || '';
+const templateId2ndFollowUp = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_2ND_FOLLOW_UP || '';
+const templateId3rdFollowUp = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_3RD_FOLLOW_UP || '';
 
 export const defaultTemplates: DefaultTemplateType[] = [
-    { name: 'Outreach', id: 'AAABiYr-poEAAAAC', waitTimeHours: 0, stepNumber: 0 },
-    { name: '1st Follow-up', id: 'AAABiYsMUIAAAAAD', waitTimeHours: 72, stepNumber: 1 },
-    { name: '2nd Follow-up', id: 'AAABieM0bMMAAAAE', waitTimeHours: 144, stepNumber: 2 },
-    { name: '3rd Follow-up', id: 'AAABieM1AhgAAAAF', waitTimeHours: 216, stepNumber: 3 },
+    { name: 'Outreach', id: templateIdOutreach, waitTimeHours: 0, stepNumber: 0 },
+    { name: '1st Follow-up', id: templateId1stFollowUp, waitTimeHours: 72, stepNumber: 1 },
+    { name: '2nd Follow-up', id: templateId2ndFollowUp, waitTimeHours: 144, stepNumber: 2 },
+    { name: '3rd Follow-up', id: templateId3rdFollowUp, waitTimeHours: 216, stepNumber: 3 },
 ];
 
 export const useSequenceSteps = (sequenceId?: string) => {
