@@ -16,7 +16,8 @@ import { companies, profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { RequestContext } from './request-context/request-context';
 import awaitToError from './await-to-error';
-import type { HttpError } from './error/http-error';
+import { UnauthorizedError, type HttpError } from './error/http-error';
+import { getHostnameFromRequest } from './get-host';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -60,6 +61,7 @@ export type ApiHandlerParams = {
     postHandler?: NextApiHandler | ActionHandler;
     deleteHandler?: NextApiHandler | ActionHandler;
     putHandler?: NextApiHandler | ActionHandler;
+    requireAuth?: boolean;
 };
 
 const isJsonable = (error: any) => {
@@ -191,10 +193,12 @@ export const ApiHandlerWithContext =
         req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
-                RequestContext.setContext({ request: req });
+                const { appUrl } = getHostnameFromRequest(req);
+                RequestContext.setContext({ request: req, requestUrl: appUrl });
                 const {
                     data: { session },
                 } = await req.supabase.auth.getSession();
+
                 if (session) {
                     const [row] = await db()
                         .select()
@@ -214,6 +218,8 @@ export const ApiHandlerWithContext =
                             return scope.setContext('User', context);
                         });
                     }
+                } else if (params.requireAuth) {
+                    throw new UnauthorizedError('Unauthorized');
                 }
 
                 return await handler(req, res);

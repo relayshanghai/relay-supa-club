@@ -86,7 +86,6 @@ export const scheduleEmails = (
                 sequence_step_id: id,
                 email_engine_account_id: account,
                 email_send_at: sendAt.toISOString(),
-
                 email_delivery_status: 'Unscheduled',
                 email_message_id: '',
             };

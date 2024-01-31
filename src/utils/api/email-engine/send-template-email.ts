@@ -15,7 +15,7 @@ export const sendTemplateEmail = async ({
     account: string;
     toEmail: { name: string; address: string };
     template: string;
-    sendAt: string;
+    sendAt?: string;
     params: Record<string, string>;
     references?: string;
     messageId?: string;

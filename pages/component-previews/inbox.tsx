@@ -1,9 +1,10 @@
+import type { UIEventHandler } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
+import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
 import useSWRInfinite from 'swr/infinite';
@@ -18,15 +19,15 @@ import { ProfileScreen } from 'src/components/influencer-profile/screens/profile
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
-import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
 import { serverLogger } from 'src/utils/logger-server';
-import { Search, Spinner } from 'src/components/icons';
+import { Search } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
 import { useTranslation } from 'react-i18next';
 import { optimisticUpdateSequenceInfluencer } from './helper';
+import { useCompany } from 'src/hooks/use-company';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -222,19 +223,16 @@ const ThreadProvider = ({
             return (fresh?.length ?? 0) < (cached?.length ?? 0);
         },
     });
-
-    const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+    const { company } = useCompany();
+    const [attachments, setAttachments] = useState<string[]>([]);
     const [replyClicked, setReplyClicked] = useState(false);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
 
-    const handleAttachmentSelect: AttachmentFieldProps['onChange'] = (files, error) => {
-        if (error) return serverLogger(error);
-        if (files === null) return serverLogger('No files attached');
+    const handleAttachmentSelect = (files: string[]) => {
+        if (!files) return serverLogger('No files attached');
         setAttachments((attached) => {
-            const attachedPool = attached.map((a) => a.id);
-            const filtered = files.filter((f) => attachedPool.includes(f.id) === false);
-            return [...attached, ...filtered];
+            return [...attached, ...files];
         });
     };
 
@@ -247,12 +245,21 @@ const ThreadProvider = ({
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
                 async (cache) => {
+                    if (attachments && attachments.length > 0) {
+                        const htmlAttachments = attachments.map((attachment) => {
+                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
+                        });
+                        // attach link of attachments to the html body content of the email
+                        replyBody = `${replyBody}
+                            <br/><br/>
+                            <b>Attachments:</b><br/>
+                            ${htmlAttachments.join('<br/>')}`;
+                    }
                     sendReply({
                         replyBody: replyBody,
                         threadId,
                         cc: ccList,
                         to: toList,
-                        attachments,
                     });
                     // Retain local data with generated data
                     const localMessage = generateLocalData({
@@ -286,7 +293,7 @@ const ThreadProvider = ({
             );
             markAsReplied(threadId);
         },
-        [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
+        [threadId, mutate, markAsReplied, currentInbox, messages, attachments, company],
     );
 
     const handleForward = useCallback(
@@ -328,8 +335,8 @@ const ThreadProvider = ({
     );
 
     const handleRemoveAttachment = useCallback(
-        (file: AttachmentFile) => {
-            setAttachments((attached) => attached && [...attached.filter((f) => f.id !== file.id)]);
+        (file: string) => {
+            setAttachments((attached) => attached && [...attached.filter((f) => f !== file)]);
         },
         [setAttachments],
     );
@@ -405,6 +412,7 @@ const InboxPreview = () => {
             };
         });
     const [page, setPage] = useState(0);
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
@@ -412,8 +420,6 @@ const InboxPreview = () => {
         sequences: [],
         page,
     });
-
-    const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
 
     const getKey = useCallback(
         (
@@ -435,10 +441,10 @@ const InboxPreview = () => {
             // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
             return {
                 url: '/api/outreach/threads',
-                params: { ...filters, threadIds: Object.keys(searchResults), page },
+                params: { ...filters, searchTerm, page },
             };
         },
-        [filters, searchResults],
+        [filters, searchTerm],
     );
 
     const {
@@ -483,27 +489,6 @@ const InboxPreview = () => {
               }
             : { unopened: 0, unreplied: 0, replied: 0 };
     }, [threadsInfo]);
-
-    const handleSearch = useCallback(
-        async (searchTerm: string) => {
-            if (!searchTerm || threads?.length === 0) {
-                setSearchResults({});
-                return;
-            }
-            // @inbox-note it is easy to just put the type here but
-            // we want to validate those types in the endpoint instead of casting/inferring the type
-            const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
-                '/api/outreach/search',
-                {
-                    query: { searchTerm },
-                },
-            );
-            setPage(0);
-            setSearchResults(res.content);
-        },
-        [threads],
-    );
-
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
@@ -553,34 +538,13 @@ const InboxPreview = () => {
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
-    /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
-    const _updateSequenceInfluencer = optimisticUpdateSequenceInfluencer;
-
-    useEffect(() => {
-        if (!threadsInfo) return;
-        const currentThread = lastThreadRef.current;
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && !isThreadsLoading) {
-                    loadMoreThreads();
-                }
-            },
-            { threshold: 1.0 },
-        );
-
-        if (lastThreadRef.current) {
-            observer.observe(lastThreadRef.current);
+    const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight > scrollHeight - 5 && !isThreadsLoading) {
+            loadMoreThreads();
         }
-
-        // Clean up observer on component unmount
-        return () => {
-            if (currentThread) {
-                observer.unobserve(currentThread);
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loadMoreThreads, lastThreadRef.current, threadsInfo, isThreadsLoading]);
-
+    };
+    const onThreadListContainerScroll = useCallback(onThreadContainerScroll, [isThreadsLoading, loadMoreThreads]);
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -601,9 +565,12 @@ const InboxPreview = () => {
     return (
         <Layout>
             <div className="flex h-full max-h-screen bg-white">
-                <section className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto">
+                <section
+                    className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
+                    onScroll={onThreadListContainerScroll}
+                >
                     <section className="flex w-full flex-col gap-4 p-2">
-                        <SearchBar onSearch={handleSearch} />
+                        <SearchBar onSearch={(term) => setSearchTerm(term)} />
                         <Filter
                             messageCount={totals}
                             allSequences={allSequences ?? []}
@@ -666,17 +633,17 @@ const InboxPreview = () => {
                             }}
                         />
                     )}
-                    {isThreadsLoading && <Spinner className="h-6 w-6 fill-primary-400" />}
                 </section>
                 <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (
-                        <ThreadProvider
-                            currentInbox={currentInbox}
-                            threadId={selectedThread.threadInfo.thread_id}
-                            selectedThread={selectedThread}
-                            markAsReplied={markAsReplied}
-                            filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
-                        />
+                        <>
+                            <ThreadProvider
+                                currentInbox={currentInbox}
+                                threadId={selectedThread.threadInfo.thread_id}
+                                selectedThread={selectedThread}
+                                markAsReplied={markAsReplied}
+                            />
+                        </>
                     ) : isThreadsLoading ? (
                         <div className="h-16 w-full animate-pulse bg-gray-100" />
                     ) : (
@@ -720,7 +687,8 @@ const InboxPreview = () => {
                                         if (!previous) {
                                             return previous;
                                         }
-                                        return _updateSequenceInfluencer(previous, update);
+                                        /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
+                                        return optimisticUpdateSequenceInfluencer(previous, update);
                                     },
                                     { revalidate },
                                 );
@@ -749,6 +717,7 @@ const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => 
                         onSearch(searchTerm);
                     }
                 }}
+                onBlur={() => onSearch(searchTerm)}
             />
         </div>
     );
