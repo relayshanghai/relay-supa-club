@@ -62,7 +62,7 @@ const Preview = () => {
                 header section
                 <div className="text-white">{updating ? 'updating...' : 'up to date'}</div>
             </div>
-            <ManageSection influencer={influencer} address={address} />
+            <ManageSection influencer={influencer} address={address} onUpdateInfluencer={() => undefined} />
         </div>
     );
 };

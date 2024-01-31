@@ -74,7 +74,7 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
 export interface ManageSectionProps {
     influencer: SequenceInfluencer;
     address: Address;
-    onUpdateInfluencer?: (data: SequenceInfluencersPutRequestBody) => void;
+    onUpdateInfluencer: (data: SequenceInfluencersPutRequestBody, revalidate: boolean) => void;
 }
 
 const processStringAsNumber = (inputValue: string) => {
@@ -127,7 +127,7 @@ export const ManageSection = ({
     const updateInfluencer = useCallback(
         async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
             setUpdating(true);
-            // controller.current?.abort();
+            onUpdateInfluencer(body, false);
             controller.current = new AbortController();
             const { content } = await apiFetch<
                 SequenceInfluencersPutRequestResponse,
@@ -144,10 +144,11 @@ export const ManageSection = ({
                 updated_field: updatedKey,
                 updated_value: updatedKey in body ? body[updatedKey]?.toString() ?? '' : '',
             });
+            onUpdateInfluencer(body, true);
 
             setUpdating(false);
         },
-        [batchId, influencer.id, setUpdating, track],
+        [batchId, influencer.id, onUpdateInfluencer, setUpdating, track],
     );
 
     const updateAddress = useCallback(
@@ -196,9 +197,7 @@ export const ManageSection = ({
             const previous = { ...influencer };
             // optimistic update
             setInfluencer({ ...previous, ...update });
-            if (onUpdateInfluencer) {
-                onUpdateInfluencer({ id, ...update });
-            }
+
             try {
                 if (debounce) {
                     await updateInfluencerDebounced({ id, ...update }, controller);
@@ -212,7 +211,7 @@ export const ManageSection = ({
                 setUpdating(false);
             }
         },
-        [influencer, onUpdateInfluencer, id, updateInfluencerDebounced, updateInfluencer, setUpdating],
+        [influencer, id, updateInfluencerDebounced, updateInfluencer, setUpdating],
     );
 
     const handleUpdateAddress = useCallback(

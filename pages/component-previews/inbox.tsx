@@ -754,7 +754,7 @@ const InboxPreview = () => {
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
-                            onUpdateInfluencer={(update) => {
+                            onUpdateInfluencer={(update, revalidate) => {
                                 refreshThreads(
                                     (previous) => {
                                         if (!previous) {
@@ -762,7 +762,7 @@ const InboxPreview = () => {
                                         }
                                         return optimisticUpdateSequenceInfluencer(previous, update);
                                     },
-                                    { revalidate: false },
+                                    { revalidate },
                                 );
                             }}
                         />

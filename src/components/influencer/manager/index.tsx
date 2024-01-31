@@ -206,7 +206,15 @@ const Manager = () => {
             </div>
             <SheetContent className="max-w-lg overflow-y-auto p-0 xl:max-w-xl">
                 {influencer && address && (
-                    <ProfileScreen profile={influencer} influencerData={influencer.channel_data} address={address} />
+                    <ProfileScreen
+                        profile={influencer}
+                        influencerData={influencer.channel_data}
+                        address={address}
+                        onUpdateInfluencer={
+                            // https://linear.app/boostbot/issue/BB-333/manager-page-optimistic-update-on-profile-info-change
+                            () => undefined
+                        }
+                    />
                 )}
             </SheetContent>
         </Sheet>

@@ -27,7 +27,7 @@ type Props = {
     profile: SequenceInfluencerManagerPage;
     address: Address;
     influencerData?: SearchTableInfluencer | null;
-    onUpdateInfluencer?: (data: SequenceInfluencersPutRequestBody) => void;
+    onUpdateInfluencer: (data: SequenceInfluencersPutRequestBody, revalidate: boolean) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
