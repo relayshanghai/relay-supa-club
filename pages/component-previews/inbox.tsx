@@ -25,9 +25,9 @@ import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
-import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -166,6 +166,16 @@ const getContactsToReply = (contacts: ThreadContact[], email?: string | null) =>
         return contact.address !== account.address && ['cc', 'bcc'].includes(contact.type) === true;
     });
     return { to, cc };
+};
+
+export type ThreadData = {
+    threads: ThreadInfo[];
+    totals: {
+        unreplied: number;
+        unopened: number;
+        replied: number;
+    };
+    totalFiltered: number;
 };
 
 const ThreadProvider = ({
@@ -387,6 +397,48 @@ const ThreadProvider = ({
     );
 };
 
+const optimisticUpdateSequenceInfluencer = (
+    currentData: ThreadData[],
+    newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
+): ThreadData[] => {
+    // find the
+    if (!currentData[0].threads) {
+        return currentData;
+    }
+    // Find the index of the thread page that needs updating
+    const pageIndex = currentData.findIndex(
+        (page) =>
+            page.threads.findIndex(
+                (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+            ) !== -1,
+    );
+
+    const influencerIndex = currentData[pageIndex].threads.findIndex(
+        (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+    );
+
+    if (pageIndex === -1 || influencerIndex === -1) {
+        return currentData;
+    }
+
+    const newThreadPages = [...currentData];
+    const newThreads = [...newThreadPages[pageIndex].threads];
+    const currentInfluencer = newThreads[influencerIndex].sequenceInfluencer;
+    if (!currentInfluencer) {
+        return currentData;
+    }
+    newThreads[influencerIndex] = {
+        ...newThreads[influencerIndex],
+        sequenceInfluencer: {
+            ...currentInfluencer,
+            ...newSequenceInfluencerData,
+        },
+    };
+    newThreadPages[pageIndex] = { ...newThreadPages[pageIndex], threads: newThreads };
+
+    return newThreadPages;
+};
+
 const InboxPreview = () => {
     const { profile } = useUser();
     const currentInbox = {
@@ -446,7 +498,7 @@ const InboxPreview = () => {
         isLoading: isThreadsLoading,
     } = useSWRInfinite(
         getKey,
-        async ({ url, params }) => {
+        async ({ url, params }): Promise<ThreadData> => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
                 body: params,
             });
@@ -528,39 +580,6 @@ const InboxPreview = () => {
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
-    const _updateSequenceInfluencer = (
-        currentData: {
-            threads: ThreadInfo[];
-            totals: {
-                unreplied: number;
-                unopened: number;
-                replied: number;
-            };
-            totalFiltered: number;
-        },
-        newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
-    ) => {
-        if (!currentData) return;
-        // Find the index of the thread that needs updating
-        const threadIndex = currentData.threads.findIndex(
-            (thread) => thread.sequenceInfluencer?.id === newSequenceInfluencerData.id,
-        );
-        if (threadIndex === -1) return currentData; // Thread not found
-
-        // Create a new threads array with the updated sequenceInfluencer
-        const newThreads = [...currentData.threads];
-        newThreads[threadIndex] = {
-            ...newThreads[threadIndex],
-            // @ts-ignore
-            sequenceInfluencer: {
-                ...newThreads[threadIndex]?.sequenceInfluencer,
-                ...newSequenceInfluencerData,
-            },
-        };
-
-        // Return the new data object with the updated threads array
-        return { ...currentData, threads: newThreads };
-    };
     const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
         if (scrollTop + clientHeight > scrollHeight - 5 && !isThreadsLoading) {
@@ -700,13 +719,21 @@ const InboxPreview = () => {
                 <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
                     {selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
                         <ProfileScreen
-                            // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
-                            onUpdate={(_data) => {
-                                // refreshThreads(updateSequenceInfluencer(threadsInfo, data));
+                            onUpdateInfluencer={(update, revalidate) => {
+                                refreshThreads(
+                                    (previous) => {
+                                        if (!previous) {
+                                            return previous;
+                                        }
+                                        /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
+                                        return optimisticUpdateSequenceInfluencer(previous, update);
+                                    },
+                                    { revalidate },
+                                );
                             }}
                         />
                     )}

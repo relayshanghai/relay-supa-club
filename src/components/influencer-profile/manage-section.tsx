@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { serverLogger } from 'src/utils/logger-server';
 import toast from 'react-hot-toast';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { OutreachCollabStatusInput } from './components/outreach-collab-status-input';
 import { useTranslation } from 'react-i18next';
 import type { CheckboxDropdownItemData } from './components/checkbox-dropdown-item';
@@ -23,6 +23,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 import { randomNumber } from 'src/utils/utils';
 import { UpdateInfluencerOrAddress } from 'src/utils/analytics/events/outreach/update-sequence-influencer-or-address';
+import { manageSectionUpdatingAtom } from './atoms';
 // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
 // import { OutreachNotesInput } from './components/outreach-notes-input';
 // import { NotesListOverlayScreen } from './screens/notes-list-overlay';
@@ -73,9 +74,8 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
 export interface ManageSectionProps {
     influencer: SequenceInfluencer;
     address: Address;
-    onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
+    onUpdateInfluencer: (data: SequenceInfluencersPutRequestBody, revalidate: boolean) => void;
 }
-export const manageSectionUpdatingAtom = atom(false);
 
 const processStringAsNumber = (inputValue: string) => {
     const value = inputValue.trim();
@@ -88,7 +88,7 @@ const processStringAsNumber = (inputValue: string) => {
 export const ManageSection = ({
     influencer: passedInfluencer,
     address: passedAddress,
-    onUpdate,
+    onUpdateInfluencer,
 }: ManageSectionProps) => {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
@@ -127,7 +127,7 @@ export const ManageSection = ({
     const updateInfluencer = useCallback(
         async (body: SequenceInfluencersPutRequestBody, controller: MutableRefObject<AbortController | null>) => {
             setUpdating(true);
-            // controller.current?.abort();
+            onUpdateInfluencer(body, false);
             controller.current = new AbortController();
             const { content } = await apiFetch<
                 SequenceInfluencersPutRequestResponse,
@@ -144,12 +144,11 @@ export const ManageSection = ({
                 updated_field: updatedKey,
                 updated_value: updatedKey in body ? body[updatedKey]?.toString() ?? '' : '',
             });
+            onUpdateInfluencer(body, true);
 
             setUpdating(false);
-            onUpdate && onUpdate(body);
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [batchId, influencer.id, setUpdating, track],
+        [batchId, influencer.id, onUpdateInfluencer, setUpdating, track],
     );
 
     const updateAddress = useCallback(
@@ -198,6 +197,7 @@ export const ManageSection = ({
             const previous = { ...influencer };
             // optimistic update
             setInfluencer({ ...previous, ...update });
+
             try {
                 if (debounce) {
                     await updateInfluencerDebounced({ id, ...update }, controller);

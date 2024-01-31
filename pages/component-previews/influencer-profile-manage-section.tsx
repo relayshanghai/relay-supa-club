@@ -1,9 +1,10 @@
 import { useAtomValue } from 'jotai';
-import { ManageSection, manageSectionUpdatingAtom } from 'src/components/influencer-profile/manage-section';
+import { ManageSection } from 'src/components/influencer-profile/manage-section';
 import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 import type { InfluencerOutreachData } from 'src/utils/outreach/types';
 import { Provider as JotaiProvider } from 'jotai';
 import i18n from 'i18n';
+import { manageSectionUpdatingAtom } from 'src/components/influencer-profile/atoms';
 
 const influencer: InfluencerOutreachData = {
     id: '9b778d64-496e-41a9-a6dd-c741ae40227b',
@@ -61,7 +62,7 @@ const Preview = () => {
                 header section
                 <div className="text-white">{updating ? 'updating...' : 'up to date'}</div>
             </div>
-            <ManageSection influencer={influencer} address={address} />
+            <ManageSection influencer={influencer} address={address} onUpdateInfluencer={() => undefined} />
         </div>
     );
 };

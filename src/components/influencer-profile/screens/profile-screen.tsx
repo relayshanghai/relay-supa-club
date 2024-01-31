@@ -10,12 +10,13 @@ import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-
 import { Youtube, Tiktok, Instagram, BorderedTick, Spinner } from 'src/components/icons';
 import Link from 'next/link';
 import { useSequence } from 'src/hooks/use-sequence';
-import { ManageSection, manageSectionUpdatingAtom } from '../manage-section';
+import { ManageSection } from '../manage-section';
 import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
+import { manageSectionUpdatingAtom } from '../atoms';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -26,13 +27,13 @@ type Props = {
     profile: SequenceInfluencerManagerPage;
     address: Address;
     influencerData?: SearchTableInfluencer | null;
-    onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
+    onUpdateInfluencer: (data: SequenceInfluencersPutRequestBody, revalidate: boolean) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
-export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Props) => {
+export const ProfileScreen = ({ profile, influencerData, address, onUpdateInfluencer }: Props) => {
     const Icon = profile.platform == 'youtube' ? Youtube : profile.platform === 'tiktok' ? Tiktok : Instagram;
 
     const { sequence } = useSequence(profile.sequence_id);
@@ -89,7 +90,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdate }: Pr
                     <TabsTrigger value="channel">{t('profile.channelTab')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="manage">
-                    <ManageSection influencer={profile} address={address} onUpdate={onUpdate} />
+                    <ManageSection influencer={profile} address={address} onUpdateInfluencer={onUpdateInfluencer} />
                 </TabsContent>
                 <TabsContent value="channel">
                     {influencerData && <ChannelSection profile={influencerData} />}

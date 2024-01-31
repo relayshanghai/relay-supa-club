@@ -6,7 +6,7 @@ export const THREAD_STATUS = z.enum(['unopened', 'unreplied', 'replied']);
 
 export type THREAD_STATUS = z.infer<typeof THREAD_STATUS>;
 
-export const FUNNEL_STATUS = z.enum([
+export const FUNNEL_STATUS_VALUES = [
     'To Contact',
     'In Sequence',
     'Ignored',
@@ -18,7 +18,9 @@ export const FUNNEL_STATUS = z.enum([
     'Completed',
     'Content Approval',
     'Posted',
-]);
+] as const;
+
+export const FUNNEL_STATUS = z.enum(FUNNEL_STATUS_VALUES);
 
 export type FUNNEL_STATUS = z.infer<typeof FUNNEL_STATUS>;
 
