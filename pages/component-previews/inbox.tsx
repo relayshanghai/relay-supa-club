@@ -25,8 +25,8 @@ import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
-import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
+import { optimisticUpdateSequenceInfluencer } from './helper';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -167,7 +167,7 @@ const getContactsToReply = (contacts: ThreadContact[], email?: string | null) =>
     return { to, cc };
 };
 
-type ThreadData = {
+export type ThreadData = {
     threads: ThreadInfo[];
     totals: {
         unreplied: number;
@@ -554,47 +554,7 @@ const InboxPreview = () => {
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
     /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
-    const optimisticUpdateSequenceInfluencer = useCallback(
-        (currentData: ThreadData[], newSequenceInfluencerData: SequenceInfluencersPutRequestBody): ThreadData[] => {
-            // find the
-            if (!currentData[0].threads) {
-                return currentData;
-            }
-            // Find the index of the thread page that needs updating
-            const pageIndex = currentData.findIndex(
-                (page) =>
-                    page.threads.findIndex(
-                        (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
-                    ) !== -1,
-            );
-
-            const influencerIndex = currentData[pageIndex].threads.findIndex(
-                (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
-            );
-
-            if (pageIndex === -1 || influencerIndex === -1) {
-                return currentData;
-            }
-
-            const newThreadPages = [...currentData];
-            const newThreads = [...newThreadPages[pageIndex].threads];
-            const currentInfluencer = newThreads[influencerIndex].sequenceInfluencer;
-            if (!currentInfluencer) {
-                return currentData;
-            }
-            newThreads[influencerIndex] = {
-                ...newThreads[influencerIndex],
-                sequenceInfluencer: {
-                    ...currentInfluencer,
-                    ...newSequenceInfluencerData,
-                },
-            };
-            newThreadPages[pageIndex] = { ...newThreadPages[pageIndex], threads: newThreads };
-
-            return newThreadPages;
-        },
-        [],
-    );
+    const _updateSequenceInfluencer = optimisticUpdateSequenceInfluencer;
 
     useEffect(() => {
         if (!threadsInfo) return;
@@ -760,7 +720,7 @@ const InboxPreview = () => {
                                         if (!previous) {
                                             return previous;
                                         }
-                                        return optimisticUpdateSequenceInfluencer(previous, update);
+                                        return _updateSequenceInfluencer(previous, update);
                                     },
                                     { revalidate },
                                 );
