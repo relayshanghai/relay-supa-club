@@ -10,12 +10,13 @@ import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-
 import { Youtube, Tiktok, Instagram, BorderedTick, Spinner } from 'src/components/icons';
 import Link from 'next/link';
 import { useSequence } from 'src/hooks/use-sequence';
-import { ManageSection, manageSectionUpdatingAtom } from '../manage-section';
+import { ManageSection } from '../manage-section';
 import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
+import { manageSectionUpdatingAtom } from '../atoms';
 
 export type ProfileValue = {
     notes: ProfileNotes;

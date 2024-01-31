@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { serverLogger } from 'src/utils/logger-server';
 import toast from 'react-hot-toast';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { OutreachCollabStatusInput } from './components/outreach-collab-status-input';
 import { useTranslation } from 'react-i18next';
 import type { CheckboxDropdownItemData } from './components/checkbox-dropdown-item';
@@ -23,6 +23,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 
 import { randomNumber } from 'src/utils/utils';
 import { UpdateInfluencerOrAddress } from 'src/utils/analytics/events/outreach/update-sequence-influencer-or-address';
+import { manageSectionUpdatingAtom } from './atoms';
 // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
 // import { OutreachNotesInput } from './components/outreach-notes-input';
 // import { NotesListOverlayScreen } from './screens/notes-list-overlay';
@@ -75,7 +76,6 @@ export interface ManageSectionProps {
     address: Address;
     onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
 }
-export const manageSectionUpdatingAtom = atom(false);
 
 const processStringAsNumber = (inputValue: string) => {
     const value = inputValue.trim();

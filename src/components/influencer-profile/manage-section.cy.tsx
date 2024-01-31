@@ -2,11 +2,12 @@
 // @ts-check
 
 import { useAtomValue } from 'jotai';
-import { ManageSection, manageSectionUpdatingAtom } from 'src/components/influencer-profile/manage-section';
+import { ManageSection } from 'src/components/influencer-profile/manage-section';
 import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 import type { InfluencerOutreachData } from 'src/utils/outreach/types';
 import i18n from 'i18n';
 import { testMount } from 'src/utils/cypress-app-wrapper';
+import { manageSectionUpdatingAtom } from './atoms';
 
 Cypress.on('uncaught:exception', (_err) => {
     // ignore abort request errors.
