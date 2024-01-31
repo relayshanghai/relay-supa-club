@@ -167,6 +167,16 @@ const getContactsToReply = (contacts: ThreadContact[], email?: string | null) =>
     return { to, cc };
 };
 
+type ThreadData = {
+    threads: ThreadInfo[];
+    totals: {
+        unreplied: number;
+        unopened: number;
+        replied: number;
+    };
+    totalFiltered: number;
+};
+
 const ThreadProvider = ({
     threadId,
     currentInbox,
@@ -440,7 +450,7 @@ const InboxPreview = () => {
         isLoading: isThreadsLoading,
     } = useSWRInfinite(
         getKey,
-        async ({ url, params }) => {
+        async ({ url, params }): Promise<ThreadData> => {
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
                 body: params,
             });
@@ -543,39 +553,48 @@ const InboxPreview = () => {
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer?.influencer_social_profile_id);
 
-    const _updateSequenceInfluencer = (
-        currentData: {
-            threads: ThreadInfo[];
-            totals: {
-                unreplied: number;
-                unopened: number;
-                replied: number;
+    /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
+    const optimisticUpdateSequenceInfluencer = useCallback(
+        (currentData: ThreadData[], newSequenceInfluencerData: SequenceInfluencersPutRequestBody): ThreadData[] => {
+            // find the
+            if (!currentData[0].threads) {
+                return currentData;
+            }
+            // Find the index of the thread page that needs updating
+            const pageIndex = currentData.findIndex(
+                (page) =>
+                    page.threads.findIndex(
+                        (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+                    ) !== -1,
+            );
+
+            const influencerIndex = currentData[pageIndex].threads.findIndex(
+                (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+            );
+
+            if (pageIndex === -1 || influencerIndex === -1) {
+                return currentData;
+            }
+
+            const newThreadPages = [...currentData];
+            const newThreads = [...newThreadPages[pageIndex].threads];
+            const currentInfluencer = newThreads[influencerIndex].sequenceInfluencer;
+            if (!currentInfluencer) {
+                return currentData;
+            }
+            newThreads[influencerIndex] = {
+                ...newThreads[influencerIndex],
+                sequenceInfluencer: {
+                    ...currentInfluencer,
+                    ...newSequenceInfluencerData,
+                },
             };
-            totalFiltered: number;
+            newThreadPages[pageIndex] = { ...newThreadPages[pageIndex], threads: newThreads };
+
+            return newThreadPages;
         },
-        newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
-    ) => {
-        if (!currentData) return;
-        // Find the index of the thread that needs updating
-        const threadIndex = currentData.threads.findIndex(
-            (thread) => thread.sequenceInfluencer?.id === newSequenceInfluencerData.id,
-        );
-        if (threadIndex === -1) return currentData; // Thread not found
-
-        // Create a new threads array with the updated sequenceInfluencer
-        const newThreads = [...currentData.threads];
-        newThreads[threadIndex] = {
-            ...newThreads[threadIndex],
-            // @ts-ignore
-            sequenceInfluencer: {
-                ...newThreads[threadIndex]?.sequenceInfluencer,
-                ...newSequenceInfluencerData,
-            },
-        };
-
-        // Return the new data object with the updated threads array
-        return { ...currentData, threads: newThreads };
-    };
+        [],
+    );
 
     useEffect(() => {
         if (!threadsInfo) return;
@@ -731,13 +750,20 @@ const InboxPreview = () => {
                 <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
                     {selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
                         <ProfileScreen
-                            // @ts-ignore
                             profile={selectedThread?.sequenceInfluencer}
                             influencerData={selectedThread?.influencerSocialProfile}
                             className="bg-white"
                             address={address}
-                            onUpdate={(_data) => {
-                                // refreshThreads(updateSequenceInfluencer(threadsInfo, data));
+                            onUpdateInfluencer={(update) => {
+                                refreshThreads(
+                                    (previous) => {
+                                        if (!previous) {
+                                            return previous;
+                                        }
+                                        return optimisticUpdateSequenceInfluencer(previous, update);
+                                    },
+                                    { revalidate: false },
+                                );
                             }}
                         />
                     )}

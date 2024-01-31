@@ -74,7 +74,7 @@ export const COLLAB_STATUS_OPTIONS: CheckboxDropdownItemData[] = [
 export interface ManageSectionProps {
     influencer: SequenceInfluencer;
     address: Address;
-    onUpdate?: (data: SequenceInfluencersPutRequestBody) => void;
+    onUpdateInfluencer?: (data: SequenceInfluencersPutRequestBody) => void;
 }
 
 const processStringAsNumber = (inputValue: string) => {
@@ -88,7 +88,7 @@ const processStringAsNumber = (inputValue: string) => {
 export const ManageSection = ({
     influencer: passedInfluencer,
     address: passedAddress,
-    onUpdate,
+    onUpdateInfluencer,
 }: ManageSectionProps) => {
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
@@ -146,9 +146,7 @@ export const ManageSection = ({
             });
 
             setUpdating(false);
-            onUpdate && onUpdate(body);
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [batchId, influencer.id, setUpdating, track],
     );
 
@@ -198,6 +196,9 @@ export const ManageSection = ({
             const previous = { ...influencer };
             // optimistic update
             setInfluencer({ ...previous, ...update });
+            if (onUpdateInfluencer) {
+                onUpdateInfluencer({ id, ...update });
+            }
             try {
                 if (debounce) {
                     await updateInfluencerDebounced({ id, ...update }, controller);
@@ -211,7 +212,7 @@ export const ManageSection = ({
                 setUpdating(false);
             }
         },
-        [influencer, id, updateInfluencerDebounced, updateInfluencer, setUpdating],
+        [influencer, onUpdateInfluencer, id, updateInfluencerDebounced, updateInfluencer, setUpdating],
     );
 
     const handleUpdateAddress = useCallback(
