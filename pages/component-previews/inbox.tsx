@@ -26,8 +26,8 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
 import { useTranslation } from 'react-i18next';
-import { optimisticUpdateSequenceInfluencer } from './helper';
 import { useCompany } from 'src/hooks/use-company';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -395,6 +395,48 @@ const ThreadProvider = ({
             </div>
         </div>
     );
+};
+
+const optimisticUpdateSequenceInfluencer = (
+    currentData: ThreadData[],
+    newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
+): ThreadData[] => {
+    // find the
+    if (!currentData[0].threads) {
+        return currentData;
+    }
+    // Find the index of the thread page that needs updating
+    const pageIndex = currentData.findIndex(
+        (page) =>
+            page.threads.findIndex(
+                (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+            ) !== -1,
+    );
+
+    const influencerIndex = currentData[pageIndex].threads.findIndex(
+        (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+    );
+
+    if (pageIndex === -1 || influencerIndex === -1) {
+        return currentData;
+    }
+
+    const newThreadPages = [...currentData];
+    const newThreads = [...newThreadPages[pageIndex].threads];
+    const currentInfluencer = newThreads[influencerIndex].sequenceInfluencer;
+    if (!currentInfluencer) {
+        return currentData;
+    }
+    newThreads[influencerIndex] = {
+        ...newThreads[influencerIndex],
+        sequenceInfluencer: {
+            ...currentInfluencer,
+            ...newSequenceInfluencerData,
+        },
+    };
+    newThreadPages[pageIndex] = { ...newThreadPages[pageIndex], threads: newThreads };
+
+    return newThreadPages;
 };
 
 const InboxPreview = () => {
