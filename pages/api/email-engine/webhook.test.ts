@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import { getScheduledMessages } from './webhook';
 import outboxMock from '../../../src/mocks/email-engine/outbox';
-import type { OutboxGet } from 'types/email-engine/outbox-get';
+import type { OutboxGet } from '../../../types/email-engine/outbox-get';
 import sequenceEmails from '../../../src/mocks/supabase/sequence_emails/four-sequence-emails';
 
 describe('webhook helpers - getScheduledMessages', () => {

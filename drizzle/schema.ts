@@ -17,8 +17,8 @@ import {
     json,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { FUNNEL_STATUS_VALUES } from 'src/utils/outreach/constants';
-import { CREATOR_PLATFORM_OPTIONS } from 'types';
+import { FUNNEL_STATUS_VALUES } from '../src/utils/outreach/constants';
+import { CREATOR_PLATFORM_OPTIONS } from '../types';
 
 export const key_status = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired']);
 export const key_type = pgEnum('key_type', [
