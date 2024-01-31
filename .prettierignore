@@ -6,3 +6,4 @@ types/supabase.ts
 docs
 .github
 release.config.js
+next.config.js
