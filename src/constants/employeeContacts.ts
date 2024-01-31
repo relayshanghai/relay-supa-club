@@ -41,6 +41,7 @@ export const EMPLOYEE_EMAILS = [
 export const QUICK_SEND_EMAIL_ACCOUNTS = [
     'egtljwhuz89pfkmj', // jacob@boostbot.ai
     '6nitzaf4gajlnt5c', // kirsten@boostbot.ai
+    'r4s32poko4nqxv08', // kirsten@boostbot.ai on staging
     '3tsfh97079jmgnni', // anne_ulike@beauty.boostbot.ai
     'm9cxoxn96dk5viwz', // support+cus_obskepogcl3egn@boostbot.ai
 ];
