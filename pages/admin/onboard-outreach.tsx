@@ -1,8 +1,5 @@
-import type {
-    AdminGetProfileGetQueries,
-    AdminGetProfileGetResponse,
-    AdminGetProfilePutResponse,
-} from 'pages/api/admin/profile';
+import type { AdminGetCompanyQueries, AdminGetCompanyResponse } from 'pages/api/admin/company';
+import type { AdminGetProfileQueries, AdminGetProfileResponse, AdminPutProfileResponse } from 'pages/api/admin/profile';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -10,8 +7,18 @@ import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { emailRegex } from 'src/constants';
-import type { ProfileDB } from 'src/utils/api/db';
+import type { CompanyDB } from 'src/utils/api/db';
+import { type ProfileDB } from 'src/utils/api/db';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+
+const validateNumberAsString = (input: string) => {
+    if (!input) return false;
+    const isNumberRegexTest = /^\d+$/.test(input);
+    if (!isNumberRegexTest) return false;
+    const toNumberTest = Number(input);
+    if (isNaN(toNumberTest)) return false;
+    return true;
+};
 
 const cleanUserInput = (input: string) => {
     // remove spaces and line breaks
@@ -38,19 +45,28 @@ const validateEmailEngineAccountId = (emailEngineAccountId: string | null) => {
 
 const OnboardOutreach = () => {
     const [profile, setProfile] = useState<ProfileDB | null>(null);
+    const [company, setCompany] = useState<CompanyDB | null>(null);
     const [fetchingProfile, setFetchingProfile] = useState<boolean>(false);
     const [submittingProfile, setSubmittingProfile] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
-    const fetchProfile: FormEventHandler<HTMLFormElement> = async (e) => {
+    const fetchProfileAndCompany: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
         setFetchingProfile(true);
         try {
-            const res = await nextFetchWithQueries<AdminGetProfileGetQueries, AdminGetProfileGetResponse>(
-                'admin/profile',
-                { email },
-            );
+            const res = await nextFetchWithQueries<AdminGetProfileQueries, AdminGetProfileResponse>('admin/profile', {
+                email,
+            });
             if (res.email) {
                 setProfile(res);
+            }
+            if (res.company_id) {
+                const companyRes = await nextFetchWithQueries<AdminGetCompanyQueries, AdminGetCompanyResponse>(
+                    'admin/company',
+                    { companyId: res.company_id },
+                );
+                if (companyRes.profiles_limit) {
+                    setCompany(companyRes);
+                }
             }
         } catch (error) {
             alert(error);
@@ -73,9 +89,47 @@ const OnboardOutreach = () => {
                 toast.error('Invalid email_engine_account_id');
                 return;
             }
-            const res = await nextFetch<AdminGetProfilePutResponse>('admin/profile', {
+            const res = await nextFetch<AdminPutProfileResponse>('admin/profile', {
                 method: 'PUT',
                 body: profile,
+            });
+            if (res.email) {
+                setProfile(res);
+                toast.success('Profile updated');
+            }
+        } catch (error) {
+            alert(error);
+        } finally {
+            setSubmittingProfile(false);
+        }
+    };
+
+    const updateCompany: FormEventHandler<HTMLFormElement> = async (e) => {
+        e.preventDefault();
+        setSubmittingProfile(true);
+        try {
+            if (!company) {
+                return;
+            }
+            if (!validateNumberAsString(company.profiles_limit)) {
+                toast.error('Invalid profiles_limit');
+                return;
+            }
+            if (!validateNumberAsString(company.searches_limit)) {
+                toast.error('Invalid searches_limit');
+                return;
+            }
+            if (!validateNumberAsString(company.trial_searches_limit)) {
+                toast.error('Invalid trial_searches_limit');
+                return;
+            }
+            if (!validateNumberAsString(company.trial_profiles_limit)) {
+                toast.error('Invalid trial_profiles_limit');
+                return;
+            }
+            const res = await nextFetch<AdminPutProfileResponse>('admin/company', {
+                method: 'PUT',
+                body: company,
             });
             if (res.email) {
                 setProfile(res);
@@ -91,7 +145,7 @@ const OnboardOutreach = () => {
     return (
         <Layout>
             <div className="p-6">
-                <form onSubmit={fetchProfile}>
+                <form onSubmit={fetchProfileAndCompany}>
                     <h2 className="text-lg font-bold">Search Profile</h2>
                     <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
                     <Button type="submit">Submit</Button>
@@ -133,6 +187,68 @@ const OnboardOutreach = () => {
                         <div>
                             fetching profile <Spinner className="h-5 w-5 fill-primary-600 text-white" />
                         </div>
+                    )}
+                    {company ? (
+                        <div>
+                            <h2 className="text-lg font-bold">Company: {company.name}</h2>
+                            <div>profiles_limit: {company.profiles_limit}</div>
+                            <form onSubmit={updateCompany} className="flex flex-col space-y-4">
+                                <label htmlFor="profiles_limit">profiles_limit</label>
+                                <input
+                                    id="profiles_limit"
+                                    type="text"
+                                    value={company.profiles_limit ?? ''}
+                                    onChange={(e) =>
+                                        setCompany({
+                                            ...company,
+                                            profiles_limit: cleanUserInput(e.target.value),
+                                        })
+                                    }
+                                />
+                                <label htmlFor="searches_limit">searches_limit</label>
+                                <input
+                                    id="searches_limit"
+                                    type="text"
+                                    value={company.searches_limit ?? ''}
+                                    onChange={(e) =>
+                                        setCompany({
+                                            ...company,
+                                            searches_limit: cleanUserInput(e.target.value),
+                                        })
+                                    }
+                                />
+                                <label htmlFor="trial_searches_limit">trial_searches_limit</label>
+                                <input
+                                    id="trial_searches_limit"
+                                    type="text"
+                                    value={company.trial_searches_limit ?? ''}
+                                    onChange={(e) =>
+                                        setCompany({
+                                            ...company,
+                                            trial_searches_limit: cleanUserInput(e.target.value),
+                                        })
+                                    }
+                                />
+                                <label htmlFor="trial_profiles_limit">trial_profiles_limit</label>
+                                <input
+                                    id="trial_profiles_limit"
+                                    type="text"
+                                    value={company.trial_profiles_limit ?? ''}
+                                    onChange={(e) =>
+                                        setCompany({
+                                            ...company,
+                                            trial_profiles_limit: cleanUserInput(e.target.value),
+                                        })
+                                    }
+                                />
+
+                                <Button disabled={submittingProfile} type="submit">
+                                    Submit
+                                </Button>
+                            </form>
+                        </div>
+                    ) : (
+                        <div>no company</div>
                     )}
                 </>
             </div>
