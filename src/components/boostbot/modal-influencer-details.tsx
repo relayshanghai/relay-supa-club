@@ -97,14 +97,17 @@ export const InfluencerDetailsModal = ({
                 { body: TopicTensorByUsernamePost }
             >('/api/topics/username', { body }, { method: 'POST' });
 
-            if (!topics || topics.length === 0) {
-                toast.error('Sorry, no topics found');
+            if (!topics || !Array.isArray(topics)) {
+                toast.error('Error finding topics for influencer. Please try again later.');
                 setAreTopicsAndRelevanceLoading(false);
                 return;
             }
-            const topicsAndRelevance = await getTopicsAndRelevance(topics, selectedRow.original.user_id);
+            // Some influencers just don't have iqdata `user_profile.relevant_tags` if IQdata doesn't have any topics, don't try to get relevance data from openai
+            if (topics.length > 0) {
+                const topicsAndRelevance = await getTopicsAndRelevance(topics, selectedRow.original.user_id);
+                setTopicsAndRelevance(topicsAndRelevance);
+            }
             setAreTopicsAndRelevanceLoading(false);
-            setTopicsAndRelevance(topicsAndRelevance);
         };
 
         if (selectedRow && isOpen) {
