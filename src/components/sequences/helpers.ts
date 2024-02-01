@@ -115,8 +115,7 @@ export const isMissingSocialProfileInfo = (sequenceInfluencer: SequenceInfluence
     !sequenceInfluencer.avatar_url ||
     !sequenceInfluencer.social_profile_last_fetched ||
     !sequenceInfluencer.influencer_social_profile_id ||
-    !sequenceInfluencer.tags ||
-    sequenceInfluencer.tags.length === 0;
+    !sequenceInfluencer.tags;
 
 export const calculateReplyRate = (
     sequenceInfluencers?: SequenceInfluencerManagerPageWithChannelData[],
