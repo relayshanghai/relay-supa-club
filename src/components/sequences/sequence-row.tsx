@@ -100,7 +100,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile } = useReport({
+    const { report, socialProfile, errorMessage } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
@@ -244,7 +244,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const sequenceSendTooltipTitle = missingSocialProfileInfo
+    const sequenceSendTooltipTitle = errorMessage
+        ? errorMessage
+        : missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltip')
         : !sequenceInfluencer.email
         ? t('sequences.missingEmail')
@@ -253,7 +255,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = missingSocialProfileInfo
+    const sequenceSendTooltipDescription = errorMessage
+        ? errorMessage
+        : missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipDescription')
         : !sequenceInfluencer.email
         ? t('sequences.missingEmailTooltipDescription')
@@ -351,6 +355,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     onSubmittingChange={setSubmittingChangeEmail}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
+                            ) : errorMessage ? (
+                                <div className="text-red-500">{errorMessage}</div>
                             ) : (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
                             )}
