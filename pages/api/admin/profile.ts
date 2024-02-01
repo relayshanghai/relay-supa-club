@@ -3,17 +3,17 @@ import { ApiHandler } from 'src/utils/api-handler';
 import type { ProfileDB } from 'src/utils/api/db';
 import { supabase } from 'src/utils/supabase-client';
 
-export type AdminGetProfileGetQueries = {
+export type AdminGetProfileQueries = {
     email: string;
 };
-export type AdminGetProfileGetResponse = ProfileDB;
+export type AdminGetProfileResponse = ProfileDB;
 
-export type AdminGetProfilePutBody = ProfileDB;
+export type AdminPutProfileBody = ProfileDB;
 
-export type AdminGetProfilePutResponse = ProfileDB;
+export type AdminPutProfileResponse = ProfileDB;
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-    const body = req.query as AdminGetProfileGetQueries;
+    const body = req.query as AdminGetProfileQueries;
     if (!body.email) {
         return res.status(400).json({ message: 'Email is required' });
     }
@@ -27,12 +27,12 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     if (!profile || profileError) {
         return res.status(500).json({ message: JSON.stringify(profileError) });
     }
-    const returnObject: AdminGetProfileGetResponse = profile;
+    const returnObject: AdminGetProfileResponse = profile;
     return res.status(200).json(returnObject);
 }
 
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {
-    const body = req.body as AdminGetProfilePutBody;
+    const body = req.body as AdminPutProfileBody;
     if (!body.id) {
         return res.status(400).json({ message: 'Email is required' });
     }
@@ -61,7 +61,7 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
                 .update({ id: serviceAccount.id, email_engine_account_id, sequence_send_email });
         }
     }
-    const returnObject: AdminGetProfilePutResponse = profile;
+    const returnObject: AdminPutProfileResponse = profile;
     return res.status(200).json(returnObject);
 }
 
