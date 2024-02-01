@@ -22,6 +22,15 @@ export type AddressesInsert = typeof addressesInsertSchema._type;
 export const addressesUpdateSchema = addressesInsertSchema.partial().extend({ id: z.string().uuid() });
 export type AddressesUpdate = z.infer<typeof addressesUpdateSchema>;
 
+export const insertAddressCall: DBQuery<(address: AddressesInsert) => Promise<Address>> =
+    (databaseInstance) => async (address) => {
+        const result = await db(databaseInstance).insert(addresses).values(address).returning();
+
+        if (result.length !== 1) throw new Error('Error in inserting address row');
+
+        return result[0];
+    };
+
 export const updateAddressCall: DBQuery<(update: AddressesUpdate) => Promise<Address>> =
     (databaseInstance) => async (update) => {
         const result = await db(databaseInstance)
@@ -30,18 +39,16 @@ export const updateAddressCall: DBQuery<(update: AddressesUpdate) => Promise<Add
             .where(eq(addresses.id, update.id))
             .returning();
 
-        if (result.length !== 1) throw new Error('Error in updating row');
+        if (result.length !== 1) throw new Error('Error in updating address row');
 
         return result[0];
     };
 
-export const getAddressCall: DBQuery<(id: string) => Promise<Address>> = (databaseInstance) => async (id) => {
-    const result = await db(databaseInstance)
-        .select()
-        .from(addresses)
-        .where(eq(addresses.influencer_social_profile_id, id));
+export const getAddressCall: DBQuery<(addressId: string) => Promise<Address>> =
+    (databaseInstance) => async (addressId) => {
+        const result = await db(databaseInstance).select().from(addresses).where(eq(addresses.id, addressId));
 
-    if (result.length !== 1) throw new Error('Error in getting row');
+        if (result.length !== 1) throw new Error('Error in getting address row');
 
-    return result[0];
-};
+        return result[0];
+    };
