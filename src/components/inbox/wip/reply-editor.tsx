@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react';
 import { Tooltip } from 'src/components/library';
 import { nanoid } from 'nanoid';
 import { truncatedText } from 'src/utils/outreach/helpers';
+import { useTranslation } from 'react-i18next';
 
 export const ReplyEditor = ({
     onReply,
@@ -25,7 +26,7 @@ export const ReplyEditor = ({
     const [replyText, setReplyText] = useState('');
     const [sendTo, setSendTo] = useState<EmailContact[]>([]);
     const [sendCC, setSendCC] = useState<EmailContact[]>([]);
-
+    const { t } = useTranslation();
     const handleSendReply = useCallback(() => {
         onReply(replyText, [...sendTo, ...defaultContacts.to], [...sendCC, ...defaultContacts.cc]);
         setReplyText('');
@@ -37,7 +38,7 @@ export const ReplyEditor = ({
         const defaultCC = defaultContacts.cc.map((contact) => getNameOrAddressContact(contact, '(CC)'));
         const to = sendTo.map((contact) => getNameOrAddressContact(contact));
         const cc = sendCC.map((contact) => getNameOrAddressContact(contact, '(CC)'));
-        return `Reply all to ${[...defaultTo, ...defaultCC, ...to, ...cc].join(', ')}`;
+        return `${t('inbox.replyAllTo')} to ${[...defaultTo, ...defaultCC, ...to, ...cc].join(', ')}`;
     };
     return (
         <div className="grid grid-cols-1 divide-y">

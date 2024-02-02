@@ -35,6 +35,16 @@ const inbox = {
             description: 'Check again later',
         },
     },
+    newInboxMessage: {
+        title: 'New Inbox UI',
+        message: `In light of your feedback regarding usability, we&apos;ve upgraded the inbox interface.
+        You&apos;ll have the opportunity to evaluate our enhancements before we introduce them to all
+        other users.`,
+        oldInbox: 'Old Inbox UI',
+        dismissMessage: 'Dismiss',
+    },
+    replyToThread: 'Reply to thread',
+    replyAllTo: 'Reply to',
 };
 
 export default inbox;

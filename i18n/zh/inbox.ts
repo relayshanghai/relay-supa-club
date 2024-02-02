@@ -36,6 +36,15 @@ const inbox = {
             description: '稍后查看',
         },
     },
+    newInboxMessage: {
+        title: '新收件箱用户界面',
+        message:
+            '根据您宝贵的反馈，我们升级了收件箱界面，旨在提升您的使用体验。在我们向所有用户推广这些改进之前，您将有机会先行体验并提供更多反馈。',
+        oldInbox: '旧收件箱用户界面',
+        dismissMessage: '忽略',
+    },
+    replyToThread: '回复邮件',
+    replyAllTo: '回复所有人',
 };
 
 export default inbox;

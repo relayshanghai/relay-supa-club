@@ -30,6 +30,7 @@ const profile = {
     compAndDeliverables: '费用和交付成果',
     commissionRate: '佣金率',
     shippingAndPersonalInfo: '发货和个人信息',
+    fee: '费用(USD)',
 };
 
 export default profile;

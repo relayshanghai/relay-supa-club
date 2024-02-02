@@ -264,7 +264,7 @@ export const ChannelSection = ({ ...props }: Props) => {
                         </Tooltip>
                     </div>
                     <div className={`w-full`}>
-                        {props.profile.influencer_niche_graph.length === 0 ? (
+                        {props.profile.influencer_niche_graph?.length === 0 ? (
                             <div className="relative flex h-[280px] w-80 items-center justify-center">
                                 <p className="left-[42%] top-[45%] flex text-center text-lg font-semibold">
                                     {t('boostbot.modal.noNichesFound')}
@@ -291,7 +291,7 @@ export const ChannelSection = ({ ...props }: Props) => {
                                     outerRadius={100}
                                     cx="50%"
                                     cy="50%"
-                                    data={props.profile.influencer_niche_graph.map((topic) => ({
+                                    data={props.profile.influencer_niche_graph?.map((topic) => ({
                                         ...topic,
                                         topic: i18n.language === 'en-US' ? topic.topic_en : topic.topic_zh,
                                     }))}
