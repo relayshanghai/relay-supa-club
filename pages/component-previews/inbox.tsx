@@ -29,6 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import Link from 'next/link';
+import { t } from 'i18next';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -391,7 +392,7 @@ const ThreadProvider = ({
                         !replyClicked ? 'block' : 'hidden'
                     }`}
                 >
-                    Reply to thread
+                    {t('inbox.replyToThread')}
                 </div>
             </div>
         </div>
@@ -454,6 +455,8 @@ const InboxPreview = () => {
                 name: sequence.name,
             };
         });
+    const { t } = useTranslation();
+
     const [page, setPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -627,14 +630,9 @@ const InboxPreview = () => {
                         >
                             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                         </svg>
-                        <span className="sr-only">Info</span>
-                        <h3 className="text-lg font-medium">New Inbox UI</h3>
+                        <h3 className="text-lg font-medium">{t('inbox.newInboxMessage.title')}</h3>
                     </div>
-                    <div className="mb-4 mt-2 text-sm">
-                        In light of your feedback regarding usability, we&apos;ve upgraded the inbox interface.
-                        You&apos;ll have the opportunity to evaluate our enhancements before we introduce them to all
-                        other users.
-                    </div>
+                    <div className="mb-4 mt-2 text-sm">{t('inbox.newInboxMessage.message')}</div>
                     <div className="flex">
                         <Link href="/old-inbox">
                             <button
@@ -650,7 +648,7 @@ const InboxPreview = () => {
                                 >
                                     <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
                                 </svg>
-                                Old Inbox UI
+                                {t('inbox.newInboxMessage.oldInbox')}
                             </button>
                         </Link>
                         <button
@@ -660,7 +658,7 @@ const InboxPreview = () => {
                             data-dismiss-target="#alert-additional-content-1"
                             aria-label="Close"
                         >
-                            Dismiss
+                            {t('inbox.newInboxMessage.dismissMessage')}
                         </button>
                     </div>
                 </div>
