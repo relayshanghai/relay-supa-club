@@ -1,13 +1,22 @@
 import type { NextApiHandler } from 'next';
-import type { Address, AddressesUpdate, AddressesGet } from 'src/backend/database/addresses';
-import { addressesUpdateSchema, updateAddressCall, addressesGet, getAddressCall } from 'src/backend/database/addresses';
+import type { Address, AddressesUpdate, AddressesGet, AddressesInsert } from 'src/backend/database/addresses';
+import {
+    addressesUpdateSchema,
+    updateAddressCall,
+    addressesGet,
+    getAddressCall,
+    addressesInsertSchema,
+    insertAddressCall,
+} from 'src/backend/database/addresses';
 
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
 
 export type AddressGetQuery = AddressesGet;
 export type AddressesPutRequestBody = AddressesUpdate;
 export type AddressesPutRequestResponse = Address;
+export type AddressesPostRequestBody = AddressesInsert;
+export type AddressesPostRequestResponse = Address;
 
 const getHandler: NextApiHandler = async (req, res) => {
     const validated = addressesGet.safeParse(req);
@@ -32,4 +41,14 @@ const putHandler: NextApiHandler = async (req, res) => {
     return res.status(httpCodes.OK).json(result);
 };
 
-export default ApiHandler({ getHandler, putHandler });
+const postHandler: NextApiHandler = async (req, res) => {
+    const validated = addressesInsertSchema.safeParse(req.body);
+    if (!validated.success) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
+    }
+    const insert = validated.data;
+    const result: Address = await insertAddressCall()(insert);
+    return res.status(httpCodes.OK).json(result);
+};
+
+export default ApiHandlerWithContext({ getHandler, putHandler, postHandler });

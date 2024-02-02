@@ -578,7 +578,7 @@ const InboxPreview = () => {
         setSize(size + 1);
     }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
 
-    const { address } = useAddress(selectedThread?.sequenceInfluencer?.address_id);
+    const { address } = useAddress(selectedThread?.sequenceInfluencer);
 
     const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
