@@ -57,12 +57,13 @@ export const useAddress = (
     }, [influencer]);
 
     useEffect(() => {
-        async () => {
+        const checkAndGetAddress = async () => {
             const newAddressId = await createAddressIfMissing(influencer);
             if (newAddressId) {
                 setAddressId(newAddressId);
             }
         };
+        checkAndGetAddress();
     }, [influencer]);
 
     const { data: address, error: addressError } = useSWR([addressId], async () => {
