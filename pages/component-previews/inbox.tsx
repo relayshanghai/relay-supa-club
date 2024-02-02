@@ -28,6 +28,7 @@ import type { Attachment } from 'types/email-engine/account-account-message-get'
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
+import Link from 'next/link';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -603,9 +604,68 @@ const InboxPreview = () => {
         acc[key].push(thread);
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
+    const [showNewInboxMessage, setShowNewInboxMessage] = useState(true);
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
-        <Layout>
+        <Layout
+            titleFlag={
+                <div
+                    style={{
+                        display: showNewInboxMessage ? 'block' : 'none',
+                    }}
+                    id="alert-additional-content-1"
+                    className="mb-4 rounded-lg border border-blue-300 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-gray-800 dark:text-blue-400"
+                    role="alert"
+                >
+                    <div className="flex items-center">
+                        <svg
+                            className="me-2 h-4 w-4 flex-shrink-0"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                        </svg>
+                        <span className="sr-only">Info</span>
+                        <h3 className="text-lg font-medium">New Inbox UI</h3>
+                    </div>
+                    <div className="mb-4 mt-2 text-sm">
+                        In light of your feedback regarding usability, we&apos;ve upgraded the inbox interface.
+                        You&apos;ll have the opportunity to evaluate our enhancements before we introduce them to all
+                        other users.
+                    </div>
+                    <div className="flex">
+                        <Link href="/old-inbox">
+                            <button
+                                type="button"
+                                className="me-2 inline-flex items-center rounded-lg bg-blue-800 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            >
+                                <svg
+                                    className="me-2 h-3 w-3"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 14"
+                                >
+                                    <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
+                                </svg>
+                                Old Inbox UI
+                            </button>
+                        </Link>
+                        <button
+                            onClick={() => setShowNewInboxMessage(false)}
+                            type="button"
+                            className="rounded-lg border border-blue-800 bg-transparent px-3 py-1.5 text-center text-xs font-medium text-blue-800 hover:bg-blue-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-200 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800"
+                            data-dismiss-target="#alert-additional-content-1"
+                            aria-label="Close"
+                        >
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            }
+        >
             <div className="flex h-full max-h-screen bg-white">
                 <section
                     className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
