@@ -61,7 +61,7 @@ const Manager = () => {
         [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
     );
 
-    const { address } = useAddress({} as any, (() => undefined) as any, influencer as any);
+    const { address } = useAddress(influencer);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPageWithChannelData) => {

@@ -8,16 +8,11 @@ import type {
 } from 'pages/api/sequence-influencers';
 import { serverLogger } from 'src/utils/logger-server';
 import type { InfluencerOutreachData } from 'src/utils/outreach/types';
-import { useEffect } from 'react';
-import type { ThreadData } from 'pages/component-previews/inbox';
+import { useEffect, useState } from 'react';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 
 const createAddressIfMissing = async (
-    threadData: ThreadData[],
-    optimisticUpdateSequenceInfluencer: (
-        currentData: ThreadData[],
-        newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
-    ) => ThreadData[],
-    influencer?: InfluencerOutreachData | null,
+    influencer?: InfluencerOutreachData | SequenceInfluencerManagerPageWithChannelData | null,
 ) => {
     // influencer exists and is populated (has email) but is missing an address
     if (influencer?.email && !influencer.address_id) {
@@ -43,8 +38,8 @@ const createAddressIfMissing = async (
                     { body: update },
                     { method: 'PUT' },
                 );
-                optimisticUpdateSequenceInfluencer(threadData, update);
             }
+            return newAddress.content.id;
         } catch (error: any) {
             serverLogger(error);
         }
@@ -52,18 +47,23 @@ const createAddressIfMissing = async (
 };
 
 export const useAddress = (
-    threadData: ThreadData[],
-    optimisticUpdateSequenceInfluencer: (
-        currentData: ThreadData[],
-        newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
-    ) => ThreadData[],
-    influencer?: InfluencerOutreachData | null,
+    influencer?: InfluencerOutreachData | SequenceInfluencerManagerPageWithChannelData | null,
 ) => {
-    const addressId = influencer?.address_id;
+    const [addressId, setAddressId] = useState<string | null>(influencer?.address_id || null);
+    useEffect(() => {
+        if (influencer?.address_id) {
+            setAddressId(influencer.address_id);
+        }
+    }, [influencer]);
 
     useEffect(() => {
-        createAddressIfMissing(threadData, optimisticUpdateSequenceInfluencer, influencer);
-    }, [influencer, optimisticUpdateSequenceInfluencer, threadData]);
+        async () => {
+            const newAddressId = await createAddressIfMissing(influencer);
+            if (newAddressId) {
+                setAddressId(newAddressId);
+            }
+        };
+    }, [influencer]);
 
     const { data: address, error: addressError } = useSWR([addressId], async () => {
         if (!addressId) {
