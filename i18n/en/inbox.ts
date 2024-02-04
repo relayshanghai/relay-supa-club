@@ -37,8 +37,8 @@ const inbox = {
     },
     newInboxMessage: {
         title: 'New Inbox UI',
-        message: `In light of your feedback regarding usability, we&apos;ve upgraded the inbox interface.
-        You&apos;ll have the opportunity to evaluate our enhancements before we introduce them to all
+        message: `In light of your feedback regarding usability, we've upgraded the inbox interface.
+        You'll have the opportunity to evaluate our enhancements before we introduce them to all
         other users.`,
         oldInbox: 'Old Inbox UI',
         dismissMessage: 'Dismiss',
