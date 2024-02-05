@@ -88,12 +88,17 @@ export async function apiFetch<TRes = void, TReq = void>(
         url = preparePayloadQuery(url, payload.query);
 
         if (payload.body) {
-            _options.method = 'POST';
+            // If method is undefined or set as GET (but has a body), set it to POST, otherwise use what's provided (and convert to upper case)
+            _options.method = !_options.method || _options.method === 'GET' ? 'POST' : _options.method.toUpperCase();
             _options.body = JSON.stringify(payload.body);
-            _options.headers = {
-                'content-type': 'application/json',
+            // If content-type is not set, set it to application/json by default
+            const headers = {
                 ..._options.headers,
-            };
+            } as Record<string, string>;
+            if (!headers['content-type'] && !headers['Content-Type']) {
+                headers['content-type'] = 'application/json';
+            }
+            _options.headers = headers;
         }
     }
 

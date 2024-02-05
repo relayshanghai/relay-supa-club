@@ -1,20 +1,17 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from 'shadcn/components/ui/dropdown-menu';
 import type { Message, CurrentInbox } from './thread-preview';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Download, ThreeDots } from 'src/components/icons';
+import { Download, Forward, ThreeDots } from 'src/components/icons';
 import { formatDate } from 'src/utils/datetime';
 import { getAttachmentStyle } from 'pages/component-previews/inbox';
 import { Tooltip } from 'src/components/library';
-import type { AttachmentFile, EmailContact } from 'src/utils/outreach/types';
+import type { EmailContact } from 'src/utils/outreach/types';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
+import { useRouter } from 'next/router';
+import { truncatedText } from 'src/utils/outreach/helpers';
+import type { Attachment } from 'types/email-engine/account-account-message-get';
 
 const MessageTitle = ({
     expanded,
@@ -82,7 +79,11 @@ const MessageTitle = ({
                     }}
                     className={`text-sm ${expanded && 'text-primary-500'} px-4`}
                 >
-                    {expanded && <span>Sent to {message.to.map((to) => to.name || to.address)}</span>}
+                    {expanded && (
+                        <span>
+                            Sent to {message.to.map((to) => (to.address === myEmail ? 'Me' : to.name || to.address))}
+                        </span>
+                    )}
                     {expanded && message.cc.length > 0 && (
                         <span> and {message.cc.map((cc) => cc.name || cc.address).join(', ')}</span>
                     )}
@@ -91,14 +92,22 @@ const MessageTitle = ({
         );
 };
 
-const AttachmentTablet = ({ attachment }: { attachment: AttachmentFile }) => {
-    const handleDownloadAttachment = useCallback(() => {
-        // eslint-disable-next-line no-console
-        console.log('Attachment Clicked', attachment);
-    }, [attachment]);
-    const truncatedText = (text: string, maxLength: number) => {
-        return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-    };
+const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
+    const router = useRouter();
+
+    const handleDownloadAttachment = useCallback(async () => {
+        if (!attachment.id) return;
+        const baseUrl = '/api/outreach/attachments';
+        const downloadParams = new URLSearchParams({
+            id: attachment.id,
+            filename: attachment.filename,
+        });
+
+        router.push(`${baseUrl}?${new URLSearchParams(downloadParams)}`, undefined, {
+            shallow: true,
+        });
+    }, [attachment, router]);
+
     return (
         <Tooltip position="right" content={attachment.filename}>
             <button
@@ -163,28 +172,20 @@ const MessageComponent = ({
             >
                 <MessageTitle expanded={messageExpanded} message={message} myEmail={myEmail} />
                 <section className="flex items-center gap-4">
-                    <DropdownMenu>
-                        <Dialog>
-                            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                                <ThreeDots className="h-4 w-4 " />
-                            </DropdownMenuTrigger>
+                    <Dialog>
+                        <DialogTrigger>
+                            <Forward className="h-4 w-4" />
+                        </DialogTrigger>
 
-                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
-                                <DropdownMenuItem>
-                                    <DialogTrigger>Forward</DialogTrigger>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-
-                            <DialogContent>
-                                <SingleAddressSection sendTo={forwardTo} setSendTo={setForwardTo} />
-                                <DialogFooter>
-                                    <Button type="button" onClick={() => onForward(message, forwardTo)}>
-                                        Save changes
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </DropdownMenu>
+                        <DialogContent>
+                            <SingleAddressSection sendTo={forwardTo} setSendTo={setForwardTo} />
+                            <DialogFooter>
+                                <Button type="button" onClick={() => onForward(message, forwardTo)}>
+                                    Save changes
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                     <span className="w-16">{formatDate(message.date, '[date] [monthShort]')}</span>
                 </section>
             </AccordionTrigger>
@@ -192,9 +193,14 @@ const MessageComponent = ({
                 <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 {message.attachments && message.attachments.length > 0 && (
                     <section className="flex w-full gap-2">
-                        {message.attachments.map((attachment) => (
-                            <AttachmentTablet key={attachment.id} attachment={attachment} />
-                        ))}
+                        {message.attachments
+                            .filter((attachment) => {
+                                // @note there are some attachments that does not have complete data (e.g. no filename)
+                                return attachment.contentType.startsWith('message/') === false;
+                            })
+                            .map((attachment) => (
+                                <AttachmentTablet key={attachment.id} attachment={attachment} />
+                            ))}
                     </section>
                 )}
                 <section className="w-full">
@@ -253,7 +259,7 @@ export const MessagesComponent = ({
         <Accordion
             type="multiple"
             id={messages[0]?.id}
-            className="w-[95%] space-y-4 bg-gray-50"
+            className="space-y-4 bg-gray-50"
             value={openMessage}
             onValueChange={(value) => {
                 setOpenMessage(value);
@@ -263,12 +269,14 @@ export const MessagesComponent = ({
                 .slice(0) // Make shallow copy before reversing
                 .reverse()
                 .map((message) => (
-                    <MessageComponent
-                        key={message.id}
-                        message={message}
-                        myEmail={currentInbox.email}
-                        onForward={onForward}
-                    />
+                    <>
+                        <MessageComponent
+                            key={message.id}
+                            message={message}
+                            myEmail={currentInbox.email}
+                            onForward={onForward}
+                        />
+                    </>
                 ))}
         </Accordion>
     );

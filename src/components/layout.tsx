@@ -27,7 +27,12 @@ const pageNameMap: { [key: string]: string } = {
     boostbot: 'boostbot',
 };
 
-export const Layout = ({ children }: any) => {
+export interface LayoutProps {
+    children: React.ReactNode;
+    titleFlag?: React.ReactNode;
+}
+
+export const Layout = ({ children, titleFlag }: LayoutProps) => {
     const { profile, loading, refreshProfile } = useUser();
     const { track } = useRudderstackTrack();
 
@@ -129,6 +134,7 @@ export const Layout = ({ children }: any) => {
                         <LanguageToggle />
                     </div>
                 </div>
+                {titleFlag && titleFlag}
                 <div className="h-full w-full overflow-auto">{children}</div>
             </div>
             <ClientRoleWarning />

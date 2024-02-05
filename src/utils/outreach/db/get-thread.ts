@@ -8,13 +8,19 @@ type GetThreadReturn = {
     sequence_influencer: typeof sequence_influencers.$inferSelect | null;
 };
 
-type GetThreadFn = (threadId: string) => Promise<GetThreadReturn | null>;
+type GetThreadFn = (account: string, threadId: string) => Promise<GetThreadReturn | null>;
 
-export const getThread: DBQuery<GetThreadFn> = (drizzlePostgresInstance) => async (threadId: string) => {
+export const getThread: DBQuery<GetThreadFn> = (drizzlePostgresInstance) => async (account, threadId) => {
     const rows = await db(drizzlePostgresInstance)
         .select()
         .from(threads)
-        .where(and(eq(threads.thread_id, threadId), isNull(threads.deleted_at)))
+        .where(
+            and(
+                eq(threads.email_engine_account_id, account),
+                eq(threads.thread_id, threadId),
+                isNull(threads.deleted_at),
+            ),
+        )
         .leftJoin(sequence_influencers, eq(sequence_influencers.id, threads.sequence_influencer_id));
 
     if (rows.length !== 1) return null;

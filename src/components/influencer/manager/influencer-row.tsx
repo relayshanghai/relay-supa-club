@@ -4,7 +4,7 @@ import { InboxIcon } from 'src/components/icons';
 import i18n from 'i18n';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { type SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GoToInbox } from 'src/utils/analytics/events/outreach/go-to-inbox';
 import { useUser } from 'src/hooks/use-user';
@@ -12,9 +12,9 @@ import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-
 
 export type InfluencerRowProps = {
     index: number;
-    influencer: SequenceInfluencerManagerPage;
+    influencer: SequenceInfluencerManagerPageWithChannelData;
     onCheckboxChange?: () => void;
-    onRowClick?: (data: SequenceInfluencerManagerPage) => void;
+    onRowClick?: (data: SequenceInfluencerManagerPageWithChannelData) => void;
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
@@ -34,7 +34,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
     const { profile } = useUser();
     const { t } = useTranslation();
     const handleRowClick = useCallback(
-        (influencer: SequenceInfluencerManagerPage) => {
+        (influencer: SequenceInfluencerManagerPageWithChannelData) => {
             props.onRowClick && props.onRowClick(influencer);
         },
         [props],

@@ -26,6 +26,7 @@ export const ProfileNotes = z.object({
             z.literal('Received'),
             z.literal('Content Approval'),
             z.literal('Posted'),
+            z.literal('Completed'),
         ])
         .default('To Contact'),
     // notes: z.string().optional(),

@@ -1,4 +1,4 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import type {
     SequenceInfluencersDeleteRequestBody,
     SequenceInfluencersDeleteResponse,
@@ -24,12 +24,15 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         mutate: refreshSequenceInfluencers,
         isLoading,
         isValidating,
-    } = useSWR<SequenceInfluencerManagerPage[]>(
+    } = useSWR<SequenceInfluencerManagerPageWithChannelData[]>(
         sequenceIds && sequenceIds.length > 0 ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[], any>('/api/sequence/influencers', {
-                body: sequenceIds,
-            });
+            const allInfluencers = await apiFetch<SequenceInfluencerManagerPageWithChannelData[], any>(
+                '/api/sequence/influencers',
+                {
+                    body: sequenceIds,
+                },
+            );
             return allInfluencers.content;
         },
         { revalidateOnFocus: true },

@@ -52,7 +52,7 @@ export type LastSetupError = {
 export type PaymentMethod = {
     id: string;
     object: string;
-    alipay: Metadata;
+    alipay?: Metadata;
     billing_details: BillingDetails;
     created: number;
     customer: string;
