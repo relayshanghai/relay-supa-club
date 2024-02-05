@@ -1,6 +1,6 @@
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { describe, it, expect } from 'vitest';
-import { findMostRecentMessageFromOtherPerson, findOtherPeopleInThread } from './helpers';
+import { findMostRecentMessageFromOtherPerson, findOtherPeopleInThread, sortByUpdatedAtDesc } from './helpers';
 
 describe('findMostRecentMessageFromOtherPerson', () => {
     it('should return the most recent message from the other person', () => {
@@ -217,5 +217,26 @@ describe('findOtherPeopleInThread', () => {
             'cc3@example.com',
         ];
         expect(result).toEqual(expected);
+    });
+});
+
+describe('sortByUpdatedAtDesc', () => {
+    it('should return a negative number when the first argument is a later date than the second argument', () => {
+        const result = sortByUpdatedAtDesc('2022-01-01', '2021-01-01');
+        expect(result).toBeLessThan(0);
+    });
+    it('should return a positive number when the first argument is an earlier date than the second argument', () => {
+        const result = sortByUpdatedAtDesc('2021-01-01', '2022-01-01');
+        expect(result).toBeGreaterThan(0);
+    });
+    it('should return zero when the arguments are the same date', () => {
+        const result = sortByUpdatedAtDesc('2021-01-01', '2021-01-01');
+        expect(result).toBe(0);
+    });
+    it('should return zero when either argument is null', () => {
+        const result1 = sortByUpdatedAtDesc(null, '2021-01-01');
+        const result2 = sortByUpdatedAtDesc('2021-01-01', null);
+        expect(result1).toBe(0);
+        expect(result2).toBe(0);
     });
 });

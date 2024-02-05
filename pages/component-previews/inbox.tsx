@@ -30,6 +30,7 @@ import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import Link from 'next/link';
 import { t } from 'i18next';
+import { sortByUpdatedAtDesc } from 'src/components/inbox/helpers';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -687,9 +688,9 @@ const InboxPreview = () => {
                         <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt)
                                 .sort((a, b) => {
-                                    const dateA = new Date(threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at || 0);
-                                    const dateB = new Date(threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at || 0);
-                                    return dateB.getTime() - dateA.getTime();
+                                    const dateA = threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
+                                    const dateB = threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
+                                    return sortByUpdatedAtDesc(dateA, dateB);
                                 })
                                 .map((date) => (
                                     <div key={date}>
