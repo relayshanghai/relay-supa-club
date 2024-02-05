@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import type { UIEventHandler } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
 import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
-import type { AttachmentFile, ThreadContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
-import type { EmailContact } from 'src/utils/outreach/types';
+import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
+import useSWRInfinite from 'swr/infinite';
 import useSWR from 'swr';
 import type { CurrentInbox } from 'src/components/inbox/wip/thread-preview';
 import { nanoid } from 'nanoid';
@@ -14,20 +15,21 @@ import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { Input } from 'shadcn/components/ui/input';
-import { ProfileScreenProvider, useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
-import { mapProfileToFormData } from 'src/components/inbox/helpers';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import { NotesListOverlayScreen } from 'src/components/influencer-profile/screens/notes-list-overlay';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
-import type { AttachmentFieldProps } from 'src/components/inbox/wip/attachment-field';
 import { serverLogger } from 'src/utils/logger-server';
 import { Search } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useAddress } from 'src/hooks/use-address';
+import type { Attachment } from 'types/email-engine/account-account-message-get';
+import { useTranslation } from 'react-i18next';
+import { useCompany } from 'src/hooks/use-company';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
+import Link from 'next/link';
+import { t } from 'i18next';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -56,6 +58,75 @@ export const getAttachmentStyle = (filename: string) => {
     }
 };
 
+const emptyMessage: Message = {
+    date: '2024-01-16T06:46:00.000Z',
+    unread: false,
+    id: 'empty-message-1',
+    from: {
+        name: 'No messages yet',
+        address: 'sample@boostbot.ai',
+    },
+    to: [
+        {
+            name: 'You',
+            address: 'you@example.com',
+        },
+    ],
+    cc: [],
+    replyTo: [],
+    attachments: [],
+    subject: 'Nothing to show here... yet',
+    body: "<p>Make sure to contact some influencers from your <a href='/sequences'>Sequences</a> and come check your inbox in a day or two!</p>",
+};
+
+const emptyThread = {
+    threadInfo: {
+        id: 'f770bc12-d10d-467b-880b-43b43ea24412',
+        thread_id: '1788228375458170330',
+        sequence_influencer_id: '99257908-639b-4725-b62f-70f4581de67b',
+        email_engine_account_id: 'oth98ylp8yhi87l5',
+        last_reply_id: 'AAAAAQAAAsU',
+        thread_status: 'unreplied',
+        deleted_at: null,
+        created_at: '2024-01-16T01:14:30.000Z',
+        updated_at: '2024-01-16T01:24:04.443Z',
+    },
+    sequenceInfluencer: {
+        id: '99257908-639b-4725-b62f-70f4581de67b',
+        name: 'No messages yet',
+        username: 'Check again later',
+    },
+    influencerSocialProfile: undefined,
+    contacts: [
+        {
+            id: 'dcb43606-66e8-4074-845f-2c077713f908',
+            name: 'LMNAO',
+            address: 'jiggling.potato@gmail.com',
+            created_at: '2024-01-16T06:43:41.651Z',
+            type: 'user',
+        },
+        {
+            id: '7e49423c-af84-4dcc-85ac-8eeb6883ff6e',
+            name: 'Austinjpg',
+            address: 'suvo.suvojitghosh@gmail.com',
+            created_at: '2024-01-16T06:44:46.440Z',
+            type: 'influencer',
+        },
+    ],
+    sequenceInfo: {
+        created_at: '2024-01-16T06:15:41.107Z',
+        updated_at: '2024-01-16T06:15:41.107Z',
+        company_id: 'd7326229-dbeb-41aa-8b9b-4baeb63d0d7f',
+        name: 'General collaboration',
+        auto_start: false,
+        id: '055870b7-1d6a-46ed-b205-9b32b34bfd83',
+        manager_first_name: 'William Edward X',
+        manager_id: '591a6cba-301e-5690-81ef-4d1742d41871',
+        deleted: false,
+        productName: 'Widget X',
+    },
+};
+
 /**
  * Generate local Message object with isLocal attribute
  */
@@ -65,7 +136,7 @@ const generateLocalData = (params: {
     to: EmailContact[];
     cc: EmailContact[];
     subject: string;
-    attachments: AttachmentFile[];
+    attachments: Attachment[];
 }): Message => {
     const localId = nanoid(10);
     return {
@@ -85,7 +156,6 @@ const generateLocalData = (params: {
 
 const getContactsToReply = (contacts: ThreadContact[], email?: string | null) => {
     const account = !email ? contacts.find((contact) => contact.type === 'user') : { address: email };
-
     if (!account) {
         throw new Error('Thread did not originate from boostbot');
     }
@@ -97,8 +167,17 @@ const getContactsToReply = (contacts: ThreadContact[], email?: string | null) =>
     const cc = contacts.filter((contact) => {
         return contact.address !== account.address && ['cc', 'bcc'].includes(contact.type) === true;
     });
-
     return { to, cc };
+};
+
+export type ThreadData = {
+    threads: ThreadInfo[];
+    totals: {
+        unreplied: number;
+        unopened: number;
+        replied: number;
+    };
+    totalFiltered: number;
 };
 
 const ThreadProvider = ({
@@ -117,6 +196,7 @@ const ThreadProvider = ({
     const {
         data: messages,
         error: messagesError,
+        isLoading: isMessageLoading,
         mutate,
     } = useSWR<Message[], any>(`/api/outreach/threads/${threadId}`, fetcher, {
         // Note that this is disabled globally in SWRConfig
@@ -128,54 +208,33 @@ const ThreadProvider = ({
         compare: (cached, fresh) => {
             // Do not update cache if both are undefined
             if (fresh === undefined && cached === undefined) {
-                // console.log('UNDEFINED', { result: true, fresh, cached });
                 return true;
             }
 
             // Update cache if fresh is empty
             if (!fresh && cached) {
-                // console.log('NO FRESH YES CACHE', { result: true, fresh, cached });
                 return false;
             }
 
             // Do not update cache if ids are equal
             if (cached && fresh && fresh.length === cached.length && fresh.length > 0 && cached.length > 0) {
-                // if (cached[0].id !== fresh[0].id) {
-                //     console.log('EQUAL', {
-                //         result: cached[0].id === fresh[0].id,
-                //         cached: cached[0].id,
-                //         fresh: fresh[0].id,
-                //     });
-                // }
-
                 return cached[0].id === fresh[0].id;
             }
-
-            // console.log('UNEQUAL', {
-            //     result: (fresh?.length ?? 0) < (cached?.length ?? 0),
-            //     cached: (cached ?? [{ id: null }])[0].id,
-            //     fresh: (fresh ?? [{ id: null }])[0].id,
-            //     cachedLen: cached?.length,
-            //     freshLen: fresh?.length,
-            // });
 
             // Do not update the cache if fresh data has less items than the cached
             return (fresh?.length ?? 0) < (cached?.length ?? 0);
         },
     });
-
-    const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+    const { company } = useCompany();
+    const [attachments, setAttachments] = useState<string[]>([]);
     const [replyClicked, setReplyClicked] = useState(false);
     const allUniqueParticipants = selectedThread.contacts;
     const contactsToReply = getContactsToReply(allUniqueParticipants, currentInbox.email);
 
-    const handleAttachmentSelect: AttachmentFieldProps['onChange'] = (files, error) => {
-        if (error) return serverLogger(error);
-        if (files === null) return serverLogger('No files attached');
+    const handleAttachmentSelect = (files: string[]) => {
+        if (!files) return serverLogger('No files attached');
         setAttachments((attached) => {
-            const attachedPool = attached.map((a) => a.id);
-            const filtered = files.filter((f) => attachedPool.includes(f.id) === false);
-            return [...attached, ...filtered];
+            return [...attached, ...files];
         });
     };
 
@@ -188,12 +247,21 @@ const ThreadProvider = ({
         (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
                 async (cache) => {
+                    if (attachments && attachments.length > 0) {
+                        const htmlAttachments = attachments.map((attachment) => {
+                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
+                        });
+                        // attach link of attachments to the html body content of the email
+                        replyBody = `${replyBody}
+                            <br/><br/>
+                            <b>Attachments:</b><br/>
+                            ${htmlAttachments.join('<br/>')}`;
+                    }
                     sendReply({
                         replyBody: replyBody,
                         threadId,
                         cc: ccList,
                         to: toList,
-                        attachments,
                     });
                     // Retain local data with generated data
                     const localMessage = generateLocalData({
@@ -204,7 +272,7 @@ const ThreadProvider = ({
                         subject: messages?.[messages.length - 1]?.subject ?? '',
                         attachments: [],
                     });
-                    // console.log('from mutator callback', cache, localMessage);
+                    setAttachments([]);
                     return [localMessage, ...(cache ?? [])];
                 },
                 {
@@ -219,7 +287,6 @@ const ThreadProvider = ({
                             subject: messages?.[messages.length - 1]?.subject ?? '',
                             attachments: [],
                         });
-                        // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
                     },
                     revalidate: false,
@@ -228,7 +295,7 @@ const ThreadProvider = ({
             );
             markAsReplied(threadId);
         },
-        [threadId, mutate, markAsReplied, currentInbox, messages, attachments],
+        [threadId, mutate, markAsReplied, currentInbox, messages, attachments, company],
     );
 
     const handleForward = useCallback(
@@ -245,7 +312,6 @@ const ThreadProvider = ({
                         subject: messages?.[messages.length - 1]?.subject ?? '',
                         attachments: message.attachments,
                     });
-                    // console.log('from mutator callback', cache, localMessage);
                     return [localMessage, ...(cache ?? [])];
                 },
                 {
@@ -260,7 +326,6 @@ const ThreadProvider = ({
                             subject: messages?.[messages.length - 1]?.subject ?? '',
                             attachments: message.attachments,
                         });
-                        // console.log('from optimistic data', cache, localMessage);
                         return [localMessage, ...(cache ?? [])];
                     },
                     revalidate: false,
@@ -272,18 +337,26 @@ const ThreadProvider = ({
     );
 
     const handleRemoveAttachment = useCallback(
-        (file: AttachmentFile) => {
-            setAttachments((attached) => attached && [...attached.filter((f) => f.id !== file.id)]);
+        (file: string) => {
+            setAttachments((attached) => attached && [...attached.filter((f) => f !== file)]);
         },
         [setAttachments],
     );
-
-    if (messagesError) return <div>Error loading messages</div>;
-    if (!messages) return <div>Loading messages...</div>;
+    const messageContainerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            // scroll to bottom of messages container when new messages are loaded and rendered
+            setTimeout(() => {
+                messageContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+    }, [messages]);
+    if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
+    if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
 
     return (
-        <div className="flex h-full flex-col justify-between">
-            <div className="h-full">
+        <div className="flex h-full flex-col bg-zinc-50">
+            <div className="flex-none bg-zinc-50">
                 <ThreadHeader
                     threadInfo={selectedThread}
                     messages={messages}
@@ -291,38 +364,81 @@ const ThreadProvider = ({
                         participant.address === currentInbox.email ? 'Me' : participant.name ?? participant.address,
                     )}
                 />
-                <div
-                    className={`flex ${
-                        replyClicked ? 'h-[51vh]' : 'h-[75vh]'
-                    } justify-center overflow-scroll rounded bg-gray-50 shadow-inner`}
-                >
-                    <MessagesComponent
-                        currentInbox={currentInbox}
-                        messages={messages}
-                        focusedMessageIds={filteredMessageIds}
-                        onForward={handleForward}
-                    />
-                </div>
             </div>
 
-            {replyClicked ? (
-                <ReplyEditor
-                    defaultContacts={contactsToReply}
-                    onReply={handleReply}
-                    attachments={attachments}
-                    handleRemoveAttachment={handleRemoveAttachment}
-                    handleAttachmentSelect={handleAttachmentSelect}
+            <div style={{ height: 10 }} className="m-5 flex-auto justify-center overflow-auto bg-zinc-50">
+                <MessagesComponent
+                    currentInbox={currentInbox}
+                    messages={messages}
+                    focusedMessageIds={filteredMessageIds}
+                    onForward={handleForward}
                 />
-            ) : (
+                <div ref={messageContainerRef} />
+            </div>
+
+            <div className="m-5 bg-white">
+                <div className={`${replyClicked ? 'block' : 'hidden'}`}>
+                    <ReplyEditor
+                        defaultContacts={contactsToReply}
+                        onReply={handleReply}
+                        attachments={attachments}
+                        handleRemoveAttachment={handleRemoveAttachment}
+                        handleAttachmentSelect={handleAttachmentSelect}
+                    />
+                </div>
                 <div
                     onClick={() => setReplyClicked(true)}
-                    className="cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300"
+                    className={`w-full cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300 ${
+                        !replyClicked ? 'block' : 'hidden'
+                    }`}
                 >
-                    Reply to thread
+                    {t('inbox.replyToThread')}
                 </div>
-            )}
+            </div>
         </div>
     );
+};
+
+const optimisticUpdateSequenceInfluencer = (
+    currentData: ThreadData[],
+    newSequenceInfluencerData: SequenceInfluencersPutRequestBody,
+): ThreadData[] => {
+    // find the
+    if (!currentData[0].threads) {
+        return currentData;
+    }
+    // Find the index of the thread page that needs updating
+    const pageIndex = currentData.findIndex(
+        (page) =>
+            page.threads.findIndex(
+                (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+            ) !== -1,
+    );
+
+    const influencerIndex = currentData[pageIndex].threads.findIndex(
+        (thread) => thread.threadInfo.sequence_influencer_id === newSequenceInfluencerData.id,
+    );
+
+    if (pageIndex === -1 || influencerIndex === -1) {
+        return currentData;
+    }
+
+    const newThreadPages = [...currentData];
+    const newThreads = [...newThreadPages[pageIndex].threads];
+    const currentInfluencer = newThreads[influencerIndex].sequenceInfluencer;
+    if (!currentInfluencer) {
+        return currentData;
+    }
+    newThreads[influencerIndex] = {
+        ...newThreads[influencerIndex],
+        sequenceInfluencer: {
+            ...currentInfluencer,
+            ...newSequenceInfluencerData,
+        },
+    };
+    newThreadPages[pageIndex] = { ...newThreadPages[pageIndex], threads: newThreads };
+
+    return newThreadPages;
 };
 
 const InboxPreview = () => {
@@ -339,7 +455,11 @@ const InboxPreview = () => {
                 name: sequence.name,
             };
         });
-    const [page, _setPage] = useState(0);
+    const { t } = useTranslation();
+
+    const [page, setPage] = useState(0);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
@@ -347,97 +467,79 @@ const InboxPreview = () => {
         page,
     });
 
-    const [searchResults, setSearchResults] = useState<{ [key: string]: string[] }>({});
-
-    const handleSearch = async (searchTerm: string) => {
-        if (!searchTerm) {
-            setSearchResults({});
-            return;
-        }
-        // @inbox-note it is easy to just put the type here but
-        // we want to validate those types in the endpoint instead of casting/inferring the type
-        const res = await apiFetch<{ [key: string]: string[] }, { query: { searchTerm: string } }>(
-            '/api/outreach/search',
-            {
-                query: { searchTerm },
+    const getKey = useCallback(
+        (
+            page: number,
+            previousPageData: {
+                threads: ThreadInfo[];
+                totals: {
+                    unreplied: number;
+                    unopened: number;
+                    replied: number;
+                };
+                totalFiltered: number;
             },
-        );
-        setSearchResults(res.content);
-    };
+        ) => {
+            // If the previous page data is empty, we've reached the end and should not fetch more
+            if (previousPageData && !previousPageData.threads.length) return null;
 
-    const [threads, setThreads] = useState<ThreadInfo[]>([]);
+            // This function should return an array with the arguments for the fetcher
+            // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
+            return {
+                url: '/api/outreach/threads',
+                params: { ...filters, searchTerm, page },
+            };
+        },
+        [filters, searchTerm],
+    );
 
     const {
-        data: threadsInfo,
+        data,
         error: _threadsError,
+        mutate: refreshThreads,
+        size,
+        setSize,
         isLoading: isThreadsLoading,
-    } = useSWR(
-        [filters, page, searchResults],
-        async () => {
-            const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>('/api/outreach/threads', {
-                body: { ...filters, threadIds: Object.keys(searchResults), page },
+    } = useSWRInfinite(
+        getKey,
+        async ({ url, params }): Promise<ThreadData> => {
+            const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
+                body: params,
             });
-
             const totals = {
                 unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
                 unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
-            if (content.data.length !== 0) {
-                setThreads((prev) => {
-                    const existingThreadIds = prev.map((thread) => thread.threadInfo.thread_id);
 
-                    const uniqueThreads = content.data.filter(
-                        (thread) => !existingThreadIds.includes(thread.threadInfo.thread_id),
-                    );
-
-                    return [...prev, ...uniqueThreads];
-                });
-            }
-
-            return { threads: content.data, totals: totals };
+            return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
         { revalidateOnFocus: true },
     );
 
-    const totals = threadsInfo?.totals ?? { unopened: 0, unreplied: 0, replied: 0 };
-    const [uiState, setUiState] = useUiState();
+    const threadsInfo = useMemo(() => {
+        return {
+            threads: data && data.flatMap((page) => page.threads),
+            totals: data && data[0].totals,
+            totalFiltered: data && data[0].totalFiltered,
+        };
+    }, [data]);
 
+    const threads = data && data.flatMap((page) => page.threads);
+    const totals = useMemo(() => {
+        return threadsInfo
+            ? {
+                  unopened: threadsInfo.totals?.unopened || 0,
+                  unreplied: threadsInfo.totals?.unreplied || 0,
+                  replied: threadsInfo.totals?.replied || 0,
+              }
+            : { unopened: 0, unreplied: 0, replied: 0 };
+    }, [threadsInfo]);
     const [selectedThread, setSelectedThread] = useState(threads ? threads[0] : null);
-    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(null);
-    const { refreshSequenceInfluencers } = useSequenceInfluencers();
-    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
-
-    const handleNoteListOpen = useCallback(() => {
-        if (!selectedThread?.sequenceInfluencer) return;
-        getNotes.call(selectedThread?.sequenceInfluencer.id);
-    }, [getNotes, selectedThread?.sequenceInfluencer]);
-
-    const handleNoteListClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isNotesListOverlayOpen: false };
-        });
-        getNotes.refresh();
-    }, [getNotes, setUiState]);
-
-    const handleUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!selectedThread?.sequenceInfluencer) return;
-
-            saveSequenceInfluencer.call(selectedThread?.sequenceInfluencer.id, data).then((profile) => {
-                // @note updates local state without additional query
-                //       this will cause issue showing previous state though
-                setLocalProfile(mapProfileToFormData(profile));
-                saveSequenceInfluencer.refresh();
-
-                refreshSequenceInfluencers();
-            });
-        },
-        [saveSequenceInfluencer, selectedThread?.sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
-    );
 
     const markThreadAsSelected = (thread: ThreadInfo) => {
         if (!thread) return;
+        refreshThreads();
         if (thread.threadInfo.thread_status === 'unopened') {
             apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
@@ -449,125 +551,251 @@ const InboxPreview = () => {
         setSelectedThread(thread);
     };
 
-    const markAsReplied = (threadId: string) => {
+    const markAsReplied = async (threadId: string) => {
         const thread = threads?.find((t) => t.threadInfo.thread_id === threadId);
         if (!thread) return;
 
         if (thread.threadInfo.thread_status === 'unreplied') {
-            apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
+            await apiFetch<UpdateThreadApiResponse, UpdateThreadApiRequest>('/api/outreach/threads/{id}', {
                 path: { id: thread.threadInfo.thread_id },
                 body: {
                     thread_status: 'replied',
                 },
             });
         }
+
+        refreshThreads();
     };
 
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
+    // Create a ref for the last thread element
+    const lastThreadRef = useRef<HTMLDivElement>(null);
+
+    // Callback function to load more items when the last one is observed
+    const loadMoreThreads = useCallback(() => {
+        // If there are no more items to load, return
+        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered) return;
+
+        // Increase the page number
+        setPage((prevPage) => prevPage + 1);
+        setSize(size + 1);
+    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
+
+    const { address } = useAddress(selectedThread?.sequenceInfluencer);
+
+    const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight > scrollHeight - 5 && !isThreadsLoading) {
+            loadMoreThreads();
+        }
+    };
+    const onThreadListContainerScroll = useCallback(onThreadContainerScroll, [isThreadsLoading, loadMoreThreads]);
     useEffect(() => {
         if (threads && !selectedThread) markThreadAsSelected(threads[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
-
-    useEffect(() => {
-        if (selectedThread?.sequenceInfluencer) {
-            setLocalProfile(mapProfileToFormData(selectedThread.sequenceInfluencer));
-        }
-    }, [selectedThread]);
 
     const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
         if (!thread.threadInfo.updated_at) {
             return acc;
         }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort] [fullYear]');
+        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
         if (!acc[key]) {
             acc[key] = [];
         }
         acc[key].push(thread);
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
-
+    const [showNewInboxMessage, setShowNewInboxMessage] = useState(true);
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
-        <Layout>
-            <div className="grid h-full max-h-screen grid-cols-12 bg-white">
-                <section className="col-span-3 flex flex-col gap-2 overflow-scroll">
+        <Layout
+            titleFlag={
+                <div
+                    style={{
+                        display: showNewInboxMessage ? 'block' : 'none',
+                    }}
+                    id="alert-additional-content-1"
+                    className="mb-4 rounded-lg border border-blue-300 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-gray-800 dark:text-blue-400"
+                    role="alert"
+                >
+                    <div className="flex items-center">
+                        <svg
+                            className="me-2 h-4 w-4 flex-shrink-0"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                        </svg>
+                        <h3 className="text-lg font-medium">{t('inbox.newInboxMessage.title')}</h3>
+                    </div>
+                    <div className="mb-4 mt-2 text-sm">{t('inbox.newInboxMessage.message')}</div>
+                    <div className="flex">
+                        <Link href="/old-inbox">
+                            <button
+                                type="button"
+                                className="me-2 inline-flex items-center rounded-lg bg-blue-800 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            >
+                                <svg
+                                    className="me-2 h-3 w-3"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 14"
+                                >
+                                    <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
+                                </svg>
+                                {t('inbox.newInboxMessage.oldInbox')}
+                            </button>
+                        </Link>
+                        <button
+                            onClick={() => setShowNewInboxMessage(false)}
+                            type="button"
+                            className="rounded-lg border border-blue-800 bg-transparent px-3 py-1.5 text-center text-xs font-medium text-blue-800 hover:bg-blue-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-200 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800"
+                            data-dismiss-target="#alert-additional-content-1"
+                            aria-label="Close"
+                        >
+                            {t('inbox.newInboxMessage.dismissMessage')}
+                        </button>
+                    </div>
+                </div>
+            }
+        >
+            <div className="flex h-full max-h-screen bg-white">
+                <section
+                    className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
+                    onScroll={onThreadListContainerScroll}
+                >
                     <section className="flex w-full flex-col gap-4 p-2">
-                        <SearchBar onSearch={handleSearch} />
+                        <SearchBar onSearch={(term) => setSearchTerm(term)} />
                         <Filter
                             messageCount={totals}
                             allSequences={allSequences ?? []}
                             filters={filters}
-                            onChangeFilter={(newFilter: FilterType) => setFilters(newFilter)}
+                            onChangeFilter={(newFilter: FilterType) => {
+                                setPage(0);
+                                refreshThreads();
+                                threadsGroupedByUpdatedAt && setFilters(newFilter);
+                            }}
                         />
                     </section>
                     {threadsGroupedByUpdatedAt ? (
-                        <div className="flex flex-col">
+                        <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
                                 <div key={date}>
-                                    <p className="px-2 py-1 text-sm font-semibold text-gray-400">
-                                        {date === today ? 'Today' : date}
-                                    </p>
-                                    {threadsGroupedByUpdatedAt[date].map((thread) => (
-                                        <ThreadPreview
+                                    <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                        <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                            {date === today ? 'Today' : date}
+                                        </div>
+                                    </div>
+                                    {threadsGroupedByUpdatedAt[date].map((thread, index) => (
+                                        <div
                                             key={thread.threadInfo.id}
-                                            sequenceInfluencer={
-                                                thread.sequenceInfluencer as NonNullable<
-                                                    typeof thread.sequenceInfluencer
-                                                >
+                                            ref={
+                                                index === threadsGroupedByUpdatedAt[date].length - 4
+                                                    ? lastThreadRef
+                                                    : null
                                             }
-                                            threadInfo={thread}
-                                            _currentInbox={currentInbox}
-                                            selected={
-                                                !!selectedThread &&
-                                                selectedThread.threadInfo.id === thread.threadInfo.id
-                                            }
-                                            onClick={() => markThreadAsSelected(thread)}
-                                        />
+                                        >
+                                            <ThreadPreview
+                                                sequenceInfluencer={
+                                                    thread.sequenceInfluencer as NonNullable<
+                                                        typeof thread.sequenceInfluencer
+                                                    >
+                                                }
+                                                threadInfo={thread}
+                                                currentInbox={currentInbox}
+                                                selected={
+                                                    !!selectedThread &&
+                                                    selectedThread.threadInfo.id === thread.threadInfo.id
+                                                }
+                                                onClick={() => markThreadAsSelected(thread)}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             ))}
                         </div>
                     ) : isThreadsLoading ? (
-                        <>Loading</>
+                        <div className="h-16 animate-pulse bg-gray-400" />
                     ) : (
-                        <>No threads here!</>
-                    )}
-                </section>
-                <section className="col-span-5 flex h-full flex-col">
-                    {selectedThread && (
-                        <ThreadProvider
-                            currentInbox={currentInbox}
-                            threadId={selectedThread.threadInfo.thread_id}
-                            selectedThread={selectedThread}
-                            markAsReplied={markAsReplied}
-                            filteredMessageIds={searchResults[selectedThread.threadInfo.thread_id]}
+                        <ThreadPreview
+                            sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
+                            // @ts-ignore
+                            threadInfo={emptyThread}
+                            _currentInbox={currentInbox}
+                            selected={false}
+                            onClick={() => {
+                                //
+                            }}
                         />
                     )}
                 </section>
-                {initialValue && selectedThread && selectedThread.sequenceInfluencer && (
-                    <section className="col-span-4 h-full overflow-x-clip overflow-y-scroll">
-                        <ProfileScreenProvider initialValue={initialValue}>
-                            <ProfileScreen
-                                profile={selectedThread?.sequenceInfluencer}
-                                influencerData={selectedThread?.influencerSocialProfile}
-                                className="bg-white"
-                                onCancel={() => {
-                                    //
-                                }}
-                                onUpdate={handleUpdate}
+                <section className={`h-full flex-auto flex-col`}>
+                    {selectedThread ? (
+                        <>
+                            <ThreadProvider
+                                currentInbox={currentInbox}
+                                threadId={selectedThread.threadInfo.thread_id}
+                                selectedThread={selectedThread}
+                                markAsReplied={markAsReplied}
                             />
-                        </ProfileScreenProvider>
-                        <NotesListOverlayScreen
-                            notes={getNotes.data}
-                            isLoading={getNotes.isLoading}
-                            isOpen={uiState.isNotesListOverlayOpen}
-                            onClose={handleNoteListClose}
-                            onOpen={handleNoteListOpen}
-                            influencerSocialProfileId={selectedThread?.sequenceInfluencer?.id}
+                        </>
+                    ) : isThreadsLoading ? (
+                        <div className="h-16 w-full animate-pulse bg-gray-100" />
+                    ) : (
+                        <div className="flex h-full flex-col bg-zinc-50">
+                            <div className="flex-none bg-zinc-50">
+                                <ThreadHeader
+                                    // @ts-ignore
+                                    threadInfo={emptyThread}
+                                    messages={[emptyMessage]}
+                                    participants={['Me']}
+                                />
+                            </div>
+
+                            <div style={{ height: 10 }} className="m-5 flex-auto justify-center bg-zinc-50">
+                                <MessagesComponent
+                                    currentInbox={currentInbox}
+                                    messages={[emptyMessage]}
+                                    focusedMessageIds={['empty-message-1']}
+                                    onForward={() => {
+                                        //
+                                    }}
+                                />
+                            </div>
+
+                            <div className="w-full cursor-text rounded-lg border-2 border-gray-100 bg-white px-4 py-2 text-gray-300">
+                                No conversation to reply to yet
+                            </div>
+                        </div>
+                    )}
+                </section>
+                <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
+                    {selectedThread && address && selectedThread.sequenceInfluencer && threadsInfo && (
+                        <ProfileScreen
+                            profile={selectedThread?.sequenceInfluencer}
+                            influencerData={selectedThread?.influencerSocialProfile}
+                            className="bg-white"
+                            address={address}
+                            onUpdateInfluencer={(update, revalidate) => {
+                                refreshThreads(
+                                    (previous) => {
+                                        if (!previous) {
+                                            return previous;
+                                        }
+                                        /** just changes the TheadInfo local data for the influencer, does not trigger a database update */
+                                        return optimisticUpdateSequenceInfluencer(previous, update);
+                                    },
+                                    { revalidate },
+                                );
+                            }}
                         />
-                    </section>
-                )}
+                    )}
+                </section>
             </div>
         </Layout>
     );
@@ -575,12 +803,13 @@ const InboxPreview = () => {
 
 const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const { t } = useTranslation();
     return (
-        <div className="flex w-full flex-row items-center justify-between rounded border border-gray-200 bg-white px-2">
+        <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 shadow">
             <Search className="h-5 w-5 fill-gray-400" />
             <Input
-                className="focus-visible:ring-none border-none bg-white focus:border-none focus-visible:outline-none"
-                placeholder="Search mailbox"
+                className="focus:ring-none focus-visible:ring-none border-none text-xs shadow-none placeholder:text-gray-400 focus-visible:ring-0"
+                placeholder={t('inbox.searchPlaceholder') || 'Search inbox'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
@@ -588,6 +817,7 @@ const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => 
                         onSearch(searchTerm);
                     }
                 }}
+                onBlur={() => onSearch(searchTerm)}
             />
         </div>
     );

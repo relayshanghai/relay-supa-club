@@ -64,7 +64,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
         url: userProfile.url,
         username: userProfile.username || userProfile.handle || userProfile.custom_name || '',
         platform: userProfile.type,
-        reference_id: `iqdata:${userProfile.user_id}`,
+        reference_id: createInfluencerReferenceId(userProfile.user_id),
         name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
         email: email.value?.toLowerCase().trim() || '',
         avatar_url: userProfile.picture,
@@ -75,4 +75,25 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
 
 export const extractInfluencerReferenceId = (userProfile: CreatorReport['user_profile']) => {
     return `iqdata:${userProfile.user_id}`;
+};
+
+/**
+ * @param iqdataUserId - The user id from iqdata user_profile.user_id
+ * @example
+ * const iqdataUserId = '1234';
+ * const referenceId = createInfluencerReferenceId(iqdataUserId);
+ * console.log(referenceId); // iqdata:1234
+ */
+export const createInfluencerReferenceId = (iqdataUserId: string) => `iqdata:${iqdataUserId}`;
+
+/**
+ *
+ * @param referenceId - The reference id from influencer_social_profile.reference_id. Looks like iqdata:1234
+ * @example
+ * const referenceId = 'iqdata:1234';
+ * const iqdataUserId = getIqdataUserIdFromReferenceId(referenceId);
+ * console.log(iqdataUserId); // 1234
+ */
+export const getIqdataUserIdFromReferenceId = (referenceId: string) => {
+    return referenceId.replace('iqdata:', '');
 };

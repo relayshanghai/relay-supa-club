@@ -17,6 +17,8 @@ import {
     json,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { FUNNEL_STATUS_VALUES } from '../src/utils/outreach/constants';
+import { CREATOR_PLATFORM_OPTIONS } from '../types';
 
 export const key_status = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired']);
 export const key_type = pgEnum('key_type', [
@@ -73,7 +75,7 @@ export const campaign_creators = pgTable('campaign_creators', {
     fullname: text('fullname'),
     link_url: text('link_url'),
     creator_id: text('creator_id').notNull(),
-    platform: text('platform').default('').notNull(),
+    platform: text('platform', { enum: CREATOR_PLATFORM_OPTIONS }).default('youtube').notNull(),
     added_by_id: uuid('added_by_id')
         .notNull()
         .references(() => profiles.id),
@@ -314,7 +316,7 @@ export const influencer_posts = pgTable('influencer_posts', {
     publish_date: timestamp('publish_date', { mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
     type: text('type').notNull(),
     campaign_id: uuid('campaign_id').references(() => campaigns.id),
-    platform: text('platform').notNull(),
+    platform: text('platform', { enum: CREATOR_PLATFORM_OPTIONS }).default('youtube').notNull(),
     updated_at: timestamp('updated_at', { mode: 'string' }).default(sql`(now() AT TIME ZONE 'utc'::text)`),
     description: text('description'),
     preview_url: text('preview_url'),
@@ -337,7 +339,7 @@ export const influencer_social_profiles = pgTable('influencer_social_profiles', 
         .notNull(),
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
     url: text('url').notNull(),
-    platform: text('platform').notNull(),
+    platform: text('platform', { enum: CREATOR_PLATFORM_OPTIONS }).default('youtube').notNull(),
     influencer_id: uuid('influencer_id')
         .notNull()
         .references(() => influencers.id),
@@ -349,6 +351,8 @@ export const influencer_social_profiles = pgTable('influencer_social_profiles', 
     recent_post_title: text('recent_post_title'),
     recent_post_url: text('recent_post_url'),
     data: jsonb('data'),
+    topic_tags: jsonb('topic_tags'),
+    topics_relevances: jsonb('topics_relevances'),
 });
 
 export const sales = pgTable('sales', {
@@ -378,8 +382,10 @@ export const sequence_influencers = pgTable('sequence_influencers', {
     added_by: text('added_by').notNull(),
     email: text('email'),
     sequence_step: smallint('sequence_step').default(0).notNull(),
-    funnel_status: text('funnel_status').notNull(),
-    tags: text('tags').default('{}').array().notNull(),
+    funnel_status: text('funnel_status', {
+        enum: FUNNEL_STATUS_VALUES,
+    }).notNull(),
+    tags: text('tags').default('[]').array().notNull(),
     next_step: text('next_step'),
     scheduled_post_date: timestamp('scheduled_post_date', { withTimezone: true, mode: 'string' }),
     video_details: text('video_details'),
@@ -397,10 +403,12 @@ export const sequence_influencers = pgTable('sequence_influencers', {
     iqdata_id: text('iqdata_id').notNull(),
     avatar_url: text('avatar_url'),
     name: text('name'),
-    platform: text('platform'),
+    platform: text('platform', { enum: CREATOR_PLATFORM_OPTIONS }).default('youtube').notNull(),
     social_profile_last_fetched: timestamp('social_profile_last_fetched', { withTimezone: true, mode: 'string' }),
     url: text('url'),
     username: text('username'),
+    affiliate_link: text('affiliate_link'),
+    commission_rate: doublePrecision('commission_rate'),
 });
 
 export const products = pgTable('products', {
@@ -651,6 +659,7 @@ export const threads = pgTable(
         sequence_influencer_id: uuid('sequence_influencer_id').references(() => sequence_influencers.id),
         email_engine_account_id: text('email_engine_account_id').notNull(),
         last_reply_id: text('last_reply_id'),
+        last_reply_date: timestamp('last_reply_date', { mode: 'string' }),
         thread_status: text('thread_status').default('unopened').notNull(),
         deleted_at: timestamp('deleted_at', { mode: 'string' }),
         created_at: timestamp('created_at', { mode: 'string' }).defaultNow(),

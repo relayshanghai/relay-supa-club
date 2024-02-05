@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChevronDown } from 'src/components/icons';
 import type { CheckboxDropdownItemData } from './checkbox-dropdown-item';
 import { CheckboxDropdownItem } from './checkbox-dropdown-item';
+import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 
 type Props = {
     label: string;
@@ -83,7 +84,12 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
 
         return selectedOptions.map((item) => {
             return (
-                <p key={item.id} className={`rounded text-xs font-medium ${item.style} whitespace-nowrap px-2 py-2`}>
+                <p
+                    key={item.id}
+                    className={`rounded text-xs font-medium ${item.style} flex gap-2 whitespace-nowrap px-2 py-2`}
+                >
+                    {COLLAB_OPTIONS[item.label].icon}
+
                     {t(`manager.${item.label}`)}
                 </p>
             );
@@ -94,7 +100,8 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
         const items = options.map((option) => {
             const label = (
                 <>
-                    <p className={`${option.style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}>
+                    <p className={`${option.style} flex gap-2 whitespace-nowrap rounded-md px-3 py-2 text-xs`}>
+                        {COLLAB_OPTIONS[option.label].icon}
                         {t(`manager.${option.label}`)}
                     </p>
                 </>
@@ -135,7 +142,7 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
                 open={isDropdownOpen}
                 onClick={handleDropdownOpen}
                 onBlur={handleBlur}
-                className="relative flex w-full cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
+                className="relative z-50 flex w-full cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
             >
                 <summary
                     tabIndex={0} // <- make this element focusable

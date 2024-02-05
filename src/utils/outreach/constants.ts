@@ -6,7 +6,7 @@ export const THREAD_STATUS = z.enum(['unopened', 'unreplied', 'replied']);
 
 export type THREAD_STATUS = z.infer<typeof THREAD_STATUS>;
 
-export const FUNNEL_STATUS = z.enum([
+export const FUNNEL_STATUS_VALUES = [
     'To Contact',
     'In Sequence',
     'Ignored',
@@ -15,13 +15,16 @@ export const FUNNEL_STATUS = z.enum([
     'Shipped',
     'Rejected',
     'Received',
+    'Completed',
     'Content Approval',
     'Posted',
-]);
+] as const;
+
+export const FUNNEL_STATUS = z.enum(FUNNEL_STATUS_VALUES);
 
 export type FUNNEL_STATUS = z.infer<typeof FUNNEL_STATUS>;
 
-export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft';
+export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft' | 'Warmup' | 'Forward';
 
 export type EMAIL_CONTACT_TYPE = 'from' | 'to' | 'cc' | 'bcc';
 

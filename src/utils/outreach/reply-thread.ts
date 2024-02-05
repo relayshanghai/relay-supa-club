@@ -14,7 +14,7 @@ type ReplyThreadParams = {
 type ReplyThreadFn = (params: ReplyThreadParams) => Promise<any>;
 
 export const replyThread: ReplyThreadFn = async (params) => {
-    const thread = await getThread()(params.threadId);
+    const thread = await getThread()(params.account, params.threadId);
 
     if (!thread || !thread.thread.last_reply_id) {
         return false;

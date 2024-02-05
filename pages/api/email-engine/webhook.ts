@@ -57,6 +57,7 @@ import { deleteJobs } from 'src/utils/scheduler/db-queries';
 import { isString } from 'src/utils/types';
 import type { SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
 import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
+import { insertAddressCall } from 'src/backend/database/addresses';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -210,9 +211,11 @@ const scheduleOutreachEmailRetry = async ({
 };
 
 export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
+    const { id, influencer_social_profile_id, real_full_name, name, username, address_id } = sequenceInfluencer;
+
     let trackData: EmailReplyPayload = {
         account_id: event.account,
-        sequence_influencer_id: sequenceInfluencer.id,
+        sequence_influencer_id: id,
         sequence_emails_pre_delete: [],
         sequence_emails_after_delete: [],
         scheduled_emails: [],
@@ -225,7 +228,7 @@ export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event:
     try {
         trackData = await deleteScheduledEmails(trackData, sequenceInfluencer);
         // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
-        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(id);
         trackData.sequence_emails_after_delete = sequenceEmails.map((email) => email.id);
 
         const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => [
@@ -248,7 +251,25 @@ export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event:
             }
         }
 
-        const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
+        const influencerUpdate: SequenceInfluencerUpdate = { id, funnel_status: 'Negotiating' };
+
+        // if the sequence_influencer already has an address_id, it means the address has been created.
+        if (influencer_social_profile_id && !address_id) {
+            try {
+                const newAddress = await insertAddressCall()({
+                    name: real_full_name || name || username || '',
+                    country: '',
+                    state: '',
+                    city: '',
+                    postal_code: '',
+                    address_line_1: '',
+                    influencer_social_profile_id,
+                });
+                influencerUpdate.address_id = newAddress.id;
+            } catch (error: any) {
+                serverLogger(error);
+            }
+        }
 
         const update = await updateSequenceInfluencer(influencerUpdate);
         trackData.extra_info.influencer_update = update;
@@ -279,11 +300,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     });
 
     // We sometimes receive a messageNew event when an email is trashed
-    if (synced.messageType === 'Trash') {
+    if (synced.messageType.type === 'Trash') {
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
 
-    if (synced.messageType === 'Reply' && synced.influencer) {
+    if (synced.messageType.type === 'Reply' && synced.influencer) {
         await handleReply(synced.influencer, event);
         return res.status(httpCodes.OK).json({ message: 'ok' });
     }
@@ -739,7 +760,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 };
 
 const handleMessageDeleted = async (event: WebhookMessageDeleted, res: NextApiResponse) => {
-    await deleteEmail(event.data.id);
+    await deleteEmail(event.account, event.data.id);
 
     return res.status(httpCodes.OK).json({ message: 'ok' });
 };

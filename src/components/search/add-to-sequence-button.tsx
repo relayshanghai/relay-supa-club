@@ -46,8 +46,7 @@ export const AddToSequenceButton = ({
         }
     };
     const { company } = useCompany();
-    const { sequences: allSequences } = useSequences();
-    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
+    const { sequences } = useSequences({ filterDeleted: true });
 
     const [suppressReportFetch, setSuppressReportFetch] = useState(true);
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);

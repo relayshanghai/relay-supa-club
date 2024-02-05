@@ -43,3 +43,14 @@ export const isCompanyOwnerOrRelayEmployee = async (req: NextApiRequest, res: Ne
 
     return isAdmin(profile?.user_role);
 };
+
+export const getSession = (req: NextApiRequest, res: NextApiResponse) => {
+    const supabase = createServerSupabaseClient(
+        { req, res },
+        {
+            supabaseUrl,
+            supabaseKey: supabaseAnonKey,
+        },
+    );
+    return supabase.auth.getSession();
+};

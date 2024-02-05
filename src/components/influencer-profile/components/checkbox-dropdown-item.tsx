@@ -30,8 +30,8 @@ export const CheckboxDropdownItem = (props: Props) => {
         <li onClick={handleSelect}>
             <label
                 className={`${
-                    isSelected && !showCheckbox ? 'bg-primary-100' : ''
-                } flex cursor-pointer flex-row items-center justify-between rounded-lg px-3 py-2 hover:bg-primary-600 hover:text-slate-100`}
+                    isSelected && !showCheckbox ? 'bg-primary-100 hover:bg-primary-100' : ''
+                } flex cursor-pointer flex-row items-center justify-between rounded-lg px-3 py-2 hover:bg-primary-50 hover:text-slate-100`}
             >
                 <div className="flex flex-row items-center gap-2">
                     {showCheckbox && (

@@ -17,11 +17,15 @@ const postHandler: ActionHandler<GetThreadsApiResponse> = async (req, res) => {
             error: request.error.format(),
         });
     }
-    const { data, totals } = await getThreads({
-        account: req.profile.email_engine_account_id,
-        filters: request.data.body,
+
+    const account = req.profile.email_engine_account_id;
+    const filters = request.data.body;
+
+    const { data, totals, totalFiltered } = await getThreads({
+        account,
+        filters,
     });
-    return res.status(200).json({ data, totals });
+    return res.status(200).json({ data, totals, totalFiltered });
 };
 
 export default ApiHandler({

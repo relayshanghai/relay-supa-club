@@ -2,7 +2,7 @@ import { threads } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
 import { now } from 'src/utils/datetime';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 type CreateThreadFn = (params: {
     threadId: string;
@@ -17,6 +17,7 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
 
     if (params.lastReplyId) {
         updateData.last_reply_id = params.lastReplyId;
+        updateData.last_reply_date = params.createdAt;
     }
 
     if (params.sequenceInfluencerId) {
@@ -30,6 +31,8 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
             sequence_influencer_id: params.sequenceInfluencerId,
             email_engine_account_id: params.emailEngineAccount,
             created_at: params.createdAt,
+            updated_at: now(),
+            last_reply_date: params.createdAt,
         })
         .onConflictDoUpdate({
             target: threads.thread_id,
@@ -41,7 +44,12 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
         result = await db(drizzlePostgresInstance)
             .select()
             .from(threads)
-            .where(eq(threads.thread_id, params.threadId))
+            .where(
+                and(
+                    eq(threads.email_engine_account_id, params.emailEngineAccount),
+                    eq(threads.thread_id, params.threadId),
+                ),
+            )
             .limit(1);
     }
 

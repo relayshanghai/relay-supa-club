@@ -11,47 +11,47 @@ export interface Database {
     Tables: {
       addresses: {
         Row: {
-          address_line_1: string
+          address_line_1: string | null
           address_line_2: string | null
-          city: string
-          country: string
+          city: string | null
+          country: string | null
           created_at: string
           id: string
           influencer_social_profile_id: string | null
-          name: string
+          name: string | null
           phone_number: string | null
-          postal_code: string
-          state: string
+          postal_code: string | null
+          state: string | null
           tracking_code: string | null
           updated_at: string
         }
         Insert: {
-          address_line_1: string
+          address_line_1?: string | null
           address_line_2?: string | null
-          city: string
-          country: string
+          city?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           influencer_social_profile_id?: string | null
-          name: string
+          name?: string | null
           phone_number?: string | null
-          postal_code: string
-          state: string
+          postal_code?: string | null
+          state?: string | null
           tracking_code?: string | null
           updated_at?: string
         }
         Update: {
-          address_line_1?: string
+          address_line_1?: string | null
           address_line_2?: string | null
-          city?: string
-          country?: string
+          city?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           influencer_social_profile_id?: string | null
-          name?: string
+          name?: string | null
           phone_number?: string | null
-          postal_code?: string
-          state?: string
+          postal_code?: string | null
+          state?: string | null
           tracking_code?: string | null
           updated_at?: string
         }
@@ -717,6 +717,8 @@ export interface Database {
           recent_post_title: string | null
           recent_post_url: string | null
           reference_id: string
+          topic_tags: Json | null
+          topics_relevances: Json | null
           url: string
           username: string
         }
@@ -732,6 +734,8 @@ export interface Database {
           recent_post_title?: string | null
           recent_post_url?: string | null
           reference_id: string
+          topic_tags?: Json | null
+          topics_relevances?: Json | null
           url: string
           username: string
         }
@@ -747,6 +751,8 @@ export interface Database {
           recent_post_title?: string | null
           recent_post_url?: string | null
           reference_id?: string
+          topic_tags?: Json | null
+          topics_relevances?: Json | null
           url?: string
           username?: string
         }
@@ -1305,7 +1311,9 @@ export interface Database {
         Row: {
           added_by: string
           address_id: string | null
+          affiliate_link: string | null
           avatar_url: string | null
+          commission_rate: number | null
           company_id: string
           created_at: string
           email: string | null
@@ -1332,7 +1340,9 @@ export interface Database {
         Insert: {
           added_by: string
           address_id?: string | null
+          affiliate_link?: string | null
           avatar_url?: string | null
+          commission_rate?: number | null
           company_id: string
           created_at?: string
           email?: string | null
@@ -1359,7 +1369,9 @@ export interface Database {
         Update: {
           added_by?: string
           address_id?: string | null
+          affiliate_link?: string | null
           avatar_url?: string | null
+          commission_rate?: number | null
           company_id?: string
           created_at?: string
           email?: string | null
@@ -1595,6 +1607,7 @@ export interface Database {
           deleted_at: string | null
           email_engine_account_id: string
           id: string
+          last_reply_date: string | null
           last_reply_id: string | null
           sequence_influencer_id: string | null
           thread_id: string
@@ -1606,6 +1619,7 @@ export interface Database {
           deleted_at?: string | null
           email_engine_account_id: string
           id?: string
+          last_reply_date?: string | null
           last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id: string
@@ -1617,6 +1631,7 @@ export interface Database {
           deleted_at?: string | null
           email_engine_account_id?: string
           id?: string
+          last_reply_date?: string | null
           last_reply_id?: string | null
           sequence_influencer_id?: string | null
           thread_id?: string

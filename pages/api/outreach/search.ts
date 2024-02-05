@@ -22,8 +22,8 @@ const transformSearchResult = (result: AccountAccountSearchPost) => {
 
 const getHandler: ActionHandler = async (req, res) => {
     const { searchTerm } = req.query;
-    const emailEngineId = req.profile?.email_engine_account_id;
-    if (!emailEngineId) {
+    const emailEngineAccountId = req.profile?.email_engine_account_id;
+    if (!emailEngineAccountId) {
         return res.status(400).json({ error: 'Missing email engine id' });
     }
 
@@ -34,7 +34,7 @@ const getHandler: ActionHandler = async (req, res) => {
             },
         },
     };
-    const result = await searchMessages(emailEngineId, body);
+    const result = await searchMessages(emailEngineAccountId, body);
 
     return res.status(200).json(transformSearchResult(result));
 };

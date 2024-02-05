@@ -1,5 +1,5 @@
 import type { JobQueue } from '../types';
-import { Blocking } from './blocking';
+import { Default } from './default';
 
 const QUEUE_NAME = 'analytics';
 
@@ -9,6 +9,6 @@ const QUEUE_NAME = 'analytics';
 export const Analytics: JobQueue<typeof QUEUE_NAME> = {
     name: QUEUE_NAME,
     run: async (payload) => {
-        return await Blocking.run({ ...payload, queue: QUEUE_NAME });
+        return await Default.run({ ...payload, queue: QUEUE_NAME });
     },
 };

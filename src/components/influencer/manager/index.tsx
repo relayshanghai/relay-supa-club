@@ -1,7 +1,9 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen-legacy';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import { FaqModal, type CommonStatusType, type MultipleDropdownObject } from 'src/components/library';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -15,7 +17,7 @@ import { filterInfluencers } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
+import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 import { useRouter } from 'next/router';
 import faq from 'i18n/en/faq';
 import { Button } from 'src/components/button';
@@ -23,6 +25,8 @@ import { Question } from 'src/components/icons';
 import { FilterInfluencerManager } from 'src/utils/analytics/events/outreach/filter-influencer-manager';
 import { SearchInfluencerManager } from 'src/utils/analytics/events/outreach/search-influencer-manager';
 import { ToggleViewMine } from 'src/utils/analytics/events/outreach/toggle-view-mine';
+import { Sheet, SheetContent } from 'shadcn/components/ui/sheet';
+import { useAddress } from 'src/hooks/use-address';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -39,7 +43,7 @@ const Manager = () => {
 
     const { push } = useRouter();
 
-    const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPageWithChannelData | null>(null);
     const [uiState, setUiState] = useUiState();
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
 
@@ -57,8 +61,10 @@ const Manager = () => {
         [sequenceInfluencers, profile, sequences, searchTerm, onlyMe, filterStatuses],
     );
 
+    const { address } = useAddress(influencer);
+
     const handleRowClick = useCallback(
-        (influencer: SequenceInfluencerManagerPage) => {
+        (influencer: SequenceInfluencerManagerPageWithChannelData) => {
             if (!influencer.influencer_social_profile_id) {
                 throw Error('No social profile id');
             }
@@ -75,20 +81,6 @@ const Manager = () => {
             });
         },
         [setUiState, track, profile],
-    );
-
-    const handleProfileUpdate = useCallback(
-        (data: Partial<ProfileValue>) => {
-            if (!sequenceInfluencers || !data.notes || !influencer) return;
-            const updatedInfluencerIndex = sequenceInfluencers.findIndex((x) => x.id === influencer.id);
-            const newInfluencers = [
-                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
-                { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
-                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
-            ];
-            refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
-        },
-        [refreshSequenceInfluencers, sequenceInfluencers, influencer],
     );
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -159,7 +151,7 @@ const Manager = () => {
     }, [setUiState]);
 
     return (
-        <>
+        <Sheet open={uiState.isProfileOverlayOpen} onOpenChange={handleProfileOverlayClose}>
             <FaqModal
                 title={t('faq.influencerManagerTitle')}
                 description={t('faq.influencerManagerDescription')}
@@ -212,13 +204,20 @@ const Manager = () => {
                 {/* Table */}
                 <Table loading={loading} influencers={influencers} onRowClick={handleRowClick} />
             </div>
-            <ProfileOverlayScreen
-                profile={influencer}
-                isOpen={uiState.isProfileOverlayOpen}
-                onClose={handleProfileOverlayClose}
-                onUpdate={handleProfileUpdate}
-            />
-        </>
+            <SheetContent className="max-w-lg overflow-y-auto p-0 xl:max-w-xl">
+                {influencer && address && (
+                    <ProfileScreen
+                        profile={influencer}
+                        influencerData={influencer.channel_data}
+                        address={address}
+                        onUpdateInfluencer={
+                            // https://linear.app/boostbot/issue/BB-333/manager-page-optimistic-update-on-profile-info-change
+                            () => undefined
+                        }
+                    />
+                )}
+            </SheetContent>
+        </Sheet>
     );
 };
 

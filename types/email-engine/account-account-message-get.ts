@@ -29,6 +29,7 @@ export interface AccountAccountMessageGet {
 }
 
 export interface Attachment {
+    filename: string;
     id: string;
     contentType: string;
     encodedSize: number;

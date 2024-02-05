@@ -1,0 +1,25 @@
+name: Push main Branch
+
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: Deploy prod
+    runs-on: ubuntu-latest
+    environment: prod
+    timeout-minutes: 15 # should not run more than 15 minutes max
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v2
+      - name: checkout main branch
+        run: git checkout -b main
+      - name: update production branch
+        run: git push -f --set-upstream origin main
+
+        
+    

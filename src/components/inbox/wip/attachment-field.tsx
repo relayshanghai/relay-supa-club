@@ -4,24 +4,6 @@ import { useRef } from 'react';
 import { Input } from 'shadcn/components/ui/input';
 import type { AttachmentFile } from 'src/utils/outreach/types';
 
-const convertFileToBase64 = (file: File) => {
-    return new Promise<AttachmentFile>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            if (typeof reader.result === 'string' || reader.result === null) {
-                resolve({
-                    id: String(Math.random()),
-                    filename: file.name,
-                    content: (reader.result ?? '').replace(/^.*,/, ''),
-                });
-            }
-            return reject('Only supports string buffer');
-        };
-        reader.onerror = (e) => reject(e);
-    });
-};
-
 export type AttachmentFieldRenderParams = {
     /**
      * Opens a field.
@@ -32,7 +14,7 @@ export type AttachmentFieldRenderParams = {
 };
 
 export type AttachmentFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
-    onChange: (file: AttachmentFile[] | null, error?: any) => void;
+    onChange: (file: AttachmentFile[]) => void;
     render?: (params: AttachmentFieldRenderParams) => JSX.Element;
 };
 
@@ -42,19 +24,21 @@ const AttachmentField = ({ onChange, render, ...props }: AttachmentFieldProps) =
     const handleFileSelect = useCallback<Required<InputHTMLAttributes<HTMLInputElement>>['onChange']>(
         (event) => {
             if (!event.target.files || event.target.files.length <= 0) return;
+            const files = Array.from(event.target.files).map((file): AttachmentFile => {
+                // prevent conflict error add timestamp to filename before extension
+                const filename = file.name.split('.');
+                const extension = filename[filename.length - 1];
+                const name = filename.slice(0, filename.length - 1).join('.');
+                const generatedFilename = `${name}-${new Date().getTime()}.${extension}`;
+                return {
+                    content: file,
+                    id: file.name,
+                    filename: generatedFilename,
+                };
+            });
 
-            const converts = Array.from(event.target.files).map((file) => convertFileToBase64(file));
-
-            Promise.all(converts)
-                .then((files) => {
-                    onChange(files);
-                })
-                .catch((error) => {
-                    onChange(null, error);
-                })
-                .finally(() => {
-                    event.target.value = '';
-                });
+            onChange(files);
+            event.target.value = '';
         },
         [onChange],
     );

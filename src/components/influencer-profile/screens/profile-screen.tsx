@@ -1,175 +1,101 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { type DetailedHTMLProps, type HTMLAttributes } from 'react';
 import { cls } from 'src/utils/classnames';
-import { ProfileHeader } from '../components/profile-header';
 import type { ProfileNotes } from './profile-notes-tab';
-import { ProfileNotesTab } from './profile-notes-tab';
-import { useProfileScreenContext } from './profile-screen-context';
-import { ProfileShippingDetailsTab, type ProfileShippingDetails } from './profile-shipping-details-tab';
-// import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
-import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
-import { randomNumber } from 'src/utils/utils';
-import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import {
-    UpdateInfluencerProfile,
-    type UpdateInfluencerProfilePayload,
-} from 'src/utils/analytics/events/outreach/update-influencer-profile';
-import { SaveInfluencerProfileUpdates } from 'src/utils/analytics/events';
-import { SelectInfluencerProfileTab } from 'src/utils/analytics/events';
+import { ChannelSection, type ProfileChannelSection } from './profile-channel-section';
+
 import type { SearchTableInfluencer } from 'types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
+import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
+import { Youtube, Tiktok, Instagram, BorderedTick, Spinner } from 'src/components/icons';
+import Link from 'next/link';
+import { useSequence } from 'src/hooks/use-sequence';
+import { ManageSection } from '../manage-section';
+import type { Address } from 'src/backend/database/addresses';
+import { useAtom } from 'jotai';
+import { truncatedText } from 'src/utils/outreach/helpers';
+import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
+import { useTranslation } from 'react-i18next';
+import { manageSectionUpdatingAtom } from '../atoms';
 
 export type ProfileValue = {
     notes: ProfileNotes;
-    shippingDetails: ProfileShippingDetails;
+    shippingDetails: ProfileChannelSection;
 };
 
 type Props = {
     profile: SequenceInfluencerManagerPage;
-    influencerData: SearchTableInfluencer;
-    selectedTab?: 'notes' | 'shipping-details';
-    onUpdate?: (data: ProfileValue) => void;
+    address: Address;
+    influencerData?: SearchTableInfluencer | null;
+    onUpdateInfluencer: (data: SequenceInfluencersPutRequestBody, revalidate: boolean) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
-const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
-    if (!p) return null;
-    return {
-        notes: mapProfileToNotes(p),
-        shippingDetails: mapProfileToShippingDetails(p),
-    };
-};
+export const ProfileScreen = ({ profile, influencerData, address, onUpdateInfluencer }: Props) => {
+    const Icon = profile.platform == 'youtube' ? Youtube : profile.platform === 'tiktok' ? Tiktok : Instagram;
 
-export const ProfileScreen = ({ profile, selectedTab, onUpdate, ...props }: Props) => {
-    const { state, setState } = useProfileScreenContext();
+    const { sequence } = useSequence(profile.sequence_id);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const batchId = useMemo(() => randomNumber(), [profile]);
+    const { t } = useTranslation();
 
-    const { track } = useRudderstackTrack();
-    const trackProfileFieldUpdate = useCallback(
-        (payload: Omit<UpdateInfluencerProfilePayload, 'batch_id'>) => {
-            track(UpdateInfluencerProfile, {
-                ...payload,
-                batch_id: batchId,
-            });
-        },
-        [batchId, track],
-    );
-
-    useEffect(() => {
-        if (!profile) return;
-        const val = mapProfileToFormData(profile);
-        if (!val) return;
-        setState(val);
-    }, [profile, setState]);
-
-    const [selected, setSelected] = useState(selectedTab ?? 'notes');
-
-    const handleTabClick = (tab: Props['selectedTab']) => {
-        if (!profile.influencer_social_profile_id) {
-            throw new Error('Influencer social profile id not found');
-        }
-        track(SelectInfluencerProfileTab, {
-            influencer_id: profile.influencer_social_profile_id,
-            influencer_current_status: profile.funnel_status,
-            current_tab: selectedTab,
-            selected: tab,
-        });
-        tab && setSelected(tab);
-    };
-
-    const handleNotesDetailsUpdate = useCallback(
-        (k: string, v: any) => {
-            setState((state) => {
-                return { ...state, notes: { ...state.notes, [k]: v } };
-            });
-        },
-        [setState],
-    );
-
-    const handleShippingUpdate = useCallback(
-        (k: string, v: any) => {
-            setState((state) => {
-                return { ...state, shippingDetails: { ...state.shippingDetails, [k]: v } };
-            });
-        },
-        [setState],
-    );
-
-    const handleUpdateClick = useCallback(
-        (data: ProfileValue) => {
-            if (!profile.influencer_social_profile_id && !profile.influencer_social_profile_id)
-                throw new Error('Influencer social profile id not found');
-
-            onUpdate && onUpdate(data);
-
-            track(SaveInfluencerProfileUpdates, {
-                influencer_id: profile.influencer_social_profile_id,
-                batch_id: batchId,
-                action_type: 'Button',
-            });
-        },
-        [onUpdate, profile, batchId, track],
-    );
+    const [updating, _setUpdating] = useAtom(manageSectionUpdatingAtom);
 
     return (
-        <div {...props}>
-            <div className="mb-4 h-28">
-                <ProfileHeader profile={profile} className="relative left-4 top-2" />
-            </div>
-
-            <nav className="flex space-x-2">
-                <button
-                    onClick={() => handleTabClick('notes')}
-                    type="button"
-                    className={`${
-                        selected === 'notes' ? activeTabStyles : ''
-                    } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
-                >
-                    {/*{t('profile.notesTab')}*/}
-                    Manager
-                </button>
-                <button
-                    onClick={() => handleTabClick('shipping-details')}
-                    type="button"
-                    className={`${
-                        selected === 'shipping-details' ? activeTabStyles : ''
-                    } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
-                >
-                    {/*{t('profile.shippingDetailsTab')}*/}
-                    Channel [WIP]
-                </button>
-            </nav>
-
-            <div className="p-8">
-                <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab
-                        profile={profile}
-                        onUpdateNotes={(key, value) => {
-                            handleNotesDetailsUpdate(key, value);
-                        }}
-                        onUpdateShippingDetails={(key, value) => {
-                            handleShippingUpdate(key, value);
-                        }}
-                        triggerSubmitNotes={(key, value) => {
-                            handleUpdateClick({ ...state, notes: { ...state.notes, [key]: value } });
-                        }}
-                        triggerSubmitShippingDetails={(key, value) => {
-                            handleUpdateClick({
-                                ...state,
-                                shippingDetails: { ...state.shippingDetails, [key]: value },
-                            });
-                        }}
-                        trackProfileFieldUpdate={trackProfileFieldUpdate}
+        <div className="relative">
+            {updating ? (
+                <Spinner className="absolute right-4 top-4 z-10 h-6 w-6 fill-white" />
+            ) : (
+                <BorderedTick className="absolute right-1 top-1 z-10 h-6 w-6 stroke-white" />
+            )}
+            <section className="relative flex items-center gap-4 p-6">
+                <section className="relative z-10">
+                    <InfluencerAvatarWithFallback
+                        bordered
+                        url={profile.avatar_url ?? influencerData?.picture}
+                        name={profile.username}
+                        size={100}
+                        className="rounded-full"
                     />
+                    <Icon className="absolute bottom-0 right-1 h-6 w-6" />
+                </section>
+                <div className="z-10 flex flex-col justify-between gap-2">
+                    <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
+                        {truncatedText(profile.name ?? profile.username ?? '', 10)}
+                    </h1>
+                    <div className="flex flex-col">
+                        {profile.url ? (
+                            <Link href={profile.url} className="text-lg font-medium text-primary-500">
+                                <span className="text-pink-500">@</span>
+                                {truncatedText(profile.username ?? '', 10)}
+                            </Link>
+                        ) : (
+                            <p className="text-lg font-medium text-primary-500">
+                                <span className="text-pink-500">@</span>
+                                {truncatedText(profile.username ?? '', 10)}
+                            </p>
+                        )}
+
+                        <Link href={`/sequences/${profile.sequence_id}`} className="text-sm text-gray-400 underline">
+                            {truncatedText(sequence?.name ?? 'Sequence Name', 10)}
+                        </Link>
+                    </div>
                 </div>
-                <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab profile={props.influencerData} onUpdate={handleShippingUpdate} />
-                </div>
-            </div>
+                <div className="absolute left-0 top-0 z-0 h-[50%] w-full bg-boostbotbackground" />
+            </section>
+            <Tabs defaultValue="manage" className="">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="manage">{t('profile.manageTab')}</TabsTrigger>
+                    <TabsTrigger value="channel">{t('profile.channelTab')}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="manage">
+                    <ManageSection influencer={profile} address={address} onUpdateInfluencer={onUpdateInfluencer} />
+                </TabsContent>
+                <TabsContent value="channel">
+                    {influencerData && <ChannelSection profile={influencerData} />}
+                </TabsContent>
+            </Tabs>
         </div>
     );
 };

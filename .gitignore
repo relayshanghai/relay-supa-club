@@ -57,3 +57,4 @@ email-server/.env
 supabase/supabase.code-workspace
 supabase/supabase/
 .env
+.scannerwork

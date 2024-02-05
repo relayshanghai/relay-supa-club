@@ -4,13 +4,13 @@ import { db } from '../../database';
 import { eq } from 'drizzle-orm';
 import { now } from 'src/utils/datetime';
 
-type DeleteEmailFn = (emailid: string) => Promise<typeof emails.$inferSelect | null>;
+type DeleteEmailFn = (account: string, emailid: string) => Promise<typeof emails.$inferSelect | null>;
 
-export const deleteEmail: DBQuery<DeleteEmailFn> = (drizzlePostgresInstance) => async (emailId: string) => {
+export const deleteEmail: DBQuery<DeleteEmailFn> = (drizzlePostgresInstance) => async (account, emailId: string) => {
     const rows = await db(drizzlePostgresInstance)
         .update(emails)
         .set({ deleted_at: now() })
-        .where(eq(emails.email_engine_id, emailId))
+        .where(eq(emails.email_engine_id, `${account}:${emailId}`))
         .returning();
 
     if (rows.length !== 1) return null;
