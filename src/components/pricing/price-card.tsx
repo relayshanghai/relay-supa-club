@@ -66,7 +66,7 @@ export const PriceCard = ({
             router.push(`/payments?plan=${priceTier}`);
             return;
         }
-        if (subscription?.status === 'active') {
+        if (subscription?.status === 'active' || subscription?.status === 'paused') {
             upgradeSubscription(prices[priceTier].priceIds.monthly).then();
             return;
         }
