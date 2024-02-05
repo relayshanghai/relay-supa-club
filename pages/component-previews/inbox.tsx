@@ -607,6 +607,7 @@ const InboxPreview = () => {
         acc[key].push(thread);
         return acc;
     }, {} as { [key: string]: ThreadInfo[] });
+
     const [showNewInboxMessage, setShowNewInboxMessage] = useState(true);
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
@@ -684,40 +685,46 @@ const InboxPreview = () => {
                     </section>
                     {threadsGroupedByUpdatedAt ? (
                         <div className="flex w-full flex-col">
-                            {Object.keys(threadsGroupedByUpdatedAt).map((date) => (
-                                <div key={date}>
-                                    <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
-                                        <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
-                                            {date === today ? 'Today' : date}
+                            {Object.keys(threadsGroupedByUpdatedAt)
+                                .sort((a, b) => {
+                                    const dateA = new Date(threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at || 0);
+                                    const dateB = new Date(threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at || 0);
+                                    return dateB.getTime() - dateA.getTime();
+                                })
+                                .map((date) => (
+                                    <div key={date}>
+                                        <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                            <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                {date === today ? 'Today' : date}
+                                            </div>
                                         </div>
+                                        {threadsGroupedByUpdatedAt[date].map((thread, index) => (
+                                            <div
+                                                key={thread.threadInfo.id}
+                                                ref={
+                                                    index === threadsGroupedByUpdatedAt[date].length - 4
+                                                        ? lastThreadRef
+                                                        : null
+                                                }
+                                            >
+                                                <ThreadPreview
+                                                    sequenceInfluencer={
+                                                        thread.sequenceInfluencer as NonNullable<
+                                                            typeof thread.sequenceInfluencer
+                                                        >
+                                                    }
+                                                    threadInfo={thread}
+                                                    currentInbox={currentInbox}
+                                                    selected={
+                                                        !!selectedThread &&
+                                                        selectedThread.threadInfo.id === thread.threadInfo.id
+                                                    }
+                                                    onClick={() => markThreadAsSelected(thread)}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
-                                    {threadsGroupedByUpdatedAt[date].map((thread, index) => (
-                                        <div
-                                            key={thread.threadInfo.id}
-                                            ref={
-                                                index === threadsGroupedByUpdatedAt[date].length - 4
-                                                    ? lastThreadRef
-                                                    : null
-                                            }
-                                        >
-                                            <ThreadPreview
-                                                sequenceInfluencer={
-                                                    thread.sequenceInfluencer as NonNullable<
-                                                        typeof thread.sequenceInfluencer
-                                                    >
-                                                }
-                                                threadInfo={thread}
-                                                currentInbox={currentInbox}
-                                                selected={
-                                                    !!selectedThread &&
-                                                    selectedThread.threadInfo.id === thread.threadInfo.id
-                                                }
-                                                onClick={() => markThreadAsSelected(thread)}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     ) : isThreadsLoading ? (
                         <div className="h-16 animate-pulse bg-gray-400" />
