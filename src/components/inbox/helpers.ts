@@ -41,3 +41,12 @@ export const findOtherPeopleInThread = (messages: SearchResponseMessage[], userE
     });
     return otherPeople;
 };
+
+export const sortByUpdatedAtDesc = (a: string | null, b: string | null) => {
+    if (!a || !b) {
+        return 0;
+    }
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateB.getTime() - dateA.getTime();
+};
