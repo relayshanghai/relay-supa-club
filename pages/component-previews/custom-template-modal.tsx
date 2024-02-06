@@ -8,21 +8,51 @@ import {
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'shadcn/components/ui/tabs';
+import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
+
+type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
+
+const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
+    switch (status) {
+        case 'OUTREACH':
+            return 'Outreach';
+        case 'FIRST_FOLLOW_UP':
+            return '1st Follow-up';
+        case 'SECOND_FOLLOW_UP':
+            return '2nd Follow-up';
+        case 'THIRD_FOLLOW_UP':
+            return '3rd Follow-up';
+        default:
+            break;
+    }
+};
+
+const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
+    // const {
+    //     data
+    // } = useSWR([status], async () => {
+    //     const res = await apiFetch('/api/outhreach/email-templates?step=${status}')
+    //     return res.content;
+    // })
+    return <>{status}: Make changes to your account here.</>;
+};
 
 const CustomTemplateModalBody = () => {
     const { t } = useTranslation();
     return (
         <Tabs defaultValue="OUTREACH" className="w-full">
             <TabsList className="flex justify-between">
-                <TabsTrigger value="OUTREACH">{t('sequences.steps.Outreach')}</TabsTrigger>
-                <TabsTrigger value="FIRST_FOLLOW_UP">{t('sequences.steps.1st Follow-up')}</TabsTrigger>
-                <TabsTrigger value="SECOND_FOLLOW_UP">{t('sequences.steps.2nd Follow-up')}</TabsTrigger>
-                <TabsTrigger value="THIRD_FOLLOW_UP">{t('sequences.steps.3rd Follow-up')}</TabsTrigger>
+                {OUTREACH_STATUSES.map((status) => (
+                    <TabsTrigger key={`tab-${status}`} value={status}>
+                        {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
+                    </TabsTrigger>
+                ))}
             </TabsList>
-            <TabsContent value="OUTREACH">Make changes to your account here.</TabsContent>
-            <TabsContent value="FIRST_FOLLOW_UP">Change your password here.</TabsContent>
-            <TabsContent value="SECOND_FOLLOW_UP">Make changes to your account here.</TabsContent>
-            <TabsContent value="THIRD_FOLLOW_UP">Change your password here.</TabsContent>
+            {OUTREACH_STATUSES.map((status) => (
+                <TabsContent key={`content-${status}`} value={status}>
+                    <TemplateTabContent status={status} />
+                </TabsContent>
+            ))}
         </Tabs>
     );
 };
@@ -31,13 +61,13 @@ const CustomTemplateModal = () => {
     return (
         <Dialog>
             <DialogTrigger>Open</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="p-0">
                 <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="flex flex-col gap-1 p-6 pb-0">
                         <p>Email Template Library</p>
-                        <p className="text-sm font-normal text-gray-400">Create, view and update your templates here</p>
+                        <p className="text-sm font-normal text-gray-500">Create, view and update your templates here</p>
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="bg-primary-50 p-6 pt-0">
                         <CustomTemplateModalBody />
                     </DialogDescription>
                 </DialogHeader>
