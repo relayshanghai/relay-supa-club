@@ -2,7 +2,7 @@ import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/s
 import { useUser } from 'src/hooks/use-user';
 import { CreateSequence } from 'src/utils/analytics/events';
 import type { FunnelStatus, SequenceInsert, SequenceStep, SequenceUpdate } from 'src/utils/api/db';
-import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
+import { createSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
 import { serverLogger } from 'src/utils/logger-server';
@@ -17,6 +17,7 @@ import type {
     SequenceInfluencersDeleteResponse,
 } from 'pages/api/sequence/influencers/delete';
 import { useCallback } from 'react';
+import { deleteSequenceCall } from 'src/backend/database/sequences';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
@@ -39,7 +40,7 @@ export const useSequence = (sequenceId?: string) => {
         [updateSequenceDBCall, refreshSequence],
     );
 
-    const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
+    const deleteSequenceDBCall = deleteSequenceCall();
     const getInfluencersBySequenceIdsCall = useDB(getSequenceInfluencersBySequenceIdsCall);
     const deleteSequence = useCallback(
         async (ids: string[]) => {
