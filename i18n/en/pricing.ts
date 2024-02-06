@@ -26,6 +26,7 @@ const pricing = {
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 
     upgrade: 'Upgrade',
+    upgradeSuccess: 'Upgrade Success',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
