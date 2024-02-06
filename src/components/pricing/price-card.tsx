@@ -84,9 +84,14 @@ export const PriceCard = ({
             router.push(`/payments?plan=${priceTier}`);
             return;
         } else if (shouldUpgrade) {
-            upgradeSubscription(prices[priceTier].priceIds.monthly).then(() => {
-                toast.success(t('pricing.upgradeSuccess'));
-            });
+            upgradeSubscription(prices[priceTier].priceIds.monthly)
+                .then(() => {
+                    toast.success(t('pricing.upgradeSuccess'));
+                })
+                .catch((error) => {
+                    toast.error(t('pricing.upgradeFailed'));
+                    clientLogger(`upgradeSubscription error: ${error}`);
+                });
             return;
         } else {
             toast.error('unhandled subscription case');

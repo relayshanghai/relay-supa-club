@@ -27,6 +27,7 @@ const pricing = {
 
     upgrade: 'Upgrade',
     upgradeSuccess: 'Upgrade Success',
+    upgradeFailed: 'Upgrade Failed, please submit a bug report',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
