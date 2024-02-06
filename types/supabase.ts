@@ -908,6 +908,70 @@ export interface Database {
         }
         Relationships: []
       }
+      outreach_email_templates: {
+        Row: {
+          company_id: string | null
+          email_engine_template_id: string
+          id: string
+          step: Database["public"]["Enums"]["outreach_step"]
+          subject: string | null
+          template: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          email_engine_template_id: string
+          id?: string
+          step: Database["public"]["Enums"]["outreach_step"]
+          subject?: string | null
+          template?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          email_engine_template_id?: string
+          id?: string
+          step?: Database["public"]["Enums"]["outreach_step"]
+          subject?: string | null
+          template?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_email_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      outreach_template_variables: {
+        Row: {
+          company_id: string | null
+          id: string
+          name: string
+          value: string
+        }
+        Insert: {
+          company_id?: string | null
+          id?: string
+          name: string
+          value: string
+        }
+        Update: {
+          company_id?: string | null
+          id?: string
+          name?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_template_variables_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       posts_performance: {
         Row: {
           campaign_id: string
@@ -1889,7 +1953,11 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      outreach_step:
+        | "OUTREACH"
+        | "FIRST_FOLLOW_UP"
+        | "SECOND_FOLLOW_UP"
+        | "THIRD_FOLLOW_UP"
     }
     CompositeTypes: {
       [_ in never]: never
