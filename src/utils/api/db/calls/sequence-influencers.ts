@@ -99,13 +99,11 @@ export const getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall =
     (supabaseClient: RelayDatabase) => async (companyId: string) => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
-            .select('id, iqdata_id, email, sequences(name, deleted)')
+            .select('id, iqdata_id, email, sequences(name)')
             .eq('company_id', companyId);
 
         if (error) throw error;
-
-        const filteredData = data.filter((item) => !item.sequences?.deleted);
-        return filteredData;
+        return data;
     };
 
 export const getSequenceInfluencerByEmailAndCompanyCall =

@@ -19,7 +19,6 @@ type DBResponseInfluencer = {
     email: string | null;
     sequences: {
         name: string;
-        deleted: boolean;
     } | null;
 };
 
@@ -39,7 +38,7 @@ export const useAllSequenceInfluencersBasicInfo = () => {
         })) ?? [];
     const refresher = (data: AllSequenceInfluencersBasicInfo[]) => {
         const formattedData: DBResponseInfluencer[] = data.map(({ sequenceName, ...influencer }) => ({
-            sequences: sequenceName ? { name: sequenceName, deleted: false } : null,
+            sequences: sequenceName ? { name: sequenceName } : null,
             ...influencer,
         }));
         refresh(formattedData);
