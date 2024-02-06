@@ -62,11 +62,15 @@ export const PriceCard = ({
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
         trackEvent('Select Upgrade Plan', { plan: priceTier });
-        if (subscription?.status === 'trial' || company?.subscription_status === 'canceled') {
+        if (
+            subscription?.status === 'trial' ||
+            company?.subscription_status === 'canceled' ||
+            subscription?.status === 'paused'
+        ) {
             router.push(`/payments?plan=${priceTier}`);
             return;
         }
-        if (subscription?.status === 'active' || subscription?.status === 'paused') {
+        if (subscription?.status === 'active') {
             upgradeSubscription(prices[priceTier].priceIds.monthly).then();
             return;
         }
