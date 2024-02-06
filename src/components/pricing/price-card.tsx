@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useCompany } from 'src/hooks/use-company';
 import { type CompanyDB } from 'src/utils/api/db';
+import toast from 'react-hot-toast';
+import { clientLogger } from 'src/utils/logger-client';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -59,16 +61,41 @@ export const PriceCard = ({
     const key: PriceKey = priceTier;
     const price = prices[key];
     const currency = price.currency;
+    const subscriptionStatus = subscription?.status;
+    const companySubscriptionStatus = company?.subscription_status;
+
+    // TODO: add check for payment method?
+    const shouldAddPayment =
+        // subscriptionStatus should be more source of truth because it is a call directly to stripe...
+        subscriptionStatus === 'canceled' ||
+        companySubscriptionStatus === 'canceled' ||
+        subscriptionStatus === 'trial' ||
+        companySubscriptionStatus === 'trial' ||
+        // TODO: check if paused can happen on existing subscription
+        subscriptionStatus === 'paused' ||
+        companySubscriptionStatus === 'paused';
+
+    const shouldUpgrade = subscriptionStatus === 'active' || companySubscriptionStatus === 'active';
+
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
         trackEvent('Select Upgrade Plan', { plan: priceTier });
-        if (subscription?.status === 'trial' || company?.subscription_status === 'canceled') {
+        if (shouldAddPayment) {
             router.push(`/payments?plan=${priceTier}`);
             return;
-        }
-        if (subscription?.status === 'active' || subscription?.status === 'paused') {
-            upgradeSubscription(prices[priceTier].priceIds.monthly).then();
+        } else if (shouldUpgrade) {
+            upgradeSubscription(prices[priceTier].priceIds.monthly)
+                .then(() => {
+                    toast.success(t('pricing.upgradeSuccess'));
+                })
+                .catch((error) => {
+                    toast.error(t('pricing.upgradeFailed'));
+                    clientLogger(`upgradeSubscription error: ${error}`);
+                });
             return;
+        } else {
+            toast.error('unhandled subscription case');
+            clientLogger(`unhandled subscription case: ${subscription?.status} ${company?.subscription_status}`);
         }
     };
     return (
