@@ -17,7 +17,7 @@ import {
     json,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { FUNNEL_STATUS_VALUES } from '../src/utils/outreach/constants';
+import { FUNNEL_STATUS_VALUES, OUTREACH_STATUSES } from '../src/utils/outreach/constants';
 import { CREATOR_PLATFORM_OPTIONS } from '../types';
 
 export const key_status = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired']);
@@ -705,3 +705,32 @@ export const email_contacts = pgTable(
         };
     },
 );
+
+export const outreach_email_templates = pgTable('outreach_email_templates', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    step: text('step', {
+        enum: OUTREACH_STATUSES,
+    }).notNull(),
+    template: text('template'),
+    subject: text('subject'),
+    email_engine_template_id: text('email_engine_template_id').notNull(),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id),
+});
+
+export const outreach_template_variables = pgTable('myTable', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    name: varchar('name').notNull().unique(),
+    value: text('value').notNull(),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id)
+        .unique(),
+});
