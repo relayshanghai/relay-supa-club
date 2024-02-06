@@ -1,59 +1,61 @@
 import type { NextApiHandler } from 'next';
 import type {
-    TemplateVariable,
-    TemplateVariablesUpdate,
-    TemplateVariablesGet,
-    TemplateVariablesInsert,
-} from 'src/backend/database/template-variables';
+    OutreachTemplateVariable,
+    OutreachTemplateVariablesUpdate,
+    OutreachTemplateVariablesGet,
+    OutreachTemplateVariablesInsert,
+} from 'src/backend/database/outreach-template-variables';
 import {
-    templateVariablesUpdateSchema,
-    updateTemplateVariableCall,
-    templateVariablesGet,
-    templateVariablesInsertSchema,
-    insertTemplateVariableCall,
-    getTemplateVariablesByCompanyIdCall,
-} from 'src/backend/database/template-variables';
+    outreachTemplateVariablesUpdateSchema,
+    updateOutreachTemplateVariableCall,
+    outreachTemplateVariablesGet,
+    outreachTemplateVariablesInsertSchema,
+    insertOutreachTemplateVariableCall,
+    getOutreachTemplateVariablesByCompanyIdCall,
+} from 'src/backend/database/outreach-template-variables';
 
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 
-export type TemplateVariableGetQuery = TemplateVariablesGet;
-export type TemplateVariablesGetResponse = TemplateVariable[];
+export type OutreachTemplateVariableGetQuery = OutreachTemplateVariablesGet;
+export type OutreachTemplateVariablesGetResponse = OutreachTemplateVariable[];
 
-export type TemplateVariablesPutRequestBody = TemplateVariablesUpdate;
-export type TemplateVariablesPutResponse = TemplateVariable;
+export type OutreachTemplateVariablesPutRequestBody = OutreachTemplateVariablesUpdate;
+export type OutreachTemplateVariablesPutResponse = OutreachTemplateVariable;
 
-export type TemplateVariablesPostRequestBody = TemplateVariablesInsert;
-export type TemplateVariablesPostResponse = TemplateVariable;
+export type OutreachTemplateVariablesPostRequestBody = OutreachTemplateVariablesInsert;
+export type OutreachTemplateVariablesPostResponse = OutreachTemplateVariable;
 
 const getHandler: NextApiHandler = async (req, res) => {
-    const validated = templateVariablesGet.safeParse(req);
+    const validated = outreachTemplateVariablesGet.safeParse(req);
 
     if (!validated.success) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
-    const query: TemplateVariableGetQuery['query'] = validated.data.query;
-    const result: TemplateVariablesGetResponse = await getTemplateVariablesByCompanyIdCall()(query.companyId);
+    const query: OutreachTemplateVariableGetQuery['query'] = validated.data.query;
+    const result: OutreachTemplateVariablesGetResponse = await getOutreachTemplateVariablesByCompanyIdCall()(
+        query.companyId,
+    );
     return res.status(httpCodes.OK).json(result);
 };
 
 const putHandler: NextApiHandler = async (req, res) => {
-    const validated = templateVariablesUpdateSchema.safeParse(req.body);
+    const validated = outreachTemplateVariablesUpdateSchema.safeParse(req.body);
     if (!validated.success) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
-    const update: TemplateVariablesPutRequestBody = validated.data;
-    const result: TemplateVariablesPutResponse = await updateTemplateVariableCall()(update);
+    const update: OutreachTemplateVariablesPutRequestBody = validated.data;
+    const result: OutreachTemplateVariablesPutResponse = await updateOutreachTemplateVariableCall()(update);
     return res.status(httpCodes.OK).json(result);
 };
 
 const postHandler: NextApiHandler = async (req, res) => {
-    const validated = templateVariablesInsertSchema.safeParse(req.body);
+    const validated = outreachTemplateVariablesInsertSchema.safeParse(req.body);
     if (!validated.success) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
-    const insert: TemplateVariablesPostRequestBody = validated.data;
-    const result: TemplateVariable = await insertTemplateVariableCall()(insert);
+    const insert: OutreachTemplateVariablesPostRequestBody = validated.data;
+    const result: OutreachTemplateVariable = await insertOutreachTemplateVariableCall()(insert);
     return res.status(httpCodes.OK).json(result);
 };
 
