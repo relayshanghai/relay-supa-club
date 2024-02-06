@@ -1,8 +1,8 @@
 import type { NextApiHandler } from 'next';
+import { deleteSequenceInfluencersCall } from 'src/backend/database/sequence-influencers';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { getSequenceEmailsBySequenceInfluencersCall } from 'src/utils/api/db/calls/sequence-emails';
-import { deleteSequenceInfluencersCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { getOutbox, deleteEmailFromOutbox } from 'src/utils/api/email-engine';
 import { serverLogger } from 'src/utils/logger-server';
 import { deleteJobs, getFailedOrPendingSequenceSendJobs } from 'src/utils/scheduler/db-queries';
@@ -53,7 +53,7 @@ const deleteSequenceInfluencers = async (ids: string[]) => {
         }
     }
 
-    await db(deleteSequenceInfluencersCall)(ids); // this cascade deletes the emails as well. Try to do this call as soon as possible otherwise the user could refresh the page and the influencer will still be there
+    await deleteSequenceInfluencersCall()(ids); // this cascade deletes the emails as well. Try to do this call as soon as possible otherwise the user could refresh the page and the influencer will still be there
 
     // then the slow part
     let outbox: OutboxGetMessage[] = [];

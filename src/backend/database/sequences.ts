@@ -22,14 +22,18 @@ export const updateSequenceCall: DBQuery<
     (update: SequenceUpdate & { id: string }) => Promise<Sequence | undefined | null>
 > = (databaseInstance) => async (update) => {
     update.updated_at = new Date().toISOString();
-    const result = await db(databaseInstance).update(sequences).set(update).where(eq(sequences.id, update.id));
+    const result = await db(databaseInstance)
+        .update(sequences)
+        .set(update)
+        .where(eq(sequences.id, update.id))
+        .returning();
 
     return result[0];
 };
 
 export const createSequenceCall: DBQuery<(insert: SequenceInsert) => Promise<Sequence | undefined | null>> =
     (databaseInstance) => async (insert) => {
-        const result = await db(databaseInstance).insert(sequences).values(insert);
+        const result = await db(databaseInstance).insert(sequences).values(insert).returning();
 
         return result[0];
     };
