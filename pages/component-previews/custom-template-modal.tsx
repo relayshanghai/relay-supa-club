@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardDescription, CardHeader, CardTitle } from 'shadcn/components/ui/card';
+import { Button } from 'shadcn/components/ui/button';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -9,10 +10,18 @@ import {
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'shadcn/components/ui/tabs';
-import { BoostbotSelected, Plus } from 'src/components/icons';
+import { BoostbotSelected, DeleteOutline, Edit, Plus } from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
+
+type Template = {
+    id: number;
+    name: string;
+    description: string;
+    subject: string;
+    body: string;
+};
 
 const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     switch (status) {
@@ -30,27 +39,86 @@ const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
 };
 
 const CustomTemplateCard = ({
-    name,
-    description,
+    template,
+    status,
     selected,
 }: {
-    name: string;
-    description: string;
+    template: Template;
+    status: OutreachStatus;
     selected?: boolean;
 }) => {
     return (
-        <Card className={`w-full min-w-[400px] border-2 ${selected ? 'border-primary-600' : 'border-gray-200'}`}>
-            <CardHeader className="flex flex-row items-center gap-4 p-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                        <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
-                    </div>
-                </div>
-                <section className="flex flex-col justify-between gap-4">
-                    <CardTitle className={`${selected && 'text-primary-800'}`}>{name}</CardTitle>
-                    <CardDescription className={`${selected && 'text-primary-400'}`}>{description}</CardDescription>
+        <Dialog>
+            <DialogTrigger>
+                <Card
+                    className={`w-full min-w-[400px] border-2 ${selected ? 'border-primary-600' : 'border-gray-200'}`}
+                >
+                    <CardHeader className="flex flex-row items-center gap-4 p-4">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
+                                <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
+                            </div>
+                        </div>
+                        <section className="flex flex-col items-start justify-between gap-4">
+                            <CardTitle className={`${selected && 'text-primary-800'}`}>{template.name}</CardTitle>
+                            <CardDescription className={`${selected && 'text-primary-400'}`}>
+                                {template.description}
+                            </CardDescription>
+                        </section>
+                    </CardHeader>
+                </Card>
+            </DialogTrigger>
+            <DialogContent className="p-0">
+                <DialogHeader>
+                    <DialogDescription className="w-full p-6">
+                        <CustomTemplateDetails status={status} subject={template.subject} body={template.body} />
+                    </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+const CustomTemplateDetails = ({
+    status,
+    subject,
+    body,
+}: {
+    status: OutreachStatus;
+    subject: string;
+    body: string;
+}) => {
+    const { t } = useTranslation();
+    return (
+        <Card className="w-full gap-2 border-none shadow-none">
+            <CardDescription>
+                <section className="flex gap-6 py-2">
+                    <section className="flex flex-col gap-2">
+                        <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
+                        <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
+                            {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
+                        </label>
+                    </section>
+                    <section className="flex flex-col gap-2">
+                        <p className="text-xl font-semibold text-gray-600">Subject Line</p>
+                        <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
+                            {subject}
+                        </label>
+                    </section>
                 </section>
-            </CardHeader>
+                <section className="min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
+                    {body}
+                </section>
+            </CardDescription>
+            <CardFooter className="mt-4 w-full justify-between px-0 pb-0">
+                <Button variant="outline">
+                    <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                </Button>
+                <Button className="flex gap-4">
+                    <Edit className="h-4 w-4 stroke-white" />
+                    Modify Template
+                </Button>
+            </CardFooter>
         </Card>
     );
 };
@@ -64,7 +132,7 @@ const NewTemplateCard = () => {
                         <Plus height={24} width={24} className="stroke-primary-500 stroke-[3px]" />
                     </div>
                 </div>
-                <section className="flex flex-col justify-between gap-4">
+                <section className="flex flex-col items-start justify-between gap-4">
                     <CardTitle>Create a totally new template</CardTitle>
                     <CardDescription>A blank canvas to call your own!</CardDescription>
                 </section>
@@ -80,13 +148,43 @@ const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
     //     const res = await apiFetch('/api/outhreach/email-templates?step=${status}')
     //     return res.content;
     // })
+    const mockData = [
+        {
+            id: 1,
+            name: 'Template 1',
+            description: 'This is a template',
+            subject: 'Email Subject 1',
+            body: 'Email Body',
+        },
+        {
+            id: 2,
+            name: 'Template 2',
+            description: 'This is a template',
+            subject: 'Email Subject 2',
+            body: 'Email Body',
+        },
+        {
+            id: 3,
+            name: 'Template 3',
+            description: 'This is a template',
+            subject: 'Email Subject',
+            body: 'Email Body',
+        },
+        {
+            id: 4,
+            name: 'Template 4',
+            description: 'This is a template',
+            subject: 'Email Subject',
+            body: 'Email Body',
+        },
+    ];
+
     return (
         <section className="divide-y-2">
-            <div className="my-4 grid max-h-[500px] grid-cols-2 gap-2 overflow-y-auto">
-                <CustomTemplateCard name=";p;" description="lel" selected />
-                <CustomTemplateCard name=";p;" description="lel" />
-                <CustomTemplateCard name=";p;" description="lel" />
-                <CustomTemplateCard name=";p;" description="lel" />
+            <div className="my-4 grid max-h-[350px] grid-cols-1 gap-2 overflow-y-auto xl:grid-cols-2">
+                {mockData.map((template) => (
+                    <CustomTemplateCard key={template.id} template={template} status={status} />
+                ))}
             </div>
             <div>
                 <section className="py-2">
