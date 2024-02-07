@@ -61,4 +61,5 @@ export const PREVIEW_PAGE_ALLOW_EMAIL_LIST = [
     'info@acebott.com',
     // znyrkk4q5g7gebsv
     'yguo@finalroundai.com',
+    'tech@relay.club',
 ];
