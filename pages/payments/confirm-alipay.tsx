@@ -59,8 +59,10 @@ const ConfirmAlipayPaymentPage = () => {
                 couponId: typeof couponId === 'string' ? couponId : undefined,
             });
             if (paymentIntent.status === 'succeeded') {
-                await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
                 toast.success('Your subscription has been upgraded successfully!');
+            }
+            if (oldSubscriptionId) {
+                await cancelSubscriptionWithSubscriptionId(oldSubscriptionId);
             }
             router.push('/account');
         } catch (error: any) {
