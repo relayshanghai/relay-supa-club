@@ -20,7 +20,7 @@ type Template = {
     name: string;
     description: string;
     subject: string;
-    body: string;
+    content: string;
 };
 
 const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
@@ -71,7 +71,7 @@ const CustomTemplateCard = ({
             <DialogContent className="p-0">
                 <DialogHeader>
                     <DialogDescription className="w-full p-6">
-                        <CustomTemplateDetails status={status} subject={template.subject} body={template.body} />
+                        <CustomTemplateDetails status={status} subject={template.subject} content={template.content} />
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>
@@ -82,11 +82,11 @@ const CustomTemplateCard = ({
 const CustomTemplateDetails = ({
     status,
     subject,
-    body,
+    content,
 }: {
     status: OutreachStatus;
     subject: string;
-    body: string;
+    content: string;
 }) => {
     const { t } = useTranslation();
     return (
@@ -107,7 +107,7 @@ const CustomTemplateDetails = ({
                     </section>
                 </section>
                 <section className="min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
-                    {body}
+                    {content}
                 </section>
             </CardDescription>
             <CardFooter className="mt-4 w-full justify-between px-0 pb-0">
@@ -154,28 +154,28 @@ const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
             name: 'Template 1',
             description: 'This is a template',
             subject: 'Email Subject 1',
-            body: 'Email Body',
+            content: 'Email content',
         },
         {
             id: 2,
             name: 'Template 2',
             description: 'This is a template',
             subject: 'Email Subject 2',
-            body: 'Email Body',
+            content: 'Email content',
         },
         {
             id: 3,
             name: 'Template 3',
             description: 'This is a template',
             subject: 'Email Subject',
-            body: 'Email Body',
+            content: 'Email content',
         },
         {
             id: 4,
             name: 'Template 4',
             description: 'This is a template',
             subject: 'Email Subject',
-            body: 'Email Body',
+            content: 'Email content',
         },
     ];
 
