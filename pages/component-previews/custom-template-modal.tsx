@@ -49,15 +49,15 @@ const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
 const OutreachTabIcon = ({ status }: { status: OutreachStatus }) => {
     switch (status) {
         case 'OUTREACH':
-            return <Compass className="h-3 w-4" />;
+            return <Compass className="h-4 w-4 stroke-2" />;
         case 'FIRST_FOLLOW_UP':
-            return <RingingBell className="h-3 w-3" />;
+            return <RingingBell className="h-4 w-4" />;
         case 'SECOND_FOLLOW_UP':
-            return <ClockAnticlockwise className="h-3 w-3" />;
+            return <ClockAnticlockwise className="h-4 w-4" />;
         case 'THIRD_FOLLOW_UP':
-            return <ClockAnticlockwise className="h-3 w-3" />;
+            return <ClockAnticlockwise className="h-4 w-4" />;
         default:
-            return <ClockAnticlockwise className="h-3 w-3" />;
+            return <ClockAnticlockwise className="h-4 w-4" />;
     }
 };
 
@@ -97,7 +97,7 @@ const CustomTemplateCard = ({
                     </CardHeader>
                 </Card>
             </DialogTrigger>
-            <DialogContent className="p-0">
+            <DialogContent className="min-w-[600px] p-0 lg:min-w-[800px]">
                 <DialogHeader>
                     <DialogDescription className="w-full p-6">
                         <CustomTemplateDetails status={status} subject={template.subject} content={template.content} />
@@ -120,16 +120,16 @@ const CustomTemplateDetails = ({
     const { t } = useTranslation();
     return (
         <Card className="w-full gap-2 border-none shadow-none">
-            <CardDescription>
-                <section className="flex gap-6 py-2">
-                    <section className="flex flex-col gap-2">
+            <CardDescription className="flex flex-col gap-2">
+                <section className="flex w-full justify-between gap-6 py-2">
+                    <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
 
                         <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
                             {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
                         </label>
                     </section>
-                    <section className="flex flex-col gap-2">
+                    <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
                         <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
                             {subject}
