@@ -41,9 +41,9 @@ const CustomTemplateModalBody = () => {
     const { t } = useTranslation();
     return (
         <Tabs defaultValue="OUTREACH" className="w-full">
-            <TabsList className="flex justify-between">
+            <TabsList className="w-full">
                 {OUTREACH_STATUSES.map((status) => (
-                    <TabsTrigger key={`tab-${status}`} value={status}>
+                    <TabsTrigger key={`tab-${status}`} className="grow font-normal" value={status}>
                         {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
                     </TabsTrigger>
                 ))}
