@@ -10,7 +10,15 @@ import {
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'shadcn/components/ui/tabs';
-import { BoostbotSelected, DeleteOutline, Edit, Plus } from 'src/components/icons';
+import {
+    BoostbotSelected,
+    ClockAnticlockwise,
+    Compass,
+    DeleteOutline,
+    Edit,
+    Plus,
+    RingingBell,
+} from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
@@ -38,6 +46,21 @@ const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     }
 };
 
+const OutreachTabIcon = ({ status }: { status: OutreachStatus }) => {
+    switch (status) {
+        case 'OUTREACH':
+            return <Compass className="h-3 w-4" />;
+        case 'FIRST_FOLLOW_UP':
+            return <RingingBell className="h-3 w-3" />;
+        case 'SECOND_FOLLOW_UP':
+            return <ClockAnticlockwise className="h-3 w-3" />;
+        case 'THIRD_FOLLOW_UP':
+            return <ClockAnticlockwise className="h-3 w-3" />;
+        default:
+            return <ClockAnticlockwise className="h-3 w-3" />;
+    }
+};
+
 const CustomTemplateCard = ({
     template,
     status,
@@ -51,17 +74,23 @@ const CustomTemplateCard = ({
         <Dialog>
             <DialogTrigger>
                 <Card
-                    className={`w-full min-w-[400px] border-2 ${selected ? 'border-primary-600' : 'border-gray-200'}`}
+                    className={`w-full min-w-[350px] border-2 shadow-none ${
+                        selected ? 'border-primary-600' : 'border-gray-200'
+                    }`}
                 >
                     <CardHeader className="flex flex-row items-center gap-4 p-4">
                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
                             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                                <BoostbotSelected height={24} width={24} className="stroke-primary-500" />
+                                <BoostbotSelected height={24} width={24} />
                             </div>
                         </div>
                         <section className="flex flex-col items-start justify-between gap-4">
-                            <CardTitle className={`${selected && 'text-primary-800'}`}>{template.name}</CardTitle>
-                            <CardDescription className={`${selected && 'text-primary-400'}`}>
+                            <CardTitle className={`${selected ? 'text-primary-800' : 'text-gray-700'} font-medium`}>
+                                {template.name}
+                            </CardTitle>
+                            <CardDescription
+                                className={`${selected ? 'text-primary-400' : 'text-gray-400'} font-normal`}
+                            >
                                 {template.description}
                             </CardDescription>
                         </section>
@@ -95,6 +124,7 @@ const CustomTemplateDetails = ({
                 <section className="flex gap-6 py-2">
                     <section className="flex flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
+
                         <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
                             {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
                         </label>
@@ -125,7 +155,7 @@ const CustomTemplateDetails = ({
 
 const NewTemplateCard = () => {
     return (
-        <Card className="w-fit min-w-[400px] border-2 border-gray-200">
+        <Card className="w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]">
             <CardHeader className="flex flex-row items-center gap-4 p-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
@@ -133,8 +163,10 @@ const NewTemplateCard = () => {
                     </div>
                 </div>
                 <section className="flex flex-col items-start justify-between gap-4">
-                    <CardTitle>Create a totally new template</CardTitle>
-                    <CardDescription>A blank canvas to call your own!</CardDescription>
+                    <CardTitle className="font-medium text-gray-700">Create a totally new template</CardTitle>
+                    <CardDescription className="font-normal text-gray-400">
+                        A blank canvas to call your own!
+                    </CardDescription>
                 </section>
             </CardHeader>
         </Card>
@@ -181,7 +213,7 @@ const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
 
     return (
         <section className="divide-y-2">
-            <div className="my-4 grid max-h-[350px] grid-cols-1 gap-2 overflow-y-auto xl:grid-cols-2">
+            <div className="my-4 grid max-h-[350px] grid-cols-1 gap-2 overflow-y-auto lg:grid-cols-2">
                 {mockData.map((template) => (
                     <CustomTemplateCard key={template.id} template={template} status={status} />
                 ))}
@@ -201,9 +233,14 @@ const CustomTemplateModalBody = () => {
     const { t } = useTranslation();
     return (
         <Tabs defaultValue="OUTREACH" className="w-full">
-            <TabsList className="w-full">
+            <TabsList className="mt-5 w-full">
                 {OUTREACH_STATUSES.map((status) => (
-                    <TabsTrigger key={`tab-${status}`} className="grow font-normal" value={status}>
+                    <TabsTrigger
+                        key={`tab-${status}`}
+                        className="flex grow items-center gap-2 border-b-2 border-b-primary-200 py-2 font-normal"
+                        value={status}
+                    >
+                        <OutreachTabIcon status={status} />
                         {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
                     </TabsTrigger>
                 ))}
@@ -221,13 +258,13 @@ const CustomTemplateModal = () => {
     return (
         <Dialog>
             <DialogTrigger>Open</DialogTrigger>
-            <DialogContent className="p-0">
+            <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                 <DialogHeader>
                     <DialogTitle className="flex flex-col gap-1 p-6 pb-0">
                         <p className="text-xl">Email Template Library</p>
                         <p className="text-sm font-normal text-gray-500">Create, view and update your templates here</p>
                     </DialogTitle>
-                    <DialogDescription className="w-full bg-primary-50 p-6 pt-0">
+                    <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
                         <CustomTemplateModalBody />
                     </DialogDescription>
                 </DialogHeader>
