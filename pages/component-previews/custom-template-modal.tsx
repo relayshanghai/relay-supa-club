@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
@@ -256,35 +256,34 @@ const CustomTemplateModalBody = () => {
     );
 };
 
-const mockTop = [
-    {
-        title: 'Choose a starting point',
-        description: 'Starter or blank slate',
-    },
-    {
-        title: 'Set template content',
-        description: 'Subject and email body',
-    },
-    {
-        title: 'Name your template',
-        description: 'Name and brief description',
-    },
-];
-
 const CustomTemplateModal = () => {
-    const [progress, setProgress] = useState(0);
+    const [step, setStep] = useState(0);
+    const progressStep = [
+        {
+            title: 'Choose a starting point',
+            description: 'Starter or blank slate',
+        },
+        {
+            title: 'Set template content',
+            description: 'Subject and email body',
+        },
+        {
+            title: 'Name your template',
+            description: 'Name and brief description',
+        },
+    ];
     return (
         <>
             <Dialog
                 onOpenChange={(open) => {
-                    open ? setProgress(50) : setProgress(0);
+                    open ? setStep(1) : setStep(0);
                 }}
             >
                 <DialogTrigger>Open</DialogTrigger>
                 <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                     <DialogHeader>
                         <DialogTitle className="flex w-full flex-col gap-1 px-20 py-6">
-                            <ProgressHeader labels={mockTop} selectedIndex={1} />
+                            <ProgressHeader labels={progressStep} selectedIndex={step} />
                         </DialogTitle>
                         <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
                             <CustomTemplateModalBody />
