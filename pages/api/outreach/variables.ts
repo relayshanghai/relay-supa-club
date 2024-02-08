@@ -7,12 +7,10 @@ import type {
 } from 'src/backend/database/outreach-template-variables';
 import {
     outreachTemplateVariablesUpdateSchema,
-    updateOutreachTemplateVariableCall,
     outreachTemplateVariablesGet,
     outreachTemplateVariablesInsertSchema,
-    insertOutreachTemplateVariableCall,
-    getOutreachTemplateVariablesByCompanyIdCall,
 } from 'src/backend/database/outreach-template-variables';
+import TemplateVariablesService from 'src/backend/domain/templates/template-variables';
 
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
@@ -33,7 +31,9 @@ const getHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
     const query: OutreachTemplateVariableGetQuery['query'] = validated.data.query;
-    const result: OutreachTemplateVariablesGetResponse = await getOutreachTemplateVariablesByCompanyIdCall()(
+
+    const templateVariablesService = TemplateVariablesService.getService();
+    const result: OutreachTemplateVariablesGetResponse = await templateVariablesService.getTemplateVariablesByCompanyId(
         query.companyId,
     );
     return res.status(httpCodes.OK).json(result);
@@ -45,7 +45,10 @@ const putHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
     const update: OutreachTemplateVariablesPutRequestBody = validated.data;
-    const result: OutreachTemplateVariablesPutResponse = await updateOutreachTemplateVariableCall()(update);
+
+    const templateVariablesService = TemplateVariablesService.getService();
+
+    const result: OutreachTemplateVariablesPutResponse = await templateVariablesService.updateTemplateVariable(update);
     return res.status(httpCodes.OK).json(result);
 };
 
@@ -55,7 +58,9 @@ const postHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: validated.error });
     }
     const insert: OutreachTemplateVariablesPostRequestBody = validated.data;
-    const result: OutreachTemplateVariable = await insertOutreachTemplateVariableCall()(insert);
+    const templateVariablesService = TemplateVariablesService.getService();
+
+    const result: OutreachTemplateVariable = await templateVariablesService.insertTemplateVariable(insert);
     return res.status(httpCodes.OK).json(result);
 };
 
