@@ -1,3 +1,4 @@
+import { RequestContext } from 'src/utils/request-context/request-context';
 import type {
     OutreachTemplateVariablesInsert,
     OutreachTemplateVariablesUpdate,
@@ -14,7 +15,11 @@ export default class TemplateVariablesService {
         return TemplateVariablesService.service;
     }
 
-    async getTemplateVariablesByCompanyId(companyId: string) {
+    async getTemplateVariablesByCompanyId() {
+        const companyId = RequestContext.getContext().companyId;
+        if (!companyId) {
+            throw new Error('No company id found in request context');
+        }
         return await getOutreachTemplateVariablesByCompanyIdCall()(companyId);
     }
 

@@ -1,20 +1,29 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import * as dbCalls from '../../../backend/database/outreach-template-variables';
 import TemplateVariablesService from './template-variables';
 import type {
     OutreachTemplateVariablesInsert,
     OutreachTemplateVariablesUpdate,
 } from '../../../backend/database/outreach-template-variables';
+import { RequestContext } from 'src/utils/request-context/request-context';
+const companyId = 'company_1';
 
 describe('src/backend/domain/templates/template-variables.test.ts', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        const getContextMock = vi.fn();
+        RequestContext.getContext = getContextMock;
+        getContextMock.mockReturnValue({
+            companyId,
+        });
+    });
     test('method: getTemplateVariablesByCompanyId calls correct db helper with correct parameters to get template variables by company id', () => {
         const getOutreachTemplateVariablesByCompanyIdCallMock = vi.fn();
         vi.spyOn(dbCalls, 'getOutreachTemplateVariablesByCompanyIdCall').mockImplementation(
             () => getOutreachTemplateVariablesByCompanyIdCallMock,
         );
-        const companyId = 'companyId';
         const templateVariablesService = new TemplateVariablesService();
-        templateVariablesService.getTemplateVariablesByCompanyId(companyId);
+        templateVariablesService.getTemplateVariablesByCompanyId();
         expect(getOutreachTemplateVariablesByCompanyIdCallMock).toHaveBeenCalledWith(companyId);
     });
 

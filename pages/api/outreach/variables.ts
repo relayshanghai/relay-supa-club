@@ -13,7 +13,6 @@ import TemplateVariablesService from 'src/backend/domain/templates/template-vari
 
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
-import { RequestContext } from 'src/utils/request-context/request-context';
 
 export type OutreachTemplateVariableGetQuery = OutreachTemplateVariablesGet;
 export type OutreachTemplateVariablesGetResponse = OutreachTemplateVariable[];
@@ -25,16 +24,10 @@ export type OutreachTemplateVariablesPostRequestBody = OutreachTemplateVariables
 export type OutreachTemplateVariablesPostResponse = OutreachTemplateVariable;
 
 const getHandler: NextApiHandler = async (req, res) => {
-    const companyId = RequestContext.getContext().customerId as string;
-    if (!companyId) {
-        return res.status(httpCodes.BAD_REQUEST).json({ error: 'No company id found in request context' });
-    }
-
     const templateVariablesService = TemplateVariablesService.getService();
 
-    const result: OutreachTemplateVariablesGetResponse = await templateVariablesService.getTemplateVariablesByCompanyId(
-        companyId,
-    );
+    const result: OutreachTemplateVariablesGetResponse =
+        await templateVariablesService.getTemplateVariablesByCompanyId();
     return res.status(httpCodes.OK).json(result);
 };
 
