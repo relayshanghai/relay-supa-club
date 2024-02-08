@@ -8,13 +8,7 @@ import { z } from 'zod';
 
 export type OutreachTemplateVariable = typeof outreach_template_variables.$inferSelect;
 
-export const outreachTemplateVariablesGet = z.object({
-    query: z.object({
-        companyId: z.string().uuid(),
-    }),
-});
-
-export type OutreachTemplateVariablesGet = z.infer<typeof outreachTemplateVariablesGet>;
+export type OutreachTemplateVariablesGet = object; // empty object
 
 export const outreachTemplateVariablesInsertSchema = createInsertSchema(outreach_template_variables);
 export type OutreachTemplateVariablesInsert = typeof outreachTemplateVariablesInsertSchema._type;
