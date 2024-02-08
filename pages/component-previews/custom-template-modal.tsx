@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
@@ -20,6 +21,7 @@ import {
     RingingBell,
 } from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
+import ProgressHeader from 'src/components/ProgressHeader';
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 
@@ -254,22 +256,59 @@ const CustomTemplateModalBody = () => {
     );
 };
 
+const mockTop = [
+    {
+        title: 'Choose a starting point',
+        description: 'Starter or blank slate',
+    },
+    {
+        title: 'Set template content',
+        description: 'Subject and email body',
+    },
+    {
+        title: 'Name your template',
+        description: 'Name and brief description',
+    },
+];
+
 const CustomTemplateModal = () => {
+    const [progress, setProgress] = useState(0);
     return (
-        <Dialog>
-            <DialogTrigger>Open</DialogTrigger>
-            <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
-                <DialogHeader>
-                    <DialogTitle className="flex flex-col gap-1 p-6 pb-0">
-                        <p className="text-xl">Email Template Library</p>
-                        <p className="text-sm font-normal text-gray-500">Create, view and update your templates here</p>
-                    </DialogTitle>
-                    <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
-                        <CustomTemplateModalBody />
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+        <>
+            <Dialog
+                onOpenChange={(open) => {
+                    open ? setProgress(50) : setProgress(0);
+                }}
+            >
+                <DialogTrigger>Open</DialogTrigger>
+                <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex w-full flex-col gap-1 px-20 py-6">
+                            <ProgressHeader labels={mockTop} selectedIndex={1} />
+                        </DialogTitle>
+                        <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
+                            <CustomTemplateModalBody />
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+            <Dialog>
+                <DialogTrigger>Open</DialogTrigger>
+                <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex flex-col gap-1 p-6 pb-0">
+                            <p className="text-xl">Email Template Library</p>
+                            <p className="text-sm font-normal text-gray-500">
+                                Create, view and update your templates here
+                            </p>
+                        </DialogTitle>
+                        <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
+                            <CustomTemplateModalBody />
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 
