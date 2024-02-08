@@ -13,7 +13,7 @@ const ProgressSymbol = ({
     children: React.ReactNode;
 }) =>
     progress > threshold ? (
-        <div className="z-10 aspect-square rounded-full border-2 bg-primary-600 p-2">{children}</div>
+        <div className="z-10 aspect-square rounded-full border-2 border-primary-600 bg-primary-600 p-2">{children}</div>
     ) : (
         <div
             className={`relative z-10 aspect-square h-full w-fit rounded-full border-2 ${
@@ -22,7 +22,9 @@ const ProgressSymbol = ({
                     : 'border-gray-200 bg-white'
             } p-3`}
         >
-            <div className="aspect-square h-4 w-4 rounded-full bg-white" />
+            <div
+                className={`aspect-square h-4 w-4 rounded-full ${progress >= threshold ? 'bg-white' : 'bg-gray-200'}`}
+            />
         </div>
     );
 
