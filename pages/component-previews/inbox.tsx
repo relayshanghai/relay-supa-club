@@ -14,13 +14,12 @@ import { nanoid } from 'nanoid';
 import { sendForward, sendReply } from 'src/components/inbox/wip/utils';
 import { useSequences } from 'src/hooks/use-sequences';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import { Input } from 'shadcn/components/ui/input';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 import type { GetThreadsApiRequest, GetThreadsApiResponse } from 'src/utils/endpoints/get-threads';
 import type { UpdateThreadApiRequest, UpdateThreadApiResponse } from 'src/utils/endpoints/update-thread';
 import { formatDate, now } from 'src/utils/datetime';
 import { serverLogger } from 'src/utils/logger-server';
-import { Search } from 'src/components/icons';
+import { SearchBar } from 'src/components/SearchBar';
 import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
@@ -672,7 +671,10 @@ const InboxPreview = () => {
                     onScroll={onThreadListContainerScroll}
                 >
                     <section className="flex w-full flex-col gap-4 p-2">
-                        <SearchBar onSearch={(term) => setSearchTerm(term)} />
+                        <SearchBar
+                            placeholder={t('inbox.searchPlaceholder') || 'Search inbox'}
+                            onSearch={(term) => setSearchTerm(term)}
+                        />
                         <Filter
                             messageCount={totals}
                             allSequences={allSequences ?? []}
@@ -806,28 +808,6 @@ const InboxPreview = () => {
                 </section>
             </div>
         </Layout>
-    );
-};
-
-const SearchBar = ({ onSearch }: { onSearch: (searchTerm: string) => void }) => {
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const { t } = useTranslation();
-    return (
-        <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 shadow">
-            <Search className="h-5 w-5 fill-gray-400" />
-            <Input
-                className="focus:ring-none focus-visible:ring-none border-none text-xs shadow-none placeholder:text-gray-400 focus-visible:ring-0"
-                placeholder={t('inbox.searchPlaceholder') || 'Search inbox'}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        onSearch(searchTerm);
-                    }
-                }}
-                onBlur={() => onSearch(searchTerm)}
-            />
-        </div>
     );
 };
 

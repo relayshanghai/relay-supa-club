@@ -31,9 +31,9 @@ const ProgressSymbol = ({
 type ProgressLabel = { title: string; description: string };
 
 const Label = ({ label, position }: { label: ProgressLabel; position: string }) => (
-    <section className={`basis-1/3 ${position}`}>
-        <p className="text-md font-semibold text-gray-400">{label.title}</p>
-        <p className="text-md font-normal text-gray-400">{label.description}</p>
+    <section className={`flex basis-1/3 flex-col ${position}`}>
+        <p className="text-sm font-semibold text-gray-400">{label.title}</p>
+        <p className="text-sm font-normal text-gray-400">{label.description}</p>
     </section>
 );
 
