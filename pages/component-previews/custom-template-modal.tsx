@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
@@ -490,7 +490,7 @@ const VariableGroup = ({ variableGroup }: { variableGroup: { title: VariableGrou
                                 </section>
                                 <section className="flex flex-col gap-2">
                                     <p className="">Name</p>
-                                    <section className="flex h-full items-center rounded-md border border-gray-200 bg-white bg-white p-1 shadow focus:border-primary-300">
+                                    <section className="flex h-full items-center rounded-md border border-gray-200 bg-white p-1 shadow focus:border-primary-300">
                                         {'{'}
                                         <input
                                             placeholder="Enter variable name"
