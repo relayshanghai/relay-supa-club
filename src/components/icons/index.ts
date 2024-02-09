@@ -123,3 +123,4 @@ export { default as Loudspeaker } from './Loudspeaker';
 export { default as Rocket } from './Rocket';
 export { default as Present } from './Present';
 export { default as Atom } from './Atom';
+export { default as ProfileSilhouette } from './ProfileSilhouette';

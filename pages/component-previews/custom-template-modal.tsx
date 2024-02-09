@@ -13,19 +13,27 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'shadcn/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
 import {
+    Atom,
     BoostbotSelected,
     ClockAnticlockwise,
     Compass,
     DeleteOutline,
     Edit,
+    Loudspeaker,
     Plus,
+    Present,
+    ProfileSilhouette,
     RingingBell,
+    Rocket,
 } from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import ProgressHeader from 'src/components/ProgressHeader';
 import { SearchBar } from 'src/components/SearchBar';
 
+const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
+
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
+type VariableGroup = (typeof VARIABLE_GROUPS)[number];
 
 type Template = {
     id: number;
@@ -62,6 +70,23 @@ const OutreachTabIcon = ({ status }: { status: OutreachStatus }) => {
             return <ClockAnticlockwise className="h-4 w-4" />;
         default:
             return <ClockAnticlockwise className="h-4 w-4" />;
+    }
+};
+
+const VariableGroupIcon = ({ status }: { status: VariableGroup }) => {
+    switch (status) {
+        case 'brand':
+            return <Loudspeaker className="exempt h-4 w-4" />;
+        case 'product':
+            return <Rocket className="exempt h-4 w-4" />;
+        case 'collab':
+            return <Present className="exempt h-4 w-4" />;
+        case 'influencer':
+            return <ProfileSilhouette className="exempt h-4 w-4" />;
+        case 'wildcards':
+            return <Atom className="exempt h-4 w-4" />;
+        default:
+            return <ClockAnticlockwise className="exempt h-4 w-4" />;
     }
 };
 
@@ -354,10 +379,11 @@ const CustomTemplateModalBody = () => {
     );
 };
 
-const VariableGroup = ({ title }: { title: string }) => {
+const VariableGroup = ({ title }: { title: VariableGroup }) => {
     return (
         <AccordionItem value={'group-' + title}>
             <AccordionTrigger className="data-[state=open]:stroke-primary-600 data-[state=open]:text-primary-600">
+                <VariableGroupIcon status={title} />
                 <p>{title}</p>
             </AccordionTrigger>
             <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
@@ -366,7 +392,6 @@ const VariableGroup = ({ title }: { title: string }) => {
 };
 
 const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void }) => {
-    const groups = ['Brand', 'Product'];
     return (
         <div className="flex h-full w-full divide-x-2 bg-white shadow-lg">
             <section className="basis-2/5 divide-y-2">
@@ -378,8 +403,8 @@ const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void 
                             //
                         }}
                     />
-                    <Accordion id={groups[0]} type="multiple" className="">
-                        {groups.map((group) => (
+                    <Accordion id={VARIABLE_GROUPS[0]} type="multiple" className="">
+                        {VARIABLE_GROUPS.map((group) => (
                             <VariableGroup key={'group-' + group} title={group} />
                         ))}
                     </Accordion>
