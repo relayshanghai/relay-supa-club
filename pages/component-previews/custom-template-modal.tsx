@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
@@ -10,6 +10,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from 'shadcn/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'shadcn/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
 import {
@@ -25,10 +31,13 @@ import {
     ProfileSilhouette,
     RingingBell,
     Rocket,
+    ChevronDown,
 } from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import ProgressHeader from 'src/components/ProgressHeader';
 import { SearchBar } from 'src/components/SearchBar';
+import { Input } from 'shadcn/components/ui/input';
+import { DialogClose } from 'shadcn/components/ui/dialog';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -183,44 +192,76 @@ const CustomTemplateDetails = ({
 };
 
 const EditCustomTemplateDetails = ({
-    status,
     subject,
+    status,
     content,
     onNextClick,
+    onStatusChange,
 }: {
-    status: OutreachStatus;
     subject: string;
+    status: OutreachStatus;
     content: string;
     onNextClick: () => void;
+    onStatusChange: (status: OutreachStatus) => void;
 }) => {
+    const [subjectInput, setSubjectInput] = useState('');
     const { t } = useTranslation();
     return (
-        <Card className="w-full gap-2 border-none shadow-none">
+        <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">
             <CardDescription className="flex flex-col gap-2">
-                <section className="flex w-full justify-between gap-6 py-2">
+                <section className="flex w-full justify-between gap-6">
                     <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
-
-                        <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
-                            {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
-                        </label>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-600 shadow">
+                                    {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
+                                    <ChevronDown className="h-4 w-4 stroke-gray-400" />
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                {OUTREACH_STATUSES.map((status, index) => (
+                                    <DropdownMenuItem
+                                        className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} grow text-gray-700`}
+                                        key={'dropdownitem-' + status}
+                                        onSelect={() => {
+                                            onStatusChange(status);
+                                        }}
+                                    >
+                                        {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </section>
                     <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
-                        <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
-                            {subject}
-                        </label>
+                        <Input
+                            disabled={status !== 'OUTREACH'}
+                            className="min-w-[300px] focus:border-primary-400 focus-visible:ring-primary-400 disabled:bg-gray-200"
+                            placeholder={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}`}
+                            value={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subjectInput}`}
+                            onChange={(e) => {
+                                setSubjectInput(e.target.value);
+                            }}
+                        />
                     </section>
                 </section>
                 <section className="min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
                     {content}
                 </section>
             </CardDescription>
-            <CardFooter className="mt-4 w-full justify-end px-0 pb-0">
+            <CardFooter className="w-full justify-end px-0 pb-0">
+                <DialogClose>
+                    <Button className=" text-gray-400" variant="ghost">
+                        Back
+                    </Button>
+                </DialogClose>
                 <Button
                     className="flex gap-4"
-                    onClick={() => {
+                    onClick={(e) => {
                         onNextClick();
+                        e.stopPropagation();
                     }}
                 >
                     Next Step
@@ -289,7 +330,9 @@ const NameTemplateBody = () => {
                 <EditableTemplateCard />
             </section>
             <section className="flex justify-end gap-2">
-                <Button variant="ghost">Cancel</Button>
+                <DialogClose>
+                    <Button variant="ghost">Cancel</Button>
+                </DialogClose>
                 <Button>Save template</Button>
             </section>
         </div>
@@ -335,14 +378,14 @@ const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
     ];
 
     return (
-        <section className="divide-y-2">
-            <div className="my-4 grid max-h-[350px] grid-cols-1 gap-2 overflow-y-auto lg:grid-cols-2">
+        <section className="divide-y-2  ">
+            <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
                 {mockData.map((template) => (
                     <CustomTemplateCard key={template.id} template={template} status={status} />
                 ))}
             </div>
             <div>
-                <section className="py-2">
+                <section className="pb-3 pt-6">
                     <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
                     <p className="font-normal text-gray-500 placeholder-gray-500">
                         If you already have a template in mind
@@ -379,43 +422,150 @@ const CustomTemplateModalBody = () => {
     );
 };
 
-const VariableGroup = ({ title }: { title: VariableGroup }) => {
+const VariableGroup = ({ variableGroup }: { variableGroup: { title: VariableGroup; variables: string[] } }) => {
+    const { title, variables } = variableGroup;
     return (
         <AccordionItem value={'group-' + title}>
             <AccordionTrigger className="data-[state=open]:stroke-primary-600 data-[state=open]:text-primary-600">
-                <VariableGroupIcon status={title} />
-                <p>{title}</p>
+                <section className="flex items-center gap-3">
+                    <VariableGroupIcon status={title} />
+                    <p>{title}</p>
+                </section>
             </AccordionTrigger>
-            <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+
+            <AccordionContent className="text-xs">
+                {variables.map((variable, index) => (
+                    <p
+                        className={`flex cursor-pointer items-center gap-1 p-3 font-semibold ${
+                            index % 2 !== 0 && 'bg-gray-50'
+                        }`}
+                        key={`variable-${title}-${variable}`}
+                    >
+                        {'{'}
+                        <span className="font-semibold text-primary-600">{variable}</span>
+                        {'}'}
+                    </p>
+                ))}
+                <Dialog>
+                    <DialogTrigger className="flex items-center gap-1 p-3 font-semibold text-gray-400">
+                        {'{'}
+                        <Plus className="h-3 w-3 stroke-gray-400 stroke-[4px]" />
+                        {'}'} Add new Brand variable
+                    </DialogTrigger>
+                    <DialogContent className="p-3 font-semibold text-gray-600">
+                        <DialogHeader>
+                            <DialogTitle className="flex flex-col gap-1 px-6 pt-6">
+                                <p className="text-xl">Add a new variable</p>
+                            </DialogTitle>
+                            <DialogDescription className="flex gap-4 px-6">
+                                <section className="flex w-full flex-col gap-2">
+                                    <p className="">Category</p>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            <div className="flex h-9 w-full flex-row items-center justify-between gap-4 rounded-md border border-gray-200 bg-white px-2 py-1 font-normal text-gray-600 shadow">
+                                                <section className="flex items-center gap-2">
+                                                    <VariableGroupIcon status={title} />
+                                                    {title}
+                                                </section>
+                                                <ChevronDown className="h-4 w-4 stroke-gray-400" />
+                                            </div>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start">
+                                            {VARIABLE_GROUPS.map((group, index) => (
+                                                <DropdownMenuItem
+                                                    className={`${
+                                                        index % 2 !== 0 && 'bg-gray-50'
+                                                    } flex items-center gap-2`}
+                                                    key={'dropdownitem-' + group}
+                                                    onSelect={() => {
+                                                        // onStatusChange(status);
+                                                    }}
+                                                >
+                                                    <VariableGroupIcon status={group} />
+                                                    {group}
+                                                </DropdownMenuItem>
+                                            ))}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </section>
+                                <section className="flex flex-col gap-2">
+                                    <p className="">Name</p>
+                                    <section className="flex h-full items-center rounded-md border border-gray-200 bg-white bg-white p-1 shadow focus:border-primary-300">
+                                        {'{'}
+                                        <input
+                                            placeholder="Enter variable name"
+                                            className="focus-visible:ring-none px-1 text-primary-600 placeholder-primary-300 focus:border-transparent focus:outline-none"
+                                        />
+                                        {'}'}
+                                    </section>
+                                </section>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <section className="flex w-full justify-end">
+                            <DialogClose>
+                                <Button variant="ghost">Cancel</Button>
+                            </DialogClose>
+                            <Button>Add new variable</Button>
+                        </section>
+                    </DialogContent>
+                </Dialog>
+            </AccordionContent>
         </AccordionItem>
     );
 };
 
+const mockVariables = [
+    {
+        title: 'brand',
+        variables: ['brand_name', 'brand_website', 'brand_email', 'brand_phone'],
+    },
+    {
+        title: 'product',
+        variables: ['product_name', 'product_price', 'product_description'],
+    },
+    {
+        title: 'collab',
+        variables: ['collab_name', 'collab_email', 'collab_phone'],
+    },
+    {
+        title: 'influencer',
+        variables: ['influencer_name', 'influencer_email', 'influencer_phone'],
+    },
+    {
+        title: 'wildcards',
+        variables: ['first_name', 'last_name', 'email', 'phone'],
+    },
+];
+
 const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void }) => {
+    const [status, setStatus] = useState('OUTREACH' as OutreachStatus);
     return (
         <div className="flex h-full w-full divide-x-2 bg-white shadow-lg">
             <section className="basis-2/5 divide-y-2">
                 <section className="p-3 text-lg font-semibold text-gray-700">Template Variables</section>
-                <section className="flex flex-col gap-2 p-3">
+                <section className="flex flex-col gap-2 px-6 py-3">
                     <SearchBar
                         placeholder={'search for variables'}
                         onSearch={(_searchTerm) => {
                             //
                         }}
                     />
-                    <Accordion id={VARIABLE_GROUPS[0]} type="multiple" className="">
-                        {VARIABLE_GROUPS.map((group) => (
-                            <VariableGroup key={'group-' + group} title={group} />
+                    <Accordion id={mockVariables[0].title} type="multiple" className="">
+                        {mockVariables.map((group) => (
+                            <VariableGroup key={'group-' + group} variableGroup={group} />
                         ))}
                     </Accordion>
                 </section>
             </section>
             <section className="basis-4/5 px-9 py-3">
                 <EditCustomTemplateDetails
-                    status={'OUTREACH'}
+                    status={status}
                     subject={'Subject'}
                     content={'BODY'}
                     onNextClick={onNextClick}
+                    onStatusChange={(status) => {
+                        setStatus(status);
+                    }}
                 />
             </section>
         </div>
@@ -451,7 +601,7 @@ const CustomTemplateModal = () => {
                 <DialogTrigger>Edit modal</DialogTrigger>
                 <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                     <DialogHeader>
-                        <DialogTitle className="flex w-full flex-col gap-1 px-20 py-6">
+                        <DialogTitle className="flex w-full flex-col gap-1 py-2">
                             <ProgressHeader labels={progressStep} selectedIndex={step} />
                         </DialogTitle>
                         <DialogDescription className="h-full w-full bg-primary-50 p-6">
@@ -468,8 +618,8 @@ const CustomTemplateModal = () => {
                 <DialogTrigger>Open</DialogTrigger>
                 <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                     <DialogHeader>
-                        <DialogTitle className="flex flex-col gap-1 p-6 pb-0">
-                            <p className="text-xl">Email Template Library</p>
+                        <DialogTitle className="flex flex-col gap-1 px-6 py-4 pt-6">
+                            <p className="text-xl text-gray-700">Email Template Library</p>
                             <p className="text-sm font-normal text-gray-500">
                                 Create, view and update your templates here
                             </p>
