@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import Fuse from 'fuse.js';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from 'shadcn/components/ui/card';
@@ -116,10 +117,10 @@ const CustomTemplateCard = ({
                         selected ? 'border-primary-600' : 'border-gray-200'
                     }`}
                 >
-                    <CardHeader className="flex flex-row items-center gap-4 p-4">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                                <BoostbotSelected height={24} width={24} />
+                    <CardHeader className="flex flex-row items-start gap-4 p-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100">
+                                <BoostbotSelected height={18} width={18} />
                             </div>
                         </div>
                         <section className="flex flex-col items-start justify-between gap-4">
@@ -211,7 +212,7 @@ const EditCustomTemplateDetails = ({
             <CardDescription className="flex flex-col gap-2">
                 <section className="flex w-full justify-between gap-6">
                     <section className="flex grow flex-col gap-2">
-                        <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
+                        <p className="whitespace-nowrap text-xl font-semibold text-gray-600">Sequence Step</p>
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-600 shadow">
@@ -274,10 +275,10 @@ const EditCustomTemplateDetails = ({
 const NewTemplateCard = () => {
     return (
         <Card className="w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]">
-            <CardHeader className="flex flex-row items-center gap-4 p-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                        <Plus height={24} width={24} className="stroke-primary-500 stroke-[3px]" />
+            <CardHeader className="flex flex-row items-start gap-4 p-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100">
+                        <Plus height={18} width={18} className="stroke-primary-500 stroke-[3px]" />
                     </div>
                 </div>
                 <section className="flex flex-col items-start justify-between gap-4">
@@ -447,7 +448,7 @@ const VariableGroup = ({ variableGroup }: { variableGroup: { title: VariableGrou
                     </p>
                 ))}
                 <Dialog>
-                    <DialogTrigger className="flex items-center gap-1 p-3 font-semibold text-gray-400">
+                    <DialogTrigger className="flex items-center gap-1 whitespace-nowrap p-3 font-semibold text-gray-400">
                         {'{'}
                         <Plus className="h-3 w-3 stroke-gray-400 stroke-[4px]" />
                         {'}'} Add new Brand variable
@@ -539,22 +540,39 @@ const mockVariables = [
 
 const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void }) => {
     const [status, setStatus] = useState('OUTREACH' as OutreachStatus);
+    const [variables, setVariables] = useState(mockVariables);
+    const [searchTerm, setSearchTerm] = useState('');
+    useEffect(() => {
+        if (searchTerm === '') {
+            setVariables(mockVariables);
+            return;
+        }
+        const fuse = new Fuse(mockVariables, {
+            keys: ['title', 'variables'],
+        });
+        const results = fuse.search(searchTerm);
+        setVariables(results.map((result) => result.item));
+    }, [searchTerm]);
     return (
         <div className="flex h-full w-full divide-x-2 bg-white shadow-lg">
-            <section className="basis-2/5 divide-y-2">
-                <section className="p-3 text-lg font-semibold text-gray-700">Template Variables</section>
-                <section className="flex flex-col gap-2 px-6 py-3">
+            <section className="basis-2/5 divide-y-2 pb-16">
+                <section className="whitespace-nowrap p-3 text-lg font-semibold text-gray-700">
+                    Template Variables
+                </section>
+                <section className="flex h-full flex-col gap-2 px-6 py-3">
                     <SearchBar
                         placeholder={'search for variables'}
-                        onSearch={(_searchTerm) => {
-                            //
+                        onSearch={(searchTerm) => {
+                            setSearchTerm(searchTerm);
                         }}
                     />
-                    <Accordion id={mockVariables[0].title} type="multiple" className="">
-                        {mockVariables.map((group) => (
-                            <VariableGroup key={'group-' + group} variableGroup={group} />
-                        ))}
-                    </Accordion>
+                    <div className="flex-auto justify-center overflow-auto" style={{ height: 2 }}>
+                        <Accordion id={mockVariables[0].title} type="multiple">
+                            {variables.map((group) => (
+                                <VariableGroup key={'group-' + group} variableGroup={group} />
+                            ))}
+                        </Accordion>
+                    </div>
                 </section>
             </section>
             <section className="basis-4/5 px-9 py-3">
