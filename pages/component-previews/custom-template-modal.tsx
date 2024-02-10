@@ -39,6 +39,7 @@ import ProgressHeader from 'src/components/ProgressHeader';
 import { SearchBar } from 'src/components/SearchBar';
 import { Input } from 'shadcn/components/ui/input';
 import { DialogClose } from 'shadcn/components/ui/dialog';
+import { Tiptap } from 'src/components/tiptap';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -209,7 +210,7 @@ const EditCustomTemplateDetails = ({
     const { t } = useTranslation();
     return (
         <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">
-            <CardDescription className="flex flex-col gap-2">
+            <CardDescription className="flex h-full flex-col gap-4">
                 <section className="flex w-full justify-between gap-6">
                     <section className="flex grow flex-col gap-2">
                         <p className="whitespace-nowrap text-xl font-semibold text-gray-600">Sequence Step</p>
@@ -248,8 +249,17 @@ const EditCustomTemplateDetails = ({
                         />
                     </section>
                 </section>
-                <section className="min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
-                    {content}
+                <section className="h-full min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
+                    <Tiptap
+                        description={content}
+                        placeholder="email body"
+                        onChange={() => {
+                            //
+                        }}
+                        onSubmit={() => {
+                            //
+                        }}
+                    />
                 </section>
             </CardDescription>
             <CardFooter className="w-full justify-end px-0 pb-0">
@@ -295,10 +305,10 @@ const NewTemplateCard = () => {
 const EditableTemplateCard = () => {
     return (
         <Card className="h-fit w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]">
-            <CardHeader className="flex flex-row items-center gap-4 p-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                        <BoostbotSelected height={24} width={24} />
+            <CardHeader className="flex flex-row items-start gap-4 p-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100">
+                        <BoostbotSelected height={18} width={18} />
                     </div>
                 </div>
                 <section className="flex flex-col items-start justify-between gap-4">
