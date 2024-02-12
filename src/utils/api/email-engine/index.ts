@@ -14,6 +14,8 @@ import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
 import type {
     AccountAccountMessagePut,
+    EmailTemplatePut,
+    EmailTemplatePutResponse,
     UpdateMessagePutResponseBody,
 } from 'types/email-engine/account-account-message-put';
 import type { TemplatesTemplateGetResponse } from 'types/email-engine/templates-template-get';
@@ -59,6 +61,8 @@ const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageS
     })}`;
 
 const getTemplateInfoPath = (templateId: string) => `templates/template/${encodeURIComponent(templateId)}`;
+
+const updateTemplateInfoPath = (templateId: string) => `templates/template/${encodeURIComponent(templateId)}`;
 
 export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
@@ -134,3 +138,9 @@ export const deleteEmailFromOutbox = async (queueId: string) =>
 
 export const getTemplateInfo = async (templateId: string) =>
     await emailEngineApiFetch<TemplatesTemplateGetResponse>(getTemplateInfoPath(templateId));
+
+export const updateTemplateInfo = async (body: EmailTemplatePut, templateId: string) =>
+    await emailEngineApiFetch<EmailTemplatePutResponse>(updateTemplateInfoPath(templateId), {
+        method: 'PUT',
+        body,
+    });
