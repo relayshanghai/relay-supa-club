@@ -3,6 +3,23 @@ export interface AccountAccountMessagePut {
     labels?: Flags;
 }
 
+export interface EmailTemplatePut {
+    name: string;
+    description?: string;
+    format: 'html';
+    content: {
+        subject: string;
+        text?: string;
+        html?: string;
+    };
+}
+
+export interface EmailTemplatePutResponse {
+    updated: boolean;
+    account: string;
+    id: string;
+}
+
 export interface Flags {
     add?: string[];
     delete?: string[];
