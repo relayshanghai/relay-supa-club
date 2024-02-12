@@ -48,7 +48,7 @@ export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: 
 
 export type ApiResponse<T> = T | ApiError;
 
-type RelayApiRequest = NextApiRequest & {
+export type RelayApiRequest = NextApiRequest & {
     supabase: SupabaseClient<RelayDatabase>;
     session?: Session;
     profile?: typeof profiles.$inferSelect;
@@ -70,7 +70,7 @@ const isJsonable = (error: any) => {
     );
 };
 
-const createErrorObject = (error: any, tag: string) => {
+export const createErrorObject = (error: any, tag: string) => {
     const e: {
         httpCode: number;
         message: any;

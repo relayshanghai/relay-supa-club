@@ -26,3 +26,9 @@ export class UnauthorizedError extends HttpError {
         super(message, httpCodes.UNAUTHORIZED, originError);
     }
 }
+
+export class NotFoundError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.NOT_FOUND, originError);
+    }
+}

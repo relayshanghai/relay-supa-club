@@ -13,7 +13,9 @@ if (!EMAIL_ENGINE_API_KEY) {
 const authHeaders = {
     Authorization: `Bearer ${EMAIL_ENGINE_API_KEY}`,
 };
-
+/**
+ * @deprecated
+ */
 export const emailEngineApiFetch = async <T = any>(path: string, passedOptions: RequestInitWithBody = {}) => {
     const options = {
         ...passedOptions,

@@ -1,13 +1,8 @@
+
+import type { TemplateVariableRequest } from 'pages/api/outreach/variables/request';
+import { CompanyIdRequired } from '../decorators/company-id';
+import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
-import type {
-    OutreachTemplateVariablesInsert,
-    OutreachTemplateVariablesUpdate,
-} from '../../database/outreach-template-variables';
-import {
-    getOutreachTemplateVariablesByCompanyIdCall,
-    insertOutreachTemplateVariableCall,
-    updateOutreachTemplateVariableCall,
-} from '../../database/outreach-template-variables';
 
 export default class TemplateVariablesService {
     static service: TemplateVariablesService = new TemplateVariablesService();
@@ -15,19 +10,30 @@ export default class TemplateVariablesService {
         return TemplateVariablesService.service;
     }
 
-    async getTemplateVariablesByCompanyId() {
-        const companyId = RequestContext.getContext().companyId;
-        if (!companyId) {
-            throw new Error('No company id found in request context');
-        }
-        return await getOutreachTemplateVariablesByCompanyIdCall()(companyId);
+    @CompanyIdRequired()
+    async get() {
+        const companyId = RequestContext.getContext().companyId as string;
+        return await OutreachTemplateVariableRepository.getRepository().getAll(companyId);
     }
 
-    async updateTemplateVariable(update: OutreachTemplateVariablesUpdate) {
-        return await updateOutreachTemplateVariableCall()(update);
+    @CompanyIdRequired()
+    async update(id: string, update: TemplateVariableRequest) {
+        const companyId = RequestContext.getContext().companyId as string;
+        await OutreachTemplateVariableRepository.getRepository().getOne(companyId, id);
+        return await OutreachTemplateVariableRepository.getRepository().update(companyId, id, {
+            category: update.category,
+            name: update.name,
+        });
     }
 
-    async insertTemplateVariable(insert: OutreachTemplateVariablesInsert) {
-        return await insertOutreachTemplateVariableCall()(insert);
+    @CompanyIdRequired()
+    async delete(id: string) {
+        const companyId = RequestContext.getContext().companyId as string;
+        return await OutreachTemplateVariableRepository.getRepository().delete(id);
+    }
+
+    @CompanyIdRequired()
+    async create(request: TemplateVariableRequest) {
+        return await OutreachTemplateVariableRepository.getRepository().create(request);
     }
 }
