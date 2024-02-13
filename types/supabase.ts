@@ -911,18 +911,18 @@ export interface Database {
       outreach_email_template_variables_relation: {
         Row: {
           id: string
-          outreach_email_template_id: string | null
-          outreach_template_variable_id: string | null
+          outreach_email_template_id: string
+          outreach_template_variable_id: string
         }
         Insert: {
           id?: string
-          outreach_email_template_id?: string | null
-          outreach_template_variable_id?: string | null
+          outreach_email_template_id: string
+          outreach_template_variable_id: string
         }
         Update: {
           id?: string
-          outreach_email_template_id?: string | null
-          outreach_template_variable_id?: string | null
+          outreach_email_template_id?: string
+          outreach_template_variable_id?: string
         }
         Relationships: [
           {
