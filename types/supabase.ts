@@ -911,24 +911,30 @@ export interface Database {
       outreach_email_templates: {
         Row: {
           company_id: string | null
+          description: string | null
           email_engine_template_id: string
           id: string
+          name: string
           step: Database["public"]["Enums"]["outreach_step"]
           subject: string | null
           template: string | null
         }
         Insert: {
           company_id?: string | null
+          description?: string | null
           email_engine_template_id: string
           id?: string
+          name: string
           step: Database["public"]["Enums"]["outreach_step"]
           subject?: string | null
           template?: string | null
         }
         Update: {
           company_id?: string | null
+          description?: string | null
           email_engine_template_id?: string
           id?: string
+          name?: string
           step?: Database["public"]["Enums"]["outreach_step"]
           subject?: string | null
           template?: string | null
@@ -945,22 +951,22 @@ export interface Database {
       }
       outreach_template_variables: {
         Row: {
+          category: string
           company_id: string | null
           id: string
           name: string
-          value: string
         }
         Insert: {
+          category: string
           company_id?: string | null
           id?: string
           name: string
-          value: string
         }
         Update: {
+          category?: string
           company_id?: string | null
           id?: string
           name?: string
-          value?: string
         }
         Relationships: [
           {

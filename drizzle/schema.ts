@@ -711,6 +711,8 @@ export const outreach_email_templates = pgTable('outreach_email_templates', {
         .default(sql`uuid_generate_v4()`)
         .primaryKey()
         .notNull(),
+    name: text('name').notNull(),
+    description: text('description'),
     step: text('step', {
         enum: OUTREACH_STATUSES,
     }).notNull(),
@@ -728,7 +730,7 @@ export const outreach_template_variables = pgTable('myTable', {
         .primaryKey()
         .notNull(),
     name: varchar('name').notNull().unique(),
-    value: text('value').notNull(),
+    category: text('value').notNull(),
     company_id: uuid('company_id')
         .notNull()
         .references(() => companies.id)
