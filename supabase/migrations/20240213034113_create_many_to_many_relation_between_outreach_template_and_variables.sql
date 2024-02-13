@@ -1,7 +1,7 @@
 create table "public"."outreach_email_template_variables_relation" (
     "id" uuid not null default gen_random_uuid(),
-    "outreach_email_template_id" uuid,
-    "outreach_template_variable_id" uuid
+    "outreach_email_template_id" uuid not null,
+    "outreach_template_variable_id" uuid not null
 );
 
 

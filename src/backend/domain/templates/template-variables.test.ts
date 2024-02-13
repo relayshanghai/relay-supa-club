@@ -54,7 +54,7 @@ describe('src/backend/domain/templates/template-variables.test.ts', () => {
             const insert: OutreachTemplateVariablesInsert = {
                 company_id: 'companyId',
                 name: 'variableName',
-                value: 'variableValue',
+                category: 'brand',
             };
             const templateVariablesService = new TemplateVariablesService();
             templateVariablesService.insertTemplateVariable(insert);
