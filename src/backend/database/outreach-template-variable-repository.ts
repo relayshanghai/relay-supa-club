@@ -4,7 +4,7 @@ import { createInsertSchema } from 'drizzle-zod';
 import { outreach_template_variables } from 'drizzle/schema';
 import awaitToError from 'src/utils/await-to-error';
 import { db } from 'src/utils/database';
-import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, ConflictError, NotFoundError } from 'src/utils/error/http-error';
 
 export const outreachTemplateVariableInsertSchema = createInsertSchema(outreach_template_variables);
 export type OutreachTemplateVariableInsert = typeof outreachTemplateVariableInsertSchema._type;
@@ -20,20 +20,28 @@ export default class OutreachTemplateVariableRepository {
     }
 
     async create(companyId: string, outreachTemplate: Omit<OutreachTemplateVariableInsert, 'company_id'>) {
-        return await db()
-            .insert(outreach_template_variables)
-            .values({
-                ...outreachTemplate,
-                company_id: companyId,
-            })
-            .returning();
+        const [err, inserted] = await awaitToError(
+            db()
+                .insert(outreach_template_variables)
+                .values({
+                    ...outreachTemplate,
+                    company_id: companyId,
+                })
+                .returning(),
+        );
+        if (err) {
+            if (err.message.includes('duplicate')) {
+                throw new ConflictError(`Variable with name: ${outreachTemplate.name} already exists`);
+            }
+            throw err;
+        }
+        return inserted[0];
     }
-    async update(companyId: string, id: string, outreachTemplate: OutreachTemplateVariablesUpdate) {
+    async update(id: string, outreachTemplate: OutreachTemplateVariablesUpdate) {
         return await db()
             .update(outreach_template_variables)
             .set({
                 ...outreachTemplate,
-                company_id: companyId,
             })
             .where(eq(outreach_template_variables.id, id));
     }

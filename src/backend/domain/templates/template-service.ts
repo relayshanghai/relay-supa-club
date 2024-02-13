@@ -1,10 +1,15 @@
-import type { GetTemplateRequest, OutreachStepRequest, TemplateRequest } from 'pages/api/outreach/email-templates/request';
+import type {
+    GetTemplateRequest,
+    OutreachStepRequest,
+    TemplateRequest,
+} from 'pages/api/outreach/email-templates/request';
 import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
 import EmailEngineService from 'src/backend/integration/email-engine/email-engine';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 export default class TemplateService {
     static readonly service: TemplateService = new TemplateService();
@@ -13,13 +18,15 @@ export default class TemplateService {
     }
     async checkVariableExists(variableIds: string[]) {
         const companyId = RequestContext.getContext().companyId as string;
-        const existedVariables = await OutreachTemplateVariableRepository.getRepository()
-            .getAll(companyId, ...variableIds.map((id) => id));
-        variableIds.forEach((id => {
+        const existedVariables = await OutreachTemplateVariableRepository.getRepository().getAll(
+            companyId,
+            ...variableIds.map((id) => id),
+        );
+        variableIds.forEach((id) => {
             if (!existedVariables.find((variable) => variable.id === id)) {
-                throw new Error(`variable with id: ${id} does not exist`);
+                throw new NotFoundError(`variable with id: ${id} does not exist`);
             }
-        }));
+        });
     }
     @CompanyIdRequired()
     async create(template: TemplateRequest) {
@@ -30,15 +37,16 @@ export default class TemplateService {
             name: template.step,
             subject: template.subject,
         });
-        await OutreachTemplateRepository.getRepository().create({
+        const created = await OutreachTemplateRepository.getRepository().create({
             company_id: companyId,
             email_engine_template_id: emailEngineId,
             step: template.step,
             subject: template.subject,
             template: template.template,
             name: template.name,
-            variableIds: template.variableIds
+            variableIds: template.variableIds,
         });
+        return created;
     }
 
     @CompanyIdRequired()
@@ -59,7 +67,7 @@ export default class TemplateService {
             step: template.step,
             subject: template.subject,
             template: template.template,
-            variableIds: template.variableIds.map((id) => id)
+            variableIds: template.variableIds.map((id) => id),
         });
     }
 
@@ -71,7 +79,7 @@ export default class TemplateService {
             name: template.name as string,
             description: template.description as string,
             id: template.id,
-            step: template.step as OutreachStepRequest
+            step: template.step as OutreachStepRequest,
         }));
     }
 
@@ -89,8 +97,14 @@ export default class TemplateService {
             variables: data.variables.map((variable) => ({
                 category: variable.outreach_template_variables.category,
                 id: variable.outreach_template_variables.id,
-                name: variable.outreach_template_variables.name
-            }))
+                name: variable.outreach_template_variables.name,
+            })),
         };
+    }
+    @CompanyIdRequired()
+    async delete(id: string): Promise<void> {
+        const companyId = RequestContext.getContext().companyId as string;
+        await OutreachTemplateRepository.getRepository().get(companyId, id);
+        await OutreachTemplateRepository.getRepository().delete(companyId, id);
     }
 }

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TemplateService from './template-service';
 import { OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
 import awaitToError from 'src/utils/await-to-error';
+import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
 
 describe('src/backend/domain/templates/template-service.ts', () => {
     describe('TemplateService', () => {
@@ -14,6 +15,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
         const outreachTemplateRepositoryUpdateMock = vi.fn();
         const outreachTemplateRepositoryGetMock = vi.fn();
         const outreachTemplateRepositoryGetAllMock = vi.fn();
+        const outreachTemplateRepositoryDeleteMock = vi.fn();
+        const outreactTemplateVariableRepositoryGetMock = vi.fn();
         const getContextMock = vi.fn();
         beforeEach(() => {
             vi.resetAllMocks();
@@ -28,6 +31,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                 emailEngineCreateTemplateMock.mockResolvedValue('some-email-template-id');
                 OutreachTemplateRepository.prototype.create = outreachTemplateRepositoryCreateMock;
                 outreachTemplateRepositoryCreateMock.mockResolvedValue({});
+                OutreachTemplateVariableRepository.prototype.getAll = outreactTemplateVariableRepositoryGetMock;
+                outreachTemplateRepositoryCreateMock.mockResolvedValue([]);
             });
             afterEach(() => {
                 vi.resetAllMocks();
@@ -39,6 +44,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err.message).toBe('No company id found in request context');
@@ -50,6 +58,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err.message).toBe('No company id found in request context');
@@ -60,6 +71,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err).toBe(null);
@@ -74,6 +88,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     step: 'OUTREACH',
                     subject: 'some subject',
                     template: '<p>some html</p>',
+                    variableIds: [],
+                    name: 'some name',
                 });
             });
         });
@@ -89,6 +105,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     email_engine_template_id: 'some-email-template-id',
                     subject: 'some-subject',
                     template: '<p>some html</p>',
+                    description: 'some description',
+                    name: 'some name',
+                    variables: [],
                 });
             });
             afterEach(() => {
@@ -101,6 +120,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err.message).toBe('No company id found in request context');
@@ -112,6 +134,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err.message).toBe('not found');
@@ -123,6 +148,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err.message).toBe('No company id found in request context');
@@ -133,6 +161,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         step: OutreachStepRequest.OUTREACH,
                         subject: 'some subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
+                        variableIds: [],
                     }),
                 );
                 expect(err).toBe(null);
@@ -147,7 +178,44 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     step: 'OUTREACH',
                     subject: 'some subject',
                     template: '<p>some html</p>',
+                    description: 'some description',
+                    name: 'some name',
+                    variableIds: [],
                 });
+            });
+        });
+        describe('.delete()', () => {
+            beforeEach(() => {
+                OutreachTemplateRepository.prototype.delete = outreachTemplateRepositoryDeleteMock;
+                outreachTemplateRepositoryUpdateMock.mockResolvedValue({});
+                OutreachTemplateRepository.prototype.get = outreachTemplateRepositoryGetMock;
+                outreachTemplateRepositoryGetMock.mockResolvedValue({
+                    step: 'OUTREACH',
+                    email_engine_template_id: 'some-email-template-id',
+                    subject: 'some-subject',
+                    template: '<p>some html</p>',
+                    description: 'some description',
+                    name: 'some name',
+                    variables: [],
+                });
+            });
+            afterEach(() => {
+                vi.resetAllMocks();
+            });
+            it(`should throw unauthorized error when company id does not setted up`, async () => {
+                getContextMock.mockReturnValue({});
+                const [err] = await awaitToError(TemplateService.getService().delete('some-id'));
+                expect(err.message).toBe('No company id found in request context');
+            });
+            it(`should throw not found error when template id does not exist`, async () => {
+                outreachTemplateRepositoryGetMock.mockRejectedValue(new Error('not found'));
+                const [err] = await awaitToError(TemplateService.getService().delete('some-id'));
+                expect(err.message).toBe('not found');
+            });
+            it(`should return success and trigger delete function when request parameter is valid`, async () => {
+                const [err] = await awaitToError(TemplateService.getService().delete('some-id'));
+                expect(err).toBe(null);
+                expect(outreachTemplateRepositoryDeleteMock).toBeCalledWith('some-of-company', 'some-id');
             });
         });
         describe('.getOne()', () => {
@@ -159,6 +227,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     email_engine_template_id: 'some-email-template-id',
                     subject: 'some-subject',
                     template: '<p>some html</p>',
+                    variables: [],
+                    description: 'some description',
+                    name: 'some name',
                 });
             });
             afterEach(() => {
@@ -187,6 +258,9 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     step: 'OUTREACH',
                     subject: 'some-subject',
                     template: '<p>some html</p>',
+                    description: 'some description',
+                    name: 'some name',
+                    variables: [],
                 });
             });
         });
@@ -200,6 +274,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                         email_engine_template_id: 'some-email-template-id',
                         subject: 'some-subject',
                         template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
                     },
                 ]);
             });
@@ -232,8 +308,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     {
                         id: 'some-id',
                         step: 'OUTREACH',
-                        subject: 'some-subject',
-                        template: '<p>some html</p>',
+                        description: 'some description',
+                        name: 'some name',
                     },
                 ]);
             });

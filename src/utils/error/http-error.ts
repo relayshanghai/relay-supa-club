@@ -32,3 +32,9 @@ export class NotFoundError extends HttpError {
         super(message, httpCodes.NOT_FOUND, originError);
     }
 }
+
+export class ConflictError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.CONFLICT, originError);
+    }
+}

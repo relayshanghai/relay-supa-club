@@ -1,7 +1,11 @@
 import type { SQL } from 'drizzle-orm';
 import { and, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { outreach_email_template_variables_relation, outreach_email_templates, outreach_template_variables } from 'drizzle/schema';
+import {
+    outreach_email_template_variables_relation,
+    outreach_email_templates,
+    outreach_template_variables,
+} from 'drizzle/schema';
 import type { OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
 import { db } from 'src/utils/database';
 import { NotFoundError } from 'src/utils/error/http-error';
@@ -14,7 +18,6 @@ export const outreachTemplateInsertSchema = createInsertSchema(outreach_email_te
 
 export type OutreachTemplateInsert = typeof outreachTemplateInsertSchema._type & { variableIds: string[] };
 
-
 export default class OutreachTemplateRepository {
     static repository: OutreachTemplateRepository = new OutreachTemplateRepository();
     static getRepository(): OutreachTemplateRepository {
@@ -23,12 +26,16 @@ export default class OutreachTemplateRepository {
 
     async create(outreachTemplate: OutreachTemplateInsert) {
         const [inserted] = await db().insert(outreach_email_templates).values(outreachTemplate).returning();
-        await db().insert(outreach_email_template_variables_relation).values(
-            outreachTemplate.variableIds.map((id) =>({
-                outreach_email_template_id: inserted.id,
-                outreach_template_variable_id: id
-            })
-        ));
+        if (outreachTemplate.variableIds && outreachTemplate.variableIds.length > 0) {
+            await db()
+                .insert(outreach_email_template_variables_relation)
+                .values(
+                    outreachTemplate.variableIds.map((id) => ({
+                        outreach_email_template_id: inserted.id,
+                        outreach_template_variable_id: id,
+                    })),
+                );
+        }
         return inserted;
     }
     async update(id: string, outreachTemplate: OutreachTemplateInsert) {
@@ -37,14 +44,16 @@ export default class OutreachTemplateRepository {
             .set(outreachTemplate)
             .where(eq(outreach_email_templates.id, id));
     }
-    async getVariables(id: string){
+    async getVariables(id: string) {
         const data = await db()
             .select()
             .from(outreach_template_variables)
-            .innerJoin(outreach_email_template_variables_relation, 
-                eq(outreach_template_variables.id, 
-                    outreach_email_template_variables_relation.outreach_template_variable_id
-                )
+            .innerJoin(
+                outreach_email_template_variables_relation,
+                eq(
+                    outreach_template_variables.id,
+                    outreach_email_template_variables_relation.outreach_template_variable_id,
+                ),
             )
             .where(eq(outreach_email_templates.id, id));
         return data;
@@ -60,8 +69,13 @@ export default class OutreachTemplateRepository {
         const variables = await this.getVariables(id);
         return {
             ...data,
-            variables
+            variables,
         };
+    }
+    async delete(companyId: string, id: string) {
+        await db()
+            .delete(outreach_email_templates)
+            .where(and(eq(outreach_email_templates.id, id), eq(outreach_email_templates.company_id, companyId)));
     }
 
     async getAll(companyId: string, step?: OutreachStepRequest) {

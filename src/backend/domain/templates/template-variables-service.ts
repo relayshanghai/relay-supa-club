@@ -1,4 +1,3 @@
-
 import type { TemplateVariableRequest } from 'pages/api/outreach/variables/request';
 import { CompanyIdRequired } from '../decorators/company-id';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
@@ -20,7 +19,7 @@ export default class TemplateVariablesService {
     async update(id: string, update: TemplateVariableRequest) {
         const companyId = RequestContext.getContext().companyId as string;
         await OutreachTemplateVariableRepository.getRepository().getOne(companyId, id);
-        return await OutreachTemplateVariableRepository.getRepository().update(companyId, id, {
+        return await OutreachTemplateVariableRepository.getRepository().update(id, {
             category: update.category,
             name: update.name,
         });
@@ -29,11 +28,13 @@ export default class TemplateVariablesService {
     @CompanyIdRequired()
     async delete(id: string) {
         const companyId = RequestContext.getContext().companyId as string;
+        await OutreachTemplateVariableRepository.getRepository().getOne(companyId, id);
         return await OutreachTemplateVariableRepository.getRepository().delete(id);
     }
 
     @CompanyIdRequired()
     async create(request: TemplateVariableRequest) {
-        return await OutreachTemplateVariableRepository.getRepository().create(request);
+        const companyId = RequestContext.getContext().companyId as string;
+        return await OutreachTemplateVariableRepository.getRepository().create(companyId, request);
     }
 }

@@ -111,3 +111,13 @@ export const DELETE = () => HandleDecorator('DELETE');
 export const getHandlerMetadata = (target: any, method: string) => {
     return Reflect.getMetadata(method, target);
 };
+
+export const Status =
+    (code: number): MethodDecorator =>
+    (target, propertyKey) => {
+        Reflect.defineMetadata('statusCode', code, target, propertyKey);
+    };
+
+export const getStatusCode = (target: any, propertyKey: string | symbol): number => {
+    return Reflect.getMetadata('statusCode', target, propertyKey);
+};

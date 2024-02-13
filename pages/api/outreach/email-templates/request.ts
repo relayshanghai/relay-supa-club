@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsArray, IsUUID } from 'class-validator';
 
 export enum OutreachStepRequest {
     OUTREACH = 'OUTREACH',
@@ -27,6 +27,9 @@ export class TemplateRequest {
         each: true,
     })
     @IsArray()
+    @IsUUID('4', {
+        each: true,
+    })
     variableIds: string[] = [];
 }
 

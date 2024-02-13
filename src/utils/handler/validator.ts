@@ -1,4 +1,6 @@
 import { validate, type ValidationError as VError } from 'class-validator';
+import { HttpError } from '../error/http-error';
+import httpCodes from 'src/constants/httpCodes';
 
 const buildKey = (root: string, key: string) => {
     if (isNaN(parseInt(key))) {
@@ -24,12 +26,11 @@ const buildErrorMessage = (errors: VError[], key?: string): string[] => {
         .flat();
 };
 
-export class ValidationError extends Error {
+export class ValidationError extends HttpError {
     messages: string[];
     constructor(messages: string[]) {
-        super();
+        super('Validation failed!', httpCodes.BAD_REQUEST);
         this.name = ValidationError.name;
-        this.message = 'Validation failed!';
         this.messages = messages;
     }
 }

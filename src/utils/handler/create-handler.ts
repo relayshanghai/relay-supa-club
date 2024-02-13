@@ -2,7 +2,7 @@ import type { NextApiResponse } from 'next';
 import { createErrorObject } from '../api-handler';
 import type { RelayApiRequest } from '../api-handler';
 import httpCodes from 'src/constants/httpCodes';
-import { getHandlerMetadata } from './decorators/api-decorator';
+import { getHandlerMetadata, getStatusCode } from './decorators/api-decorator';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { RelayDatabase } from '../api/db';
 import awaitToError from '../await-to-error';
@@ -58,13 +58,16 @@ export const createHandler = (target: new () => any) => {
         if (error) {
             const tag = nanoid(6);
             const e = createErrorObject(error, tag);
-
             serverLogger(error, (scope) => {
                 return scope.setTag('error_code_tag', e.tag);
             });
 
-            return res.status(e.httpCode).json(error);
+            return res.status(e.httpCode).json({
+                ...error,
+                message: error.message,
+            });
         }
-        return res.status(httpCodes.OK).json(resp);
+        const status = getStatusCode(instance, handlerStr) || 200;
+        return res.status(status).json(resp);
     };
 };
