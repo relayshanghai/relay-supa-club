@@ -908,6 +908,39 @@ export interface Database {
         }
         Relationships: []
       }
+      outreach_email_template_variables_relation: {
+        Row: {
+          id: string
+          outreach_email_template_id: string | null
+          outreach_template_variable_id: string | null
+        }
+        Insert: {
+          id?: string
+          outreach_email_template_id?: string | null
+          outreach_template_variable_id?: string | null
+        }
+        Update: {
+          id?: string
+          outreach_email_template_id?: string | null
+          outreach_template_variable_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_email_template_variables_relation_outreach_email_templ"
+            columns: ["outreach_email_template_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_email_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_email_template_variables_relation_outreach_template_va"
+            columns: ["outreach_template_variable_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_template_variables"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       outreach_email_templates: {
         Row: {
           company_id: string | null
