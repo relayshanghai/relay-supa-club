@@ -911,18 +911,18 @@ export interface Database {
       outreach_email_template_variables_relation: {
         Row: {
           id: string
-          outreach_email_template_id: string
-          outreach_template_variable_id: string
+          outreach_email_template_id: string | null
+          outreach_template_variable_id: string | null
         }
         Insert: {
           id?: string
-          outreach_email_template_id: string
-          outreach_template_variable_id: string
+          outreach_email_template_id?: string | null
+          outreach_template_variable_id?: string | null
         }
         Update: {
           id?: string
-          outreach_email_template_id?: string
-          outreach_template_variable_id?: string
+          outreach_email_template_id?: string | null
+          outreach_template_variable_id?: string | null
         }
         Relationships: [
           {
@@ -957,7 +957,7 @@ export interface Database {
           description?: string | null
           email_engine_template_id: string
           id?: string
-          name: string
+          name?: string
           step: Database["public"]["Enums"]["outreach_step"]
           subject?: string | null
           template?: string | null
