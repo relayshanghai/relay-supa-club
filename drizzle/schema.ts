@@ -711,6 +711,8 @@ export const outreach_email_templates = pgTable('outreach_email_templates', {
         .default(sql`uuid_generate_v4()`)
         .primaryKey()
         .notNull(),
+    name: text('name').notNull(),
+    description: text('description'),
     step: text('step', {
         enum: OUTREACH_STATUSES,
     }).notNull(),
@@ -722,15 +724,28 @@ export const outreach_email_templates = pgTable('outreach_email_templates', {
         .references(() => companies.id),
 });
 
-export const outreach_template_variables = pgTable('myTable', {
+export const outreach_template_variables = pgTable('outreach_template_variables', {
     id: uuid('id')
         .default(sql`uuid_generate_v4()`)
         .primaryKey()
         .notNull(),
     name: varchar('name').notNull().unique(),
-    value: text('value').notNull(),
+    category: text('value').notNull(),
     company_id: uuid('company_id')
         .notNull()
         .references(() => companies.id)
         .unique(),
+});
+
+export const outreach_email_template_variables_relation = pgTable('outreach_email_template_variables_relation', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    outreach_email_template_id: uuid('outreach_email_template_id')
+        .notNull()
+        .references(() => outreach_email_templates.id, { onDelete: 'cascade' }),
+    outreach_template_variable_id: uuid('outreach_template_variable_id')
+        .notNull()
+        .references(() => outreach_template_variables.id, { onDelete: 'cascade' }),
 });
