@@ -59,10 +59,7 @@ export default class OutreachTemplateRepository {
         return data;
     }
     async get(companyId: string, id: string) {
-        const [data] = await db()
-            .select()
-            .from(outreach_email_templates)
-            .where(and(eq(outreach_email_templates.id, id), eq(outreach_email_templates.company_id, companyId)));
+        const [data] = await db().select().from(outreach_email_templates);
         if (!data) {
             throw new NotFoundError(`template with id: ${id} and company id: ${companyId} does not exist`);
         }

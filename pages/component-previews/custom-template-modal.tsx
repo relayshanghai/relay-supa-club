@@ -40,19 +40,14 @@ import { SearchBar } from 'src/components/SearchBar';
 import { Input } from 'shadcn/components/ui/input';
 import { DialogClose } from 'shadcn/components/ui/dialog';
 import { Tiptap } from 'src/components/tiptap';
+import useSWR from 'swr';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 type VariableGroup = (typeof VARIABLE_GROUPS)[number];
-
-type Template = {
-    id: number;
-    name: string;
-    description: string;
-    subject: string;
-    content: string;
-};
 
 const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     switch (status) {
@@ -102,14 +97,19 @@ const VariableGroupIcon = ({ status }: { status: VariableGroup }) => {
 };
 
 const CustomTemplateCard = ({
-    template,
+    templateId,
     status,
     selected,
 }: {
-    template: Template;
+    templateId: string;
     status: OutreachStatus;
     selected?: boolean;
 }) => {
+    const { data: template } = useSWR([templateId], async () => {
+        const url = `/api/outreach/email-templates/${templateId}`;
+        const res = await apiFetch<GetTemplateResponse>(url);
+        return res.content;
+    });
     return (
         <Dialog>
             <DialogTrigger>
@@ -126,12 +126,12 @@ const CustomTemplateCard = ({
                         </div>
                         <section className="flex flex-col items-start justify-between gap-4">
                             <CardTitle className={`${selected ? 'text-primary-800' : 'text-gray-700'} font-medium`}>
-                                {template.name}
+                                {template?.name}
                             </CardTitle>
                             <CardDescription
                                 className={`${selected ? 'text-primary-400' : 'text-gray-400'} font-normal`}
                             >
-                                {template.description}
+                                {template?.description}
                             </CardDescription>
                         </section>
                     </CardHeader>
@@ -140,7 +140,11 @@ const CustomTemplateCard = ({
             <DialogContent className="min-w-[600px] p-0 lg:min-w-[800px]">
                 <DialogHeader>
                     <DialogDescription className="w-full p-6">
-                        <CustomTemplateDetails status={status} subject={template.subject} content={template.content} />
+                        <CustomTemplateDetails
+                            status={status}
+                            subject={template?.subject || ''}
+                            content={template?.template || ''}
+                        />
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>
@@ -350,49 +354,12 @@ const NameTemplateBody = () => {
     );
 };
 
-const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
-    // const {
-    //     data
-    // } = useSWR([status], async () => {
-    //     const res = await apiFetch('/api/outhreach/email-templates?step=${status}')
-    //     return res.content;
-    // })
-    const mockData = [
-        {
-            id: 1,
-            name: 'Template 1',
-            description: 'This is a template',
-            subject: 'Email Subject 1',
-            content: 'Email content',
-        },
-        {
-            id: 2,
-            name: 'Template 2',
-            description: 'This is a template',
-            subject: 'Email Subject 2',
-            content: 'Email content',
-        },
-        {
-            id: 3,
-            name: 'Template 3',
-            description: 'This is a template',
-            subject: 'Email Subject',
-            content: 'Email content',
-        },
-        {
-            id: 4,
-            name: 'Template 4',
-            description: 'This is a template',
-            subject: 'Email Subject',
-            content: 'Email content',
-        },
-    ];
-
+const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; templates: GetAllTemplateResponse[] }) => {
     return (
-        <section className="divide-y-2  ">
+        <section className="divide-y-2">
             <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
-                {mockData.map((template) => (
-                    <CustomTemplateCard key={template.id} template={template} status={status} />
+                {templates.map((template) => (
+                    <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
                 ))}
             </div>
             <div>
@@ -410,6 +377,19 @@ const TemplateTabContent = ({ status }: { status: OutreachStatus }) => {
 
 const CustomTemplateModalBody = () => {
     const { t } = useTranslation();
+    const { data } = useSWR(['pah'], async () => {
+        const res = await apiFetch<GetAllTemplateResponse[]>('/api/outreach/email-templates');
+        return res.content;
+    });
+    const groupedTemplateData = data?.reduce((acc: { [key: string]: GetAllTemplateResponse[] }, template) => {
+        const key = template.step;
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(template);
+        return acc;
+    }, {});
+
     return (
         <Tabs defaultValue="OUTREACH" className="w-full">
             <TabsList className="mt-5 w-full">
@@ -426,7 +406,7 @@ const CustomTemplateModalBody = () => {
             </TabsList>
             {OUTREACH_STATUSES.map((status) => (
                 <TabsContent key={`content-${status}`} value={status}>
-                    <TemplateTabContent status={status} />
+                    <TemplateTabContent templates={groupedTemplateData?.[status] || []} status={status} />
                 </TabsContent>
             ))}
         </Tabs>
