@@ -54,7 +54,7 @@ env:
     NEXT_PUBLIC_ENABLE_RUDDERSTACK: false
 jobs:
     e2e-test:
-        environment: staging
+        environment: preview
 
         runs-on:
             group: large-runner
