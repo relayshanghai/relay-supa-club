@@ -8,6 +8,7 @@ export const NOT_FOUND = 404;
 export const METHOD_NOT_ALLOWED = 405;
 export const INTERNAL_SERVER_ERROR = 500;
 export const NOT_IMPLEMENTED = 501;
+export const CONFLICT = 409;
 
 const httpCodes = {
     OK,
@@ -20,6 +21,7 @@ const httpCodes = {
     METHOD_NOT_ALLOWED,
     INTERNAL_SERVER_ERROR,
     NOT_IMPLEMENTED,
+    CONFLICT,
 };
 
 export default httpCodes;

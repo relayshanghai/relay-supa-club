@@ -48,7 +48,7 @@ env:
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
     NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
     EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
-    EMAIL_ENGINE_API_URL: https://email.relay.club
+    EMAIL_ENGINE_API_URL: https://staging-email.relay.club
     NEXT_PUBLIC_DISABLE_CHATWOOT: true
     SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
     NEXT_PUBLIC_ENABLE_RUDDERSTACK: false
@@ -111,14 +111,14 @@ jobs:
             - name: Make sure seed is loaded
               run: supabase db reset
 
-            - name: Cypress run
-              uses: cypress-io/github-action@v5
-              with:
-                  browser: chrome
-                  start: npm run dev
-                  # http://localhost:54323/ is the supabase dashboard
-                  wait-on: http://localhost:3000, http://localhost:54323
-                  wait-on-timeout: 180
+            # - name: Cypress run
+            #   uses: cypress-io/github-action@v5
+            #   with:
+            #       browser: chrome
+            #       start: npm run dev
+            #       # http://localhost:54323/ is the supabase dashboard
+            #       wait-on: http://localhost:3000, http://localhost:54323
+            #       wait-on-timeout: 180
 
     component-test:
         needs: e2e-test

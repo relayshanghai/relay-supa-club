@@ -957,7 +957,7 @@ export interface Database {
           description?: string | null
           email_engine_template_id: string
           id?: string
-          name: string
+          name?: string
           step: Database["public"]["Enums"]["outreach_step"]
           subject?: string | null
           template?: string | null
