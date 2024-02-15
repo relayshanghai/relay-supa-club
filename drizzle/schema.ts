@@ -750,10 +750,8 @@ export const outreach_email_template_variables_relation = pgTable('outreach_emai
         .references(() => outreach_template_variables.id, { onDelete: 'cascade' }),
 });
 
-export const template_variables_relation = relations(outreach_email_templates, ({ 
-    many
- }) => ({
+export const template_variables_relation = relations(outreach_email_templates, ({ many }) => ({
     variables: many(outreach_template_variables, {
         relationName: 'outreach_email_template_id',
     }),
- }))
+}));
