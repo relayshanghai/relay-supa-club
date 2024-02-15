@@ -1,4 +1,4 @@
-import SupabaseStorageService, { STORAGE_URL } from 'src/backend/integration/supabase-storage';
+import SupabaseStorageService, { STORAGE_URL } from 'src/backend/integration/supabase-storage/supabase-storage';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import * as path from 'path';
 export default class StorageService {

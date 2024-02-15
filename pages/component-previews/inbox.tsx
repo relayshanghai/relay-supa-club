@@ -525,7 +525,20 @@ const InboxPreview = () => {
         };
     }, [data]);
 
-    const threads = data && data.flatMap((page) => page.threads);
+    const threads =
+        data &&
+        data
+            .flatMap((page) => page.threads)
+            .reduce((uniqueThreads, currentThread) => {
+                const isDuplicate = uniqueThreads.some(
+                    (thread) => thread.threadInfo.thread_id === currentThread.threadInfo.thread_id,
+                );
+                if (!isDuplicate) {
+                    uniqueThreads.push(currentThread);
+                }
+                return uniqueThreads;
+            }, [] as ThreadInfo[]);
+
     const totals = useMemo(() => {
         return threadsInfo
             ? {
