@@ -48,13 +48,13 @@ env:
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
     NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
     EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
-    EMAIL_ENGINE_API_URL: https://email.relay.club
+    EMAIL_ENGINE_API_URL: https://staging-email.relay.club
     NEXT_PUBLIC_DISABLE_CHATWOOT: true
     SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
     NEXT_PUBLIC_ENABLE_RUDDERSTACK: false
 jobs:
     e2e-test:
-        environment: preview
+        environment: staging
 
         runs-on:
             group: large-runner
