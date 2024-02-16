@@ -51,15 +51,18 @@ export default class OutreachTemplateRepository {
             .innerJoin(
                 outreach_email_template_variables_relation,
                 eq(
-                    outreach_template_variables.id,
                     outreach_email_template_variables_relation.outreach_template_variable_id,
+                    outreach_template_variables.id,
                 ),
             )
-            .where(eq(outreach_email_templates.id, id));
+            .where(eq(outreach_email_template_variables_relation.outreach_email_template_id, id));
         return data;
     }
     async get(companyId: string, id: string) {
-        const [data] = await db().select().from(outreach_email_templates);
+        const [data] = await db()
+            .select()
+            .from(outreach_email_templates)
+            .where(and(eq(outreach_email_templates.id, id), eq(outreach_email_templates.company_id, companyId)));
         if (!data) {
             throw new NotFoundError(`template with id: ${id} and company id: ${companyId} does not exist`);
         }

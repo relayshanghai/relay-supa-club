@@ -43,6 +43,7 @@ import { Tiptap } from 'src/components/tiptap';
 import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -129,9 +130,11 @@ const CustomTemplateCard = ({
                                 {template?.name}
                             </CardTitle>
                             <CardDescription
-                                className={`${selected ? 'text-primary-400' : 'text-gray-400'} font-normal`}
+                                className={`${
+                                    selected ? 'text-primary-400' : 'text-gray-400'
+                                } overflow-hidden overflow-ellipsis text-start font-normal`}
                             >
-                                {template?.description}
+                                {truncatedText(template?.description || '', 30)}
                             </CardDescription>
                         </section>
                     </CardHeader>
@@ -180,7 +183,7 @@ const CustomTemplateDetails = ({
                         </label>
                     </section>
                 </section>
-                <section className="min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
+                <section className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
                     {content}
                 </section>
             </CardDescription>
@@ -623,7 +626,9 @@ const CustomTemplateModal = () => {
                 </DialogContent>
             </Dialog>
             <Dialog>
-                <DialogTrigger>Open</DialogTrigger>
+                <DialogTrigger>
+                    <Button>Template Library</Button>
+                </DialogTrigger>
                 <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                     <DialogHeader>
                         <DialogTitle className="flex flex-col gap-1 px-6 py-4 pt-6">
