@@ -701,11 +701,10 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('fixing, addAdminSuperuserToEachAccount');
     shouldStop = false;
 
-    const password = 'B00*Support'; // use old one for now, then change all the passwords later
-    // const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
-    // if (!password) {
-    //     throw new Error('No password found');
-    // }
+    const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
+    if (!password) {
+        throw new Error('No password found');
+    }
     const supportUsers =
         (
             await db()
