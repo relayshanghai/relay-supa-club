@@ -4,11 +4,12 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
-import { profiles as profilesSchema } from '../../drizzle/schema';
+import { companies, profiles as profilesSchema } from '../../drizzle/schema';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { wait } from 'src/utils/utils';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
+import { eq, ilike, notInArray } from 'drizzle-orm';
 let shouldStop = false;
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
@@ -696,18 +697,34 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
     return res.json({ results });
 };
 
-const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
+const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('fixing, addAdminSuperuserToEachAccount');
     shouldStop = false;
 
-    const password = 'B00$t80t*Support';
-    const { data: companies } = await supabase.from('companies').select('id, name, cus_id, created_at');
+    const password = 'B00*Support'; // use old one for now, then change all the passwords later
+    // const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
+    // if (!password) {
+    //     throw new Error('No password found');
+    // }
+    const supportUsers =
+        (
+            await db()
+                .select({ company_id: profilesSchema.company_id })
+                .from(profilesSchema)
+                .where(ilike(profilesSchema.email, '%support+%'))
+        )?.map((p) => p.company_id ?? '') ?? [];
+
+    const companiesWithoutServiceAccounts = await db()
+        .select()
+        .from(companies)
+        .where(notInArray(companies.id, supportUsers));
+
     const results = [];
     const noServiceAccountCompanies = [];
 
-    console.log('companies', companies?.length);
-    if (companies)
-        for (const company of companies) {
+    console.log('companies', companiesWithoutServiceAccounts?.length);
+    if (companiesWithoutServiceAccounts)
+        for (const company of companiesWithoutServiceAccounts) {
             if (shouldStop) {
                 console.log('stopped');
                 break;
@@ -738,19 +755,29 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 email,
                 password,
             });
-            console.log('signupResData, error', signupResData, error, email, password);
+            // console.log('signupResData, error', signupResData, error, email, password);
             let id = signupResData?.user?.id;
             if (error?.message.includes('User already registered')) {
                 const { error: error2, data: signinResData } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 });
-                id = signinResData?.user?.id;
                 if (error2) {
-                    console.log('error message');
-                    console.log(error2?.message || 'Unknown error', email);
-                    continue;
+                    const { error: error3, data: otherPass } = await supabase.auth.signInWithPassword({
+                        email,
+                        password: 'B00$t80t*Support',
+                    });
+                    if (error3) {
+                        console.log('error message');
+                        console.log(error3?.message || 'Unknown error', email);
+                        continue;
+                    }
+                    if (otherPass) {
+                        id = otherPass?.user?.id;
+                    }
                 }
+
+                id = signinResData?.user?.id;
             }
 
             if (!id) {
@@ -772,14 +799,82 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
 
                 console.log('created profile', result);
                 results.push(company);
-            } catch (error) {
-                console.log('error inserting');
-                console.error(error);
+            } catch (error: any) {
+                if (error.message.includes('duplicate key value violates unique constraint "profiles_pkey')) {
+                    try {
+                        const result = db()
+                            .update(profilesSchema)
+                            .set(profileBody)
+                            .where(eq(profilesSchema.id, id))
+                            .returning();
+                        console.log('update profile', result);
+                        results.push(company);
+                    } catch (error) {
+                        console.log('error updating profile');
+                        console.error(error);
+                    }
+                } else {
+                    console.log('error inserting');
+                    console.error(error);
+                }
             }
         }
     console.log('results', results);
     console.log('noServiceAccountCompanies', noServiceAccountCompanies);
     return res.json({ results });
+};
+
+const updateSupportUsersPasswords: NextApiHandler = async (_req, res) => {
+    console.log('updateSupportUsersPasswords');
+    shouldStop = false;
+    const supportUsers = await db().select().from(profilesSchema).where(ilike(profilesSchema.email, '%support+%'));
+    console.log('supportUsers', supportUsers?.length);
+
+    for (const user of supportUsers) {
+        if (shouldStop) {
+            console.log('stopped');
+            break;
+        }
+        const email = user.email ?? '';
+        if (!email) {
+            console.log('no email', user);
+            continue;
+        }
+        const password = 'B00*Support';
+        let id = ''; // see if still empty after login
+        const { error: error2, data: signinResData } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error2) {
+            const { error: error3, data: otherPass } = await supabase.auth.signInWithPassword({
+                email,
+                password: 'B00$t80t*Support',
+            });
+            if (error3) {
+                continue;
+            } else {
+                id = otherPass?.user?.id ?? '';
+            }
+        } else {
+            id = signinResData?.user?.id ?? '';
+        }
+
+        if (!id) {
+            console.log('Error signing in with old passwords');
+            continue;
+        }
+        const { error, data: updated } = await supabase.auth.updateUser({
+            password: process.env.SERVICE_ACCOUNT_PASSWORD,
+        });
+        if (error) {
+            console.log('error updating password');
+            console.error(error);
+            continue;
+        }
+        console.log('updated', updated, process.env.SERVICE_ACCOUNT_PASSWORD);
+    }
+    return res.json({ ok: 'asd' });
 };
 
 const _fixStuckInSequenceWithNoEmailSent: NextApiHandler = async (_req, res) => {
@@ -933,6 +1028,6 @@ const handleStop: NextApiHandler = async (_req, res) => {
 };
 
 export default ApiHandlerWithContext({
-    getHandler: addAdminSuperuserToEachAccount,
+    getHandler: updateSupportUsersPasswords,
     deleteHandler: handleStop,
 });
