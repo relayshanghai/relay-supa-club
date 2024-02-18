@@ -702,28 +702,20 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     if (companies)
         for (const company of companies) {
             if (!company.name || !company.cus_id) {
-                console.log('no company name or cus_id', company);
+                // console.log('no company name or cus_id', company);
                 continue;
             }
             const { data: profiles } = await supabase
                 .from('profiles')
-                .select('id, email_engine_account_id, sequence_send_email')
+                .select('id, email, email_engine_account_id, sequence_send_email')
                 .eq('company_id', company.id);
 
-            let hasAccountProfile:
-                | {
-                      id: string;
-                      email_engine_account_id: string | null;
-                      sequence_send_email: string | null;
-                  }
-                | undefined;
-            if (profiles)
-                for (const profile of profiles) {
-                    if (profile.email_engine_account_id) {
-                        hasAccountProfile = profile;
-                        break;
-                    }
-                }
+            const hasServiceAccount = profiles?.some((p) => p.email?.includes('support+'));
+            if (hasServiceAccount) {
+                continue;
+            }
+            const hasAccountProfile = profiles?.find((p) => p.email_engine_account_id);
+
             const emailBadCharactersReplacer = (email: string) => {
                 return email.replace(/[.,'"\(\) ]/g, '');
             };
@@ -892,7 +884,7 @@ const _checkHowManyJobsCreatedPerInfluencer: NextApiHandler = async (_req, res) 
     return res.status(200).json({ message: jobs.length });
 };
 
-const fixOutboxEmailsHaveNoSequenceEmailRecord: NextApiHandler = async (_req, res) => {
+const _fixOutboxEmailsHaveNoSequenceEmailRecord: NextApiHandler = async (_req, res) => {
     console.log('fixOutboxEmailsHaveNoSequenceEmailRecord');
     const outbox = await getOutbox();
 
@@ -923,4 +915,4 @@ const fixOutboxEmailsHaveNoSequenceEmailRecord: NextApiHandler = async (_req, re
     return res.status(200).json({ message: results });
 };
 
-export default fixOutboxEmailsHaveNoSequenceEmailRecord;
+export default _addAdminSuperuserToEachAccount;
