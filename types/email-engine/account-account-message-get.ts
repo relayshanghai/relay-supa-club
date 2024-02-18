@@ -29,6 +29,7 @@ export interface AccountAccountMessageGet {
 }
 
 export interface Attachment {
+    filename: string;
     id: string;
     contentType: string;
     encodedSize: number;
@@ -61,6 +62,7 @@ export interface Headers {
 }
 
 export interface ReplyTo {
+    name?: string;
     address: string;
 }
 

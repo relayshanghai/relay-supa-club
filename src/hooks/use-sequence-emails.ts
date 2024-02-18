@@ -1,10 +1,6 @@
 import useSWR from 'swr';
 import { useDB } from 'src/utils/client-db/use-client-db';
-import {
-    getAllSequenceEmailsCall,
-    getSequenceEmailsBySequenceCall,
-    updateSequenceEmailCall,
-} from 'src/utils/api/db/calls/sequence-emails';
+import { getAllSequenceEmailsCall, getSequenceEmailsBySequenceCall } from 'src/utils/api/db/calls/sequence-emails';
 import { useSequences } from './use-sequences';
 
 export const useSequenceEmails = (sequenceId?: string) => {
@@ -13,7 +9,6 @@ export const useSequenceEmails = (sequenceId?: string) => {
     const getSequenceEmailsBySequenceDBCall = useDB<typeof getSequenceEmailsBySequenceCall>(
         getSequenceEmailsBySequenceCall,
     );
-    const updateSequenceEmail = useDB<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
 
     const {
         data: sequenceEmails,
@@ -34,7 +29,6 @@ export const useSequenceEmails = (sequenceId?: string) => {
     return {
         sequenceEmails,
         refreshSequenceEmails,
-        updateSequenceEmail,
         allSequenceEmails,
         isLoading,
     };

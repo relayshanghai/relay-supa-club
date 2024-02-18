@@ -99,7 +99,10 @@ export type SubscriptionPlans =
 /** "profile" for creator report, "search" for creator search, "ai_email" (Deprecated)  for usage of the ai email generator */
 export type UsageType = 'profile' | 'search';
 
-export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
+export const CREATOR_PLATFORM_OPTIONS = ['instagram', 'youtube', 'tiktok'] as const;
+
+export const CreatorPlatform = z.enum(CREATOR_PLATFORM_OPTIONS);
+export type CreatorPlatform = z.infer<typeof CreatorPlatform>;
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 export const influencerSizes = ['microinfluencer', 'nicheinfluencer', 'megainfluencer'] as const;
 export type InfluencerSize = (typeof influencerSizes)[number];

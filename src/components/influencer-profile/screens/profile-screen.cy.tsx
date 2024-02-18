@@ -1,5 +1,5 @@
 import { testMount } from 'src/utils/cypress-app-wrapper';
-import { ProfileScreen } from './profile-screen';
+import { ProfileScreen } from './profile-screen-legacy';
 import { inManagerDummyInfluencers } from 'src/components/sequences/in-manager-dummy-sequence-influencers';
 import { ProfileScreenProvider } from './profile-screen-context';
 import { mapProfileToFormData } from 'src/components/inbox/helpers';

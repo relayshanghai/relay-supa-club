@@ -1,3 +1,6 @@
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { SearchTableInfluencer } from 'types';
+
 export const getPaginationItems = (
     currentPage: number,
     lastPage: number,
@@ -69,4 +72,13 @@ export const getPaginationItems = (
     }
 
     return res;
+};
+
+export const filterOutAlreadyAddedInfluencers = (
+    allSequenceInfluencers: AllSequenceInfluencersBasicInfo[],
+    influencers: SearchTableInfluencer[],
+) => {
+    const allSequenceInfluencersSet = new Set(allSequenceInfluencers.map(({ iqdata_id }) => iqdata_id));
+
+    return influencers.filter((i) => i && !allSequenceInfluencersSet.has(i.user_id));
 };

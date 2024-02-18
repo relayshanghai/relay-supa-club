@@ -16,9 +16,11 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
-import { useAnalytics } from 'src/components/analytics/analytics-provider';
+import { initSmartlook, useAnalytics, useSmartlook } from 'src/components/analytics/analytics-provider';
 import { useMixpanel } from './use-mixpanel';
 import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
+import awaitToError from 'src/utils/await-to-error';
+import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
 
 export type SignupData = {
     email: string;
@@ -49,6 +51,9 @@ export interface IUserContext {
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
     signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
+
+    paymentMethods: Record<string, PaymentMethod>;
+    refreshPaymentMethods: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -65,6 +70,8 @@ export const UserContext = createContext<IUserContext>({
     supabaseClient: null,
     getProfileController: { current: null },
     signup: async () => undefined as any,
+    paymentMethods: {},
+    refreshPaymentMethods: () => null,
 });
 
 export const useUser = () => {
@@ -84,10 +91,28 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const clientRoleData = useAtomValue(clientRoleAtom);
     const mixpanel = useMixpanel();
     const { analytics } = useAnalytics();
+    const { identify } = useSmartlook();
+
+    useEffect(() => {
+        initSmartlook();
+    }, []);
 
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
+    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR('payment-methods', async () => {
+        if (!session?.user?.id) return;
+        const [error, data] = await awaitToError(nextFetch<PaymentMethod[]>(`profiles/payment-methods`));
+        if (error) {
+            clientLogger(error, 'error');
+            return {};
+        }
+        const _paymentMethods: Record<string, PaymentMethod> = data?.reduce((acc, curr) => {
+            acc[curr.type] = curr;
+            return acc;
+        }, {} as Record<string, PaymentMethod>);
+        return _paymentMethods;
+    });
 
     const { data: profile, mutate: refreshProfile } = useSWR(
         session?.user.id ? [session.user.id, 'profiles'] : null,
@@ -106,6 +131,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger(error, 'error');
                 throw new Error(error.message || 'Unknown error');
             }
+            identify(fetchedProfile.email || '');
+
             return fetchedProfile;
         },
     );
@@ -121,6 +148,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
+                identify(data?.user?.email || '');
                 return data;
             } catch (e: unknown) {
                 clientLogger(e, 'error');
@@ -131,7 +159,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent],
+        [supabaseClient, trackEvent, identify],
     );
 
     const updateProfile = useCallback(
@@ -244,6 +272,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 signup,
                 supabaseClient,
                 getProfileController,
+                paymentMethods: paymentMethods || {},
+                refreshPaymentMethods,
             }}
         >
             {children}

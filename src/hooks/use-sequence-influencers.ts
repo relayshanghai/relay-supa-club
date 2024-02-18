@@ -1,4 +1,4 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPageWithChannelData } from 'pages/api/sequence/influencers';
 import type {
     SequenceInfluencersDeleteRequestBody,
     SequenceInfluencersDeleteResponse,
@@ -15,6 +15,7 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
+/** If you only want to use `refresh` or `create`, no need to pass sequenceIds. If you don't pass sequenceIds it will not call the fetch */
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
 
@@ -23,12 +24,15 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         mutate: refreshSequenceInfluencers,
         isLoading,
         isValidating,
-    } = useSWR<SequenceInfluencerManagerPage[]>(
-        sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
+    } = useSWR<SequenceInfluencerManagerPageWithChannelData[]>(
+        sequenceIds && sequenceIds.length > 0 ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
-                body: sequenceIds,
-            });
+            const allInfluencers = await apiFetch<SequenceInfluencerManagerPageWithChannelData[], any>(
+                '/api/sequence/influencers',
+                {
+                    body: sequenceIds,
+                },
+            );
             return allInfluencers.content;
         },
         { revalidateOnFocus: true },
@@ -43,7 +47,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
                 'added_by' | 'company_id' | 'sequence_step' | 'funnel_status' | 'rate_amount' | 'rate_currency'
             >,
         ) => {
-            if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
             if (!profile?.company_id) throw new Error('No profile found');
 
             const insert: SequenceInfluencerInsert = {
@@ -58,7 +61,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
             const res = await createSequenceInfluencerDBCall(insert);
             return res;
         },
-        [createSequenceInfluencerDBCall, profile?.company_id, profile?.id, sequenceIds],
+        [createSequenceInfluencerDBCall, profile?.company_id, profile?.id],
     );
 
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);
@@ -75,7 +78,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         async (ids: string[]) => {
             const body: SequenceInfluencersDeleteRequestBody = { ids };
             // optimistic update
-            refreshSequenceInfluencers((prev) => prev?.filter((i) => !ids.includes(i.id)) ?? []);
+            refreshSequenceInfluencers((prev) => prev?.filter((i) => !ids.includes(i.id)) ?? [], { revalidate: false });
             const res = await nextFetch<SequenceInfluencersDeleteResponse>('sequence/influencers/delete', {
                 method: 'POST',
                 body,

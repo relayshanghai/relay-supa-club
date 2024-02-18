@@ -189,6 +189,11 @@ import type { HoverLocationGraphPayload } from './boostbot/hover-location-graph'
 import { HOVER_LOCATION_GRAPH, HoverLocationGraph } from './boostbot/hover-location-graph';
 import { type HoverGenderGraphPayload } from './boostbot/hover-gender-graph';
 import { HOVER_GENDER_GRAPH, HoverGenderGraph } from './boostbot/hover-gender-graph';
+import type { UpdateInfluencerOrAddressPayload } from './outreach/update-sequence-influencer-or-address';
+import {
+    UPDATE_INFLUENCER_OR_ADDRESS,
+    UpdateInfluencerOrAddress,
+} from './outreach/update-sequence-influencer-or-address';
 
 export {
     Search,
@@ -339,6 +344,7 @@ export const events = {
     [OPEN_INFLUENCER_CARD]: OpenInfluencerCard,
     [HOVER_LOCATION_GRAPH]: HoverLocationGraph,
     [HOVER_GENDER_GRAPH]: HoverGenderGraph,
+    [UPDATE_INFLUENCER_OR_ADDRESS]: UpdateInfluencerOrAddress,
 };
 
 export type payloads = {
@@ -430,6 +436,7 @@ export type payloads = {
     [OPEN_INFLUENCER_CARD]: OpenInfluencerCardPayload;
     [HOVER_LOCATION_GRAPH]: HoverLocationGraphPayload;
     [HOVER_GENDER_GRAPH]: HoverGenderGraphPayload;
+    [UPDATE_INFLUENCER_OR_ADDRESS]: UpdateInfluencerOrAddressPayload;
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -523,6 +530,7 @@ export const eventKeys = z.union([
     z.literal(OPEN_INFLUENCER_CARD),
     z.literal(HOVER_LOCATION_GRAPH),
     z.literal(HOVER_GENDER_GRAPH),
+    z.literal(UPDATE_INFLUENCER_OR_ADDRESS),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

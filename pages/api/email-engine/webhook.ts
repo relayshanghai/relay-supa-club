@@ -1,20 +1,13 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type {
-    ProfileDB,
-    SequenceEmail,
-    SequenceEmailUpdate,
-    SequenceInfluencer,
-    SequenceInfluencerUpdate,
-} from 'src/utils/api/db';
+import type { ProfileDB, SequenceEmail, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
     getSequenceEmailByInfluencerAndSequenceStep,
     getSequenceEmailByMessageIdCall,
     getSequenceEmailsBySequenceInfluencerCall,
-    updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
@@ -56,9 +49,15 @@ import { now } from 'src/utils/datetime';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { SEQUENCE_STEP_SEND_QUEUE_NAME } from 'src/utils/scheduler/queues/sequence-step-send';
+import { syncEmail } from 'src/utils/outreach/sync-email';
+import type { WebhookMessageDeleted } from 'types/email-engine/webhook-message-deleted';
+import { deleteEmail } from 'src/utils/outreach/delete-email';
 import { v4 } from 'uuid';
 import { deleteJobs } from 'src/utils/scheduler/db-queries';
 import { isString } from 'src/utils/types';
+import type { SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
+import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
+import { insertAddressCall } from 'src/backend/database/addresses';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -71,6 +70,7 @@ export type WebhookEvent =
     | WebhookMessageFailed
     | WebhookMessageNew
     | WebhookMessageSent
+    | WebhookMessageDeleted
     | WebhookTrackClick
     | WebhookTrackOpen;
 
@@ -81,8 +81,6 @@ const getSequenceEmailsBySequenceInfluencer = db<typeof getSequenceEmailsBySeque
 );
 
 const getSequenceInfluencerById = db<typeof getSequenceInfluencerByIdCall>(getSequenceInfluencerByIdCall);
-
-const updateSequenceEmail = db<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
 
 const getSequenceInfluencerByEmailAndCompany = db<typeof getSequenceInfluencerByEmailAndCompanyCall>(
     getSequenceInfluencerByEmailAndCompanyCall,
@@ -151,10 +149,73 @@ const deleteScheduledEmails = async (
     }
 };
 
-const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
+const scheduleOutreachEmailRetry = async ({
+    event,
+    sequenceInfluencer,
+    sequenceStep,
+    sequenceSteps,
+    templateVariables,
+}: {
+    event: any;
+    sequenceInfluencer: any;
+    sequenceStep: any;
+    sequenceSteps: any;
+    templateVariables: any;
+}) => {
+    const payload: SequenceStepSendArgs = {
+        emailEngineAccountId: event.account,
+        sequenceInfluencer,
+        sequenceStep,
+        sequenceSteps,
+        templateVariables,
+        reference: event.data.messageId,
+    };
+
+    // Get existing sequence email retry if it exists
+    const { data, error } = await db(getSequenceEmailByInfluencerAndSequenceStep)(
+        sequenceInfluencer.id,
+        sequenceStep.id,
+    );
+
+    if (error) {
+        serverLogger(
+            `nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`,
+            (scope) => {
+                return scope.setContext('Error', {
+                    error,
+                });
+            },
+        );
+    }
+
+    if (!data) {
+        serverLogger(
+            `no next email record found for influencer id: ${sequenceInfluencer.id} and step id: ${sequenceStep.id}`,
+        );
+    }
+
+    const jobId = v4();
+
+    const job = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
+        id: jobId,
+        queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
+        payload,
+    });
+
+    // Update existing sequence email retry of the new job
+    if (data) {
+        await updateSequenceEmailCall(data.id, { job_id: jobId });
+    }
+
+    return job;
+};
+
+export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
+    const { id, influencer_social_profile_id, real_full_name, name, username, address_id } = sequenceInfluencer;
+
     let trackData: EmailReplyPayload = {
         account_id: event.account,
-        sequence_influencer_id: sequenceInfluencer.id,
+        sequence_influencer_id: id,
         sequence_emails_pre_delete: [],
         sequence_emails_after_delete: [],
         scheduled_emails: [],
@@ -167,18 +228,18 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
     try {
         trackData = await deleteScheduledEmails(trackData, sequenceInfluencer);
         // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
-        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(id);
         trackData.sequence_emails_after_delete = sequenceEmails.map((email) => email.id);
 
-        const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
-            id: sequenceEmail.id,
-            email_delivery_status: 'Replied',
-        }));
-        trackData.email_updates = emailUpdates.map((update) => update.id || '');
+        const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => [
+            sequenceEmail.id,
+            { email_delivery_status: 'Replied' },
+        ]);
+        trackData.email_updates = emailUpdates.map((update) => update[0] || '');
 
         for (const emailUpdate of emailUpdates) {
             try {
-                await updateSequenceEmail(emailUpdate);
+                await updateSequenceEmailCall(...emailUpdate);
             } catch (error: any) {
                 if (isFetchFailedError(error)) {
                     throw error;
@@ -190,7 +251,25 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
             }
         }
 
-        const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
+        const influencerUpdate: SequenceInfluencerUpdate = { id, funnel_status: 'Negotiating' };
+
+        // if the sequence_influencer already has an address_id, it means the address has been created.
+        if (influencer_social_profile_id && !address_id) {
+            try {
+                const newAddress = await insertAddressCall()({
+                    name: real_full_name || name || username || '',
+                    country: '',
+                    state: '',
+                    city: '',
+                    postal_code: '',
+                    address_line_1: '',
+                    influencer_social_profile_id,
+                });
+                influencerUpdate.address_id = newAddress.id;
+            } catch (error: any) {
+                serverLogger(error);
+            }
+        }
 
         const update = await updateSequenceInfluencer(influencerUpdate);
         trackData.extra_info.influencer_update = update;
@@ -215,6 +294,21 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
+    const synced = await syncEmail({
+        account: event.account,
+        emailEngineId: event.data.id,
+    });
+
+    // We sometimes receive a messageNew event when an email is trashed
+    if (synced.messageType.type === 'Trash') {
+        return res.status(httpCodes.OK).json({ message: 'ok' });
+    }
+
+    if (synced.messageType.type === 'Reply' && synced.influencer) {
+        await handleReply(synced.influencer, event);
+        return res.status(httpCodes.OK).json({ message: 'ok' });
+    }
+
     const trackData: Omit<EmailNewPayload, 'is_success'> = {
         account_id: event.account,
         profile_id: null,
@@ -315,8 +409,8 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
-        await updateSequenceEmail(update);
+        update = [sequenceEmail.id, { email_tracking_status: 'Link Clicked' }];
+        await updateSequenceEmailCall(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -352,10 +446,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_tracking_status: 'Opened',
-        };
+        update = [sequenceEmail.id, { email_tracking_status: 'Opened' }];
     } catch (error: any) {
         if (isFetchFailedError(error)) {
             throw error;
@@ -366,7 +457,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
     try {
         if (update) {
-            await updateSequenceEmail(update);
+            await updateSequenceEmailCall(...update);
             is_success = true;
         }
     } catch (error: any) {
@@ -397,10 +488,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 
 const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Bounced',
-    };
+    const update: SequenceEmailUpdate = [sequenceEmail.id, { email_delivery_status: 'Bounced' }];
     let trackData: EmailFailedPayload = {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
@@ -416,7 +504,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
     };
 
     try {
-        await updateSequenceEmail(update);
+        await updateSequenceEmailCall(...update);
 
         const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
         trackData.sequence_influencer_id = sequenceInfluencer.id;
@@ -465,12 +553,9 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
     let errorMessage = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Failed',
-        };
+        update = [sequenceEmail.id, { email_delivery_status: 'Failed' }];
 
-        await updateSequenceEmail(update);
+        await updateSequenceEmailCall(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -505,12 +590,8 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
     let errorMessage: string | null = null;
     try {
         sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-        update = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Failed',
-        };
-
-        await updateSequenceEmail(update);
+        update = [sequenceEmail.id, { email_delivery_status: 'Failed' }];
+        await updateSequenceEmailCall(...update);
         is_success = true;
     } catch (error: any) {
         if (isFetchFailedError(error)) {
@@ -560,7 +641,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     };
 
     try {
-        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
         trackData.extra_info.sequenceEmail = sequenceEmail;
 
         if (!sequenceEmail || !sequenceEmail.sequence_id) {
@@ -571,18 +653,21 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.sequence_id = sequenceEmail.sequence_id;
         trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id;
 
-        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id); // likewise will fail if there is no sequenceInfluencer
+        // likewise will fail if there is no sequenceInfluencer
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
         trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
         trackData.sequence_step = sequenceInfluencer.sequence_step;
 
-        const sequenceEmailUpdate: SequenceEmailUpdate = {
-            id: sequenceEmail.id,
-            email_delivery_status: 'Delivered',
-            email_send_at: new Date().toISOString(),
-        };
+        const sequenceEmailUpdate: SequenceEmailUpdate = [
+            sequenceEmail.id,
+            {
+                email_delivery_status: 'Delivered',
+                email_send_at: new Date().toISOString(),
+            },
+        ];
 
-        await updateSequenceEmail(sequenceEmailUpdate);
+        await updateSequenceEmailCall(...sequenceEmailUpdate);
         trackData.extra_info.sequenceEmailUpdate = sequenceEmailUpdate;
 
         const sequenceSteps = await db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall)(
@@ -613,14 +698,20 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             await updateSequenceInfluencer(sequenceInfluencerUpdate);
             trackData.extra_info.sequenceInfluencerUpdate = sequenceInfluencerUpdate;
         }
+
+        trackData.is_success = true;
+
+        // schedule next outreach email
         if (sequenceSteps.length > currentStep.step_number + 1) {
             const nextStep = sequenceSteps.find((step) => step.step_number === currentStep.step_number + 1);
 
             if (!nextStep) {
                 throw new Error('No next sequence step found');
             }
+
             const templateVariables = await db(getTemplateVariablesBySequenceIdCall)(sequenceEmail.sequence_id);
-            const payload: SequenceStepSendArgs = {
+
+            trackData.extra_info.next_sequence_email_payload = {
                 emailEngineAccountId: event.account,
                 sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
                 sequenceStep: nextStep,
@@ -628,34 +719,17 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
                 templateVariables,
                 reference: event.data.messageId,
             };
-            trackData.extra_info.next_sequence_email_payload = payload;
 
-            const { data: nextEmailRecord, error: nextEmailError } = await db(
-                getSequenceEmailByInfluencerAndSequenceStep,
-            )(sequenceInfluencer.id, nextStep.id);
-            if (nextEmailError) {
-                serverLogger(`nextEmailError for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`);
-            }
-            if (!nextEmailRecord) {
-                serverLogger(
-                    `no next email record found for influencer id: ${sequenceInfluencer.id} and step id: ${nextStep.id}`,
-                );
-            }
-
-            const jobId = v4();
-
-            const jobCreated = await createJob(SEQUENCE_STEP_SEND_QUEUE_NAME, {
-                id: jobId,
-                queue: SEQUENCE_STEP_SEND_QUEUE_NAME,
-                payload,
+            const jobCreated = await scheduleOutreachEmailRetry({
+                event,
+                sequenceInfluencer: { ...sequenceInfluencer, sequence_step: currentStep.step_number },
+                sequenceStep: nextStep,
+                sequenceSteps,
+                templateVariables,
             });
+
             trackData.extra_info.job_created = jobCreated;
-            if (jobCreated && jobCreated.id) {
-                trackData.is_success = true;
-                if (nextEmailRecord?.id) {
-                    await updateSequenceEmail({ job_id: jobId, id: nextEmailRecord.id });
-                }
-            }
+            trackData.is_success = jobCreated !== false;
         } else {
             trackData.is_success = true;
         }
@@ -685,10 +759,19 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json({});
 };
 
+const handleMessageDeleted = async (event: WebhookMessageDeleted, res: NextApiResponse) => {
+    await deleteEmail(event.account, event.data.id);
+
+    return res.status(httpCodes.OK).json({ message: 'ok' });
+};
+
 const handleOtherWebhook = async (_event: WebhookEvent, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json({});
 };
 
+// @note
+//  messageUpdate happens on seen/unseen, "toggling a star"
+//  adding a reaction triggers messageNew and messageUpdated
 const ignoredWebhooks = ['messageUpdated'];
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
@@ -720,6 +803,8 @@ const postHandler: NextApiHandler = async (req, res) => {
                 return handleFailed(body, res);
             case 'messageSent':
                 return handleSent(body, res);
+            case 'messageDeleted':
+                return handleMessageDeleted(body, res);
             default:
                 return handleOtherWebhook(body, res);
         }

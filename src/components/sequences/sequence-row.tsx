@@ -6,7 +6,13 @@ import type { SetStateAction } from 'react';
 import { useMemo } from 'react';
 import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { Sequence, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type {
+    Sequence,
+    SequenceEmail,
+    SequenceInfluencerUpdate,
+    SequenceStep,
+    TemplateVariable,
+} from 'src/utils/api/db';
 import { Button } from '../button';
 import { DeleteOutline, SendOutline } from '../icons';
 import { Tooltip } from '../library';
@@ -19,7 +25,10 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from 'pages/api/sequence/influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
 import { useReport } from 'src/hooks/use-report';
@@ -34,10 +43,14 @@ import { EmailStatusBadge } from './email-status-badge';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 import { useAtom } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
+import type { KeyedMutator } from 'swr';
 
 interface SequenceRowProps {
     sequence?: Sequence;
-    sequenceInfluencer: SequenceInfluencerManagerPage;
+    sequenceInfluencer: SequenceInfluencerManagerPageWithChannelData;
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[];
+    updateSequenceInfluencer: (i: SequenceInfluencerUpdate) => Promise<SequenceInfluencerManagerPageWithChannelData>;
+    refreshSequenceInfluencers: KeyedMutator<SequenceInfluencerManagerPageWithChannelData[]>;
     loadingEmails: boolean;
     lastEmail?: SequenceEmail;
     lastStep?: SequenceStep;
@@ -50,7 +63,9 @@ interface SequenceRowProps {
     templateVariables: TemplateVariable[];
     onCheckboxChange?: (id: string) => void;
     checked?: boolean;
-    handleStartSequence: (sequenceInfluencers: SequenceInfluencerManagerPage[]) => Promise<SequenceSendPostResponse>;
+    handleStartSequence: (
+        sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
+    ) => Promise<SequenceSendPostResponse>;
 }
 
 /** use the tracking status if it is delivered */
@@ -62,6 +77,9 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,
     sequenceInfluencer,
+    updateSequenceInfluencer,
+    refreshSequenceInfluencers,
+    sequenceInfluencers,
     loadingEmails,
     lastEmail,
     lastStep,
@@ -75,19 +93,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     onCheckboxChange,
     checked,
 }) => {
-    const {
-        sequenceInfluencers,
-        updateSequenceInfluencer,
-        deleteSequenceInfluencers: deleteSequenceInfluencer,
-        refreshSequenceInfluencers,
-    } = useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
+    const { deleteSequenceInfluencers } = useSequenceInfluencers();
     const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
 
     const missingSocialProfileInfo = isMissingSocialProfileInfo(sequenceInfluencer);
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile } = useReport({
+    const { report, socialProfile, errorMessage } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
@@ -104,17 +117,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     updateSequenceInfluencer,
                     company_id: sequenceInfluencer.company_id,
                 }).catch((error: any) => {
-                    // Temporarily comment out the deleteSequenceInfluencer call as it seems to be causing unexpected issues. https://relayclub.slack.com/archives/C05R1C6V553/p1700226227238909?thread_ts=1700225873.168129&cid=C05R1C6V553
-                    // if (error.message.includes('Email already exists for this company')) {
-                    //     // Sometimes a user adds an influencer to a sequence from both tiktok and instagram and the email is the same. More permanent solution linked below.
-                    //     // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/1106
-
-                    //     deleteSequenceInfluencer([sequenceInfluencer.id]);
-                    // } else {
-                    //     clientLogger(error);
-                    // }
                     clientLogger(error);
-
                     return null;
                 });
             if (result?.email) {
@@ -123,7 +126,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         };
 
         update();
-    }, [deleteSequenceInfluencer, report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
+    }, [report, sequenceInfluencer, socialProfile, updateSequenceInfluencer]);
 
     useEffect(() => {
         checkForIgnoredEmails({
@@ -228,7 +231,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
         try {
-            await deleteSequenceInfluencer([sequenceInfluencerId]);
+            await deleteSequenceInfluencers([sequenceInfluencerId]);
             refreshSequenceInfluencers(
                 sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId),
             );
@@ -241,7 +244,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const sequenceSendTooltipTitle = missingSocialProfileInfo
+    const sequenceSendTooltipTitle = errorMessage
+        ? errorMessage
+        : missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltip')
         : !sequenceInfluencer.email
         ? t('sequences.missingEmail')
@@ -250,7 +255,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables')
         : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = missingSocialProfileInfo
+    const sequenceSendTooltipDescription = errorMessage
+        ? errorMessage
+        : missingSocialProfileInfo
         ? t('sequences.invalidSocialProfileTooltipDescription')
         : !sequenceInfluencer.email
         ? t('sequences.missingEmailTooltipDescription')
@@ -348,6 +355,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     onSubmittingChange={setSubmittingChangeEmail}
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
+                            ) : errorMessage ? (
+                                <div className="text-red-500">{errorMessage}</div>
                             ) : (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
                             )}

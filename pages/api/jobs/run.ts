@@ -19,6 +19,10 @@ const postHandler: ActionHandler = async (req, res) => {
     const jobQueue = initQueue(queue);
     const results = await jobQueue.run({ status, limit });
 
+    if (!results) {
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: `Cannot process queue: ${queue}` });
+    }
+
     return res.status(httpCodes.OK).json(results);
 };
 

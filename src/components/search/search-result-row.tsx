@@ -22,7 +22,7 @@ import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 import type { track } from './use-track-event';
 
-import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import { useUser } from 'src/hooks/use-user';
 import type { analyzeInfluencerParams } from 'src/hooks/use-analyze-influencer';
@@ -38,7 +38,7 @@ export interface SearchResultRowProps {
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersBasicInfo[];
     trackSearch?: track;
     batchId: number;
     page: number;

@@ -119,7 +119,7 @@ const frontendHandlers = [
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/sequence_steps`, (req, res, ctx) => {
         const sequence_id = req.url.searchParams.get('sequence_id')?.split('eq.')[1] ?? v4();
-        const steps: SequenceStepInsert[] = defaultTemplates.map(({ name, id, waitTimeHours, stepNumber }) => ({
+        const steps: SequenceStepInsert[] = defaultTemplates().map(({ name, id, waitTimeHours, stepNumber }) => ({
             name,
             sequence_id,
             template_id: id,

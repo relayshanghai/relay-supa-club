@@ -7,7 +7,6 @@ const profile = {
     notesPlaceholder: '写下关于此KOL的备注，以备后续查看。',
     collab: '合作详情',
     addNoteButton: '添加另一条备注',
-    fee: '报价 (USD)',
     videoDetails: '视频详情',
     videoDetailsPlaceholder: '视频内容或风格',
     scheduledPostDate: '计划发布时间',
@@ -15,8 +14,8 @@ const profile = {
     affiliateLinkPlaceholder: '需要KOL需要发布的推广链接',
     posts: '帖子',
     addPostButton: '点击添加新的帖子',
-    notesTab: '备注',
-    shippingDetailsTab: '发货信息',
+    channelTab: '账户分析',
+    manageTab: '管理',
     shippingDetails: '发货信息',
     name: ' 姓名（全名）',
     phoneNumber: '电话号码',
@@ -28,6 +27,10 @@ const profile = {
     trackingCode: '物流编号',
     fullAddress: '完整地址',
     updateProfileButton: '完整地址',
+    compAndDeliverables: '费用和交付成果',
+    commissionRate: '佣金率',
+    shippingAndPersonalInfo: '发货和个人信息',
+    fee: '费用(USD)',
 };
 
 export default profile;

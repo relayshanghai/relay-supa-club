@@ -1,13 +1,15 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useState } from 'react';
 import { OverlayRight } from 'src/components/influencer-profile/components/overlay-right';
-import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
-import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen-legacy';
+import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen-legacy';
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
+import type { SearchTableInfluencer } from 'types';
 
 type Props = {
     profile: SequenceInfluencerManagerPage | null;
+    influencerData: SearchTableInfluencer | null;
     isOpen?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
@@ -52,7 +54,7 @@ export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPa
     };
 };
 
-export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
+export const ProfileOverlayScreen = ({ profile, influencerData, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
 
     const mapProfileToFormData = useCallback((p: typeof profile) => {
@@ -91,7 +93,7 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     return (
         <>
             <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
-                {profile && initialValue ? (
+                {profile && influencerData && initialValue ? (
                     <ProfileScreenProvider initialValue={initialValue}>
                         <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} />
                     </ProfileScreenProvider>

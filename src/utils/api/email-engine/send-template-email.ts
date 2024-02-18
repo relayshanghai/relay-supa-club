@@ -13,15 +13,15 @@ export const sendTemplateEmail = async ({
     messageId,
 }: {
     account: string;
-    toEmail: string;
+    toEmail: { name: string; address: string };
     template: string;
-    sendAt: string;
+    sendAt?: string;
     params: Record<string, string>;
     references?: string;
     messageId?: string;
 }): Promise<{ error: string } | SendEmailPostResponseBody> => {
     const body: SendEmailRequestBody = {
-        to: [{ address: toEmail }],
+        to: [toEmail],
         template,
         render: {
             format: 'html',

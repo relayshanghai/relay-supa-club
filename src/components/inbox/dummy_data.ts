@@ -1,11 +1,13 @@
 import type { AccountAccountMessagesGet, MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 import templates from 'src/mocks/api/email-engine/templates.json';
+import { MAILBOX_PATH_ALL } from 'src/utils/outreach/constants';
 
 const company = 'Aduro';
 
 const messages: MessagesGetMessage[] = inManagerDummyInfluencers.map((influencer, index) => {
     return {
+        path: MAILBOX_PATH_ALL,
         id: influencer.id,
         uid: 123, // Replace with an appropriate value
         emailId: `email_${influencer.id}`, // You can use any relevant value here

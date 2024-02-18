@@ -46,6 +46,15 @@ const nextConfig = {
             },
         ],
     },
+    async rewrites() {
+        return [
+          {
+            // proxy to supabase storage
+            source: '/storage/v1/:path*',
+            destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/:path*` // Proxy to Backend
+          }
+        ]
+      }
 };
 
 module.exports = nextConfig;

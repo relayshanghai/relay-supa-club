@@ -103,7 +103,7 @@ export const classicColumns: ColumnDef<SearchTableInfluencer>[] = [
             <input
                 type="checkbox"
                 className="checkbox mr-0"
-                checked={table.getIsAllPageRowsSelected()}
+                checked={table.options.meta?.isLoading ? false : table.getIsAllPageRowsSelected()}
                 aria-label={table.options.meta?.t('boostbot.table.selectAll')}
                 disabled={table.options.meta?.isLoading}
                 onChange={(e) => {
@@ -133,7 +133,7 @@ export const classicColumns: ColumnDef<SearchTableInfluencer>[] = [
                     type="checkbox"
                     disabled={table.options.meta?.isLoading}
                     className="checkbox mr-0"
-                    checked={row.getIsSelected()}
+                    checked={table.options.meta?.isLoading ? false : row.getIsSelected()}
                     aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
                     onChange={(e) => row.toggleSelected(!!e.target.checked)}
                 />

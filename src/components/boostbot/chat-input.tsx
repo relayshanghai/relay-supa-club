@@ -7,14 +7,14 @@ interface ChatInputProps {
     onSendMessage: (message: string) => void;
     isLoading: boolean;
     isDisabled: boolean;
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
     onSendMessage,
     isLoading,
     isDisabled,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
 }) => {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null);
     const optionsMenuRef = useRef<null | HTMLDivElement>(null);
@@ -29,7 +29,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     const handleSendMessage = (): void => {
         if (isLoading || isDisabled || !message.trim()) return;
 
-        setSelectedInfluencers({});
+        setSelectedInfluencerIds({});
 
         onSendMessage(message.trim());
         setMessage('');

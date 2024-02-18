@@ -16,7 +16,7 @@ import type {
 } from 'pages/api/boostbot/get-topics-and-relevance';
 import type { RelevantTopic } from 'src/utils/api/boostbot/get-topic-relevance';
 import {
-    getBoostbotConversationCall,
+    getMostRecentBoostbotConversationCall,
     createNewBoostbotConversationCall,
     updateBoostbotConversationCall,
 } from 'src/utils/api/db/calls/boostbot-conversations';
@@ -32,7 +32,7 @@ type UseBoostbotProps = {
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const getBoostbotConversation = useDB(getBoostbotConversationCall);
+    const getMostRecentBoostbotConversation = useDB(getMostRecentBoostbotConversationCall);
     const createNewConversation = useDB(createNewBoostbotConversationCall);
     const updateConversation = useDB(updateBoostbotConversationCall);
 
@@ -41,7 +41,10 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
         data: conversation,
         mutate: refreshConversation,
         isLoading: isConversationLoading,
-    } = useSWR(profile?.id ? [profile.id, 'get-boostbot-conversation'] : null, getBoostbotConversation);
+    } = useSWR(profile?.id ? [profile.id, 'get-boostbot-conversation'] : null, async () => {
+        if (!profile?.id) return null;
+        return await getMostRecentBoostbotConversation(profile.id);
+    });
 
     const [messages, setMessages] = useState<MessageType[]>((conversation?.chat_messages as MessageType[]) ?? []);
     const [influencers, setInfluencers] = useState<BoostbotInfluencer[]>(
@@ -120,10 +123,10 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps = {}) => {
     );
 
     const getTopicsAndRelevance = useCallback(
-        async (topics: RelevantTopic[]) => {
+        async (topics: RelevantTopic[], iqdata_id: string) => {
             const topicsAndRelevance = await performFetch<GetTopicsAndRelevanceResponse, GetTopicsAndRelevanceBody>(
                 'get-topics-and-relevance',
-                { topics },
+                { topics, iqdata_id },
             );
 
             return topicsAndRelevance;

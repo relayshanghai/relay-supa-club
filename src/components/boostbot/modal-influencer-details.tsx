@@ -30,12 +30,12 @@ import type { Dispatch, SetStateAction } from 'react';
 import { Tooltip } from '../library/tooltip';
 import { Question } from '../icons';
 import type { SearchTableInfluencer } from 'types';
-import { nextFetch } from 'src/utils/fetcher';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 import toast from 'react-hot-toast';
-import type { GetRelevantTopicTagsResponse } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
 import { enUS } from 'src/constants';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { TopicTensorByUsernamePost, TopicTensorByUsernameResponse } from 'pages/api/topics/username';
 
 type InfluencerDetailsModalProps = {
     isOpen: boolean;
@@ -43,7 +43,7 @@ type InfluencerDetailsModalProps = {
     selectedRow?: Row<SearchTableInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
-    setSelectedInfluencers: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
     url: string;
 };
 
@@ -53,7 +53,7 @@ export const InfluencerDetailsModal = ({
     selectedRow,
     setShowSequenceSelector,
     outReachDisabled,
-    setSelectedInfluencers,
+    setSelectedInfluencerIds,
     url,
 }: InfluencerDetailsModalProps) => {
     const { t, i18n } = useTranslation();
@@ -69,38 +69,49 @@ export const InfluencerDetailsModal = ({
               topic: i18n.language === enUS ? topic.topic_en : topic.topic_zh,
           }));
     useEffect(() => {
-        const handleTopicsAndRelevance = async (handle: string) => {
-            if (!selectedRow?.original.url) {
-                throw new Error('No url found for influencer');
+        const handleTopicsAndRelevance = async () => {
+            if (!selectedRow?.original.user_id) {
+                throw new Error('No user_id found for influencer');
             }
-            const { data: topics } = await nextFetch<GetRelevantTopicTagsResponse>('topics/username', {
-                method: 'POST',
-                body: {
-                    username: handle,
-                    platform,
-                },
-            });
-
-            if (topics.length === 0) {
-                toast.error('Sorry, no topics found');
-                setAreTopicsAndRelevanceLoading(false);
-                return;
-            }
-            const topicsAndRelevance = await getTopicsAndRelevance(topics);
-            setAreTopicsAndRelevanceLoading(false);
-
-            setTopicsAndRelevance(topicsAndRelevance);
-        };
-
-        if (selectedRow && isOpen) {
-            const userHandle =
+            const handle =
                 platform === 'youtube'
                     ? selectedRow.original.user_id
                     : selectedRow.original.username ||
                       selectedRow.original.handle ||
                       selectedRow.original.custom_name ||
                       selectedRow.original.fullname;
-            handleTopicsAndRelevance(userHandle);
+
+            if (!handle) {
+                throw new Error('No handle found for influencer');
+            }
+            if (!platform) {
+                throw new Error('No platform found for influencer');
+            }
+            const body: TopicTensorByUsernamePost = {
+                username: handle,
+                platform,
+                iqdata_id: selectedRow.original.user_id,
+            };
+            const { content: topics } = await apiFetch<
+                TopicTensorByUsernameResponse,
+                { body: TopicTensorByUsernamePost }
+            >('/api/topics/username', { body }, { method: 'POST' });
+
+            if (!topics || !Array.isArray(topics)) {
+                toast.error('Error finding topics for influencer. Please try again later.');
+                setAreTopicsAndRelevanceLoading(false);
+                return;
+            }
+            // Some influencers just don't have iqdata `user_profile.relevant_tags` if IQdata doesn't have any topics, don't try to get relevance data from openai
+            if (topics.length > 0) {
+                const topicsAndRelevance = await getTopicsAndRelevance(topics, selectedRow.original.user_id);
+                setTopicsAndRelevance(topicsAndRelevance);
+            }
+            setAreTopicsAndRelevanceLoading(false);
+        };
+
+        if (selectedRow && isOpen) {
+            handleTopicsAndRelevance();
         }
     }, [getTopicsAndRelevance, selectedRow, isOpen, platform]);
 
@@ -145,10 +156,9 @@ export const InfluencerDetailsModal = ({
     // audience engagement rate for Instagram and Tiktok is just engagmentRate see V2-1063
     const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
 
-    const handleAddToSequence = () => {
-        setSelectedInfluencers({ [selectedRow.id]: true });
+    const handleAddToSequence = (user_id: string) => {
+        setSelectedInfluencerIds({ [user_id]: true });
         setShowSequenceSelector(true);
-        // TODO: add to sequence function in V2-1029
     };
 
     // Used to break multiline labels into multiple tspans to prevent text overflow
@@ -443,7 +453,7 @@ export const InfluencerDetailsModal = ({
                     <AddToSequenceButton
                         buttonText={t('boostbot.modal.addToSequence')}
                         outReachDisabled={outReachDisabled}
-                        handleAddToSequenceButton={handleAddToSequence}
+                        handleAddToSequenceButton={() => handleAddToSequence(user_id)}
                         textClassName="px-12"
                         url={url}
                     />

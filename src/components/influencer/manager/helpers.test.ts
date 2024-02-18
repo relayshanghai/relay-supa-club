@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import type { SequenceInfluencerManagerPage } from '../../../../pages/api/sequence/influencers';
+import type {
+    SequenceInfluencerManagerPage,
+    SequenceInfluencerManagerPageWithChannelData,
+} from '../../../../pages/api/sequence/influencers';
 import type { Sequence } from '../../../../src/utils/api/db/types';
 import { filterByMe } from './helpers';
 import { mockProfile } from 'src/mocks/test-user';
@@ -42,7 +45,7 @@ describe('filterByMe', () => {
     ];
     it('filters the list of influencers by which ones are managed by the current user', () => {
         const filteredInfluencers = filterByMe(
-            mockInfluencers as SequenceInfluencerManagerPage[],
+            mockInfluencers as SequenceInfluencerManagerPageWithChannelData[],
             mockProfile,
             mockSequences as Sequence[],
         );

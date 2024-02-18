@@ -1,8 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
+import httpCodes, { OK } from 'src/constants/httpCodes';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
+import type { TopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
 import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
+import { createInfluencerReferenceId } from 'src/utils/api/iqdata/extract-influencer';
+import {
+    getInfluencerSocialProfileTopicsRelevances,
+    saveInfluencerSocialProfileTopicsRelevances,
+} from 'src/backend/database/influencer-social-profiles';
+import { serverLogger } from 'src/utils/logger-server';
 
 const GetTopicsAndRelevanceBody = z.object({
     topics: z
@@ -11,15 +18,15 @@ const GetTopicsAndRelevanceBody = z.object({
             distance: z.number(),
         })
         .array(),
+    iqdata_id: z.string(),
 });
 
 export type GetTopicsAndRelevanceBody = z.input<typeof GetTopicsAndRelevanceBody>;
-export type GetTopicsAndRelevanceResponse = {
-    topic_en: string;
-    topic_zh: string;
-    relevance: number;
-}[];
+export type GetTopicsAndRelevanceResponse = TopicsAndRelevance[];
 
+/** gets topic relevances from openai based on topic tags generated from iqdatas topic tags dict.
+ * checks if the topics relevances exist for this influencer in our db.
+    // if not then fetch from iqdata and save it in our db. */
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetTopicsAndRelevanceBody.safeParse(req.body);
 
@@ -27,10 +34,24 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
     }
 
-    const { topics } = result.data;
+    const { topics, iqdata_id } = result.data;
+    const referenceId = createInfluencerReferenceId(iqdata_id);
+
+    const existingTopicsRelevances = await getInfluencerSocialProfileTopicsRelevances()(referenceId);
+
+    if (existingTopicsRelevances && Array.isArray(existingTopicsRelevances)) {
+        return res.status(httpCodes.OK).json(existingTopicsRelevances);
+    }
+
     const topicsAndRelevance: GetTopicsAndRelevanceResponse = await getTopicsAndRelevance(topics);
 
-    return res.status(httpCodes.OK).json(topicsAndRelevance);
+    try {
+        await saveInfluencerSocialProfileTopicsRelevances()(referenceId, topicsAndRelevance);
+    } catch (error) {
+        serverLogger(error);
+    }
+
+    return res.status(OK).json(topicsAndRelevance);
 };
 
-export default ApiHandler({ postHandler });
+export default ApiHandlerWithContext({ postHandler });

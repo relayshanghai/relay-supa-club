@@ -7,11 +7,14 @@ export interface AccountAccountMessagesGet {
 }
 
 export interface MessagesGetMessage {
+    path: string;
     id: string;
     uid: number;
     emailId: string;
     threadId: string;
     date: string;
+    draft?: boolean;
+    flagged?: boolean;
     flags: any[];
     labels: any[];
     unseen: boolean;
@@ -19,9 +22,16 @@ export interface MessagesGetMessage {
     subject: string;
     from: From;
     replyTo: From[];
+    sender?: From[];
     to: From[];
+    cc?: From[];
+    bcc?: From[];
     messageId: string;
+    inReplyTo?: string;
+    attachments?: any[];
     text: Text;
+    messageSpecialUse?: string;
+    preview?: string;
 }
 
 interface From {

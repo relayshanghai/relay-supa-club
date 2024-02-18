@@ -14,7 +14,7 @@ export type SubscriptionUpgradeWithAlipayPostRequestBody = {
 
 export interface SubscriptionUpgradeWithAlipayPostResponse {
     paymentIntent: Stripe.PaymentIntent;
-    oldSubscriptionId: string;
+    oldSubscriptionId?: string | null;
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -42,7 +42,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             .json({ error: 'More than one subscription found for customer: ' + cusId });
     }
 
-    const oldSubscriptionId = oldSubscription.data[0].id;
+    const oldSubscriptionId = oldSubscription?.data ? oldSubscription?.data[0]?.id : null;
 
     // create a new subscription with the attached paymentMethod
     const subscription = await stripeClient.subscriptions.create({
@@ -51,6 +51,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         expand: ['latest_invoice.payment_intent'],
         off_session: true,
         coupon: couponId,
+        payment_settings: { save_default_payment_method: 'on_subscription', payment_method_types: ['alipay' as any] },
     });
 
     const paymentIntent = (subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent;

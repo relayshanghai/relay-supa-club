@@ -1,10 +1,10 @@
-import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import type { ActionHandler } from 'src/utils/api-handler';
 import { ApiHandler } from 'src/utils/api-handler';
 import { rudderstack } from 'src/utils/rudderstack';
 import type { CreateJobInsert } from 'src/utils/scheduler/utils';
 import { createJobs } from 'src/utils/scheduler/utils';
-import type { SequenceInfluencerManagerPage } from './influencers';
+import type { SequenceInfluencerManagerPage, SequenceInfluencerManagerPageWithChannelData } from './influencers';
 import {
     updateSequenceInfluencerCall,
     upsertSequenceInfluencersFunnelStatusCall,
@@ -21,7 +21,7 @@ import { v4 } from 'uuid';
 
 export type SequenceSendPostBody = {
     account: string;
-    sequenceInfluencers: SequenceInfluencerManagerPage[];
+    sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[];
     sequenceSteps: SequenceStep[];
     templateVariables: TemplateVariable[];
 };
@@ -75,7 +75,11 @@ const failedResults = (influencer: SequenceInfluencerManagerPage, error?: string
     },
 ];
 
-const postHandler: NextApiHandler = async (req, res) => {
+const postHandler: ActionHandler = async (req, res) => {
+    if (!req.profile || !req.profile.email_engine_account_id) {
+        throw new Error('Cannot get email account');
+    }
+
     await rudderstack.identify({ req, res });
     const { account, sequenceInfluencers } = req.body as SequenceSendPostBody;
     let { sequenceSteps, templateVariables } = req.body as SequenceSendPostBody;
@@ -105,6 +109,7 @@ const postHandler: NextApiHandler = async (req, res) => {
                 address: _filterOut2,
                 recent_post_title: _filterOut3,
                 recent_post_url: _filterOut4,
+                channel_data: _filterOut5,
                 ...influencer
             }) => {
                 const upsert: SequenceInfluencerInsert = {

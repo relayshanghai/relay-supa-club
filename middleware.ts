@@ -3,7 +3,7 @@ import { createMiddlewareSupabaseClient, type Session } from '@supabase/auth-hel
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { isDev } from 'src/constants';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import { EMPLOYEE_EMAILS, PREVIEW_PAGE_ALLOW_EMAIL_LIST } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
@@ -207,12 +207,29 @@ export async function middleware(req: NextRequest) {
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
 
+    if (req.nextUrl.pathname.includes('component-previews')) {
+        if (!authData.session?.user?.email) {
+            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        }
+        if (
+            PREVIEW_PAGE_ALLOW_EMAIL_LIST.includes(authData.session.user.email) ||
+            process.env.NODE_ENV === 'development'
+        ) {
+            return res;
+        }
+        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+    }
+
     if (authData.session?.user?.email) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
     }
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
+        // download-presign-url is a public endpoint
+        if (req.nextUrl.pathname.includes('download-presign-url')) {
+            return res;
+        }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 

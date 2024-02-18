@@ -24,12 +24,13 @@ import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
-import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
-import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
+import { type ProfileValue } from '../influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { findOtherPeopleInThread, mapProfileToFormData } from './helpers';
 import inboxTranslation from 'i18n/en/inbox';
+import { ProfileScreen } from '../influencer-profile/screens/profile-screen-legacy';
+import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -45,6 +46,7 @@ export const InboxPage = () => {
     const { refreshSequenceInfluencers } = useSequenceInfluencers();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
+
     const { t } = useTranslation();
 
     const { track } = useRudderstackTrack();
