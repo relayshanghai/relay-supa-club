@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import { Button } from './button';
 
 export default function FixerScriptButtonComponent() {
     const [fixing, setFixing] = useState(false);
-    const abortController = useRef(new AbortController());
-    const handleFix = async () => {
+    const [abortController, setAbortController] = useState<AbortController | null>(null);
+    const handleFix = useCallback(async () => {
         setFixing(true);
         try {
+            const controller = new AbortController();
+            setAbortController(controller);
             const res = await nextFetch('fix', {
-                signal: abortController.current.signal,
+                signal: controller.signal,
             });
             // eslint-disable-next-line no-console
             console.log(res);
@@ -18,7 +20,8 @@ export default function FixerScriptButtonComponent() {
             console.error(error);
         }
         setFixing(false);
-    };
+    }, []);
+
     return (
         <div className="relative z-10">
             <div className="t-10 r-10 fixed">
@@ -28,8 +31,11 @@ export default function FixerScriptButtonComponent() {
                 <Button
                     variant="secondary"
                     onClick={() => {
-                        abortController.current.abort();
+                        abortController?.abort();
                         setFixing(false);
+                        nextFetch('fix', {
+                            method: 'DELETE',
+                        });
                     }}
                 >
                     cancel

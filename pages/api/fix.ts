@@ -7,6 +7,8 @@ import type { ProfileInsertBody } from './profiles';
 import { emailRegex } from 'src/constants';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { wait } from 'src/utils/utils';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
+let shouldStop = false;
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
     // some influencers were created with sequence_step_id's from another sequence. For each influencer, pull their `sequence_steps` for the right sequence. If the influencer's `sequence_step_id` is not in the `sequence_steps` for that sequence, set the id to the corresponding `sequence_step_number` for that sequence.
@@ -693,14 +695,20 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
     return res.json({ results });
 };
 
-const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
-    const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'password';
-    const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id');
+const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
+    console.log('fixing, addAdminSuperuserToEachAccount');
+    shouldStop = false;
+    const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'B00$t80t*Support';
+    const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id, created_at');
     const results = [];
     const companies = companiesAll;
     console.log('companies', companies?.length);
     if (companies)
         for (const company of companies) {
+            if (shouldStop) {
+                console.log('stopped');
+                break;
+            }
             if (!company.name || !company.cus_id) {
                 // console.log('no company name or cus_id', company);
                 continue;
@@ -712,7 +720,10 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
 
             const hasServiceAccount = profiles?.some((p) => p.email?.includes('support+'));
             if (hasServiceAccount) {
+                console.log('hasServiceAccount');
                 continue;
+            } else {
+                console.log('created date:', company.created_at);
             }
             const hasAccountProfile = profiles?.find((p) => p.email_engine_account_id);
 
@@ -739,6 +750,7 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 });
                 id = signinResData?.user?.id;
                 if (error2) {
+                    console.log('error message');
                     console.log(error2?.message || 'Unknown error', email);
                     continue;
                 }
@@ -764,7 +776,7 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 continue;
             }
             console.log('created profile', data);
-            results.push(email);
+            results.push(company);
         }
     console.log('results', results);
     return res.json({ results });
@@ -915,4 +927,12 @@ const _fixOutboxEmailsHaveNoSequenceEmailRecord: NextApiHandler = async (_req, r
     return res.status(200).json({ message: results });
 };
 
-export default _addAdminSuperuserToEachAccount;
+const handleStop: NextApiHandler = async (_req, res) => {
+    shouldStop = true;
+    return res.status(200).json({ message: 'stopping' });
+};
+
+export default ApiHandlerWithContext({
+    getHandler: addAdminSuperuserToEachAccount,
+    deleteHandler: handleStop,
+});
