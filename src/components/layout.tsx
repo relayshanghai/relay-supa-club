@@ -15,6 +15,7 @@ import { useReport } from 'src/hooks/use-report';
 import type { CreatorPlatform } from 'types';
 import { VisitPage } from 'src/utils/analytics/events';
 import { ChatQuestion } from './icons';
+import FixerScriptButtonComponent from './fixer-script-button';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -76,68 +77,71 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
 
     return (
-        <div className="fixed flex h-screen w-screen">
-            <Sidebar
-                accountMenuOpen={accountMenuOpen}
-                accountMenuButtonRef={accountMenuButtonRef}
-                accountMenuRef={accountMenuRef}
-                setAccountMenuOpen={setAccountMenuOpen}
-                loggedIn={!!profile?.id && !loading}
-                profileFirstName={profile?.first_name}
-            />
-            <div className="flex w-full max-w-full flex-col overflow-hidden">
-                <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
-                    <div className="flex items-center">
-                        <p className="flex flex-row items-center gap-2 pl-4">
-                            {routerPath.includes('influencer') ? (
-                                <p className="text-sm font-semibold text-gray-600">
-                                    {influencer && t('navbar.report', { influencerName: influencer.name })}
-                                </p>
-                            ) : (
-                                routerPath.map((path, index) => {
-                                    return (
-                                        <Link
-                                            href={`/${routerPath.slice(0, index + 1).join('/')}`}
-                                            className="flex items-center gap-2"
-                                            key={index}
-                                        >
-                                            <span
-                                                className={`text-sm ${
-                                                    index === routerPath.length - 1
-                                                        ? 'font-semibold text-gray-600'
-                                                        : 'font-medium text-gray-400'
-                                                }`}
+        <>
+            <FixerScriptButtonComponent />
+            <div className="fixed flex h-screen w-screen">
+                <Sidebar
+                    accountMenuOpen={accountMenuOpen}
+                    accountMenuButtonRef={accountMenuButtonRef}
+                    accountMenuRef={accountMenuRef}
+                    setAccountMenuOpen={setAccountMenuOpen}
+                    loggedIn={!!profile?.id && !loading}
+                    profileFirstName={profile?.first_name}
+                />
+                <div className="flex w-full max-w-full flex-col overflow-hidden">
+                    <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
+                        <div className="flex items-center">
+                            <p className="flex flex-row items-center gap-2 pl-4">
+                                {routerPath.includes('influencer') ? (
+                                    <p className="text-sm font-semibold text-gray-600">
+                                        {influencer && t('navbar.report', { influencerName: influencer.name })}
+                                    </p>
+                                ) : (
+                                    routerPath.map((path, index) => {
+                                        return (
+                                            <Link
+                                                href={`/${routerPath.slice(0, index + 1).join('/')}`}
+                                                className="flex items-center gap-2"
+                                                key={index}
                                             >
-                                                {routerPath[index - 1] === 'sequences' && sequence?.name}
-                                                {routerPath[index - 1] === 'campaigns' && campaign?.name}
-                                                {routerPath[index - 1] !== 'sequences' &&
-                                                    routerPath[index - 1] !== 'campaigns' &&
-                                                    t(`navbar.${pageNameMap[path]}`)}
-                                            </span>
-                                            <span className="text-[9px] font-semibold text-gray-400">
-                                                {index !== routerPath.length - 1 && ' / '}
-                                            </span>
-                                        </Link>
-                                    );
-                                })
-                            )}
-                        </p>
+                                                <span
+                                                    className={`text-sm ${
+                                                        index === routerPath.length - 1
+                                                            ? 'font-semibold text-gray-600'
+                                                            : 'font-medium text-gray-400'
+                                                    }`}
+                                                >
+                                                    {routerPath[index - 1] === 'sequences' && sequence?.name}
+                                                    {routerPath[index - 1] === 'campaigns' && campaign?.name}
+                                                    {routerPath[index - 1] !== 'sequences' &&
+                                                        routerPath[index - 1] !== 'campaigns' &&
+                                                        t(`navbar.${pageNameMap[path]}`)}
+                                                </span>
+                                                <span className="text-[9px] font-semibold text-gray-400">
+                                                    {index !== routerPath.length - 1 && ' / '}
+                                                </span>
+                                            </Link>
+                                        );
+                                    })
+                                )}
+                            </p>
+                        </div>
+                        <div className="flex flex-row items-center space-x-4 px-8 py-4">
+                            <button
+                                className="mr-6 mt-auto flex items-center gap-1 overflow-visible stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-600 hover:text-primary-600"
+                                onClick={() => window.$chatwoot?.toggle()}
+                            >
+                                {t('navbar.support')}
+                                <ChatQuestion height={20} width={20} className="my-0.5 ml-1 stroke-inherit" />
+                            </button>
+                            <LanguageToggle />
+                        </div>
                     </div>
-                    <div className="flex flex-row items-center space-x-4 px-8 py-4">
-                        <button
-                            className="mr-6 mt-auto flex items-center gap-1 overflow-visible stroke-gray-400 py-2 font-poppins text-sm text-gray-400 transition hover:stroke-primary-600 hover:text-primary-600"
-                            onClick={() => window.$chatwoot?.toggle()}
-                        >
-                            {t('navbar.support')}
-                            <ChatQuestion height={20} width={20} className="my-0.5 ml-1 stroke-inherit" />
-                        </button>
-                        <LanguageToggle />
-                    </div>
+                    {titleFlag && titleFlag}
+                    <div className="h-full w-full overflow-auto">{children}</div>
                 </div>
-                {titleFlag && titleFlag}
-                <div className="h-full w-full overflow-auto">{children}</div>
+                <ClientRoleWarning />
             </div>
-            <ClientRoleWarning />
-        </div>
+        </>
     );
 };

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import { Button } from './button';
 
-export function FixerScriptButton() {
+export default function FixerScriptButtonComponent() {
     const [fixing, setFixing] = useState(false);
     const abortController = useRef(new AbortController());
     const handleFix = async () => {
@@ -20,19 +20,21 @@ export function FixerScriptButton() {
         setFixing(false);
     };
     return (
-        <div className="t-10 r-10 absolute">
-            <Button disabled={fixing} onClick={handleFix}>
-                FIX DATA
-            </Button>
-            <Button
-                variant="secondary"
-                onClick={() => {
-                    abortController.current.abort();
-                    setFixing(false);
-                }}
-            >
-                cancel
-            </Button>
+        <div className="relative z-10">
+            <div className="t-10 r-10 fixed">
+                <Button disabled={fixing} onClick={handleFix}>
+                    FIX DATA
+                </Button>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        abortController.current.abort();
+                        setFixing(false);
+                    }}
+                >
+                    cancel
+                </Button>
+            </div>
         </div>
     );
 }
