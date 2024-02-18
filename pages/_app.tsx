@@ -16,6 +16,7 @@ import chatwootConfig from 'chatwoot.config';
 import { AnalyticsProvider, useDeviceId } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
+import { FixerScriptButton } from 'src/components/fixer-script-button';
 
 function MyApp({
     Component,
@@ -85,6 +86,7 @@ function MyApp({
                             <UserProvider>
                                 <ChatwootProvider {...chatwootConfig}>
                                     <CompanyProvider>
+                                        <FixerScriptButton />
                                         <Component {...pageProps} />
                                     </CompanyProvider>
                                 </ChatwootProvider>

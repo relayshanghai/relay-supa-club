@@ -35,7 +35,6 @@ import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
-import { nextFetch } from 'src/utils/fetcher';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
@@ -386,15 +385,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     message={t('banner.outreach.descriptionSequences')}
                 />
             )}
-            <Button
-                onClick={async () => {
-                    const res = await nextFetch('fix');
-                    // eslint-disable-next-line no-console
-                    console.log(res);
-                }}
-            >
-                FIX DATA
-            </Button>
+
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
