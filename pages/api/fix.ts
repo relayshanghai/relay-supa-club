@@ -4,10 +4,11 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
-import { emailRegex } from 'src/constants';
+import { profiles as profilesSchema } from '../../drizzle/schema';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { wait } from 'src/utils/utils';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
+import { db } from 'src/utils/database';
 let shouldStop = false;
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
@@ -698,10 +699,12 @@ const _deleteSequenceEmailsWithNoInfluencer: NextApiHandler = async (_req, res) 
 const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('fixing, addAdminSuperuserToEachAccount');
     shouldStop = false;
-    const password = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'B00$t80t*Support';
-    const { data: companiesAll } = await supabase.from('companies').select('id, name, cus_id, created_at');
+
+    const password = 'B00$t80t*Support';
+    const { data: companies } = await supabase.from('companies').select('id, name, cus_id, created_at');
     const results = [];
-    const companies = companiesAll;
+    const noServiceAccountCompanies = [];
+
     console.log('companies', companies?.length);
     if (companies)
         for (const company of companies) {
@@ -723,25 +726,19 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 console.log('hasServiceAccount');
                 continue;
             } else {
-                console.log('created date:', company.created_at);
+                noServiceAccountCompanies.push(company.id);
+                console.log('!hasServiceAccount, created date:', company.created_at, company.id);
             }
             const hasAccountProfile = profiles?.find((p) => p.email_engine_account_id);
 
-            const emailBadCharactersReplacer = (email: string) => {
-                return email.replace(/[.,'"\(\) ]/g, '');
-            };
-
-            const identifier = emailBadCharactersReplacer(company.cus_id.toLowerCase().trim());
+            const identifier = company.cus_id.toLowerCase().trim();
             const email = `support+${identifier}@boostbot.ai`;
-            const emailCheck = emailRegex.test(email);
-            if (!emailCheck) {
-                console.log('email invalid', email);
-                continue;
-            }
+
             const { error, data: signupResData } = await supabase.auth.signUp({
                 email,
                 password,
             });
+            console.log('signupResData, error', signupResData, error, email, password);
             let id = signupResData?.user?.id;
             if (error?.message.includes('User already registered')) {
                 const { error: error2, data: signinResData } = await supabase.auth.signInWithPassword({
@@ -770,15 +767,18 @@ const addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
                 email_engine_account_id: hasAccountProfile?.email_engine_account_id,
                 sequence_send_email: hasAccountProfile?.sequence_send_email,
             };
-            const { data, error: error2 } = await supabase.from('profiles').upsert(profileBody).select('*').single();
-            if (!data || error2) {
-                console.log('error inserting profile', error2?.message || 'unknown error');
-                continue;
+            try {
+                const result = await db().insert(profilesSchema).values(profileBody).returning();
+
+                console.log('created profile', result);
+                results.push(company);
+            } catch (error) {
+                console.log('error inserting');
+                console.error(error);
             }
-            console.log('created profile', data);
-            results.push(company);
         }
     console.log('results', results);
+    console.log('noServiceAccountCompanies', noServiceAccountCompanies);
     return res.json({ results });
 };
 
