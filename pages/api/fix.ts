@@ -4,12 +4,12 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
-import { companies, profiles as profilesSchema } from '../../drizzle/schema';
+import { companies, jobs, profiles as profilesSchema } from '../../drizzle/schema';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { wait } from 'src/utils/utils';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { eq, ilike, notInArray } from 'drizzle-orm';
+import { and, eq, ilike, inArray, notInArray, or } from 'drizzle-orm';
 let shouldStop = false;
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
@@ -823,7 +823,7 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     return res.json({ results });
 };
 
-const updateSupportUsersPasswords: NextApiHandler = async (_req, res) => {
+const _updateSupportUsersPasswords: NextApiHandler = async (_req, res) => {
     console.log('updateSupportUsersPasswords');
     shouldStop = false;
     const supportUsers = await db().select().from(profilesSchema).where(ilike(profilesSchema.email, '%support+%'));
@@ -1026,7 +1026,67 @@ const handleStop: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: 'stopping' });
 };
 
+const deleteSuspendedAccountJobs: NextApiHandler = async (_req, res) => {
+    const failedOrPendingJobs = (await db()
+        .select({ payload: jobs.payload, id: jobs.id })
+        .from(jobs)
+        .where(
+            and(eq(jobs.queue, 'sequence_step_send'), or(eq(jobs.status, 'failed'), eq(jobs.status, 'pending'))),
+        )) as { id: string; payload: { emailEngineAccountId: string } }[];
+
+    const payloads = failedOrPendingJobs.map((j) => j.payload);
+    // console.log(payloads);
+    const payloadAccounts = payloads.map((p) => p.emailEngineAccountId);
+    const activeAccounts = [
+        // got from Email engine API
+        '0xu37s825q3on348',
+        '1tj6nzr1sf89672v',
+        '1tpuxkha9rgdvio3',
+        '37xxa5nlj8vhwb9h',
+        '3ozhp5k44b3o08x8',
+        '3tsfh97079jmgnni',
+        '58jw7k9v81eyiwh8',
+        '83m6lgt150ov43r3',
+        '8e4qxf6qbux2fvw5',
+        '9i2yi0xa4chs95ld',
+        'bspu6ywz70nxq4js',
+        'echa',
+        'f5hr7c61wlr5iu6e',
+        'fc6kby0dep7zxgo0',
+        'fvovl2wcvqd95cq9',
+        'gtfebdqrn758321l',
+        'h9a1wzcztc3i3air',
+        'hitb1w9whwi1zgxd',
+        'hn3f34a5ucfqac3a',
+        'hqkcg7fe1086zc9a',
+        'iqth3khgpootqdav',
+        'iwi0s7dep71wdqlh',
+        'j273xv087yujnum2',
+        'n1as8g25a8et32mm',
+        'o027vgrbc3pze0he',
+        'oka59gixztqwbvjm',
+        'pdy2s7tesmxcpyn9',
+        'q0n4dfn1fvs9ak0j',
+        'sc8pc9krygnpeq7q',
+        'v1v4t0yhlra1g1mi',
+        'vn6onkibk5qj8kwb',
+        'xtb2dtv0i5h22wlm',
+        'znyrkk4q5g7gebsv',
+    ];
+
+    const suspendedAccounts = new Set(payloadAccounts.filter((p) => !activeAccounts.includes(p)));
+    // console.log('suspendedAccounts', suspendedAccounts);
+
+    const toDelete = failedOrPendingJobs
+        .filter((j) => suspendedAccounts.has(j.payload.emailEngineAccountId))
+        .map((j) => j.id);
+
+    const deleted = await db().delete(jobs).where(inArray(jobs.id, toDelete)).returning({ id: jobs.id });
+    console.log('deleted', deleted);
+    return res.json({ deleted });
+};
+
 export default ApiHandlerWithContext({
-    getHandler: updateSupportUsersPasswords,
+    getHandler: deleteSuspendedAccountJobs,
     deleteHandler: handleStop,
 });
