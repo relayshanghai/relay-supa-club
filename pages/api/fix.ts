@@ -1166,22 +1166,6 @@ const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
         id: string;
         payload: Payload;
     };
-    const size = 10000;
-    const page = 1;
-    const offset = (page - 1) * size;
-    console.log('fetching data', { page });
-
-    const allSucceededJobs = (await db()
-        .select({ id: jobs.id, payload: jobs.payload })
-        .from(jobs)
-        .where(and(eq(jobs.status, 'success'), eq(jobs.queue, 'sequence_step_send')))
-        .limit(size)
-        .offset(offset)
-        .orderBy(asc(jobs.created_at))) as Job[];
-
-    // console.log('allSucceededJobs', allSucceededJobs.length);
-    const succeededJobs = allSucceededJobs.filter((j) => activeAccounts.includes(j.payload.emailEngineAccountId));
-    // console.log('succeededJobs', succeededJobs.length);
 
     const emailsStuckInScheduled = await db()
         .select()
@@ -1193,11 +1177,23 @@ const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
             ),
         );
 
+    const stuckJobIds = emailsStuckInScheduled.filter((e) => e.job_id).map((e) => e.job_id) as string[];
+    const allSucceededJobs = (await db()
+        .select({ id: jobs.id, payload: jobs.payload })
+        .from(jobs)
+        .where(and(eq(jobs.status, 'success'), eq(jobs.queue, 'sequence_step_send'), inArray(jobs.id, stuckJobIds)))
+        .orderBy(asc(jobs.created_at))) as Job[];
+
+    // console.log('allSucceededJobs', allSucceededJobs.length);
+    const succeededJobs = allSucceededJobs.filter((j) => activeAccounts.includes(j.payload.emailEngineAccountId));
+    // console.log('succeededJobs', succeededJobs.length);
+    const affectedInfluencers: string[] = [];
+
     console.log('emailsStuckInScheduled', emailsStuckInScheduled.length);
     const allOutbox = await getOutbox();
     const outbox = allOutbox.filter((e) => activeAccounts.includes(e.account));
     console.log('outbox', outbox.length);
-
+    const affectedUsers: string[] = [];
     const result = [];
     shouldStop = false;
     // if the email is stuck in scheduled, and not in the outbox. mark the old 'succeeded' job as pending.
@@ -1207,17 +1203,37 @@ const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
             break;
         }
         const found = outbox.find((e) => e.messageId === email.email_message_id);
-        console.log('found', found, email.email_message_id);
+        // console.log('found', found, email.email_message_id);
         if (!found) {
             const job = succeededJobs.find((j) => j.payload.sequenceInfluencer.id === email.sequence_influencer_id);
-            console.log('job', job);
+            // console.log('job', job);
             if (job) {
+                // option one:
                 // await db().update(jobs).set({ status: 'pending' }).where(eq(jobs.id, job.id));
+                // Remove the need for the current PR by:
+                // also delete the 'scheduled' emails so that when we reinsert there is no problem.
                 result.push(job.id);
+                if (!affectedUsers.includes(job.payload.emailEngineAccountId)) {
+                    affectedUsers.push(job.payload.emailEngineAccountId);
+                }
+                if (!affectedInfluencers.includes(email.sequence_influencer_id)) {
+                    affectedInfluencers.push(email.sequence_influencer_id);
+                }
+                // option two:
+
+                // delete all the jobs and emails, and set the sequence influencer to 'To Contact'
+                // await db().delete(sequence_emails).where(eq(sequence_emails.email_message_id, email.email_message_id));
+
+                // await db().update(sequence_influencers).set({ funnel_status: 'To Contact' }).where(
+                //     eq(sequence_influencers.id, email.sequence_influencer_id),
+                // );
+                // contact users and ask if they want to re-send.
             }
         }
     }
-    console.log('result', result.length);
+    // console.log('result', result.length);
+    // console.log('affectedUsers', affectedUsers);
+    console.log('affectedInfluencers', affectedInfluencers);
     return res.send({ result });
 };
 
