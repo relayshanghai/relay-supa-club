@@ -4,12 +4,12 @@ import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { supabase } from 'src/utils/supabase-client';
 import type { CreatorPlatform } from 'types';
 import type { ProfileInsertBody } from './profiles';
-import { companies, jobs, profiles as profilesSchema } from '../../drizzle/schema';
+import { companies, jobs, profiles as profilesSchema, sequence_emails } from '../../drizzle/schema';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 import { wait } from 'src/utils/utils';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { db } from 'src/utils/database';
-import { and, eq, ilike, inArray, notInArray, or } from 'drizzle-orm';
+import { and, eq, ilike, inArray, notInArray, or, asc } from 'drizzle-orm';
 let shouldStop = false;
 
 const _fixSequenceStepDoesNotBelongToInfluencerSequence: NextApiHandler = async (_req, res) => {
@@ -1026,7 +1026,7 @@ const handleStop: NextApiHandler = async (_req, res) => {
     return res.status(200).json({ message: 'stopping' });
 };
 
-const deleteSuspendedAccountJobs: NextApiHandler = async (_req, res) => {
+const _deleteSuspendedAccountJobs: NextApiHandler = async (_req, res) => {
     const failedOrPendingJobs = (await db()
         .select({ payload: jobs.payload, id: jobs.id })
         .from(jobs)
@@ -1086,7 +1086,142 @@ const deleteSuspendedAccountJobs: NextApiHandler = async (_req, res) => {
     return res.json({ deleted });
 };
 
+const examplePayload = {
+    emailEngineAccountId: 'u14h6qshz6u2mu6p\n',
+    sequenceInfluencer: {
+        id: '4d89bbf6-692d-4608-bf32-35bed7ced8ce',
+        created_at: '2023-10-30T02:19:00.673183+00:00',
+        updated_at: '2023-11-16T03:58:18.527+00:00',
+        added_by: 'b5f8e241-ee9b-4ece-bebd-888fc4fe94fa',
+        email: 'onlyerrice@gmail.com',
+        sequence_step: 0,
+        funnel_status: 'To Contact',
+        tags: ['pregnancy', 'fertilityjourney', 'pcos'],
+        next_step: null,
+        scheduled_post_date: null,
+        video_details: null,
+        rate_amount: 0,
+        rate_currency: 'USD',
+        real_full_name: null,
+        company_id: '00da5f09-4ce1-404e-a2ce-18f137b739e2',
+        sequence_id: '8906cd31-4613-4fc7-976a-00180c1101bc',
+        address_id: null,
+        influencer_social_profile_id: '1d1acfae-fc0a-4a6a-810d-de0961b90e66',
+        iqdata_id: '6936869082667779077',
+        avatar_url:
+            'https://imgp.sptds.icu/v2?9gRRkBbg4nctjMDXek72QaA0lwJ%2B7AvoxtJKlEuzU8RZC78ehYBtaTYOSfFVCKJiVkpQ0sG16SNCfTbjlQU%2BgUNqE22XuFHqLd080bd2kP%2B9dT25K9CASe%2BaHw5hnNgCS%2FGfIvCb4BWfDz3VLG%2Fwfg%3D%3D',
+        name: 'Onlyerrice',
+        platform: 'tiktok',
+        social_profile_last_fetched: '2023-10-30T02:20:05.286+00:00',
+        url: 'https://www.tiktok.com/@6936869082667779077',
+        username: 'onlyaerrice',
+        address: null,
+        manager_first_name: 'Mingzhen',
+        recent_post_title: 'TTC products . #geritolbaby #ttcjourney #ttccommunity...',
+        recent_post_url: 'https://www.tiktok.com/@onlyaerrice/video/7295448905200700715',
+    },
+};
+
+type Payload = typeof examplePayload;
+
+const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
+    console.log('rescheduleLostOutboxJobs');
+    const activeAccounts = [
+        // got from Email engine API
+        '0xu37s825q3on348',
+        '1tj6nzr1sf89672v',
+        '1tpuxkha9rgdvio3',
+        '37xxa5nlj8vhwb9h',
+        '3ozhp5k44b3o08x8',
+        '3tsfh97079jmgnni',
+        '58jw7k9v81eyiwh8',
+        '83m6lgt150ov43r3',
+        '8e4qxf6qbux2fvw5',
+        '9i2yi0xa4chs95ld',
+        'bspu6ywz70nxq4js',
+        'echa',
+        'f5hr7c61wlr5iu6e',
+        'fc6kby0dep7zxgo0',
+        'fvovl2wcvqd95cq9',
+        'gtfebdqrn758321l',
+        'h9a1wzcztc3i3air',
+        'hitb1w9whwi1zgxd',
+        'hn3f34a5ucfqac3a',
+        'hqkcg7fe1086zc9a',
+        'iqth3khgpootqdav',
+        'iwi0s7dep71wdqlh',
+        'j273xv087yujnum2',
+        'n1as8g25a8et32mm',
+        'o027vgrbc3pze0he',
+        'oka59gixztqwbvjm',
+        'pdy2s7tesmxcpyn9',
+        'q0n4dfn1fvs9ak0j',
+        'sc8pc9krygnpeq7q',
+        'v1v4t0yhlra1g1mi',
+        'vn6onkibk5qj8kwb',
+        'xtb2dtv0i5h22wlm',
+        'znyrkk4q5g7gebsv',
+    ];
+    type Job = {
+        id: string;
+        payload: Payload;
+    };
+    const size = 10000;
+    const page = 1;
+    const offset = (page - 1) * size;
+    console.log('fetching data', { page });
+
+    const allSucceededJobs = (await db()
+        .select({ id: jobs.id, payload: jobs.payload })
+        .from(jobs)
+        .where(and(eq(jobs.status, 'success'), eq(jobs.queue, 'sequence_step_send')))
+        .limit(size)
+        .offset(offset)
+        .orderBy(asc(jobs.created_at))) as Job[];
+
+    // console.log('allSucceededJobs', allSucceededJobs.length);
+    const succeededJobs = allSucceededJobs.filter((j) => activeAccounts.includes(j.payload.emailEngineAccountId));
+    // console.log('succeededJobs', succeededJobs.length);
+
+    const emailsStuckInScheduled = await db()
+        .select()
+        .from(sequence_emails)
+        .where(
+            and(
+                eq(sequence_emails.email_delivery_status, 'Scheduled'),
+                inArray(sequence_emails.email_engine_account_id, activeAccounts),
+            ),
+        );
+
+    console.log('emailsStuckInScheduled', emailsStuckInScheduled.length);
+    const allOutbox = await getOutbox();
+    const outbox = allOutbox.filter((e) => activeAccounts.includes(e.account));
+    console.log('outbox', outbox.length);
+
+    const result = [];
+    shouldStop = false;
+    // if the email is stuck in scheduled, and not in the outbox. mark the old 'succeeded' job as pending.
+    for (const email of emailsStuckInScheduled) {
+        if (shouldStop) {
+            console.log('stopped');
+            break;
+        }
+        const found = outbox.find((e) => e.messageId === email.email_message_id);
+        console.log('found', found, email.email_message_id);
+        if (!found) {
+            const job = succeededJobs.find((j) => j.payload.sequenceInfluencer.id === email.sequence_influencer_id);
+            console.log('job', job);
+            if (job) {
+                // await db().update(jobs).set({ status: 'pending' }).where(eq(jobs.id, job.id));
+                result.push(job.id);
+            }
+        }
+    }
+    console.log('result', result.length);
+    return res.send({ result });
+};
+
 export default ApiHandlerWithContext({
-    getHandler: deleteSuspendedAccountJobs,
+    getHandler: rescheduleLostOutboxJobs,
     deleteHandler: handleStop,
 });
