@@ -1,6 +1,9 @@
 import { v4 as uuid } from 'uuid';
 import type { SequenceStep } from '../db/types';
 
+/**
+ * see: https://docs.emailengine.app/sending-multiple-emails-in-the-same-thread/
+ */
 export const generateMessageId = (email: string) => {
     // message id format is "<UUID@senderdomain.com>" (including the <> symbols)
     return `<${uuid()}@${email.split('@')[1]}>`;

@@ -120,6 +120,7 @@ const sendAndInsertEmail = async ({
         outreachStepInsert.job_id = jobId; // other job ids will be added in handleSent webhook
 
         const res = await sendTemplateEmail({
+            // sends to email engine
             account,
             toEmail: { name: influencerAccountName, address: influencer.email },
             template: step.template_id,
