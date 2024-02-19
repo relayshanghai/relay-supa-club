@@ -1,5 +1,5 @@
 import { SequenceSend, type SequenceSendPayload } from 'src/utils/analytics/events/outreach/sequence-send';
-import type { SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type { SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import {
     deleteSequenceEmailsByInfluencerCall,
     getSequenceEmailsByEmailEngineAccountId,
@@ -21,6 +21,7 @@ import type { SendResult } from 'pages/api/sequence/send';
 import { maxExecutionTimeAndMemory } from 'src/utils/max-execution-time';
 import type { EmailCountPerDayPerStep } from 'src/utils/api/email-engine/schedule-emails';
 import { scheduleEmails } from 'src/utils/api/email-engine/schedule-emails';
+import type { SequenceEmailInsert, SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
 import { insertSequenceEmailsCall, updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
 
 export type SequenceStepSendArgs = {
@@ -74,12 +75,8 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent post url');
     }
 
-    let existingSequenceEmails: SequenceEmail[] = [];
-    try {
-        existingSequenceEmails = await db(getSequenceEmailsBySequenceInfluencerCall)(influencer.id);
-    } catch (error) {
-        serverLogger(error);
-    }
+    const existingSequenceEmails = await db(getSequenceEmailsBySequenceInfluencerCall)(influencer.id);
+
     const existingSequenceEmail = existingSequenceEmails.find((email) => email.sequence_step_id === step.id);
     crumb({
         message: `existingSequenceEmail: ${JSON.stringify(existingSequenceEmail)}, influencer funnel_status ${
@@ -138,7 +135,29 @@ const sendAndInsertEmail = async ({
         crumb({ message: `sent outreach email` });
         outreachStepInsert.email_delivery_status = 'Scheduled';
         outreachStepInsert.email_message_id = res.messageId;
-        await insertSequenceEmailsCall([outreachStepInsert, ...followupEmailInserts]);
+
+        // START FIX
+        // this is to fix a bug we had where emails were dropped from the email engine outbox. should not need this logic after those are cleared up
+        const allInserts: SequenceEmailInsert[] = [outreachStepInsert, ...followupEmailInserts];
+        const toInsert: SequenceEmailInsert[] = [];
+        const toUpdate: SequenceEmailUpdate[] = [];
+        allInserts.forEach((insert: SequenceEmailInsert) => {
+            const existing = existingSequenceEmails.find(
+                (email) =>
+                    email.sequence_step_id === insert.sequence_step_id && email.sequence_id === insert.sequence_id,
+            );
+            if (existing?.id) {
+                toUpdate.push([existing.id, insert]);
+            } else {
+                toInsert.push(insert);
+            }
+        });
+
+        await insertSequenceEmailsCall(toInsert);
+        for (const update of toUpdate) {
+            await updateSequenceEmailCall(...update);
+        }
+        // END FIX
         crumb({ message: `inserted sequence emails` });
     } else {
         if (!existingSequenceEmail || !existingSequenceEmail.email_send_at) {
