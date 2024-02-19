@@ -44,6 +44,9 @@ import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import { truncatedText } from 'src/utils/outreach/helpers';
+import { type Editor } from '@tiptap/react';
+import { useAtomValue } from 'jotai';
+import { currentEditorAtom } from 'src/atoms/current-editor';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -416,7 +419,13 @@ const CustomTemplateModalBody = () => {
     );
 };
 
-const VariableGroup = ({ variableGroup }: { variableGroup: { title: VariableGroup; variables: string[] } }) => {
+const VariableGroup = ({
+    variableGroup,
+    onClick,
+}: {
+    variableGroup: { title: VariableGroup; variables: string[] };
+    onClick: (variable: string) => void;
+}) => {
     const { title, variables } = variableGroup;
     return (
         <AccordionItem value={'group-' + title}>
@@ -430,6 +439,7 @@ const VariableGroup = ({ variableGroup }: { variableGroup: { title: VariableGrou
             <AccordionContent className="text-xs">
                 {variables.map((variable, index) => (
                     <p
+                        onClick={() => onClick(variable)}
                         className={`flex cursor-pointer items-center gap-1 p-3 font-semibold ${
                             index % 2 !== 0 && 'bg-gray-50'
                         }`}
@@ -531,10 +541,16 @@ const mockVariables = [
     },
 ];
 
+export const addVariable = (editor: Editor | null, text: string) => {
+    editor?.commands.insertContent(`<variable-component text="${text}"></variable-component>`);
+};
+
 const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void }) => {
     const [status, setStatus] = useState('OUTREACH' as OutreachStatus);
     const [variables, setVariables] = useState(mockVariables);
     const [searchTerm, setSearchTerm] = useState('');
+    const editor = useAtomValue(currentEditorAtom);
+
     useEffect(() => {
         if (searchTerm === '') {
             setVariables(mockVariables);
@@ -562,7 +578,13 @@ const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void 
                     <div className="flex-auto justify-center overflow-auto" style={{ height: 2 }}>
                         <Accordion id={mockVariables[0].title} type="multiple">
                             {variables.map((group) => (
-                                <VariableGroup key={'group-' + group} variableGroup={group} />
+                                <VariableGroup
+                                    onClick={(variable: string) => {
+                                        addVariable(editor, variable);
+                                    }}
+                                    key={'group-' + group}
+                                    variableGroup={group}
+                                />
                             ))}
                         </Accordion>
                     </div>

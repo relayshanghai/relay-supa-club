@@ -1,11 +1,14 @@
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { Underline } from '@tiptap/extension-underline';
 import { useEffect } from 'react';
-import { Toolbar } from './inbox/wip/toolbar';
+import { Toolbar } from '../inbox/wip/toolbar';
+import VariableNode from './variable-node';
+import { useSetAtom } from 'jotai';
+import { currentEditorAtom } from 'src/atoms/current-editor';
 
 export const Tiptap = ({
     description,
@@ -18,6 +21,7 @@ export const Tiptap = ({
     onSubmit: () => void;
     placeholder?: string;
 }) => {
+    const setCurrentEditor = useSetAtom(currentEditorAtom);
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -49,15 +53,19 @@ export const Tiptap = ({
                     class: 'list-disc ml-2',
                 },
             }),
+            VariableNode,
         ],
         content: description,
         editorProps: {
             attributes: {
-                class: 'w-full bg-transparent p-3 h-full transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                class: 'w-full inline bg-transparent p-3 h-full transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
             },
         },
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
+        },
+        onFocus: ({ editor }) => {
+            setCurrentEditor(editor as Editor);
         },
     });
     useEffect(() => {
