@@ -62,7 +62,9 @@ Only respond in JSON format with the 7 objects as an array. Do not respond with 
             .replace(/[“”]/g, '"') // fix quotation marks
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
             .replace(/,\s*]/g, ']') // remove trailing commas
-            .replace(/,\s*}/g, '}'); // remove trailing commas
+            .replace(/,\s*}/g, '}') // remove trailing commas
+            .replace(/```json/g, ''); // replace ```json
+
         const topicsAndRelevance = JSON.parse(fixedString);
 
         return topicsAndRelevance;
