@@ -749,36 +749,27 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
 
             const identifier = company.cus_id.toLowerCase().trim();
             const email = `support+${identifier}@boostbot.ai`;
+            let id = '';
 
-            const { error, data: signupResData } = await supabase.auth.signUp({
-                email,
-                password,
-            });
-            // console.log('signupResData, error', signupResData, error, email, password);
-            let id = signupResData?.user?.id;
-            if (error?.message.includes('User already registered')) {
-                const { error: error2, data: signinResData } = await supabase.auth.signInWithPassword({
+            // logic above is a mess. lets try refactoring
+            const passwords = [process.env.SERVICE_ACCOUNT_PASSWORD ?? '', 'B00$t80t*Support', 'B00*Support'];
+
+            for (const password of passwords) {
+                const { error, data: signinResData } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 });
-                if (error2) {
-                    const { error: error3, data: otherPass } = await supabase.auth.signInWithPassword({
-                        email,
-                        password: 'B00$t80t*Support',
-                    });
-                    if (error3) {
-                        console.log('error message');
-                        console.log(error3?.message || 'Unknown error', email);
-                        continue;
-                    }
-                    if (otherPass) {
-                        id = otherPass?.user?.id;
-                    }
+                console.log({ signinResData, error });
+                if (error) {
+                    console.log('error signing in with old passwords', error, password);
+                    // continue;
                 }
-
-                id = signinResData?.user?.id;
+                if (signinResData?.user?.id) {
+                    id = signinResData?.user?.id;
+                    break;
+                }
             }
-
+            console.log('id', id);
             if (!id) {
                 console.log('Error creating profile, no id in response');
                 continue;
@@ -821,6 +812,207 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('results', results);
     console.log('noServiceAccountCompanies', noServiceAccountCompanies);
     return res.json({ results });
+};
+const _updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
+    console.log('updateSuperUserPasswords');
+    const affectedUserEmailengineAccountIds = [
+        'hitb1w9whwi1zgxd',
+        '3ozhp5k44b3o08x8',
+        'hn3f34a5ucfqac3a',
+        'iqth3khgpootqdav',
+        '8e4qxf6qbux2fvw5',
+        'bspu6ywz70nxq4js',
+        'sc8pc9krygnpeq7q',
+        'n1as8g25a8et32mm',
+        '58jw7k9v81eyiwh8',
+        'xtb2dtv0i5h22wlm',
+        'oka59gixztqwbvjm',
+        '83m6lgt150ov43r3',
+        'f5hr7c61wlr5iu6e',
+        'h9a1wzcztc3i3air',
+        'znyrkk4q5g7gebsv',
+        '37xxa5nlj8vhwb9h',
+        '9i2yi0xa4chs95ld',
+        'fvovl2wcvqd95cq9',
+        'iwi0s7dep71wdqlh',
+    ];
+    const affectedUsers = await db()
+        .select()
+        .from(profilesSchema)
+        .where(inArray(profilesSchema.email_engine_account_id, affectedUserEmailengineAccountIds));
+
+    console.log('affectedUsers', affectedUsers?.length);
+
+    const affectedCompanies = await db()
+        .select()
+        .from(companies)
+        .where(inArray(companies.id, affectedUsers.map((u) => u.company_id) as string[]));
+
+    console.log('affectedCompanies', affectedCompanies?.length);
+
+    const results: string[] = [];
+    shouldStop = false;
+
+    for (const user of affectedUsers) {
+        if (shouldStop) {
+            console.log('stopped');
+            break;
+        }
+        if (!user.email) {
+            console.log('no email', user);
+            continue;
+        }
+        if (user.email?.includes('support+')) {
+            console.log('support user, skipping');
+            continue;
+        }
+        const company = affectedCompanies.find((c) => c.id === user.company_id);
+        if (!company) {
+            console.log('no company', user);
+            continue;
+        }
+        // login as support user to change password
+        const identifier = company.cus_id?.toLowerCase().trim();
+        const supportEmail = `support+${identifier}@boostbot.ai`;
+        let id = '';
+
+        // logic above is a mess. lets try refactoring
+        const oldPasswords = ['', 'B00$t80t*Support', 'B00*Support'];
+        const newPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
+        if (!newPassword) {
+            throw new Error('new password not set');
+        }
+        const { data: shouldBePassword } = await supabase.auth.signInWithPassword({
+            email: supportEmail,
+            password: newPassword,
+        });
+        if (shouldBePassword.user?.id) {
+            console.log('passowrd already updated');
+            continue;
+        }
+        for (const password of oldPasswords) {
+            const { error, data: signinResData } = await supabase.auth.signInWithPassword({
+                email: supportEmail,
+                password,
+            });
+            console.log({ signinResData, error });
+            if (error) {
+                console.log('error signing in with old passwords', error, password);
+                // continue;
+            }
+            if (signinResData?.user?.id) {
+                id = signinResData?.user?.id;
+                break;
+            }
+        }
+        if (!id) {
+            console.log('unable to log in with old passwords');
+            continue;
+        }
+        await supabase.auth.updateUser({
+            email: supportEmail,
+            password: process.env.SERVICE_ACCOUNT_PASSWORD,
+        });
+        results.push(id);
+    }
+
+    console.log('updated', results);
+
+    return res.send({ results });
+};
+
+const updateSuperUserEmailEngineAccountIds: NextApiHandler = async (_req, res) => {
+    console.log('updateSuperUserEmailEngineAccountIds');
+    const affectedUserEmailengineAccountIds = [
+        'hitb1w9whwi1zgxd',
+        '3ozhp5k44b3o08x8',
+        'hn3f34a5ucfqac3a',
+        'iqth3khgpootqdav',
+        '8e4qxf6qbux2fvw5',
+        'bspu6ywz70nxq4js',
+        'sc8pc9krygnpeq7q',
+        'n1as8g25a8et32mm',
+        '58jw7k9v81eyiwh8',
+        'xtb2dtv0i5h22wlm',
+        'oka59gixztqwbvjm',
+        '83m6lgt150ov43r3',
+        'f5hr7c61wlr5iu6e',
+        'h9a1wzcztc3i3air',
+        'znyrkk4q5g7gebsv',
+        '37xxa5nlj8vhwb9h',
+        '9i2yi0xa4chs95ld',
+        'fvovl2wcvqd95cq9',
+        'iwi0s7dep71wdqlh',
+    ];
+    const affectedUsers = await db()
+        .select()
+        .from(profilesSchema)
+        .where(inArray(profilesSchema.email_engine_account_id, affectedUserEmailengineAccountIds));
+
+    console.log('affectedUsers', affectedUsers?.length);
+
+    const affectedCompanies = await db()
+        .select()
+        .from(companies)
+        .where(inArray(companies.id, affectedUsers.map((u) => u.company_id) as string[]));
+
+    console.log('affectedCompanies', affectedCompanies?.length);
+
+    const results: string[] = [];
+    shouldStop = false;
+
+    for (const user of affectedUsers) {
+        if (shouldStop) {
+            console.log('stopped');
+            break;
+        }
+        if (!user.email) {
+            console.log('no email', user);
+            continue;
+        }
+        if (user.email?.includes('support+')) {
+            console.log('support user already has email engine account ID, skipping');
+            continue;
+        }
+        const company = affectedCompanies.find((c) => c.id === user.company_id);
+        if (!company) {
+            console.log('no company', user);
+            continue;
+        }
+        // login as support user to change password
+        const identifier = company.cus_id?.toLowerCase().trim();
+        const supportEmail = `support+${identifier}@boostbot.ai`;
+        let supportAccountId = '';
+
+        const newPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
+        if (!newPassword) {
+            throw new Error('new password not set');
+        }
+        const { data: supportAccount } = await supabase.auth.signInWithPassword({
+            email: supportEmail,
+            password: newPassword,
+        });
+        supportAccountId = supportAccount?.user?.id ?? '';
+
+        if (!supportAccountId) {
+            console.log('unable to log in with support account');
+            continue;
+        }
+
+        await db()
+            .update(profilesSchema)
+            .set({
+                email_engine_account_id: user.email_engine_account_id,
+                sequence_send_email: user.sequence_send_email,
+            })
+            .where(eq(profilesSchema.id, supportAccountId));
+
+        results.push(supportAccountId);
+    }
+
+    console.log('updated', results);
+
+    return res.send({ results });
 };
 
 const _updateSupportUsersPasswords: NextApiHandler = async (_req, res) => {
@@ -1124,7 +1316,7 @@ const examplePayload = {
 
 type Payload = typeof examplePayload;
 
-const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
+const _rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
     console.log('rescheduleLostOutboxJobs');
     const activeAccounts = [
         // got from Email engine API
@@ -1190,6 +1382,7 @@ const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
     const affectedInfluencers: string[] = [];
 
     console.log('emailsStuckInScheduled', emailsStuckInScheduled.length);
+
     const allOutbox = await getOutbox();
     const outbox = allOutbox.filter((e) => activeAccounts.includes(e.account));
     console.log('outbox', outbox.length);
@@ -1238,6 +1431,6 @@ const rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
 };
 
 export default ApiHandlerWithContext({
-    getHandler: rescheduleLostOutboxJobs,
+    getHandler: updateSuperUserEmailEngineAccountIds,
     deleteHandler: handleStop,
 });
