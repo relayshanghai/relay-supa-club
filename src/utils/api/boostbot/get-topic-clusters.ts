@@ -1,5 +1,6 @@
 import type { ClientOptions } from 'openai';
 import OpenAIApi from 'openai';
+import type { GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
@@ -47,8 +48,10 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
             .replace(/,\s*]/g, ']') // remove trailing commas
             .replace(/,\s*}/g, '}'); // remove trailing commas
-        const topicClusters = JSON.parse(fixedString);
-
+        const topicClusters = JSON.parse(fixedString) as GetTopicClustersResponse | { clusters: string[][] };
+        if (typeof topicClusters === 'object' && 'clusters' in topicClusters) {
+            return topicClusters.clusters;
+        }
         return topicClusters;
     } catch (error: any) {
         serverLogger(error);
