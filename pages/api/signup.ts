@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { LEGACY_RELAY_DOMAIN, emailRegex } from 'src/constants';
+import { LEGACY_RELAY_DOMAIN, emailRegex, isDev } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import { ApiHandler } from 'src/utils/api-handler';
@@ -20,6 +20,8 @@ import { DISCOVERY_PLAN } from 'src/utils/api/stripe/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { deleteUserById } from 'src/utils/api/db/calls/profiles';
+
+const blockedSignupDomains = isDev() ? [] : ['example'];
 
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
@@ -296,11 +298,20 @@ const rollback = async ({ companyId, cus_id, userId }: { companyId: string; cus_
     }
 };
 
+const validateSignupEmail = async (email: string, blockedDomains: string[]) => {
+    const domain = email.split('@')[1];
+    if (blockedDomains.includes(domain)) {
+        throw new RelayError(createCompanyErrors.failedToSignUp, httpCodes.BAD_REQUEST);
+    }
+};
+
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, password, firstName, lastName, phoneNumber, companyName, companyWebsite, category } =
         validateAndParseData(req);
 
     await validateCompanyName({ companyName });
+
+    await validateSignupEmail(email, blockedSignupDomains);
 
     const companyId = v4();
     let cus_id = '';
