@@ -186,7 +186,10 @@ const SignUpPage = ({
             } catch (e: any) {
                 clientLogger(e, 'error');
                 if (e?.message.includes('User already registered')) {
-                    toast.error(t('login.userAlreadyRegistered'));
+                    toast.error(t('login.emailDomainNotAllowed', { domain: email.split('@')[1] }));
+                }
+                if (e?.message.includes('This email domain is blocked')) {
+                    toast.error(t('login.emailDomainNotAllowed', { domain: email.split('@')[1] }));
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else {

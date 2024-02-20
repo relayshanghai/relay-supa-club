@@ -296,10 +296,20 @@ const rollback = async ({ companyId, cus_id, userId }: { companyId: string; cus_
     }
 };
 
+const blockedEmailDomains = process.env.BLOCKED_EMAIL_DOMAINS?.split(',') || ['example'];
+
+const validateEmail = (email: string) => {
+    blockedEmailDomains.forEach((domain) => {
+        if (email.includes(domain)) {
+            throw new Error(`This email domain is blocked`);
+        }
+    });
+};
+
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, password, firstName, lastName, phoneNumber, companyName, companyWebsite, category } =
         validateAndParseData(req);
-
+    validateEmail(email);
     await validateCompanyName({ companyName });
 
     const companyId = v4();
