@@ -47,7 +47,8 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
             .replace(/[“”]/g, '"') // fix quotation marks
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
             .replace(/,\s*]/g, ']') // remove trailing commas
-            .replace(/,\s*}/g, '}'); // remove trailing commas
+            .replace(/,\s*}/g, '}') // remove trailing commas
+            .replace(/```json/g, ''); // replace ```json
         const topicClusters = JSON.parse(fixedString) as GetTopicClustersResponse | { clusters: string[][] };
         if (typeof topicClusters === 'object' && 'clusters' in topicClusters) {
             return topicClusters.clusters;
