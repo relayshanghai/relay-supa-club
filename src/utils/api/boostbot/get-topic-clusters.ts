@@ -1,10 +1,11 @@
-import { Configuration, OpenAIApi } from 'openai';
+import type { ClientOptions } from 'openai';
+import OpenAIApi from 'openai';
 import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
-const configuration = new Configuration({
+const configuration: ClientOptions = {
     apiKey: process.env.OPENAI_API_KEY,
-});
+};
 
 export const getTopicClusters = async (productDescription: string, topics: string[]): Promise<string[][]> => {
     const openai = new OpenAIApi(configuration);
@@ -28,8 +29,9 @@ Only respond in JSON format with the 3 clusters as an array of arrays of 3 strin
 
 Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
 
-    const chatCompletion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+    const chatCompletion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo-0125',
+        response_format: { type: 'json_object' },
         messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
@@ -39,7 +41,7 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
     let topicClustersString = '';
     let fixedString = '';
     try {
-        topicClustersString = chatCompletion?.data?.choices[0]?.message?.content as string;
+        topicClustersString = chatCompletion?.choices[0]?.message?.content as string;
         fixedString = topicClustersString
             .replace(/[“”]/g, '"') // fix quotation marks
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters

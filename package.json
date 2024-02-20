@@ -82,7 +82,7 @@
     "nanoid": "^4.0.2",
     "next": "^13.5.0",
     "node-object-hash": "^3.0.0",
-    "openai": "^3.2.1",
+    "openai": "^4.28.0",
     "postgres": "^3.4.3",
     "react": "^18.2.0",
     "react-countup": "^6.4.2",

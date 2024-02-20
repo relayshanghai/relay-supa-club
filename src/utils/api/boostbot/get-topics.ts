@@ -1,10 +1,11 @@
-import { Configuration, OpenAIApi } from 'openai';
+import type { ClientOptions } from 'openai';
+import OpenAIApi from 'openai';
 import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
-const configuration = new Configuration({
+const configuration: ClientOptions = {
     apiKey: process.env.OPENAI_API_KEY,
-});
+};
 
 export const getTopics = async (productDescription: string): Promise<string[]> => {
     const openai = new OpenAIApi(configuration);
@@ -17,15 +18,15 @@ Example response: #skincare, #beauty, #facial, #LEDtherapy, #selfcare
 
 Only respond with a comma separated list of 5 English tags.`;
 
-    const chatCompletion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+    const chatCompletion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo-0125',
         messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: productDescription },
         ],
     });
 
-    const topics = chatCompletion?.data?.choices[0]?.message?.content
+    const topics = chatCompletion?.choices[0]?.message?.content
         ?.replaceAll('#', '')
         .split(',')
         .map((topic) => topic.trim());
