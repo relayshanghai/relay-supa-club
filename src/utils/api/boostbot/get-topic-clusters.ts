@@ -36,9 +36,11 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
         ],
     });
 
+    let topicClustersString = '';
+    let fixedString = '';
     try {
-        const topicClustersString = chatCompletion?.data?.choices[0]?.message?.content as string;
-        const fixedString = topicClustersString
+        topicClustersString = chatCompletion?.data?.choices[0]?.message?.content as string;
+        fixedString = topicClustersString
             .replace(/[“”]/g, '"') // fix quotation marks
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
             .replace(/,\s*]/g, ']') // remove trailing commas
@@ -48,6 +50,8 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
         return topicClusters;
     } catch (error: any) {
         serverLogger(error);
-        throw new RelayError('Invalid topic clusters response from OpenAI');
+        throw new RelayError(
+            `Invalid topic clusters response from OpenAI. fixedString: ${fixedString} | topicClustersString:${topicClustersString} | error: ${error}`,
+        );
     }
 };
