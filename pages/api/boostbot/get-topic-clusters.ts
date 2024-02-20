@@ -20,7 +20,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { productDescription, topics } = result.data;
-    const topicClusters: GetTopicClustersResponse = await getTopicClusters(productDescription, topics);
+    const topicClusters: GetTopicClustersResponse | { clusters: string[][] } = await getTopicClusters(
+        productDescription,
+        topics,
+    );
+    if (typeof topicClusters === 'object' && 'clusters' in topicClusters) {
+        return res.status(httpCodes.OK).json(topicClusters.clusters);
+    }
 
     return res.status(httpCodes.OK).json(topicClusters);
 };
