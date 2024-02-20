@@ -995,9 +995,10 @@ const updateSuperUserEmailEngineAccountIds: NextApiHandler = async (_req, res) =
         supportAccountId = supportAccount?.user?.id ?? '';
 
         if (!supportAccountId) {
-            console.log('unable to log in with support account');
+            console.log('unable to log in with support account', supportEmail, newPassword);
             continue;
         }
+        console.log('supportAccountId', supportAccountId, user.email_engine_account_id, user.sequence_send_email);
 
         await db()
             .update(profilesSchema)
