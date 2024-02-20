@@ -73,5 +73,6 @@ const login = {
     noSpacesAllowed: '不许包含空格',
     activateSuccess: '激活成功',
     companyNameRequired: '公司名称是必填字段',
+    emailDomainNotAllowed: '不允许使用此电子邮件域: {{domain}}',
 };
 export default login;

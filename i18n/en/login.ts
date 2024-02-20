@@ -76,5 +76,6 @@ const login = {
     noSpacesAllowed: 'Must not include spaces',
     activateSuccess: 'Success',
     companyNameRequired: 'Company name is required',
+    emailDomainNotAllowed: 'This email domain is not allowed: {{domain}}',
 };
 export default login;
