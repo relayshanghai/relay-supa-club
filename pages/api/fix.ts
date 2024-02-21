@@ -813,13 +813,231 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('noServiceAccountCompanies', noServiceAccountCompanies);
     return res.json({ results });
 };
+const alreadyProcessed = [
+    'support+cus_otpbpdkymr5qkn@boostbot.ai',
+    'support+cus_nlffbksdhf7ka8@boostbot.ai',
+    'support+cus_nrgsfnorl7g4fd@boostbot.ai',
+    'support+cus_p2pg2grjjmdnyp@boostbot.ai',
+    'support+cus_p2ule9jho9stmw@boostbot.ai',
+    'support+cus_pahwgbrhns5sow@boostbot.ai',
+    'support+cus_pai3mlcvaasyge@boostbot.ai',
+    'support+cus_pazywljhtsx4kq@boostbot.ai',
+    'support+cus_p2jycwasfuuxx2@boostbot.ai',
+    'support+cus_p26qggzkeyg3fi@boostbot.ai',
+    'support+cus_p3ibzbehljd8y6@boostbot.ai',
+    'support+cus_p54umnzhbtamkj@boostbot.ai',
+    'support+cus_paf3tbwwcalqer@boostbot.ai',
+    'support+cus_pahgs9dndhmcve@boostbot.ai',
+    'support+cus_otsb9x0n8efxtx@boostbot.ai',
+    'support+cus_p3ygmfhgympdov@boostbot.ai',
+    'support+cus_p3j1g0carkphab@boostbot.ai',
+    'support+cus_p2tqb97yxy4xf2@boostbot.ai',
+    'support+cus_p26v0rmpxmrmz0@boostbot.ai',
+    'support+cus_p2tvxaruwjvxwq@boostbot.ai',
+    'support+cus_p55qfdlilzmrxy@boostbot.ai',
+    'support+cus_p29lgrev9xcf0b@boostbot.ai',
+    'support+cus_paf4eesggqt36j@boostbot.ai',
+    'support+cus_oxit0taaaqpfc4@boostbot.ai',
+    'support+cus_p28ef3katg53dz@boostbot.ai',
+    'support+cus_p4wo8xiid1kg4w@boostbot.ai',
+    'support+cus_p2zs1c04bjpqqc@boostbot.ai',
+    'support+cus_p0e4yjop3ytg1r@boostbot.ai',
+    'support+cus_p3yqzeorv7joet@boostbot.ai',
+    'support+cus_p2xdywgfdqlcbw@boostbot.ai',
+    'support+cus_p2fqnjiuznage7@boostbot.ai',
+    'support+cus_paf5ir7pmbw1xq@boostbot.ai',
+    'support+cus_p2apvt3xu2vbhs@boostbot.ai',
+    'support+cus_p55vmn0jbtbilz@boostbot.ai',
+    'support+cus_paf6mcvhp9kg8a@boostbot.ai',
+    'support+cus_paf8gm6mprxr74@boostbot.ai',
+    'support+cus_p2miuu1wjf1kmm@boostbot.ai',
+    'support+cus_p3ajbkknzdczr0@boostbot.ai',
+    'support+cus_p3fzsm231lq5xn@boostbot.ai',
+    'support+cus_paf7ab1jjmwqwa@boostbot.ai',
+    'support+cus_p3yr2onaclwmvo@boostbot.ai',
+    'support+cus_p2cxve8gvtdsyh@boostbot.ai',
+    'support+cus_panl56nfzsq4hh@boostbot.ai',
+    'support+cus_panmfjyinbencz@boostbot.ai',
+    'support+cus_paf8c6zeklk7w9@boostbot.ai',
+    'support+cus_panartqbpmgwig@boostbot.ai',
+    'support+cus_npn12ukbhkwnde@boostbot.ai',
+    'support+cus_p2dy7cuupbixgt@boostbot.ai',
+    'support+cus_p2gect7vtgcwv4@boostbot.ai',
+    'support+cus_p2hniwhruajkxt@boostbot.ai',
+    'support+cus_p2b66egmukdmgy@boostbot.ai',
+    'support+cus_noxsd1i7v3l1ne@boostbot.ai',
+    'support+cus_nlcmguikvgld7c@boostbot.ai',
+    'support+cus_nq2jhy08gwkrmj@boostbot.ai',
+    'support+cus_npmdzb9vgyb8sn@boostbot.ai',
+    'support+cus_np19yudywsnre9@boostbot.ai',
+    'support+cus_nq6qra8kwwp6vz@boostbot.ai',
+    'support+cus_nlbxnumpzft3rp@boostbot.ai',
+    'support+cus_npqwa5i1w4aq68@boostbot.ai',
+    'support+cus_p0xr1gnzrvpubr@boostbot.ai',
+    'support+cus_p40kurfkvwmkij@boostbot.ai',
+    'support+cus_nldkl7btc35swr@boostbot.ai',
+    'support+cus_nlegedvz4l8uom@boostbot.ai',
+    'support+cus_npo6eiosmnatij@boostbot.ai',
+    'support+cus_ntviy5zucj0njd@boostbot.ai',
+    'support+cus_nrasspyganchnn@boostbot.ai',
+    'support+cus_p2u32tuvbkcvi3@boostbot.ai',
+    'support+cus_pc0k3hawgmiyu6@boostbot.ai',
+    'support+cus_pdryvbqqiwjzwb@boostbot.ai',
+    'support+cus_pdhzxd0bhq1cyk@boostbot.ai',
+    'support+cus_pdn5ia3l0vpgbf@boostbot.ai',
+    'support+cus_penfqmdeizy8yo@boostbot.ai',
+    'support+cus_pgoiueymszdodu@boostbot.ai',
+    'support+cus_pgrp8xt0notdjm@boostbot.ai',
+    'support+cus_ph7c808iwjg11z@boostbot.ai',
+    'support+cus_nlbv66jowbyrnc@boostbot.ai',
+    'support+cus_npnesgs9m4ks9r@boostbot.ai',
+    'support+cus_nkce8jkclsn7ym@boostbot.ai',
+    'support+cus_nmiwpyba2ild5o@boostbot.ai',
+    'support+cus_nmnkiwozv4a1u7@boostbot.ai',
+    'support+cus_nm31kgxjdbobdc@boostbot.ai',
+    'support+cus_npmx7zzizrtazg@boostbot.ai',
+    'support+cus_pbw6goeqa9pbro@boostbot.ai',
+    'support+cus_pbrlncx8kdmjl1@boostbot.ai',
+    'support+cus_pfyedrd5oww8ld@boostbot.ai',
+    'support+cus_pfdjrqc5lnbb4l@boostbot.ai',
+    'support+cus_pfxeblpenzzjxo@boostbot.ai',
+    'support+cus_pj4iq87ijhlftm@boostbot.ai',
+    'support+cus_p3bct6o4pcrq03@boostbot.ai',
+    'support+cus_p2jcliyckiefxy@boostbot.ai',
+    'support+cus_p583h28bthhuqw@boostbot.ai',
+    'support+cus_peyfx79fccsncw@boostbot.ai',
+    'support+cus_pfi9bc520qrxll@boostbot.ai',
+    'support+cus_pfz6nfeudlygfj@boostbot.ai',
+    'support+cus_pfenn2xqvu8umw@boostbot.ai',
+    'support+cus_pgkxiwas93xig6@boostbot.ai',
+    'support+cus_pgoqbkvqwen8js@boostbot.ai',
+    'support+cus_pghwjgnxda4ixq@boostbot.ai',
+    'support+cus_pgsnhcgvpp6mqd@boostbot.ai',
+    'support+cus_np1k4bu71kf8qc@boostbot.ai',
+    'support+cus_npnjzy2uoajnnx@boostbot.ai',
+    'support+cus_nkxdz8xkacgtuu@boostbot.ai',
+    'support+cus_nr0nsftx3edgde@boostbot.ai',
+    'support+cus_nqq6wqcmghqjau@boostbot.ai',
+    'support+cus_ntqrw5pzxfmir1@boostbot.ai',
+    'support+cus_nrguowqggqjwzh@boostbot.ai',
+    'support+cus_p2xonujs7fz0xe@boostbot.ai',
+    'support+cus_p3orskvr25gsy1@boostbot.ai',
+    'support+cus_p2vdkam3afpdeg@boostbot.ai',
+    'support+cus_oxmnwuushxyaep@boostbot.ai',
+    'support+cus_pfetyeqd4cqpjv@boostbot.ai',
+    'support+cus_pb0emjsrsczzvt@boostbot.ai',
+    'support+cus_pdutvzcvdeoscj@boostbot.ai',
+    'support+cus_pbbftbg3g6vyp0@boostbot.ai',
+    'support+cus_pdo7f1ztlaxcqu@boostbot.ai',
+    'support+cus_phco59qm7inaes@boostbot.ai',
+    'support+cus_piysijqpdghs7v@boostbot.ai',
+    'support+cus_nlce5rcgdmmfts@boostbot.ai',
+    'support+cus_np3l4dqegbz3b4@boostbot.ai',
+    'support+cus_noyvzzc17xfpnn@boostbot.ai',
+    'support+cus_nozendrvv7dcnl@boostbot.ai',
+    'support+cus_np13qzqzbqjh64@boostbot.ai',
+    'support+cus_nqnnlvsmmmkeg6@boostbot.ai',
+    'support+cus_nrftzgtjs0uzz4@boostbot.ai',
+    'support+cus_p2ztuxeoscqaqq@boostbot.ai',
+    'support+cus_p2ug1opychjyob@boostbot.ai',
+    'support+cus_p40mjmwpwz50xn@boostbot.ai',
+    'support+cus_p2zabqmsrl3olo@boostbot.ai',
+    'support+cus_p3iartcv0ikelu@boostbot.ai',
+    'support+cus_pd2jd82ifsxwak@boostbot.ai',
+    'support+cus_pdnuzloy0re44s@boostbot.ai',
+    'support+cus_pdnwc1l3vnqzzx@boostbot.ai',
+    'support+cus_pbbeynw1gvaavo@boostbot.ai',
+    'support+cus_pe4b7nznrd49af@boostbot.ai',
+    'support+cus_pe9iflwup4sxr9@boostbot.ai',
+    'support+cus_peusimr8235wna@boostbot.ai',
+    'support+cus_peuurzrbyzhybx@boostbot.ai',
+    'support+cus_pcwsx8p0edz9de@boostbot.ai',
+    'support+cus_pdnkjxnbub9kb6@boostbot.ai',
+    'support+cus_phhr8cooukg9eh@boostbot.ai',
+    'support+cus_pifxyfnleinqkh@boostbot.ai',
+    'support+cus_npgzab4kgoy884@boostbot.ai',
+    'support+cus_oy0zwslhhut869@boostbot.ai',
+    'support+cus_p407xfci7h59se@boostbot.ai',
+    'support+cus_p2gyg2tyeez72x@boostbot.ai',
+    'support+cus_p3gbnn09goqan0@boostbot.ai',
+    'support+cus_p2mjpmgi88w1ro@boostbot.ai',
+    'support+cus_p2pckca3yzhlx6@boostbot.ai',
+    'support+cus_pfmyqkr4vwlzi8@boostbot.ai',
+    'support+cus_pd32sgqhc94wpb@boostbot.ai',
+    'support+cus_pdtxbamkbf3q01@boostbot.ai',
+    'support+cus_peyp1vygooswpy@boostbot.ai',
+    'support+cus_p3danaa21tb14n@boostbot.ai',
+    'support+cus_pakoe8ckben2xg@boostbot.ai',
+    'support+cus_pbrnoaorrrftue@boostbot.ai',
+    'support+cus_pbrpuaqzmgd5lh@boostbot.ai',
+    'support+cus_pcbuqiqtdjxzzv@boostbot.ai',
+    'support+cus_pcsbimvh9tvc9g@boostbot.ai',
+    'support+cus_pdidut9kamg85k@boostbot.ai',
+    'support+cus_pix61u95ezgix1@boostbot.ai',
+    'support+cus_pjjqykaj61rhip@boostbot.ai',
+    'support+cus_omw6bn1qhv6f3n@boostbot.ai',
+    'support+cus_nlzwujghis4ngw@boostbot.ai',
+    'support+cus_np3sloeiiuvcwc@boostbot.ai',
+    'support+cus_npmigl5cftfi5o@boostbot.ai',
+    'support+cus_npmjvf7wqbtdpc@boostbot.ai',
+    'support+cus_nre52esnmjnhfh@boostbot.ai',
+    'support+cus_piysaqkp7sgmya@boostbot.ai',
+    'support+cus_nq3qsehjnchnyq@boostbot.ai',
+    'support+cus_nrh1sfbknxhi3i@boostbot.ai',
+    'support+cus_nuyhtmxkf1f3el@boostbot.ai',
+    'support+cus_ntvvwxa25oegyz@boostbot.ai',
+    'support+cus_nuvyplgf7tlhbe@boostbot.ai',
+    'support+cus_nxwontytrx2ech@boostbot.ai',
+    'support+cus_ncunvxsrviurjc@boostbot.ai',
+    'support+cus_nlq3bhlgjykxbc@boostbot.ai',
+    'support+cus_nmaqu5xnxzumti@boostbot.ai',
+    'support+cus_peygfzcg2bbk4v@boostbot.ai',
+    'support+cus_nqnv8hcz5xclb6@boostbot.ai',
+    'support+cus_pfa2cwmbrwyimk@boostbot.ai',
+    'support+cus_paks1ir512u4uo@boostbot.ai',
+    'support+cus_pajrts3js1g2pg@boostbot.ai',
+    'support+cus_pbx2ug4gbekqmj@boostbot.ai',
+    'support+cus_pe4in2ijyd83nf@boostbot.ai',
+    'support+cus_peanmcymyemu5m@boostbot.ai',
+    'support+cus_pgmunivgs6q9uh@boostbot.ai',
+    'support+cus_pgkmqboj3ar2bu@boostbot.ai',
+    'support+cus_ph7cbncnqd6f4c@boostbot.ai',
+    'support+cus_pj51p2nhjmtrnz@boostbot.ai',
+    'support+cus_pjiyonj5bgbm8i@boostbot.ai',
+    'support+cus_pjqi98y8shwyqf@boostbot.ai',
+    'support+cus_pjh8tdqqw6mfz8@boostbot.ai',
+    'support+cus_ot9wn5pm04r67e@boostbot.ai',
+    'support+cus_npoe2ag9zv5cle@boostbot.ai',
+    'support+cus_npos1zxbk391et@boostbot.ai',
+    'support+cus_nqvrvzotloq1c5@boostbot.ai',
+    'support+cus_npmg7dtlhyaukq@boostbot.ai',
+    'support+cus_nqpb8mlvmoqrbf@boostbot.ai',
+    'support+cus_nsndot7kctguxd@boostbot.ai',
+    'support+cus_nsvaq0hz30khg2@boostbot.ai',
+    'support+cus_nrvcufikx0tlgo@boostbot.ai',
+    'support+cus_ntd5vqeikkncqs@boostbot.ai',
+    'support+cus_p3di9cdr1cfxe8@boostbot.ai',
+    'support+cus_ntpkngy3wj1ot7@boostbot.ai',
+    'support+cus_nuo4oqobmwiz7y@boostbot.ai',
+    'support+cus_ntwlc1h28ggegr@boostbot.ai',
+    'support+cus_nux1bhqtgietzl@boostbot.ai',
+    'support+cus_nwbbpwzmbaroj9@boostbot.ai',
+    'support+cus_nwsw3p8l4gnrry@boostbot.ai',
+    'support+cus_nywvadybd3yln8@boostbot.ai',
+    'support+cus_nie16yfo5pepsf@boostbot.ai',
+];
 const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
     console.log('updateSuperUserPasswords');
 
-    const affectedUsers = await db().select().from(profilesSchema).where(ilike(profilesSchema.email, '%support+%'));
-
+    const affectedUsers = await db()
+        .select()
+        .from(profilesSchema)
+        .where(and(ilike(profilesSchema.email, '%support+%'), notInArray(profilesSchema.email, alreadyProcessed)))
+        .limit(100);
     console.log('superUsers', affectedUsers?.length);
 
+    const failed: string[] = [];
+    const alreadyUpdated: string[] = [];
     const results: string[] = [];
     shouldStop = false;
 
@@ -845,6 +1063,7 @@ const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
         });
         if (shouldBePassword.user?.id) {
             console.log('password already updated');
+            alreadyUpdated.push(user.email);
             continue;
         }
         let id = '';
@@ -863,17 +1082,23 @@ const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
             }
         }
         if (!id) {
-            console.log('unable to log in with old passwords');
+            console.log('unable to log in with old passwords', user.email);
+            failed.push(user.email);
             continue;
         }
         await supabase.auth.updateUser({
             email: user.email,
             password: process.env.SERVICE_ACCOUNT_PASSWORD,
         });
-        results.push(id);
+        console.log('updated', user.email);
+        results.push(user.email);
     }
 
-    console.log('updated', results);
+    console.log('failed', failed);
+    // console.log('updated', results);
+    // console.log('alreadyUpdated', alreadyUpdated);
+    const toIgnore = [...alreadyUpdated, ...results];
+    console.log('to ignore next round', toIgnore);
 
     return res.send({ results });
 };
