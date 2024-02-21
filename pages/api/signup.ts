@@ -22,7 +22,7 @@ import { unixEpochToISOString } from 'src/utils/utils';
 import { deleteUserById } from 'src/utils/api/db/calls/profiles';
 import { kv } from '@vercel/kv';
 
-const incrementIP = async (req: NextApiRequest) => {
+const revertRateLimit = async (req: NextApiRequest) => {
     const ip = req.headers['x-forwarded-host'] || '127.0.0.1';
     const pattern = `*:${ip}:*`;
 
@@ -30,8 +30,8 @@ const incrementIP = async (req: NextApiRequest) => {
 
     const value = await kv.get(key.toString());
     if (value) {
-        const incrementedValue = parseInt(value.toString()) + 1;
-        await kv.set(key.toString(), incrementedValue.toString());
+        const revertedValue = parseInt(value.toString()) - 1;
+        await kv.set(key.toString(), revertedValue.toString());
     }
 };
 
@@ -361,7 +361,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.OK).json(response);
     } catch (error) {
         await rollback({ companyId, cus_id, userId });
-        incrementIP(req);
+        revertRateLimit(req);
         throw error;
     }
 };
