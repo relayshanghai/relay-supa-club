@@ -813,42 +813,12 @@ const _addAdminSuperuserToEachAccount: NextApiHandler = async (_req, res) => {
     console.log('noServiceAccountCompanies', noServiceAccountCompanies);
     return res.json({ results });
 };
-const _updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
+const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
     console.log('updateSuperUserPasswords');
-    const affectedUserEmailengineAccountIds = [
-        'hitb1w9whwi1zgxd',
-        '3ozhp5k44b3o08x8',
-        'hn3f34a5ucfqac3a',
-        'iqth3khgpootqdav',
-        '8e4qxf6qbux2fvw5',
-        'bspu6ywz70nxq4js',
-        'sc8pc9krygnpeq7q',
-        'n1as8g25a8et32mm',
-        '58jw7k9v81eyiwh8',
-        'xtb2dtv0i5h22wlm',
-        'oka59gixztqwbvjm',
-        '83m6lgt150ov43r3',
-        'f5hr7c61wlr5iu6e',
-        'h9a1wzcztc3i3air',
-        'znyrkk4q5g7gebsv',
-        '37xxa5nlj8vhwb9h',
-        '9i2yi0xa4chs95ld',
-        'fvovl2wcvqd95cq9',
-        'iwi0s7dep71wdqlh',
-    ];
-    const affectedUsers = await db()
-        .select()
-        .from(profilesSchema)
-        .where(inArray(profilesSchema.email_engine_account_id, affectedUserEmailengineAccountIds));
 
-    console.log('affectedUsers', affectedUsers?.length);
+    const affectedUsers = await db().select().from(profilesSchema).where(ilike(profilesSchema.email, '%support+%'));
 
-    const affectedCompanies = await db()
-        .select()
-        .from(companies)
-        .where(inArray(companies.id, affectedUsers.map((u) => u.company_id) as string[]));
-
-    console.log('affectedCompanies', affectedCompanies?.length);
+    console.log('superUsers', affectedUsers?.length);
 
     const results: string[] = [];
     shouldStop = false;
@@ -862,43 +832,30 @@ const _updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
             console.log('no email', user);
             continue;
         }
-        if (user.email?.includes('support+')) {
-            console.log('support user, skipping');
-            continue;
-        }
-        const company = affectedCompanies.find((c) => c.id === user.company_id);
-        if (!company) {
-            console.log('no company', user);
-            continue;
-        }
-        // login as support user to change password
-        const identifier = company.cus_id?.toLowerCase().trim();
-        const supportEmail = `support+${identifier}@boostbot.ai`;
-        let id = '';
 
         // logic above is a mess. lets try refactoring
-        const oldPasswords = ['', 'B00$t80t*Support', 'B00*Support'];
+        const oldPasswords = ['B00$t80t*Support', 'B00*Support'];
         const newPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
         if (!newPassword) {
             throw new Error('new password not set');
         }
         const { data: shouldBePassword } = await supabase.auth.signInWithPassword({
-            email: supportEmail,
+            email: user.email,
             password: newPassword,
         });
         if (shouldBePassword.user?.id) {
-            console.log('passowrd already updated');
+            console.log('password already updated');
             continue;
         }
+        let id = '';
         for (const password of oldPasswords) {
             const { error, data: signinResData } = await supabase.auth.signInWithPassword({
-                email: supportEmail,
+                email: user.email,
                 password,
             });
-            console.log({ signinResData, error });
             if (error) {
-                console.log('error signing in with old passwords', error, password);
-                // continue;
+                // console.log('error signing in with old passwords', error, password);
+                continue;
             }
             if (signinResData?.user?.id) {
                 id = signinResData?.user?.id;
@@ -910,7 +867,7 @@ const _updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
             continue;
         }
         await supabase.auth.updateUser({
-            email: supportEmail,
+            email: user.email,
             password: process.env.SERVICE_ACCOUNT_PASSWORD,
         });
         results.push(id);
@@ -921,7 +878,7 @@ const _updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
     return res.send({ results });
 };
 
-const updateSuperUserEmailEngineAccountIds: NextApiHandler = async (_req, res) => {
+const _updateSuperUserEmailEngineAccountIds: NextApiHandler = async (_req, res) => {
     console.log('updateSuperUserEmailEngineAccountIds');
     const affectedUserEmailengineAccountIds = [
         'hitb1w9whwi1zgxd',
@@ -1432,6 +1389,6 @@ const _rescheduleLostOutboxJobs: NextApiHandler = async (_req, res) => {
 };
 
 export default ApiHandlerWithContext({
-    getHandler: updateSuperUserEmailEngineAccountIds,
+    getHandler: updateSuperUserPasswords,
     deleteHandler: handleStop,
 });
