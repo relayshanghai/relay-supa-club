@@ -1,6 +1,6 @@
-import { products } from "drizzle/schema";
-import awaitToError from "src/utils/await-to-error";
-import { db } from "src/utils/database";
+import { products } from 'drizzle/schema';
+import awaitToError from 'src/utils/await-to-error';
+import { db } from 'src/utils/database';
 
 export type ProductInsert = typeof products.$inferInsert;
 
@@ -16,7 +16,6 @@ export interface Product {
     createdAt: Date;
     updatedAt: Date;
 }
-
 
 export default class ProductRepository {
     public static readonly repository: ProductRepository = new ProductRepository();
@@ -47,6 +46,6 @@ export default class ProductRepository {
             currency: returning.price_currency || '',
             createdAt: new Date(returning.created_at),
             updatedAt: new Date(returning.updated_at),
-        }
+        };
     }
 }

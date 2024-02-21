@@ -3,7 +3,7 @@ import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 export class ProductRequest {
     @IsString()
     name!: string;
-    
+
     @IsNumber()
     price!: number;
 

@@ -1,8 +1,8 @@
-import ProductRepository from "src/backend/database/product-repository";
-import { RequestContext } from "src/utils/request-context/request-context";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import ProductService from "./product-service";
-import awaitToError from "src/utils/await-to-error";
+import ProductRepository from 'src/backend/database/product-repository';
+import { RequestContext } from 'src/utils/request-context/request-context';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import ProductService from './product-service';
+import awaitToError from 'src/utils/await-to-error';
 
 describe('src/backend/domain/product/product-service.ts', () => {
     const getContextMock = vi.fn();
@@ -51,19 +51,20 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     shopUrl: 'https://example.com',
                     currency: 'USD',
                 });
-            })
+            });
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
-                getContextMock.mockReturnValue({})
-                const [err] = await awaitToError( ProductService.getService().create({
-                    name: 'product_name',
-                    description: 'product_description',
-                    price: 100,
-                    shopUrl: 'https://example.com',
-                    currency: 'USD',
-                }))
+                getContextMock.mockReturnValue({});
+                const [err] = await awaitToError(
+                    ProductService.getService().create({
+                        name: 'product_name',
+                        description: 'product_description',
+                        price: 100,
+                        shopUrl: 'https://example.com',
+                        currency: 'USD',
+                    }),
+                );
                 expect(err.message).toBe('No company id found in request context');
-
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

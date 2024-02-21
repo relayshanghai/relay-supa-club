@@ -1,8 +1,8 @@
-import type { ProductRequest } from "pages/api/products/request";
-import { CompanyIdRequired } from "../decorators/company-id";
-import type { GetProductResponse } from "pages/api/products/response";
-import ProductRepository from "src/backend/database/product-repository";
-import { RequestContext } from "src/utils/request-context/request-context";
+import type { ProductRequest } from 'pages/api/products/request';
+import { CompanyIdRequired } from '../decorators/company-id';
+import type { GetProductResponse } from 'pages/api/products/response';
+import ProductRepository from 'src/backend/database/product-repository';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 export default class ProductService {
     public static readonly service: ProductService = new ProductService();
