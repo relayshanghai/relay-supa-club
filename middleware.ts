@@ -169,7 +169,7 @@ const isSessionClean = async (supabase: SupabaseClient) => {
 
 const ratelimit = new Ratelimit({
     redis: kv,
-    // 5 requests from the same IP in 10 seconds
+    // 10 requests from the same IP in 24 hours
     limiter: Ratelimit.slidingWindow(10, '24 h'),
 });
 
