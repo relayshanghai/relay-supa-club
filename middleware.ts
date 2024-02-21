@@ -7,6 +7,8 @@ import { EMPLOYEE_EMAILS, PREVIEW_PAGE_ALLOW_EMAIL_LIST } from 'src/constants/em
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { kv } from '@vercel/kv';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
@@ -165,6 +167,12 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
+const ratelimit = new Ratelimit({
+    redis: kv,
+    // 5 requests from the same IP in 10 seconds
+    limiter: Ratelimit.slidingWindow(1, '10 s'),
+});
+
 /**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
@@ -173,6 +181,14 @@ const isSessionClean = async (supabase: SupabaseClient) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+
+    if (req.nextUrl.pathname === '/api/signup') {
+        const ip = req.ip ?? '127.0.0.1';
+        const { success } = await ratelimit.limit(ip);
+        if (!success) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+    }
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);

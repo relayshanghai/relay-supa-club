@@ -60,6 +60,8 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
+    "@upstash/ratelimit": "^1.0.1",
+    "@vercel/kv": "^1.0.1",
     "analytics": "^0.8.9",
     "bottleneck": "^2.19.5",
     "callsites": "^4.0.0",
