@@ -1,10 +1,11 @@
-import { Configuration, OpenAIApi } from 'openai';
+import type { ClientOptions } from 'openai';
+import OpenAIApi from 'openai';
 import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
-const configuration = new Configuration({
+const configuration: ClientOptions = {
     apiKey: process.env.OPENAI_API_KEY,
-});
+};
 
 export type RelevantTopic = {
     tag: string;
@@ -45,26 +46,32 @@ Only respond in JSON format with the 7 objects as an array. Do not respond with 
 
     const userPrompt = `Influencer topics: "${JSON.stringify(topics)}"`;
 
-    const chatCompletion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+    const chatCompletion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo-0125',
+        response_format: { type: 'json_object' },
         messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
         ],
     });
-
+    let topicsAndRelevanceString = '';
+    let fixedString = '';
     try {
-        const topicsAndRelevanceString = chatCompletion?.data?.choices[0]?.message?.content as string;
-        const fixedString = topicsAndRelevanceString
+        topicsAndRelevanceString = chatCompletion?.choices[0]?.message?.content as string;
+        fixedString = topicsAndRelevanceString
             .replace(/[“”]/g, '"') // fix quotation marks
             .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
             .replace(/,\s*]/g, ']') // remove trailing commas
-            .replace(/,\s*}/g, '}'); // remove trailing commas
+            .replace(/,\s*}/g, '}') // remove trailing commas
+            .replace(/```json/g, ''); // replace ```json
+
         const topicsAndRelevance = JSON.parse(fixedString);
 
         return topicsAndRelevance;
     } catch (error) {
         serverLogger(error);
-        throw new RelayError('Invalid topic relevance response from OpenAI');
+        throw new RelayError(
+            `Invalid topic clusters response from OpenAI. fixedString: ${fixedString} | topicClustersString:${topicsAndRelevanceString} | error: ${error}`,
+        );
     }
 };
