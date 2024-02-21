@@ -170,7 +170,7 @@ const isSessionClean = async (supabase: SupabaseClient) => {
 const ratelimit = new Ratelimit({
     redis: kv,
     // 5 requests from the same IP in 10 seconds
-    limiter: Ratelimit.slidingWindow(1, '10 s'),
+    limiter: Ratelimit.slidingWindow(10, '24 h'),
 });
 
 /**
@@ -181,14 +181,6 @@ const ratelimit = new Ratelimit({
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
-
-    if (req.nextUrl.pathname === '/api/signup') {
-        const ip = req.ip ?? '127.0.0.1';
-        const { success } = await ratelimit.limit(ip);
-        if (!success) {
-            return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
-        }
-    }
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
@@ -238,6 +230,16 @@ export async function middleware(req: NextRequest) {
 
     if (authData.session?.user?.email) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
+    }
+
+    if (req.nextUrl.pathname.includes('/api/signup')) {
+        const ip = req.ip ?? '127.0.0.1';
+        const { success } = await ratelimit.limit(ip);
+        if (!success) {
+            return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
+        } else {
+            return res;
+        }
     }
 
     // not logged in -- api requests, just return an error
@@ -291,6 +293,6 @@ export const config = {
          * - api/jobs/run
          * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };
