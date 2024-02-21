@@ -186,7 +186,7 @@ export async function middleware(req: NextRequest) {
         const ip = req.ip ?? '127.0.0.1';
         const { success } = await ratelimit.limit(ip);
         if (!success) {
-            return NextResponse.redirect(new URL('/', req.url));
+            return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
         }
     }
 
