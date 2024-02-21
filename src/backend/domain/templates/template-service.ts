@@ -67,7 +67,7 @@ export default class TemplateService {
             step: template.step,
             subject: template.subject,
             template: template.template,
-            variableIds: template.variableIds.map((id) => id),
+            variableIds: template.variableIds,
         });
     }
 

@@ -4,6 +4,7 @@ import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { Underline } from '@tiptap/extension-underline';
+import { Paragraph } from '@tiptap/extension-paragraph';
 import { useEffect } from 'react';
 import { Toolbar } from '../inbox/wip/toolbar';
 import VariableNode from './variable-node';
@@ -53,12 +54,17 @@ export const Tiptap = ({
                     class: 'list-disc ml-2',
                 },
             }),
+            Paragraph.configure({
+                HTMLAttributes: {
+                    class: 'grow-0 overflow-y-auto max-h-[400px] text-clip',
+                },
+            }),
             VariableNode,
         ],
         content: description,
         editorProps: {
             attributes: {
-                class: 'w-full inline bg-transparent p-3 h-full transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                class: 'w-full max-h-[100px] overflow-y-auto inline bg-transparent p-3 h-full transition-all text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:border-primary-0 focus-visible:ring-primary-0 focus-visible:ring-0 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
             },
         },
         onUpdate: ({ editor }) => {
@@ -85,12 +91,17 @@ export const Tiptap = ({
                 onSubmit();
                 editor?.commands.clearContent();
             }}
-            className="min-h-[250]px flex h-full flex-col justify-stretch"
+            className="flex h-full min-h-[500px] flex-col justify-stretch"
         >
             <div className="flex">
                 <Toolbar editor={editor} />
             </div>
-            <EditorContent className="h-full" spellCheck="false" placeholder={placeholder} editor={editor} />
+            <EditorContent
+                className="h-full min-h-[500px] overflow-y-auto"
+                spellCheck="false"
+                placeholder={placeholder}
+                editor={editor}
+            />
         </form>
     );
 };

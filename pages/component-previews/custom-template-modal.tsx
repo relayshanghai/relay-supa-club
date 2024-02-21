@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, type SetStateAction, type Dispatch } from 'react';
 import Fuse from 'fuse.js';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
@@ -37,16 +37,20 @@ import {
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import ProgressHeader from 'src/components/ProgressHeader';
 import { SearchBar } from 'src/components/SearchBar';
-import { Input } from 'shadcn/components/ui/input';
 import { DialogClose } from 'shadcn/components/ui/dialog';
 import { Tiptap } from 'src/components/tiptap';
 import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
+import type {
+    GetAllTemplateResponse,
+    GetTemplateResponse,
+    GetTemplateVariableResponse,
+} from 'pages/api/outreach/email-templates/response';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import { type Editor } from '@tiptap/react';
 import { useAtomValue } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
+import { TiptapInput } from 'src/components/tiptap/input';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -109,7 +113,7 @@ const CustomTemplateCard = ({
     status: OutreachStatus;
     selected?: boolean;
 }) => {
-    const { data: template } = useSWR([templateId], async () => {
+    const { data: template, mutate: refreshTemplate } = useSWR([templateId], async () => {
         const url = `/api/outreach/email-templates/${templateId}`;
         const res = await apiFetch<GetTemplateResponse>(url);
         return res.content;
@@ -146,11 +150,9 @@ const CustomTemplateCard = ({
             <DialogContent className="min-w-[600px] p-0 lg:min-w-[800px]">
                 <DialogHeader>
                     <DialogDescription className="w-full p-6">
-                        <CustomTemplateDetails
-                            status={status}
-                            subject={template?.subject || ''}
-                            content={template?.template || ''}
-                        />
+                        {template && (
+                            <CustomTemplateDetails status={status} template={template} setTemplate={refreshTemplate} />
+                        )}
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>
@@ -160,14 +162,37 @@ const CustomTemplateCard = ({
 
 const CustomTemplateDetails = ({
     status,
-    subject,
-    content,
+    template,
+    setTemplate,
 }: {
     status: OutreachStatus;
-    subject: string;
-    content: string;
+    template: GetTemplateResponse;
+    setTemplate: (template: GetTemplateResponse) => void;
 }) => {
     const { t } = useTranslation();
+    const [templateDetails, setTemplateDetails] = useState<GetTemplateResponse>(template);
+    useEffect(() => {
+        console.log(templateDetails);
+    }, [templateDetails]);
+    const [step, setStep] = useState(0);
+
+    const progressStep = [
+        {
+            title: 'Choose a starting point',
+            description: 'Starter or blank slate',
+        },
+        {
+            title: 'Set template content',
+            description: 'Subject and email body',
+        },
+        {
+            title: 'Name your template',
+            description: 'Name and brief description',
+        },
+    ];
+    const handleNextClick = useCallback(() => {
+        setStep(step + 1);
+    }, [step]);
     return (
         <Card className="w-full gap-2 border-none shadow-none">
             <CardDescription className="flex flex-col gap-2">
@@ -182,22 +207,76 @@ const CustomTemplateDetails = ({
                     <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
                         <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
-                            {subject}
+                            {template?.subject}
                         </label>
                     </section>
                 </section>
                 <section className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
-                    {content}
+                    {template?.template}
                 </section>
             </CardDescription>
             <CardFooter className="mt-4 w-full justify-between px-0 pb-0">
                 <Button variant="outline">
                     <DeleteOutline className="h-4 w-4 stroke-red-500" />
                 </Button>
-                <Button className="flex gap-4">
-                    <Edit className="h-4 w-4 stroke-white" />
-                    Modify Template
-                </Button>
+                <Dialog
+                    onOpenChange={(open) => {
+                        open ? setStep(1) : setStep(0);
+                    }}
+                >
+                    <DialogTrigger>
+                        <Button type="button" className="flex gap-4">
+                            <Edit className="h-4 w-4 stroke-white" />
+                            Modify Template
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                        className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]"
+                        onPointerDownOutside={(e) => e.preventDefault()}
+                    >
+                        <DialogHeader>
+                            <DialogTitle className="flex w-full flex-col gap-1 py-2">
+                                <ProgressHeader labels={progressStep} selectedIndex={step} />
+                            </DialogTitle>
+                            <DialogDescription className="h-full w-full bg-primary-50 p-6">
+                                {step <= 1 ? (
+                                    <EditCustomTemplateModalBody
+                                        onNextClick={handleNextClick}
+                                        templateDetails={templateDetails}
+                                        setTemplateDetails={setTemplateDetails}
+                                    />
+                                ) : (
+                                    <NameTemplateBody
+                                        templateDetails={templateDetails}
+                                        setTemplateDetails={setTemplateDetails}
+                                        onSubmit={async () => {
+                                            setTemplate(templateDetails);
+                                            await apiFetch(
+                                                `/api/outreach/email-templates/{id}`,
+                                                {
+                                                    path: { id: templateDetails.id },
+                                                    body: {
+                                                        name: templateDetails.name,
+                                                        description: templateDetails.description,
+                                                        subject: templateDetails.subject,
+                                                        template: templateDetails.template,
+                                                        step: status,
+                                                        variableIds: templateDetails.variables.map(
+                                                            (variable) => variable.id,
+                                                        ),
+                                                    },
+                                                },
+                                                {
+                                                    method: 'PUT',
+                                                },
+                                            );
+                                        }}
+                                    />
+                                )}
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
             </CardFooter>
         </Card>
     );
@@ -209,12 +288,14 @@ const EditCustomTemplateDetails = ({
     content,
     onNextClick,
     onStatusChange,
+    setTemplateDetails,
 }: {
     subject: string;
     status: OutreachStatus;
     content: string;
     onNextClick: () => void;
     onStatusChange: (status: OutreachStatus) => void;
+    setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
 }) => {
     const [subjectInput, setSubjectInput] = useState('');
     const { t } = useTranslation();
@@ -246,15 +327,19 @@ const EditCustomTemplateDetails = ({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </section>
-                    <section className="flex grow flex-col gap-2">
+                    <section className="flex grow-0 flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
-                        <Input
-                            disabled={status !== 'OUTREACH'}
-                            className="min-w-[300px] focus:border-primary-400 focus-visible:ring-primary-400 disabled:bg-gray-200"
+                        <TiptapInput
+                            onChange={(subject: string) => {
+                                setSubjectInput(`${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}`);
+                                setTemplateDetails((prev) => {
+                                    return { ...prev, subject: `${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}` };
+                                });
+                            }}
                             placeholder={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}`}
-                            value={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subjectInput}`}
-                            onChange={(e) => {
-                                setSubjectInput(e.target.value);
+                            description={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subjectInput}`}
+                            onSubmit={() => {
+                                //
                             }}
                         />
                     </section>
@@ -263,8 +348,10 @@ const EditCustomTemplateDetails = ({
                     <Tiptap
                         description={content}
                         placeholder="email body"
-                        onChange={() => {
-                            //
+                        onChange={(description) => {
+                            setTemplateDetails((prev) => {
+                                return { ...prev, template: description };
+                            });
                         }}
                         onSubmit={() => {
                             //
@@ -279,6 +366,7 @@ const EditCustomTemplateDetails = ({
                     </Button>
                 </DialogClose>
                 <Button
+                    type="button"
                     className="flex gap-4"
                     onClick={(e) => {
                         onNextClick();
@@ -312,7 +400,13 @@ const NewTemplateCard = () => {
     );
 };
 
-const EditableTemplateCard = () => {
+const EditableTemplateCard = ({
+    templateDetails,
+    setTemplateDetails,
+}: {
+    templateDetails: GetTemplateResponse;
+    setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
+}) => {
     return (
         <Card className="h-fit w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]">
             <CardHeader className="flex flex-row items-start gap-4 p-4">
@@ -323,10 +417,25 @@ const EditableTemplateCard = () => {
                 </div>
                 <section className="flex flex-col items-start justify-between gap-4">
                     <CardTitle className="font-medium text-gray-700">
-                        <input className="border-none focus:outline-none" placeholder="Create a totally new template" />
+                        <input
+                            value={templateDetails.name}
+                            onChange={(e) => {
+                                setTemplateDetails((prev) => {
+                                    return { ...prev, name: e.target.value };
+                                });
+                            }}
+                            className="border-none focus:outline-none"
+                            placeholder="Create a totally new template"
+                        />
                     </CardTitle>
                     <CardDescription className="font-normal text-gray-400">
                         <input
+                            value={templateDetails.description}
+                            onChange={(e) => {
+                                setTemplateDetails((prev) => {
+                                    return { ...prev, description: e.target.value };
+                                });
+                            }}
                             className="border-none focus:outline-none"
                             placeholder="A blank canvas to call your own!"
                         />
@@ -337,7 +446,15 @@ const EditableTemplateCard = () => {
     );
 };
 
-const NameTemplateBody = () => {
+const NameTemplateBody = ({
+    templateDetails,
+    setTemplateDetails,
+    onSubmit,
+}: {
+    templateDetails: GetTemplateResponse;
+    setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
+    onSubmit: () => void;
+}) => {
     return (
         <div className="flex h-full w-full flex-col gap-2">
             <p className="text-xl font-semibold text-gray-600">Name your template</p>
@@ -348,13 +465,13 @@ const NameTemplateBody = () => {
                 <p className="text-sm font-normal text-gray-500">This is what it will look like on other pages</p>
             </div>
             <section className="flex h-full w-full items-center justify-center">
-                <EditableTemplateCard />
+                <EditableTemplateCard templateDetails={templateDetails} setTemplateDetails={setTemplateDetails} />
             </section>
             <section className="flex justify-end gap-2">
                 <DialogClose>
                     <Button variant="ghost">Cancel</Button>
                 </DialogClose>
-                <Button>Save template</Button>
+                <Button onClick={onSubmit}>Save template</Button>
             </section>
         </div>
     );
@@ -423,8 +540,8 @@ const VariableGroup = ({
     variableGroup,
     onClick,
 }: {
-    variableGroup: { title: VariableGroup; variables: string[] };
-    onClick: (variable: string) => void;
+    variableGroup: { title: VariableGroup; variables: GetTemplateVariableResponse[] };
+    onClick: (variable: GetTemplateVariableResponse) => void;
 }) => {
     const { title, variables } = variableGroup;
     return (
@@ -437,16 +554,16 @@ const VariableGroup = ({
             </AccordionTrigger>
 
             <AccordionContent className="text-xs">
-                {variables.map((variable, index) => (
+                {variables?.map((variable, index) => (
                     <p
                         onClick={() => onClick(variable)}
                         className={`flex cursor-pointer items-center gap-1 p-3 font-semibold ${
                             index % 2 !== 0 && 'bg-gray-50'
                         }`}
-                        key={`variable-${title}-${variable}`}
+                        key={`variable-${title}-${variable.id}`}
                     >
                         {'{'}
-                        <span className="font-semibold text-primary-600">{variable}</span>
+                        <span className="font-semibold text-primary-600">{variable.name}</span>
                         {'}'}
                     </p>
                 ))}
@@ -518,50 +635,56 @@ const VariableGroup = ({
     );
 };
 
-const mockVariables = [
-    {
-        title: 'brand',
-        variables: ['brand_name', 'brand_website', 'brand_email', 'brand_phone'],
-    },
-    {
-        title: 'product',
-        variables: ['product_name', 'product_price', 'product_description'],
-    },
-    {
-        title: 'collab',
-        variables: ['collab_name', 'collab_email', 'collab_phone'],
-    },
-    {
-        title: 'influencer',
-        variables: ['influencer_name', 'influencer_email', 'influencer_phone'],
-    },
-    {
-        title: 'wildcards',
-        variables: ['first_name', 'last_name', 'email', 'phone'],
-    },
-];
-
 export const addVariable = (editor: Editor | null, text: string) => {
-    editor?.commands.insertContent(`<variable-component text="${text}"></variable-component>`);
+    editor?.commands.insertContent(`<variable-component text="${text}" />`);
 };
 
-const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void }) => {
+const EditCustomTemplateModalBody = ({
+    onNextClick,
+    templateDetails,
+    setTemplateDetails,
+}: {
+    onNextClick: () => void;
+    templateDetails: GetTemplateResponse;
+    setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
+}) => {
     const [status, setStatus] = useState('OUTREACH' as OutreachStatus);
-    const [variables, setVariables] = useState(mockVariables);
+    const { data: variables } = useSWR('/api/outreach/variables', async () => {
+        const res = await apiFetch<GetTemplateVariableResponse[]>('/api/outreach/variables');
+        const groupedVariables = res.content.reduce(
+            (
+                acc: { title: string; variables: GetTemplateVariableResponse[] }[],
+                variable: GetTemplateVariableResponse,
+            ) => {
+                const key = variable.category;
+                const index = acc.findIndex((item) => item.title === key);
+                if (index === -1) {
+                    acc.push({ title: key, variables: [variable] });
+                } else {
+                    acc[index].variables.push(variable);
+                }
+                return acc;
+            },
+            [],
+        );
+        return groupedVariables;
+    });
+    const [filteredVariables, setFilteredVariables] = useState(variables);
     const [searchTerm, setSearchTerm] = useState('');
     const editor = useAtomValue(currentEditorAtom);
 
     useEffect(() => {
+        if (!variables) return;
         if (searchTerm === '') {
-            setVariables(mockVariables);
+            setFilteredVariables(variables);
             return;
         }
-        const fuse = new Fuse(mockVariables, {
+        const fuse = new Fuse(variables, {
             keys: ['title', 'variables'],
         });
         const results = fuse.search(searchTerm);
-        setVariables(results.map((result) => result.item));
-    }, [searchTerm]);
+        setFilteredVariables(results.map((result) => result.item));
+    }, [searchTerm, variables]);
     return (
         <div className="flex h-full w-full divide-x-2 bg-white shadow-lg">
             <section className="basis-2/5 divide-y-2 pb-16">
@@ -576,13 +699,16 @@ const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void 
                         }}
                     />
                     <div className="flex-auto justify-center overflow-auto" style={{ height: 2 }}>
-                        <Accordion id={mockVariables[0].title} type="multiple">
-                            {variables.map((group) => (
+                        <Accordion id={filteredVariables?.[0].title} type="multiple">
+                            {filteredVariables?.map((group) => (
                                 <VariableGroup
-                                    onClick={(variable: string) => {
-                                        addVariable(editor, variable);
+                                    onClick={(variable: GetTemplateVariableResponse) => {
+                                        addVariable(editor, variable.name);
+                                        setTemplateDetails((prev) => {
+                                            return { ...prev, variables: [...prev.variables, variable] };
+                                        });
                                     }}
-                                    key={'group-' + group}
+                                    key={'group-' + group.title}
                                     variableGroup={group}
                                 />
                             ))}
@@ -593,8 +719,9 @@ const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void 
             <section className="basis-4/5 px-9 py-3">
                 <EditCustomTemplateDetails
                     status={status}
-                    subject={'Subject'}
-                    content={'BODY'}
+                    subject={templateDetails.subject}
+                    content={templateDetails.template}
+                    setTemplateDetails={setTemplateDetails}
                     onNextClick={onNextClick}
                     onStatusChange={(status) => {
                         setStatus(status);
@@ -606,47 +733,8 @@ const EditCustomTemplateModalBody = ({ onNextClick }: { onNextClick: () => void 
 };
 
 const CustomTemplateModal = () => {
-    const [step, setStep] = useState(0);
-    const progressStep = [
-        {
-            title: 'Choose a starting point',
-            description: 'Starter or blank slate',
-        },
-        {
-            title: 'Set template content',
-            description: 'Subject and email body',
-        },
-        {
-            title: 'Name your template',
-            description: 'Name and brief description',
-        },
-    ];
-    const handleNextClick = useCallback(() => {
-        setStep(step + 1);
-    }, [step]);
     return (
         <>
-            <Dialog
-                onOpenChange={(open) => {
-                    open ? setStep(1) : setStep(0);
-                }}
-            >
-                <DialogTrigger>Edit modal</DialogTrigger>
-                <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex w-full flex-col gap-1 py-2">
-                            <ProgressHeader labels={progressStep} selectedIndex={step} />
-                        </DialogTitle>
-                        <DialogDescription className="h-full w-full bg-primary-50 p-6">
-                            {step === 1 ? (
-                                <EditCustomTemplateModalBody onNextClick={handleNextClick} />
-                            ) : (
-                                <NameTemplateBody />
-                            )}
-                        </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
             <Dialog>
                 <DialogTrigger>
                     <Button>Template Library</Button>
