@@ -1025,14 +1025,80 @@ const alreadyProcessed = [
     'support+cus_nwsw3p8l4gnrry@boostbot.ai',
     'support+cus_nywvadybd3yln8@boostbot.ai',
     'support+cus_nie16yfo5pepsf@boostbot.ai',
+    'support+cus_nrgb16q1zwj1bm@boostbot.ai',
+    'support+cus_ntkku6xcrqv4bc@boostbot.ai',
+    'support+cus_ngzpp4lhwz3s0d@boostbot.ai',
+    'support+cus_nwqvh9pma11ieq@boostbot.ai',
+    'support+cus_nhkdbttlhvq8f7@boostbot.ai',
+    'support+cus_nuqhwepts0370f@boostbot.ai',
+    'support+cus_pg1vrhrrdnujip@boostbot.ai',
+    'support+cus_ots9qarlmtcfpo@boostbot.ai',
+    'support+cus_nhfrdpezrvpi6n@boostbot.ai',
+    'support+cus_nr9surdflvnusb@boostbot.ai',
+    'support+cus_nvh8w70rkk0vfi@boostbot.ai',
+    'support+cus_nrgucr3h2wkkit@boostbot.ai',
+    'support+cus_nw7abadodagxlv@boostbot.ai',
+    'support+cus_nratx1ypenjlpu@boostbot.ai',
+    'support+cus_nraecahikhgzl4@boostbot.ai',
+    'support+cus_nucfhrs6zg5gjz@boostbot.ai',
+    'support+cus_nrebq2n1dggewc@boostbot.ai',
+    'support+cus_otbrcx14thxuxf@boostbot.ai',
+    'support+cus_nsdhosff7oc9va@boostbot.ai',
+    'support+cus_nrfjdhltvmp9zn@boostbot.ai',
+    'support+cus_nruyfhmwozwlvi@boostbot.ai',
+    'support+cus_nrx43qnakv2jno@boostbot.ai',
+    'support+cus_nsnf3tux75kvcg@boostbot.ai',
+    'support+cus_nt75vhynsxj9rq@boostbot.ai',
+    'support+cus_ntug4uelzk4sl9@boostbot.ai',
+    'support+cus_ntvctvubzs9jrr@boostbot.ai',
+    'support+cus_nqp8umcytmzsew@boostbot.ai',
+    'support+cus_ngxyqfn6zihcyn@boostbot.ai',
+    'support+cus_nv0rg0jmekg1pi@boostbot.ai',
+    'support+cus_nv12ffz8nbuwwg@boostbot.ai',
+    'support+cus_nv2dtx5veflie4@boostbot.ai',
+    'support+cus_nw8amrpyg6vwka@boostbot.ai',
+    'support+cus_nwrlbvoorlnrfp@boostbot.ai',
+    'support+cus_nudshfizcala8g@boostbot.ai',
+    'support+cus_nwthqhqj0cs5qb@boostbot.ai',
+    'support+cus_nwueavyjjn2bac@boostbot.ai',
+    'support+cus_nwuf0htblfrqy1@boostbot.ai',
+    'support+cus_ny78lj5vkdyrza@boostbot.ai',
+    'support+cus_otcppd4pdcxexq@boostbot.ai',
+    'support+cus_nz9nc4vmoc4a85@boostbot.ai',
+    'support+cus_ncmogmvf4lkzl7@boostbot.ai',
+    'support+cus_p3j3pprb9urack@boostbot.ai',
+    'support+cus_p2ytvv6n1cw7my@boostbot.ai',
+    'support+cus_p57dynteuvygst@boostbot.ai',
+    'support+cus_nyldxdpia3wcdi@boostbot.ai',
+    'support+cus_nbmgv9ae1hz7u6@boostbot.ai',
+    'support+cus_ngd8j6mrutvomk@boostbot.ai',
+    'support+cus_nmdzqodk1nvdlv@boostbot.ai',
+    'support+cus_ntmemv99jojplu@boostbot.ai',
+    'support+cus_nnhacnpfzpzhry@boostbot.ai',
+    'support+cus_pbqn1ff4j8igtf@boostbot.ai',
+    'support+cus_pbxmyxnpef1wvf@boostbot.ai',
 ];
 const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
     console.log('updateSuperUserPasswords');
 
+    type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled' | 'paused';
+    const activeStatus = ['trial', 'active', 'paused'] as SubscriptionStatus[];
+    const activeCompanies = await db()
+        .select({ id: companies.id })
+        .from(companies)
+        .where(inArray(companies.subscription_status, activeStatus));
+    const activeCompanyIds = activeCompanies.map((c) => c.id);
+
     const affectedUsers = await db()
         .select()
         .from(profilesSchema)
-        .where(and(ilike(profilesSchema.email, '%support+%'), notInArray(profilesSchema.email, alreadyProcessed)))
+        .where(
+            and(
+                ilike(profilesSchema.email, '%support+%'),
+                notInArray(profilesSchema.email, alreadyProcessed),
+                inArray(profilesSchema.company_id, activeCompanyIds),
+            ),
+        )
         .limit(100);
     console.log('superUsers', affectedUsers?.length);
 
@@ -1052,7 +1118,7 @@ const updateSuperUserPasswords: NextApiHandler = async (_req, res) => {
         }
 
         // logic above is a mess. lets try refactoring
-        const oldPasswords = ['B00$t80t*Support', 'B00*Support'];
+        const oldPasswords = ['B00$t80t*Support', 'B00*Support', 'password123!'];
         const newPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? '';
         if (!newPassword) {
             throw new Error('new password not set');
