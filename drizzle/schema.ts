@@ -415,10 +415,14 @@ export const products = pgTable('products', {
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
     updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+    name: text('string'),
     shop_url: text('shop_url'),
     description: text('description'),
     price: doublePrecision('price'),
     price_currency: text('price_currency'),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id),
 });
 
 export const sequence_steps = pgTable('sequence_steps', {
