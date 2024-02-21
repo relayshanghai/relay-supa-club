@@ -1,3 +1,4 @@
+import { and, eq } from 'drizzle-orm';
 import { products } from 'drizzle/schema';
 import awaitToError from 'src/utils/await-to-error';
 import { db } from 'src/utils/database';
@@ -46,6 +47,25 @@ export default class ProductRepository {
             currency: returning.price_currency || '',
             createdAt: new Date(returning.created_at),
             updatedAt: new Date(returning.updated_at),
+        };
+    }
+    async getOne(companyId: string, id: string): Promise<Product> {
+        const [product] = await db()
+            .select()
+            .from(products)
+            .where(and(eq(products.id, id), eq(products.company_id, companyId)));
+        if (!product) {
+            throw new Error(`Product with id: ${id} does not exists`);
+        }
+        return {
+            id: product.id,
+            name: product.name || '',
+            description: product.description || '',
+            price: product.price || 0,
+            shopUrl: product.shop_url || '',
+            currency: product.price_currency || '',
+            createdAt: new Date(product.created_at),
+            updatedAt: new Date(product.updated_at),
         };
     }
 }
