@@ -20,6 +20,20 @@ import { DISCOVERY_PLAN } from 'src/utils/api/stripe/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { deleteUserById } from 'src/utils/api/db/calls/profiles';
+import { kv } from '@vercel/kv';
+
+const revertRateLimit = async (req: NextApiRequest) => {
+    const ip = req.headers['x-forwarded-host'] || '127.0.0.1';
+    const pattern = `*:${ip}:*`;
+
+    const key = (await kv.scan(0, { match: pattern }))[1][0];
+
+    const value = await kv.get(key.toString());
+    if (value) {
+        const revertedValue = parseInt(value.toString()) - 1;
+        await kv.set(key.toString(), revertedValue.toString());
+    }
+};
 
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
@@ -344,10 +358,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         await createServiceAccount(company);
 
         const response: SignupPostResponse = company;
-
         return res.status(httpCodes.OK).json(response);
     } catch (error) {
         await rollback({ companyId, cus_id, userId });
+        revertRateLimit(req);
         throw error;
     }
 };

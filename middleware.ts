@@ -7,6 +7,8 @@ import { EMPLOYEE_EMAILS, PREVIEW_PAGE_ALLOW_EMAIL_LIST } from 'src/constants/em
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { kv } from '@vercel/kv';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
@@ -165,6 +167,12 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
+const ratelimit = new Ratelimit({
+    redis: kv,
+    // 10 requests from the same IP in 24 hours
+    limiter: Ratelimit.slidingWindow(10, '24 h'),
+});
+
 /**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
@@ -224,6 +232,16 @@ export async function middleware(req: NextRequest) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
     }
 
+    if (req.nextUrl.pathname.includes('/api/signup')) {
+        const ip = req.ip ?? '127.0.0.1';
+        const { success } = await ratelimit.limit(ip);
+        if (!success) {
+            return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
+        } else {
+            return res;
+        }
+    }
+
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
         // download-presign-url is a public endpoint
@@ -275,6 +293,6 @@ export const config = {
          * - api/jobs/run
          * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };
