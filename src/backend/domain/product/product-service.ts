@@ -15,4 +15,10 @@ export default class ProductService {
         const response = await ProductRepository.getRepository().create(companyId, request);
         return response;
     }
+    @CompanyIdRequired()
+    async getOne(id: string): Promise<GetProductResponse> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const response = await ProductRepository.getRepository().getOne(companyId, id);
+        return response;
+    }
 }
