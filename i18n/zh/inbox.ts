@@ -45,6 +45,11 @@ const inbox = {
     },
     replyToThread: '回复邮件',
     replyAllTo: '回复所有人',
+    attachments: {
+        loading: '正在开始下载...',
+        success: '下载已开始',
+        error: '下载附件时出错',
+    },
 };
 
 export default inbox;

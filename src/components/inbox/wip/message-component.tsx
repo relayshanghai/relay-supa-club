@@ -12,6 +12,8 @@ import { Button } from 'shadcn/components/ui/button';
 import { useRouter } from 'next/router';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const MessageTitle = ({
     expanded,
@@ -94,6 +96,7 @@ const MessageTitle = ({
 
 const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
     const router = useRouter();
+    const { t } = useTranslation();
 
     const handleDownloadAttachment = useCallback(async () => {
         if (!attachment.id) return;
@@ -103,10 +106,16 @@ const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
             filename: attachment.filename,
         });
 
-        router.push(`${baseUrl}?${new URLSearchParams(downloadParams)}`, undefined, {
+        const downloadStarted = router.push(`${baseUrl}?${new URLSearchParams(downloadParams)}`, undefined, {
             shallow: true,
         });
-    }, [attachment, router]);
+
+        toast.promise(downloadStarted, {
+            loading: t('inbox.attachments.loading'),
+            success: t('inbox.attachments.success'),
+            error: t('inbox.attachments.error'),
+        });
+    }, [attachment, router, t]);
 
     return (
         <Tooltip position="right" content={attachment.filename}>

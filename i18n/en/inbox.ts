@@ -45,6 +45,11 @@ const inbox = {
     },
     replyToThread: 'Reply to thread',
     replyAllTo: 'Reply to',
+    attachments: {
+        loading: 'Starting download...',
+        success: 'Download started',
+        error: 'Error when downloading attachment',
+    },
 };
 
 export default inbox;
