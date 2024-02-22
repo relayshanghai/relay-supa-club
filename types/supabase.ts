@@ -1080,33 +1080,47 @@ export interface Database {
       }
       products: {
         Row: {
+          company_id: string | null
           created_at: string
           description: string | null
           id: string
+          name: string
           price: number | null
           price_currency: string | null
           shop_url: string | null
           updated_at: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_company_fk"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
