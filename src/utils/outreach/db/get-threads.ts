@@ -70,7 +70,7 @@ export const getThreads: DBQuery<GetThreadsFn> =
                 sql`${template_variables.sequence_id} = ${sequences.id} AND ${template_variables.key} = 'productName'`,
             )
             .where(and(...queryFilters))
-            .orderBy(desc(threads.updated_at))
+            .orderBy(desc(threads.last_reply_date), desc(threads.updated_at))
             .limit(THREADS_PER_PAGE)
             .offset(page * THREADS_PER_PAGE);
 
