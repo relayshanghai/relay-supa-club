@@ -701,8 +701,8 @@ const InboxPreview = () => {
                         <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt)
                                 .sort((a, b) => {
-                                    const dateA = threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
-                                    const dateB = threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
+                                    const dateA = threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date;
+                                    const dateB = threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date;
                                     return sortByUpdatedAtDesc(dateA, dateB);
                                 })
                                 .map((date) => (
