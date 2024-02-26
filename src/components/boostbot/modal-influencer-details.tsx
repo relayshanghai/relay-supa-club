@@ -105,7 +105,14 @@ export const InfluencerDetailsModal = ({
             // Some influencers just don't have iqdata `user_profile.relevant_tags` if IQdata doesn't have any topics, don't try to get relevance data from openai
             if (topics.length > 0) {
                 const topicsAndRelevance = await getTopicsAndRelevance(topics, selectedRow.original.user_id);
-                setTopicsAndRelevance(topicsAndRelevance);
+                if (
+                    topicsAndRelevance &&
+                    typeof topicsAndRelevance === 'object' &&
+                    Array.isArray(topicsAndRelevance) &&
+                    topicsAndRelevance.length === 7
+                ) {
+                    setTopicsAndRelevance(topicsAndRelevance);
+                }
             }
             setAreTopicsAndRelevanceLoading(false);
         };

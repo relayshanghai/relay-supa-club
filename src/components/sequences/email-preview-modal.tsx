@@ -15,7 +15,9 @@ export interface EmailPreviewModalProps extends Omit<ModalProps, 'children'> {
 export const EmailPreviewModal = ({ templateVariables, sequenceSteps, ...modalProps }: EmailPreviewModalProps) => {
     const { t } = useTranslation();
 
-    const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(sequenceSteps.map((step) => step.template_id));
+    const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(
+        sequenceSteps.map((step) => step.template_id).filter((templateId) => templateId !== 'AAABjaKO4zEAAAAE'),
+    );
     useEffect(() => {
         if (modalProps.visible) {
             refreshEmailTemplates();
