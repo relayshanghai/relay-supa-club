@@ -43,20 +43,5 @@
       "text": "Hey {{ params.influencerAccountName }} just wanted to check in and see if you've had a chance to consider our {{ params.productName}} collab?\r\nWe're pretty excited about the potential here, but we've only got a couple spots still open for this campaign.\r\n\r\nLet me know if you're keen!\r\n\r\n{{ params.marketingManagerName }} at {{ params.brandName }}\r\n\r\n\" Hey {{ params.influencerAccountName }},\r\n{{ params.marketingManagerName }} here from {{ params.brandName }}. I just saw your \"{{ params.recentPostTitle }}\" post, and I gotta say, love your content style 🤩.\r\n\r\nI've got a {{ params.productName}} I'd like to send you, have a feeling it's something your audience would be really into!\r\n{{ params.productDescription }}\r\n\r\nWe're looking to partner with 8 or so influencers to get the word out about {{ params.productName }} over the next couple of weeks, and would love for you to be a part of it. Let me know if this is something you'd be interested in! \"",
       "previewText": ""
     }
-  },
-  {
-    "account": null,
-    "id": "AAABieM1AhgAAAAF",
-    "name": "3rd Follow-up",
-    "description": "",
-    "format": "html",
-    "created": "2023-08-11T06:07:29.304Z",
-    "updated": "2023-09-06T05:32:06.312Z",
-    "content": {
-      "subject": "Last call on the collab 🕰️",
-      "html": "<p>One last nudge from me. We'd love to explore the <a href=\"{{ params.productLink }}\">{{ params.productName}}</a> collab with you. If it's a yes, awesome! If not, no hard feelings.</p>\r\n<br>\r\n<p>Hope to hear from you either way.</p>\r\n<br>\r\n<p>{{ params.marketingManagerName }} at {{ params.brandName }}</p>\r\n<br>\r\n<hr>\r\n<hr>\r\n<br>\r\n<p>\" Hey {{ params.influencerAccountName }},</p>\r\n<p>{{ params.marketingManagerName }} here from {{ params.brandName }}. I just saw your <a href=\"{{ params.recentPostURL }}\">\"{{ params.recentPostTitle }}\"</a> post, and I gotta say, love your content style 🤩.</p> \r\n<br>    \r\n<p>I've got a <a href=\"{{ params.productLink }}\">{{ params.productName}}</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>\r\n<p>{{  params.productDescription }}</p>\r\n<br>\r\n<p>We’re looking to partner with 8 or so influencers to get the word out about {{ params.productName }} over the next couple weeks, and would love for you to be apart of it.</p>\r\n<p>Let me know if this is something you'd be interested in! \"</p>",
-      "text": "One last nudge from me. We'd love to explore the {{ params.productName}} collab with you. If it's a yes, awesome! If not, no hard feelings.\r\n\r\nHope to hear from you either way.\r\n\r\n{{ params.marketingManagerName }} at {{ params.brandName }}\r\n\r\n\" Hey {{ params.influencerAccountName }},\r\n{{ params.marketingManagerName }} here from {{ params.brandName }}. I just saw your \"{{ params.recentPostTitle }}\" post, and I gotta say, love your content style 🤩.\r\n\r\nI've got a {{ params.productName}} I'd like to send you, have a feeling it's something your audience would be really into!\r\n{{ params.productDescription }}\r\n\r\nWe're looking to partner with 8 or so influencers to get the word out about {{ params.productName }} over the next couple of weeks, and would love for you to be a part of it. Let me know if this is something you'd be interested in! \"",
-      "previewText": ""
-    }
   }
 ]
