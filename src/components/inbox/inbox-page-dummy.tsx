@@ -21,18 +21,6 @@ import { useUiState } from '../influencer-profile/screens/profile-screen-context
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 import { Banner } from '../library/banner';
 
-const _dummyNote = {
-    author: {
-        id: '1',
-        name: 'Jim',
-        avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=relay-manager-no-name@example.com&size=96',
-    },
-    content: 'This is a sample note content.',
-    id: 'note1',
-    created_at: '2023-09-13T12:00:00Z',
-    updated_at: '2023-09-13T12:30:00Z',
-};
-
 export const InboxPageDummy = () => {
     const inboxMessages = dummyData.messages;
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);

@@ -17,7 +17,7 @@ const messages: MessagesGetMessage[] = inManagerDummyInfluencers.map((influencer
         labels: ['label_1', 'label_2'], // Replace with relevant labels
         unseen: false, // You can set this based on your logic
         size: 1024, // Replace with an appropriate value
-        subject: templates[index % 4].content.subject.replace(/{{\s*[^{}]+\s*}}/g, company), // You can use any relevant value here
+        subject: templates[index % 3].content.subject.replace(/{{\s*[^{}]+\s*}}/g, company), // You can use any relevant value here
         from: {
             name: influencer.name || 'John Doe',
             address: influencer.email || 'jim@boostbot.ai',
