@@ -9,6 +9,7 @@ export const METHOD_NOT_ALLOWED = 405;
 export const RATE_LIMIT_EXCEEDED = 429;
 export const INTERNAL_SERVER_ERROR = 500;
 export const NOT_IMPLEMENTED = 501;
+export const CONFLICT = 409;
 
 const httpCodes = {
     OK,
@@ -22,6 +23,7 @@ const httpCodes = {
     RATE_LIMIT_EXCEEDED,
     INTERNAL_SERVER_ERROR,
     NOT_IMPLEMENTED,
+    CONFLICT,
 };
 
 export default httpCodes;
