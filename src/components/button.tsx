@@ -1,9 +1,11 @@
 import { forwardRef, type ButtonHTMLAttributes, type ForwardedRef } from 'react';
+import { Spinner } from './icons';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'neutral' | 'gray';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;
+    loading?: boolean;
 }
 
 const defaultClasses =
@@ -21,7 +23,10 @@ const grayClasses = 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50';
  *
  * @note If you want to change one of the already applied css styles in the passed in className, you might need to use !important. e.g. className="!py-4"
  */
-function ButtonWithRef({ children, variant, className, ...rest }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+function ButtonWithRef(
+    { children, variant, className, loading, ...rest }: ButtonProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) {
     const variantClasses =
         variant === 'secondary'
             ? secondaryClasses
@@ -38,7 +43,8 @@ function ButtonWithRef({ children, variant, className, ...rest }: ButtonProps, r
                 ${variant === 'neutral' ? `${neutralClasses}` : `${defaultClasses} ${variantClasses}`} ${className} `}
             {...rest}
         >
-            {children}
+            {loading}
+            {loading ? <Spinner className="h-5 w-5 fill-primary-600 text-white" /> : children}
         </button>
     );
 }

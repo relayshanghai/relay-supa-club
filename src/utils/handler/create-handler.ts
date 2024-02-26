@@ -14,6 +14,8 @@ import { getHostnameFromRequest } from '../get-host';
 import { db } from '../database';
 import { companies, profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { zhCN } from 'src/constants';
+import i18n from 'i18n/index';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -25,8 +27,11 @@ export const createHandler = (target: new () => any) => {
         req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
+                const language = req.cookies['language'] || zhCN;
+                i18n.changeLanguage(language);
+
                 const { appUrl } = getHostnameFromRequest(req);
-                RequestContext.setContext({ request: req, requestUrl: appUrl });
+                RequestContext.setContext({ request: req, requestUrl: appUrl, translation: i18n.t });
                 const {
                     data: { session },
                 } = await req.supabase.auth.getSession();
