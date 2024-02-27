@@ -37,10 +37,10 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                         <InfluencerAvatarWithFallback
                             url={picture}
                             name={handle ?? username}
-                            size={45}
+                            size={48}
                             className="rounded-full"
                         />
-                        <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
+                        <Icon className="absolute -bottom-1 -right-2 h-6 w-6" />
                     </>
                 )}
             </div>

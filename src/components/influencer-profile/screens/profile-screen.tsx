@@ -58,7 +58,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdateInflue
                         size={100}
                         className="rounded-full"
                     />
-                    <Icon className="absolute bottom-0 right-1 h-6 w-6" />
+                    <Icon className="absolute -bottom-1 -right-1 h-8 w-8" />
                 </section>
                 <div className="z-10 flex flex-col justify-between gap-2">
                     <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
