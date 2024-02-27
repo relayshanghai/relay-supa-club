@@ -11,7 +11,6 @@ export default defineConfig({
         setupFiles: ['./test-setup.js'],
         include: ['**/*.test.ts'], // run only tests with .test.ts extension,
         environment: 'node', // We are only using vitest for backend and node tests, not for components which we are using cypress component tests for
-        includeSource: ['src/utils/handler/decorators/api-decorator'], // include source files for coverage
     },
     resolve: {
         alias: {
