@@ -1,4 +1,4 @@
-import type { ProductRequest } from 'pages/api/products/request';
+import type { GetProductRequest, ProductRequest } from 'pages/api/products/request';
 import { CompanyIdRequired } from '../decorators/company-id';
 import type { GetProductResponse } from 'pages/api/products/response';
 import ProductRepository from 'src/backend/database/product-repository';
@@ -19,6 +19,12 @@ export default class ProductService {
     async getOne(id: string): Promise<GetProductResponse> {
         const companyId = RequestContext.getContext().companyId as string;
         const response = await ProductRepository.getRepository().getOne(companyId, id);
+        return response;
+    }
+    @CompanyIdRequired()
+    async fetch(request: GetProductRequest) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const response = await ProductRepository.getRepository().fetch(companyId, request);
         return response;
     }
 }

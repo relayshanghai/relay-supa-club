@@ -1,7 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 import { products } from 'drizzle/schema';
+import { type GetProductRequest } from 'pages/api/products/request';
 import awaitToError from 'src/utils/await-to-error';
 import { db } from 'src/utils/database';
+import { type Paginated } from 'types/pagination';
 
 export type ProductInsert = typeof products.$inferInsert;
 
@@ -66,6 +68,31 @@ export default class ProductRepository {
             currency: product.price_currency || '',
             createdAt: new Date(product.created_at),
             updatedAt: new Date(product.updated_at),
+        };
+    }
+    async fetch(companyId: string, request: GetProductRequest): Promise<Paginated<Product>> {
+        const product = await db()
+            .select()
+            .from(products)
+            .limit(request.size)
+            .offset(request.page)
+            .where(and(eq(products.company_id, companyId), eq(products.name, request.name as string)));
+        const items = product.map((d) => ({
+            id: d.id,
+            name: d.name ?? '',
+            description: d.description ?? '',
+            price: d.price ?? 0,
+            shopUrl: d.shop_url ?? '',
+            currency: d.price_currency ?? '',
+            createdAt: new Date(d.created_at),
+            updatedAt: new Date(d.updated_at),
+        }));
+        return {
+            items,
+            page: request.page,
+            size: request.size,
+            totalPages: 0,
+            totalSize: 0,
         };
     }
 }
