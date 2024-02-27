@@ -112,19 +112,16 @@ describe('src/backend/domain/product/product-service.ts', () => {
             let mockedProducts: Product[];
 
             beforeAll(() => {
-                mockedProducts = new Array(20)
-                    .fill(null)
-                    .map((d, i) => ({
-                        id: `product_${i}`,
-                        name: `product_name_${i}`,
-                        description: `product_description_${i}`,
-                        price: 100,
-                        shopUrl: `https://example${i}.com`,
-                        currency: 'USD',
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                    }))
-                    .slice(0, 10);
+                mockedProducts = new Array(20).fill(null).map((d, i) => ({
+                    id: `product_${i}`,
+                    name: `product_name_${i}`,
+                    description: `product_description_${i}`,
+                    price: 100,
+                    shopUrl: `https://example${i}.com`,
+                    currency: 'USD',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                }));
             });
             afterEach(() => {
                 vi.resetAllMocks();
@@ -156,6 +153,64 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_0');
                 expect(result.items[9].id).toBe('product_9');
+                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+            });
+
+            it('should fetch product when request is valid and page is 2', async () => {
+                const request: GetProductRequest = {
+                    page: 2,
+                    size: 10,
+                };
+
+                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                    items: mockedProducts.slice(10, 20),
+                    page: 2,
+                    size: 10,
+                    totalPages: 2,
+                    totalSize: 20,
+                } as Paginated<Product>);
+
+                const result = await ProductService.getService().fetch(request);
+
+                expect(result).toEqual({
+                    items: mockedProducts.slice(10, 20),
+                    page: 2,
+                    size: 10,
+                    totalPages: 2,
+                    totalSize: 20,
+                } as Paginated<Product>);
+                expect(result.items.length).toBe(10);
+                expect(result.items[0].id).toBe('product_10');
+                expect(result.items[9].id).toBe('product_19');
+                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+            });
+
+            it('should filtered by name when request is valid', async () => {
+                const request: GetProductRequest = {
+                    page: 1,
+                    size: 10,
+                    name: 'product_name_1',
+                };
+
+                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                    items: [mockedProducts[1]],
+                    page: 1,
+                    size: 10,
+                    totalPages: 1,
+                    totalSize: 1,
+                } as Paginated<Product>);
+
+                const result = await ProductService.getService().fetch(request);
+
+                expect(result).toEqual({
+                    items: [mockedProducts[1]],
+                    page: 1,
+                    size: 10,
+                    totalPages: 1,
+                    totalSize: 1,
+                } as Paginated<Product>);
+                expect(result.items.length).toBe(1);
+                expect(result.items[0].id).toBe('product_1');
                 expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
             });
 

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, like } from 'drizzle-orm';
 import { products } from 'drizzle/schema';
 import { type GetProductRequest } from 'pages/api/products/request';
 import awaitToError from 'src/utils/await-to-error';
@@ -71,12 +71,18 @@ export default class ProductRepository {
         };
     }
     async fetch(companyId: string, request: GetProductRequest): Promise<Paginated<Product>> {
-        const product = await db()
-            .select()
-            .from(products)
-            .limit(request.size)
-            .offset(request.page)
-            .where(and(eq(products.company_id, companyId), eq(products.name, request.name as string)));
+        const offset = (request.page - 1) * request.size;
+        let whereQuery = and(eq(products.company_id, companyId));
+        if (request.name) {
+            whereQuery = and(whereQuery, like(products.name, `%${request.name}%`));
+        }
+
+        const product = await db().select().from(products).limit(request.size).offset(offset).where(whereQuery);
+        const allProducts = await db().select().from(products).where(whereQuery);
+
+        const totalSize = allProducts.length;
+        const totalPages = Math.ceil(totalSize / request.size);
+
         const items = product.map((d) => ({
             id: d.id,
             name: d.name ?? '',
@@ -87,12 +93,13 @@ export default class ProductRepository {
             createdAt: new Date(d.created_at),
             updatedAt: new Date(d.updated_at),
         }));
+
         return {
             items,
             page: request.page,
             size: request.size,
-            totalPages: 0,
-            totalSize: 0,
+            totalPages,
+            totalSize,
         };
     }
 }
