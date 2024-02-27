@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ProfileEntity } from '../profile/profile-entity';
+import { ProductEntity } from '../product/product-entity';
 
 @Entity('companies')
 export class CompanyEntity {
@@ -68,4 +69,7 @@ export class CompanyEntity {
 
     @OneToMany(() => ProfileEntity, (profile) => profile.company, { cascade: true })
     profiles?: ProfileEntity[];
+
+    @OneToMany(() => ProductEntity, (product) => product.company, { cascade: true })
+    products?: ProductEntity[];
 }

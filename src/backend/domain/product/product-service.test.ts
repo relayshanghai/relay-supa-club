@@ -1,5 +1,3 @@
-import type { Product } from 'src/backend/database/product-repository';
-import ProductRepository from 'src/backend/database/product-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import ProductService from './product-service';
@@ -7,6 +5,8 @@ import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import type { GetProductRequest } from 'pages/api/products/request';
 import type { Paginated } from 'types/pagination';
+import ProductRepository from 'src/backend/database/product/product-repository';
+import type { ProductEntity } from 'src/backend/database/product/product-entity';
 
 describe('src/backend/domain/product/product-service.ts', () => {
     const getContextMock = vi.fn();
@@ -75,7 +75,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 vi.resetAllMocks();
             });
             it('should get product when request is valid', async () => {
-                ProductRepository.prototype.getOne = vi.fn().mockReturnValue({
+                ProductRepository.prototype.findOneBy = vi.fn().mockReturnValue({
                     id: 'product_1',
                     name: 'product_name',
                     description: 'product_description',
@@ -93,7 +93,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     shopUrl: 'https://example.com',
                     currency: 'USD',
                 });
-                expect(ProductRepository.prototype.getOne).toBeCalledWith('company_1', 'product_1');
+                expect(ProductRepository.prototype.findOneBy).toBeCalledWith('company_1', 'product_1');
             });
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
                 getContextMock.mockReturnValue({});
@@ -101,7 +101,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(err.message).toBe('No company id found in request context');
             });
             it('should throw error when product does not exists', async () => {
-                ProductRepository.prototype.getOne = vi
+                ProductRepository.prototype.findOneBy = vi
                     .fn()
                     .mockRejectedValue(new NotFoundError('Product with id: product_1 does not exists'));
                 const [err] = await awaitToError(ProductService.getService().getOne('product_1'));
@@ -109,7 +109,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
             });
         });
         describe('fetch', () => {
-            let mockedProducts: Product[];
+            let mockedProducts: ProductEntity[];
 
             beforeAll(() => {
                 mockedProducts = new Array(20).fill(null).map((d, i) => ({
@@ -133,13 +133,13 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
                     items: mockedProducts.slice(0, 10),
                     page: 1,
                     size: 10,
                     totalPages: 2,
                     totalSize: 20,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
 
                 const result = await ProductService.getService().fetch(request);
 
@@ -149,11 +149,11 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                     totalPages: 2,
                     totalSize: 20,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_0');
                 expect(result.items[9].id).toBe('product_9');
-                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
             });
 
             it('should fetch product when request is valid and page is 2', async () => {
@@ -162,13 +162,13 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
                     items: mockedProducts.slice(10, 20),
                     page: 2,
                     size: 10,
                     totalPages: 2,
                     totalSize: 20,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
 
                 const result = await ProductService.getService().fetch(request);
 
@@ -178,11 +178,11 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                     totalPages: 2,
                     totalSize: 20,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_10');
                 expect(result.items[9].id).toBe('product_19');
-                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
             });
 
             it('should filtered by name when request is valid', async () => {
@@ -192,13 +192,13 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     name: 'product_name_1',
                 };
 
-                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
                     items: [mockedProducts[1]],
                     page: 1,
                     size: 10,
                     totalPages: 1,
                     totalSize: 1,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
 
                 const result = await ProductService.getService().fetch(request);
 
@@ -208,10 +208,10 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                     totalPages: 1,
                     totalSize: 1,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
                 expect(result.items.length).toBe(1);
                 expect(result.items[0].id).toBe('product_1');
-                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
             });
 
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
@@ -225,17 +225,17 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     page: 1,
                     size: 10,
                 };
-                ProductRepository.getRepository().fetch = vi.fn().mockReturnValue({
+                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
                     items: [],
                     page: 1,
                     size: 10,
                     totalPages: 0,
                     totalSize: 0,
-                } as Paginated<Product>);
+                } as Paginated<ProductEntity>);
                 const [, result] = await awaitToError(ProductService.getService().fetch({ page: 1, size: 10 }));
                 expect(result.items).toEqual([]);
                 expect(result.items.length).toBe(0);
-                expect(ProductRepository.getRepository().fetch).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
             });
         });
     });
