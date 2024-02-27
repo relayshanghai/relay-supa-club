@@ -3,17 +3,19 @@ import { AsyncLocalStorage } from 'async_hooks';
 import type { Session } from '@supabase/supabase-js';
 import awaitToError from '../await-to-error';
 import type { NextApiRequest } from 'next';
-
+export type TranslationFunction = (key: string, params?: Record<string, string>) => string;
 export interface Context {
     session?: Session | null;
     customerId?: string | null;
     companyId?: string | null;
     request?: NextApiRequest;
     requestUrl: string;
+    translation: TranslationFunction;
 }
 const initialContext = (): Context => ({
     session: undefined,
     requestUrl: '',
+    translation: () => '',
 });
 export class RequestContext {
     static contextMap: Map<string, Context> = new Map();
@@ -25,6 +27,9 @@ export class RequestContext {
         RequestContext.contextMap.delete(contextId);
         if (err) throw err;
         return res as T;
+    }
+    static t(key: string, params?: Record<string, string>): string {
+        return RequestContext.getContext().translation(key, params);
     }
     static getContext(): Context {
         const id = RequestContext.asyncLocalStorage.getStore();

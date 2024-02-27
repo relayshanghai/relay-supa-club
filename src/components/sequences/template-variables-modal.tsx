@@ -183,7 +183,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     };
     const [submitting, setSubmitting] = useState(false);
     const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(
-        props.sequenceSteps.map((step) => step.template_id),
+        props.sequenceSteps.map((step) => step.template_id).filter((templateId) => templateId !== 'AAABjaKO4zEAAAAE'),
     );
     useEffect(() => {
         if (props.visible) {
@@ -357,17 +357,6 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                             } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                         >
                             {t('sequences.steps.2nd Follow-up')}
-                        </button>
-                        <button
-                            onClick={() => {
-                                handleSetPreviewPage(3);
-                            }}
-                            type="button"
-                            className={`${
-                                previewPage === 3 ? activeTabStyles : ''
-                            } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
-                        >
-                            {t('sequences.steps.3rd Follow-up')}
                         </button>
                     </nav>
 
