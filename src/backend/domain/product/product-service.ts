@@ -3,7 +3,6 @@ import { CompanyIdRequired } from '../decorators/company-id';
 import type { GetProductResponse } from 'pages/api/products/response';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import ProductRepository from 'src/backend/database/product/product-repository';
-import { type FindOptionsWhere, Like } from 'typeorm';
 import { ProductEntity } from 'src/backend/database/product/product-entity';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type Paginated } from 'types/pagination';
@@ -56,40 +55,22 @@ export default class ProductService {
     @CompanyIdRequired()
     async fetch(request: GetProductRequest): Promise<Paginated<GetProductResponse>> {
         const companyId = RequestContext.getContext().companyId as string;
-        const where: FindOptionsWhere<ProductEntity> = {
-            company: {
-                id: companyId,
+        const items = await ProductRepository.getRepository().getPaginated(
+            {
+                page: request.page,
+                size: request.size,
             },
-        };
-        if (request.name) {
-            where.name = Like(`%${request.name}%`);
-        }
-        const products = await ProductRepository.getRepository().find({
-            where,
-            skip: (request.page - 1) * request.size,
-            take: request.size,
-        });
-        const totalSize = await ProductRepository.getRepository().count({
-            where,
-        });
-        const totalPages = Math.ceil(totalSize / request.size);
-
-        const items = products.map((d) => ({
-            id: d.id,
-            name: d.name ?? '',
-            description: d.description ?? '',
-            price: d.price ?? 0,
-            shopUrl: d.shopUrl ?? '',
-            currency: d.priceCurrency ?? '',
-            createdAt: new Date(d.createdAt),
-            updatedAt: new Date(d.updatedAt),
-        }));
-        return {
-            items,
-            page: request.page,
-            size: request.size,
-            totalPages,
-            totalSize,
-        };
+            {
+                where: {
+                    company: {
+                        id: companyId,
+                    },
+                },
+            },
+            {
+                name: request.name,
+            },
+        );
+        return items as Paginated<GetProductResponse>;
     }
 }

@@ -141,7 +141,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     description: `product_description_${i}`,
                     price: 100,
                     shopUrl: `https://example${i}.com`,
-                    priceCurrency: 'USD',
+                    currency: 'USD',
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 }));
@@ -156,21 +156,18 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
-                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
-                findProductMock.mockResolvedValue(mockedProducts.slice(0, 10));
-                countProductMock.mockResolvedValue(mockedProducts.length);
+                const paginatedProducts = vi.spyOn(ProductRepository.getRepository(), 'getPaginated');
+                paginatedProducts.mockResolvedValue({
+                    items: mockedProducts.slice(0, 10),
+                    page: 1,
+                    size: 10,
+                    totalPages: 2,
+                    totalSize: 20,
+                });
                 const result = await ProductService.getService().fetch(request);
 
                 expect(result).toEqual({
-                    items: mockedProducts.slice(0, 10).map((d) => {
-                        const c = d.priceCurrency;
-                        delete d.priceCurrency;
-                        return {
-                            ...d,
-                            currency: c,
-                        };
-                    }),
+                    items: mockedProducts.slice(0, 10),
                     page: 1,
                     size: 10,
                     totalPages: 2,
@@ -179,15 +176,19 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_0');
                 expect(result.items[9].id).toBe('product_9');
-                expect(ProductRepository.getRepository().find).toBeCalledWith({
-                    skip: request.page - 1,
-                    take: request.size,
-                    where: {
-                        company: {
-                            id: 'company_1',
+                expect(ProductRepository.getRepository().getPaginated).toBeCalledWith(
+                    request,
+                    {
+                        where: {
+                            company: {
+                                id: 'company_1',
+                            },
                         },
                     },
-                });
+                    {
+                        name: undefined,
+                    },
+                );
             });
 
             it('should fetch product when request is valid and page is 2', async () => {
@@ -196,21 +197,18 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
-                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
-                findProductMock.mockResolvedValue(mockedProducts.slice(10, 20));
-                countProductMock.mockResolvedValue(mockedProducts.length);
+                const paginatedProducts = vi.spyOn(ProductRepository.getRepository(), 'getPaginated');
+                paginatedProducts.mockResolvedValue({
+                    items: mockedProducts.slice(10, 20),
+                    page: 2,
+                    size: 10,
+                    totalPages: 2,
+                    totalSize: 20,
+                });
                 const result = await ProductService.getService().fetch(request);
 
                 expect(result).toEqual({
-                    items: mockedProducts.slice(10, 20).map((d) => {
-                        const c = d.priceCurrency;
-                        delete d.priceCurrency;
-                        return {
-                            ...d,
-                            currency: c,
-                        };
-                    }),
+                    items: mockedProducts.slice(10, 20),
                     page: 2,
                     size: 10,
                     totalPages: 2,
@@ -219,15 +217,19 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_10');
                 expect(result.items[9].id).toBe('product_19');
-                expect(ProductRepository.getRepository().find).toBeCalledWith({
-                    skip: (request.page - 1) * request.size,
-                    take: request.size,
-                    where: {
-                        company: {
-                            id: 'company_1',
+                expect(ProductRepository.getRepository().getPaginated).toBeCalledWith(
+                    request,
+                    {
+                        where: {
+                            company: {
+                                id: 'company_1',
+                            },
                         },
                     },
-                });
+                    {
+                        name: undefined,
+                    },
+                );
             });
 
             it('should filtered by name when request is valid', async () => {
@@ -237,13 +239,8 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     name: 'product_name_1',
                 };
 
-                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
-                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
-                findProductMock.mockResolvedValue([mockedProducts[1]]);
-                countProductMock.mockResolvedValue([mockedProducts[1]].length);
-
-                const result = await ProductService.getService().fetch(request);
-                expect(result).toEqual({
+                const paginatedProducts = vi.spyOn(ProductRepository.getRepository(), 'getPaginated');
+                paginatedProducts.mockResolvedValue({
                     items: [
                         {
                             id: 'product_1',
@@ -260,11 +257,24 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                     totalPages: 1,
                     totalSize: 1,
-                } as Paginated<ProductEntity>);
+                });
+                const result = await ProductService.getService().fetch(request);
+
                 expect(result.items.length).toBe(1);
                 expect(result.items[0].id).toBe('product_1');
-                expect(ProductRepository.getRepository().find).toBeCalled();
-                expect(ProductRepository.getRepository().count).toBeCalled();
+                expect(ProductRepository.getRepository().getPaginated).toBeCalledWith(
+                    { page: request.page, size: request.size },
+                    {
+                        where: {
+                            company: {
+                                id: 'company_1',
+                            },
+                        },
+                    },
+                    {
+                        name: request.name,
+                    },
+                );
             });
 
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
@@ -278,23 +288,32 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     page: 1,
                     size: 10,
                 };
-                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
-                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
-                findProductMock.mockResolvedValue([].slice(0, 10));
-                countProductMock.mockResolvedValue([].length);
+
+                const paginatedProducts = vi.spyOn(ProductRepository.getRepository(), 'getPaginated');
+                paginatedProducts.mockResolvedValue({
+                    items: [],
+                    page: 1,
+                    size: 10,
+                    totalPages: 2,
+                    totalSize: 20,
+                });
                 const result = await ProductService.getService().fetch(request);
 
                 expect(result.items).toEqual([]);
                 expect(result.items.length).toBe(0);
-                expect(ProductRepository.getRepository().find).toBeCalledWith({
-                    skip: request.page - 1,
-                    take: request.size,
-                    where: {
-                        company: {
-                            id: 'company_1',
+                expect(ProductRepository.getRepository().getPaginated).toBeCalledWith(
+                    request,
+                    {
+                        where: {
+                            company: {
+                                id: 'company_1',
+                            },
                         },
                     },
-                });
+                    {
+                        name: undefined,
+                    },
+                );
             });
         });
     });
