@@ -41,7 +41,9 @@ export const Tiptap = ({
                     'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
             }),
 
-            Link.configure({
+            Link.extend({
+                inclusive: false,
+            }).configure({
                 openOnClick: false,
                 linkOnPaste: true,
                 validate: (href) => /^https?:\/\//.test(href),
