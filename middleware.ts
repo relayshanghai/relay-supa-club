@@ -246,8 +246,7 @@ export async function middleware(req: NextRequest) {
         else if (req.nextUrl.pathname.includes('download-presign-url')) {
             return res;
         }
-        return res;
-        // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();
