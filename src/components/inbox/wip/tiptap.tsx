@@ -40,6 +40,7 @@ export const Tiptap = ({
                 emptyNodeClass:
                     'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
             }),
+
             Link.configure({
                 openOnClick: false,
                 linkOnPaste: true,
@@ -85,7 +86,7 @@ export const Tiptap = ({
             },
         },
         onUpdate: ({ editor }) => {
-            onChange(editor.getHTML());
+            onChange(editor.getHTML().replaceAll('<p></p>', '<br>'));
         },
     });
     useEffect(() => {
