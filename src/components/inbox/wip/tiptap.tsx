@@ -3,6 +3,8 @@ import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
+import { OrderedList } from '@tiptap/extension-ordered-list';
+import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
 import { Underline } from '@tiptap/extension-underline';
 import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
@@ -57,7 +59,20 @@ export const Tiptap = ({
                 keepAttributes: true,
                 keepMarks: true,
                 HTMLAttributes: {
-                    class: 'list-disc ml-2',
+                    class: 'list-disc ml-8',
+                },
+            }),
+            OrderedList.configure({
+                itemTypeName: 'listItem',
+                keepAttributes: true,
+                keepMarks: true,
+                HTMLAttributes: {
+                    class: 'list-decimal ml-8',
+                },
+            }),
+            HorizontalRule.configure({
+                HTMLAttributes: {
+                    class: 'border-1 border-gray-600 my-2',
                 },
             }),
         ],
