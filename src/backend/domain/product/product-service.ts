@@ -2,7 +2,7 @@ import type { GetProductRequest, ProductRequest } from 'pages/api/products/reque
 import { CompanyIdRequired } from '../decorators/company-id';
 import type { GetProductResponse } from 'pages/api/products/response';
 import { RequestContext } from 'src/utils/request-context/request-context';
-import TypeormProductRepository from 'src/backend/database/product/product-repository';
+import ProductRepository from 'src/backend/database/product/product-repository';
 import { type FindOptionsWhere, Like } from 'typeorm';
 import { ProductEntity } from 'src/backend/database/product/product-entity';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
@@ -25,13 +25,15 @@ export default class ProductService {
         product.company = {
             id: companyId,
         } as CompanyEntity;
-        const response = await TypeormProductRepository.getRepository().save(product);
-        return { ...response, currency: response.priceCurrency as string } as GetProductResponse;
+        const response = await ProductRepository.getRepository().save(product);
+        const currency = response.priceCurrency as string;
+        delete response.priceCurrency;
+        return { ...response, currency } as GetProductResponse;
     }
     @CompanyIdRequired()
     async getOne(id: string): Promise<GetProductResponse> {
         const companyId = RequestContext.getContext().companyId as string;
-        const product = await TypeormProductRepository.getRepository().findOneBy({
+        const product = await ProductRepository.getRepository().findOneBy({
             id,
             company: {
                 id: companyId,
@@ -62,12 +64,12 @@ export default class ProductService {
         if (request.name) {
             where.name = Like(`%${request.name}%`);
         }
-        const products = await TypeormProductRepository.getRepository().find({
+        const products = await ProductRepository.getRepository().find({
             where,
             skip: (request.page - 1) * request.size,
             take: request.size,
         });
-        const totalSize = await TypeormProductRepository.getRepository().count({
+        const totalSize = await ProductRepository.getRepository().count({
             where,
         });
         const totalPages = Math.ceil(totalSize / request.size);

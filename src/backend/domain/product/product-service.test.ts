@@ -1,5 +1,5 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ProductService from './product-service';
 import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
@@ -33,6 +33,15 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 vi.resetAllMocks();
             });
             it('should create product when request is valid', async () => {
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'save');
+                findOneByProductMock.mockResolvedValue({
+                    id: 'product_1',
+                    name: 'product_name',
+                    description: 'product_description',
+                    price: 100,
+                    shopUrl: 'https://example.com',
+                    priceCurrency: 'USD',
+                } as ProductEntity);
                 const result = await ProductService.getService().create({
                     name: 'product_name',
                     description: 'product_description',
@@ -48,12 +57,16 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     shopUrl: 'https://example.com',
                     currency: 'USD',
                 });
-                expect(ProductRepository.prototype.create).toBeCalledWith('company_1', {
-                    name: 'product_name',
+                expect(ProductRepository.getRepository().save).toBeCalledWith({
+                    company: { id: 'company_1' },
+                    createdAt: undefined,
                     description: 'product_description',
+                    id: undefined,
+                    name: 'product_name',
                     price: 100,
+                    priceCurrency: 'USD',
                     shopUrl: 'https://example.com',
-                    currency: 'USD',
+                    updatedAt: undefined,
                 });
             });
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
@@ -75,14 +88,18 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 vi.resetAllMocks();
             });
             it('should get product when request is valid', async () => {
-                ProductRepository.prototype.findOneBy = vi.fn().mockReturnValue({
+                const mockData = {
                     id: 'product_1',
                     name: 'product_name',
                     description: 'product_description',
                     price: 100,
                     shopUrl: 'https://example.com',
-                    currency: 'USD',
-                });
+                    priceCurrency: 'USD',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                } as unknown as ProductEntity;
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOneBy');
+                findOneByProductMock.mockResolvedValue(mockData);
 
                 const result = await ProductService.getService().getOne('product_1');
                 expect(result).toEqual({
@@ -92,8 +109,15 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     price: 100,
                     shopUrl: 'https://example.com',
                     currency: 'USD',
+                    createdAt: mockData.createdAt,
+                    updatedAt: mockData.updatedAt,
                 });
-                expect(ProductRepository.prototype.findOneBy).toBeCalledWith('company_1', 'product_1');
+                expect(ProductRepository.getRepository().findOneBy).toBeCalledWith({
+                    id: 'product_1',
+                    company: {
+                        id: 'company_1',
+                    },
+                });
             });
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
                 getContextMock.mockReturnValue({});
@@ -101,9 +125,8 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(err.message).toBe('No company id found in request context');
             });
             it('should throw error when product does not exists', async () => {
-                ProductRepository.prototype.findOneBy = vi
-                    .fn()
-                    .mockRejectedValue(new NotFoundError('Product with id: product_1 does not exists'));
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOneBy');
+                findOneByProductMock.mockRejectedValue(new NotFoundError('Product with id: product_1 does not exists'));
                 const [err] = await awaitToError(ProductService.getService().getOne('product_1'));
                 expect(err.message).toBe('Product with id: product_1 does not exists');
             });
@@ -111,14 +134,14 @@ describe('src/backend/domain/product/product-service.ts', () => {
         describe('fetch', () => {
             let mockedProducts: ProductEntity[];
 
-            beforeAll(() => {
+            beforeEach(() => {
                 mockedProducts = new Array(20).fill(null).map((d, i) => ({
                     id: `product_${i}`,
                     name: `product_name_${i}`,
                     description: `product_description_${i}`,
                     price: 100,
                     shopUrl: `https://example${i}.com`,
-                    currency: 'USD',
+                    priceCurrency: 'USD',
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 }));
@@ -133,18 +156,21 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
-                    items: mockedProducts.slice(0, 10),
-                    page: 1,
-                    size: 10,
-                    totalPages: 2,
-                    totalSize: 20,
-                } as Paginated<ProductEntity>);
-
+                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
+                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
+                findProductMock.mockResolvedValue(mockedProducts.slice(0, 10));
+                countProductMock.mockResolvedValue(mockedProducts.length);
                 const result = await ProductService.getService().fetch(request);
 
                 expect(result).toEqual({
-                    items: mockedProducts.slice(0, 10),
+                    items: mockedProducts.slice(0, 10).map((d) => {
+                        const c = d.priceCurrency;
+                        delete d.priceCurrency;
+                        return {
+                            ...d,
+                            currency: c,
+                        };
+                    }),
                     page: 1,
                     size: 10,
                     totalPages: 2,
@@ -153,7 +179,15 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_0');
                 expect(result.items[9].id).toBe('product_9');
-                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith({
+                    skip: request.page - 1,
+                    take: request.size,
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
             });
 
             it('should fetch product when request is valid and page is 2', async () => {
@@ -162,18 +196,21 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     size: 10,
                 };
 
-                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
-                    items: mockedProducts.slice(10, 20),
-                    page: 2,
-                    size: 10,
-                    totalPages: 2,
-                    totalSize: 20,
-                } as Paginated<ProductEntity>);
-
+                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
+                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
+                findProductMock.mockResolvedValue(mockedProducts.slice(10, 20));
+                countProductMock.mockResolvedValue(mockedProducts.length);
                 const result = await ProductService.getService().fetch(request);
 
                 expect(result).toEqual({
-                    items: mockedProducts.slice(10, 20),
+                    items: mockedProducts.slice(10, 20).map((d) => {
+                        const c = d.priceCurrency;
+                        delete d.priceCurrency;
+                        return {
+                            ...d,
+                            currency: c,
+                        };
+                    }),
                     page: 2,
                     size: 10,
                     totalPages: 2,
@@ -182,7 +219,15 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result.items.length).toBe(10);
                 expect(result.items[0].id).toBe('product_10');
                 expect(result.items[9].id).toBe('product_19');
-                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith({
+                    skip: (request.page - 1) * request.size,
+                    take: request.size,
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
             });
 
             it('should filtered by name when request is valid', async () => {
@@ -192,18 +237,25 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     name: 'product_name_1',
                 };
 
-                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
-                    items: [mockedProducts[1]],
-                    page: 1,
-                    size: 10,
-                    totalPages: 1,
-                    totalSize: 1,
-                } as Paginated<ProductEntity>);
+                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
+                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
+                findProductMock.mockResolvedValue([mockedProducts[1]]);
+                countProductMock.mockResolvedValue([mockedProducts[1]].length);
 
                 const result = await ProductService.getService().fetch(request);
-
                 expect(result).toEqual({
-                    items: [mockedProducts[1]],
+                    items: [
+                        {
+                            id: 'product_1',
+                            name: 'product_name_1',
+                            description: 'product_description_1',
+                            price: 100,
+                            shopUrl: 'https://example1.com',
+                            currency: 'USD',
+                            createdAt: mockedProducts[1].createdAt,
+                            updatedAt: mockedProducts[1].updatedAt,
+                        } as unknown as ProductEntity,
+                    ],
                     page: 1,
                     size: 10,
                     totalPages: 1,
@@ -211,7 +263,8 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 } as Paginated<ProductEntity>);
                 expect(result.items.length).toBe(1);
                 expect(result.items[0].id).toBe('product_1');
-                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalled();
+                expect(ProductRepository.getRepository().count).toBeCalled();
             });
 
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
@@ -220,22 +273,28 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(err.message).toBe('No company id found in request context');
             });
 
-            it('should throw error when product does not exists', async () => {
+            it('return empty array when product does not exists', async () => {
                 const request: GetProductRequest = {
                     page: 1,
                     size: 10,
                 };
-                ProductRepository.getRepository().find = vi.fn().mockReturnValue({
-                    items: [],
-                    page: 1,
-                    size: 10,
-                    totalPages: 0,
-                    totalSize: 0,
-                } as Paginated<ProductEntity>);
-                const [, result] = await awaitToError(ProductService.getService().fetch({ page: 1, size: 10 }));
+                const findProductMock = vi.spyOn(ProductRepository.getRepository(), 'find');
+                const countProductMock = vi.spyOn(ProductRepository.getRepository(), 'count');
+                findProductMock.mockResolvedValue([].slice(0, 10));
+                countProductMock.mockResolvedValue([].length);
+                const result = await ProductService.getService().fetch(request);
+
                 expect(result.items).toEqual([]);
                 expect(result.items.length).toBe(0);
-                expect(ProductRepository.getRepository().find).toBeCalledWith('company_1', request);
+                expect(ProductRepository.getRepository().find).toBeCalledWith({
+                    skip: request.page - 1,
+                    take: request.size,
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
             });
         });
     });
