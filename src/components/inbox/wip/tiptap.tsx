@@ -5,6 +5,7 @@ import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
 import { OrderedList } from '@tiptap/extension-ordered-list';
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
+import { HardBreak } from '@tiptap/extension-hard-break';
 import { Underline } from '@tiptap/extension-underline';
 import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
@@ -33,9 +34,7 @@ export const Tiptap = ({
 }) => {
     const editor = useEditor({
         extensions: [
-            StarterKit.configure({
-                hardBreak: false,
-            }),
+            StarterKit,
             Placeholder.configure({
                 showOnlyWhenEditable: false,
                 emptyNodeClass:
@@ -74,6 +73,9 @@ export const Tiptap = ({
                 HTMLAttributes: {
                     class: 'border-1 border-gray-600 my-2',
                 },
+            }),
+            HardBreak.configure({
+                keepMarks: false,
             }),
         ],
         content: description,
