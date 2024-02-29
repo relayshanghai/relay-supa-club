@@ -5,7 +5,7 @@ export interface PaginationParam {
 
 export interface Paginated<T> {
     items: T[];
-    totalElements: number;
+    totalSize: number;
     totalPages: number;
     page: number;
     size: number;

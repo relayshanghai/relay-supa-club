@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { beforeAll, afterEach, afterAll } from 'vitest';
 import { server } from './src/mocks/server';
 

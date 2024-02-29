@@ -5,4 +5,6 @@ export interface GetProductResponse {
     currency: string;
     description: string;
     shopUrl: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
