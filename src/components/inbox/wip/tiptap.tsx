@@ -148,7 +148,7 @@ export const Tiptap = ({
                                         openField();
                                     }}
                                 >
-                                    <Paperclip className="h-5 w-5 stroke-gray-300" />
+                                    <Paperclip className="h-5 w-5 fill-gray-400" />
                                 </button>
                             );
                         }}

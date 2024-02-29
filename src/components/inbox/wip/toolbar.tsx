@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { Button } from 'shadcn/components/ui/button';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { useTranslation } from 'react-i18next';
+import { NumberedList } from 'src/components/icons';
 
 export const Toolbar = ({ editor }: { editor: Editor | null }) => {
     const addOrEditLink = useCallback(
@@ -35,7 +36,7 @@ export const Toolbar = ({ editor }: { editor: Editor | null }) => {
                 pressed={editor.isActive('bold')}
                 onClick={() => editor.chain().focus().toggleBold().run()}
             >
-                <FontBoldIcon className="h-5 w-5 stroke-gray-400" />
+                <FontBoldIcon className="h-5 w-5 text-gray-400" />
             </Toggle>
 
             <Toggle
@@ -43,7 +44,7 @@ export const Toolbar = ({ editor }: { editor: Editor | null }) => {
                 pressed={editor.isActive('italic')}
                 onClick={() => editor.chain().focus().toggleItalic().run()}
             >
-                <FontItalicIcon className="h-5 w-5 stroke-gray-400" />
+                <FontItalicIcon className="h-5 w-5 text-gray-400" />
             </Toggle>
 
             <UrlInputDialog
@@ -61,7 +62,7 @@ export const Toolbar = ({ editor }: { editor: Editor | null }) => {
                 pressed={editor.isActive('strike')}
                 onClick={() => editor.chain().focus().toggleStrike().run()}
             >
-                <StrikethroughIcon className="h-5 w-5 stroke-gray-400" />
+                <StrikethroughIcon className="h-5 w-5 text-gray-400" />
             </Toggle>
 
             <Toggle
@@ -69,7 +70,7 @@ export const Toolbar = ({ editor }: { editor: Editor | null }) => {
                 pressed={editor.isActive('underline')}
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
             >
-                <UnderlineIcon className="h-5 w-5 stroke-gray-400" />
+                <UnderlineIcon className="h-5 w-5 text-gray-400" />
             </Toggle>
 
             <Toggle
@@ -77,7 +78,14 @@ export const Toolbar = ({ editor }: { editor: Editor | null }) => {
                 pressed={editor.isActive('bulletList')}
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
             >
-                <ListBulletIcon className="h-5 w-5 stroke-gray-400" />
+                <ListBulletIcon className="h-5 w-5 text-gray-400" />
+            </Toggle>
+            <Toggle
+                size="sm"
+                pressed={editor.isActive('orderedList')}
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            >
+                <NumberedList className="h-4 w-4 text-gray-400" />
             </Toggle>
         </div>
     );
@@ -103,7 +111,7 @@ const UrlInputDialog: React.FC<UrlInputDialogProps> = ({ editor, onSave, onRemov
         >
             <DialogTrigger>
                 <Toggle size="sm" pressed={editor.isActive('link')}>
-                    <Link2Icon className="h-5 w-5 stroke-gray-400" />
+                    <Link2Icon className="h-5 w-5 text-gray-400" />
                 </Toggle>
             </DialogTrigger>
             <DialogContent>
