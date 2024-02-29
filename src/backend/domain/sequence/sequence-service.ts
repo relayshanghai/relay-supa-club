@@ -5,6 +5,7 @@ import SequenceRepository from 'src/backend/database/sequence/sequence-repositor
 import ProductRepository from 'src/backend/database/product/product-repository';
 import awaitToError from 'src/utils/await-to-error';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -16,9 +17,12 @@ export default class SequenceService {
         const companyId = RequestContext.getContext().companyId as string;
         const user = RequestContext.getContext().session?.user;
         const profile = await ProfileRepository.getRepository().findOne({ where: { id: user?.id } });
-        const [, product] = await awaitToError(
+        const [err, product] = await awaitToError(
             ProductRepository.getRepository().findOne({ where: { id: request.productId } }),
         );
+        if (err) {
+            throw new NotFoundError('Product not found');
+        }
         const response = await SequenceRepository.getRepository().save({
             ...request,
             company: { id: companyId },

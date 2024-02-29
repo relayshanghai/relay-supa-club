@@ -7,6 +7,7 @@ import { ProfileRepository } from 'src/backend/database/profile/profile-reposito
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 import ProductRepository from 'src/backend/database/product/product-repository';
 import SequenceService from './sequence-service';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 describe('src/backend/domain/sequence/sequence-service.ts', () => {
     const getContextMock = vi.fn();
@@ -84,6 +85,24 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     manager: { id: 'user_1' },
                     managerFirstName: 'John',
                 });
+            });
+            it('should throw not found error when product does not exists', async () => {
+                const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
+                profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
+
+                const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
+                findOneProductMock.mockRejectedValue(new NotFoundError('Product not found'));
+
+                const [err] = await awaitToError(
+                    SequenceService.getService().create({
+                        name: 'new sequence',
+                        productId: 'product_1',
+                        sequenceTemplates: [],
+                        variables: [],
+                        autoStart: false,
+                    }),
+                );
+                expect(err.message).toBe('Product not found');
             });
             it('should throw unauthorized error when company id does not exists in the request context', async () => {
                 getContextMock.mockReturnValue({});
