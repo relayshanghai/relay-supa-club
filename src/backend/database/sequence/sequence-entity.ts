@@ -7,8 +7,11 @@ import {
     UpdateDateColumn,
     type Relation,
     JoinColumn,
+    OneToOne,
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import { ProfileEntity } from '../profile/profile-entity';
+import { ProductEntity } from '../product/product-entity';
 
 @Entity('sequences')
 export class SequenceEntity {
@@ -33,7 +36,15 @@ export class SequenceEntity {
     @Column({ name: 'deleted', type: 'boolean', default: false })
     deleted!: boolean;
 
-    @JoinColumn({ name: 'manager_id' })
+    @JoinColumn({ name: 'company_id' })
     @ManyToOne(() => CompanyEntity, (company) => company.sequences)
     company?: Relation<CompanyEntity>;
+
+    @JoinColumn({ name: 'manager_id' })
+    @ManyToOne(() => ProfileEntity, (manager) => manager.sequences)
+    manager?: Relation<ProfileEntity>;
+
+    @JoinColumn({ name: 'product_id' })
+    @OneToOne(() => ProductEntity, (product) => product.sequence)
+    product?: Relation<ProductEntity>;
 }
