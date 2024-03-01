@@ -127,7 +127,7 @@ const UrlInputDialog: React.FC<UrlInputDialogProps> = ({ editor, onSave, onRemov
                     <DialogClose>
                         <Button
                             onClick={() => {
-                                onSave(urlInput);
+                                onSave('https://' + urlInput);
                             }}
                         >
                             {linkUrl ? t('inbox.edit') : t('inbox.save')}
