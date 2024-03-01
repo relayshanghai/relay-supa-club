@@ -55,6 +55,10 @@ export default class OutreachTemplateRepository {
                     outreach_email_template_variables_relation.outreach_template_variable_id,
                 ),
             )
+            .innerJoin(
+                outreach_email_templates,
+                eq(outreach_email_templates.id, outreach_email_template_variables_relation.outreach_email_template_id),
+            )
             .where(eq(outreach_email_templates.id, id));
         return data;
     }
