@@ -608,17 +608,21 @@ const InboxPreview = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
-    const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
-        if (!thread.threadInfo.updated_at) {
-            return acc;
-        }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
-        if (!acc[key]) {
-            acc[key] = [];
-        }
-        acc[key].push(thread);
-        return acc;
-    }, {} as { [key: string]: ThreadInfo[] });
+    const threadsGroupedByUpdatedAt = useMemo(
+        () =>
+            threads?.reduce((acc, thread) => {
+                if (!thread.threadInfo.updated_at) {
+                    return acc;
+                }
+                const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(thread);
+                return acc;
+            }, {} as { [key: string]: ThreadInfo[] }),
+        [threads],
+    );
 
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
