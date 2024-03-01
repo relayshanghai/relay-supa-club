@@ -5,6 +5,7 @@ import { ProductEntity } from '../product/product-entity';
 import { SequenceEntity } from '../sequence/sequence-entity';
 import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
 import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
+import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -24,6 +25,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             SequenceEntity,
             SequenceStepEntity,
             OutreachEmailTemplateEntity,
+            TemplateVariableEntity,
             __dirname + '../**/*entity{.ts,.js}',
         ],
         synchronize: false,

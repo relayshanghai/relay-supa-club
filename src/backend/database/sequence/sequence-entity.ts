@@ -14,6 +14,7 @@ import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
 import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
+import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
 
 @Entity('sequences')
 export class SequenceEntity {
@@ -52,4 +53,7 @@ export class SequenceEntity {
 
     @OneToMany(() => SequenceStepEntity, (sequenceStep) => sequenceStep.sequence, { cascade: true })
     sequenceSteps?: SequenceStepEntity[];
+
+    @OneToMany(() => TemplateVariableEntity, (templateVariable) => templateVariable.sequence, { cascade: true })
+    templateVariables?: TemplateVariableEntity[];
 }

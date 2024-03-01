@@ -11,6 +11,7 @@ import { NotFoundError } from 'src/utils/error/http-error';
 import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
 import SequenceStepRepository from 'src/backend/database/sequence-step/sequence-step-repository';
 import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
+import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 
 describe('src/backend/domain/sequence/sequence-service.ts', () => {
     const getContextMock = vi.fn();
@@ -91,7 +92,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                         id: 'user_1',
                     },
                     managerFirstName: 'John',
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                     createdAt: '2024-02-29T08:58:59.251Z',
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
@@ -105,10 +106,22 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     stepNumber: 1,
                     waitTimeHours: 24,
                     templateId: 'outreach_template_1',
-                    sequence: { id: '90c311f2-4a8c-4bea-8f10-50f64047463f' } as SequenceEntity,
+                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
+                });
+
+                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
+                templateVariable.mockResolvedValue({
+                    id: 'template_variable_1',
+                    key: 'test_one',
+                    name: 'test_one',
+                    value: 'Test 1',
+                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                    required: true,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 });
 
                 const result = await SequenceService.getService().create({
@@ -145,7 +158,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     product: { id: 'product_1' },
                     manager: { id: 'user_1' },
                     managerFirstName: 'John',
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                     createdAt: '2024-02-29T08:58:59.251Z',
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
@@ -237,7 +250,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                         id: 'user_1',
                     },
                     managerFirstName: 'John',
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                     createdAt: '2024-02-29T08:58:59.251Z',
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
@@ -251,10 +264,10 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     stepNumber: 1,
                     waitTimeHours: 24,
                     templateId: 'outreach_template_1',
-                    sequence: { id: '90c311f2-4a8c-4bea-8f10-50f64047463f' } as SequenceEntity,
+                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                 });
 
                 const [err] = await awaitToError(
@@ -350,7 +363,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                         id: 'user_1',
                     },
                     managerFirstName: 'John',
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                     createdAt: '2024-02-29T08:58:59.251Z',
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
@@ -364,10 +377,10 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     stepNumber: 1,
                     waitTimeHours: 24,
                     templateId: 'outreach_template_1',
-                    sequence: { id: '90c311f2-4a8c-4bea-8f10-50f64047463f' } as SequenceEntity,
+                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                 });
 
                 const [err] = await awaitToError(
@@ -451,7 +464,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                         id: 'user_1',
                     },
                     managerFirstName: 'John',
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                     createdAt: '2024-02-29T08:58:59.251Z',
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
@@ -465,10 +478,10 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     stepNumber: 1,
                     waitTimeHours: 24,
                     templateId: 'outreach_template_1',
-                    sequence: { id: '90c311f2-4a8c-4bea-8f10-50f64047463f' } as SequenceEntity,
+                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    id: '90c311f2-4a8c-4bea-8f10-50f64047463f',
+                    id: 'sequence_id_1',
                 });
 
                 const [err] = await awaitToError(

@@ -12,6 +12,7 @@ import {
     Step,
     type OutreachEmailTemplateEntity,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -46,6 +47,7 @@ export default class SequenceService {
             managerFirstName: profile?.firstName,
         });
         await this.insertIntoSequenceStep(sequence.id, emailTemplates);
+        await this.insertIntoTemplateVariables(sequence.id, templateVariables as Variable[]);
         return sequence;
     }
 
@@ -118,6 +120,20 @@ export default class SequenceService {
                     name,
                     waitTimeHours,
                     stepNumber,
+                });
+            }),
+        );
+        return sequenceSteps;
+    }
+
+    private async insertIntoTemplateVariables(sequenceId: string, variables: Variable[]) {
+        const sequenceSteps = await Promise.all(
+            variables.map((item) => {
+                return TemplateVariableRepository.getRepository().save({
+                    sequence: { id: sequenceId },
+                    name: item.name,
+                    key: item.name,
+                    value: item.value,
                 });
             }),
         );
