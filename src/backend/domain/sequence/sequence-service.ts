@@ -46,7 +46,7 @@ export default class SequenceService {
             managerFirstName: profile?.firstName,
         });
         await this.insertIntoSequenceStep(sequence.id, emailTemplates);
-        return {};
+        return sequence;
     }
 
     private async checkTemplateStepIsUnique(
@@ -75,18 +75,21 @@ export default class SequenceService {
             sequenceTemplates.map((data) => OutreachTemplateRepository.getRepository().get(companyId, data.id)),
         );
         const v = templates.map((item) => item.variables);
-        const [templateVariables] = v.map((item) => item.map((variable) => variable.outreach_template_variables));
-        const fullfilledVariables = templateVariables
-            .map((item) => {
-                return variables.find((v) => v.name === item.name);
-            })
-            // filter out undefined
-            .filter((item) => item);
-        const isFullfilled = fullfilledVariables.length === templateVariables.length;
-        if (!isFullfilled) {
-            throw new PreconditionError('sequence template variables is not fullfilled');
-        }
-        return isFullfilled;
+        const templateVariables = v.map((item) => item.map((variable) => variable.outreach_template_variables));
+        templateVariables.forEach((templateItems) => {
+            const fullfilledVariables = templateItems
+                .map((item) => {
+                    return variables.find((v) => v.name === item.name);
+                })
+                // filter out undefined
+                .filter((item) => item);
+            const isFullfilled = fullfilledVariables.length === templateItems.length;
+            if (!isFullfilled) {
+                throw new PreconditionError('sequence template variables is not fullfilled');
+            }
+        });
+        // return isFullfilled;
+        return false;
     }
 
     private getSequenceStepData(outreachEmailStep: Step) {
