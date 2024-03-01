@@ -17,7 +17,7 @@ export const InfluencerAvatarWithFallback = ({
 }) => {
     return (
         <Avatar
-            className={`relative flex-none rounded-full ${bordered && 'border-8 border-white shadow-lg'}`}
+            className={`flex-none rounded-full ${bordered && 'border-8 border-white shadow-lg'}`}
             style={{ width: size, height: size }}
         >
             <AvatarImage

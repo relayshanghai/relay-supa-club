@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { sequence_influencers } from 'drizzle/schema';
 import type { DBQuery } from 'src/utils/database';
@@ -30,3 +30,15 @@ export const updateSequenceInfluencerCall: DBQuery<
 
     return result[0];
 };
+
+export const deleteSequenceInfluencersCall: DBQuery<(ids: string[]) => Promise<SequenceInfluencer>> =
+    (databaseInstance) => async (ids) => {
+        const result = await db(databaseInstance)
+            .delete(sequence_influencers)
+            .where(inArray(sequence_influencers.id, ids))
+            .returning();
+
+        if (result.length !== 1) throw new Error('Error in deleting row');
+
+        return result[0];
+    };

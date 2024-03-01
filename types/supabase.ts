@@ -908,6 +908,109 @@ export interface Database {
         }
         Relationships: []
       }
+      outreach_email_template_variables_relation: {
+        Row: {
+          id: string
+          outreach_email_template_id: string
+          outreach_template_variable_id: string
+        }
+        Insert: {
+          id?: string
+          outreach_email_template_id: string
+          outreach_template_variable_id: string
+        }
+        Update: {
+          id?: string
+          outreach_email_template_id?: string
+          outreach_template_variable_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_email_template_variables_relation_outreach_email_templ"
+            columns: ["outreach_email_template_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_email_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_email_template_variables_relation_outreach_template_va"
+            columns: ["outreach_template_variable_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_template_variables"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      outreach_email_templates: {
+        Row: {
+          company_id: string | null
+          description: string | null
+          email_engine_template_id: string
+          id: string
+          name: string
+          step: Database["public"]["Enums"]["outreach_step"]
+          subject: string | null
+          template: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          description?: string | null
+          email_engine_template_id: string
+          id?: string
+          name?: string
+          step: Database["public"]["Enums"]["outreach_step"]
+          subject?: string | null
+          template?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          description?: string | null
+          email_engine_template_id?: string
+          id?: string
+          name?: string
+          step?: Database["public"]["Enums"]["outreach_step"]
+          subject?: string | null
+          template?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_email_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      outreach_template_variables: {
+        Row: {
+          category: string
+          company_id: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category: string
+          company_id?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string
+          company_id?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_template_variables_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       posts_performance: {
         Row: {
           campaign_id: string
@@ -977,33 +1080,47 @@ export interface Database {
       }
       products: {
         Row: {
+          company_id: string | null
           created_at: string
           description: string | null
           id: string
+          name: string
           price: number | null
           price_currency: string | null
           shop_url: string | null
           updated_at: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_company_fk"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -1889,7 +2006,11 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      outreach_step:
+        | "OUTREACH"
+        | "FIRST_FOLLOW_UP"
+        | "SECOND_FOLLOW_UP"
+        | "THIRD_FOLLOW_UP"
     }
     CompositeTypes: {
       [_ in never]: never

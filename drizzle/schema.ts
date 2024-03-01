@@ -16,8 +16,8 @@ import {
     index,
     json,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
-import { FUNNEL_STATUS_VALUES } from '../src/utils/outreach/constants';
+import { relations, sql } from 'drizzle-orm';
+import { FUNNEL_STATUS_VALUES, OUTREACH_STATUSES } from '../src/utils/outreach/constants';
 import { CREATOR_PLATFORM_OPTIONS } from '../types';
 
 export const key_status = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired']);
@@ -415,10 +415,14 @@ export const products = pgTable('products', {
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
     updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+    name: text('name'),
     shop_url: text('shop_url'),
     description: text('description'),
     price: doublePrecision('price'),
     price_currency: text('price_currency'),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id),
 });
 
 export const sequence_steps = pgTable('sequence_steps', {
@@ -705,3 +709,53 @@ export const email_contacts = pgTable(
         };
     },
 );
+
+export const outreach_email_templates = pgTable('outreach_email_templates', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    name: text('name').notNull(),
+    description: text('description'),
+    step: text('step', {
+        enum: OUTREACH_STATUSES,
+    }).notNull(),
+    template: text('template'),
+    subject: text('subject'),
+    email_engine_template_id: text('email_engine_template_id').notNull(),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id),
+});
+
+export const outreach_template_variables = pgTable('outreach_template_variables', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    name: varchar('name').notNull().unique(),
+    category: text('category').notNull(),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id)
+        .unique(),
+});
+
+export const outreach_email_template_variables_relation = pgTable('outreach_email_template_variables_relation', {
+    id: uuid('id')
+        .default(sql`uuid_generate_v4()`)
+        .primaryKey()
+        .notNull(),
+    outreach_email_template_id: uuid('outreach_email_template_id')
+        .notNull()
+        .references(() => outreach_email_templates.id, { onDelete: 'cascade' }),
+    outreach_template_variable_id: uuid('outreach_template_variable_id')
+        .notNull()
+        .references(() => outreach_template_variables.id, { onDelete: 'cascade' }),
+});
+
+export const template_variables_relation = relations(outreach_email_templates, ({ many }) => ({
+    variables: many(outreach_template_variables, {
+        relationName: 'outreach_email_template_id',
+    }),
+}));

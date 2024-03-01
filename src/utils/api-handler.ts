@@ -16,7 +16,8 @@ import { companies, profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { RequestContext } from './request-context/request-context';
 import awaitToError from './await-to-error';
-import { UnauthorizedError, type HttpError } from './error/http-error';
+import type { HttpError } from './error/http-error';
+import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
@@ -48,7 +49,7 @@ export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: 
 
 export type ApiResponse<T> = T | ApiError;
 
-type RelayApiRequest = NextApiRequest & {
+export type RelayApiRequest = NextApiRequest & {
     supabase: SupabaseClient<RelayDatabase>;
     session?: Session;
     profile?: typeof profiles.$inferSelect;
@@ -70,7 +71,7 @@ const isJsonable = (error: any) => {
     );
 };
 
-const createErrorObject = (error: any, tag: string) => {
+export const createErrorObject = (error: any, tag: string) => {
     const e: {
         httpCode: number;
         message: any;
@@ -93,7 +94,6 @@ const createErrorObject = (error: any, tag: string) => {
         e.httpCode = error.httpCode;
         e.message = `${error.message} - ERR:${tag}`;
     }
-
     if (typeof error === 'string') {
         e.message = `${error} - ERR:${tag}`;
     }
@@ -102,7 +102,6 @@ const createErrorObject = (error: any, tag: string) => {
         const message = JSON.stringify(error);
         e.message = `${message} - ERR:${tag}`;
     }
-
     return e;
 };
 
