@@ -3,6 +3,9 @@ import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Link } from '@tiptap/extension-link';
 import { BulletList } from '@tiptap/extension-bullet-list';
+import { OrderedList } from '@tiptap/extension-ordered-list';
+import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
+import { HardBreak } from '@tiptap/extension-hard-break';
 import { Underline } from '@tiptap/extension-underline';
 import { Toolbar } from './toolbar';
 import { Paperclip, Send } from 'src/components/icons';
@@ -31,15 +34,16 @@ export const Tiptap = ({
 }) => {
     const editor = useEditor({
         extensions: [
-            StarterKit.configure({
-                hardBreak: false,
-            }),
+            StarterKit,
             Placeholder.configure({
                 showOnlyWhenEditable: false,
                 emptyNodeClass:
                     'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
             }),
-            Link.configure({
+
+            Link.extend({
+                inclusive: false,
+            }).configure({
                 openOnClick: false,
                 linkOnPaste: true,
                 validate: (href) => /^https?:\/\//.test(href),
@@ -57,8 +61,24 @@ export const Tiptap = ({
                 keepAttributes: true,
                 keepMarks: true,
                 HTMLAttributes: {
-                    class: 'list-disc ml-2',
+                    class: 'list-disc ml-8',
                 },
+            }),
+            OrderedList.configure({
+                itemTypeName: 'listItem',
+                keepAttributes: true,
+                keepMarks: true,
+                HTMLAttributes: {
+                    class: 'list-decimal ml-8',
+                },
+            }),
+            HorizontalRule.configure({
+                HTMLAttributes: {
+                    class: 'border-1 border-gray-600 my-2',
+                },
+            }),
+            HardBreak.configure({
+                keepMarks: false,
             }),
         ],
         content: description,
@@ -68,7 +88,7 @@ export const Tiptap = ({
             },
         },
         onUpdate: ({ editor }) => {
-            onChange(editor.getHTML());
+            onChange(editor.getHTML().replaceAll('<p></p>', '<br>'));
         },
     });
     useEffect(() => {
@@ -128,7 +148,7 @@ export const Tiptap = ({
                                         openField();
                                     }}
                                 >
-                                    <Paperclip className="h-5 w-5 stroke-gray-300" />
+                                    <Paperclip className="h-5 w-5 fill-gray-400" />
                                 </button>
                             );
                         }}
