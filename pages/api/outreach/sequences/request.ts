@@ -28,6 +28,8 @@ export class SequenceRequest {
     sequenceTemplates?: SequenceTemplate[];
 
     @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => Variable)
     variables?: Variable[];
 
     @IsOptional()
