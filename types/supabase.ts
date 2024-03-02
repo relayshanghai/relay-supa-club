@@ -1548,6 +1548,7 @@ export interface Database {
           created_at: string
           id: string
           name: string | null
+          outreach_email_template_id: string | null
           sequence_id: string
           step_number: number
           template_id: string
@@ -1558,6 +1559,7 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
+          outreach_email_template_id?: string | null
           sequence_id: string
           step_number?: number
           template_id: string
@@ -1568,6 +1570,7 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
+          outreach_email_template_id?: string | null
           sequence_id?: string
           step_number?: number
           template_id?: string
@@ -1575,6 +1578,13 @@ export interface Database {
           wait_time_hours?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "outreach_email_template_sequence_step_fk"
+            columns: ["outreach_email_template_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_email_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_steps_sequence_id_fkey"
             columns: ["sequence_id"]
@@ -1594,6 +1604,7 @@ export interface Database {
           manager_first_name: string | null
           manager_id: string | null
           name: string
+          product_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1605,6 +1616,7 @@ export interface Database {
           manager_first_name?: string | null
           manager_id?: string | null
           name: string
+          product_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1616,9 +1628,17 @@ export interface Database {
           manager_first_name?: string | null
           manager_id?: string | null
           name?: string
+          product_id?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_product_fk"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
