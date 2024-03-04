@@ -65,6 +65,12 @@ export default class SequenceService {
             sequenceTemplates as SequenceTemplate[],
             templateVariables as Variable[],
         );
+        const [err, existingSequence] = await awaitToError(
+            SequenceRepository.getRepository().findOneOrFail({ where: { id } }),
+        );
+        if (err) {
+            throw new NotFoundError('Sequence not found');
+        }
 
         let product = null;
         if (request.productId) {
@@ -76,7 +82,6 @@ export default class SequenceService {
             }
             product = p;
         }
-        const existingSequence = await SequenceRepository.getRepository().findOne({ where: { id } });
         const newData = {
             ...existingSequence,
             ...request,
