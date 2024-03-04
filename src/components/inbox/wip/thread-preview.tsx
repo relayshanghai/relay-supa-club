@@ -79,7 +79,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                                 {sequenceInfluencer?.name ? sequenceInfluencer?.name[0] : 'I'}
                             </AvatarFallback>
                         </Avatar>
-                        <Icon className="absolute -right-2 -top-1 h-5 w-5" />
+                        <Icon className="absolute -bottom-1 -right-2 h-5 w-5" />
                     </section>
                     <span>
                         <p className={`text-sm font-medium ${selected && 'text-primary-600'}`}>

@@ -7,6 +7,7 @@ import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-no
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
 import type { SearchTableInfluencer } from 'types';
+import { mapProfileToNotes, mapProfileToShippingDetails } from 'src/components/inbox/helpers';
 
 type Props = {
     profile: SequenceInfluencerManagerPage | null;
@@ -16,30 +17,6 @@ type Props = {
     onClose?: () => void;
     onUpdate?: (data: Partial<ProfileValue>) => void;
 };
-
-export const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
-    return {
-        collabStatus: profile?.funnel_status ?? profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
-        nextStep: profile?.next_step ?? profile?.next_step ?? '', // profile.next_step
-        fee: profile?.rate_amount ?? profile?.rate_amount ?? '', // profile.rate_amount
-        videoDetails: profile?.video_details ?? profile?.video_details ?? '', // profile.video_details
-        affiliateLink: '', // ??
-        scheduledPostDate: profile?.scheduled_post_date ?? profile?.scheduled_post_date ?? '', // profile.scheduled_post_date
-        notes: '', // will be filled by getNotes
-    };
-};
-
-export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => ({
-    name: profile?.address?.name ?? '',
-    phoneNumber: profile?.address?.phone_number ?? profile?.address?.phone_number ?? '',
-    streetAddress: profile?.address?.address_line_1 ?? profile?.address?.address_line_1 ?? '',
-    city: profile?.address?.city ?? '',
-    state: profile?.address?.state ?? '',
-    country: profile?.address?.country ?? '',
-    postalCode: profile?.address?.postal_code ?? profile?.address?.postal_code ?? '',
-    trackingCode: profile?.address?.tracking_code ?? profile?.address?.tracking_code ?? '',
-    fullAddress: '', // probably combination of stuff above
-});
 
 export const ProfileOverlayScreen = ({ profile, influencerData, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();

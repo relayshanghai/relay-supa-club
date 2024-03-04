@@ -232,20 +232,19 @@ export async function middleware(req: NextRequest) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
     }
 
-    if (req.nextUrl.pathname.includes('/api/signup')) {
-        const ip = req.ip ?? '127.0.0.1';
-        const { success } = await ratelimit.limit(ip);
-        if (!success) {
-            return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
-        } else {
-            return res;
-        }
-    }
-
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
+        if (req.nextUrl.pathname.includes('signup')) {
+            const ip = req.ip ?? '127.0.0.1';
+            const { success } = await ratelimit.limit(ip);
+            if (!success) {
+                return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
+            } else {
+                return res;
+            }
+        }
         // download-presign-url is a public endpoint
-        if (req.nextUrl.pathname.includes('download-presign-url')) {
+        else if (req.nextUrl.pathname.includes('download-presign-url')) {
             return res;
         }
         if (req.nextUrl.pathname.includes('users')) {

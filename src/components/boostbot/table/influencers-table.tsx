@@ -137,9 +137,7 @@ export function InfluencersTable<_T, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={false}
-                                    className={`${
-                                        parseInt(row.id) % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                                    } justify-center`}
+                                    className={`${row.index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} justify-center`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
