@@ -7,8 +7,11 @@ import {
     UpdateDateColumn,
     type Relation,
     JoinColumn,
+    OneToMany,
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import { SequenceEntity } from '../sequence/sequence-entity';
+import { JobEntity } from '../job/job-entity';
 
 @Entity('profiles')
 export class ProfileEntity {
@@ -48,4 +51,10 @@ export class ProfileEntity {
 
     @Column({ name: 'sequence_send_email', nullable: true })
     sequenceSendEmail?: string;
+
+    @OneToMany(() => SequenceEntity, (sequence) => sequence.manager)
+    sequences?: Relation<SequenceEntity>;
+
+    @OneToMany(() => JobEntity, (job) => job.owner)
+    jobs?: Relation<JobEntity>;
 }

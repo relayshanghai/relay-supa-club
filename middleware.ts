@@ -9,7 +9,6 @@ import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { kv } from '@vercel/kv';
-import { DatabaseProvider } from 'src/backend/database/provider/database-provider';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
@@ -193,7 +192,8 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+            return res;
+            // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';
@@ -251,7 +251,8 @@ export async function middleware(req: NextRequest) {
         if (req.nextUrl.pathname.includes('users')) {
             return res;
         }
-        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+        return res;
+        // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();

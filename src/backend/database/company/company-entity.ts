@@ -1,5 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+    type Relation,
+} from 'typeorm';
 import { ProfileEntity } from '../profile/profile-entity';
+import { SequenceEntity } from '../sequence/sequence-entity';
+import { SequenceInfluencerEntity } from '../sequence/sequence-influencer-entity';
 
 @Entity('companies')
 export class CompanyEntity {
@@ -67,5 +77,11 @@ export class CompanyEntity {
     subscriptionPlan?: string;
 
     @OneToMany(() => ProfileEntity, (profile) => profile.company, { cascade: true })
-    profiles?: ProfileEntity[];
+    profiles?: Relation<ProfileEntity[]>;
+
+    @OneToMany(() => SequenceEntity, (sequence) => sequence.manager, { cascade: true })
+    sequences!: SequenceEntity[];
+
+    @OneToMany(() => SequenceInfluencerEntity, (sequenceInfluencer) => sequenceInfluencer.company, { cascade: true })
+    sequenceInfluencers!: SequenceInfluencerEntity[];
 }
