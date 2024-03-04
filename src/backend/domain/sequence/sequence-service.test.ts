@@ -9,7 +9,7 @@ import ProductRepository from 'src/backend/database/product/product-repository';
 import SequenceService from './sequence-service';
 import { NotFoundError } from 'src/utils/error/http-error';
 import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
-import SequenceStepRepository from 'src/backend/database/sequence-step/sequence-step-repository';
+import SequenceStepRepository from 'src/backend/database/sequence/sequence-step-repository';
 import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 

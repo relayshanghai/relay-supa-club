@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, type Relation, OneToOne } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
-import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
+import { SequenceStepEntity } from '../sequence/sequence-step-entity';
 
 export enum Step {
     OUTREACH = 'OUTREACH',
@@ -37,5 +37,5 @@ export class OutreachEmailTemplateEntity {
     company?: Relation<CompanyEntity>;
 
     @OneToOne(() => SequenceStepEntity, (sequenceStep) => sequenceStep.outreachEmailTemplate, { onDelete: 'CASCADE' })
-    sequenceStep?: Relation<CompanyEntity>;
+    sequenceStep?: Relation<SequenceStepEntity>;
 }

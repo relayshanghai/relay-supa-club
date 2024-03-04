@@ -7,7 +7,7 @@ import awaitToError from 'src/utils/await-to-error';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import { NotFoundError, PreconditionError } from 'src/utils/error/http-error';
 import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
-import SequenceStepRepository from 'src/backend/database/sequence-step/sequence-step-repository';
+import SequenceStepRepository from 'src/backend/database/sequence/sequence-step-repository';
 import {
     Step,
     type OutreachEmailTemplateEntity,

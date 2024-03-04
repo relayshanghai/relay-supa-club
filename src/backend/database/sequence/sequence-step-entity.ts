@@ -9,6 +9,7 @@ import {
     type Relation,
 } from 'typeorm';
 import { SequenceEntity } from './sequence-entity';
+import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
 
 @Entity('sequence_steps')
 export class SequenceStepEntity {
@@ -36,4 +37,8 @@ export class SequenceStepEntity {
 
     @Column({ name: 'step_number', type: 'smallint', default: 0 })
     stepNumber!: number;
+
+    @JoinColumn({ name: 'outreach_email_template_id' })
+    @ManyToOne(() => OutreachEmailTemplateEntity, (sequence) => sequence.sequenceStep)
+    outreachEmailTemplate?: Relation<OutreachEmailTemplateEntity>;
 }

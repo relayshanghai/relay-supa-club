@@ -13,9 +13,9 @@ import {
 import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
-import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
 import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
+import { SequenceStepEntity } from './sequence-step-entity';
 
 @Entity('sequences')
 export class SequenceEntity {
@@ -51,9 +51,6 @@ export class SequenceEntity {
     @JoinColumn({ name: 'product_id' })
     @OneToOne(() => ProductEntity, (product) => product.sequence)
     product?: Relation<ProductEntity>;
-
-    @OneToMany(() => SequenceStepEntity, (sequenceStep) => sequenceStep.sequence, { cascade: true })
-    sequenceSteps?: SequenceStepEntity[];
 
     @OneToMany(() => TemplateVariableEntity, (templateVariable) => templateVariable.sequence, { cascade: true })
     templateVariables?: TemplateVariableEntity[];
