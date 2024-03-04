@@ -278,7 +278,6 @@ describe('scheduleEmails', () => {
         const memoryAfter = process.memoryUsage().heapUsed;
         const memoryUsed = byteToMegabyte(memoryAfter - memoryBefore); // should be under 0.35
         expect(memoryUsed).toBeLessThan(0.5);
-        // console.log(`Memory used: ${memoryUsed} mb`);
         expect(isSameDay(new Date(outreachStepInsert.email_send_at ?? ''), new Date(wednesdayDate), timeZone)).toEqual(
             true,
         );

@@ -192,7 +192,8 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+            return res;
+            // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';

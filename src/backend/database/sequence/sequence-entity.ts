@@ -2,12 +2,12 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    ManyToOne,
+    OneToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    type Relation,
+    ManyToOne,
     JoinColumn,
-    OneToOne,
+    type Relation,
     OneToMany,
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
@@ -15,6 +15,7 @@ import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
 import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
 import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
+import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 
 @Entity('sequences')
 export class SequenceEntity {
@@ -56,4 +57,12 @@ export class SequenceEntity {
 
     @OneToMany(() => TemplateVariableEntity, (templateVariable) => templateVariable.sequence, { cascade: true })
     templateVariables?: TemplateVariableEntity[];
+
+    @OneToMany(() => SequenceInfluencerEntity, (sequenceInfluencer) => sequenceInfluencer.sequence, {
+        onDelete: 'CASCADE',
+    })
+    sequenceInfluencers?: Relation<SequenceInfluencerEntity>;
+
+    @OneToMany(() => SequenceStepEntity, (sequenceStep) => sequenceStep.sequence, { onDelete: 'CASCADE' })
+    steps!: Relation<SequenceStepEntity[]>;
 }

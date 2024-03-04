@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { SequenceEntity } from '../sequence/sequence-entity';
+import { JobEntity } from '../job/job-entity';
 
 @Entity('profiles')
 export class ProfileEntity {
@@ -53,4 +54,7 @@ export class ProfileEntity {
 
     @OneToMany(() => SequenceEntity, (sequence) => sequence.manager, { cascade: true })
     sequences?: SequenceEntity[];
+
+    @OneToMany(() => JobEntity, (job) => job.owner)
+    jobs?: Relation<JobEntity>;
 }

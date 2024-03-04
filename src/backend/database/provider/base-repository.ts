@@ -1,12 +1,12 @@
-import type { EntityTarget, FindManyOptions, ObjectLiteral } from 'typeorm';
+import type { EntityManager, EntityTarget, FindManyOptions, ObjectLiteral } from 'typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseProvider } from './database-provider';
 import type { Paginated, PaginationParam } from 'types/pagination';
 
 export default class BaseRepository<E extends ObjectLiteral> extends Repository<E> {
-    constructor(entity: EntityTarget<E>) {
+    constructor(entity: EntityTarget<E>, manager?: EntityManager) {
         const baseRepository = DatabaseProvider.getDatasource().getRepository<E>(entity);
-        super(baseRepository.target, baseRepository.manager, baseRepository.queryRunner);
+        super(baseRepository.target, manager || baseRepository.manager, baseRepository.queryRunner);
     }
 
     // generic fetch function with pagination page and size

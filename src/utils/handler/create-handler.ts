@@ -16,6 +16,7 @@ import { companies, profiles } from 'drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
+import { getAuthMetadata } from './decorators/api-auth-decorator';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -27,6 +28,10 @@ export const createHandler = (target: new () => any) => {
         req.supabase = createServerSupabaseClient<RelayDatabase>({ req, res });
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
+                const authMetadata = getAuthMetadata(instance, handlerStr);
+                if (authMetadata) {
+                    await authMetadata.auth(req);
+                }
                 const language = req.cookies['language'] || zhCN;
                 i18n.changeLanguage(language);
 

@@ -2,10 +2,19 @@ import type { DataSourceOptions } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
-import { SequenceEntity } from '../sequence/sequence-entity';
-import { SequenceStepEntity } from '../sequence-step/sequence-step-entity';
 import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
 import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
+import { ThreadEntity } from '../thread/thread-entity';
+import { SequenceEmailEntity } from '../sequence/sequence-email-entity';
+import { SequenceEntity } from '../sequence/sequence-entity';
+import { EmailContactEntity, ThreadContactEntity } from '../thread/email-contact-entity';
+import { SequenceInfluencerEntity } from '../sequence/sequence-influencer-entity';
+import { InfluencerEntity } from '../influencer/influencer-entity';
+import { JobEntity } from '../job/job-entity';
+import { SequenceStepEntity } from '../sequence/sequence-step-entity';
+import { EmailEntity } from '../thread/email-entity';
+import { InfluencerSocialProfileEntity } from '../influencer/influencer-social-profile-entity';
+import { AddressEntity } from '../influencer/address-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -26,8 +35,22 @@ export const datasourceOptions = (): DataSourceOptions => {
             SequenceStepEntity,
             OutreachEmailTemplateEntity,
             TemplateVariableEntity,
-            __dirname + '../**/*entity{.ts,.js}',
-        ],
+            ThreadEntity,
+            SequenceEmailEntity,
+            SequenceEntity,
+            ThreadEntity,
+            ThreadContactEntity,
+            EmailContactEntity,
+            SequenceInfluencerEntity,
+            InfluencerEntity,
+            JobEntity,
+            SequenceStepEntity,
+            EmailEntity,
+            SequenceEmailEntity,
+            ,
+            InfluencerSocialProfileEntity,
+            AddressEntity,
+        ] as any,
         synchronize: false,
         logger: 'simple-console',
         subscribers: [],

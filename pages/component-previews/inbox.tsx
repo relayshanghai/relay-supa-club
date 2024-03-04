@@ -608,17 +608,21 @@ const InboxPreview = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
-    const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
-        if (!thread.threadInfo.updated_at) {
-            return acc;
-        }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
-        if (!acc[key]) {
-            acc[key] = [];
-        }
-        acc[key].push(thread);
-        return acc;
-    }, {} as { [key: string]: ThreadInfo[] });
+    const threadsGroupedByUpdatedAt = useMemo(
+        () =>
+            threads?.reduce((acc, thread) => {
+                if (!thread.threadInfo.updated_at) {
+                    return acc;
+                }
+                const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(thread);
+                return acc;
+            }, {} as { [key: string]: ThreadInfo[] }),
+        [threads],
+    );
 
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
@@ -645,8 +649,12 @@ const InboxPreview = () => {
                         <div className="flex w-full flex-col">
                             {Object.keys(threadsGroupedByUpdatedAt)
                                 .sort((a, b) => {
-                                    const dateA = threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date;
-                                    const dateB = threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date;
+                                    const dateA =
+                                        threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date ||
+                                        threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
+                                    const dateB =
+                                        threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date ||
+                                        threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
                                     return sortByUpdatedAtDesc(dateA, dateB);
                                 })
                                 .map((date) => (
