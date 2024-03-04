@@ -45,6 +45,7 @@ export const Tiptap = ({
                 inclusive: false,
             }).configure({
                 openOnClick: false,
+                autolink: true,
                 linkOnPaste: true,
                 validate: (href) => /^https?:\/\//.test(href),
                 HTMLAttributes: {
