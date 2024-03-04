@@ -56,6 +56,33 @@ export interface IUserContext {
     refreshPaymentMethods: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
 }
 
+export const userExists = async (email: string) => {
+    const params = new URLSearchParams();
+    params.append('email', email);
+    const url = `profiles/exists?${params.toString()}`;
+    try {
+        const res = await nextFetch<{ message: string } | { error: string }>(url, {
+            method: 'get',
+        });
+        if (res) {
+            return {
+                exists: false,
+            };
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            return {
+                exists: true,
+                mail: e.message,
+            };
+        }
+    }
+    return {
+        exists: false,
+        error: 'unknown error',
+    };
+};
+
 export const UserContext = createContext<IUserContext>({
     user: null,
     profile: undefined,

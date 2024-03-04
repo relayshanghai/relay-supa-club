@@ -321,6 +321,7 @@ const validateEmail = (email: string) => {
 };
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    console.log('bruh');
     const { email, password, firstName, lastName, phoneNumber, companyName, companyWebsite, category } =
         validateAndParseData(req);
     validateEmail(email);

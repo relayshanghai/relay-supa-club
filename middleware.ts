@@ -287,10 +287,11 @@ export const config = {
          * - api/ping
          * - api/slack/create
          * - api/subscriptions/webhook
-         * - api/company/exists
+         * - api/company/exists|api/profiles/exists
+         * - api/profiles/exists|api/profiles/exists
          * - api/jobs/run
          * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/profiles/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };

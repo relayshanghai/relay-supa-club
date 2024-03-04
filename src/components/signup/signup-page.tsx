@@ -16,6 +16,7 @@ import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
 import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -193,7 +194,7 @@ const SignUpPage = ({
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else {
-                    toast.error(`${t('login.oopsSomethingWentWrong')} ${e?.message}`);
+                    toast.error(`${t('login.oopsSomethingWentWrong')} ${truncatedText(e?.message, 40)}`);
                 }
             } finally {
                 setLoading(false);
