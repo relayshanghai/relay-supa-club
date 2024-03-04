@@ -13,12 +13,15 @@ import {
     type OutreachEmailTemplateEntity,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
+import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
+import { type ProductEntity } from 'src/backend/database/product/product-entity';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
     static getService(): SequenceService {
         return SequenceService.service;
     }
+
     @CompanyIdRequired()
     async create(request: SequenceRequest) {
         const companyId = RequestContext.getContext().companyId as string;
@@ -46,6 +49,44 @@ export default class SequenceService {
             manager: { id: user?.id },
             managerFirstName: profile?.firstName,
         });
+        await this.insertIntoSequenceStep(sequence.id, emailTemplates);
+        await this.insertIntoTemplateVariables(sequence.id, templateVariables as Variable[]);
+        return sequence;
+    }
+
+    @CompanyIdRequired()
+    async update(request: SequenceRequest, id: string) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const sequenceTemplates = request.sequenceTemplates;
+        const templateVariables = request.variables;
+        const emailTemplates = await this.checkTemplateStepIsUnique(companyId, sequenceTemplates as SequenceTemplate[]);
+        await this.checkTemplateVariables(
+            companyId,
+            sequenceTemplates as SequenceTemplate[],
+            templateVariables as Variable[],
+        );
+
+        let product = null;
+        if (request.productId) {
+            const [err, p] = await awaitToError(
+                ProductRepository.getRepository().findOne({ where: { id: request.productId } }),
+            );
+            if (err) {
+                throw new NotFoundError('Product not found');
+            }
+            product = p;
+        }
+        const existingSequence = await SequenceRepository.getRepository().findOne({ where: { id } });
+        const newData = {
+            ...existingSequence,
+            ...request,
+        } as SequenceEntity;
+        if (product) {
+            newData.product = { id: product?.id } as ProductEntity;
+        }
+        const sequence = await SequenceRepository.getRepository().save(newData);
+        await this.removeAllSequenceSteps(sequence.id);
+        await this.removeAllTemplateVariables(sequence.id);
         await this.insertIntoSequenceStep(sequence.id, emailTemplates);
         await this.insertIntoTemplateVariables(sequence.id, templateVariables as Variable[]);
         return sequence;
@@ -138,5 +179,13 @@ export default class SequenceService {
             }),
         );
         return sequenceSteps;
+    }
+
+    private removeAllSequenceSteps(sequenceId: string) {
+        return SequenceStepRepository.getRepository().delete({ sequence: { id: sequenceId } });
+    }
+
+    private removeAllTemplateVariables(sequenceId: string) {
+        return TemplateVariableRepository.getRepository().delete({ sequence: { id: sequenceId } });
     }
 }
