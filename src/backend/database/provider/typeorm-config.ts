@@ -47,7 +47,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             SequenceStepEntity,
             EmailEntity,
             SequenceEmailEntity,
-            ,
+            SequenceStepEntity,
             InfluencerSocialProfileEntity,
             AddressEntity,
         ] as any,
