@@ -1,6 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
+import { SequenceEntity } from '../sequence/sequence-entity';
+import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
 
 @Entity('companies')
 export class CompanyEntity {
@@ -72,4 +74,12 @@ export class CompanyEntity {
 
     @OneToMany(() => ProductEntity, (product) => product.company, { cascade: true })
     products?: ProductEntity[];
+
+    @OneToMany(() => SequenceEntity, (sequence) => sequence.company, { cascade: true })
+    sequences?: SequenceEntity[];
+
+    @OneToMany(() => OutreachEmailTemplateEntity, (outreachEmailTemplate) => outreachEmailTemplate.company, {
+        cascade: true,
+    })
+    outreachEmailTemplates?: OutreachEmailTemplateEntity[];
 }

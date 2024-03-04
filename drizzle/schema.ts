@@ -435,6 +435,7 @@ export const sequence_steps = pgTable('sequence_steps', {
     sequence_id: uuid('sequence_id')
         .notNull()
         .references(() => sequences.id),
+    outreach_email_templates: uuid('outreach_email_templates').references(() => outreach_email_templates.id),
     step_number: smallint('step_number').default(0).notNull(),
 });
 
@@ -540,6 +541,7 @@ export const sequences = pgTable(
         id: uuid('id').defaultRandom().primaryKey().notNull(),
         manager_first_name: text('manager_first_name'),
         manager_id: uuid('manager_id').references(() => profiles.id, { onDelete: 'cascade' }),
+        product_id: uuid('product_id').references(() => products.id),
         deleted: boolean('deleted').default(false).notNull(),
     },
     (table) => {

@@ -7,8 +7,10 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
     type Relation,
+    OneToOne,
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import { SequenceEntity } from '../sequence/sequence-entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -39,4 +41,7 @@ export class ProductEntity {
     @JoinColumn({ name: 'company_id' })
     @ManyToOne(() => CompanyEntity, (company) => company.products)
     company?: Relation<CompanyEntity>;
+
+    @OneToOne(() => SequenceEntity, (sequence) => sequence.product)
+    sequence?: Relation<SequenceEntity>;
 }
