@@ -15,6 +15,8 @@ import {
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
+import type { SequenceStepEntity } from 'src/backend/database/sequence-step/sequence-step-entity';
+import { In } from 'typeorm';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -90,9 +92,8 @@ export default class SequenceService {
             newData.product = { id: product?.id } as ProductEntity;
         }
         const sequence = await SequenceRepository.getRepository().save(newData);
-        await this.removeAllSequenceSteps(sequence.id);
-        await this.removeAllTemplateVariables(sequence.id);
         await this.insertIntoSequenceStep(sequence.id, emailTemplates);
+        await this.removeAllTemplateVariables(sequence.id);
         await this.insertIntoTemplateVariables(sequence.id, templateVariables as Variable[]);
         return sequence;
     }
@@ -155,21 +156,74 @@ export default class SequenceService {
         }
     }
 
-    private async insertIntoSequenceStep(sequenceId: string, sequenceTemplates: OutreachEmailTemplateEntity[]) {
-        const sequenceSteps = await Promise.all(
-            sequenceTemplates.map((item) => {
-                const { stepName: name, waitTimeHours, stepNumber } = this.getSequenceStepData(item.step);
-                return SequenceStepRepository.getRepository().save({
-                    sequence: { id: sequenceId },
-                    outreachEmailTemplate: { id: item.id },
-                    templateId: item.email_engine_template_id,
-                    name,
-                    waitTimeHours,
-                    stepNumber,
-                });
+    private async upsertSequenceStep(sequenceId: string, item: OutreachEmailTemplateEntity) {
+        const { stepName: name, waitTimeHours, stepNumber } = this.getSequenceStepData(item.step);
+        const [err, sequenceStep] = await awaitToError(
+            SequenceStepRepository.getRepository().findOneByOrFail({
+                sequence: { id: sequenceId },
+                stepNumber,
             }),
         );
-        return sequenceSteps;
+
+        if (err) {
+            return SequenceStepRepository.getRepository().save({
+                sequence: { id: sequenceId },
+                outreachEmailTemplate: { id: item.id },
+                templateId: item.email_engine_template_id,
+                name,
+                waitTimeHours,
+                stepNumber,
+            });
+        }
+        return SequenceStepRepository.getRepository().save({
+            ...sequenceStep,
+            outreachEmailTemplate: { id: item.id },
+            templateId: item.email_engine_template_id,
+            name,
+            waitTimeHours,
+        });
+    }
+
+    private async removeUnusedSequenceStep(
+        sequenceStep: SequenceStepEntity[],
+        sequenceTemplates: OutreachEmailTemplateEntity[],
+    ) {
+        if (sequenceStep.length === 0 || sequenceTemplates.length === 0) {
+            return;
+        }
+        const emailTemplateIdsInSequenceSteps = sequenceStep.map((item) => item.outreachEmailTemplate?.id);
+        const emailTemplateIds = sequenceTemplates.map((item) => item.id);
+        const diff = emailTemplateIdsInSequenceSteps.filter((id) => !emailTemplateIds.includes(id as string));
+        if (diff.length === 0) {
+            return;
+        }
+        await SequenceStepRepository.getRepository().delete({
+            outreachEmailTemplate: {
+                id: In(diff),
+            },
+        });
+    }
+
+    private async insertIntoSequenceStep(sequenceId: string, sequenceTemplates: OutreachEmailTemplateEntity[]) {
+        // get diff between existing sequence steps and new sequence steps
+        const [err, sequenceSteps] = await awaitToError(
+            SequenceStepRepository.getRepository().find({
+                where: { sequence: { id: sequenceId } },
+                relations: {
+                    outreachEmailTemplate: true,
+                },
+            }),
+        );
+        if (err) {
+            throw new NotFoundError('Sequence not found');
+        }
+        // delete the diff
+        await this.removeUnusedSequenceStep(sequenceSteps, sequenceTemplates);
+        // insert the new sequence steps
+        const newSequenceStep = await Promise.all(
+            sequenceTemplates.map((item) => this.upsertSequenceStep(sequenceId, item)),
+        );
+        return newSequenceStep;
     }
 
     private async insertIntoTemplateVariables(sequenceId: string, variables: Variable[]) {
@@ -184,10 +238,6 @@ export default class SequenceService {
             }),
         );
         return sequenceSteps;
-    }
-
-    private removeAllSequenceSteps(sequenceId: string) {
-        return SequenceStepRepository.getRepository().delete({ sequence: { id: sequenceId } });
     }
 
     private removeAllTemplateVariables(sequenceId: string) {
