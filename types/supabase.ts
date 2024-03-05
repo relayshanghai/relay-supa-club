@@ -1655,6 +1655,65 @@ export interface Database {
           }
         ]
       }
+      subscriptions: {
+        Row: {
+          active_at: string | null
+          cancelled_at: string | null
+          company_id: string
+          coupon: string | null
+          discount: number | null
+          id: string
+          paused_at: string | null
+          payment_method: string
+          price: number
+          provider: string
+          provider_subscription_id: string
+          quantity: number
+          subscription_data: Json
+          total: number
+        }
+        Insert: {
+          active_at?: string | null
+          cancelled_at?: string | null
+          company_id: string
+          coupon?: string | null
+          discount?: number | null
+          id?: string
+          paused_at?: string | null
+          payment_method: string
+          price: number
+          provider?: string
+          provider_subscription_id: string
+          quantity: number
+          subscription_data: Json
+          total: number
+        }
+        Update: {
+          active_at?: string | null
+          cancelled_at?: string | null
+          company_id?: string
+          coupon?: string | null
+          discount?: number | null
+          id?: string
+          paused_at?: string | null
+          payment_method?: string
+          price?: number
+          provider?: string
+          provider_subscription_id?: string
+          quantity?: number
+          subscription_data?: Json
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_company"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       template_variables: {
         Row: {
           created_at: string
