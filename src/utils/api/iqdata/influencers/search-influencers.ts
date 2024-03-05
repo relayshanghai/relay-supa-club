@@ -2,7 +2,7 @@ import type { CreatorPlatform, CreatorSearchByUsernameResult, CreatorSearchResul
 import type { z } from 'zod';
 import type { ServerContext } from '..';
 import { withServerContext } from '..';
-import { apiFetch } from '../api-fetch';
+import { IqDataApiFetcher } from '../api-fetch';
 import { SearchInfluencersPayload } from './search-influencers-payload';
 
 export type SearchInfluencersListPayloadInput = {
@@ -24,7 +24,7 @@ export const searchInfluencers = async (payload: SearchInfluencersPayloadInput, 
     const parsedPayload: z.infer<typeof SearchInfluencersPayload> =
         SearchInfluencersPayload.passthrough().parse(payload);
 
-    const response = await apiFetch<
+    const response = await IqDataApiFetcher.service.request<
         CreatorSearchResult & SearchResultMetadata,
         SearchInfluencersPayloadInput & { context?: ServerContext }
     >('/search/newv1', { ...parsedPayload, context }, { method: 'POST' });
@@ -35,7 +35,7 @@ export const searchInfluencers = async (payload: SearchInfluencersPayloadInput, 
 export const searchInfluencersList = async (payload: SearchInfluencersListPayloadInput, context?: ServerContext) => {
     const { username, platform } = payload;
 
-    const response = await apiFetch<
+    const response = await IqDataApiFetcher.service.request<
         CreatorSearchByUsernameResult & SearchResultMetadata,
         { query: SearchInfluencersListPayloadQuery } & { context?: ServerContext }
     >(
