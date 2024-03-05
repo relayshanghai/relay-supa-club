@@ -50,6 +50,9 @@ const inbox = {
         success: 'Download started',
         error: 'Error when downloading attachment',
     },
+    save: 'Save',
+    edit: 'Save changes',
+    remove: 'Remove',
 };
 
 export default inbox;

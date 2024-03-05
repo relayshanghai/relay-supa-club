@@ -50,6 +50,9 @@ const inbox = {
         success: '下载已开始',
         error: '下载附件时出错',
     },
+    save: '保存',
+    edit: '保存更改',
+    remove: '移除',
 };
 
 export default inbox;
