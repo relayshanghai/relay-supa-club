@@ -4,7 +4,9 @@ import { BadRequestError } from 'src/utils/error/http-error';
 import { getHostnameFromRequest } from 'src/utils/get-host';
 import { serverLogger } from 'src/utils/logger-server';
 import { RequestContext } from 'src/utils/request-context/request-context';
-
+/**
+ * @deprecated use SubscriptionV2Service instead
+ */
 export default class SubscriptionService {
     static service: SubscriptionService = new SubscriptionService();
     static getService(): SubscriptionService {
