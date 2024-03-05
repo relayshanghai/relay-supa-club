@@ -3,7 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
+import {
+    ThreadPreview,
+    type Message as BaseMessage,
+    ThreadPreviewSkeleton,
+} from 'src/components/inbox/wip/thread-preview';
 import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -352,7 +356,17 @@ const ThreadProvider = ({
             }, 500);
         }
     }, [messages]);
-    if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
+    if (!messages && isMessageLoading) {
+        return (
+            <div className="m-4 flex flex-col space-y-4">
+                {Array(4)
+                    .fill(0)
+                    .map((_, index) => (
+                        <Skeleton key={index} className="flex h-12 rounded-lg bg-gray-300" />
+                    ))}
+            </div>
+        );
+    }
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
 
     return (
@@ -457,14 +471,15 @@ const InboxPreview = () => {
             };
         });
 
-    const [page, setPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const [loading, setLoading] = useState(false);
 
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
         sequences: [],
-        page,
+        page: 0,
     });
 
     const getKey = useCallback(
@@ -503,6 +518,7 @@ const InboxPreview = () => {
     } = useSWRInfinite(
         getKey,
         async ({ url, params }): Promise<ThreadData> => {
+            setLoading(true);
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
                 body: params,
             });
@@ -512,9 +528,10 @@ const InboxPreview = () => {
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
+            setLoading(false);
             return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
-        { revalidateOnFocus: true },
+        { revalidateFirstPage: false },
     );
 
     const threadsInfo = useMemo(() => {
@@ -588,12 +605,11 @@ const InboxPreview = () => {
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
         // If there are no more items to load, return
-        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered) return;
+        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered || loading) return;
 
         // Increase the page number
-        setPage((prevPage) => prevPage + 1);
         setSize(size + 1);
-    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
+    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered, loading]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer);
 
@@ -640,14 +656,14 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
-                                setPage(0);
+                                setSize(0);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
                         />
                     </section>
                     {(() => {
-                        if (isThreadsLoading) {
+                        if (!threadsGroupedByUpdatedAt && (isThreadsLoading || loading)) {
                             return (
                                 <>
                                     <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
@@ -655,7 +671,7 @@ const InboxPreview = () => {
                                             Loading...
                                         </div>
                                     </div>
-                                    <Skeleton className="h-16 w-full bg-gray-100" />
+                                    <ThreadPreviewSkeleton />
                                 </>
                             );
                         } else if (threadsGroupedByUpdatedAt) {
@@ -705,6 +721,16 @@ const InboxPreview = () => {
                                                 ))}
                                             </div>
                                         ))}
+                                    {loading && (
+                                        <>
+                                            <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                                <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                    Loading...
+                                                </div>
+                                            </div>
+                                            <ThreadPreviewSkeleton />
+                                        </>
+                                    )}
                                 </div>
                             );
                         } else {
