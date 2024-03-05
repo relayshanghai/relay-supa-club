@@ -30,6 +30,38 @@ export default class ProductService {
         return { ...response, currency } as GetProductResponse;
     }
     @CompanyIdRequired()
+    async update(request: ProductRequest, id: string): Promise<GetProductResponse> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const product = await ProductRepository.getRepository().findOneBy({
+            id,
+            company: {
+                id: companyId,
+            },
+        });
+        if (!product) {
+            throw new Error(`Product with id: ${id} does not exists`);
+        }
+        const c = request.currency;
+        const newProduct = {
+            ...product,
+            name: request.name,
+            description: request.description,
+            price: request.price,
+            shopUrl: request.shopUrl,
+            priceCurrency: c,
+        };
+        const response = await ProductRepository.getRepository().save(newProduct);
+        const currency = response.priceCurrency;
+        delete (response as { priceCurrency?: unknown }).priceCurrency;
+        return {
+            ...response,
+            company: {
+                id: companyId,
+            },
+            currency,
+        } as GetProductResponse;
+    }
+    @CompanyIdRequired()
     async getOne(id: string): Promise<GetProductResponse> {
         const companyId = RequestContext.getContext().companyId as string;
         const product = await ProductRepository.getRepository().findOneBy({
