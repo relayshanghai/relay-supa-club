@@ -9,11 +9,11 @@ import type { EmailContact } from 'src/utils/outreach/types';
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { SingleAddressSection } from './reply-editor';
 import { Button } from 'shadcn/components/ui/button';
-import { useRouter } from 'next/router';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { clientLogger } from 'src/utils/logger-client';
 
 const MessageTitle = ({
     expanded,
@@ -95,7 +95,6 @@ const MessageTitle = ({
 };
 
 const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
-    const router = useRouter();
     const { t } = useTranslation();
 
     const handleDownloadAttachment = useCallback(async () => {
@@ -106,16 +105,34 @@ const AttachmentTablet = ({ attachment }: { attachment: Attachment }) => {
             filename: attachment.filename,
         });
 
-        const downloadStarted = router.push(`${baseUrl}?${new URLSearchParams(downloadParams)}`, undefined, {
-            shallow: true,
-        });
+        const downloadFile = fetch(`${baseUrl}?${new URLSearchParams(downloadParams)}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = '';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return true;
+            })
+            .catch((error: any) => {
+                clientLogger('Attachment download failed', error.message);
+                return false;
+            });
 
-        toast.promise(downloadStarted, {
+        toast.promise(downloadFile, {
             loading: t('inbox.attachments.loading'),
             success: t('inbox.attachments.success'),
             error: t('inbox.attachments.error'),
         });
-    }, [attachment, router, t]);
+    }, [attachment, t]);
 
     return (
         <Tooltip position="right" content={attachment.filename}>

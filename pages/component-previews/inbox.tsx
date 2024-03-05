@@ -3,7 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
+import {
+    ThreadPreview,
+    type Message as BaseMessage,
+    ThreadPreviewSkeleton,
+} from 'src/components/inbox/wip/thread-preview';
 import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -30,6 +34,7 @@ import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { t } from 'i18next';
 import { sortByUpdatedAtDesc } from 'src/components/inbox/helpers';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -351,7 +356,17 @@ const ThreadProvider = ({
             }, 500);
         }
     }, [messages]);
-    if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
+    if (!messages && isMessageLoading) {
+        return (
+            <div className="m-4 flex flex-col space-y-4">
+                {Array(4)
+                    .fill(0)
+                    .map((_, index) => (
+                        <Skeleton key={index} className="flex h-12 rounded-lg bg-gray-300" />
+                    ))}
+            </div>
+        );
+    }
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
 
     return (
@@ -456,14 +471,15 @@ const InboxPreview = () => {
             };
         });
 
-    const [page, setPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const [loading, setLoading] = useState(false);
 
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
         sequences: [],
-        page,
+        page: 0,
     });
 
     const getKey = useCallback(
@@ -502,6 +518,7 @@ const InboxPreview = () => {
     } = useSWRInfinite(
         getKey,
         async ({ url, params }): Promise<ThreadData> => {
+            setLoading(true);
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
                 body: params,
             });
@@ -511,9 +528,10 @@ const InboxPreview = () => {
                 replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
+            setLoading(false);
             return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
-        { revalidateOnFocus: true },
+        { revalidateFirstPage: false },
     );
 
     const threadsInfo = useMemo(() => {
@@ -587,12 +605,11 @@ const InboxPreview = () => {
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
         // If there are no more items to load, return
-        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered) return;
+        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered || loading) return;
 
         // Increase the page number
-        setPage((prevPage) => prevPage + 1);
         setSize(size + 1);
-    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
+    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered, loading]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer);
 
@@ -639,73 +656,98 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
-                                setPage(0);
+                                setSize(0);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
                         />
                     </section>
-                    {threadsGroupedByUpdatedAt ? (
-                        <div className="flex w-full flex-col">
-                            {Object.keys(threadsGroupedByUpdatedAt)
-                                .sort((a, b) => {
-                                    const dateA =
-                                        threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date ||
-                                        threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
-                                    const dateB =
-                                        threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date ||
-                                        threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
-                                    return sortByUpdatedAtDesc(dateA, dateB);
-                                })
-                                .map((date) => (
-                                    <div key={date}>
-                                        <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
-                                            <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
-                                                {date === today ? 'Today' : date}
-                                            </div>
+                    {(() => {
+                        if (!threadsGroupedByUpdatedAt && (isThreadsLoading || loading)) {
+                            return (
+                                <>
+                                    <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                        <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                            Loading...
                                         </div>
-                                        {threadsGroupedByUpdatedAt[date].map((thread, index) => (
-                                            <div
-                                                key={thread.threadInfo.id}
-                                                ref={
-                                                    index === threadsGroupedByUpdatedAt[date].length - 4
-                                                        ? lastThreadRef
-                                                        : null
-                                                }
-                                            >
-                                                <ThreadPreview
-                                                    sequenceInfluencer={
-                                                        thread.sequenceInfluencer as NonNullable<
-                                                            typeof thread.sequenceInfluencer
-                                                        >
-                                                    }
-                                                    threadInfo={thread}
-                                                    currentInbox={currentInbox}
-                                                    selected={
-                                                        !!selectedThread &&
-                                                        selectedThread.threadInfo.id === thread.threadInfo.id
-                                                    }
-                                                    onClick={() => markThreadAsSelected(thread)}
-                                                />
+                                    </div>
+                                    <ThreadPreviewSkeleton />
+                                </>
+                            );
+                        } else if (threadsGroupedByUpdatedAt) {
+                            return (
+                                <div className="flex w-full flex-col">
+                                    {Object.keys(threadsGroupedByUpdatedAt)
+                                        .sort((a, b) => {
+                                            const dateA =
+                                                threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date ||
+                                                threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
+                                            const dateB =
+                                                threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date ||
+                                                threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
+                                            return sortByUpdatedAtDesc(dateA, dateB);
+                                        })
+                                        .map((date) => (
+                                            <div key={date}>
+                                                <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                                    <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                        {date === today ? 'Today' : date}
+                                                    </div>
+                                                </div>
+                                                {threadsGroupedByUpdatedAt[date].map((thread, index) => (
+                                                    <div
+                                                        key={thread.threadInfo.id}
+                                                        ref={
+                                                            index === threadsGroupedByUpdatedAt[date].length - 4
+                                                                ? lastThreadRef
+                                                                : null
+                                                        }
+                                                    >
+                                                        <ThreadPreview
+                                                            sequenceInfluencer={
+                                                                thread.sequenceInfluencer as NonNullable<
+                                                                    typeof thread.sequenceInfluencer
+                                                                >
+                                                            }
+                                                            threadInfo={thread}
+                                                            currentInbox={currentInbox}
+                                                            selected={
+                                                                !!selectedThread &&
+                                                                selectedThread.threadInfo.id === thread.threadInfo.id
+                                                            }
+                                                            onClick={() => markThreadAsSelected(thread)}
+                                                        />
+                                                    </div>
+                                                ))}
                                             </div>
                                         ))}
-                                    </div>
-                                ))}
-                        </div>
-                    ) : isThreadsLoading ? (
-                        <div className="h-16 animate-pulse bg-gray-400" />
-                    ) : (
-                        <ThreadPreview
-                            sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
-                            // @ts-ignore
-                            threadInfo={emptyThread}
-                            _currentInbox={currentInbox}
-                            selected={false}
-                            onClick={() => {
-                                //
-                            }}
-                        />
-                    )}
+                                    {loading && (
+                                        <>
+                                            <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                                <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                    Loading...
+                                                </div>
+                                            </div>
+                                            <ThreadPreviewSkeleton />
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <ThreadPreview
+                                    sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
+                                    // @ts-ignore
+                                    threadInfo={emptyThread}
+                                    _currentInbox={currentInbox}
+                                    selected={false}
+                                    onClick={() => {
+                                        //
+                                    }}
+                                />
+                            );
+                        }
+                    })()}
                 </section>
                 <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (
