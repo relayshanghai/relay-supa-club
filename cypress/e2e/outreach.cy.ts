@@ -305,10 +305,10 @@ describe('outreach', () => {
         cy.contains(outreachMessage); // fills in variables
         const firstFollowup = 'Just floating this to the top of your inbox';
         cy.contains(firstFollowup);
-        cy.contains('3rd Follow-up'); // shows all emails not just outreach
-        const thirdFollowup =
+        cy.contains('2nd Follow-up'); // shows all emails not just outreach
+        const secondFollowup =
             "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
-        cy.contains(thirdFollowup); // shows all emails not just outreach
+        cy.contains(secondFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
     });
 });
