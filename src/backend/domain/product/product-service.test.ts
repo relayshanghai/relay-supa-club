@@ -400,6 +400,13 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 );
                 expect(err.message).toBe('No company id found in request context');
             });
+
+            it('should throw error when product does not exists', async () => {
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOneBy');
+                findOneByProductMock.mockRejectedValue(new NotFoundError('Product with id: product_1 does not exists'));
+                const [err] = await awaitToError(ProductService.getService().getOne('product_1'));
+                expect(err.message).toBe('Product with id: product_1 does not exists');
+            });
         });
     });
 });
