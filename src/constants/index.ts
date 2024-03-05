@@ -20,3 +20,4 @@ export const enUS = 'en-US';
 export const zhCN = 'zh-CN';
 ('');
 export const LOCAL_STORAGE_LANGUAGE_KEY = 'language';
+export const I18N_LANGUAGE_DETECTOR_KEY = 'i18nextLng';
