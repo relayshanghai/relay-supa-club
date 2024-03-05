@@ -15,7 +15,7 @@ import {
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
-import type { SequenceStepEntity } from 'src/backend/database/sequence-step/sequence-step-entity';
+import type { SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
 import { In } from 'typeorm';
 
 export default class SequenceService {

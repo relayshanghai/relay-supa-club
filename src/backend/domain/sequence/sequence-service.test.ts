@@ -14,7 +14,7 @@ import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
-import type { SequenceStepEntity } from 'src/backend/database/sequence-step/sequence-step-entity';
+import type { SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
 
 describe('src/backend/domain/sequence/sequence-service.ts', () => {
     const getContextMock = vi.fn();
