@@ -14,7 +14,7 @@ import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
-import type { SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
+import { type OutreachEmailTemplateEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 
 describe('src/backend/domain/sequence/sequence-service.ts', () => {
     const getContextMock = vi.fn();
@@ -100,41 +100,74 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     updatedAt: '2024-02-29T08:58:59.251Z',
                     deleted: false,
                 };
+                const insertIntoSequenceStepMock = vi.spyOn(
+                    SequenceStepRepository.getRepository(),
+                    'insertIntoSequenceStep',
+                );
+                insertIntoSequenceStepMock.mockResolvedValue([
+                    {
+                        id: 'sequence_step_1',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_1' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_1',
+                        name: 'step_1',
+                        waitTimeHours: 1,
+                        stepNumber: 1,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'sequence_step_2',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_2' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_2',
+                        name: 'step_2',
+                        waitTimeHours: 2,
+                        stepNumber: 2,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                ]);
+
+                const insertIntoTemplateVariablesMock = vi.spyOn(
+                    TemplateVariableRepository.getRepository(),
+                    'insertIntoTemplateVariables',
+                );
+                insertIntoTemplateVariablesMock.mockResolvedValue([
+                    {
+                        id: 'template_variable_1',
+                        key: 'test_one',
+                        name: 'test_one',
+                        value: 'Test 1',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_2',
+                        key: 'test_two',
+                        name: 'test_two',
+                        value: 'Test 2',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_3',
+                        key: 'test_three',
+                        name: 'test_three',
+                        value: 'Test 3',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                ]);
+
                 const createSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
                 createSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
-
-                const findSequenceStepMock = vi.spyOn(SequenceStepRepository.getRepository(), 'find');
-                findSequenceStepMock.mockResolvedValue([]);
-
-                const findOneOrFailSequenceStepMock = vi.spyOn(
-                    SequenceStepRepository.getRepository(),
-                    'findOneByOrFail',
-                );
-                findOneOrFailSequenceStepMock.mockRejectedValue(new NotFoundError('Sequence step not found'));
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
-
-                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
-                templateVariable.mockResolvedValue({
-                    id: 'template_variable_1',
-                    key: 'test_one',
-                    name: 'test_one',
-                    value: 'Test 1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    required: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
 
                 const result = await SequenceService.getService().create({
                     name: 'new sequence',
@@ -618,61 +651,77 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const updateSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
                 updateSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
 
-                const findSequenceStepMock = vi.spyOn(SequenceStepRepository.getRepository(), 'find');
-                findSequenceStepMock.mockResolvedValue([
-                    { id: 'sequence_step_1' } as SequenceStepEntity,
-                    { id: 'sequence_step_2' } as SequenceStepEntity,
+                const insertIntoSequenceStepMock = vi.spyOn(
+                    SequenceStepRepository.getRepository(),
+                    'insertIntoSequenceStep',
+                );
+                insertIntoSequenceStepMock.mockResolvedValue([
+                    {
+                        id: 'sequence_step_1',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_1' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_1',
+                        name: 'step_1',
+                        waitTimeHours: 1,
+                        stepNumber: 1,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'sequence_step_2',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_2' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_2',
+                        name: 'step_2',
+                        waitTimeHours: 2,
+                        stepNumber: 2,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
                 ]);
 
-                const findOneOrFailSequenceStepMock = vi.spyOn(
-                    SequenceStepRepository.getRepository(),
-                    'findOneByOrFail',
+                const deleteTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
+                deleteTemplateVariablesMock.mockResolvedValue({
+                    raw: {},
+                    affected: 1,
+                });
+
+                const insertIntoTemplateVariablesMock = vi.spyOn(
+                    TemplateVariableRepository.getRepository(),
+                    'insertIntoTemplateVariables',
                 );
-                findOneOrFailSequenceStepMock.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                } as SequenceStepEntity);
-
-                const removeAllSequenceStepsMock = vi.spyOn(SequenceStepRepository.getRepository(), 'delete');
-                removeAllSequenceStepsMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-                const removeAllTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
-                removeAllTemplateVariablesMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
-
-                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
-                templateVariable.mockResolvedValue({
-                    id: 'template_variable_1',
-                    key: 'test_one',
-                    name: 'test_one',
-                    value: 'Test 1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    required: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
+                insertIntoTemplateVariablesMock.mockResolvedValue([
+                    {
+                        id: 'template_variable_1',
+                        key: 'test_one',
+                        name: 'test_one',
+                        value: 'Test 1',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_2',
+                        key: 'test_two',
+                        name: 'test_two',
+                        value: 'Test 2',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_3',
+                        key: 'test_three',
+                        name: 'test_three',
+                        value: 'Test 3',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                ]);
 
                 const result = await SequenceService.getService().update(
                     {
@@ -702,8 +751,8 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     'sequence_id_1',
                 );
 
-                expect(removeAllSequenceStepsMock).toBeCalled();
-                expect(removeAllTemplateVariablesMock).toBeCalled();
+                expect(insertIntoSequenceStepMock).toBeCalled();
+                expect(insertIntoTemplateVariablesMock).toBeCalled();
                 expect(result).toEqual({
                     name: 'new updated sequence',
                     productId: 'product_1',
@@ -819,61 +868,77 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const updateSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
                 updateSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
 
-                const findSequenceStepMock = vi.spyOn(SequenceStepRepository.getRepository(), 'find');
-                findSequenceStepMock.mockResolvedValue([
-                    { id: 'sequence_step_1' } as SequenceStepEntity,
-                    { id: 'sequence_step_2' } as SequenceStepEntity,
+                const insertIntoSequenceStepMock = vi.spyOn(
+                    SequenceStepRepository.getRepository(),
+                    'insertIntoSequenceStep',
+                );
+                insertIntoSequenceStepMock.mockResolvedValue([
+                    {
+                        id: 'sequence_step_1',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_1' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_1',
+                        name: 'step_1',
+                        waitTimeHours: 1,
+                        stepNumber: 1,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'sequence_step_2',
+                        sequence: { id: 'sequence_1' } as SequenceEntity,
+                        outreachEmailTemplate: { id: 'outreach_template_2' } as OutreachEmailTemplateEntity,
+                        templateId: 'template_2',
+                        name: 'step_2',
+                        waitTimeHours: 2,
+                        stepNumber: 2,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
                 ]);
 
-                const findOneOrFailSequenceStepMock = vi.spyOn(
-                    SequenceStepRepository.getRepository(),
-                    'findOneByOrFail',
+                const deleteTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
+                deleteTemplateVariablesMock.mockResolvedValue({
+                    raw: {},
+                    affected: 1,
+                });
+
+                const insertIntoTemplateVariablesMock = vi.spyOn(
+                    TemplateVariableRepository.getRepository(),
+                    'insertIntoTemplateVariables',
                 );
-                findOneOrFailSequenceStepMock.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                } as SequenceStepEntity);
-
-                const removeAllSequenceStepsMock = vi.spyOn(SequenceStepRepository.getRepository(), 'delete');
-                removeAllSequenceStepsMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-                const removeAllTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
-                removeAllTemplateVariablesMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
-
-                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
-                templateVariable.mockResolvedValue({
-                    id: 'template_variable_1',
-                    key: 'test_one',
-                    name: 'test_one',
-                    value: 'Test 1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    required: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
+                insertIntoTemplateVariablesMock.mockResolvedValue([
+                    {
+                        id: 'template_variable_1',
+                        key: 'test_one',
+                        name: 'test_one',
+                        value: 'Test 1',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_2',
+                        key: 'test_two',
+                        name: 'test_two',
+                        value: 'Test 2',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                    {
+                        id: 'template_variable_3',
+                        key: 'test_three',
+                        name: 'test_three',
+                        value: 'Test 3',
+                        sequence: { id: 'sequence_id_1' } as SequenceEntity,
+                        required: true,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    },
+                ]);
 
                 const result = await SequenceService.getService().update(
                     {
@@ -902,8 +967,8 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     'sequence_id_1',
                 );
 
-                expect(removeAllSequenceStepsMock).toBeCalled();
-                expect(removeAllTemplateVariablesMock).toBeCalled();
+                expect(insertIntoSequenceStepMock).toBeCalled();
+                expect(insertIntoTemplateVariablesMock).toBeCalled();
                 expect(findOneProductMock).not.toBeCalled();
                 expect(result).toEqual({
                     name: 'new updated sequence',
@@ -1086,44 +1151,6 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     updatedAt: new Date(),
                 });
 
-                const updateSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
-                updateSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
-
-                const removeAllSequenceStepsMock = vi.spyOn(SequenceStepRepository.getRepository(), 'delete');
-                removeAllSequenceStepsMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-                const removeAllTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
-                removeAllTemplateVariablesMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
-
-                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
-                templateVariable.mockResolvedValue({
-                    id: 'template_variable_1',
-                    key: 'test_one',
-                    name: 'test_one',
-                    value: 'Test 1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    required: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
-
                 const [err] = await awaitToError(
                     SequenceService.getService().update(
                         {
@@ -1230,44 +1257,6 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                     updatedAt: new Date(),
                 });
 
-                const updateSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
-                updateSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
-
-                const removeAllSequenceStepsMock = vi.spyOn(SequenceStepRepository.getRepository(), 'delete');
-                removeAllSequenceStepsMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-                const removeAllTemplateVariablesMock = vi.spyOn(TemplateVariableRepository.getRepository(), 'delete');
-                removeAllTemplateVariablesMock.mockResolvedValue({
-                    raw: {},
-                    affected: 1,
-                });
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new updated sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
-
-                const templateVariable = vi.spyOn(TemplateVariableRepository.getRepository(), 'save');
-                templateVariable.mockResolvedValue({
-                    id: 'template_variable_1',
-                    key: 'test_one',
-                    name: 'test_one',
-                    value: 'Test 1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    required: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
-
                 const [err] = await awaitToError(
                     SequenceService.getService().update(
                         {
@@ -1336,42 +1325,6 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockRejectedValue(new NotFoundError('Product not found'));
-
-                const mockSequenceData = {
-                    name: 'new sequence',
-                    productId: 'product_1',
-                    sequenceTemplates: [],
-                    variables: [],
-                    autoStart: false,
-                    company: {
-                        id: 'company_1',
-                    },
-                    product: {
-                        id: 'product_1',
-                    },
-                    manager: {
-                        id: 'user_1',
-                    },
-                    managerFirstName: 'John',
-                    id: 'sequence_id_1',
-                    createdAt: '2024-02-29T08:58:59.251Z',
-                    updatedAt: '2024-02-29T08:58:59.251Z',
-                    deleted: false,
-                };
-                const createSequenceResultMock = vi.spyOn(SequenceRepository.getRepository(), 'save');
-                createSequenceResultMock.mockResolvedValue(mockSequenceData as unknown as SequenceEntity);
-
-                const sequenceStepRepository = vi.spyOn(SequenceStepRepository.getRepository(), 'save');
-                sequenceStepRepository.mockResolvedValue({
-                    name: 'new sequence',
-                    stepNumber: 1,
-                    waitTimeHours: 24,
-                    templateId: 'outreach_template_1',
-                    sequence: { id: 'sequence_id_1' } as SequenceEntity,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    id: 'sequence_id_1',
-                });
 
                 const [err] = await awaitToError(
                     SequenceService.getService().create({

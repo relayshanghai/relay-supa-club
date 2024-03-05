@@ -29,7 +29,7 @@ export default class SequenceStepRepository extends BaseRepository<SequenceStepE
         super(target, manager);
     }
 
-    private async getSequenceStepData(outreachEmailStep: Step) {
+    async getSequenceStepData(outreachEmailStep: Step) {
         switch (outreachEmailStep) {
             case Step.OUTREACH:
                 return { stepName: 'Outreach', waitTimeHours: 0, stepNumber: 0 };
@@ -44,7 +44,7 @@ export default class SequenceStepRepository extends BaseRepository<SequenceStepE
         }
     }
 
-    private async upsertSequenceStep(sequenceId: string, item: OutreachEmailTemplateEntity) {
+    async upsertSequenceStep(sequenceId: string, item: OutreachEmailTemplateEntity) {
         const data = await this.getSequenceStepData(item.step);
         const { stepName: name, waitTimeHours, stepNumber } = data;
         const [err, sequenceStep] = await awaitToError(

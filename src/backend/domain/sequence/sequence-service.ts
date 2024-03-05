@@ -89,6 +89,7 @@ export default class SequenceService {
         if (product) {
             newData.product = { id: product?.id } as ProductEntity;
         }
+
         const sequence = await SequenceRepository.getRepository().save(newData);
         await SequenceStepRepository.getRepository().insertIntoSequenceStep(sequence.id, emailTemplates);
         await TemplateVariableRepository.getRepository().delete({ sequence: { id: sequence.id } });
