@@ -1,8 +1,10 @@
 import { createHandler } from 'src/utils/handler/create-handler';
 import { TemplateVariableRequest } from './request';
-import { Body, DELETE, PUT, Path, Status } from 'src/utils/handler/decorators/api-decorator';
+import { DELETE, PUT, Status } from 'src/utils/handler/decorators/api-decorator';
 import TemplateVariablesService from 'src/backend/domain/templates/template-variables-service';
 import httpCodes from 'src/constants/httpCodes';
+import { Path } from 'src/utils/handler/decorators/api-path-decorator';
+import { Body } from 'src/utils/handler/decorators/api-body-decorator';
 
 export class EmailTemplateApiHandler {
     @PUT()

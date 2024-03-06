@@ -1,8 +1,9 @@
 import { createHandler } from 'src/utils/handler/create-handler';
 import { TemplateVariableRequest } from './request';
-import { Body, GET, POST, Status } from 'src/utils/handler/decorators/api-decorator';
+import { GET, POST, Status } from 'src/utils/handler/decorators/api-decorator';
 import TemplateVariablesService from 'src/backend/domain/templates/template-variables-service';
 import httpCodes from 'src/constants/httpCodes';
+import { Body } from 'src/utils/handler/decorators/api-body-decorator';
 
 export class EmailTemplateApiHandler {
     @POST()

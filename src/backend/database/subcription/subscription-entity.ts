@@ -62,4 +62,8 @@ export class SubscriptionEntity<T = any> {
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt!: Date;
+
+    static getSubscriptionEntity<T>(e: SubscriptionEntity): SubscriptionEntity<T> {
+        return e as SubscriptionEntity<T>;
+    }
 }

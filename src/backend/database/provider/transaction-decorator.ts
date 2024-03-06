@@ -2,6 +2,10 @@ import awaitToError from 'src/utils/await-to-error';
 import { DatabaseProvider } from './database-provider';
 import { RequestContext } from 'src/utils/request-context/request-context';
 
+/**
+ * Method decorator that wraps the method in a database transaction, all of the database operations inside the method will ignored when an error is thrown
+ * @returns
+ */
 export const UseTransaction = (): MethodDecorator => {
     return (_target, _propertyKey, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;

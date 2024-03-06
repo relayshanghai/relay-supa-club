@@ -1,8 +1,9 @@
 import { createHandler } from 'src/utils/handler/create-handler';
 import { SequenceRequest } from './request';
-import { Body, POST, Status } from 'src/utils/handler/decorators/api-decorator';
+import { POST, Status } from 'src/utils/handler/decorators/api-decorator';
 import httpCodes from 'src/constants/httpCodes';
 import SequenceService from 'src/backend/domain/sequence/sequence-service';
+import { Body } from 'src/utils/handler/decorators/api-body-decorator';
 
 export class SequencesApiHandler {
     @POST()
