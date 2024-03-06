@@ -523,21 +523,21 @@ const InboxPreview = () => {
                 body: params,
             });
             const totals = {
-                unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
-                unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
-                replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
+                unreplied: content?.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
+                unopened: content?.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
+                replied: content?.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
             setLoading(false);
             return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
-        { revalidateFirstPage: false },
+        { revalidateFirstPage: false, revalidateOnFocus: true },
     );
 
     const threadsInfo = useMemo(() => {
         return {
             threads: data && data.flatMap((page) => page.threads),
-            totals: data && data[0].totals,
+            totals: data && data[0]?.totals,
             totalFiltered: data && data[0].totalFiltered,
         };
     }, [data]);
@@ -559,9 +559,9 @@ const InboxPreview = () => {
     const totals = useMemo(() => {
         return threadsInfo
             ? {
-                  unopened: threadsInfo.totals?.unopened || 0,
-                  unreplied: threadsInfo.totals?.unreplied || 0,
-                  replied: threadsInfo.totals?.replied || 0,
+                  unopened: threadsInfo?.totals?.unopened || 0,
+                  unreplied: threadsInfo?.totals?.unreplied || 0,
+                  replied: threadsInfo?.totals?.replied || 0,
               }
             : { unopened: 0, unreplied: 0, replied: 0 };
     }, [threadsInfo]);
