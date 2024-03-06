@@ -245,6 +245,8 @@ export async function middleware(req: NextRequest) {
         // download-presign-url is a public endpoint
         else if (req.nextUrl.pathname.includes('download-presign-url')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('logout')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
