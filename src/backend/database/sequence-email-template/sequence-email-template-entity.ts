@@ -1,6 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, type Relation, OneToOne } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+    type Relation,
+    OneToOne,
+    ManyToMany,
+    JoinTable,
+} from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { SequenceStepEntity } from '../sequence/sequence-step-entity';
+import { OutreachEmailTemplateVariableEntity } from './sequence-email-template-variable-entity';
 
 export enum Step {
     OUTREACH = 'OUTREACH',
@@ -38,4 +49,18 @@ export class OutreachEmailTemplateEntity {
 
     @OneToOne(() => SequenceStepEntity, (sequenceStep) => sequenceStep.outreachEmailTemplate, { onDelete: 'CASCADE' })
     sequenceStep?: Relation<SequenceStepEntity>;
+
+    @ManyToMany(() => OutreachEmailTemplateVariableEntity, (variable) => variable.outreachEmailTemplates)
+    @JoinTable({
+        name: 'outreach_email_template_variables_relation',
+        joinColumn: {
+            name: 'outreach_email_template_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'outreach_template_variable_id',
+            referencedColumnName: 'id',
+        },
+    })
+    variables?: OutreachEmailTemplateVariableEntity[];
 }

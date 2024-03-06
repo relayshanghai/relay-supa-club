@@ -8,13 +8,22 @@ import type { ProfileEntity } from 'src/backend/database/profile/profile-entity'
 import ProductRepository from 'src/backend/database/product/product-repository';
 import SequenceService from './sequence-service';
 import { NotFoundError } from 'src/utils/error/http-error';
-import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
 import SequenceStepRepository from 'src/backend/database/sequence/sequence-step-repository';
 import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
-import { type OutreachEmailTemplateEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import {
+    Step,
+    type OutreachEmailTemplateEntity,
+} from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
+
+vi.mock('src/backend/database/provider/transaction-decorator', () => ({
+    UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
+        // do nothing
+    },
+}));
 
 describe('src/backend/domain/sequence/sequence-service.ts', () => {
     const getContextMock = vi.fn();
@@ -38,34 +47,36 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockResolvedValue({
@@ -238,34 +249,17 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockRejectedValue(new Error('sequence template step is not unique'));
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockResolvedValue({
@@ -351,34 +345,38 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockRejectedValue(
+                    new Error('sequence template variables is not fullfilled'),
+                );
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockResolvedValue({
@@ -461,34 +459,36 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockRejectedValue(new NotFoundError('Product not found'));
@@ -582,34 +582,36 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const mockSequenceData = {
                     name: 'new updated sequence',
@@ -802,34 +804,36 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const mockSequenceData = {
                     name: 'new updated sequence',
@@ -1017,34 +1021,37 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const findOneSequenceMock = vi.spyOn(SequenceRepository.getRepository(), 'findOneOrFail');
                 findOneSequenceMock.mockRejectedValue(new NotFoundError('Sequence not found'));
@@ -1085,34 +1092,17 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockRejectedValue(new Error('sequence template step is not unique'));
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const mockSequenceData = {
                     name: 'new updated sequence',
@@ -1191,34 +1181,38 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockRejectedValue(
+                    new Error('sequence template variables is not fullfilled'),
+                );
 
                 const mockSequenceData = {
                     name: 'new updated sequence',
@@ -1294,34 +1288,36 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const profileMock = vi.spyOn(ProfileRepository.getRepository(), 'findOne');
                 profileMock.mockResolvedValue({ firstName: 'John' } as ProfileEntity);
 
-                const outreachEmailMock = vi.spyOn(OutreachTemplateRepository.getRepository(), 'get');
-                outreachEmailMock.mockResolvedValue({
-                    id: 'outreach_template_1',
-                    name: 'outreach_template_name_1',
-                    description: 'outreach_template_description_1',
-                    step: 'OUTREACH',
-                    subject: 'outreach_template_subject_1',
-                    variables: [
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_1',
-                                name: 'test_one',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_2',
-                                name: 'test_two',
-                            },
-                        },
-                        {
-                            outreach_template_variables: {
-                                id: 'outreach_template_variable_3',
-                                name: 'test_three',
-                            },
-                        },
-                    ],
-                } as any);
+                const checkTemplateStepIsUniqueMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateStepIsUnique',
+                );
+                checkTemplateStepIsUniqueMock.mockResolvedValue([
+                    {
+                        id: 'outreach_template_1',
+                        name: 'outreach_template_name_1',
+                        description: 'outreach_template_description_1',
+                        step: Step.OUTREACH,
+                        subject: 'outreach_template_subject_1',
+                        template: 'outreach_template_1',
+                        email_engine_template_id: 'email_engine_template_id_1',
+                    },
+                    {
+                        id: 'outreach_template_2',
+                        name: 'outreach_template_name_2',
+                        description: 'outreach_template_description_2',
+                        step: Step.FIRST_FOLLOW_UP,
+                        subject: 'outreach_template_subject_2',
+                        template: 'outreach_template_2',
+                        email_engine_template_id: 'email_engine_template_id_2',
+                    },
+                ]);
+
+                const checkTemplateVariablesMock = vi.spyOn(
+                    OutreachEmailTemplateRepository.getRepository(),
+                    'checkTemplateVariables',
+                );
+                checkTemplateVariablesMock.mockResolvedValue(true);
 
                 const findOneProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOne');
                 findOneProductMock.mockRejectedValue(new NotFoundError('Product not found'));

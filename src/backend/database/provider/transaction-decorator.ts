@@ -14,6 +14,7 @@ export const UseTransaction = (): MethodDecorator => {
             const parentContextData = RequestContext.getContext();
             return RequestContext.startContext(async () => {
                 RequestContext.setContext(parentContextData);
+                await DatabaseProvider.initialize();
                 const runner = await DatabaseProvider.getDatasource().createQueryRunner();
                 await runner.startTransaction();
                 runner.manager;
