@@ -6,6 +6,7 @@ import ProductRepository from 'src/backend/database/product/product-repository';
 import { ProductEntity } from 'src/backend/database/product/product-entity';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type Paginated } from 'types/pagination';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 export default class ProductService {
     public static readonly service: ProductService = new ProductService();
@@ -30,6 +31,38 @@ export default class ProductService {
         return { ...response, currency } as GetProductResponse;
     }
     @CompanyIdRequired()
+    async update(request: ProductRequest, id: string): Promise<GetProductResponse> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const product = await ProductRepository.getRepository().findOneBy({
+            id,
+            company: {
+                id: companyId,
+            },
+        });
+        if (!product) {
+            throw new NotFoundError(`Product with id: ${id} does not exists`);
+        }
+        const c = request.currency;
+        const newProduct = {
+            ...product,
+            name: request.name,
+            description: request.description,
+            price: request.price,
+            shopUrl: request.shopUrl,
+            priceCurrency: c,
+        };
+        const response = await ProductRepository.getRepository().save(newProduct);
+        const currency = response.priceCurrency;
+        delete (response as { priceCurrency?: unknown }).priceCurrency;
+        return {
+            ...response,
+            company: {
+                id: companyId,
+            },
+            currency,
+        } as GetProductResponse;
+    }
+    @CompanyIdRequired()
     async getOne(id: string): Promise<GetProductResponse> {
         const companyId = RequestContext.getContext().companyId as string;
         const product = await ProductRepository.getRepository().findOneBy({
@@ -39,7 +72,7 @@ export default class ProductService {
             },
         });
         if (!product) {
-            throw new Error(`Product with id: ${id} does not exists`);
+            throw new NotFoundError(`Product with id: ${id} does not exists`);
         }
         return {
             id: product.id,

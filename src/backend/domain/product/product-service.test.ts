@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ProductService from './product-service';
 import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
-import type { GetProductRequest } from 'pages/api/products/request';
+import type { GetProductRequest, ProductRequest } from 'pages/api/products/request';
 import type { Paginated } from 'types/pagination';
 import ProductRepository from 'src/backend/database/product/product-repository';
 import type { ProductEntity } from 'src/backend/database/product/product-entity';
@@ -314,6 +314,98 @@ describe('src/backend/domain/product/product-service.ts', () => {
                         name: undefined,
                     },
                 );
+            });
+        });
+
+        describe('update', () => {
+            it('should update product when request is valid', async () => {
+                const request: ProductRequest = {
+                    name: 'new_product_name',
+                    description: 'new_product_description',
+                    price: 200,
+                    shopUrl: 'https://example.com/new',
+                    currency: 'USD',
+                };
+                const companyId = 'company_1';
+                const productId = 'product_1';
+
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOneBy');
+                findOneByProductMock.mockResolvedValue({
+                    id: productId,
+                    name: 'product_name',
+                    description: 'product_description',
+                    price: 100,
+                    shopUrl: 'https://example.com',
+                    priceCurrency: 'USD',
+                    company: {
+                        id: companyId,
+                    },
+                } as ProductEntity);
+
+                const saveProductMock = vi.spyOn(ProductRepository.getRepository(), 'save');
+                saveProductMock.mockResolvedValue({
+                    id: productId,
+                    name: 'new_product_name',
+                    description: 'new_product_description',
+                    price: 200,
+                    shopUrl: 'https://example.com/new',
+                    priceCurrency: 'USD',
+                    company: {
+                        id: companyId,
+                    },
+                } as ProductEntity);
+
+                const result = await ProductService.getService().update(request, productId);
+
+                expect(result).toEqual({
+                    id: productId,
+                    name: 'new_product_name',
+                    description: 'new_product_description',
+                    price: 200,
+                    shopUrl: 'https://example.com/new',
+                    currency: 'USD',
+                    company: {
+                        id: companyId,
+                    },
+                });
+                expect(ProductRepository.getRepository().findOneBy).toBeCalledWith({
+                    id: productId,
+                    company: {
+                        id: companyId,
+                    },
+                });
+                expect(ProductRepository.getRepository().save).toBeCalledWith({
+                    id: productId,
+                    name: 'new_product_name',
+                    description: 'new_product_description',
+                    price: 200,
+                    shopUrl: 'https://example.com/new',
+                    priceCurrency: 'USD',
+                    company: {
+                        id: companyId,
+                    },
+                });
+            });
+
+            it('should throw unauthorized error when company id does not exists in the request context', async () => {
+                getContextMock.mockReturnValue({});
+                const [err] = await awaitToError(
+                    ProductService.getService().create({
+                        name: 'product_name',
+                        description: 'product_description',
+                        price: 100,
+                        shopUrl: 'https://example.com',
+                        currency: 'USD',
+                    }),
+                );
+                expect(err.message).toBe('No company id found in request context');
+            });
+
+            it('should throw error when product does not exists', async () => {
+                const findOneByProductMock = vi.spyOn(ProductRepository.getRepository(), 'findOneBy');
+                findOneByProductMock.mockRejectedValue(new NotFoundError('Product with id: product_1 does not exists'));
+                const [err] = await awaitToError(ProductService.getService().getOne('product_1'));
+                expect(err.message).toBe('Product with id: product_1 does not exists');
             });
         });
     });
