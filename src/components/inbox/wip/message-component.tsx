@@ -216,7 +216,7 @@ const MessageComponent = ({
                 </section>
             </AccordionTrigger>
             <AccordionContent onClick={(e) => e.stopPropagation()} className="p-4 text-black">
-                <div dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
+                <div className="[&_a]:text-primary-500" dangerouslySetInnerHTML={{ __html: emailDoc.body.innerHTML }} />
                 {message.attachments && message.attachments.length > 0 && (
                     <section className="flex w-full gap-2">
                         {message.attachments
