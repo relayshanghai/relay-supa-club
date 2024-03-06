@@ -21,6 +21,7 @@ import { useMixpanel } from './use-mixpanel';
 import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
+import { appCacheDBKey } from 'src/constants';
 
 export type SignupData = {
     email: string;
@@ -191,7 +192,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger('User cannot logout', 'error', true);
                 return;
             }
-
+            const id = session?.user?.id;
             const email = session?.user?.email;
             await trackEvent('Logout', { email });
             // destroy the session first
@@ -208,7 +209,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             } catch (error: unknown) {
                 clientLogger(error, 'error', true);
             }
-
+            indexedDB.deleteDatabase(appCacheDBKey(id));
             Sentry.setUser(null);
             if (redirect) {
                 const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
@@ -216,6 +217,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 window.location.href = redirectUrl;
             }
         },
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [refreshProfile, supabaseClient, session?.user?.email, trackEvent, mixpanel, analytics],
     );
 
