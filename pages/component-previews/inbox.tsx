@@ -721,7 +721,8 @@ const InboxPreview = () => {
                                                 ))}
                                             </div>
                                         ))}
-                                    {loading && (
+                                    {((threadsInfo?.threads?.length ?? 0) < (threadsInfo?.totalFiltered ?? 0) ||
+                                        loading) && (
                                         <>
                                             <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
                                                 <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
