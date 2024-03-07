@@ -46,7 +46,7 @@ type Message = BaseMessage & { isLocal?: true };
 const fileExtensionRegex = /.[^.\\/]*$/;
 
 export const getAttachmentStyle = (filename: string) => {
-    const extension = filename.match(fileExtensionRegex)?.[0].replace('.', '');
+    const extension = filename?.match(fileExtensionRegex)?.[0].replace('.', '');
     switch (extension) {
         case 'pdf':
             return 'bg-red-100 hover:bg-red-50 text-red-400 stroke-red-400';
