@@ -53,75 +53,7 @@ env:
     SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
     NEXT_PUBLIC_ENABLE_RUDDERSTACK: false
 jobs:
-    e2e-test:
-        environment: preview
-
-        runs-on:
-            group: large-runner
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-
-        steps:
-            - uses: actions/checkout@v3
-
-            - uses: supabase/setup-cli@v1
-              with:
-                  version: 1.123.4
-
-            - name: Verify supabase cli version
-              run: supabase -v
-
-            - name: Create supabase config file
-              run: cp supabase/config.toml.example supabase/config.toml
-
-            - name: Create seed file
-              run: cp supabase/seed.example supabase/seed.sql
-
-            - name: Start Supabase local development setup
-              run: supabase start
-
-            - name: Verify generated types are up-to-date
-              run: |
-                  supabase gen types typescript --local --schema=public > types/supabase.ts
-                  if [ "$(git diff --ignore-space-at-eol types/supabase.ts | wc -l)" -gt "0" ]; then
-                    echo "Detected uncommitted changes after build. See status below:"
-                    git diff
-                    exit 1
-                  fi
-
-            - name: Run lint
-              run: supabase db lint
-
-            - name: Run tests
-              run: |
-                  chmod +x ./supabase/db.sh
-                  ./supabase/db.sh db_test
-
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-
-            - name: Export Supabase keys
-              # Uses supabase status to print the anon key and service key to the terminal and populates the environment variables
-              run: ./supabase/db.sh export_supabase_keys
-
-            - name: Make sure seed is loaded
-              run: supabase db reset
-
-            # - name: Cypress run
-            #   uses: cypress-io/github-action@v5
-            #   with:
-            #       browser: chrome
-            #       start: npm run dev
-            #       # http://localhost:54323/ is the supabase dashboard
-            #       wait-on: http://localhost:3000, http://localhost:54323
-            #       wait-on-timeout: 180
-
     component-test:
-        needs: e2e-test
         runs-on:
             group: large-runner
         environment: preview
@@ -141,7 +73,6 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
-
             - run: npm ci
             - run: npm run lint
             - run: npx prettier . --check

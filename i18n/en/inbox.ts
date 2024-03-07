@@ -52,6 +52,7 @@ const inbox = {
     },
     save: 'Save',
     edit: 'Edit',
+    saveChanges: 'Save changes',
     remove: 'Remove',
 };
 

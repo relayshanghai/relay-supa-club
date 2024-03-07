@@ -161,10 +161,8 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             error: 'Method not allowed',
         });
     }
-
-    try {
-        return await handler(req, res);
-    } catch (error) {
+    const [error, resp] = await awaitToError(handler(req, res) as any);
+    if (error) {
         const tag = nanoid(6);
         const e = createErrorObject(error, tag);
 
@@ -174,6 +172,7 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
 
         return res.status(e.httpCode).json({ error: e.message });
     }
+    return res.status(httpCodes.OK).json(resp);
 };
 /**
  * handle data of request flow to support request context
