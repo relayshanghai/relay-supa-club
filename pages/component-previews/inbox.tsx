@@ -655,7 +655,7 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
-                                setSize(0);
+                                setSize(1);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
