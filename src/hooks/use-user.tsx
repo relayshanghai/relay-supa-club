@@ -252,7 +252,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const signup = useCallback(
         async (body: SignupPostBody) => {
-            const res = await nextFetch<SignupPostResponse>(`/users`, {
+            const res = await nextFetch<SignupPostResponse>(`/signup`, {
                 method: 'POST',
                 body,
             });
