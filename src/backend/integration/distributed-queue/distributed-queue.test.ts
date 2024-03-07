@@ -1,15 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { UseDistributedQueue } from './distributed-queue';
+import KVService from '../kv';
 
 const kvSetMocked = vi.fn();
 const kvGetMocked = vi.fn();
-
-vi.mock('kv', () => ({
-    kv: {
-        set: kvSetMocked,
-        get: kvGetMocked,
-    },
-}));
 
 const data: Record<string, any> = {};
 
@@ -19,6 +13,9 @@ kvSetMocked.mockImplementation(async <T>(key: string, value: T) => {
 kvGetMocked.mockImplementation(async <T>(key: string): Promise<T> => {
     return data[key];
 });
+
+KVService.prototype.get = kvGetMocked;
+KVService.prototype.set = kvSetMocked;
 describe('src/backend/integration/distributed-queue/distributed-queue.ts', () => {
     describe('UseDistributedQueue', () => {
         it('should await to queue when it does not queued', async () => {
