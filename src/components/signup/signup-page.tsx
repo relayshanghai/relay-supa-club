@@ -16,6 +16,7 @@ import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
 import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -176,9 +177,9 @@ const SignUpPage = ({
             try {
                 setLoading(true);
 
-                const signupCompanyRes: any = await signup(data);
-                if (!signupCompanyRes?.cusId) {
-                    throw new Error('no cusId, error creating company');
+                const signupCompanyRes = await signup(data);
+                if (!signupCompanyRes?.cus_id) {
+                    throw new Error('no cus_id, error creating company');
                 } else {
                     await login(email, password);
                     return 'success';
@@ -193,7 +194,7 @@ const SignUpPage = ({
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else {
-                    toast.error(`${t('login.oopsSomethingWentWrong')} ${e?.message}`);
+                    toast.error(`${t('login.oopsSomethingWentWrong')} ${truncatedText(e?.message, 40)}`);
                 }
             } finally {
                 setLoading(false);

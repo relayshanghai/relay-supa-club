@@ -5,7 +5,9 @@ import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
 import { Spinner } from '../icons';
-import { useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { userExists } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const StepTwo = ({
     email,
@@ -33,16 +35,53 @@ export const StepTwo = ({
     const submitDisabled = invalidFormInput || loading;
     const passwordRef = useRef<HTMLInputElement>(null);
     const passwordConfirmRef = useRef<HTMLInputElement>(null);
+
+    const [inputLoading, setInputLoading] = useState(false);
+    const [existsTimeout, setExistsTimeout] = useState<NodeJS.Timeout | undefined>();
+
+    const [userError, setUserError] = useState(false);
+
+    const setEmailExists = useCallback(
+        async (email: string) => {
+            if (existsTimeout) {
+                clearTimeout(existsTimeout);
+            }
+            setExistsTimeout(
+                setTimeout(async () => {
+                    try {
+                        const res = await userExists(email);
+                        if (res?.exists) {
+                            setUserError(true);
+                        } else {
+                            setUserError(false);
+                        }
+                    } catch (error: any) {
+                        clientLogger(error);
+                    }
+
+                    setInputLoading(false);
+                }, 1000),
+            );
+        },
+        [existsTimeout],
+    );
+
     return (
         <>
             <Input
-                error={validationErrors.email}
+                error={userError ? t('login.userAlreadyExists') : validationErrors.email}
                 label={t('signup.email')}
                 type="email"
+                loading={inputLoading}
                 placeholder="you@site.com"
                 value={email}
                 required
-                onChange={(e) => setAndValidate('email', e.target.value)}
+                onChange={(e) => {
+                    setUserError(false);
+                    setAndValidate('email', e.target.value);
+                    setInputLoading(true);
+                    setEmailExists(e.target.value);
+                }}
                 autoFocus
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -82,12 +121,12 @@ export const StepTwo = ({
             />
 
             <Button
-                disabled={submitDisabled}
+                disabled={submitDisabled || userError || inputLoading}
                 type="submit"
                 className="mt-12 flex w-full justify-center"
                 onClick={onNext}
             >
-                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
+                {inputLoading || loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
             </Button>
         </>
     );
