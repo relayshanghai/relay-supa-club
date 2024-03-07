@@ -497,7 +497,6 @@ const InboxPreview = () => {
         ) => {
             // If the previous page data is empty, we've reached the end and should not fetch more
             if (previousPageData && !previousPageData.threads.length) return null;
-
             // This function should return an array with the arguments for the fetcher
             // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
             return {
@@ -536,9 +535,9 @@ const InboxPreview = () => {
 
     const threadsInfo = useMemo(() => {
         return {
-            threads: data && data.flatMap((page) => page.threads),
-            totals: data && data[0]?.totals,
-            totalFiltered: data && data[0].totalFiltered,
+            threads: (data && data.length > 0 && data.flatMap((page) => page.threads)) || undefined,
+            totals: (data && data.length > 0 && data[0]?.totals) || undefined,
+            totalFiltered: (data && data.length > 0 && data[0].totalFiltered) || undefined,
         };
     }, [data]);
 
