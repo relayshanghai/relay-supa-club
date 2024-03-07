@@ -14,7 +14,7 @@ export default defineConfig({
     },
     deps: {
         moduleDirectories: ['node_modules'],
-    },  
+    },
     resolve: {
         alias: {
             src: resolve(__dirname, './src'),
