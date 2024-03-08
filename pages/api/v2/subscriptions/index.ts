@@ -1,5 +1,5 @@
 import { createHandler } from 'src/utils/handler/create-handler';
-import { POST, Status } from 'src/utils/handler/decorators/api-decorator';
+import { GET, POST, Status } from 'src/utils/handler/decorators/api-decorator';
 import { CreateSubscriptionRequest } from './request';
 import httpCodes from 'src/constants/httpCodes';
 import SubscriptionV2Service from 'src/backend/domain/subscription/subscription-v2-service';
@@ -18,6 +18,12 @@ class SubscriptionHandler {
             ...result,
             ipAddress,
         };
+    }
+
+    @GET()
+    @Status(httpCodes.OK)
+    async getSubscriptions() {
+        return await SubscriptionV2Service.getService().getSubscriptions();
     }
 }
 

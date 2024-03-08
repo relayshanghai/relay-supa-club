@@ -50,4 +50,37 @@ export default class SubscriptionV2Service {
             clientSecret: subscription.clientSecret,
         };
     }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    @UseTransaction()
+    async getSubscriptions() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const cusId = RequestContext.getContext().customerId as string;
+        let subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            const stripeSubscriptions = await StripeService.getService().getSubscription(cusId);
+            let lastSubscription = stripeSubscriptions.data.filter((sub) => {
+                return sub.status === 'active' || sub.status === 'trialing';
+            });
+            if (lastSubscription.length === 0) {
+                lastSubscription = stripeSubscriptions.data
+                    .filter((sub) => {
+                        return sub.status === 'past_due';
+                    })
+                    .sort((a, b) => {
+                        return new Date(b.current_period_start).getTime() - new Date(a.current_period_start).getTime();
+                    });
+            }
+
+            subscription = await StripeService.getService().syncSubscriptionWithDb(companyId, lastSubscription[0]);
+        }
+        return subscription;
+    }
 }
