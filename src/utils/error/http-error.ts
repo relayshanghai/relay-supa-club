@@ -44,3 +44,9 @@ export class ConflictError extends HttpError {
         super(message, httpCodes.CONFLICT, originError);
     }
 }
+
+export class UnprocessableEntityError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.UNPROCESSABLE_ENTITY, originError);
+    }
+}

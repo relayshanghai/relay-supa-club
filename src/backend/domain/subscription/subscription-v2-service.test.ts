@@ -4,6 +4,8 @@ import awaitToError from 'src/utils/await-to-error';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SubscriptionV2Service from './subscription-v2-service';
+import CompanyRepository from 'src/backend/database/company/company-repository';
+import { UnprocessableEntityError } from 'src/utils/error/http-error';
 vi.mock('src/backend/database/provider/transaction-decorator', () => ({
     UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
         // do nothing
@@ -80,6 +82,140 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(result.clientSecret).toBe('some-secret');
                 expect(result.providerSubscriptionId).toBe('sub_1');
             });
+        });
+
+        describe(`postConfirmation`, () => {
+            const StripeCreateSubscriptionMock = vi.fn();
+            const SubscriptionRepositoryFindOneMock = vi.fn();
+            const StripeGetPaymentIntentMock = vi.fn();
+            const StripeGetSubscriptionMock = vi.fn();
+            const StripeUpdateSubscriptionMock = vi.fn();
+            const SubscriptionRepositoryInsertMock = vi.fn();
+            const SubscriptionRepositoryDeleteMock = vi.fn();
+            const CompanyRepositoryUpdateMock = vi.fn();
+            SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
+            StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
+            StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
+            StripeService.getService().getSubscripion = StripeGetSubscriptionMock;
+            StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
+            SubscriptionRepository.getRepository().insert = SubscriptionRepositoryInsertMock;
+            SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
+            CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
+
+            beforeEach(() => {
+                StripeGetPaymentIntentMock.mockResolvedValue({
+                    payment_method: 'pm_1',
+                });
+                StripeGetSubscriptionMock.mockResolvedValue({
+                    id: 'sub_1',
+                    items: {
+                        data: [
+                            {
+                                quantity: 1,
+                                price: {
+                                    unit_amount: 100,
+                                    product: 'prod_1',
+                                },
+                            },
+                        ],
+                    },
+                });
+            });
+
+            it(`should update subscription and company, and insert new subscription when redirectStatus is success`, async () => {
+                await SubscriptionV2Service.getService().postConfirmation({
+                    redirectStatus: 'success',
+                    paymentIntentId: 'pi_1',
+                    paymentIntentSecret: 'some-secret',
+                    subscriptionId: 'sub_1',
+                });
+                expect(StripeService.getService().updateSubscription).toHaveBeenCalledWith('sub_1', {
+                    default_payment_method: 'pm_1',
+                });
+                expect(SubscriptionRepository.getRepository().delete).toHaveBeenCalledWith({
+                    company: {
+                        id: 'company_1',
+                    },
+                });
+                expect(SubscriptionRepository.getRepository().insert).toHaveBeenCalledWith({
+                    company: {
+                        id: 'company_1',
+                    },
+                    id: 'sub_1',
+                    provider: 'stripe',
+                    providerSubscriptionId: 'sub_1',
+                    paymentMethod: 'pm_1',
+                    quantity: 1,
+                    price: 100,
+                    total: 100,
+                    activeAt: expect.any(Date),
+                    pausedAt: expect.any(Date),
+                    cancelledAt: null,
+                });
+                expect(CompanyRepository.getRepository().update).toHaveBeenCalledWith(
+                    {
+                        id: 'company_1',
+                    },
+                    {
+                        subscriptionStatus: 'active',
+                        searchesLimit: '100000000',
+                        profilesLimit: '100000000',
+                        aiEmailGeneratorLimit: '100000000',
+                        subscriptionPlan: 'prod_1',
+                    },
+                );
+            });
+
+            it(`should cancel subscription and throw UnprocessableEntityError when redirectStatus is not success`, async () => {
+                await expect(
+                    SubscriptionV2Service.getService().postConfirmation({
+                        redirectStatus: 'failure',
+                        paymentIntentId: 'pi_1',
+                        paymentIntentSecret: 'some-secret',
+                        subscriptionId: 'sub_1',
+                    }),
+                ).rejects.toThrowError(UnprocessableEntityError);
+                expect(StripeService.getService().cancelSubscription).toHaveBeenCalledWith('company_1', 'cus_1');
+            });
+
+            /*it(`should success when request is valid`, async () => {
+                const getPaymentIntentMock = vi.fn();
+                const getSubscripionMock = vi.fn();
+                const updateSubscriptionMock = vi.fn();
+                StripeService.getService().getPaymentIntent = getPaymentIntentMock;
+                StripeService.getService().getSubscripion = getSubscripionMock;
+                StripeService.getService().updateSubscription = updateSubscriptionMock;
+                getPaymentIntentMock.mockResolvedValue({
+                    payment_method: 'pm_1',
+                });
+                getSubscripionMock.mockResolvedValue({
+                    id: 'sub_1',
+                });
+                await SubscriptionV2Service.getService().postConfirmation({
+                    paymentIntentId: 'pi_1',
+                    redirectStatus: 'success',
+                    paymentIntentSecret: 'some-secret',
+                    subscriptionId: 'sub_1',
+                });
+                expect(getPaymentIntentMock).toHaveBeenCalledTimes(1);
+                expect(getSubscripionMock).toHaveBeenCalledTimes(1);
+                expect(updateSubscriptionMock).toHaveBeenCalledTimes(1);
+            });
+            it(`should throw unprocessable entity error when redirect status is not success`, async () => {
+                const cancelSubscriptionMock = vi.fn();
+                StripeService.getService().cancelSubscription = cancelSubscriptionMock;
+                const [err] = await awaitToError(
+                    SubscriptionV2Service.getService().postConfirmation({
+                        paymentIntentId: 'pi_1',
+                        redirectStatus: 'failed',
+                        paymentIntentSecret: 'some-secret',
+                        subscriptionId: 'sub_1',
+                    }),
+                );
+                expect(err).not.toBeNull();
+                expect(err.message).toBe('entity is unprocessable');
+                expect(cancelSubscriptionMock).toHaveBeenCalledTimes(1);
+            });*/
         });
     });
     describe(`getSubscription`, () => {

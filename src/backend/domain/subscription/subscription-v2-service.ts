@@ -1,6 +1,6 @@
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { CompanyIdRequired } from '../decorators/company-id';
-import type { CreateSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
+import type { CreateSubscriptionRequest, PostConfirmationRequest } from 'pages/api/v2/subscriptions/request';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
