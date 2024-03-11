@@ -15,8 +15,10 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeCreateSubscriptionMock = vi.fn();
     const SubscriptionRepositoryFindOneMock = vi.fn();
     const StripeGetPaymentIntentMock = vi.fn();
-    const StripeGetSubscriptionMock = vi.fn();
+    const StripeGetTrialSubscriptionMock = vi.fn();
+    const StripeGetIncompleteSubscriptionMock = vi.fn();
     const StripeUpdateSubscriptionMock = vi.fn();
+    const StripeDeleteSubscriptionMock = vi.fn();
     const SubscriptionRepositoryInsertMock = vi.fn();
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
@@ -24,8 +26,10 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
-    StripeService.getService().getSubscripion = StripeGetSubscriptionMock;
+    StripeService.getService().getTrialSubscription = StripeGetTrialSubscriptionMock;
+    StripeService.getService().getIncompleteSubscription = StripeGetIncompleteSubscriptionMock;
     StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
+    StripeService.getService().deleteSubscription = StripeDeleteSubscriptionMock;
     StripeService.getService().cancelSubscription = CancelSubscriptionMock;
     SubscriptionRepository.getRepository().insert = SubscriptionRepositoryInsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
@@ -48,6 +52,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 },
             });
         });
+
         describe(`createSubscription`, () => {
             beforeEach(() => {
                 StripeCreateSubscriptionMock.mockReturnValue({
@@ -103,8 +108,22 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 StripeGetPaymentIntentMock.mockResolvedValue({
                     payment_method: 'pm_1',
                 });
-                StripeGetSubscriptionMock.mockResolvedValue({
-                    id: 'sub_1',
+                StripeGetTrialSubscriptionMock.mockResolvedValue({
+                    id: 'trial_sub_1',
+                    items: {
+                        data: [
+                            {
+                                quantity: 1,
+                                price: {
+                                    unit_amount: 100,
+                                    product: 'prod_1',
+                                },
+                            },
+                        ],
+                    },
+                });
+                StripeGetIncompleteSubscriptionMock.mockResolvedValue({
+                    id: 'incomplete_sub_1',
                     items: {
                         data: [
                             {
@@ -125,23 +144,18 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     redirectStatus: 'success',
                     paymentIntentId: 'pi_1',
                     paymentIntentSecret: 'some-secret',
-                    subscriptionId: 'sub_1',
+                    subscriptionId: 'trial_sub_1',
                 });
-                expect(StripeService.getService().updateSubscription).toHaveBeenCalledWith('sub_1', {
+                expect(StripeService.getService().updateSubscription).toHaveBeenCalledWith('trial_sub_1', {
                     default_payment_method: 'pm_1',
-                });
-                expect(SubscriptionRepository.getRepository().delete).toHaveBeenCalledWith({
-                    company: {
-                        id: 'company_1',
-                    },
                 });
                 expect(SubscriptionRepository.getRepository().insert).toHaveBeenCalledWith({
                     company: {
                         id: 'company_1',
                     },
-                    id: 'sub_1',
+                    id: 'incomplete_sub_1',
                     provider: 'stripe',
-                    providerSubscriptionId: 'sub_1',
+                    providerSubscriptionId: 'incomplete_sub_1',
                     paymentMethod: 'pm_1',
                     quantity: 1,
                     price: 100,
@@ -170,12 +184,12 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         redirectStatus: 'failure',
                         paymentIntentId: 'pi_1',
                         paymentIntentSecret: 'some-secret',
-                        subscriptionId: 'sub_1',
+                        subscriptionId: 'trial_sub_1',
                     }),
                 );
                 expect(err).not.toBeNull();
                 expect(err).toBeInstanceOf(UnprocessableEntityError);
-                expect(StripeService.getService().cancelSubscription).toHaveBeenCalledWith('company_1', 'cus_1');
+                expect(StripeService.getService().cancelSubscription).toHaveBeenCalledWith('cus_1');
             });
         });
     });

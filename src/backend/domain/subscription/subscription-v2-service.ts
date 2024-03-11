@@ -10,6 +10,7 @@ import type { StripeSubscription } from 'src/backend/integration/stripe/type';
 import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
 import CompanyRepository from 'src/backend/database/company/company-repository';
+import awaitToError from 'src/utils/await-to-error';
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;

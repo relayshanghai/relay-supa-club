@@ -62,4 +62,13 @@ export default class StripeService {
     async getProduct(productId: string) {
         return await StripeService.client.products.retrieve(productId);
     }
+
+    private async getSubscripion(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
+        const subscription = await StripeService.client.subscriptions.list({
+            customer: customerId,
+            status,
+            expand: ['data.plan.product'],
+        });
+        return subscription.data[0];
+    }
 }
