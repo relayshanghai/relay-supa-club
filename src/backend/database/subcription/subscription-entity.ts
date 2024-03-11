@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import { type Nullable } from 'types/nullable';
 
 @Entity({ name: 'subscriptions' })
 export class SubscriptionEntity<T = any> {
@@ -41,13 +42,13 @@ export class SubscriptionEntity<T = any> {
     subscriptionData!: T;
 
     @Column({ type: 'timestamp', nullable: true, name: 'active_at' })
-    activeAt?: Date | null;
+    activeAt?: Nullable<Date>;
 
     @Column({ type: 'timestamp', nullable: true, name: 'paused_at' })
-    pausedAt?: Date | null;
+    pausedAt?: Nullable<Date>;
 
     @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
-    cancelledAt?: Date | null;
+    cancelledAt?: Nullable<Date>;
 
     static getSubscriptionEntity<T>(e: SubscriptionEntity): SubscriptionEntity<T> {
         return e as SubscriptionEntity<T>;
