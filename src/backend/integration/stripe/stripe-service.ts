@@ -1,4 +1,3 @@
-import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
 import Stripe from 'stripe';
 
 export default class StripeService {
@@ -51,35 +50,14 @@ export default class StripeService {
                     return new Date(b.current_period_start).getTime() - new Date(a.current_period_start).getTime();
                 });
         }
-        return lastSubscription[0];
+        return lastSubscription?.[0];
     }
 
-    async syncSubscriptionWithDb(companyId: string, subscriptionData: Stripe.Subscription) {
-        const subscription = await SubscriptionRepository.getRepository().save({
-            company: {
-                id: companyId,
-            },
-            provider: 'stripe',
-            providerSubscriptionId: subscriptionData.id,
-            paymentMethod:
-                subscriptionData.payment_settings?.payment_method_types?.[0] ||
-                subscriptionData.default_payment_method?.toString() ||
-                'card',
-            quantity: subscriptionData.items.data[0].quantity,
-            price: subscriptionData.items.data[0].price.unit_amount?.valueOf() || 0,
-            total:
-                (subscriptionData.items.data[0].price.unit_amount?.valueOf() || 0) *
-                (subscriptionData?.items?.data?.[0].quantity ?? 0),
-            subscriptionData: subscriptionData,
-            discount: subscriptionData.discount?.coupon?.amount_off?.valueOf() || 0,
-            coupon: subscriptionData.discount?.coupon?.id,
-            activeAt: subscriptionData.current_period_start
-                ? new Date(subscriptionData.current_period_start * 1000)
-                : undefined,
-            pausedAt: subscriptionData.pause_collection?.behavior === 'void' ? new Date() : undefined,
-            cancelledAt: subscriptionData.cancel_at ? new Date(subscriptionData.cancel_at * 1000) : undefined,
-        });
+    async getPrice(priceId: string) {
+        return await StripeService.client.prices.retrieve(priceId);
+    }
 
-        return subscription;
+    async getProduct(productId: string) {
+        return await StripeService.client.products.retrieve(productId);
     }
 }
