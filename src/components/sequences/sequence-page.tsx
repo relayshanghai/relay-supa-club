@@ -387,7 +387,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             )}
             <Banner
                 title={t('banner.sequencePageSlow.title')}
-                message={t('banner.sequencePageSlow.descriptionSequences')}
+                message={t('banner.sequencePageSlow.description')}
                 dismissable
             />
             <FaqModal
