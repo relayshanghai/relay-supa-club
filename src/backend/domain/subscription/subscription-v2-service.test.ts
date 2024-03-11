@@ -15,6 +15,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeCreateSubscriptionMock = vi.fn();
     const SubscriptionRepositoryFindOneMock = vi.fn();
     const StripeGetPaymentIntentMock = vi.fn();
+    const StripeGetSubscriptionMock = vi.fn();
     const StripeGetTrialSubscriptionMock = vi.fn();
     const StripeGetIncompleteSubscriptionMock = vi.fn();
     const StripeUpdateSubscriptionMock = vi.fn();
@@ -26,6 +27,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
+    StripeService.getService().getSubscription = StripeGetSubscriptionMock;
     StripeService.getService().getTrialSubscription = StripeGetTrialSubscriptionMock;
     StripeService.getService().getIncompleteSubscription = StripeGetIncompleteSubscriptionMock;
     StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
@@ -122,8 +124,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         ],
                     },
                 });
-                StripeGetIncompleteSubscriptionMock.mockResolvedValue({
-                    id: 'incomplete_sub_1',
+                StripeGetSubscriptionMock.mockResolvedValue({
+                    id: 'new_sub_1',
                     items: {
                         data: [
                             {
@@ -153,9 +155,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     company: {
                         id: 'company_1',
                     },
-                    id: 'incomplete_sub_1',
+                    id: 'new_sub_1',
                     provider: 'stripe',
-                    providerSubscriptionId: 'incomplete_sub_1',
+                    providerSubscriptionId: 'new_sub_1',
                     paymentMethod: 'pm_1',
                     quantity: 1,
                     price: 100,
