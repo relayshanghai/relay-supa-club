@@ -51,10 +51,39 @@ export default class SubscriptionV2Service {
         };
     }
 
+    @UseTransaction()
+    async syncStripeSubscriptionWithDb(companyId: string, cusId: string) {
+        const lastSubscription = await StripeService.getService().getLastSubscription(cusId);
+
+        return await SubscriptionRepository.getRepository().save({
+            company: {
+                id: companyId,
+            },
+            provider: 'stripe',
+            providerSubscriptionId: lastSubscription.id,
+            paymentMethod:
+                lastSubscription.payment_settings?.payment_method_types?.[0] ||
+                lastSubscription.default_payment_method?.toString() ||
+                'card',
+            quantity: lastSubscription.items.data[0].quantity,
+            price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+            total:
+                (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                (lastSubscription?.items?.data?.[0].quantity ?? 0),
+            subscriptionData: lastSubscription,
+            discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
+            coupon: lastSubscription.discount?.coupon?.id,
+            activeAt: lastSubscription.current_period_start
+                ? new Date(lastSubscription.current_period_start * 1000)
+                : undefined,
+            pausedAt: lastSubscription.pause_collection?.behavior === 'void' ? new Date() : undefined,
+            cancelledAt: lastSubscription.cancel_at ? new Date(lastSubscription.cancel_at * 1000) : undefined,
+        });
+    }
+
     @CompanyIdRequired()
     @UseLogger()
-    @UseTransaction()
-    async getSubscriptions() {
+    async getSubscription() {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
         let subscription = await SubscriptionRepository.getRepository().findOne({
@@ -65,21 +94,7 @@ export default class SubscriptionV2Service {
             },
         });
         if (!subscription) {
-            const stripeSubscriptions = await StripeService.getService().getSubscription(cusId);
-            let lastSubscription = stripeSubscriptions.data.filter((sub) => {
-                return sub.status === 'active' || sub.status === 'trialing';
-            });
-            if (lastSubscription.length === 0) {
-                lastSubscription = stripeSubscriptions.data
-                    .filter((sub) => {
-                        return sub.status === 'past_due';
-                    })
-                    .sort((a, b) => {
-                        return new Date(b.current_period_start).getTime() - new Date(a.current_period_start).getTime();
-                    });
-            }
-
-            subscription = await StripeService.getService().syncSubscriptionWithDb(companyId, lastSubscription[0]);
+            subscription = await this.syncStripeSubscriptionWithDb(companyId, cusId);
         }
         return subscription;
     }

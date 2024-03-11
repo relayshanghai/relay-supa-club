@@ -82,4 +82,36 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
             });
         });
     });
+    describe(`getSubscription`, () => {
+        it(`should return subscription from stripe`, async () => {
+            const stripeSubscription = {
+                subscriptionData: {
+                    items: {
+                        data: [
+                            {
+                                status: 'active',
+                            },
+                        ],
+                    },
+                },
+            };
+            SubscriptionRepositoryFindOneMock.mockResolvedValue(stripeSubscription);
+            StripeService.client.subscriptions.list = vi.fn().mockResolvedValue(stripeSubscription);
+
+            const result = await SubscriptionV2Service.getService().getSubscription();
+            expect(result).toBe(stripeSubscription);
+        });
+        it(`should return subscription from database`, async () => {
+            const subscriptionData = {
+                subscriptionData: {
+                    items: {
+                        data: [{ price: { id: 'price_1' } }],
+                    },
+                },
+            };
+            SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
+            const result = await SubscriptionV2Service.getService().getSubscription();
+            expect(result).toBe(subscriptionData);
+        });
+    });
 });
