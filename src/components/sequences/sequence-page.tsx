@@ -380,11 +380,16 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         <Layout>
             {!profile?.email_engine_account_id && (
                 <Banner
-                    buttonText={t('banner.button')}
+                    buttonText={t('banner.button') ?? ''}
                     title={t('banner.outreach.title')}
                     message={t('banner.outreach.descriptionSequences')}
                 />
             )}
+            <Banner
+                title={t('banner.sequencePageSlow.title')}
+                message={t('banner.sequencePageSlow.descriptionSequences')}
+                dismissable
+            />
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}

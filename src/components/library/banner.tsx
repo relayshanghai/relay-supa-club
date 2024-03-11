@@ -1,7 +1,24 @@
 import Link from 'next/link';
 import { BoostbotSelected, Thunder } from '../icons';
+import { useState } from 'react';
+import { Cross1Icon } from '@radix-ui/react-icons';
 
-export const Banner = ({ title, message, buttonText }: { title: string; message: string; buttonText: string }) => {
+export const Banner = ({
+    title,
+    message,
+    buttonText,
+    dismissable = false,
+}: {
+    title: string;
+    message: string;
+    buttonText?: string;
+    dismissable?: boolean;
+}) => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    if (!isOpen) {
+        return null;
+    }
     return (
         <div className="sticky top-0 isolate z-50 flex items-center gap-x-6 overflow-hidden rounded-b-md bg-gradient-to-t from-violet-600 via-violet-500 to-violet-400 px-6 py-2.5 text-white shadow-lg">
             <div className="flex flex-1">
@@ -17,14 +34,18 @@ export const Banner = ({ title, message, buttonText }: { title: string; message:
                     </svg>
                     {message}
                 </p>
-                <Link
-                    href="/upgrade"
-                    className="flex flex-row items-center rounded-full bg-white px-3.5 py-1 text-sm font-semibold text-primary-500 shadow-sm"
-                >
-                    <Thunder className="h-5 w-5 stroke-primary-500" /> {buttonText}
-                </Link>
+                {buttonText && (
+                    <Link
+                        href="/upgrade"
+                        className="flex flex-row items-center rounded-full bg-white px-3.5 py-1 text-sm font-semibold text-primary-500 shadow-sm"
+                    >
+                        <Thunder className="h-5 w-5 stroke-primary-500" /> {buttonText}
+                    </Link>
+                )}
             </div>
-            <div className="flex flex-1 justify-end" />
+            <div className="flex flex-1 justify-end">
+                {dismissable && <Cross1Icon className="h-5 w-5 cursor-pointer" onClick={() => setIsOpen(false)} />}
+            </div>
         </div>
     );
 };
