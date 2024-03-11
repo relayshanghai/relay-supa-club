@@ -18,6 +18,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeGetSubscriptionMock = vi.fn();
     const StripeGetTrialSubscriptionMock = vi.fn();
     const StripeGetIncompleteSubscriptionMock = vi.fn();
+    const StripeGetProductMock = vi.fn();
     const StripeUpdateSubscriptionMock = vi.fn();
     const StripeDeleteSubscriptionMock = vi.fn();
     const SubscriptionRepositoryInsertMock = vi.fn();
@@ -30,6 +31,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     StripeService.getService().getSubscription = StripeGetSubscriptionMock;
     StripeService.getService().getTrialSubscription = StripeGetTrialSubscriptionMock;
     StripeService.getService().getIncompleteSubscription = StripeGetIncompleteSubscriptionMock;
+    StripeService.getService().getProduct = StripeGetProductMock;
     StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
     StripeService.getService().deleteSubscription = StripeDeleteSubscriptionMock;
     StripeService.getService().cancelSubscription = CancelSubscriptionMock;
@@ -134,8 +136,20 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                     unit_amount: 100,
                                     product: 'prod_1',
                                 },
+                                plan: {
+                                    id: 'plan_1',
+                                },
                             },
                         ],
+                    },
+                    status: 'active',
+                });
+                StripeGetProductMock.mockResolvedValue({
+                    name: 'some-product',
+                    metadata: {
+                        searches: '100000000',
+                        profiles: '100000000',
+                        ai_emails: '100000000',
                     },
                 });
                 CancelSubscriptionMock.mockResolvedValue(undefined);
@@ -175,7 +189,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         searchesLimit: '100000000',
                         profilesLimit: '100000000',
                         aiEmailGeneratorLimit: '100000000',
-                        subscriptionPlan: 'prod_1',
+                        subscriptionPlan: 'plan_1',
                     },
                 );
             });
