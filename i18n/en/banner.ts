@@ -10,9 +10,9 @@ const banner = {
         description: 'Please upgrade your account to use this feature.',
     },
     sequencePageSlow: {
-        title: "We're currently working on a fix for influencer data not loading on this page.",
+        title: "We're currently addressing influencer data not loading on this page",
         description:
-            'We apologize for the impact this is having on your work!   Please try refreshing the page to retry any failed requests.',
+            'We apologize for the impact this is having on your work, please try to refresh the page to retry.',
     },
     button: 'Upgrade now',
 };

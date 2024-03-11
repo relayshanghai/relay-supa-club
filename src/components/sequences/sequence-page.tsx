@@ -376,9 +376,11 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [sequenceInfluencers, sequenceEmails],
     );
 
+    const [showSlowBanner, setShowSlowBanner] = useState(true);
+
     return (
         <Layout>
-            {!profile?.email_engine_account_id && (
+            {!profile?.email_engine_account_id && !showSlowBanner && (
                 <Banner
                     buttonText={t('banner.button') ?? ''}
                     title={t('banner.outreach.title')}
@@ -387,7 +389,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             )}
             <Banner
                 title={t('banner.sequencePageSlow.title')}
+                show={showSlowBanner}
+                setShow={setShowSlowBanner}
                 message={t('banner.sequencePageSlow.description')}
+                orientation="vertical"
                 dismissable
             />
             <FaqModal
