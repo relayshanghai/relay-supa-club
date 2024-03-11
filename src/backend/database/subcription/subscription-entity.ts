@@ -1,13 +1,6 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    JoinColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import { type Nullable } from 'types/nullable';
 
 @Entity({ name: 'subscriptions' })
 export class SubscriptionEntity<T = any> {
@@ -27,7 +20,7 @@ export class SubscriptionEntity<T = any> {
     @Column({ name: 'provider_subscription_id' })
     providerSubscriptionId!: string;
 
-    @Column()
+    @Column({ name: 'payment_method' })
     paymentMethod!: string;
 
     @Column('int')
@@ -45,23 +38,17 @@ export class SubscriptionEntity<T = any> {
     @Column({ nullable: true })
     coupon?: string;
 
-    @Column('json')
+    @Column({ name: 'subscription_data', type: 'json' })
     subscriptionData!: T;
 
     @Column({ type: 'timestamp', nullable: true, name: 'active_at' })
-    activeAt?: Date;
+    activeAt?: Nullable<Date>;
 
     @Column({ type: 'timestamp', nullable: true, name: 'paused_at' })
-    pausedAt?: Date;
+    pausedAt?: Nullable<Date>;
 
     @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
-    cancelledAt?: Date;
-
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt!: Date;
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt!: Date;
+    cancelledAt?: Nullable<Date>;
 
     static getSubscriptionEntity<T>(e: SubscriptionEntity): SubscriptionEntity<T> {
         return e as SubscriptionEntity<T>;
