@@ -60,11 +60,17 @@ const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageS
 
 const getTemplateInfoPath = (templateId: string) => `templates/template/${encodeURIComponent(templateId)}`;
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
     return res.url;
 };
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const outboxPath = (page = 0, pageSize = 1000) =>
     `outbox?${new URLSearchParams({
         page: String(page),
@@ -75,27 +81,50 @@ export const outboxDeletePath = (queueId: string) => `outbox/${encodeURIComponen
 
 // CALLS
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getMailboxes = async (account: string) =>
     await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
-
+/**
+ * @deprecated use EmailEngineService instead
+ * @param body 
+ * @param account 
+ * @returns 
+ */
 export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
     await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getEmails = async (account: string, mailboxPath: string, page = 0) =>
     await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath, page));
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getMessage = async (account: string, messageId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountMessageGet>(getEmailPath(account, messageId, textType));
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const updateMessage = async (body: AccountAccountMessagePut, account: string, messageId: string) =>
     await emailEngineApiFetch<UpdateMessagePutResponseBody>(updateEmailPath(account, messageId), {
         method: 'PUT',
         body,
     });
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const searchMailbox = async (
     account: string,
     search: MailboxSearchOptions,
@@ -116,6 +145,10 @@ export const searchMailbox = async (
 /** outbox is global for all accounts
  * This function gets the entire outbox
  */
+
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getOutbox = async () => {
     const firstRes = await emailEngineApiFetch<OutboxGet>(outboxPath());
     if (firstRes.pages === 1) return firstRes.messages;
@@ -129,8 +162,14 @@ export const getOutbox = async () => {
     return rest;
 };
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const deleteEmailFromOutbox = async (queueId: string) =>
     await emailEngineApiFetch<OutboxQueueidDelete>(outboxDeletePath(queueId), { method: 'DELETE' });
 
+/**
+ * @deprecated use EmailEngineService instead
+ */
 export const getTemplateInfo = async (templateId: string) =>
     await emailEngineApiFetch<TemplatesTemplateGetResponse>(getTemplateInfoPath(templateId));

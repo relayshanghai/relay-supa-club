@@ -98,4 +98,9 @@ export interface MailboxSearchOptions {
 export interface SearchEmailParam {
     search?: Nullable<MailboxSearchOptions>;
     page?: Nullable<number>;
+    documentQuery?: {
+        query_string?: {
+            query?: string
+        }
+    }
 }

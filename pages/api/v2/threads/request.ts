@@ -1,5 +1,6 @@
+import { Transform, type TransformFnParams } from 'class-transformer';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
-import PaginationParam from 'pages/api/shared/requets';
+import { PaginationParam } from 'types/pagination';
 
 export enum ThreadStatusRequest {
     UNOPENED = 'unopened',
@@ -31,9 +32,18 @@ export class GetThreadsRequest extends PaginationParam {
     })
     @IsOptional()
     @IsArray()
+    @Transform((param: TransformFnParams) => {
+        return param.value.split(',')
+    })
     sequences?: string[];
 
     @IsOptional()
-    @IsEnum(FunnelStatusRequest)
-    funnelStatus?: FunnelStatusRequest;
+    @IsArray()
+    @IsEnum(FunnelStatusRequest, {
+        each: true
+    })
+    @Transform((param: TransformFnParams) => {
+        return param.value.split(',')
+    })
+    funnelStatus?: FunnelStatusRequest[];
 }

@@ -11,14 +11,78 @@ import {
 } from 'typeorm';
 import { ThreadEntity } from './thread-entity';
 
+interface EmailContact {
+    name?: string;
+    address: string;
+}
+  
+  
+interface EmailHeader {
+    from: string[];
+    subject: string[];
+}
+  
+interface EmailTextContent {
+    id: string;
+    plain: string;
+    html: string;
+    encodedSize: {
+      plain: number;
+      html: number;
+    };
+    hasMore: boolean;
+}
+
+interface EmailAttachment {
+    id: string;
+    inline: boolean;
+    embedded: boolean;
+    filename: string;
+    contentId: string;
+    contentType: string;
+    encodedSize: number;
+}
+export interface Email {
+    path: string;
+    specialUse: string;
+    id: string;
+    uid: number;
+    emailId: string;
+    threadId: string;
+    date: Date;
+    flags: string[];
+    labels: string[];
+    size: number;
+    subject: string;
+    from: EmailContact;
+    replyTo: EmailContact[];
+    sender: EmailContact;
+    to: EmailContact[];
+    cc: EmailContact[];
+    messageId: string;
+    headers: EmailHeader;
+    text: EmailTextContent;
+    messageSpecialUse: string;
+    unseen: boolean;
+    attachments: EmailAttachment[]
+}
 @Entity('emails')
 @Unique('emails_email_engine_message_id_key', ['emailEngineId'])
 export class EmailEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column({ type: 'jsonb', nullable: false })
-    data!: object;
+    @Column({ // @ts-ignore
+        type: 'jsonb', 
+        nullable: false, 
+        transformer: {
+            from(value: object) {
+                if(typeof value === 'string') return JSON.parse(value)
+                return value
+            },
+        } 
+    })
+    data!: Email;
 
     @Column({ type: 'text', nullable: false })
     sender!: string;
@@ -47,4 +111,5 @@ export class EmailEntity {
 
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
     updatedAt!: Date;
+
 }

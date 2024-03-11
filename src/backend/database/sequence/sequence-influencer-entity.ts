@@ -78,7 +78,7 @@ export class SequenceInfluencerEntity {
         (influencerSocialProfile) => influencerSocialProfile.sequenceInfluencers,
         { onDelete: 'SET NULL' },
     )
-    @JoinColumn({ name: 'influencer_social_profile_id' })
+    @JoinColumn({ name: 'influencer_social_profile_id', referencedColumnName: 'id' })
     influencerSocialProfile?: Relation<InfluencerSocialProfileEntity>;
 
     @Column({ name: 'iqdata_id', type: 'text', nullable: false })

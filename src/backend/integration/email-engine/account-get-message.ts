@@ -1,4 +1,5 @@
 export interface AccountMessage {
+    path: string;
     id: string;
     uid: number;
     emailId: string;

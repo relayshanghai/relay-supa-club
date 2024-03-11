@@ -35,7 +35,7 @@ export class InfluencerSocialProfileEntity {
     @JoinColumn({ name: 'influencer_id' })
     influencer!: InfluencerEntity;
 
-    @Column({ type: 'text', nullable: false })
+    @Column({ type: 'text', name: 'reference_id', nullable: false })
     referenceId!: string;
 
     @Column({ type: 'text', nullable: false })

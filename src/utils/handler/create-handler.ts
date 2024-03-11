@@ -11,12 +11,10 @@ import { nanoid } from 'nanoid';
 import { serverLogger } from '../logger-server';
 import { RequestContext } from '../request-context/request-context';
 import { getHostnameFromRequest } from '../get-host';
-import { db } from '../database';
-import { companies, profiles } from 'drizzle/schema';
-import { eq } from 'drizzle-orm';
 import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
+import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -42,17 +40,20 @@ export const createHandler = (target: new () => any) => {
                 } = await req.supabase.auth.getSession();
 
                 if (session) {
-                    const [row] = await db()
-                        .select()
-                        .from(profiles)
-                        .fullJoin(companies, eq(companies.id, profiles.company_id))
-                        .where(eq(profiles.id, session.user.id))
-                        .limit(1);
+                    const [row] = await ProfileRepository.getRepository().find({
+                        where: {
+                            id: session.user.id
+                        },
+                        relations: {
+                            company: true
+                        }
+                    })
 
                     RequestContext.setContext({
                         session,
-                        customerId: row?.companies?.cus_id,
-                        companyId: row?.companies?.id,
+                        customerId: row?.company?.cusId,
+                        companyId: row?.company?.id,
+                        profile: row
                     });
                     if (!row) {
                         const context = { id: session.user.id };
