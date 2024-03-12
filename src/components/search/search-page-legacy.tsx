@@ -326,7 +326,7 @@ export const SearchPage = () => {
         <Layout>
             {isExpired && (
                 <Banner
-                    buttonText={t('banner.button')}
+                    buttonText={t('banner.button') ?? ''}
                     title={t('banner.expired.title')}
                     message={t('banner.expired.description')}
                 />

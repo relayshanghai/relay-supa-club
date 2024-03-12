@@ -10,7 +10,6 @@ import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import { logIqdataLimits } from '../forensicTrack';
 import { serverLogger } from 'src/utils/logger-server';
-import { UseDistributedQueue } from 'src/backend/integration/distributed-queue/distributed-queue';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
