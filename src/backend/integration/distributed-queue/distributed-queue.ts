@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import KVService from '../kv';
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -13,20 +13,20 @@ export const UseDistributedQueue =
             let queue = [];
 
             while (true) {
-                queue = (await kv.get<number[]>(queueKey)) || [];
+                queue = (await KVService.getService().get<number[]>(queueKey)) || [];
                 if (queue.length < concurrencyPerSecond) {
                     break;
                 }
                 if (queue[queue.length - 1] < Date.now() - 1000) {
                     queue.pop();
-                    await kv.set(queueKey, queue);
+                    await KVService.getService().set(queueKey, queue);
                     break;
                 }
                 await delay(delayCheck);
             }
             const now = Date.now();
             queue = [now, ...queue];
-            await kv.set(queueKey, queue);
+            await KVService.getService().set(queueKey, queue);
 
             const result = await originalMethod.apply(this, args);
             return result;

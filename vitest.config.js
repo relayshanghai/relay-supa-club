@@ -17,6 +17,9 @@ export default defineConfig({
         include: ['**/*.test.ts'], // run only tests with .test.ts extension,
         environment: 'node', // We are only using vitest for backend and node tests, not for components which we are using cypress component tests for
     },
+    deps: {
+        moduleDirectories: ['node_modules'],
+    },
     resolve: {
         alias: {
             src: resolve(__dirname, './src'),
