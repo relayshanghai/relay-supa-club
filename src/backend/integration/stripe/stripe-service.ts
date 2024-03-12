@@ -29,4 +29,35 @@ export default class StripeService {
             clientSecret: paymentIntent.client_secret,
         };
     }
+
+    async getSubscription(cusId: string) {
+        return await StripeService.client.subscriptions.list({
+            customer: cusId,
+        });
+    }
+
+    async getLastSubscription(cusId: string) {
+        const subscriptions = await this.getSubscription(cusId);
+        let lastSubscription = subscriptions.data.filter((sub) => {
+            return sub.status === 'active' || sub.status === 'trialing';
+        });
+        if (lastSubscription.length === 0) {
+            lastSubscription = subscriptions.data
+                .filter((sub) => {
+                    return sub.status === 'past_due';
+                })
+                .sort((a, b) => {
+                    return new Date(b.current_period_start).getTime() - new Date(a.current_period_start).getTime();
+                });
+        }
+        return lastSubscription?.[0];
+    }
+
+    async getPrice(priceId: string) {
+        return await StripeService.client.prices.retrieve(priceId);
+    }
+
+    async getProduct(productId: string) {
+        return await StripeService.client.products.retrieve(productId);
+    }
 }

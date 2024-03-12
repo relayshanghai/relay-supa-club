@@ -82,4 +82,54 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
             });
         });
     });
+    describe(`getSubscription`, () => {
+        it(`should return subscription from stripe`, async () => {
+            const stripeSubscription = {
+                subscriptionData: {
+                    items: {
+                        data: [
+                            {
+                                status: 'active',
+                            },
+                        ],
+                    },
+                },
+            };
+            SubscriptionRepositoryFindOneMock.mockResolvedValue(stripeSubscription);
+            StripeService.client.subscriptions.list = vi.fn().mockResolvedValue(stripeSubscription);
+
+            const result = await SubscriptionV2Service.getService().getSubscription();
+            expect(result).toBe(stripeSubscription);
+        });
+        it(`should return subscription from database`, async () => {
+            const subscriptionData = {
+                subscriptionData: {
+                    items: {
+                        data: [{ price: { id: 'price_1' } }],
+                    },
+                },
+            };
+            SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
+            const result = await SubscriptionV2Service.getService().getSubscription();
+            expect(result).toBe(subscriptionData);
+        });
+    });
+
+    describe('getPrice', () => {
+        it('should return price from stripe', async () => {
+            const price = { id: 'price_1' };
+            StripeService.client.prices.retrieve = vi.fn().mockResolvedValue(price);
+            const result = await StripeService.getService().getPrice('price_1');
+            expect(result).toBe(price);
+        });
+    });
+
+    describe('getProduct', () => {
+        it('should return product from stripe', async () => {
+            const product = { id: 'product_1' };
+            StripeService.client.products.retrieve = vi.fn().mockResolvedValue(product);
+            const result = await StripeService.getService().getProduct('product_1');
+            expect(result).toBe(product);
+        });
+    });
 });
