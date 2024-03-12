@@ -139,7 +139,7 @@ export default class EmailHelperService {
         });
         return [fromEntity, ...toEntities, ...ccEntities, ...bccEntities];
     }
-    parseMessage(email: EmailEntity){
+    parseMessage(email: EmailEntity) {
         const { date, unseen, id, from, cc, replyTo, text, subject, attachments, to } = email.data;
 
         const parsed = {
@@ -153,7 +153,7 @@ export default class EmailHelperService {
             replyTo,
             subject,
             body: text.html,
-        }
+        };
         return parsed;
     }
     stringifyContacts(...contacts: Contact[]): string {

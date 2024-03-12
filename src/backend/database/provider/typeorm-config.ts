@@ -42,7 +42,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             SequenceEmailEntity,
             InfluencerSocialProfileEntity,
             AddressEntity,
-            SequenceTemplateVariableEntity
+            SequenceTemplateVariableEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

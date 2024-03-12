@@ -15,22 +15,21 @@ export interface EmailContact {
     name?: string;
     address: string;
 }
-  
-  
+
 interface EmailHeader {
     from: string[];
     subject: string[];
 }
-  
+
 interface EmailTextContent {
-    id: string;
-    plain: string;
+    id?: string;
+    plain?: string;
     html: string;
-    encodedSize: {
-      plain: number;
-      html: number;
+    encodedSize?: {
+        plain: number;
+        html: number;
     };
-    hasMore: boolean;
+    hasMore?: boolean;
 }
 
 export interface EmailAttachment {
@@ -64,7 +63,7 @@ export interface Email {
     text: EmailTextContent;
     messageSpecialUse: string;
     unseen: boolean;
-    attachments: EmailAttachment[]
+    attachments: EmailAttachment[];
 }
 @Entity('emails')
 @Unique('emails_email_engine_message_id_key', ['emailEngineId'])
@@ -72,15 +71,16 @@ export class EmailEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column({ // @ts-ignore
-        type: 'jsonb', 
-        nullable: false, 
+    @Column({
+        // @ts-ignore
+        type: 'jsonb',
+        nullable: false,
         transformer: {
             from(value: object) {
-                if(typeof value === 'string') return JSON.parse(value)
-                return value
+                if (typeof value === 'string') return JSON.parse(value);
+                return value;
             },
-        } 
+        },
     })
     data!: Email;
 
@@ -111,5 +111,4 @@ export class EmailEntity {
 
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
     updatedAt!: Date;
-
 }

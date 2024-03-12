@@ -10,8 +10,8 @@ export default defineConfig({
     test: {
         global: true,
         setupFiles: ['./test-setup.js'],
-        include: ['**/*.test.ts','**/*.test.tsx'], // run only tests with .test.ts extension,
-        environment: 'jsdom'
+        include: ['**/*.test.ts', '**/*.test.tsx'], // run only tests with .test.ts extension,
+        environment: 'jsdom',
     },
     deps: {
         moduleDirectories: ['node_modules'],

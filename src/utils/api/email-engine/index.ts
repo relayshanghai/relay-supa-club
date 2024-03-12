@@ -88,9 +88,9 @@ export const getMailboxes = async (account: string) =>
     await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
 /**
  * @deprecated use EmailEngineService instead
- * @param body 
- * @param account 
- * @returns 
+ * @param body
+ * @param account
+ * @returns
  */
 export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
     await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });

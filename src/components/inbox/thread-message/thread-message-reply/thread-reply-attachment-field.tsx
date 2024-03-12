@@ -18,7 +18,7 @@ export type AttachmentFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, '
     render?: (params: AttachmentFieldRenderParams) => JSX.Element;
 };
 
-export default function ThreadReplyAttachmentField ({ onChange, render, ...props }: AttachmentFieldProps) {
+export default function ThreadReplyAttachmentField({ onChange, render, ...props }: AttachmentFieldProps) {
     const fieldRef = useRef<HTMLInputElement | null>(null);
 
     const handleFileSelect = useCallback<Required<InputHTMLAttributes<HTMLInputElement>>['onChange']>(
@@ -57,5 +57,4 @@ export default function ThreadReplyAttachmentField ({ onChange, render, ...props
             {render && render({ openField })}
         </>
     );
-};
-
+}

@@ -10,9 +10,7 @@ export default class SequenceRepository extends BaseRepository<SequenceEntity> {
         // to cover transactional operations
         const manager = RequestContext.getManager();
         if (manager) {
-            const contextRepository = RequestContext.getRepository<SequenceRepository>(
-                SequenceRepository.name,
-            );
+            const contextRepository = RequestContext.getRepository<SequenceRepository>(SequenceRepository.name);
             if (contextRepository) {
                 return contextRepository as SequenceRepository;
             }

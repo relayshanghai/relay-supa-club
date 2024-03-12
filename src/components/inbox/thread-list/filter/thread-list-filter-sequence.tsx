@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { useSequences } from 'src/hooks/v2/use-sequences';
 
-
 export default function ThreadListFilterSequence({
     selectedSequenceIds,
     onChange,
@@ -12,10 +11,7 @@ export default function ThreadListFilterSequence({
     onChange: (ids: string[]) => void;
 }) {
     const { t } = useTranslation();
-    const {
-        sequences,
-        loading
-    } = useSequences()
+    const { sequences, loading } = useSequences();
     const handleUpdateFunnelStatus = useCallback(
         (checkSequence: string) => {
             if (!checkSequence) {
@@ -38,9 +34,7 @@ export default function ThreadListFilterSequence({
     return (
         <div className="flex flex-col gap-2">
             <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
-            {
-                loading && <div>Loading...</div>
-            }
+            {loading && <div>Loading...</div>}
             {sequences.map((sequence, index) => (
                 <div
                     key={sequence.id}
@@ -58,7 +52,9 @@ export default function ThreadListFilterSequence({
                     >
                         <Checkbox
                             className="border-gray-300"
-                            checked={selectedSequenceIds.some((selectedSequenceId) => selectedSequenceId === sequence.id)}
+                            checked={selectedSequenceIds.some(
+                                (selectedSequenceId) => selectedSequenceId === sequence.id,
+                            )}
                             onCheckedChange={() => {
                                 handleUpdateFunnelStatus(sequence.id);
                             }}
@@ -69,4 +65,4 @@ export default function ThreadListFilterSequence({
             ))}
         </div>
     );
-};
+}

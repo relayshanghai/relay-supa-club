@@ -109,7 +109,7 @@ export class SequenceInfluencerEntity {
     commissionRate?: number;
 
     @OneToOne(() => ThreadEntity, (thread) => thread.sequenceInfluencer, { onDelete: 'SET NULL' })
-    thread?: ThreadEntity;
+    thread?: Relation<ThreadEntity>;
 
     @OneToMany(() => SequenceEmailEntity, (sequenceEmail) => sequenceEmail.sequenceInfluencer)
     sequenceEmails!: SequenceEmailEntity[];

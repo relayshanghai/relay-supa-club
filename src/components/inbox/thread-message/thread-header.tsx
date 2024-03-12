@@ -1,25 +1,25 @@
-import Link from "next/link";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import type { ThreadEntity } from "src/backend/database/thread/thread-entity";
+import Link from 'next/link';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import { Collapse, Expand } from 'src/components/icons';
-import { useUser } from "src/hooks/use-user";
-import { formatDate } from "src/utils/datetime";
+import { useUser } from 'src/hooks/use-user';
+import { formatDate } from 'src/utils/datetime';
 
-export default function ThreadHeader({
-    thread,
-    subject,
-}: {
-    thread: ThreadEntity;
-    subject?: string;
-}) {
+export default function ThreadHeader({ thread, subject }: { thread: ThreadEntity; subject?: string }) {
     const { t } = useTranslation();
     const { profile } = useUser();
 
     const [expanded, setExpanded] = useState(false);
-    const participants = thread.contacts?.map((participant) => participant.emailContact?.address === profile?.sequence_send_email ? 'Me' : participant.emailContact.name).join(',');
+    const participants = thread.contacts
+        ?.map((participant) =>
+            participant.emailContact?.address === profile?.sequence_send_email ? 'Me' : participant.emailContact.name,
+        )
+        .join(',');
     const ToggleExpanded = expanded ? Collapse : Expand;
-    const productName = thread.sequenceInfluencer?.sequence.templateVariables?.find(variable => variable.key === 'productName')?.value;
+    const productName = thread.sequenceInfluencer?.sequence.templateVariables?.find(
+        (variable) => variable.key === 'productName',
+    )?.value;
     return (
         <div
             className={`flex w-full justify-between bg-white px-2 py-3 shadow-lg ${
@@ -96,4 +96,4 @@ export default function ThreadHeader({
             </div>
         </div>
     );
-};
+}

@@ -1,12 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from "shadcn/components/ui/avatar";
-import { Card, CardContent } from "shadcn/components/ui/card";
-import { Skeleton } from "shadcn/components/ui/skeleton";
-import type { ThreadEntity, ThreadStatus } from "src/backend/database/thread/thread-entity";
+import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar';
+import { Card, CardContent } from 'shadcn/components/ui/card';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
+import type { ThreadEntity } from 'src/backend/database/thread/thread-entity';
+import type { ThreadStatus } from 'src/backend/database/thread/thread-status';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
-import { COLLAB_OPTIONS } from "src/components/influencer/constants";
-import { truncatedText } from "src/utils/outreach/helpers";
-import type { CreatorPlatform } from "types";
-
+import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
+import { truncatedText } from 'src/utils/outreach/helpers';
+import type { CreatorPlatform } from 'types';
 
 const getPlatformIcon = (platform?: CreatorPlatform) => {
     switch (platform) {
@@ -53,10 +53,14 @@ export const ThreadListItemSkeleton = () => {
     );
 };
 
-export default function ThreadListItem({ thread, onClick, selected }: {
-    thread: ThreadEntity,
-    selected: boolean,
-    onClick: (thread: ThreadEntity) => void
+export default function ThreadListItem({
+    thread,
+    onClick,
+    selected,
+}: {
+    thread: ThreadEntity;
+    selected: boolean;
+    onClick: (thread: ThreadEntity) => void;
 }) {
     // Get components conditionally
     const Icon = getPlatformIcon(thread.sequenceInfluencer?.platform as CreatorPlatform);
@@ -74,7 +78,7 @@ export default function ThreadListItem({ thread, onClick, selected }: {
                     <section className="relative">
                         <Avatar>
                             <AvatarImage src={thread.sequenceInfluencer?.avatarUrl ?? ''} />
-                            <AvatarFallback >
+                            <AvatarFallback>
                                 {thread.sequenceInfluencer?.name ? thread.sequenceInfluencer.name[0] : 'I'}
                             </AvatarFallback>
                         </Avatar>
@@ -99,7 +103,6 @@ export default function ThreadListItem({ thread, onClick, selected }: {
                             COLLAB_OPTIONS[thread.sequenceInfluencer?.funnelStatus]?.style
                         } rounded-sm p-1`}
                     >
-                        
                         {COLLAB_OPTIONS[thread.sequenceInfluencer?.funnelStatus] &&
                             COLLAB_OPTIONS[thread.sequenceInfluencer?.funnelStatus].icon}
                         {UnreadMarker}
@@ -108,4 +111,4 @@ export default function ThreadListItem({ thread, onClick, selected }: {
             )}
         </Card>
     );
-};
+}

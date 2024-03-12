@@ -100,7 +100,7 @@ export interface SearchEmailParam {
     page?: Nullable<number>;
     documentQuery?: {
         query_string?: {
-            query?: string
-        }
-    }
+            query?: string;
+        };
+    };
 }

@@ -1,12 +1,12 @@
-import { type KeyboardEvent, useCallback, useState } from "react";
-import type { EmailContact } from "src/backend/database/thread/email-entity";
-import ThreadReplyAddressLabel from "./thread-reply-address-label";
+import { type KeyboardEvent, useCallback, useState } from 'react';
+import type { EmailContact } from 'src/backend/database/thread/email-entity';
+import ThreadReplyAddressLabel from './thread-reply-address-label';
 
 const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
 };
-export default function ThreadReplyAddressSection ({
+export default function ThreadReplyAddressSection({
     defaultTo,
     defaultCC,
     sendTo,
@@ -135,4 +135,4 @@ export default function ThreadReplyAddressSection ({
             </div>
         </section>
     );
-};
+}

@@ -1,15 +1,16 @@
-import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import type { EmailContact } from "src/backend/database/thread/email-entity";
-import ThreadReplyAddressSection from "./thread-reply-address-section";
-import ThreadReplyEditor from "./thread-reply-editor";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { EmailContact } from 'src/backend/database/thread/email-entity';
+import ThreadReplyAddressSection from './thread-reply-address-section';
+import ThreadReplyEditor from './thread-reply-editor';
 
-export default function ThreadReply ({
+export default function ThreadReply({
     onReply,
     defaultContacts,
     attachments,
     handleRemoveAttachment,
     handleAttachmentSelect,
+    loading,
 }: {
     onReply: any;
     defaultContacts: {
@@ -19,6 +20,7 @@ export default function ThreadReply ({
     attachments: string[];
     handleRemoveAttachment: (file: string) => void;
     handleAttachmentSelect: (files: string[]) => void;
+    loading: boolean;
 }) {
     const [replyText, setReplyText] = useState('');
     const [sendTo, setSendTo] = useState<EmailContact[]>([]);
@@ -37,31 +39,57 @@ export default function ThreadReply ({
         const cc = sendCC.map((contact) => getNameOrAddressContact(contact, '(CC)'));
         return `${t('inbox.replyAllTo')} to ${[...defaultTo, ...defaultCC, ...to, ...cc].join(', ')}`;
     };
+    const [replyClicked, setReplyClicked] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handler = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                setReplyClicked(false);
+            }
+        };
+        document.addEventListener('click', handler, true);
+        return () => {
+            document.removeEventListener('click', handler, true);
+        };
+    }, []);
     return (
-        <div className="grid grid-cols-1 divide-y">
-            <div className="p-2">
-                <ThreadReplyAddressSection
-                    defaultTo={defaultContacts.to}
-                    defaultCC={defaultContacts.cc}
-                    sendTo={sendTo}
-                    setSendTo={setSendTo}
-                    sendCC={sendCC}
-                    setSendCC={setSendCC}
-                />
+        <>
+            <div
+                onClick={() => setReplyClicked(true)}
+                onBlur={() => setReplyClicked(false)}
+                className={`w-full cursor-text rounded-lg border-2 border-gray-100 px-4 py-2 text-gray-300 ${
+                    !replyClicked ? 'block' : 'hidden'
+                }`}
+            >
+                {t('inbox.replyToThread')}
             </div>
-            <div className="p-2">
-                <ThreadReplyEditor
-                    description={replyText}
-                    onChange={(text: string) => {
-                        setReplyText(text);
-                    }}
-                    placeholder={replyCaption()}
-                    onSubmit={handleSendReply}
-                    attachments={attachments}
-                    handleRemoveAttachment={handleRemoveAttachment}
-                    handleAttachmentSelect={handleAttachmentSelect}
-                />
+            <div ref={ref} className={`grid grid-cols-1 divide-y ${replyClicked ? 'block' : 'hidden'}`}>
+                <div className="p-2">
+                    <ThreadReplyAddressSection
+                        defaultTo={defaultContacts.to}
+                        defaultCC={defaultContacts.cc}
+                        sendTo={sendTo}
+                        setSendTo={setSendTo}
+                        sendCC={sendCC}
+                        setSendCC={setSendCC}
+                    />
+                </div>
+                <div className="p-2">
+                    <ThreadReplyEditor
+                        loading={loading}
+                        description={replyText}
+                        onChange={(text: string) => {
+                            setReplyText(text);
+                        }}
+                        placeholder={replyCaption()}
+                        onSubmit={handleSendReply}
+                        attachments={attachments}
+                        handleRemoveAttachment={handleRemoveAttachment}
+                        handleAttachmentSelect={handleAttachmentSelect}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
-};
+}

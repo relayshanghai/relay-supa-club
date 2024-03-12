@@ -58,16 +58,33 @@ export class InfluencerSocialProfileEntity {
 
     @Column({ name: 'data', type: 'jsonb', nullable: true })
     data?: object;
-    // @ts-ignore
-    @Column({ name: 'topic_tags', type: 'jsonb', nullable: true, transformer: {
-        from(value: object) {
-            if (typeof value === 'string') return JSON.parse(value);
-            return value;
-        }
-    } })
+
+    @Column({
+        //@ts-ignore
+        name: 'topic_tags',
+        type: 'jsonb',
+        nullable: true,
+        transformer: {
+            from(value: object) {
+                if (typeof value === 'string') return JSON.parse(value);
+                return value;
+            },
+        },
+    })
     topicTags?: object[];
 
-    @Column({ name: 'topics_relevances', type: 'jsonb', nullable: true })
+    @Column({
+        //@ts-ignore
+        name: 'topics_relevances',
+        type: 'jsonb',
+        nullable: true,
+        transformer: {
+            from(value: object) {
+                if (typeof value === 'string') return JSON.parse(value);
+                return value;
+            },
+        },
+    })
     topicsRelevances?: object[];
 
     @OneToMany(() => AddressEntity, (address) => address.influencerSocialProfile)

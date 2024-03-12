@@ -13,7 +13,7 @@ import useStorage from 'src/hooks/use-storage';
 import ThreadReplyAttachmentFileItem from './thread-reply-attachment-file-item';
 import { ThreadReplyEditorToolbar } from './thread-reply-editor-toolbar';
 import ThreadReplyAttachmentField from './thread-reply-attachment-field';
-import { Paperclip, Send } from 'src/components/icons';
+import { Paperclip, Send, Spinner } from 'src/components/icons';
 
 export default function ThreadReplyEditor({
     description,
@@ -23,6 +23,7 @@ export default function ThreadReplyEditor({
     handleRemoveAttachment,
     handleAttachmentSelect,
     placeholder,
+    loading,
 }: {
     description: string;
     onChange: (description: string) => void;
@@ -31,6 +32,7 @@ export default function ThreadReplyEditor({
     handleRemoveAttachment: (file: string) => void;
     handleAttachmentSelect: (files: string[]) => void;
     placeholder?: string;
+    loading?: boolean;
 }) {
     const editor = useEditor({
         extensions: [
@@ -177,9 +179,9 @@ export default function ThreadReplyEditor({
                     )}
                 </div>
                 <button type="submit" className="mx-2 cursor-pointer">
-                    <Send className="h-6 w-6 stroke-gray-400" />
+                    {loading ? <Spinner /> : <Send className="h-6 w-6 stroke-gray-400" />}
                 </button>
             </section>
         </form>
     );
-};
+}

@@ -6,13 +6,7 @@ import type { Email } from 'src/backend/database/thread/email-entity';
 import ThreadMessageListItemTitle from './thread-message-list-item-title';
 import ThreadMessageListItemAttachment from './thread-message-list-item-attachment';
 
-export default function ThreadMessageListItem({
-    message,
-    myEmail,
-}: {
-    message: Email;
-    myEmail?: string;
-}){
+export default function ThreadMessageListItem({ message, myEmail }: { message: Email; myEmail?: string }) {
     const [messageExpanded, setMessageExpanded] = useState(false);
     const [quoteExpanded, setQuoteExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
@@ -97,4 +91,4 @@ export default function ThreadMessageListItem({
             </AccordionContent>
         </AccordionItem>
     );
-};
+}

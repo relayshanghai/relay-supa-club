@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { Accordion } from "shadcn/components/ui/accordion";
-import type { Email } from "src/backend/database/thread/email-entity";
-import ThreadMessageListItem from "./thread-message-list-item";
+import { useEffect, useState } from 'react';
+import { Accordion } from 'shadcn/components/ui/accordion';
+import type { Email } from 'src/backend/database/thread/email-entity';
+import ThreadMessageListItem from './thread-message-list-item';
 
 export default function ThreadMessageList({
     messages,
@@ -37,15 +37,9 @@ export default function ThreadMessageList({
                 .reverse()
                 .map((message) => (
                     <>
-                        <ThreadMessageListItem
-
-                            key={message.id}
-                            message={message}
-                            myEmail={myEmail}
-
-                        />
+                        <ThreadMessageListItem key={message.id} message={message} myEmail={myEmail} />
                     </>
                 ))}
         </Accordion>
     );
-};
+}

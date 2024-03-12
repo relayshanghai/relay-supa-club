@@ -13,11 +13,7 @@ import {
 import { SequenceInfluencerEntity } from '../sequence/sequence-influencer-entity';
 import { EmailEntity } from './email-entity';
 import { ThreadContactEntity } from './email-contact-entity';
-export enum ThreadStatus {
-    UNOPENED = 'unopened',
-    UNREPLIED = 'unreplied',
-    REPLIED = 'replied',
-}
+import type { ThreadStatus } from './thread-status';
 
 @Entity('threads')
 @Unique('threads_thread_id_key', ['threadId'])

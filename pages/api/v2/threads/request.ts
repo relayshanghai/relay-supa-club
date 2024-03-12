@@ -34,17 +34,17 @@ export class GetThreadsRequest extends PaginationParam {
     @IsOptional()
     @IsArray()
     @Transform((param: TransformFnParams) => {
-        return param.value.split(',')
+        return param.value.split(',');
     })
     sequences?: string[];
 
     @IsOptional()
     @IsArray()
     @IsEnum(FunnelStatusRequest, {
-        each: true
+        each: true,
     })
     @Transform((param: TransformFnParams) => {
-        return param.value.split(',')
+        return param.value.split(',');
     })
     funnelStatus?: FunnelStatusRequest[];
 }

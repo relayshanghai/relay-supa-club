@@ -7,7 +7,7 @@ type AttachmentFileItemProps = {
     onRemove: (file: string) => void;
 };
 
-export default function ThreadReplyAttachmentFileItem ({ file, onRemove }: AttachmentFileItemProps) {
+export default function ThreadReplyAttachmentFileItem({ file, onRemove }: AttachmentFileItemProps) {
     return (
         <Tooltip content={file} position="top-right">
             <span
@@ -22,5 +22,4 @@ export default function ThreadReplyAttachmentFileItem ({ file, onRemove }: Attac
             </span>
         </Tooltip>
     );
-};
-
+}

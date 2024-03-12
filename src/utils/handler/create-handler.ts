@@ -42,18 +42,18 @@ export const createHandler = (target: new () => any) => {
                 if (session) {
                     const [row] = await ProfileRepository.getRepository().find({
                         where: {
-                            id: session.user.id
+                            id: session.user.id,
                         },
                         relations: {
-                            company: true
-                        }
-                    })
+                            company: true,
+                        },
+                    });
 
                     RequestContext.setContext({
                         session,
                         customerId: row?.company?.cusId,
                         companyId: row?.company?.id,
-                        profile: row
+                        profile: row,
                     });
                     if (!row) {
                         const context = { id: session.user.id };

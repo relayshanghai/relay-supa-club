@@ -1,11 +1,11 @@
-import { useCallback } from "react";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
-import type { EmailAttachment } from "src/backend/database/thread/email-entity";
-import { Download } from "src/components/icons";
-import { Tooltip } from "src/components/library";
-import { clientLogger } from "src/utils/logger-client";
-import { truncatedText } from "src/utils/outreach/helpers";
+import { useCallback } from 'react';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import type { EmailAttachment } from 'src/backend/database/thread/email-entity';
+import { Download } from 'src/components/icons';
+import { Tooltip } from 'src/components/library';
+import { clientLogger } from 'src/utils/logger-client';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 const fileExtensionRegex = /.[^.\\/]*$/;
 export const getAttachmentStyle = (filename: string) => {
@@ -25,7 +25,7 @@ export const getAttachmentStyle = (filename: string) => {
             return 'bg-gray-100 hover:bg-gray-50 text-gray-400 stroke-gray-400';
     }
 };
-export default function ThreadMessageListItemAttachment({ attachment }: { attachment: EmailAttachment }){
+export default function ThreadMessageListItemAttachment({ attachment }: { attachment: EmailAttachment }) {
     const { t } = useTranslation();
 
     const handleDownloadAttachment = useCallback(async () => {
@@ -79,4 +79,4 @@ export default function ThreadMessageListItemAttachment({ attachment }: { attach
             </button>
         </Tooltip>
     );
-};
+}

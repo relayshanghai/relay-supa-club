@@ -4,10 +4,10 @@ import InputSearch from './thread-list-input-search';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 describe('InputSearch Component', () => {
-    afterEach(cleanup)
+    afterEach(cleanup);
 
     test('should render component', () => {
-        const { getByTestId } = render(<InputSearch/>);
+        const { getByTestId } = render(<InputSearch />);
         getByTestId('search');
     });
 
@@ -17,8 +17,8 @@ describe('InputSearch Component', () => {
         const inputElement = getByTestId('search-input');
         act(() => {
             fireEvent.change(inputElement, { target: { value: 'test' } });
-            fireEvent.keyDown(inputElement, { key: 'Enter', code: 'Enter' });    
-        })
+            fireEvent.keyDown(inputElement, { key: 'Enter', code: 'Enter' });
+        });
         await waitFor(() => {
             expect(onSearchMock).toHaveBeenCalledWith('test');
         });

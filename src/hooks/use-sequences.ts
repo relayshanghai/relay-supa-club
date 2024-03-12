@@ -7,8 +7,8 @@ import { getSequencesByCompanyIdCall } from 'src/utils/api/db/calls/sequences';
 
 /**
  * @deprecated use /hoost/v2/use-sequences instead
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export const useSequences = (params?: { filterDeleted?: boolean }) => {
     const { company } = useCompany();

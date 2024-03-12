@@ -8,7 +8,7 @@ const CounterStyles: {
 } = {
     unopened: 'bg-pink-100 text-pink-500',
     unreplied: 'bg-blue-100 text-blue-500',
-    all: ''
+    all: '',
 };
 
 type FilterStatusButtons = {
@@ -79,4 +79,4 @@ export default function ThreadListFilterStatus({
             ))}
         </div>
     );
-};
+}

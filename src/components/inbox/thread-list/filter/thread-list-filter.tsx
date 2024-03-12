@@ -10,7 +10,7 @@ export interface FilterRequest {
     threadStatus: ThreadStatusRequest;
     funnelStatus: FunnelStatusRequest[];
     sequences: string[];
-} 
+}
 
 export const ThreadListFilter = ({
     messageCount,
@@ -55,4 +55,3 @@ export const ThreadListFilter = ({
         </Popover>
     );
 };
-

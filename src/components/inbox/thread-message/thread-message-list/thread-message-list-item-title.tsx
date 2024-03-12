@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import type { Email } from "src/backend/database/thread/email-entity";
-import { formatDate } from "src/utils/datetime";
+import { useEffect, useState } from 'react';
+import type { Email } from 'src/backend/database/thread/email-entity';
+import { formatDate } from 'src/utils/datetime';
 
 export default function ThreadMessageListItemTitle({
     expanded,
@@ -10,7 +10,7 @@ export default function ThreadMessageListItemTitle({
     expanded: boolean;
     message: Email;
     myEmail?: string;
-}){
+}) {
     const [headerExpanded, setHeaderExpanded] = useState(false);
     useEffect(() => {
         if (!expanded) {
@@ -79,4 +79,4 @@ export default function ThreadMessageListItemTitle({
                 </span>
             </p>
         );
-};
+}

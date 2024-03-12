@@ -3,7 +3,7 @@ import awaitToError from 'src/utils/await-to-error';
 import type { AccountSearchPost, SearchEmailParam, SearchResponseMessage } from './account-search-types';
 import type { AccountMessage } from './account-get-message';
 import type { EmailEnginePaginatedAccount } from './account';
-import { SendEmailRequestBody, SendEmailResponseBody } from './account-submit-message';
+import type { SendEmailRequestBody, SendEmailResponseBody } from './account-submit-message';
 
 export const EMAIL_ENGINE_API_URL = `${process.env.EMAIL_ENGINE_API_URL || 'http://localhost:4000'}/v1`;
 
@@ -60,7 +60,7 @@ export default class EmailEngineService {
                 `/account/${accountId}/search?documentStore=true&page=${param.page}`,
                 {
                     search: param.search,
-                    documentQuery: param.documentQuery
+                    documentQuery: param.documentQuery,
                 },
             ),
         );
@@ -105,10 +105,7 @@ export default class EmailEngineService {
 
     async sendEmail(accountId: string, payload: SendEmailRequestBody): Promise<SendEmailResponseBody> {
         const [err, result] = await awaitToError<AxiosError, AxiosResponse<SendEmailResponseBody>>(
-            this.apiClient.post<SendEmailResponseBody>(
-                `/account/${accountId}/submit`,
-                payload,
-            ),
+            this.apiClient.post<SendEmailResponseBody>(`/account/${accountId}/submit`, payload),
         );
         if (err) {
             throw new Error(err.message);

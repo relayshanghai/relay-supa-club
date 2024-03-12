@@ -1,6 +1,6 @@
-import type { EmailContact } from "src/backend/database/thread/email-entity";
-import { Tooltip } from "src/components/library";
-import { truncatedText } from "src/utils/outreach/helpers";
+import type { EmailContact } from 'src/backend/database/thread/email-entity';
+import { Tooltip } from 'src/components/library';
+import { truncatedText } from 'src/utils/outreach/helpers';
 
 export default function ThreadReplyAddressLabel({
     info,
@@ -25,4 +25,4 @@ export default function ThreadReplyAddressLabel({
             </span>
         </Tooltip>
     );
-};
+}

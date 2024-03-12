@@ -8,7 +8,6 @@ import {
     JoinColumn,
     type Relation,
     OneToMany,
-    VirtualColumn,
 } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
@@ -58,5 +57,4 @@ export class SequenceEntity {
 
     @OneToMany(() => SequenceTemplateVariableEntity, (variable) => variable.sequence, { onDelete: 'CASCADE' })
     templateVariables!: Relation<SequenceTemplateVariableEntity[]>;
-
 }
