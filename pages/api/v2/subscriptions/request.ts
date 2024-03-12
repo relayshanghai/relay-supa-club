@@ -9,3 +9,17 @@ export class CreateSubscriptionRequest {
     @IsOptional()
     quantity?: number;
 }
+
+export class PostConfirmationRequest {
+    @IsString()
+    paymentIntentId!: string;
+
+    @IsString()
+    paymentIntentSecret!: string;
+
+    @IsString()
+    redirectStatus!: string;
+
+    @IsString()
+    subscriptionId!: string;
+}
