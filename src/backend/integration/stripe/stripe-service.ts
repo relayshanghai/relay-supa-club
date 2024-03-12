@@ -1,3 +1,5 @@
+import awaitToError from 'src/utils/await-to-error';
+import { NotFoundError } from 'src/utils/error/http-error';
 import Stripe from 'stripe';
 
 export default class StripeService {
@@ -59,5 +61,68 @@ export default class StripeService {
 
     async getProduct(productId: string) {
         return await StripeService.client.products.retrieve(productId);
+    }
+
+    async getProductMetadata(subscriptionId: string) {
+        const subscription = await this.retrieveSubscription(subscriptionId);
+
+        if (!subscription || subscription.items.data.length === 0) {
+            throw new NotFoundError('No subscription found');
+        }
+        const price = await this.getPrice(subscription.items.data[0].price.id as string);
+        const product = await this.getProduct(price.product.toString());
+
+        const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
+
+        if (!profiles || !searches) {
+            throw new NotFoundError('Missing product metadata');
+        }
+
+        return { trial_profiles, trial_searches, profiles, searches };
+    }
+
+    async updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {
+        return StripeService.client.subscriptions.update(subscriptionId, params);
+    }
+
+    async retrieveSubscription(subscriptionId: string) {
+        return StripeService.client.subscriptions.retrieve(subscriptionId);
+    }
+
+    async getActiveSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId);
+    }
+
+    async getTrialSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId, 'trialing');
+    }
+
+    async getIncompleteSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId, 'incomplete');
+    }
+
+    async cancelSubscription(customerId: string) {
+        const [err, existingSubscription] = await awaitToError(this.getSubscriptionByStatus(customerId));
+        if (err || !existingSubscription) {
+            throw new NotFoundError('no subscription found');
+        }
+        return StripeService.client.subscriptions.cancel(existingSubscription.id);
+    }
+
+    async getPaymentIntent(paymentIntentId: string) {
+        return StripeService.client.paymentIntents.retrieve(paymentIntentId);
+    }
+
+    async deleteSubscription(subscriptionId: string) {
+        return StripeService.client.subscriptions.del(subscriptionId);
+    }
+
+    private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
+        const subscription = await StripeService.client.subscriptions.list({
+            customer: customerId,
+            status,
+            expand: ['data.plan.product'],
+        });
+        return subscription.data[0];
     }
 }

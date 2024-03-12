@@ -1,5 +1,5 @@
 import { createHandler } from 'src/utils/handler/create-handler';
-import { GET, POST, Status } from 'src/utils/handler/decorators/api-decorator';
+import { DELETE, GET, POST, Status } from 'src/utils/handler/decorators/api-decorator';
 import { CreateSubscriptionRequest } from './request';
 import httpCodes from 'src/constants/httpCodes';
 import SubscriptionV2Service from 'src/backend/domain/subscription/subscription-v2-service';
@@ -10,6 +10,19 @@ class SubscriptionHandler {
     @POST()
     @Status(httpCodes.CREATED)
     async createSubscription(
+        @Body(CreateSubscriptionRequest) request: CreateSubscriptionRequest,
+        @IpAddress() ipAddress: string,
+    ) {
+        const result = await SubscriptionV2Service.getService().createSubscription(request);
+        return {
+            ...result,
+            ipAddress,
+        };
+    }
+
+    @DELETE()
+    @Status(httpCodes.NO_CONTENT)
+    async cancelSubscription(
         @Body(CreateSubscriptionRequest) request: CreateSubscriptionRequest,
         @IpAddress() ipAddress: string,
     ) {
