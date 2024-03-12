@@ -337,11 +337,13 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     company: {
                         id: 'company_1',
                     },
+                    providerSubscriptionId: 'sub_1',
                 } as SubscriptionEntity);
 
                 const getLastSubscriptionMock = vi.spyOn(StripeService.getService(), 'getLastSubscription');
                 getLastSubscriptionMock.mockResolvedValue({
                     id: 'sub_1',
+                    canceled_at: 1234567890,
                 } as Stripe.Subscription);
 
                 const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
@@ -362,10 +364,23 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 } as Stripe.Response<Stripe.Subscription>);
 
                 await SubscriptionV2Service.getService().cancelSubscription();
-                expect(findOneMock).toHaveBeenCalledTimes(1);
-                expect(getLastSubscriptionMock).toHaveBeenCalledTimes(1);
-                expect(updateMock).toHaveBeenCalledTimes(1);
-                expect(deleteSubscriptionMock).toHaveBeenCalledTimes(1);
+                expect(findOneMock).toHaveBeenCalledWith({
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
+                expect(getLastSubscriptionMock).toHaveBeenCalledWith('cus_1');
+                expect(updateMock).toHaveBeenCalledWith(
+                    {
+                        id: 'sub_1',
+                    },
+                    {
+                        cancelledAt: 1234567890,
+                    },
+                );
+                expect(deleteSubscriptionMock).toHaveBeenCalledWith('sub_1');
             });
             it(`should throw NotFoundError when no subscription found`, async () => {
                 const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
