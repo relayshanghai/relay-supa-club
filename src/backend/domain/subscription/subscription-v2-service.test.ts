@@ -340,11 +340,17 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     providerSubscriptionId: 'sub_1',
                 } as SubscriptionEntity);
 
-                const getLastSubscriptionMock = vi.spyOn(StripeService.getService(), 'getLastSubscription');
-                getLastSubscriptionMock.mockResolvedValue({
+                const retrieveSubscriptionMock = vi.spyOn(StripeService.getService(), 'retrieveSubscription');
+                retrieveSubscriptionMock.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
                     id: 'sub_1',
-                    current_period_end: 1234567890,
-                } as Stripe.Subscription);
+                    customer: 'cus_1',
+                    current_period_end: 1712811791,
+                } as Stripe.Response<Stripe.Subscription>);
 
                 const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
                 updateMock.mockResolvedValue({
@@ -371,13 +377,13 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         },
                     },
                 });
-                expect(getLastSubscriptionMock).toHaveBeenCalledWith('cus_1');
+                expect(retrieveSubscriptionMock).toHaveBeenCalledWith('sub_1');
                 expect(updateMock).toHaveBeenCalledWith(
                     {
                         id: 'sub_1',
                     },
                     {
-                        cancelledAt: 1234567890,
+                        cancelledAt: new Date(1712811791 * 1000),
                     },
                 );
                 expect(deleteSubscriptionMock).toHaveBeenCalledWith('sub_1');
