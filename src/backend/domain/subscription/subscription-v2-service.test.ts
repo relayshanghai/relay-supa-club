@@ -15,27 +15,33 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeCreateSubscriptionMock = vi.fn();
     const SubscriptionRepositoryFindOneMock = vi.fn();
     const StripeGetPaymentIntentMock = vi.fn();
-    const StripeGetSubscriptionMock = vi.fn();
+    const StripeRetrieveSubscriptionMock = vi.fn();
     const StripeGetTrialSubscriptionMock = vi.fn();
     const StripeGetIncompleteSubscriptionMock = vi.fn();
     const StripeGetProductMock = vi.fn();
+    const StripeGetLastSubscriptionMock = vi.fn();
+    const StripeGetPriceMock = vi.fn();
     const StripeUpdateSubscriptionMock = vi.fn();
     const StripeDeleteSubscriptionMock = vi.fn();
-    const SubscriptionRepositoryInsertMock = vi.fn();
+    const StripeGetSubscriptionProductMetadataMock = vi.fn();
+    const SubscriptionRepositoryUpsertMock = vi.fn();
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
     const CompanyRepositoryUpdateMock = vi.fn();
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
-    StripeService.getService().getSubscription = StripeGetSubscriptionMock;
+    StripeService.getService().retrieveSubscription = StripeRetrieveSubscriptionMock;
     StripeService.getService().getTrialSubscription = StripeGetTrialSubscriptionMock;
     StripeService.getService().getIncompleteSubscription = StripeGetIncompleteSubscriptionMock;
     StripeService.getService().getProduct = StripeGetProductMock;
     StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
     StripeService.getService().deleteSubscription = StripeDeleteSubscriptionMock;
     StripeService.getService().cancelSubscription = CancelSubscriptionMock;
-    SubscriptionRepository.getRepository().insert = SubscriptionRepositoryInsertMock;
+    StripeService.getService().getLastSubscription = StripeGetLastSubscriptionMock;
+    StripeService.getService().getPrice = StripeGetPriceMock;
+    StripeService.getService().getSubscriptionProductMetadata = StripeGetSubscriptionProductMetadataMock;
+    SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
 
@@ -126,7 +132,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         ],
                     },
                 });
-                StripeGetSubscriptionMock.mockResolvedValue({
+                StripeRetrieveSubscriptionMock.mockResolvedValue({
                     id: 'new_sub_1',
                     items: {
                         data: [
@@ -152,6 +158,45 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         ai_emails: '100000000',
                     },
                 });
+                StripeGetLastSubscriptionMock.mockResolvedValue({
+                    id: 'new_sub_1',
+                    items: {
+                        data: [
+                            {
+                                price: {
+                                    id: 'price_1',
+                                    unit_amount: 100,
+                                },
+                                quantity: 1,
+                                plan: {
+                                    id: 'plan_1',
+                                },
+                            },
+                        ],
+                    },
+                    discount: {
+                        coupon: {
+                            id: 'mock-coupon-id',
+                            amount_off: 200,
+                        },
+                    },
+                    payment_settings: {
+                        payment_method_types: ['card'],
+                    },
+                    default_payment_method: 'card',
+                    status: 'active',
+                });
+                StripeGetSubscriptionProductMetadataMock.mockResolvedValue({
+                    searches: '100000000',
+                    profiles: '100000000',
+                    ai_emails: '100000000',
+                    trial_searches: '100000000',
+                    trial_profiles: '100000000',
+                    trial_ai_emails: '100000000',
+                });
+                StripeGetPriceMock.mockResolvedValue({
+                    product: 'prod_1',
+                });
                 CancelSubscriptionMock.mockResolvedValue(undefined);
             });
 
@@ -165,21 +210,55 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(StripeService.getService().updateSubscription).toHaveBeenCalledWith('trial_sub_1', {
                     default_payment_method: 'pm_1',
                 });
-                expect(SubscriptionRepository.getRepository().insert).toHaveBeenCalledWith({
-                    company: {
-                        id: 'company_1',
+                expect(SubscriptionRepository.getRepository().upsert).toHaveBeenCalledWith(
+                    {
+                        company: {
+                            id: 'company_1',
+                        },
+                        provider: 'stripe',
+                        providerSubscriptionId: 'new_sub_1',
+                        paymentMethod: 'card',
+                        quantity: 1,
+                        price: 100,
+                        total: 100,
+                        subscriptionData: {
+                            id: 'new_sub_1',
+                            default_payment_method: 'card',
+                            discount: {
+                                coupon: {
+                                    amount_off: 200,
+                                    id: 'mock-coupon-id',
+                                },
+                            },
+                            items: {
+                                data: [
+                                    {
+                                        quantity: 1,
+                                        price: {
+                                            unit_amount: 100,
+                                            id: 'price_1',
+                                        },
+                                        plan: {
+                                            id: 'plan_1',
+                                        },
+                                    },
+                                ],
+                            },
+                            payment_settings: {
+                                payment_method_types: ['card'],
+                            },
+                            status: 'active',
+                        },
+                        discount: 200,
+                        coupon: 'mock-coupon-id',
+                        activeAt: expect.any(Date),
+                        pausedAt: expect.any(Date),
+                        cancelledAt: null,
                     },
-                    id: 'new_sub_1',
-                    provider: 'stripe',
-                    providerSubscriptionId: 'new_sub_1',
-                    paymentMethod: 'pm_1',
-                    quantity: 1,
-                    price: 100,
-                    total: 100,
-                    activeAt: expect.any(Date),
-                    pausedAt: expect.any(Date),
-                    cancelledAt: null,
-                });
+                    {
+                        conflictPaths: ['company.id'],
+                    },
+                );
                 expect(CompanyRepository.getRepository().update).toHaveBeenCalledWith(
                     {
                         id: 'company_1',
@@ -188,8 +267,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         subscriptionStatus: 'active',
                         searchesLimit: '100000000',
                         profilesLimit: '100000000',
-                        aiEmailGeneratorLimit: '100000000',
                         subscriptionPlan: 'plan_1',
+                        trialProfilesLimit: '100000000',
+                        trialSearchesLimit: '100000000',
                     },
                 );
             });
@@ -208,55 +288,38 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(StripeService.getService().cancelSubscription).toHaveBeenCalledWith('cus_1');
             });
         });
-    });
-    describe(`getSubscription`, () => {
-        it(`should return subscription from stripe`, async () => {
-            const stripeSubscription = {
-                subscriptionData: {
-                    items: {
-                        data: [
-                            {
-                                status: 'active',
-                            },
-                        ],
+
+        describe(`getSubscription`, () => {
+            it(`should return subscription from stripe`, async () => {
+                const stripeSubscription = {
+                    subscriptionData: {
+                        items: {
+                            data: [
+                                {
+                                    status: 'active',
+                                },
+                            ],
+                        },
                     },
-                },
-            };
-            SubscriptionRepositoryFindOneMock.mockResolvedValue(stripeSubscription);
-            StripeService.client.subscriptions.list = vi.fn().mockResolvedValue(stripeSubscription);
+                };
+                SubscriptionRepositoryFindOneMock.mockResolvedValue(stripeSubscription);
+                StripeService.client.subscriptions.list = vi.fn().mockResolvedValue(stripeSubscription);
 
-            const result = await SubscriptionV2Service.getService().getSubscription();
-            expect(result).toBe(stripeSubscription);
-        });
-        it(`should return subscription from database`, async () => {
-            const subscriptionData = {
-                subscriptionData: {
-                    items: {
-                        data: [{ price: { id: 'price_1' } }],
+                const result = await SubscriptionV2Service.getService().getSubscription();
+                expect(result).toBe(stripeSubscription);
+            });
+            it(`should return subscription from database`, async () => {
+                const subscriptionData = {
+                    subscriptionData: {
+                        items: {
+                            data: [{ price: { id: 'price_1' } }],
+                        },
                     },
-                },
-            };
-            SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
-            const result = await SubscriptionV2Service.getService().getSubscription();
-            expect(result).toBe(subscriptionData);
-        });
-    });
-
-    describe('getPrice', () => {
-        it('should return price from stripe', async () => {
-            const price = { id: 'price_1' };
-            StripeService.client.prices.retrieve = vi.fn().mockResolvedValue(price);
-            const result = await StripeService.getService().getPrice('price_1');
-            expect(result).toBe(price);
-        });
-    });
-
-    describe('getProduct', () => {
-        it('should return product from stripe', async () => {
-            const product = { id: 'product_1' };
-            StripeService.client.products.retrieve = vi.fn().mockResolvedValue(product);
-            const result = await StripeService.getService().getProduct('product_1');
-            expect(result).toBe(product);
+                };
+                SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
+                const result = await SubscriptionV2Service.getService().getSubscription();
+                expect(result).toBe(subscriptionData);
+            });
         });
     });
 });

@@ -3,9 +3,10 @@ import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
 import { SubscriptionEntity } from './subscription-entity';
 import type { EntityManager, EntityTarget } from 'typeorm';
+import type Stripe from 'stripe';
 
 @InjectInitializeDatabaseOnAllProps
-export default class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
+export default class SubscriptionRepository extends BaseRepository<SubscriptionEntity<Stripe.Subscription>> {
     static repository = new SubscriptionRepository();
     static getRepository(): SubscriptionRepository {
         // when request context is not available, use the default repository, otherwise use the manager from the request context

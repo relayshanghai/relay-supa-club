@@ -63,6 +63,60 @@ export default class StripeService {
         return await StripeService.client.products.retrieve(productId);
     }
 
+    async getSubscriptionProductMetadata(cusId: string) {
+        const lastSubscription = await this.getLastSubscription(cusId);
+
+        if (!lastSubscription || lastSubscription.items.data.length === 0) {
+            throw new NotFoundError('No subscription found');
+        }
+        const price = await this.getPrice(lastSubscription.items.data[0].price.id as string);
+        const product = await this.getProduct(price.product.toString());
+
+        const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
+
+        if (!profiles || !searches) {
+            throw new NotFoundError('Missing product metadata');
+        }
+
+        return { trial_profiles, trial_searches, profiles, searches };
+    }
+
+    async updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {
+        return StripeService.client.subscriptions.update(subscriptionId, params);
+    }
+
+    async retrieveSubscription(subscriptionId: string) {
+        return StripeService.client.subscriptions.retrieve(subscriptionId);
+    }
+
+    async getActiveSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId);
+    }
+
+    async getTrialSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId, 'trialing');
+    }
+
+    async getIncompleteSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId, 'incomplete');
+    }
+
+    async cancelSubscription(customerId: string) {
+        const [err, existingSubscription] = await awaitToError(this.getSubscriptionByStatus(customerId));
+        if (err || !existingSubscription) {
+            throw new NotFoundError('no subscription found');
+        }
+        return StripeService.client.subscriptions.cancel(existingSubscription.id);
+    }
+
+    async getPaymentIntent(paymentIntentId: string) {
+        return StripeService.client.paymentIntents.retrieve(paymentIntentId);
+    }
+
+    async deleteSubscription(subscriptionId: string) {
+        return StripeService.client.subscriptions.del(subscriptionId);
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

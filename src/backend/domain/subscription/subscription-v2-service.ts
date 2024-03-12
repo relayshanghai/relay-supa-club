@@ -4,7 +4,7 @@ import type { CreateSubscriptionRequest, PostConfirmationRequest } from 'pages/a
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
-import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-error';
 import { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type { StripeSubscription } from 'src/backend/integration/stripe/type';
 import StripeService from 'src/backend/integration/stripe/stripe-service';
@@ -124,23 +124,81 @@ export default class SubscriptionV2Service {
             if (!lastSubscription || lastSubscription.items.data.length === 0) {
                 throw new NotFoundError('No subscription found');
             }
-
-            const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id as string);
-            const product = await StripeService.getService().getProduct(price.product.toString());
-
-            const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
-
-            if (!profiles || !searches) {
-                throw new NotFoundError('Missing product metadata');
-            }
+            const productMetadata = await StripeService.getService().getSubscriptionProductMetadata(cusId);
 
             subscription = await this.syncStripeSubscriptionWithDb(companyId, cusId, lastSubscription, {
-                profilesLimit: profiles,
-                searchesLimit: searches,
-                trialProfilesLimit: trial_profiles,
-                trialSearchesLimit: trial_searches,
+                profilesLimit: productMetadata.profiles,
+                searchesLimit: productMetadata.searches,
+                trialProfilesLimit: productMetadata.trial_profiles,
+                trialSearchesLimit: productMetadata.trial_searches,
             });
         }
         return subscription;
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    @UseTransaction()
+    async postConfirmation(request: PostConfirmationRequest) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const cusId = RequestContext.getContext().customerId as string;
+        if (request.redirectStatus != 'success') {
+            await StripeService.getService().cancelSubscription(cusId);
+            throw new UnprocessableEntityError('entity is unprocessable');
+        }
+        const paymentIntent = await StripeService.getService().getPaymentIntent(request.paymentIntentId);
+        await StripeService.getService().updateSubscription(request.subscriptionId, {
+            default_payment_method: paymentIntent.payment_method as string,
+        });
+
+        const lastSubscription = await StripeService.getService().getLastSubscription(cusId);
+        const productMetadata = await StripeService.getService().getSubscriptionProductMetadata(cusId);
+
+        await SubscriptionRepository.getRepository().upsert(
+            {
+                company: {
+                    id: companyId,
+                },
+                provider: 'stripe',
+                providerSubscriptionId: lastSubscription.id,
+                paymentMethod:
+                    lastSubscription.payment_settings?.payment_method_types?.[0] ||
+                    lastSubscription.default_payment_method?.toString() ||
+                    'card',
+                quantity: lastSubscription.items.data[0].quantity,
+                price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                total:
+                    (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                    (lastSubscription?.items?.data?.[0].quantity ?? 0),
+                subscriptionData: lastSubscription,
+                discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
+                coupon: lastSubscription.discount?.coupon?.id,
+                activeAt: new Date(),
+                pausedAt: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+                cancelledAt: null,
+            },
+            {
+                conflictPaths: ['company.id'],
+            },
+        );
+
+        await CompanyRepository.getRepository().update(
+            {
+                id: companyId,
+            },
+            {
+                subscriptionStatus: lastSubscription.status as string,
+                profilesLimit: productMetadata.profiles,
+                searchesLimit: productMetadata.searches,
+                trialProfilesLimit: productMetadata.trial_profiles,
+                trialSearchesLimit: productMetadata.trial_searches,
+                subscriptionPlan: lastSubscription.items.data[0].plan.id as string,
+            },
+        );
+
+        const [, trialSubscription] = await awaitToError(StripeService.getService().getTrialSubscription(cusId));
+        if (trialSubscription) {
+            await StripeService.getService().deleteSubscription(trialSubscription.id);
+        }
     }
 }
