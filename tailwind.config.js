@@ -49,6 +49,21 @@ module.exports = {
                     100: '#F4F7FF',
                     500: '#599CC9',
                 },
+                accent: {
+                    DEFAULT: '#F53D86',
+                    foreground: '#FFFFFF',
+                    50: '#FF7EBE',
+                    100: '#FF62A8',
+                    200: '#FF4591',
+                    300: '#FF297B',
+                    400: '#FF0D65',
+                    500: '#F53D86',
+                    600: '#DB356F',
+                    700: '#C12459',
+                    800: '#A11343',
+                    900: '#87002C',
+                },
+
                 tertiary: {
                     DEFAULT: '#4b5563',
                     foreground: '#F4F8FF',
@@ -66,10 +81,6 @@ module.exports = {
                 muted: {
                     DEFAULT: 'hsl(var(--muted))',
                     foreground: 'hsl(var(--muted-foreground))',
-                },
-                accent: {
-                    DEFAULT: 'hsl(var(--accent))',
-                    foreground: 'hsl(var(--accent-foreground))',
                 },
                 popover: {
                     DEFAULT: 'hsl(var(--popover))',

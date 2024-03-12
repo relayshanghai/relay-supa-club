@@ -61,9 +61,9 @@ const account = {
         trial: 'Trial',
         upgradeSubscription: 'Upgrade subscription',
         cancelSubscription: 'Cancel subscription',
-        monthly: 'monthly',
-        quarterly: 'quarterly',
-        annually: 'annually',
+        monthly: 'Monthly',
+        quarterly: 'Quarterly',
+        annually: 'Annually',
         modal: {
             plan_planName: '{{planName}} plan',
             youAreAboutToSubscribeFor: 'You are about to subscribe for',

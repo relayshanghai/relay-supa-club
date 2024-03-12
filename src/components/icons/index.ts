@@ -118,3 +118,4 @@ export { default as Download } from './Download';
 export { default as BorderedTick } from './BorderedTick';
 export { default as Forward } from './Forward';
 export { default as NumberedList } from './NumberedList';
+export { default as Rocket } from './Rocket';
