@@ -6,6 +6,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SubscriptionV2Service from './subscription-v2-service';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import { UnprocessableEntityError } from 'src/utils/error/http-error';
+import { NotFoundError } from 'src/utils/error/http-error';
+import { type SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import type Stripe from 'stripe';
 vi.mock('src/backend/database/provider/transaction-decorator', () => ({
     UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
         // do nothing
@@ -323,6 +326,75 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
                 const result = await SubscriptionV2Service.getService().getSubscription();
                 expect(result).toBe(subscriptionData);
+            });
+        });
+
+        describe(`cancelSubscription`, () => {
+            it(`should call deleteSubscription with the correct providerSubscriptionId`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue({
+                    id: 'sub_1',
+                    company: {
+                        id: 'company_1',
+                    },
+                    providerSubscriptionId: 'sub_1',
+                } as SubscriptionEntity);
+
+                const retrieveSubscriptionMock = vi.spyOn(StripeService.getService(), 'retrieveSubscription');
+                retrieveSubscriptionMock.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                    customer: 'cus_1',
+                    current_period_end: 1712811791,
+                } as Stripe.Response<Stripe.Subscription>);
+
+                const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
+                updateMock.mockResolvedValue({
+                    raw: [],
+                    affected: 1,
+                    generatedMaps: [],
+                });
+
+                const deleteSubscriptionMock = vi.spyOn(StripeService.getService(), 'deleteSubscription');
+                deleteSubscriptionMock.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                } as Stripe.Response<Stripe.Subscription>);
+
+                await SubscriptionV2Service.getService().cancelSubscription();
+                expect(findOneMock).toHaveBeenCalledWith({
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
+                expect(retrieveSubscriptionMock).toHaveBeenCalledWith('sub_1');
+                expect(updateMock).toHaveBeenCalledWith(
+                    {
+                        id: 'sub_1',
+                    },
+                    {
+                        cancelledAt: new Date(1712811791 * 1000),
+                    },
+                );
+                expect(deleteSubscriptionMock).toHaveBeenCalledWith('sub_1');
+            });
+            it(`should throw NotFoundError when no subscription found`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue(null);
+                const [err] = await awaitToError(SubscriptionV2Service.getService().cancelSubscription());
+                expect(err).not.toBeNull();
+                expect(err).toBeInstanceOf(NotFoundError);
+                expect(err.message).toBe('No subscription found');
             });
         });
     });

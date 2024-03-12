@@ -209,4 +209,32 @@ export default class SubscriptionV2Service {
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
     }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async cancelSubscription() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        const stripeSubscription = await StripeService.getService().retrieveSubscription(
+            subscription.providerSubscriptionId,
+        );
+        await SubscriptionRepository.getRepository().update(
+            {
+                id: subscription.id,
+            },
+            {
+                cancelledAt: new Date(stripeSubscription.current_period_end * 1000),
+            },
+        );
+        await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
+    }
 }
