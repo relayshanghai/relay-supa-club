@@ -181,8 +181,8 @@ export default class SubscriptionV2Service {
                 subscriptionData: subscription,
                 discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
                 coupon: subscription.discount?.coupon?.id,
-                activeAt: new Date(),
-                pausedAt: new Date(new Date(subscription.start_date * 1000).setMonth(new Date().getMonth() + 1)),
+                activeAt: subscription.current_period_start,
+                pausedAt: subscription.current_period_end,
                 cancelledAt: null,
             },
             {

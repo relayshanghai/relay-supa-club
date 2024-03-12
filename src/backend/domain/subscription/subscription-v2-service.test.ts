@@ -184,6 +184,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         payment_method_types: ['card'],
                     },
                     default_payment_method: 'card',
+                    current_period_start: 1710133391,
+                    current_period_end: 1712811791,
                     status: 'active',
                 });
                 StripeGetProductMetadataMock.mockResolvedValue({
@@ -248,11 +250,13 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                 payment_method_types: ['card'],
                             },
                             status: 'active',
+                            current_period_end: 1712811791,
+                            current_period_start: 1710133391,
                         },
                         discount: 200,
                         coupon: 'mock-coupon-id',
-                        activeAt: expect.any(Date),
-                        pausedAt: expect.any(Date),
+                        activeAt: 1710133391,
+                        pausedAt: 1712811791,
                         cancelledAt: null,
                     },
                     {
