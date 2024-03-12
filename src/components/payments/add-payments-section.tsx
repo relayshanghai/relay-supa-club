@@ -1,7 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
-import CheckoutForm from './checkout-form';
 import { type ActiveSubscriptionTier, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState } from 'react';
@@ -11,6 +10,7 @@ import { randomNumber } from 'src/utils/utils';
 import { PromoCodeSection } from './promo-code-section';
 import AlipayPortal from './alipay-portal';
 import { useUser } from 'src/hooks/use-user';
+import CheckoutFormV2 from './checkout-form-v2';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -98,7 +98,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
                     <>
                         {selectedPaymentMethod === 'card' && (
                             <StripeElementsProvider stripe={stripePromise} options={cardOptions}>
-                                <CheckoutForm selectedPrice={selectedPrice} batchId={batchId} couponId={couponId} />
+                                <CheckoutFormV2 selectedPrice={selectedPrice} batchId={batchId} couponId={couponId} />
                             </StripeElementsProvider>
                         )}
 

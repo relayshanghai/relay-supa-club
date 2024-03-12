@@ -52,7 +52,7 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.signup;
     }
 
-    if (/^\/payments\/?/.test(pathname)) {
+    if (/^\/payments\/?/.test(pathname) || /^\/subscriptions\/?/.test(pathname)) {
         return CurrentPageEvent.payments;
     }
 
