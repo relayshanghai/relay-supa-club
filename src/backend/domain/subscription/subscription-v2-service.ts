@@ -124,13 +124,21 @@ export default class SubscriptionV2Service {
             if (!lastSubscription || lastSubscription.items.data.length === 0) {
                 throw new NotFoundError('No subscription found');
             }
-            const productMetadata = await StripeService.getService().getSubscriptionProductMetadata(cusId);
+
+            const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id as string);
+            const product = await StripeService.getService().getProduct(price.product.toString());
+
+            const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
+
+            if (!profiles || !searches) {
+                throw new NotFoundError('Missing product metadata');
+            }
 
             subscription = await this.syncStripeSubscriptionWithDb(companyId, cusId, lastSubscription, {
-                profilesLimit: productMetadata.profiles,
-                searchesLimit: productMetadata.searches,
-                trialProfilesLimit: productMetadata.trial_profiles,
-                trialSearchesLimit: productMetadata.trial_searches,
+                profilesLimit: profiles,
+                searchesLimit: searches,
+                trialProfilesLimit: trial_profiles,
+                trialSearchesLimit: trial_searches,
             });
         }
         return subscription;
@@ -151,8 +159,8 @@ export default class SubscriptionV2Service {
             default_payment_method: paymentIntent.payment_method as string,
         });
 
-        const lastSubscription = await StripeService.getService().getLastSubscription(cusId);
-        const productMetadata = await StripeService.getService().getSubscriptionProductMetadata(cusId);
+        const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
+        const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
 
         await SubscriptionRepository.getRepository().upsert(
             {
@@ -160,19 +168,19 @@ export default class SubscriptionV2Service {
                     id: companyId,
                 },
                 provider: 'stripe',
-                providerSubscriptionId: lastSubscription.id,
+                providerSubscriptionId: subscription.id,
                 paymentMethod:
-                    lastSubscription.payment_settings?.payment_method_types?.[0] ||
-                    lastSubscription.default_payment_method?.toString() ||
+                    subscription.payment_settings?.payment_method_types?.[0] ||
+                    subscription.default_payment_method?.toString() ||
                     'card',
-                quantity: lastSubscription.items.data[0].quantity,
-                price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                quantity: subscription.items.data[0].quantity,
+                price: subscription.items.data[0].price.unit_amount?.valueOf() || 0,
                 total:
-                    (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
-                    (lastSubscription?.items?.data?.[0].quantity ?? 0),
-                subscriptionData: lastSubscription,
-                discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
-                coupon: lastSubscription.discount?.coupon?.id,
+                    (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                    (subscription?.items?.data?.[0].quantity ?? 0),
+                subscriptionData: subscription,
+                discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
+                coupon: subscription.discount?.coupon?.id,
                 activeAt: new Date(),
                 pausedAt: new Date(new Date().setMonth(new Date().getMonth() + 1)),
                 cancelledAt: null,
@@ -187,12 +195,12 @@ export default class SubscriptionV2Service {
                 id: companyId,
             },
             {
-                subscriptionStatus: lastSubscription.status as string,
+                subscriptionStatus: subscription.status as string,
                 profilesLimit: productMetadata.profiles,
                 searchesLimit: productMetadata.searches,
                 trialProfilesLimit: productMetadata.trial_profiles,
                 trialSearchesLimit: productMetadata.trial_searches,
-                subscriptionPlan: lastSubscription.items.data[0].plan.id as string,
+                subscriptionPlan: subscription.items.data[0].plan.id as string,
             },
         );
 

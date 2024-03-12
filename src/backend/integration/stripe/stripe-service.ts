@@ -63,13 +63,13 @@ export default class StripeService {
         return await StripeService.client.products.retrieve(productId);
     }
 
-    async getSubscriptionProductMetadata(cusId: string) {
-        const lastSubscription = await this.getLastSubscription(cusId);
+    async getProductMetadata(subscriptionId: string) {
+        const subscription = await this.retrieveSubscription(subscriptionId);
 
-        if (!lastSubscription || lastSubscription.items.data.length === 0) {
+        if (!subscription || subscription.items.data.length === 0) {
             throw new NotFoundError('No subscription found');
         }
-        const price = await this.getPrice(lastSubscription.items.data[0].price.id as string);
+        const price = await this.getPrice(subscription.items.data[0].price.id as string);
         const product = await this.getProduct(price.product.toString());
 
         const { trial_profiles, trial_searches, profiles, searches } = product.metadata;

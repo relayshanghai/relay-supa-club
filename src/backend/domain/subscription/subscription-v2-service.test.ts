@@ -23,7 +23,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeGetPriceMock = vi.fn();
     const StripeUpdateSubscriptionMock = vi.fn();
     const StripeDeleteSubscriptionMock = vi.fn();
-    const StripeGetSubscriptionProductMetadataMock = vi.fn();
+    const StripeGetProductMetadataMock = vi.fn();
     const SubscriptionRepositoryUpsertMock = vi.fn();
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
@@ -38,9 +38,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     StripeService.getService().updateSubscription = StripeUpdateSubscriptionMock;
     StripeService.getService().deleteSubscription = StripeDeleteSubscriptionMock;
     StripeService.getService().cancelSubscription = CancelSubscriptionMock;
-    StripeService.getService().getLastSubscription = StripeGetLastSubscriptionMock;
+    StripeService.getService().retrieveSubscription = StripeGetLastSubscriptionMock;
     StripeService.getService().getPrice = StripeGetPriceMock;
-    StripeService.getService().getSubscriptionProductMetadata = StripeGetSubscriptionProductMetadataMock;
+    StripeService.getService().getProductMetadata = StripeGetProductMetadataMock;
     SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
@@ -186,7 +186,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     default_payment_method: 'card',
                     status: 'active',
                 });
-                StripeGetSubscriptionProductMetadataMock.mockResolvedValue({
+                StripeGetProductMetadataMock.mockResolvedValue({
                     searches: '100000000',
                     profiles: '100000000',
                     ai_emails: '100000000',
