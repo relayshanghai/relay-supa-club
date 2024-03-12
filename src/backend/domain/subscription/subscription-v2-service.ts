@@ -209,4 +209,21 @@ export default class SubscriptionV2Service {
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
     }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async cancelSubscription() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
+    }
 }
