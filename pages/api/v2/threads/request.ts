@@ -5,6 +5,7 @@ import { PaginationParam } from 'types/pagination';
 export enum ThreadStatusRequest {
     UNOPENED = 'unopened',
     UNREPLIED = 'unreplied',
+    ALL = 'all',
 }
 
 export enum FunnelStatusRequest {

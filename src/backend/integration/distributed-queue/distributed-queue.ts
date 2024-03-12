@@ -11,17 +11,13 @@ export const UseDistributedQueue =
             const queueKey = `${key}-queue`;
             // check if the queue full, if full, wait for a while
             let queue = [];
-
             while (true) {
                 queue = (await KVService.getService().get<number[]>(queueKey)) || [];
                 if (queue.length < concurrencyPerSecond) {
                     break;
                 }
-                if (queue[queue.length - 1] < Date.now() - 1000) {
-                    queue.pop();
-                    await KVService.getService().set(queueKey, queue);
-                    break;
-                }
+                queue.filter((item) => item > Date.now() - 1000);
+                KVService.getService().set(queueKey, queue);
                 await delay(delayCheck);
             }
             const now = Date.now();

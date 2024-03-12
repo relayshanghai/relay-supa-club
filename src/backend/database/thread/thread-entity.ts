@@ -15,8 +15,8 @@ import { EmailEntity } from './email-entity';
 import { ThreadContactEntity } from './email-contact-entity';
 export enum ThreadStatus {
     UNOPENED = 'unopened',
-    OPENED = 'opened',
-    CLOSED = 'closed',
+    UNREPLIED = 'unreplied',
+    REPLIED = 'replied',
 }
 @Entity('threads')
 @Unique('threads_thread_id_key', ['threadId'])

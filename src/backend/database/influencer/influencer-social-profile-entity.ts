@@ -58,8 +58,13 @@ export class InfluencerSocialProfileEntity {
 
     @Column({ name: 'data', type: 'jsonb', nullable: true })
     data?: object;
-
-    @Column({ name: 'topic_tags', type: 'jsonb', nullable: true })
+    // @ts-ignore
+    @Column({ name: 'topic_tags', type: 'jsonb', nullable: true, transformer: {
+        from(value: object) {
+            if (typeof value === 'string') return JSON.parse(value);
+            return value;
+        }
+    } })
     topicTags?: object[];
 
     @Column({ name: 'topics_relevances', type: 'jsonb', nullable: true })

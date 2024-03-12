@@ -9,6 +9,7 @@ import EmailRepository from "src/backend/database/thread/email-repository";
 import EmailHelperService from "../email/email-helper-service";
 import type { ReplyRequest } from "pages/api/v2/threads/[id]/reply-request";
 import { NotFoundError } from "src/utils/error/http-error";
+import type { GetThreadResponse } from "pages/api/v2/threads/response";
 
 export default class ThreadService {
     static service = new ThreadService();
@@ -19,7 +20,7 @@ export default class ThreadService {
 
     @UseLogger()
     @CompanyIdRequired()
-    async getAllThread(request: GetThreadsRequest) {
+    async getAllThread(request: GetThreadsRequest): Promise<GetThreadResponse> {
         const companyId = RequestContext.getContext().companyId as string
         const threadIds: string[] = []
         /**
@@ -47,15 +48,10 @@ export default class ThreadService {
             ...request,
             threadIds
         }, {
-            contacts: {
-                emailContact: true
-            },
-            sequenceInfluencer: {
-                sequence: true,
-                influencerSocialProfile: true
-            },
+            sequenceInfluencer: true,
             
         });
+        
         return data;
     }
 
