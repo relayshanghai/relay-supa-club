@@ -22,7 +22,6 @@ import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
 import { appCacheDBKey } from 'src/constants';
-import { apiFetch } from 'src/utils/api/api-fetch';
 
 export type SignupData = {
     email: string;
@@ -63,15 +62,16 @@ export const userExists = async (email: string) => {
     params.append('email', email);
     const url = `profiles/exists?${params.toString()}`;
     try {
-        const res = await apiFetch<{ message?: string; error?: string }>(url);
-        if (res.response.status === 200) {
-            return {
-                exists: false,
-            };
-        } else if (res.response.status === 400) {
+        const res = await nextFetch<{ message?: string; error?: string }>(url, {
+            method: 'get',
+        });
+        if (res.error) {
             return {
                 exists: true,
-                mail: res.content.error,
+            };
+        } else {
+            return {
+                exists: false,
             };
         }
     } catch (e) {
