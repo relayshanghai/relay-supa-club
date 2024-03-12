@@ -343,7 +343,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 const getLastSubscriptionMock = vi.spyOn(StripeService.getService(), 'getLastSubscription');
                 getLastSubscriptionMock.mockResolvedValue({
                     id: 'sub_1',
-                    canceled_at: 1234567890,
+                    current_period_end: 1234567890,
                 } as Stripe.Subscription);
 
                 const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');

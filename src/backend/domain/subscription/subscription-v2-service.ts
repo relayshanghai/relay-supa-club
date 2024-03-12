@@ -231,7 +231,7 @@ export default class SubscriptionV2Service {
                 id: subscription.id,
             },
             {
-                cancelledAt: lastSubscription.canceled_at,
+                cancelledAt: lastSubscription.current_period_end,
             },
         );
         await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
