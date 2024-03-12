@@ -53,7 +53,7 @@ export default class EmailSyncService {
             thread.sequenceInfluencer = sequenceInfluencer;
             thread.emailEngineAccountId = emailEngineAccountId;
             thread.createdAt = new Date();
-            thread.threadStatus = ThreadStatus.OPENED;
+            thread.threadStatus = ThreadStatus.UNOPENED;
             await ThreadRepository.getRepository().save(thread);
             thread = await ThreadRepository.getRepository().findOne({
                 where: {

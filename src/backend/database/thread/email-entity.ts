@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { ThreadEntity } from './thread-entity';
 
-interface EmailContact {
+export interface EmailContact {
     name?: string;
     address: string;
 }
@@ -33,7 +33,7 @@ interface EmailTextContent {
     hasMore: boolean;
 }
 
-interface EmailAttachment {
+export interface EmailAttachment {
     id: string;
     inline: boolean;
     embedded: boolean;

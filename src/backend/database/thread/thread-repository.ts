@@ -2,7 +2,7 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
 import { ThreadEntity, ThreadStatus } from './thread-entity';
-import { In, IsNull, Not, type EntityManager, type EntityTarget, type FindOptionsRelations, type FindOptionsWhere } from 'typeorm';
+import { And, In, Not, type EntityManager, type EntityTarget, type FindOptionsRelations, type FindOptionsWhere } from 'typeorm';
 import { ThreadStatusRequest, type GetThreadsRequest } from 'pages/api/v2/threads/request';
 import type { SequenceInfluencerEntity } from '../sequence/sequence-influencer-entity';
 import type { GetThreadResponse } from 'pages/api/v2/threads/response';
@@ -30,21 +30,23 @@ export default class ThreadRepository extends BaseRepository<ThreadEntity> {
     }
 
     async getAll(companyId: string, param: GetThreadsRequest & {
-        threadIds?: string[]
+        threadIds?: string[],
     }, relations?: FindOptionsRelations<ThreadEntity>): Promise<GetThreadResponse> {
         let where: FindOptionsWhere<ThreadEntity> = {
-            lastReplyId: Not(IsNull()),
-            lastReplyDate: Not(IsNull())
+            //lastReplyId: Not(IsNull()),
+            //lastReplyDate: Not(IsNull())
         } 
+        const skipFunneLStatus = Not(In(['Ignored', 'In Sequence']))
         let whereSequenceInfluencer: FindOptionsWhere<SequenceInfluencerEntity> = {
             company: {
                 id: companyId
-            }
+            },
+            funnelStatus: skipFunneLStatus
         }
         if(param.funnelStatus) {
             whereSequenceInfluencer = {
                 ...whereSequenceInfluencer,     
-                funnelStatus: In(param.funnelStatus)
+                funnelStatus: And(In(param.funnelStatus), skipFunneLStatus)
             }
         }
         if(param.threadStatus && param.threadStatus !== ThreadStatusRequest.ALL ) {

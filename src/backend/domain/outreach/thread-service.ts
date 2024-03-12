@@ -61,7 +61,7 @@ export default class ThreadService {
         const companyId = RequestContext.getContext().companyId as string;
         const thread = await ThreadRepository.getRepository().findOne({
             where: {
-                threadId: id,
+                id,
                 sequenceInfluencer: {
                     company: {
                         id: companyId
@@ -70,7 +70,9 @@ export default class ThreadService {
             },
             relations: {
                 sequenceInfluencer: {
-                    sequence: true,
+                    sequence: {
+                        templateVariables: true
+                    },
                     influencerSocialProfile: true
                 },
                 contacts: {
@@ -100,10 +102,10 @@ export default class ThreadService {
                 }
             },
             order: {
-                createdAt: 'ASC'
+                createdAt: 'DESC'
             }
         });
-        return data.map(EmailHelperService.getService().parseMessage);
+        return data.map((email) => email.data);
     }
 
     @UseLogger()

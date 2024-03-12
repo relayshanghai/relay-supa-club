@@ -18,6 +18,7 @@ export enum ThreadStatus {
     UNREPLIED = 'unreplied',
     REPLIED = 'replied',
 }
+
 @Entity('threads')
 @Unique('threads_thread_id_key', ['threadId'])
 export class ThreadEntity {
