@@ -29,7 +29,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
         return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.userAlreadyExists });
     }
 
-    return res.status(200).json({ message: `Email available` });
+    return res.status(httpCodes.OK).json({ message: `Email available` });
 };
 
 export default ApiHandler({
