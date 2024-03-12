@@ -85,6 +85,7 @@ export const CompanyDetails = () => {
 
     return (
         <div
+            id="company-details"
             className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
                 userDataLoading || updating ? 'opacity-50' : ''
             } shadow-lg shadow-gray-200`}

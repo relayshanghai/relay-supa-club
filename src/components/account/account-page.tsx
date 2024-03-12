@@ -27,7 +27,7 @@ export const AccountPage = () => {
                         {t('account.companyDetails')}
                     </a>
                 </nav>
-                <section className="w-full">
+                <section className="max-h-[79vh] w-full overflow-y-auto">
                     <SubscriptionDetails />
                     {/* Do not show personal details when acting on behalf of company, because the other two sections are showing the 'manage as' company's info, but PersonalDetails is the relay employee. This could cause confusion. */}
                     {!clientRoleData.companyId && <PersonalDetails />}

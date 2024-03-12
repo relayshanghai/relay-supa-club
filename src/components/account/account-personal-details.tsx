@@ -127,6 +127,7 @@ export const PersonalDetails = () => {
 
     return (
         <div
+            id="personal-details"
             className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
                 userDataLoading ? 'opacity-50' : ''
             } shadow-lg shadow-gray-200`}

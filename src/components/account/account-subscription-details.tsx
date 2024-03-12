@@ -7,12 +7,12 @@ import { useUsages } from 'src/hooks/use-usages';
 import { checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { Button } from 'shadcn/components/ui/button';
-import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
 import { Progress } from 'shadcn/components/ui/progress';
 import { Rocket } from '../icons';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
 
 const Tablet = ({ children, customStyle }: { children: React.ReactNode; customStyle: string }) => {
     return <span className={`rounded-lg border px-2 py-0.5 text-sm font-medium ${customStyle}`}>{children}</span>;
@@ -58,7 +58,7 @@ export const SubscriptionDetails = () => {
     }, [company, refreshCompany, refreshUsages]);
 
     return (
-        <section className="w-full justify-end">
+        <section id="subscription-details" className="w-full justify-end">
             <p className="pb-6">Plan</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
@@ -69,50 +69,53 @@ export const SubscriptionDetails = () => {
                             onClose={() => setShowCancelModal(false)}
                             periodEnd={periodEnd}
                         />
-                        <section className="flex">
-                            <div className="flex w-full flex-col items-start justify-between">
-                                <h2 className="text-4xl font-semibold text-gray-900">
-                                    {t(`account.plans.${subscription?.name.toLowerCase()}`)}
-                                </h2>
-                                <h2 className="text-sm font-normal text-gray-600">{t(`account.plans.details`)}</h2>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                                <div className="flex h-fit gap-3">
-                                    <Tablet customStyle={statusColor}>
-                                        {subscriptionEndDate
-                                            ? t('account.subscription.canceled')
-                                            : t(`account.subscription.${subscription?.status}`)}
-                                    </Tablet>
-                                    <Tablet customStyle={'bg-primary-100 text-primary-700 border-primary-200'}>
-                                        {t(`account.subscription.${subscription?.interval}`)}
-                                    </Tablet>
-                                </div>
-                                <div className="text-sm">
-                                    <span className="font-semibold text-gray-600">
-                                        {subscription?.status === 'active' && !canceledNotExpired
-                                            ? t('account.subscription.renewsOn')
-                                            : t('account.subscription.expirationDate')}
-                                        {': '}
-                                    </span>
-                                    <span>
-                                        {new Date(
-                                            subscriptionEndDate ?? (periodEnd as string | number),
-                                        ).toLocaleDateString(i18n.language, {
-                                            month: 'short',
-                                            day: 'numeric',
-                                        })}
-                                    </span>
-                                </div>
-                                <p
-                                    onClick={handleCancelSubscription}
-                                    className="cursor-pointer text-sm font-semibold text-red-400"
-                                >
-                                    {t('account.subscription.cancelSubscription')}
-                                </p>
-                            </div>
-                        </section>
-                        {company ? (
+                        {company && subscription ? (
                             <>
+                                <section className="flex">
+                                    <div className="flex w-full flex-col items-start justify-between">
+                                        <h2 className="text-4xl font-semibold text-gray-900">
+                                            {t(`account.plans.${subscription?.name.toLowerCase()}`)}
+                                        </h2>
+                                        <h2 className="text-sm font-normal text-gray-600">
+                                            {t(`account.plans.details`)}
+                                        </h2>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-2">
+                                        <div className="flex h-fit gap-3">
+                                            <Tablet customStyle={statusColor}>
+                                                {subscriptionEndDate
+                                                    ? t('account.subscription.canceled')
+                                                    : t(`account.subscription.${subscription?.status}`)}
+                                            </Tablet>
+                                            <Tablet customStyle={'bg-primary-100 text-primary-700 border-primary-200'}>
+                                                {t(`account.subscription.${subscription?.interval}`)}
+                                            </Tablet>
+                                        </div>
+                                        <div className="text-sm">
+                                            <span className="font-semibold text-gray-600">
+                                                {subscription?.status === 'active' && !canceledNotExpired
+                                                    ? t('account.subscription.renewsOn')
+                                                    : t('account.subscription.expirationDate')}
+                                                {': '}
+                                            </span>
+                                            <span>
+                                                {new Date(
+                                                    subscriptionEndDate ?? (periodEnd as string | number),
+                                                ).toLocaleDateString(i18n.language, {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                })}
+                                            </span>
+                                        </div>
+                                        <p
+                                            onClick={handleCancelSubscription}
+                                            className="cursor-pointer text-sm font-semibold text-red-400"
+                                        >
+                                            {t('account.subscription.cancelSubscription')}
+                                        </p>
+                                    </div>
+                                </section>
+
                                 <section className="flex flex-col gap-3">
                                     <span>
                                         {usages.profile.current}/{usages.profile.limit} Reports
@@ -129,10 +132,31 @@ export const SubscriptionDetails = () => {
                                 </section>
                             </>
                         ) : (
-                            <div className="flex w-full justify-center">
-                                {/* TODO task V2-32: make skeleton */}
-                                <Spinner className="h-8 w-8 fill-primary-400 text-white" />
-                            </div>
+                            <>
+                                <section className="flex">
+                                    <div className="flex w-full flex-col items-start justify-between gap-5">
+                                        <Skeleton className="h-9 w-48 font-semibold text-gray-900" />
+                                        <Skeleton className="h-4 w-24 font-normal text-gray-600" />
+                                    </div>
+                                    <div className="flex flex-col items-end gap-3">
+                                        <div className="flex h-fit gap-3">
+                                            <Skeleton className="h-4 w-24" />
+                                            <Skeleton className="h-4 w-24" />
+                                        </div>
+                                        <div className="text-sm">
+                                            <Skeleton className="h-4 w-48" />
+                                        </div>
+                                        <Skeleton className="h-4 w-48 cursor-pointer text-sm font-semibold text-red-400" />
+                                    </div>
+                                </section>
+
+                                <section className="flex flex-col gap-3">
+                                    <Skeleton className="h-5 w-48" />
+                                    <Skeleton className="h-5 w-full" />
+                                    <Skeleton className="h-5 w-48" />
+                                    <Skeleton className="h-5 w-full" />
+                                </section>
+                            </>
                         )}
                     </div>
                     <Link className="mt-11" href="/upgrade">
