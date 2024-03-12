@@ -214,6 +214,7 @@ export default class SubscriptionV2Service {
     @UseLogger()
     async cancelSubscription() {
         const companyId = RequestContext.getContext().companyId as string;
+        const cusId = RequestContext.getContext().customerId as string;
         const subscription = await SubscriptionRepository.getRepository().findOne({
             where: {
                 company: {
@@ -224,6 +225,15 @@ export default class SubscriptionV2Service {
         if (!subscription) {
             throw new NotFoundError('No subscription found');
         }
+        const lastSubscription = await StripeService.getService().getLastSubscription(cusId);
+        await SubscriptionRepository.getRepository().update(
+            {
+                id: subscription.id,
+            },
+            {
+                cancelledAt: lastSubscription.canceled_at,
+            },
+        );
         await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
     }
 }
