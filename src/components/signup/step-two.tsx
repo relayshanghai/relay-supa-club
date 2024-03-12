@@ -50,6 +50,8 @@ export const StepTwo = ({
                 setTimeout(async () => {
                     try {
                         const res = await userExists(email);
+                        // eslint-disable-next-line no-console
+                        console.log('response: ', res);
                         if (res?.exists) {
                             setUserError(true);
                         } else {
