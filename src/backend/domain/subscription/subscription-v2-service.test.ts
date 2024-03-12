@@ -255,8 +255,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         },
                         discount: 200,
                         coupon: 'mock-coupon-id',
-                        activeAt: 1710133391,
-                        pausedAt: 1712811791,
+                        activeAt: new Date(1710133391 * 1000),
+                        pausedAt: new Date(1712811791 * 1000),
                         cancelledAt: null,
                     },
                     {
