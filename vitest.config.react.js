@@ -7,7 +7,7 @@ dotenv.config({ path: './.env.local' });
 
 export default defineConfig({
     plugins: [
-        // Vite plugin        
+        // Vite plugin
         react(),
     ], // need this to be able to test hooks which are jsx/tsx files
     test: {

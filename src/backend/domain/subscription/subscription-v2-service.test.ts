@@ -207,7 +207,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
 
             it(`should update subscription and company, and insert new subscription when redirectStatus is success`, async () => {
                 await SubscriptionV2Service.getService().postConfirmation({
-                    redirectStatus: 'success',
+                    redirectStatus: 'succeeded',
                     paymentIntentId: 'pi_1',
                     paymentIntentSecret: 'some-secret',
                     subscriptionId: 'trial_sub_1',

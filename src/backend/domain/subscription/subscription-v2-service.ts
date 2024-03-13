@@ -150,7 +150,7 @@ export default class SubscriptionV2Service {
     async postConfirmation(request: PostConfirmationRequest) {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
-        if (request.redirectStatus != 'success') {
+        if (request.redirectStatus != 'succeeded') {
             await StripeService.getService().cancelSubscription(cusId);
             throw new UnprocessableEntityError('entity is unprocessable');
         }
