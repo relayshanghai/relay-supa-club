@@ -11,7 +11,11 @@ import { useCompany } from 'src/hooks/use-company';
 import { type CompanyDB } from 'src/utils/api/db';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import {
+    STRIPE_SECRET_RESPONSE,
+    stripeSecretResponseInitialValue,
+    useSubscriptionV2,
+} from 'src/hooks/use-subscription-v2';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 
 const isCurrentPlan = (
