@@ -51,6 +51,9 @@ export const sendInviteEmail = async (email: string, senderName: string, company
     //@ts-ignore
     const templateInfo: SmtpMailType = await apiInstance.getSmtpTemplate(templates.invite);
     const { htmlContent, subject } = templateInfo;
+    if (!htmlContent || !subject || htmlContent === '' || subject === '') {
+        throw new Error('Invite template not found');
+    }
     const sendSmtpEmail = new (Brevo('SendSmtpEmail'))();
     sendSmtpEmail.sender = { name: BOOSTBOT_DOMAIN, email: `no-reply@${BOOSTBOT_DOMAIN}` };
     sendSmtpEmail.to = [{ email, name: email }];
