@@ -49,6 +49,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             AddressEntity,
             OutreachEmailTemplateVariableEntity,
             SubscriptionEntity,
+            TemplateVariableEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

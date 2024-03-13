@@ -16,7 +16,6 @@ import { ProductEntity } from '../product/product-entity';
 import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { SequenceStepEntity } from './sequence-step-entity';
-
 @Entity('sequences')
 export class SequenceEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -52,9 +51,6 @@ export class SequenceEntity {
     @OneToOne(() => ProductEntity, (product) => product.sequence)
     product?: Relation<ProductEntity>;
 
-    @OneToMany(() => TemplateVariableEntity, (templateVariable) => templateVariable.sequence, { cascade: true })
-    templateVariables?: TemplateVariableEntity[];
-
     @OneToMany(() => SequenceInfluencerEntity, (sequenceInfluencer) => sequenceInfluencer.sequence, {
         onDelete: 'CASCADE',
     })
@@ -62,4 +58,7 @@ export class SequenceEntity {
 
     @OneToMany(() => SequenceStepEntity, (sequenceStep) => sequenceStep.sequence, { onDelete: 'CASCADE' })
     steps!: Relation<SequenceStepEntity[]>;
+
+    @OneToMany(() => TemplateVariableEntity, (variable) => variable.sequence, { onDelete: 'CASCADE' })
+    templateVariables!: Relation<TemplateVariableEntity[]>;
 }

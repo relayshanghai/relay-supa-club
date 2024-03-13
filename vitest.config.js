@@ -13,9 +13,10 @@ export default defineConfig({
         swc.vite(),
     ], // need this to be able to test hooks which are jsx/tsx files
     test: {
+        global: true,
         setupFiles: ['./test-setup.js'],
-        include: ['**/*.test.ts'], // run only tests with .test.ts extension,
-        environment: 'node', // We are only using vitest for backend and node tests, not for components which we are using cypress component tests for
+        include: ['**/*.test.ts', '**/*.test.tsx'], // run only tests with .test.ts extension,
+        environment: 'jsdom',
     },
     deps: {
         moduleDirectories: ['node_modules'],
@@ -23,6 +24,7 @@ export default defineConfig({
     resolve: {
         alias: {
             src: resolve(__dirname, './src'),
+            shadcn: resolve(__dirname, './shadcn'),
         },
     },
 });

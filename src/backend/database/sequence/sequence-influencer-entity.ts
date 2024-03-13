@@ -78,7 +78,7 @@ export class SequenceInfluencerEntity {
         (influencerSocialProfile) => influencerSocialProfile.sequenceInfluencers,
         { onDelete: 'SET NULL' },
     )
-    @JoinColumn({ name: 'influencer_social_profile_id' })
+    @JoinColumn({ name: 'influencer_social_profile_id', referencedColumnName: 'id' })
     influencerSocialProfile?: Relation<InfluencerSocialProfileEntity>;
 
     @Column({ name: 'iqdata_id', type: 'text', nullable: false })
@@ -109,7 +109,7 @@ export class SequenceInfluencerEntity {
     commissionRate?: number;
 
     @OneToOne(() => ThreadEntity, (thread) => thread.sequenceInfluencer, { onDelete: 'SET NULL' })
-    thread?: ThreadEntity;
+    thread?: Relation<ThreadEntity>;
 
     @OneToMany(() => SequenceEmailEntity, (sequenceEmail) => sequenceEmail.sequenceInfluencer)
     sequenceEmails!: SequenceEmailEntity[];
