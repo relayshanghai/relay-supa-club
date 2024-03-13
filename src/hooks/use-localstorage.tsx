@@ -4,10 +4,17 @@ import { clientLogger } from 'src/utils/logger-client';
 // Define a generic type for the initial value
 type InitialValue<T> = T | (() => T);
 
-export const useLocalStorage = <T,>(key: string, initialValue: InitialValue<T>): [T, (value: T | ((val: T) => T)) => void] => {
+export const useLocalStorage = <T,>(
+    key: string,
+    initialValue: InitialValue<T>,
+): [T, (value: T | ((val: T) => T)) => void] => {
     // Retrieve the value from localStorage if it exists, otherwise use the initial value
     const [storedValue, setStoredValue] = useState<T>(() => {
         try {
+            if (typeof window === 'undefined') {
+                return typeof initialValue === 'function' ? (initialValue as () => T)() : initialValue;
+            }
+
             const item = window.localStorage.getItem(key);
             // Parse JSON if the stored value is an object, otherwise return it as is
             return item
@@ -41,4 +48,3 @@ export const useLocalStorage = <T,>(key: string, initialValue: InitialValue<T>):
 
     return [storedValue, setValue];
 };
-

@@ -3,7 +3,6 @@ import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
-import { useCompany } from 'src/hooks/use-company';
 import type { NewRelayPlan } from 'types';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
@@ -11,13 +10,14 @@ import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-pa
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue } from 'src/hooks/use-subscription-v2';
 import { useRouter } from 'next/router';
+import { PayForUpgradedPlan } from 'src/utils/analytics/events';
+import awaitToError from 'src/utils/await-to-error';
 
 type PaymentType = 'card' | 'alipay';
 
 const CheckoutFormV2 = ({
     selectedPrice,
     batchId,
-    couponId,
 }: {
     selectedPrice: NewRelayPlan;
     batchId: number;
@@ -29,7 +29,6 @@ const CheckoutFormV2 = ({
     const stripe = useStripe();
     const elements = useElements();
     const { t } = useTranslation();
-    const { company } = useCompany();
     const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const [isLoading, setIsLoading] = useState(false);
@@ -45,16 +44,15 @@ const CheckoutFormV2 = ({
 
     const handleCardPayment = async () => {
         if (!stripe) return;
-        const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSecretResponse.clientSecret, {
+        const { error } = await stripe.confirmCardPayment(stripeSecretResponse.clientSecret, {
             return_url: `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks`,
         });
-        console.log('error', error);
-        console.log('paymentIntent', paymentIntent);
+        if (error) throw error;
     };
 
     const handleAlipayPayment = async () => {
         if (!stripe) return;
-        const { error, paymentIntent } = await stripe.confirmAlipayPayment(stripeSecretResponse.clientSecret, {
+        const { error } = await stripe.confirmAlipayPayment(stripeSecretResponse.clientSecret, {
             return_url: `${window.location.origin}/subscriptions/${subscriptionId}/alipay/callbacks`,
             mandate_data: {
                 customer_acceptance: {
@@ -67,6 +65,7 @@ const CheckoutFormV2 = ({
             },
             save_payment_method: true,
         });
+        if (error) throw error;
     };
 
     const handleSubmit = async () => {
@@ -83,18 +82,28 @@ const CheckoutFormV2 = ({
             return;
         }
 
-        try {
-            console.log(company);
-            if (paymentType === 'card') {
-                await handleCardPayment();
-            } else if (paymentType === 'alipay') {
-                await handleAlipayPayment();
-            }
-        } catch (error) {
-            console.log('errr', error);
-        } finally {
-            setIsLoading(false);
+        let err = null;
+        if (paymentType === 'card') {
+            [err] = await awaitToError(handleCardPayment());
+        } else if (paymentType === 'alipay') {
+            [err] = await awaitToError(handleAlipayPayment());
         }
+
+        if (err) {
+            track(PayForUpgradedPlan, {
+                successful: false,
+                batch_id: batchId,
+                stripe_error_code: (err as any).code,
+            });
+            handleError(err);
+            return;
+        } else {
+            track(PayForUpgradedPlan, {
+                successful: true,
+                batch_id: batchId,
+            });
+        }
+        setIsLoading(false);
     };
 
     return (
