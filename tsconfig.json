@@ -19,6 +19,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js", "node_modules/typeorm/**/*.d.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js", "node_modules/typeorm/**/*.d.ts", "vitest.workspace.js"],
   "exclude": ["node_modules"]
 }
