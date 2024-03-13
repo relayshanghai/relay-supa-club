@@ -41,8 +41,20 @@ export default function ThreadList() {
             onScroll={onThreadListContainerScroll}
         >
             <section className="flex w-full flex-col gap-4 p-2">
-                <ThreadListInputSearch onSearch={setSearchTerm} />
-                <ThreadListFilter filters={filter} messageCount={messageCount} onChangeFilter={setFilters} />
+                <ThreadListInputSearch
+                    onSearch={(value) => {
+                        setPage(1);
+                        setSearchTerm(value);
+                    }}
+                />
+                <ThreadListFilter
+                    filters={filter}
+                    messageCount={messageCount}
+                    onChangeFilter={(value) => {
+                        setPage(1);
+                        setFilters(value);
+                    }}
+                />
             </section>
             <ThreadListContainer loading={loading} threads={threads} />
         </section>

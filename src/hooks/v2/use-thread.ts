@@ -97,6 +97,7 @@ export const useThread = () => {
         const [, response] = await awaitToError(apiClient.get<GetThreadResponse>('/v2/threads', { params }));
         if (response) {
             if (params.page === response?.data.totalPages) setIsNextAvailable(false);
+            else setIsNextAvailable(true);
 
             if (request.page === 1) setThreads(response?.data.items);
             else appendThreads(response?.data.items);
