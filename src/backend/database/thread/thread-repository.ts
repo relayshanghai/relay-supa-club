@@ -5,6 +5,7 @@ import { ThreadEntity } from './thread-entity';
 import {
     And,
     In,
+    IsNull,
     Not,
     type EntityManager,
     type EntityTarget,
@@ -46,8 +47,7 @@ export default class ThreadRepository extends BaseRepository<ThreadEntity> {
         relations?: FindOptionsRelations<ThreadEntity>,
     ): Promise<GetThreadResponse> {
         let where: FindOptionsWhere<ThreadEntity> = {
-            //lastReplyId: Not(IsNull()),
-            //lastReplyDate: Not(IsNull())
+            lastReplyId: Not(IsNull()),
         };
         const skipFunneLStatus = Not(In(['Ignored', 'In Sequence']));
         let whereSequenceInfluencer: FindOptionsWhere<SequenceInfluencerEntity> = {

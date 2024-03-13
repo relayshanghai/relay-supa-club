@@ -11,10 +11,11 @@ export default function ThreadListContainer({ threads, loading }: { threads: Thr
     const threadsGroupedByUpdatedAt = useMemo(
         () =>
             threads?.reduce((acc, thread) => {
-                if (!thread.updatedAt) {
+                const date = thread.lastReplyDate || thread.updatedAt;
+                if (!date) {
                     return acc;
                 }
-                const key = formatDate(thread.updatedAt.toString(), '[date] [monthShort]');
+                const key = formatDate(date.toString(), '[date] [monthShort]');
                 if (!acc[key]) {
                     acc[key] = [];
                 }
