@@ -43,9 +43,13 @@ const CheckoutFormV2 = ({
     };
 
     const handleCardPayment = async () => {
-        if (!stripe) return;
-        const { error } = await stripe.confirmCardPayment(stripeSecretResponse.clientSecret, {
-            return_url: `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks`,
+        if (!stripe || !elements) return;
+        const { error } = await stripe.confirmPayment({
+            clientSecret: stripeSecretResponse.clientSecret,
+            elements,
+            confirmParams: {
+                return_url: `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks`,
+            },
         });
         if (error) throw error;
     };
