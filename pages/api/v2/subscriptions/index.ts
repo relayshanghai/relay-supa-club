@@ -22,15 +22,8 @@ class SubscriptionHandler {
 
     @DELETE()
     @Status(httpCodes.NO_CONTENT)
-    async cancelSubscription(
-        @Body(CreateSubscriptionRequest) request: CreateSubscriptionRequest,
-        @IpAddress() ipAddress: string,
-    ) {
-        const result = await SubscriptionV2Service.getService().createSubscription(request);
-        return {
-            ...result,
-            ipAddress,
-        };
+    async cancelSubscription() {
+        await SubscriptionV2Service.getService().cancelSubscription();
     }
 
     @GET()
