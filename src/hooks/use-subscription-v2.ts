@@ -9,6 +9,7 @@ export type CreateSubscriptionResponse = {
 };
 
 export const STRIPE_SECRET_RESPONSE = 'boostbot_stripe_secret_response'
+export const stripeSecretResponseInitialValue = { clientSecret: '', ipAddress: '', plan: '' };
 
 export const useSubscriptionV2 = () => {
     const { apiClient, loading, error } = useApiClient();

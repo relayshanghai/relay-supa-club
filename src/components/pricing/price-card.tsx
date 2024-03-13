@@ -11,8 +11,8 @@ import { useCompany } from 'src/hooks/use-company';
 import { type CompanyDB } from 'src/utils/api/db';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import { STRIPE_SECRET_RESPONSE, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
-import useLocalStorage from 'src/hooks/use-localstorage';
+import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import { useLocalStorage } from 'src/hooks/use-localstorage';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -58,7 +58,7 @@ export const PriceCard = ({
     const { prices } = usePrices();
     const { subscription, upgradeSubscription } = useSubscription();
     const { createSubscription, loading: subscriptionV2Loading } = useSubscriptionV2();
-    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, { clientSecret: '', ipAddress: '' });
+    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue);
     const { company } = useCompany();
     const router = useRouter();
     type PriceKey = keyof typeof prices;
@@ -84,12 +84,27 @@ export const PriceCard = ({
     const triggerCreateSubscription = () => {
         createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
             .then((res) => {
-                setStripeSecretResponse({ clientSecret: res?.clientSecret as string, ipAddress: res?.ipAddress as string });
-                router.push(`/subscriptions/${res?.providerSubscriptionId}/payments?plan=${priceTier}`);
+                setStripeSecretResponse({
+                    clientSecret: res?.clientSecret as string,
+                    ipAddress: res?.ipAddress as string,
+                    plan: priceTier,
+                });
+                router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })
             .catch((error) => {
                 toast.error(t('pricing.createSubscriptionFailed'));
                 clientLogger(`createSubscription error: ${error}`);
+            });
+    };
+
+    const triggerUpgradeSubscription = () => {
+        upgradeSubscription(prices[priceTier].priceIds.monthly)
+            .then(() => {
+                toast.success(t('pricing.upgradeSuccess'));
+            })
+            .catch((error) => {
+                toast.error(t('pricing.upgradeFailed'));
+                clientLogger(`upgradeSubscription error: ${error}`);
             });
     };
 
@@ -99,15 +114,7 @@ export const PriceCard = ({
         if (shouldAddPayment) {
             triggerCreateSubscription();
         } else if (shouldUpgrade) {
-            upgradeSubscription(prices[priceTier].priceIds.monthly)
-                .then(() => {
-                    toast.success(t('pricing.upgradeSuccess'));
-                })
-                .catch((error) => {
-                    toast.error(t('pricing.upgradeFailed'));
-                    clientLogger(`upgradeSubscription error: ${error}`);
-                });
-            return;
+            triggerUpgradeSubscription();
         } else {
             toast.error('unhandled subscription case');
             clientLogger(`unhandled subscription case: ${subscription?.status} ${company?.subscription_status}`);

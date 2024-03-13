@@ -1,31 +1,26 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import LoginSignupLayout from 'src/components/SignupLayout';
 import { AddPaymentsSection } from 'src/components/payments/add-payments-section';
 import { PlanDetails } from 'src/components/payments/plan-details';
+import { useLocalStorage } from 'src/hooks/use-localstorage';
 import { type ActiveSubscriptionTier } from 'src/hooks/use-prices';
+import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue } from 'src/hooks/use-subscription-v2';
 
 export default function SubscriptionPaymentPage() {
     const router = useRouter();
-    const {
-        isReady,
-        query: { plan },
-    } = router;
-    const [routing, setRouting] = useState(true);
+    const [stripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue);
+    const { isReady } = router;
 
-    useEffect(() => {
-        if (isReady) {
-            setRouting(false);
-        }
-    }, [isReady]);
-
-    const priceTier = typeof plan === 'string' ? (plan as ActiveSubscriptionTier) : 'discovery';
+    const priceTier =
+        typeof stripeSecretResponse.plan === 'string'
+            ? (stripeSecretResponse.plan as ActiveSubscriptionTier)
+            : 'discovery';
 
     return (
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
-            left={routing ? <></> : <PlanDetails priceTier={priceTier as ActiveSubscriptionTier} />}
-            right={routing ? <></> : <AddPaymentsSection priceTier={priceTier as ActiveSubscriptionTier} />}
+            left={isReady ? <PlanDetails priceTier={priceTier as ActiveSubscriptionTier} /> : <></>}
+            right={isReady ? <AddPaymentsSection priceTier={priceTier as ActiveSubscriptionTier} /> : <></>}
         />
     );
 }
