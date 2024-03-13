@@ -43,6 +43,7 @@ export class IQDataApiFetch {
      * @returns fetch .json() data
      * @description fetcher for IQData API. API docs: https://iqdata.social/docs/api
      */
+    // @UseDistributedQueue(10)
     async request<T = any>(path: string, options: RequestInit & { context?: ServerContext } = {}) {
         const { context, ...strippedOptions } = options;
 

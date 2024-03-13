@@ -13,6 +13,7 @@ import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { SequenceStepEntity } from './sequence-step-entity';
+import { SequenceTemplateVariableEntity } from './sequence-template-variable';
 @Entity('sequences')
 export class SequenceEntity {
     @PrimaryGeneratedColumn('uuid', { name: 'id' })
@@ -53,4 +54,7 @@ export class SequenceEntity {
 
     @OneToMany(() => SequenceStepEntity, (sequenceStep) => sequenceStep.sequence, { onDelete: 'CASCADE' })
     steps!: Relation<SequenceStepEntity[]>;
+
+    @OneToMany(() => SequenceTemplateVariableEntity, (variable) => variable.sequence, { onDelete: 'CASCADE' })
+    templateVariables!: Relation<SequenceTemplateVariableEntity[]>;
 }
