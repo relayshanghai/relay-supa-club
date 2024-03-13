@@ -47,7 +47,7 @@ export default function ThreadMessageListItemAttachment({ attachment }: { attach
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = '';
+                link.download = attachment.filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
