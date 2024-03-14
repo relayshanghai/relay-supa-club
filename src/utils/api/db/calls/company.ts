@@ -108,6 +108,17 @@ export const getTeammatesByCompanyId = async (companyId: string) => {
     return data;
 };
 
+export const updateTeammateRole = async (teammateId: string, teammateRole: 'company_owner' | 'company_teammate') => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .update({ user_role: teammateRole })
+        .eq('id', teammateId)
+        .select()
+        .single();
+    if (error) throw error;
+    return data;
+};
+
 /** Finds company name with case insensitive query */
 export const findCompaniesByName = (db: RelayDatabase) => async (name: string) => {
     // case insensitive comparison

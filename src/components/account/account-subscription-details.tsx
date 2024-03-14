@@ -58,12 +58,12 @@ export const SubscriptionDetails = () => {
     }, [company, refreshCompany, refreshUsages]);
 
     return (
-        <section id="subscription-details" className="w-full justify-end">
-            <p className="pb-6">Plan</p>
+        <section id="subscription-details" className="w-full">
+            <p className="pb-6 font-semibold">Plan</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
-                    <div className="flex w-full flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-6 pb-12 lg:max-w-2xl">
+                    <div className="flex flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-6 pb-12 lg:w-3/4">
                         <CancelSubscriptionModal
                             visible={showCancelModal}
                             onClose={() => setShowCancelModal(false)}
@@ -161,7 +161,7 @@ export const SubscriptionDetails = () => {
                     </div>
                     <Link className="mt-11" href="/upgrade">
                         <Button
-                            className="w-full bg-accent-500 text-white hover:bg-accent-300"
+                            className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300"
                             onClick={() =>
                                 // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page
                                 trackEvent('Start Upgrade Subscription')

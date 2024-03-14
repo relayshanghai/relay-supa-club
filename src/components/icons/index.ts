@@ -119,3 +119,7 @@ export { default as BorderedTick } from './BorderedTick';
 export { default as Forward } from './Forward';
 export { default as NumberedList } from './NumberedList';
 export { default as Rocket } from './Rocket';
+export { default as PaymentOutline } from './PaymentOutline';
+export { default as Building } from './Building';
+export { default as ProfileOutline } from './ProfileOutline';
+export { default as ProfileTeam } from './ProfileTeam';

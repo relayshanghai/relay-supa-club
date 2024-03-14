@@ -3,6 +3,8 @@ import { nextFetchWithQueries } from 'src/utils/fetcher';
 
 import { useCompany } from './use-company';
 import { useCallback, useEffect, useState } from 'react';
+import awaitToError from 'src/utils/await-to-error';
+import { apiFetch } from 'src/utils/api/api-fetch';
 
 export const useTeammates = () => {
     const { company } = useCompany();
@@ -24,6 +26,21 @@ export const useTeammates = () => {
         setTeammates(result);
     }, [company?.id]);
 
+    const updateTeammate = useCallback(async (id: string, role: 'company_owner' | 'company_teammate') => {
+        const [error] = await awaitToError(
+            apiFetch(
+                'api/company/teammates',
+                { body: { id, role } },
+                {
+                    method: 'PUT',
+                },
+            ),
+        );
+        if (error) {
+            return;
+        }
+    }, []);
+
     useEffect(() => {
         refreshTeammates();
     }, [refreshTeammates]);
@@ -31,5 +48,6 @@ export const useTeammates = () => {
     return {
         teammates,
         refreshTeammates,
+        updateTeammate,
     };
 };

@@ -6,11 +6,9 @@ import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
-import { Button } from '../button';
-import { Edit } from '../icons';
+import { Button } from 'shadcn/components/ui/button';
 import { Input } from '../input';
-import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
 import { nextFetch } from 'src/utils/fetcher';
@@ -27,11 +25,9 @@ export const PersonalDetails = () => {
     });
     const { refreshCompany } = useCompany();
     const { loading: userDataLoading, profile, user, updateProfile, refreshProfile } = useUser();
-    const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const { appUrl } = useHostname();
 
-    const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
     const handleResetPassword = async () => {
         setGeneratingResetEmail(true);
@@ -76,7 +72,6 @@ export const PersonalDetails = () => {
             refreshProfile();
             refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
-            setEditMode(false);
             if (firstName !== profile?.first_name) {
                 track(UpdateProfileInfo, {
                     info_type: 'Profile',
@@ -126,97 +121,68 @@ export const PersonalDetails = () => {
     };
 
     return (
-        <div
-            id="personal-details"
-            className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
-                userDataLoading ? 'opacity-50' : ''
-            } shadow-lg shadow-gray-200`}
-        >
-            <h2 className="text-lg font-bold">{t('account.personal.title')}</h2>
-            {editMode ? (
-                <div className={`w-full lg:w-1/2 `}>
-                    <Input
-                        label={t('account.personal.firstName')}
-                        type="first_name"
-                        placeholder={t('account.personal.firstNamePlaceholder') || ''}
-                        value={firstName}
-                        required
-                        onChange={(e) => setUserFieldValues('firstName', e.target.value)}
-                    />
-                    <Input
-                        label={t('account.personal.lastName')}
-                        type="last_name"
-                        placeholder={t('account.personal.lastNamePlaceholder') || ''}
-                        value={lastName}
-                        required
-                        onChange={(e) => setUserFieldValues('lastName', e.target.value)}
-                    />
-
-                    {editMode && (
+        <section id="personal-details" className="w-full">
+            <p className="pb-6 font-semibold">Personal Info</p>
+            <hr className="pb-5" />
+            <section className="flex w-full justify-end">
+                <div className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4`}>
+                    <div className={`w-full`}>
+                        <section className="flex gap-6">
+                            <Input
+                                label={t('account.personal.firstName')}
+                                type="first_name"
+                                placeholder={t('account.personal.firstNamePlaceholder') || ''}
+                                value={firstName}
+                                required
+                                onChange={(e) => setUserFieldValues('firstName', e.target.value)}
+                            />
+                            <Input
+                                label={t('account.personal.lastName')}
+                                type="last_name"
+                                placeholder={t('account.personal.lastNamePlaceholder') || ''}
+                                value={lastName}
+                                required
+                                onChange={(e) => setUserFieldValues('lastName', e.target.value)}
+                            />
+                        </section>
                         <div className="mb-6 flex w-full flex-row justify-end space-x-4">
-                            <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
+                            <Button
+                                className="bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                                disabled={userDataLoading}
+                                onClick={handleUpdateProfile}
+                            >
                                 {t('account.update')}
                             </Button>
-                            <Button onClick={() => setEditMode(false)} variant="secondary">
-                                {t('account.cancel')}
+                        </div>
+
+                        <hr className="pb-5" />
+                        <Input
+                            label={t('account.personal.email')}
+                            type="email"
+                            placeholder={t('account.personal.emailPlaceholder') || ''}
+                            value={email}
+                            required
+                            onChange={(e) => setUserFieldValues('email', e.target.value)}
+                        />
+
+                        <div className="flex w-full flex-row justify-end space-x-4">
+                            <Button
+                                className="bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                                onClick={handleUpdateEmail}
+                            >
+                                {t('account.personal.updateEmail')}
                             </Button>
                         </div>
-                    )}
-
-                    <Input
-                        label={t('account.personal.email')}
-                        type="email"
-                        placeholder={t('account.personal.emailPlaceholder') || ''}
-                        value={email}
-                        required
-                        onChange={(e) => setUserFieldValues('email', e.target.value)}
-                    />
-
-                    <div className="flex w-full flex-row justify-end space-x-4">
-                        <Button onClick={handleUpdateEmail}>{t('account.personal.updateEmail')}</Button>
-                        <Button onClick={() => setEditMode(false)} variant="secondary">
-                            {t('account.cancel')}
-                        </Button>
                     </div>
+                    <Button
+                        className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                        onClick={handleResetPassword}
+                        disabled={generatingResetEmail}
+                    >
+                        {t('login.changePassword')}
+                    </Button>
                 </div>
-            ) : (
-                <div className={`w-full space-y-6`}>
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.firstName')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.first_name}</div>
-                    </div>
-
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.lastName')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.last_name}</div>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.email}</div>
-                    </div>
-                </div>
-            )}
-            {!editMode && (
-                <Button variant="secondary" onClick={handleResetPassword} disabled={generatingResetEmail}>
-                    {t('login.changePassword')}
-                </Button>
-            )}
-
-            {!editMode && (
-                <Button
-                    className={`absolute right-4 top-4 px-3 py-1 disabled:bg-white ${
-                        userDataLoading ? 'opacity-75' : ''
-                    }`}
-                    disabled={userDataLoading}
-                    onClick={() => {
-                        setEditMode(true);
-                        trackEvent(ACCOUNT_PERSONAL_DETAILS('click on Edit'));
-                    }}
-                    variant="secondary"
-                >
-                    <Edit className="h-4 w-4 text-primary-500" />
-                </Button>
-            )}
-        </div>
+            </section>
+        </section>
     );
 };
