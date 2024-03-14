@@ -8,7 +8,7 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
-import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';
@@ -32,7 +32,10 @@ const CheckoutFormV2 = ({
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
-    const [stripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue);
+    const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorage(
+        STRIPE_SECRET_RESPONSE,
+        stripeSubscribeResponseInitialValue,
+    );
 
     const handleError = (error: any) => {
         setIsLoading(false);
@@ -42,18 +45,19 @@ const CheckoutFormV2 = ({
     const handleCardPayment = async () => {
         if (!stripe || !elements) return;
 
-        const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSecretResponse.clientSecret, {
+        const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSubscribeResponse.clientSecret, {
             payment_method: {
                 card: elements.getElement('card') as any,
             },
         });
 
         if (error) throw error;
+        setStripeSubscribeResponse(stripeSubscribeResponseInitialValue);
         const returnUrlParams = new URLSearchParams();
         returnUrlParams.append('payment_intent', paymentIntent.id);
         returnUrlParams.append('payment_intent_client_secret', paymentIntent.client_secret as string);
         returnUrlParams.append('redirect_status', 'succeeded');
-        window.location.href = `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks?${returnUrlParams}`;
+        return `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks?${returnUrlParams}`;
     };
 
     const handleSubmit = async () => {
@@ -70,8 +74,9 @@ const CheckoutFormV2 = ({
             return;
         }
 
-        let err = null;
-        [err] = await awaitToError(handleCardPayment());
+        let err = null,
+            returnUrl = null;
+        [err, returnUrl] = await awaitToError(handleCardPayment());
 
         if (err) {
             track(PayForUpgradedPlan, {
@@ -88,6 +93,7 @@ const CheckoutFormV2 = ({
             });
         }
         setIsLoading(false);
+        window.location.href = returnUrl as string;
     };
 
     return (

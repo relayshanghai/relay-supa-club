@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
-import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import awaitToError from 'src/utils/await-to-error';
@@ -32,7 +32,10 @@ export default function AlipayPortalV2({
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
-    const [stripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue);
+    const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorage(
+        STRIPE_SECRET_RESPONSE,
+        stripeSubscribeResponseInitialValue,
+    );
 
     const handleError = (error: any) => {
         setIsLoading(false);
@@ -41,13 +44,13 @@ export default function AlipayPortalV2({
 
     const handleAlipayPayment = async () => {
         if (!stripe) return;
-        const { error } = await stripe.confirmAlipayPayment(stripeSecretResponse.clientSecret, {
+        const { error } = await stripe.confirmAlipayPayment(stripeSubscribeResponse.clientSecret, {
             return_url: `${window.location.origin}/subscriptions/${subscriptionId}/alipay/callbacks`,
             mandate_data: {
                 customer_acceptance: {
                     type: 'online',
                     online: {
-                        ip_address: stripeSecretResponse.ipAddress,
+                        ip_address: stripeSubscribeResponse.ipAddress,
                         user_agent: window.navigator.userAgent,
                     },
                 },
@@ -55,6 +58,7 @@ export default function AlipayPortalV2({
             save_payment_method: true,
         });
         if (error) throw error;
+        setStripeSubscribeResponse(stripeSubscribeResponseInitialValue);
     };
 
     const handleSubmit = async () => {
