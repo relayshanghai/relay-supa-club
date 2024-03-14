@@ -3,6 +3,7 @@ import { CompanyEntity } from 'src/backend/database/company/company-entity';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
+import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import TwilioService from 'src/backend/integration/twilio';
 import { createCompanyErrors } from 'src/errors/company';
 import { createSubscriptionErrors } from 'src/errors/subscription';
@@ -179,6 +180,7 @@ export default class RegistrationService {
         if (!isVerified) throw new BadRequestError(RequestContext.t('signup.invalidOtp'));
         return true;
     }
+    @UseTransaction()
     async register(request: RegisterRequest) {
         const createdCompany = await this.createCompany(request);
         const createdProfile = await this.createProfile(request, createdCompany);
