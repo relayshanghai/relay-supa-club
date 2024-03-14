@@ -152,6 +152,7 @@ export const PriceCard = ({
                         disabled={disableButton(priceTier, period, subscription, company) || subscriptionV2Loading}
                         loading={subscriptionV2Loading}
                         className="mt-auto"
+                        data-testid="upgrade-button"
                     >
                         {isCurrentPlan(priceTier, period, subscription)
                             ? t('pricing.yourCurrentPlan')
