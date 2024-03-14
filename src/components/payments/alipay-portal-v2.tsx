@@ -1,26 +1,26 @@
-import { useState } from 'react';
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import { Spinner } from '../icons';
 import { Button } from '../button';
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { Spinner } from '../icons';
 import type { NewRelayPlan } from 'types';
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
+import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
-import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 import { STRIPE_SECRET_RESPONSE, stripeSecretResponseInitialValue } from 'src/hooks/use-subscription-v2';
-import { useRouter } from 'next/router';
-import { PayForUpgradedPlan } from 'src/utils/analytics/events';
+import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
+import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import awaitToError from 'src/utils/await-to-error';
+import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 
-const CheckoutFormV2 = ({
+export default function AlipayPortalV2({
     selectedPrice,
     batchId,
 }: {
     selectedPrice: NewRelayPlan;
     batchId: number;
     couponId?: string;
-}) => {
+}) {
     const {
         query: { subscriptionId },
     } = useRouter();
@@ -39,21 +39,22 @@ const CheckoutFormV2 = ({
         setErrorMessage(error.message);
     };
 
-    const handleCardPayment = async () => {
-        if (!stripe || !elements) return;
-
-        const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSecretResponse.clientSecret, {
-            payment_method: {
-                card: elements.getElement('card') as any,
+    const handleAlipayPayment = async () => {
+        if (!stripe) return;
+        const { error } = await stripe.confirmAlipayPayment(stripeSecretResponse.clientSecret, {
+            return_url: `${window.location.origin}/subscriptions/${subscriptionId}/alipay/callbacks`,
+            mandate_data: {
+                customer_acceptance: {
+                    type: 'online',
+                    online: {
+                        ip_address: stripeSecretResponse.ipAddress,
+                        user_agent: window.navigator.userAgent,
+                    },
+                },
             },
+            save_payment_method: true,
         });
-
         if (error) throw error;
-        const returnUrlParams = new URLSearchParams();
-        returnUrlParams.append('payment_intent', paymentIntent.id);
-        returnUrlParams.append('payment_intent_client_secret', paymentIntent.client_secret as string);
-        returnUrlParams.append('redirect_status', 'succeeded');
-        window.location.href = `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks?${returnUrlParams}`;
     };
 
     const handleSubmit = async () => {
@@ -71,7 +72,7 @@ const CheckoutFormV2 = ({
         }
 
         let err = null;
-        [err] = await awaitToError(handleCardPayment());
+        [err] = await awaitToError(handleAlipayPayment());
 
         if (err) {
             track(PayForUpgradedPlan, {
@@ -98,20 +99,20 @@ const CheckoutFormV2 = ({
                 handleSubmit();
             }}
         >
-            <CardElement
-                id="card-element"
+            <PaymentElement
+                id="payment-element"
                 onChange={({ complete, empty }) => {
                     track(InputPaymentInfo, {
                         complete,
                         empty,
-                        type: 'card',
+                        type: 'alipay',
                         batch_id: batchId,
                     });
                     setFormReady(complete);
                 }}
             />
 
-            <Button disabled={isLoading || !stripe || !elements || !formReady} className="mt-10 w-full" type="submit">
+            <Button disabled={isLoading || !stripe || !elements || !formReady} className="w-full" type="submit">
                 {isLoading ? (
                     <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
                 ) : (
@@ -122,6 +123,4 @@ const CheckoutFormV2 = ({
             {errorMessage && <p className="mt-2 text-xs text-red-500">{errorMessage}</p>}
         </form>
     );
-};
-
-export default CheckoutFormV2;
+}
