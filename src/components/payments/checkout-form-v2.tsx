@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from '
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';
-import { type StripeCardElement } from '@stripe/stripe-js';
+type PaymentType = 'card' | 'alipay';
 
 const CheckoutFormV2 = ({
     selectedPrice,
@@ -33,6 +33,7 @@ const CheckoutFormV2 = ({
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
+    const [paymentType, setPaymentType] = useState<PaymentType>('card');
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorage(
         STRIPE_SUBSCRIBE_RESPONSE,
         stripeSubscribeResponseInitialValue,
@@ -45,20 +46,32 @@ const CheckoutFormV2 = ({
 
     const handleCardPayment = async () => {
         if (!stripe || !elements) return;
-
-        const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSubscribeResponse.clientSecret, {
-            payment_method: {
-                card: elements.getElement('card') as StripeCardElement,
+        const { error } = await stripe.confirmPayment({
+            clientSecret: stripeSubscribeResponse.clientSecret,
+            elements,
+            confirmParams: {
+                return_url: `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks`,
             },
         });
-
         if (error) throw error;
-        setStripeSubscribeResponse(stripeSubscribeResponseInitialValue);
-        const returnUrlParams = new URLSearchParams();
-        returnUrlParams.append('payment_intent', paymentIntent.id);
-        returnUrlParams.append('payment_intent_client_secret', paymentIntent.client_secret as string);
-        returnUrlParams.append('redirect_status', 'succeeded');
-        return `${window.location.origin}/subscriptions/${subscriptionId}/credit-card/callbacks?${returnUrlParams}`;
+    };
+
+    const handleAlipayPayment = async () => {
+        if (!stripe) return;
+        const { error } = await stripe.confirmAlipayPayment(stripeSubscribeResponse.clientSecret, {
+            return_url: `${window.location.origin}/subscriptions/${subscriptionId}/alipay/callbacks`,
+            mandate_data: {
+                customer_acceptance: {
+                    type: 'online',
+                    online: {
+                        ip_address: stripeSubscribeResponse.ipAddress,
+                        user_agent: window.navigator.userAgent,
+                    },
+                },
+            },
+            save_payment_method: true,
+        });
+        if (error) throw error;
     };
 
     const handleSubmit = async () => {
@@ -75,9 +88,12 @@ const CheckoutFormV2 = ({
             return;
         }
 
-        let err = null,
-            returnUrl = null;
-        [err, returnUrl] = await awaitToError(handleCardPayment());
+        let err = null;
+        if (paymentType === 'card') {
+            [err] = await awaitToError(handleCardPayment());
+        } else if (paymentType === 'alipay') {
+            [err] = await awaitToError(handleAlipayPayment());
+        }
 
         if (err) {
             track(PayForUpgradedPlan, {
@@ -92,9 +108,9 @@ const CheckoutFormV2 = ({
                 successful: true,
                 batch_id: batchId,
             });
+            setStripeSubscribeResponse(stripeSubscribeResponseInitialValue);
         }
         setIsLoading(false);
-        window.location.href = returnUrl as string;
     };
 
     return (
@@ -105,16 +121,17 @@ const CheckoutFormV2 = ({
                 handleSubmit();
             }}
         >
-            <CardElement
-                id="card-element"
-                onChange={({ complete, empty }) => {
+            <PaymentElement
+                id="payment-element"
+                onChange={({ complete, empty, value }) => {
                     track(InputPaymentInfo, {
                         complete,
                         empty,
-                        type: 'card',
+                        type: value.type,
                         batch_id: batchId,
                     });
                     setFormReady(complete);
+                    setPaymentType(value.type as PaymentType);
                 }}
             />
 
