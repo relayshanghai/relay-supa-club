@@ -123,3 +123,5 @@ export { default as PaymentOutline } from './PaymentOutline';
 export { default as Building } from './Building';
 export { default as ProfileOutline } from './ProfileOutline';
 export { default as ProfileTeam } from './ProfileTeam';
+export { default as Visa } from './Visa';
+export { default as MasterCard } from './MasterCard';

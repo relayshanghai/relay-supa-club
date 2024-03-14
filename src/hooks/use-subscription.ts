@@ -1,3 +1,4 @@
+import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
 import type { SubscriptionCancelPostBody, SubscriptionCancelPostResponse } from 'pages/api/subscriptions/cancel';
 import type { SubscriptionCreatePostBody, SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
@@ -22,6 +23,7 @@ export const useSubscription = () => {
         async ([id, path]) =>
             await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
     );
+
     const upgradeSubscription = useCallback(
         async (priceId: string) => {
             const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/upgrade', {
@@ -66,6 +68,41 @@ export const useSubscription = () => {
         return res;
     }, [company?.id, mutate]);
 
+    const setDefaultPaymentMethod = useCallback(
+        async (paymentMethodId: string) => {
+            if (!company?.id) throw new Error('No company found');
+            const res = await apiFetch(
+                'api/subscriptions/payment-method',
+                {
+                    body: {
+                        companyId: company?.id,
+                        paymentMethodId,
+                    },
+                },
+                {
+                    method: 'PUT',
+                },
+            );
+            return res;
+        },
+        [company?.id],
+    );
+
+    const removePaymentMethod = useCallback(async (paymentMethodId: string) => {
+        const res = await apiFetch(
+            'api/subscriptions/payment-method',
+            {
+                body: {
+                    paymentMethodId,
+                },
+            },
+            {
+                method: 'DELETE',
+            },
+        );
+        return res;
+    }, []);
+
     const cancelSubscription = useCallback(async () => {
         if (!subscription) throw new Error('No subscription found');
         if (!company?.id) throw new Error('No company found');
@@ -84,12 +121,15 @@ export const useSubscription = () => {
 
     return {
         subscription,
-        paymentMethods,
+        paymentMethods: paymentMethods?.paymentMethods,
+        defaultPaymentMethod: paymentMethods?.defaultPaymentMethod,
         refreshPaymentMethods,
         refreshSubscription: mutate,
         createSubscription,
         createDiscountRenew,
         cancelSubscription,
+        setDefaultPaymentMethod,
+        removePaymentMethod,
         upgradeSubscription,
     };
 };

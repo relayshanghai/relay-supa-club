@@ -6,6 +6,7 @@ import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { TeamDetails } from './account-team-details';
 import { Building, PaymentOutline, ProfileOutline, ProfileTeam, Rocket } from '../icons';
+import { BillingDetails } from './account-billing-details';
 
 export const AccountPage = () => {
     const { t } = useTranslation();
@@ -45,6 +46,7 @@ export const AccountPage = () => {
                 <div aria-hidden className="display-none h-2 w-full max-w-xs flex-col opacity-0 2xl:max-w-sm" />
                 <section className="w-full">
                     <SubscriptionDetails />
+                    <BillingDetails />
                     {/* Do not show personal details when acting on behalf of company, because the other two sections are showing the 'manage as' company's info, but PersonalDetails is the relay employee. This could cause confusion. */}
                     {!clientRoleData.companyId && <PersonalDetails />}
                     <CompanyDetails />

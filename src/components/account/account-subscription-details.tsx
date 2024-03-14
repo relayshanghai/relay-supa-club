@@ -20,6 +20,7 @@ const Tablet = ({ children, customStyle }: { children: React.ReactNode; customSt
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
+
     const { company, refreshCompany } = useCompany();
     const { t, i18n } = useTranslation();
     const { trackEvent } = useRudderstack();

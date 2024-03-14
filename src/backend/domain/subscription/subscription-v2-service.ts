@@ -20,6 +20,19 @@ export default class SubscriptionV2Service {
         }
         return SubscriptionV2Service.service;
     }
+
+    async getDefaultPaymentMethod(cusId: string) {
+        return await StripeService.getService().getDefaultPaymentMethod(cusId);
+    }
+
+    async setDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
+        return await StripeService.getService().setDefaultPaymentMethod(cusId, paymentMethodId);
+    }
+
+    async removePaymentMethod(paymentMethodId: string) {
+        return await StripeService.getService().removePaymentMethod(paymentMethodId);
+    }
+
     @CompanyIdRequired()
     @UseLogger()
     @UseTransaction()

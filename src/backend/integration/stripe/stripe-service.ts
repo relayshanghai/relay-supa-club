@@ -38,6 +38,32 @@ export default class StripeService {
         });
     }
 
+    async removePaymentMethod(paymentMethodId: string) {
+        return await StripeService.client.paymentMethods.detach(paymentMethodId);
+    }
+
+    async getPaymentMethods(cusId: string) {
+        return await StripeService.client.paymentMethods.list({
+            customer: cusId,
+        });
+    }
+
+    async getDefaultPaymentMethod(cusId: string) {
+        const customer = await StripeService.client.customers.retrieve(cusId);
+        if (customer.deleted) {
+            throw new NotFoundError('Customer not found');
+        }
+        return customer.invoice_settings.default_payment_method;
+    }
+
+    async setDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
+        return await StripeService.client.customers.update(cusId, {
+            invoice_settings: {
+                default_payment_method: paymentMethodId,
+            },
+        });
+    }
+
     async getLastSubscription(cusId: string) {
         const subscriptions = await this.getSubscription(cusId);
         let lastSubscription = subscriptions.data.filter((sub) => {
