@@ -31,7 +31,7 @@ export class ProfileEntity {
     createdAt!: Date;
 
     @JoinColumn({ name: 'company_id' })
-    @ManyToOne(() => CompanyEntity, (company) => company.profiles)
+    @ManyToOne(() => CompanyEntity)
     company?: Relation<CompanyEntity>;
 
     @Column({ name: 'last_name' })
