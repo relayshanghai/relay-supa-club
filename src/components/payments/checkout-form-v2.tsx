@@ -12,6 +12,7 @@ import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from '
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';
+import { type StripeCardElement } from '@stripe/stripe-js';
 
 const CheckoutFormV2 = ({
     selectedPrice,
@@ -47,7 +48,7 @@ const CheckoutFormV2 = ({
 
         const { error, paymentIntent } = await stripe.confirmCardPayment(stripeSubscribeResponse.clientSecret, {
             payment_method: {
-                card: elements.getElement('card') as any,
+                card: elements.getElement('card') as StripeCardElement,
             },
         });
 
