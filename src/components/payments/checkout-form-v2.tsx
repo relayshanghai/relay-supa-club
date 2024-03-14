@@ -8,7 +8,7 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
-import { STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';
@@ -33,7 +33,7 @@ const CheckoutFormV2 = ({
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorage(
-        STRIPE_SECRET_RESPONSE,
+        STRIPE_SUBSCRIBE_RESPONSE,
         stripeSubscribeResponseInitialValue,
     );
 

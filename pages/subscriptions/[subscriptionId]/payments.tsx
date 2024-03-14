@@ -4,11 +4,11 @@ import { AddPaymentsSection } from 'src/components/payments/add-payments-section
 import { PlanDetails } from 'src/components/payments/plan-details';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 import { type ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
 
 export default function SubscriptionPaymentPage() {
     const router = useRouter();
-    const [stripeSubscribeResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue);
+    const [stripeSubscribeResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
     const { isReady } = router;
 
     const priceTier =

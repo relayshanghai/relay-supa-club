@@ -12,7 +12,7 @@ import { type CompanyDB } from 'src/utils/api/db';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
 import {
-    STRIPE_SECRET_RESPONSE,
+    STRIPE_SUBSCRIBE_RESPONSE,
     stripeSubscribeResponseInitialValue,
     useSubscriptionV2,
 } from 'src/hooks/use-subscription-v2';
@@ -62,7 +62,7 @@ export const PriceCard = ({
     const { prices } = usePrices();
     const { subscription, upgradeSubscription } = useSubscription();
     const { createSubscription, loading: subscriptionV2Loading } = useSubscriptionV2();
-    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue);
+    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
     const { company } = useCompany();
     const router = useRouter();
     type PriceKey = keyof typeof prices;

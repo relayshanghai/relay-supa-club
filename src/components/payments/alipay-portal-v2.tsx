@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
-import { STRIPE_SECRET_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import awaitToError from 'src/utils/await-to-error';
@@ -33,7 +33,7 @@ export default function AlipayPortalV2({
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorage(
-        STRIPE_SECRET_RESPONSE,
+        STRIPE_SUBSCRIBE_RESPONSE,
         stripeSubscribeResponseInitialValue,
     );
 
