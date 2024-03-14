@@ -123,6 +123,7 @@ const CheckoutFormV2 = ({
         >
             <PaymentElement
                 id="payment-element"
+                data-testid="payment-element"
                 onChange={({ complete, empty, value }) => {
                     track(InputPaymentInfo, {
                         complete,
@@ -135,7 +136,12 @@ const CheckoutFormV2 = ({
                 }}
             />
 
-            <Button disabled={isLoading || !stripe || !elements || !formReady} className="mt-10 w-full" type="submit">
+            <Button
+                data-testid="upgrade-button"
+                disabled={isLoading || !stripe || !elements || !formReady}
+                className="mt-10 w-full"
+                type="submit"
+            >
                 {isLoading ? (
                     <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
                 ) : (
