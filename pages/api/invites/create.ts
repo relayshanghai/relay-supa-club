@@ -66,12 +66,8 @@ const handler: NextApiHandler = async (req, res) => {
     }
     const existingInvite = await getExistingInvite(email, company_id);
 
-    if (
-        existingInvite?.expire_at &&
-        existingInvite.used === false &&
-        Date.now() < new Date(existingInvite.expire_at).getTime()
-    )
-        return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.inviteExistsAndHasNotExpired });
+    if (existingInvite?.expire_at && existingInvite.used === true)
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.inviteAlreadyExists });
 
     const insertData = await insertInvite({ email, company_id, company_owner: companyOwner });
 

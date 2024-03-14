@@ -20,7 +20,6 @@ import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/
 import { Tooltip } from 'src/components/library';
 import { Question } from 'src/components/icons';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
-// import { UpdateInfluencerProfilePayload } from 'src/utils/analytics/events/outreach/update-influencer-profile';
 import { useReport } from 'src/hooks/use-report';
 import type { SearchTableInfluencer } from 'types';
 

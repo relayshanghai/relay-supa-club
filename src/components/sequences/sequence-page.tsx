@@ -489,7 +489,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </section>
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
-                    <div className="sticky left-0 flex w-full flex-row items-center justify-between">
+                    <div className="left-0 flex w-full flex-row items-center justify-between">
                         <SelectMultipleDropdown
                             text={t('sequences.steps.filter')}
                             options={emailSteps}

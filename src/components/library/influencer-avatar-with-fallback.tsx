@@ -17,12 +17,12 @@ export const InfluencerAvatarWithFallback = ({
 }) => {
     return (
         <Avatar
-            className={`flex-none rounded-full ${bordered && 'border-8 border-white shadow-lg'}`}
+            className={`flex-none rounded-full ${bordered ? 'border-8 border-white shadow-lg' : ''}`}
             style={{ width: size, height: size }}
         >
             <AvatarImage
                 data-testid={`influencer-avatar-${name}`}
-                className={`inline-block bg-slate-300 ${className} aspect-square rounded-full`}
+                className={`inline-block bg-slate-300 ${className ? className : ''} aspect-square rounded-full`}
                 alt={`Influencer avatar ${name ?? url}`}
                 src={imgProxy(url ?? '') ?? ''}
                 width={size}
