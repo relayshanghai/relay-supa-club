@@ -21,8 +21,22 @@ export default class SubscriptionV2Service {
         return SubscriptionV2Service.service;
     }
 
+    @CompanyIdRequired()
+    async updateCustomer(data: Stripe.CustomerUpdateParams) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().updateCustomer(cusId, data);
+    }
+
     async getDefaultPaymentMethod(cusId: string) {
         return await StripeService.getService().getDefaultPaymentMethod(cusId);
+    }
+
+    async getDefaultInvoiceEmail(cusId: string) {
+        return await StripeService.getService().getDefaultInvoiceEmail(cusId);
     }
 
     async setDefaultPaymentMethod(cusId: string, paymentMethodId: string) {

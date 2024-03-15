@@ -11,14 +11,18 @@ import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useCompany } from './use-company';
+import { useApiClient } from 'src/utils/api-client/request';
+import type { CreateSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
+import type Stripe from 'stripe';
 
 export const useSubscription = () => {
     const { company } = useCompany();
+    const { apiClient } = useApiClient();
     const { data: subscription, mutate } = useSWR(
         company?.id ? [company.id, 'subscriptions'] : null,
         async ([id, path]) => await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, { id }),
     );
-    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
+    const { data: customerInfo, mutate: refreshCustomerInfo } = useSWR(
         company?.id ? [company.id, 'subscriptions/payment-method'] : null,
         async ([id, path]) =>
             await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
@@ -37,6 +41,23 @@ export const useSubscription = () => {
         },
         [mutate],
     );
+
+    const updateDefaultInvoiceEmail = useCallback(
+        async (email: string) => {
+            if (!company?.id) throw new Error('No company found');
+            const res = await apiClient.put<
+                CreateSubscriptionRequest,
+                Stripe.Customer & {
+                    ipAddress: string;
+                }
+            >('/v2/subscriptions/customer', {
+                email,
+            });
+            return res;
+        },
+        [company?.id, apiClient],
+    );
+
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
             if (!company?.id) throw new Error('No company found');
@@ -121,9 +142,11 @@ export const useSubscription = () => {
 
     return {
         subscription,
-        paymentMethods: paymentMethods?.paymentMethods,
-        defaultPaymentMethod: paymentMethods?.defaultPaymentMethod,
-        refreshPaymentMethods,
+        paymentMethods: customerInfo?.paymentMethods,
+        defaultPaymentMethod: customerInfo?.defaultPaymentMethod,
+        defaultInvoiceEmail: customerInfo?.defaultInvoiceEmail,
+        refreshCustomerInfo,
+        updateDefaultInvoiceEmail,
         refreshSubscription: mutate,
         createSubscription,
         createDiscountRenew,

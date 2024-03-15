@@ -27,7 +27,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
     const { i18n, t } = useTranslation();
     const { prices } = usePrices();
     const { trackEvent } = useRudderstack();
-    const { paymentMethods, refreshPaymentMethods } = useUser();
+    const { paymentMethods, refreshCustomerInfo } = useUser();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
@@ -50,8 +50,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
         localStorage.setItem('selectedPlan', priceTier);
     }, [priceTier]);
     useEffect(() => {
-        refreshPaymentMethods();
-    }, [refreshPaymentMethods]);
+        refreshCustomerInfo();
+    }, [refreshCustomerInfo]);
     return (
         <div className="w-80 lg:w-[28rem]">
             <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />

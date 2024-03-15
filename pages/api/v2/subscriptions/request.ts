@@ -10,6 +10,11 @@ export class CreateSubscriptionRequest {
     quantity?: number;
 }
 
+export class UpdateSubscriptionRequest {
+    @IsString()
+    email!: string;
+}
+
 export class PostConfirmationRequest {
     @IsString()
     paymentIntentId!: string;

@@ -47,7 +47,7 @@ export const TeamDetails = () => {
             <p className="pb-6 font-semibold">{t('account.company.members')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
-                <div className="p-4 lg:w-3/4">
+                <div className="p-4 text-sm lg:w-3/4">
                     <InviteMembersModal
                         showAddMoreMembers={showAddMoreMembers}
                         setShowAddMoreMembers={setShowAddMoreMembers}
@@ -64,7 +64,7 @@ export const TeamDetails = () => {
                                         <p className="basis-1/5 text-sm font-medium">
                                             {teammateProfile.first_name} {teammateProfile.last_name}
                                         </p>
-                                        <p className="basis-2/5 font-normal">{teammateProfile.email}</p>
+                                        <p className="basis-2/5 text-sm font-normal">{teammateProfile.email}</p>
                                         {isAdmin(profile?.user_role) ? (
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger>
@@ -120,7 +120,7 @@ export const TeamDetails = () => {
                                     >
                                         <div>
                                             <p className="text-xs text-gray-500">{t('account.company.email')}</p>
-                                            <p>{invites.email}</p>
+                                            <p className="text-sm">{invites.email}</p>
                                         </div>
                                     </div>
                                 );

@@ -11,6 +11,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { UpdateProfileInfo } from 'src/utils/analytics/events';
+import Label from './label';
 
 export const CompanyDetails = () => {
     const { company, updateCompany, refreshCompany } = useCompany();
@@ -76,26 +77,25 @@ export const CompanyDetails = () => {
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <div className="relative flex flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4">
-                    <div className="w-full">
-                        <Input
-                            label={t('account.company.companyName')}
-                            type="text"
-                            value={companyValues.name || ''}
-                            required
-                            onChange={(e) => setCompanyFieldValues('name', e.target.value)}
-                        />
-                        <Input
-                            label={t('account.company.website')}
-                            type="text"
-                            value={companyValues.website || ''}
-                            placeholder={t('account.company.websiteAddress') || ''}
-                            required
-                            onChange={(e) => setCompanyFieldValues('website', e.target.value)}
-                        />
-                    </div>
-
-                    {isAdmin(profile?.user_role) && (
+                    {isAdmin(profile?.user_role) ? (
                         <>
+                            <div className="w-full">
+                                <Input
+                                    label={t('account.company.companyName')}
+                                    type="text"
+                                    value={companyValues.name || ''}
+                                    required
+                                    onChange={(e) => setCompanyFieldValues('name', e.target.value)}
+                                />
+                                <Input
+                                    label={t('account.company.website')}
+                                    type="text"
+                                    value={companyValues.website || ''}
+                                    placeholder={t('account.company.websiteAddress') || ''}
+                                    required
+                                    onChange={(e) => setCompanyFieldValues('website', e.target.value)}
+                                />
+                            </div>
                             <div className="flex w-full flex-row justify-end space-x-4">
                                 <Button
                                     className='hover:bg-blue-300" bg-blue-200 font-semibold text-blue-500'
@@ -106,6 +106,11 @@ export const CompanyDetails = () => {
                                 </Button>
                             </div>
                         </>
+                    ) : (
+                        <div className="flex w-full flex-col gap-5">
+                            <Label label={t('account.company.companyName')} value={companyValues.name || ''} />
+                            <Label label={t('account.company.website')} value={companyValues.website || ''} />
+                        </div>
                     )}
                 </div>
             </section>

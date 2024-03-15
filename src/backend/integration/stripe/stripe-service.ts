@@ -9,6 +9,10 @@ export default class StripeService {
         apiVersion: '2022-11-15',
     });
 
+    async updateCustomer(cusId: string, params: Stripe.CustomerUpdateParams) {
+        return await StripeService.client.customers.update(cusId, params);
+    }
+
     async createSubscription(cusId: string, priceId: string, quantity = 1) {
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
@@ -36,6 +40,14 @@ export default class StripeService {
         return await StripeService.client.subscriptions.list({
             customer: cusId,
         });
+    }
+
+    async getDefaultInvoiceEmail(cusId: string) {
+        const customer = await StripeService.client.customers.retrieve(cusId);
+        if (customer.deleted) {
+            throw new NotFoundError('Customer not found');
+        }
+        return customer.email;
     }
 
     async removePaymentMethod(paymentMethodId: string) {

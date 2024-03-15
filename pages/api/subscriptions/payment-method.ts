@@ -15,6 +15,7 @@ export type PaymentMethodGetQueries = {
 export type PaymentMethodGetResponse = {
     paymentMethods: Stripe.PaymentMethod[];
     defaultPaymentMethod: string | null | Stripe.PaymentMethod;
+    defaultInvoiceEmail: string;
 };
 
 export const PutBodySchema = z.object({
@@ -42,8 +43,9 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const result = await stripeClient.customers.listPaymentMethods(data.cus_id);
     const defaultPaymentMethod = await SubscriptionV2Service.getService().getDefaultPaymentMethod(data.cus_id);
+    const defaultInvoiceEmail = await SubscriptionV2Service.getService().getDefaultInvoiceEmail(data.cus_id);
 
-    return res.status(httpCodes.OK).json({ paymentMethods: result.data, defaultPaymentMethod: defaultPaymentMethod });
+    return res.status(httpCodes.OK).json({ paymentMethods: result.data, defaultPaymentMethod, defaultInvoiceEmail });
 }
 
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {

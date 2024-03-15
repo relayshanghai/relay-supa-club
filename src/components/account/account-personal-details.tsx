@@ -174,6 +174,7 @@ export const PersonalDetails = () => {
                             </Button>
                         </div>
                     </div>
+                    <hr />
                     <Button
                         className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
                         onClick={handleResetPassword}

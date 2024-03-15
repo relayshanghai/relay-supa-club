@@ -54,7 +54,7 @@ export interface IUserContext {
     signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
 
     paymentMethods: Record<string, PaymentMethod>;
-    refreshPaymentMethods: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
+    refreshCustomerInfo: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
 }
 
 export const userExists = async (email: string) => {
@@ -103,7 +103,7 @@ export const UserContext = createContext<IUserContext>({
     getProfileController: { current: null },
     signup: async () => undefined as any,
     paymentMethods: {},
-    refreshPaymentMethods: () => null,
+    refreshCustomerInfo: () => null,
 });
 
 export const useUser = () => {
@@ -132,7 +132,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
-    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR('payment-methods', async () => {
+    const { data: paymentMethods, mutate: refreshCustomerInfo } = useSWR('payment-methods', async () => {
         if (!session?.user?.id) return;
         const [error, data] = await awaitToError(nextFetch<PaymentMethod[]>(`profiles/payment-methods`));
         if (error) {
@@ -307,7 +307,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 supabaseClient,
                 getProfileController,
                 paymentMethods: paymentMethods || {},
-                refreshPaymentMethods,
+                refreshCustomerInfo,
             }}
         >
             {children}
