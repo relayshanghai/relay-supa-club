@@ -72,13 +72,14 @@ export default class StripeService {
         const price = await this.getPrice(subscription.items.data[0].price.id as string);
         const product = await this.getProduct(price.product.toString());
 
-        const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
+        const { metadata, name } = product;
+        const { trial_profiles, trial_searches, profiles, searches } = metadata;
 
         if (!profiles || !searches) {
             throw new NotFoundError('Missing product metadata');
         }
 
-        return { trial_profiles, trial_searches, profiles, searches };
+        return { name, trial_profiles, trial_searches, profiles, searches };
     }
 
     async updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {

@@ -11,23 +11,28 @@ const PaymentCallback = () => {
     const router = useRouter();
     const { subscriptionId, payment_intent, payment_intent_client_secret, redirect_status } = router.query;
     useEffect(() => {
+        if (subscriptionId && payment_intent && payment_intent_client_secret && redirect_status) {
+            postConfirmation();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [subscriptionId, payment_intent, payment_intent_client_secret, redirect_status]);
+
+    const postConfirmation = async () => {
         const data = {
             paymentIntentId: payment_intent,
             paymentIntentSecret: payment_intent_client_secret,
             redirectStatus: redirect_status,
             subscriptionId: subscriptionId,
         };
-        apiClient
-            .put(`/v2/subscriptions/stripe-post-confirmation`, data)
-            .catch((e) => {
-                clientLogger(`post confirmation error: ${e}`, 'error');
-                toast.error(t('subscription.failedToConfirm'));
-            })
-            .finally(() => {
-                router.push(`/account`);
-            });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [subscriptionId, payment_intent, payment_intent_client_secret, redirect_status]);
+        try {
+            await apiClient.put(`/v2/subscriptions/stripe-post-confirmation`, data);
+        } catch (e) {
+            clientLogger(`post confirmation error: ${e}`, 'error');
+            toast.error(t('subscription.failedToConfirm'));
+        } finally {
+            router.push(`/account`);
+        }
+    };
 
     return (
         <>

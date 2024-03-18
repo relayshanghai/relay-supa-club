@@ -48,6 +48,15 @@ services:
         volumes:
             - /data
 
+    redis-commander:
+        image: ghcr.io/joeferner/redis-commander:latest
+        build: .
+        restart: always
+        environment:
+        - REDIS_HOSTS=local:redis:6379
+        ports:
+        - 8081:8081
+
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
         container_name: elasticsearch
@@ -61,22 +70,35 @@ services:
         volumes:
             - esdata:/usr/share/elasticsearch/data
 
-    # Kibana now requires a service key which is a pain to get from elastic search, so let's not activate yet.
-    # Error: value of "elastic" is forbidden. This is a superuser account that cannot write to system indices that Kibana needs to function. Use a service account token instead. Learn more: https://www.elastic.co/guide/en/elasticsearch/reference/8.0/service-accounts.html
-    # kibana:
-    #     env_file:
-    #         - ../.env.local
+    init-kibana:
+        image: appropriate/curl
+        restart: on-failure
+        depends_on:
+            - elasticsearch
+        entrypoint: [sh, -c]
+        command:
+            - |
+                until curl -u elastic:${ELASTIC_PASSWORD} http://elasticsearch:9200  > /dev/null; do sleep 1; done &&
+                curl -u elastic:${ELASTIC_PASSWORD} -v -X  POST -H "Content-Type:application/json" "http://elasticsearch:9200/_security/user/kibana_system/_password" -d '{"password":"${KIBANA_PASSWORD}"}'
+        networks:
+            default:
 
-    #     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
-    #     container_name: kibana
-    #     environment:
-    #         - 'ELASTICSEARCH_HOSTS=http://elasticsearch:${ES_PORT}'
-    #         - 'ELASTICSEARCH_USERNAME=elastic'
-    #         - 'ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}'
-    #     ports:
-    #         - ${KIBANA_PORT}:${KIBANA_PORT}
-    #     networks:
-    #         - elastic
+    kibana:
+        image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+            - ELASTICSEARCH_USERNAME=kibana_system
+            - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+        volumes:
+            - kibanadata:/usr/share/kibana/data
+        ports:
+            - 5601:5601
+        depends_on:
+            - elasticsearch
+            - init-kibana
+        networks:
+            default:
 
 volumes:
     esdata:
+    kibanadata:
