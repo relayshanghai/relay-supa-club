@@ -119,10 +119,7 @@ const deleteScheduledEmails = async (
 
         trackData.sequence_emails_pre_delete = sequenceEmailIds;
         const toDelete = sequenceEmails.filter(
-            (email) =>
-                email.email_delivery_status === 'Scheduled' ||
-                email.email_delivery_status === 'Unscheduled' ||
-                email.email_delivery_status === 'Replied',
+            (email) => email.email_delivery_status === 'Scheduled' || email.email_delivery_status === 'Unscheduled',
         );
         const outbox = await getOutbox();
         // If there are any scheduled emails in the outbox to this address, cancel them
