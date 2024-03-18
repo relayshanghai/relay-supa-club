@@ -164,9 +164,7 @@ export default class SubscriptionV2Service {
 
         await SubscriptionRepository.getRepository().upsert(
             {
-                company: {
-                    id: companyId,
-                },
+                companyId,
                 provider: 'stripe',
                 providerSubscriptionId: subscription.id,
                 paymentMethod:
