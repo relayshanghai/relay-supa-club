@@ -102,7 +102,7 @@ export const useThread = () => {
             if (request.page === 1) setThreads(response?.data.items);
             else appendThreads(response?.data.items);
             setMessageCount(response?.data.messageCount);
-            if (!selectedThread) getAndSelectThread(response?.data.items[0].id);
+            if (!selectedThread && response?.data.items.length) getAndSelectThread(response?.data.items[0].id);
         }
     };
     const getAndSelectThread = async (threadId: string) => {

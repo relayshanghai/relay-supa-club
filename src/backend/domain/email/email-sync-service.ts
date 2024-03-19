@@ -22,6 +22,11 @@ import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { logger } from 'src/backend/integration/logger';
 import BoostbotService from 'src/backend/integration/boostbot/boostbot-service';
 import { ThreadStatus } from 'src/backend/database/thread/thread-status';
+import SequenceEmailRepository from 'src/backend/database/sequence/sequence-email-repository';
+import { isString } from 'src/utils/types';
+import JobRepository from 'src/backend/database/job/job-repository';
+import { type OutboxGet } from 'types/email-engine/outbox-get';
+import { type SequenceEmailEntity } from 'src/backend/database/sequence/sequence-email-entity';
 
 export default class EmailSyncService {
     static service = new EmailSyncService();
@@ -138,6 +143,7 @@ export default class EmailSyncService {
                 },
             ),
         ]);
+
         const savedEmailContacts = await EmailContactRepository.getRepository().getAllByAddresses(
             newThreadContacts.map((e) => e.emailContact.address),
         );
@@ -149,9 +155,11 @@ export default class EmailSyncService {
             const lastEmail = newEmails[newEmails.length - 1];
 
             if (lastEmail.from?.address !== profile.sequenceSendEmail) {
+                const influencer = await ThreadRepository.getRepository().getInfluencerByThreadId(threadId);
                 toUpdate.lastReplyDate = new Date(newEmails[newEmails.length - 1].date);
                 toUpdate.lastReplyId = newEmails[newEmails.length - 1].id;
                 toUpdate.threadStatus = ThreadStatus.REPLIED;
+                this.deleteScheduledEmails(influencer?.id as string);
             }
         }
 
@@ -217,5 +225,37 @@ export default class EmailSyncService {
     async syncEmails() {
         const accounts = await EmailEngineService.getService().getAllAccounts();
         await Promise.all(accounts.map(({ account }) => BoostbotService.getService().triggerSyncEmailAccount(account)));
+    }
+
+    private async deleteScheduledEmails(influencerId: string) {
+        const sequenceEmails = await SequenceEmailRepository.getRepository().getSequenceByInfluencerId(influencerId);
+
+        const jobIds = sequenceEmails.map((email) => email.job?.id).filter(isString);
+        if (jobIds.length > 0) {
+            await JobRepository.getRepository().delete(jobIds);
+        }
+
+        const toDelete = sequenceEmails.filter(
+            (email) => email.emailDeliveryStatus === 'Scheduled' || email.emailDeliveryStatus === 'Unscheduled',
+        );
+        const outbox = await EmailEngineService.getService().getOutbox({});
+        // If there are any scheduled emails in the outbox to this address, cancel them
+        const scheduledMessages = this.getScheduledMessages(outbox, toDelete);
+        if (scheduledMessages.length === 0) {
+            return;
+        }
+        for (const message of scheduledMessages) {
+            const { deleted } = await EmailEngineService.getService().deleteOutbox(message.queueId);
+            if (!deleted) {
+                throw new Error('failed to delete email from outbox');
+            }
+            await SequenceEmailRepository.getRepository().delete({ emailMessageId: message.messageId });
+        }
+    }
+
+    private getScheduledMessages(outbox: OutboxGet['messages'], sequenceEmails: SequenceEmailEntity[]) {
+        return outbox.filter((message) =>
+            sequenceEmails.some((sequenceEmail) => sequenceEmail.emailMessageId === message.messageId),
+        );
     }
 }
