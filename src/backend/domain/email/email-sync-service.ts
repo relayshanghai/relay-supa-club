@@ -151,6 +151,7 @@ export default class EmailSyncService {
             if (lastEmail.from?.address !== profile.sequenceSendEmail) {
                 toUpdate.lastReplyDate = new Date(newEmails[newEmails.length - 1].date);
                 toUpdate.lastReplyId = newEmails[newEmails.length - 1].id;
+                toUpdate.threadStatus = ThreadStatus.REPLIED;
             }
         }
 
