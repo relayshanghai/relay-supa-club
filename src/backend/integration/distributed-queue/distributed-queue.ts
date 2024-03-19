@@ -17,11 +17,8 @@ export const UseDistributedQueue =
                 if (queue.length < concurrencyPerSecond) {
                     break;
                 }
-                if (queue[queue.length - 1] < Date.now() - 1000) {
-                    queue.pop();
-                    await KVService.getService().set(queueKey, queue);
-                    break;
-                }
+                const filtered = queue.filter((time) => time > Date.now() - 1000);
+                await KVService.getService().set(queueKey, filtered);
                 await delay(delayCheck);
             }
             const now = Date.now();

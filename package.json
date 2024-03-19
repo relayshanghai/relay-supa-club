@@ -11,13 +11,15 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "lint:sql": "sqlfluff lint --ignore=parsing --disable-progress-bar supabase/seed.sql supabase/policies supabase/functions/ supabase/tests",
     "fix:sql": "sqlfluff fix --ignore=parsing --disable-progress-bar --show-lint-violations supabase/seed.sql supabase/policies supabase/functions/ supabase/tests",
-    "type-check:app": "tsc",
+    "type-check:app": "next lint",
     "type-check-all": "run-p type-check:*",
-    "test": "vitest run",
     "tailwind:build": "tailwindcss -i ./styles/globals.css -o ./build/index.css",
     "tailwind:watch": "tailwindcss -i ./styles/globals.css -o ./build/index.css --watch",
     "test-cypress-unit": "run-s tailwind:build test:run-cypress-unit",
     "test:watch": "vitest",
+    "test:react": "vitest -c vitest.config.react.js run",
+    "test:node": "vitest -c vitest.config.node.js run",
+    "test": "npm run test:react && npm run test:node",
     "test:run-cypress-unit": "cypress run --component",
     "cypress": "npx cypress open",
     "prepare": "husky install",
@@ -123,7 +125,8 @@
     "ulid": "^2.3.0",
     "use-analytics": "^1.1.0",
     "uuid": "^9.0.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -143,6 +146,7 @@
     "@swc/core": "^1.4.2",
     "@tailwindcss/forms": "^0.5.3",
     "@testing-library/cypress": "^10.0.1",
+    "@testing-library/react": "^14.2.1",
     "@types/dompurify": "^3.0.2",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
@@ -153,6 +157,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "autoprefixer": "^10.4.14",
     "cypress": "^13.2.0",
     "cypress-iframe": "^1.0.1",
@@ -162,6 +167,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-storybook": "^0.6.11",
     "husky": "^8.0.3",
+    "jsdom": "^24.0.0",
     "lint-staged": "^13.2.1",
     "msw": "^1.2.1",
     "npm-run-all": "^4.1.5",
@@ -174,7 +180,7 @@
     "tailwindcss": "^3.3.1",
     "typescript": "5.0.4",
     "unplugin-swc": "^1.4.4",
-    "vitest": "^0.30.1"
+    "vitest": "^0.31.4"
   },
   "lint-staged": {
     "(supabase|supabase/policies|supabase/functions|supabase/tests)/**/(*|seed).sql": [

@@ -3,6 +3,7 @@ import {
     ThreadContactEntity,
     ThreadContactType,
 } from 'src/backend/database/thread/email-contact-entity';
+import type { EmailEntity } from 'src/backend/database/thread/email-entity';
 import { type From, type AccountMessage, type ReplyTo } from 'src/backend/integration/email-engine/account-get-message';
 
 type Contact = From | ReplyTo;
@@ -137,6 +138,23 @@ export default class EmailHelperService {
             return entity;
         });
         return [fromEntity, ...toEntities, ...ccEntities, ...bccEntities];
+    }
+    parseMessage(email: EmailEntity) {
+        const { date, unseen, id, from, cc, replyTo, text, subject, attachments, to } = email.data;
+
+        const parsed = {
+            date,
+            unread: unseen || false,
+            id,
+            from,
+            to,
+            attachments: attachments,
+            cc: cc || [],
+            replyTo,
+            subject,
+            body: text.html,
+        };
+        return parsed;
     }
     stringifyContacts(...contacts: Contact[]): string {
         return contacts

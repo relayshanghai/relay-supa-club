@@ -31,6 +31,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
     const CompanyRepositoryUpdateMock = vi.fn();
+    const CompanyRepositoryGetOneMock = vi.fn();
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
@@ -47,6 +48,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
+    CompanyRepository.getRepository().findOne = CompanyRepositoryGetOneMock;
 
     describe(`SubscriptionV2Service`, () => {
         beforeEach(() => {
@@ -192,6 +194,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     status: 'active',
                 });
                 StripeGetProductMetadataMock.mockResolvedValue({
+                    name: 'Outreach',
                     searches: '100000000',
                     profiles: '100000000',
                     ai_emails: '100000000',
@@ -203,11 +206,14 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     product: 'prod_1',
                 });
                 CancelSubscriptionMock.mockResolvedValue(undefined);
+                CompanyRepositoryGetOneMock.mockResolvedValue({
+                    id: 'company_1',
+                });
             });
 
             it(`should update subscription and company, and insert new subscription when redirectStatus is success`, async () => {
                 await SubscriptionV2Service.getService().postConfirmation({
-                    redirectStatus: 'success',
+                    redirectStatus: 'succeeded',
                     paymentIntentId: 'pi_1',
                     paymentIntentSecret: 'some-secret',
                     subscriptionId: 'trial_sub_1',
@@ -263,7 +269,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         cancelledAt: null,
                     },
                     {
-                        conflictPaths: ['company.id'],
+                        conflictPaths: ['company'],
                     },
                 );
                 expect(CompanyRepository.getRepository().update).toHaveBeenCalledWith(
@@ -274,7 +280,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         subscriptionStatus: 'active',
                         searchesLimit: '100000000',
                         profilesLimit: '100000000',
-                        subscriptionPlan: 'plan_1',
+                        subscriptionPlan: 'Outreach',
                         trialProfilesLimit: '100000000',
                         trialSearchesLimit: '100000000',
                     },

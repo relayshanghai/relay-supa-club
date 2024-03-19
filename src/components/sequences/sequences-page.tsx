@@ -70,7 +70,7 @@ export const SequencesPage = () => {
         <Layout>
             {!profile?.email_engine_account_id && (
                 <Banner
-                    buttonText={t('banner.button')}
+                    buttonText={t('banner.button') ?? ''}
                     title={t('banner.outreach.title')}
                     message={t('banner.outreach.descriptionSequences')}
                 />

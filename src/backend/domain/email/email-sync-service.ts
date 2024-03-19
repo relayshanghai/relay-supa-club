@@ -7,7 +7,7 @@ import ThreadRepository from 'src/backend/database/thread/thread-repository';
 import EmailRepository from 'src/backend/database/thread/email-repository';
 import { EmailEntity } from 'src/backend/database/thread/email-entity';
 import EmailHelperService from './email-helper-service';
-import { ThreadEntity, ThreadStatus } from 'src/backend/database/thread/thread-entity';
+import { ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
@@ -21,6 +21,7 @@ import type { ProfileEntity } from 'src/backend/database/profile/profile-entity'
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { logger } from 'src/backend/integration/logger';
 import BoostbotService from 'src/backend/integration/boostbot/boostbot-service';
+import { ThreadStatus } from 'src/backend/database/thread/thread-status';
 
 export default class EmailSyncService {
     static service = new EmailSyncService();
@@ -53,7 +54,7 @@ export default class EmailSyncService {
             thread.sequenceInfluencer = sequenceInfluencer;
             thread.emailEngineAccountId = emailEngineAccountId;
             thread.createdAt = new Date();
-            thread.threadStatus = ThreadStatus.OPENED;
+            thread.threadStatus = ThreadStatus.UNOPENED;
             await ThreadRepository.getRepository().save(thread);
             thread = await ThreadRepository.getRepository().findOne({
                 where: {

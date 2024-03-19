@@ -8,14 +8,12 @@ import { forensicTrack } from '../forensicTrack';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
 import { serverLogger } from 'src/utils/logger-server';
 import { nanoid } from 'nanoid';
-import { UseDistributedQueue } from 'src/backend/integration/distributed-queue/distributed-queue';
 
 /**
  * For fetching IQData API
  */
 export class IqDataApiFetcher {
     static service = new IqDataApiFetcher();
-    @UseDistributedQueue(10)
     async request<TRes, TReq>(
         url: string,
         payload: ApiPayloadParam<TReq> & { context?: ServerContext },

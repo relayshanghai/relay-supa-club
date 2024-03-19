@@ -11,6 +11,7 @@ import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import awaitToError from 'src/utils/await-to-error';
+import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;
@@ -177,7 +178,7 @@ export default class SubscriptionV2Service {
     async postConfirmation(request: PostConfirmationRequest) {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
-        if (request.redirectStatus != 'success') {
+        if (request.redirectStatus != 'succeeded') {
             await StripeService.getService().cancelSubscription(cusId);
             throw new UnprocessableEntityError('entity is unprocessable');
         }
@@ -189,11 +190,15 @@ export default class SubscriptionV2Service {
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
 
+        const company = await CompanyRepository.getRepository().findOne({
+            where: {
+                id: companyId,
+            },
+        });
+
         await SubscriptionRepository.getRepository().upsert(
             {
-                company: {
-                    id: companyId,
-                },
+                company: company as CompanyEntity,
                 provider: 'stripe',
                 providerSubscriptionId: subscription.id,
                 paymentMethod:
@@ -213,7 +218,7 @@ export default class SubscriptionV2Service {
                 cancelledAt: null,
             },
             {
-                conflictPaths: ['company.id'],
+                conflictPaths: ['company'],
             },
         );
 
@@ -227,7 +232,7 @@ export default class SubscriptionV2Service {
                 searchesLimit: productMetadata.searches,
                 trialProfilesLimit: productMetadata.trial_profiles,
                 trialSearchesLimit: productMetadata.trial_searches,
-                subscriptionPlan: subscription.items.data[0].plan.id as string,
+                subscriptionPlan: productMetadata.name as string,
             },
         );
 

@@ -77,6 +77,7 @@ export const HandleDecorator =
 export const POST = () => HandleDecorator('POST');
 export const GET = () => HandleDecorator('GET');
 export const PUT = () => HandleDecorator('PUT');
+export const PATCH = () => HandleDecorator('PATCH');
 export const DELETE = () => HandleDecorator('DELETE');
 
 export const getHandlerMetadata = (target: any, method: string) => {

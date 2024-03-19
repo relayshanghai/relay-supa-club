@@ -9,10 +9,9 @@ export default class BaseRepository<E extends ObjectLiteral> extends Repository<
         super(baseRepository.target, manager || baseRepository.manager, baseRepository.queryRunner);
     }
 
-    // generic fetch function with pagination page and size
     async getPaginated({ page, size }: PaginationParam, options: FindManyOptions<E> = {}): Promise<Paginated<E>> {
-        page = page || 1;
-        size = size || 10;
+        page = parseInt(page.toString()) || 1;
+        size = parseInt(size.toString()) || 10;
         const [items, totalItems] = await this.findAndCount({
             skip: (page - 1) * size,
             take: size,
