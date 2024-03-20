@@ -1,7 +1,11 @@
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRICE_MONTHLY_OUTREACH } from 'src/utils/api/stripe/constants';
+import {
+    STRIPE_PRICE_MONTHLY_DISCOVERY,
+    STRIPE_PRICE_MONTHLY_OUTREACH,
+    STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+} from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
@@ -54,6 +58,7 @@ export const priceDetails: PriceDetails = {
         { title: 'amount_EmailsPerMonth', icon: 'check', amount: 600 },
         { title: 'fullCustomerService', icon: 'check' },
     ],
+    addPayment: [{ title: 'addPayment', icon: 'check' }],
 };
 
 export const usePrices = () => {
@@ -76,6 +81,13 @@ export const usePrices = () => {
                 searches: '',
                 priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
             },
+            addPayment: {
+                currency: en ? 'usd' : 'cny',
+                prices: { monthly: en ? '0' : '0' },
+                profiles: '',
+                searches: '',
+                priceIds: { monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT },
+            },
         }),
         [en],
     );
@@ -90,6 +102,7 @@ export const usePrices = () => {
             const prices = {
                 discovery: data.discovery.find((plan) => plan.currency === 'cny') || defaultPrices.discovery,
                 outreach: data.outreach.find((plan) => plan.currency === 'cny') || defaultPrices.outreach,
+                addPayment: defaultPrices.addPayment,
             };
 
             setPrices(prices);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { emailRegex } from 'src/constants';
@@ -9,7 +9,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { Button } from 'shadcn/components/ui/button';
 import { Input } from '../input';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
+import { UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
 import { nextFetch } from 'src/utils/fetcher';
 
@@ -27,29 +27,6 @@ export const PersonalDetails = () => {
     const { loading: userDataLoading, profile, user, updateProfile, refreshProfile } = useUser();
     const { track } = useRudderstackTrack();
     const { appUrl } = useHostname();
-
-    const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
-    const handleResetPassword = async () => {
-        setGeneratingResetEmail(true);
-        try {
-            if (!email) {
-                throw new Error('Please enter your email');
-            }
-            await nextFetch('profiles/reset-password', {
-                method: 'POST',
-                body: {
-                    name: `${profile?.first_name} ${profile?.last_name}`,
-                    email,
-                    redirectUrl: appUrl,
-                },
-            });
-            toast.success(t('login.resetPasswordEmailSent'));
-            track(ChangePassword);
-        } catch (error: any) {
-            toast.error(error.message || t('login.oopsSomethingWentWrong'));
-        }
-        setGeneratingResetEmail(false);
-    };
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -122,7 +99,7 @@ export const PersonalDetails = () => {
 
     return (
         <section id="personal-details" className="w-full">
-            <p className="pb-6 font-semibold">Personal Info</p>
+            <p className="pb-6 font-semibold">{t('account.personal.title')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <div className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4`}>
@@ -175,13 +152,6 @@ export const PersonalDetails = () => {
                         </div>
                     </div>
                     <hr />
-                    <Button
-                        className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
-                        onClick={handleResetPassword}
-                        disabled={generatingResetEmail}
-                    >
-                        {t('login.changePassword')}
-                    </Button>
                 </div>
             </section>
         </section>

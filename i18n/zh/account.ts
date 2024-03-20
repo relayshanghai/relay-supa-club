@@ -52,7 +52,11 @@ const account = {
         trialExpired: '试用已过期',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: '您没有活动的订阅。请在下面购买。',
         beforePurchasingYouNeedPaymentMethod: '在购买订阅之前，您需要添加付款方式。',
-        addPaymentMethod: '添加付款方式',
+        addPaymentMethod: {
+            title: '添加付款方式',
+            success: 'Payment method added',
+            error: 'Unable to add payment method',
+        },
         availablePlans: '可用方案',
         planName: '名称',
         active: '活跃',
@@ -126,6 +130,7 @@ const account = {
         offCn: '节省',
     },
     plans: {
+        discoveryTrial: 'Discovery Trial',
         discovery: '探索方案',
         outreach: '拓展方案',
     },

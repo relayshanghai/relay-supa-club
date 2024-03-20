@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
 import type Stripe from 'stripe';
 import { Alipay, MasterCard, Plus, Visa } from '../icons';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { Button } from 'shadcn/components/ui/button';
+import { AddPaymentMethodModal } from './modal-add-payment-method';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
+import toast from 'react-hot-toast';
+import type { PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
 
 const PaymentMethodDetails: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ paymentMethod }) => {
     let details = 'Unknown';
@@ -41,23 +45,58 @@ const PaymentMethodIcon: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ 
 };
 
 export const BillingDetails = () => {
-    const { defaultPaymentMethod, paymentMethods, refreshCustomerInfo, setDefaultPaymentMethod, removePaymentMethod } =
-        useSubscription();
+    const [newPaymentModalOpenState, setNewPaymentModalOpenState] = useState(false);
+
+    const {
+        defaultPaymentMethod,
+        paymentMethods,
+        loadingCustomerInfo,
+        refreshCustomerInfo,
+        setDefaultPaymentMethod,
+        removePaymentMethod,
+    } = useSubscription();
     const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
-        await setDefaultPaymentMethod(paymentMethodId);
-        await refreshCustomerInfo();
+        setDefaultPaymentMethod(paymentMethodId);
+        refreshCustomerInfo((prev) => {
+            return {
+                ...prev,
+                defaultPaymentMethod: paymentMethodId,
+            } as PaymentMethodGetResponse;
+        });
     };
     const handleConfirmRemovePaymentMethod = async (paymentMethodId: string) => {
-        await removePaymentMethod(paymentMethodId);
-        await refreshCustomerInfo();
+        removePaymentMethod(paymentMethodId).then(() => {
+            toast.success('Payment method removed');
+        });
+        refreshCustomerInfo((prev) => {
+            return {
+                ...prev,
+                paymentMethods: prev?.paymentMethods?.filter((pm) => pm.id !== paymentMethodId) || [],
+            } as PaymentMethodGetResponse;
+        });
     };
+
     return (
         <section id="subscription-details" className="w-full">
-            <p className="pb-6 font-semibold">Plan</p>
+            <AddPaymentMethodModal open={newPaymentModalOpenState} setOpen={setNewPaymentModalOpenState} />
+            <p className="pb-6 font-semibold">Payment Methods</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
                     <div className="flex flex-col space-y-4 rounded-lg bg-white pb-12 lg:w-3/4">
+                        {loadingCustomerInfo && (
+                            <div className="flex w-full flex-row items-center justify-between rounded-xl border p-6">
+                                <section className="flex items-center gap-3">
+                                    <Skeleton className="h-10 w-10" />
+                                    <Skeleton className="h-10 w-6" />
+                                </section>
+                                <Skeleton className="h-4">Default</Skeleton>
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-10 w-24" />
+                                    <Skeleton className="h-10 w-24" />
+                                </div>
+                            </div>
+                        )}
                         {paymentMethods?.map((paymentMethod) => {
                             return (
                                 <div
@@ -84,15 +123,17 @@ export const BillingDetails = () => {
                                                 <DialogContent className="flex flex-col items-center">
                                                     <p>Are you sure you want to delete this payment method?</p>
                                                     <div className="flex items-center gap-2">
-                                                        <Button
-                                                            variant="destructive"
-                                                            className="text-sm font-medium text-red-500 hover:bg-red-600 hover:text-white"
-                                                            onClick={() =>
-                                                                handleConfirmRemovePaymentMethod(paymentMethod.id)
-                                                            }
-                                                        >
-                                                            Yes, remove
-                                                        </Button>
+                                                        <DialogClose>
+                                                            <Button
+                                                                variant="destructive"
+                                                                className="text-sm font-medium text-red-500 hover:bg-red-600 hover:text-white"
+                                                                onClick={() =>
+                                                                    handleConfirmRemovePaymentMethod(paymentMethod.id)
+                                                                }
+                                                            >
+                                                                Yes, remove
+                                                            </Button>
+                                                        </DialogClose>
                                                         <DialogClose className="text-sm font-medium text-accent-500">
                                                             <Button>Cancel</Button>
                                                         </DialogClose>
@@ -112,15 +153,12 @@ export const BillingDetails = () => {
                         })}
                     </div>
                     <section className="flex items-center gap-3">
-                        {/* <Link className="" href="/upgrade">
-                            <Button
-                                variant="outline"
-                                className="border-primary-700 font-semibold text-primary-700 hover:bg-primary-700 hover:text-white"
-                            >
-                                View payment history
-                            </Button>
-                        </Link> */}
-                        <Button className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300">
+                        <Button
+                            onClick={() => {
+                                setNewPaymentModalOpenState(true);
+                            }}
+                            className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                        >
                             <Plus className="mr-2 h-4 w-4" />
                             Add new payment method
                         </Button>

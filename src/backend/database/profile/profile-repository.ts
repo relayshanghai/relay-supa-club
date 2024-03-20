@@ -48,4 +48,12 @@ export class ProfileRepository extends BaseRepository<ProfileEntity> {
         }
         return true;
     }
+
+    async getProfileById(id: string) {
+        return this.findOneByOrFail({ id });
+    }
+
+    async deleteProfileById(id: string) {
+        return this.delete({ id });
+    }
 }

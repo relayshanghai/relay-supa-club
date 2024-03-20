@@ -48,7 +48,7 @@ export const InvoiceDetails = () => {
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <div className="relative flex flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4">
-                    {!isAdmin(profile?.user_role) ? (
+                    {isAdmin(profile?.user_role) ? (
                         <>
                             <div className="w-full">
                                 <Input

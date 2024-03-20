@@ -22,7 +22,12 @@ export const useSubscription = () => {
         company?.id ? [company.id, 'subscriptions'] : null,
         async ([id, path]) => await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, { id }),
     );
-    const { data: customerInfo, mutate: refreshCustomerInfo } = useSWR(
+    const {
+        data: customerInfo,
+        mutate: refreshCustomerInfo,
+        isLoading: loadingCustomerInfo,
+        isValidating: validatingCustomerInfo,
+    } = useSWR(
         company?.id ? [company.id, 'subscriptions/payment-method'] : null,
         async ([id, path]) =>
             await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
@@ -146,6 +151,8 @@ export const useSubscription = () => {
         defaultPaymentMethod: customerInfo?.defaultPaymentMethod,
         defaultInvoiceEmail: customerInfo?.defaultInvoiceEmail,
         refreshCustomerInfo,
+        loadingCustomerInfo,
+        validatingCustomerInfo,
         updateDefaultInvoiceEmail,
         refreshSubscription: mutate,
         createSubscription,

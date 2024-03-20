@@ -12,6 +12,7 @@ import SequenceStepRepository from 'src/backend/database/sequence/sequence-step-
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
+import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -56,6 +57,10 @@ export default class SequenceService {
             templateVariables as Variable[],
         );
         return sequence;
+    }
+
+    async moveManager(originalProfile: ProfileEntity, newProfile: ProfileEntity) {
+        await SequenceRepository.getRepository().moveManager(originalProfile, newProfile);
     }
 
     @UseTransaction()

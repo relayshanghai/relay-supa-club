@@ -14,9 +14,6 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptionTier }) => {
     const { i18n } = useTranslation();
     const { prices } = usePrices();
-    const { trackEvent } = useRudderstack();
-    const { paymentMethods, refreshCustomerInfo } = useUser();
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = prices[priceTier];
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
     const batchId = useMemo(() => randomNumber(), []);
@@ -32,12 +29,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
         },
         locale: i18n.language?.includes('en') ? 'en' : 'zh',
     };
-    useEffect(() => {
-        localStorage.setItem('selectedPlan', priceTier);
-    }, [priceTier]);
-    useEffect(() => {
-        refreshCustomerInfo();
-    }, [refreshCustomerInfo]);
+
     return (
         <div className="w-80 lg:w-[28rem]">
             <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />

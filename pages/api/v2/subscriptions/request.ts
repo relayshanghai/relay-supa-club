@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateSubscriptionRequest {
     @IsString()
@@ -27,4 +27,15 @@ export class PostConfirmationRequest {
 
     @IsString()
     subscriptionId!: string;
+}
+
+export class CreatePaymentMethodRequest {
+    @IsEnum(['card', 'alipay'])
+    paymentMethodType!: 'card' | 'alipay';
+    @IsString()
+    currency!: string;
+    @IsString()
+    paymentMethodId!: string;
+    @IsString()
+    userAgent!: string;
 }

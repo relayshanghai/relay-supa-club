@@ -74,14 +74,19 @@ export const SubscriptionDetails = () => {
                             <>
                                 <section className="flex">
                                     <div className="flex w-full flex-col items-start justify-between">
-                                        <h2 className="text-4xl font-semibold text-gray-900">
+                                        <h2 className="flex items-start gap-2 text-4xl font-semibold text-gray-900">
                                             {t(`account.plans.${subscription?.name.toLowerCase()}`)}
+                                            {subscription.status === 'trial' && (
+                                                <span className="rounded border border-gray-600 bg-gray-300 px-1 text-base text-gray-600">
+                                                    Trial
+                                                </span>
+                                            )}
                                         </h2>
                                         <h2 className="text-sm font-normal text-gray-600">
                                             {t(`account.plans.details`)}
                                         </h2>
                                     </div>
-                                    <div className="flex flex-col items-end gap-2">
+                                    <div className="flex w-full flex-col items-end gap-2">
                                         <div className="flex h-fit gap-3">
                                             <Tablet customStyle={statusColor}>
                                                 {subscriptionEndDate

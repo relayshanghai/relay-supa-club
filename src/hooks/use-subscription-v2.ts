@@ -1,5 +1,9 @@
+import type { AxiosResponse } from 'axios';
+import type { CreatePaymentMethodRequest } from 'pages/api/v2/subscriptions/request';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
+import type Stripe from 'stripe';
+import useSWR from 'swr';
 
 export type CreateSubscriptionPayload = { priceId: string; quantity: number };
 export type CreateSubscriptionResponse = {
@@ -18,5 +22,39 @@ export const useSubscriptionV2 = () => {
         if (err) return;
         return res.data;
     };
-    return { loading, error, createSubscription };
+    const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
+        const [err, res] = await awaitToError(
+            apiClient.get<Stripe.Subscription>('/v2/subscriptions').then((res) => res.data),
+        );
+
+        if (err) return;
+
+        return res;
+    });
+    const addPaymentMethod = async ({
+        paymentMethodId,
+        paymentMethodType,
+        currency = 'cny',
+    }: {
+        paymentMethodId: string;
+        paymentMethodType: 'card' | 'alipay';
+        currency?: string;
+    }) => {
+        const [err, res] = await awaitToError(
+            apiClient.post<CreatePaymentMethodRequest, AxiosResponse<Stripe.SetupIntent>>(
+                '/v2/subscriptions/payment-method',
+                {
+                    paymentMethodId,
+                    paymentMethodType,
+                    userAgent: window.navigator.userAgent,
+                    currency,
+                },
+            ),
+        );
+        if (err) return;
+
+        return res.data;
+    };
+
+    return { loading, error, createSubscription, subscription, refreshSubscription, addPaymentMethod };
 };

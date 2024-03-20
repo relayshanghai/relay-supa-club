@@ -13,6 +13,49 @@ export default class StripeService {
         return await StripeService.client.customers.update(cusId, params);
     }
 
+    async createConfirmedSetupIntent({
+        cusId,
+        paymentMethodType,
+        paymentMethodId,
+        currency,
+        userAgent,
+        ipAddress,
+    }: {
+        cusId: string;
+        paymentMethodType: 'card' | 'alipay';
+        paymentMethodId: string;
+        currency: string;
+        userAgent: string;
+        ipAddress: string;
+    }) {
+        return await StripeService.client.setupIntents.create(
+            {
+                customer: cusId,
+                payment_method_types: [paymentMethodType],
+                confirm: true,
+                payment_method: paymentMethodId,
+                payment_method_options: {
+                    //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
+                    alipay: {
+                        currency,
+                    },
+                },
+                usage: 'off_session',
+                mandate_data: {
+                    customer_acceptance: {
+                        type: 'online',
+                        online: {
+                            ip_address: ipAddress,
+                            user_agent: userAgent,
+                        },
+                    },
+                },
+                return_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscriptions/undefined/${paymentMethodType}/callbacks`,
+            },
+            undefined,
+        );
+    }
+
     async createSubscription(cusId: string, priceId: string, quantity = 1) {
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
@@ -38,6 +81,12 @@ export default class StripeService {
 
     async getSubscription(cusId: string) {
         return await StripeService.client.subscriptions.list({
+            customer: cusId,
+        });
+    }
+
+    async attachPaymentMethod(cusId: string, paymentMethodId: string) {
+        return await StripeService.client.paymentMethods.attach(paymentMethodId, {
             customer: cusId,
         });
     }

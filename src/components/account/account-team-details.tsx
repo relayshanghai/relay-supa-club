@@ -6,6 +6,7 @@ import { InviteMembersModal } from './modal-invite-members';
 import { useInvites } from 'src/hooks/use-invites';
 import { useTeammates } from 'src/hooks/use-teammates';
 import { useUser } from 'src/hooks/use-user';
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from 'shadcn/components/ui/dialog';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { ACCOUNT_COMPANY_DETAILS } from 'src/utils/rudderstack/event-names';
 import {
@@ -21,7 +22,7 @@ export const TeamDetails = () => {
     const { profile } = useUser();
     const { invites, createInvite } = useInvites();
     const { trackEvent } = useRudderstack();
-    const { teammates, refreshTeammates, updateTeammate } = useTeammates();
+    const { teammates, refreshTeammates, updateTeammate, deleteTeammate } = useTeammates();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
 
@@ -40,6 +41,14 @@ export const TeamDetails = () => {
             refreshTeammates();
         },
         [refreshTeammates, updateTeammate],
+    );
+
+    const handleDeleteUser = useCallback(
+        async (adminId: string, teammateId: string) => {
+            await deleteTeammate(adminId, teammateId);
+            refreshTeammates();
+        },
+        [refreshTeammates, deleteTeammate],
     );
 
     return (
@@ -102,7 +111,36 @@ export const TeamDetails = () => {
                                             </p>
                                         )}
                                         {isAdmin(profile?.user_role) && !isAdmin(teammateProfile?.user_role) && (
-                                            <button className="font-semibold text-red-400">Remove</button>
+                                            <Dialog>
+                                                <DialogTrigger>
+                                                    <button className="font-semibold text-red-400">Remove</button>
+                                                </DialogTrigger>
+                                                <DialogContent className="flex flex-col items-center">
+                                                    <p>
+                                                        Are you sure you want to delete this teammate? They will lose
+                                                        their account but their sequences will get ported over to you
+                                                    </p>
+                                                    <div className="flex items-center gap-2">
+                                                        <DialogClose>
+                                                            <Button
+                                                                variant="destructive"
+                                                                className="text-sm font-medium text-red-500 hover:bg-red-600 hover:text-white"
+                                                                onClick={() =>
+                                                                    handleDeleteUser(
+                                                                        profile?.id ?? '',
+                                                                        teammateProfile.id,
+                                                                    )
+                                                                }
+                                                            >
+                                                                Yes, remove
+                                                            </Button>
+                                                        </DialogClose>
+                                                        <DialogClose className="text-sm font-medium text-accent-500">
+                                                            <Button>Cancel</Button>
+                                                        </DialogClose>
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
                                         )}
                                     </div>
                                 );

@@ -5,9 +5,12 @@ import { useCompany } from './use-company';
 import { useCallback, useEffect, useState } from 'react';
 import awaitToError from 'src/utils/await-to-error';
 import { apiFetch } from 'src/utils/api/api-fetch';
+import { useApiClient } from 'src/utils/api-client/request';
 
 export const useTeammates = () => {
     const { company } = useCompany();
+
+    const { apiClient } = useApiClient();
 
     const [teammates, setTeammates] = useState<CompanyTeammatesGetResponse>([]);
 
@@ -41,6 +44,10 @@ export const useTeammates = () => {
         }
     }, []);
 
+    const deleteTeammate = (adminId: string, teammateId: string) => {
+        return apiClient.delete(`v2/company/teammates?adminId=${adminId}&teammateId=${teammateId}`);
+    };
+
     useEffect(() => {
         refreshTeammates();
     }, [refreshTeammates]);
@@ -49,5 +56,6 @@ export const useTeammates = () => {
         teammates,
         refreshTeammates,
         updateTeammate,
+        deleteTeammate,
     };
 };

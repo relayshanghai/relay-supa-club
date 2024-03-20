@@ -2,7 +2,7 @@ const account = {
     account: 'Account',
     update: 'Update',
     personal: {
-        title: 'Personal details',
+        title: 'Personal Info',
         firstName: 'First name',
         firstNamePLaceholder: 'Enter your first name',
         lastName: 'Last name',
@@ -52,7 +52,11 @@ const account = {
         trialExpired: 'Trial expired',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: 'You have no active subscription. Please purchase one below.',
         beforePurchasingYouNeedPaymentMethod: 'Before purchasing a subscription, you need to add a payment method.',
-        addPaymentMethod: 'Add payment method',
+        addPaymentMethod: {
+            title: 'Add payment method',
+            success: 'Payment method added',
+            error: 'Unable to add payment method',
+        },
         availablePlans: 'Available plans',
         planName: 'Name',
         active: 'Active',
@@ -126,6 +130,7 @@ const account = {
         offCn: '',
     },
     plans: {
+        discoveryTrial: 'Discovery Trial',
         discovery: 'Discovery',
         outreach: 'Outreach',
     },
