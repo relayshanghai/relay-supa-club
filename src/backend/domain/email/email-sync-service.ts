@@ -155,11 +155,11 @@ export default class EmailSyncService {
             const lastEmail = newEmails[newEmails.length - 1];
 
             if (lastEmail.from?.address !== profile.sequenceSendEmail) {
-                const influencer = await ThreadRepository.getRepository().getInfluencerByThreadId(threadId);
+                const thread = await ThreadRepository.getRepository().getInfluencerByThreadId(threadId);
                 toUpdate.lastReplyDate = new Date(newEmails[newEmails.length - 1].date);
                 toUpdate.lastReplyId = newEmails[newEmails.length - 1].id;
                 toUpdate.threadStatus = ThreadStatus.REPLIED;
-                await this.deleteScheduledEmails(influencer?.id as string);
+                await this.deleteScheduledEmails(thread?.sequenceInfluencer?.id as string);
             }
         }
 
@@ -243,7 +243,7 @@ export default class EmailSyncService {
             );
             const outbox = await EmailEngineService.getService().getOutbox({});
             // If there are any scheduled emails in the outbox to this address, cancel them
-            const scheduledMessages = this.getScheduledMessages(outbox, toDelete);
+            const scheduledMessages = this.getScheduledMessages(outbox.messages, toDelete);
             if (scheduledMessages.length === 0) {
                 return;
             }

@@ -81,7 +81,7 @@ export class EmailEntity {
                 return value;
             },
             to(value: object) {
-                return value;
+                return JSON.stringify(value);
             },
         },
     })

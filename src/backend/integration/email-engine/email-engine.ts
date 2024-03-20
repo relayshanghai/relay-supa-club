@@ -118,7 +118,7 @@ export default class EmailEngineService {
     }
 
     async getOutbox({ page = 0, pageSize = 1000 }) {
-        const [err, result] = await awaitToError<AxiosError, AxiosResponse<OutboxGet['messages']>>(
+        const [err, result] = await awaitToError<AxiosError, AxiosResponse<OutboxGet>>(
             this.apiClient.get(`/outbox?page=${page}&pageSize=${pageSize}`),
         );
         if (err) {
