@@ -31,6 +31,9 @@ export default class SequenceEmailRepository extends BaseRepository<SequenceEmai
             where: {
                 sequenceInfluencer: { id: influencerId },
             },
+            relations: {
+                job: true,
+            },
         });
     }
 }
