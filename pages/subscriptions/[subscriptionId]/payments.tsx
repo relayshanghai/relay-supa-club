@@ -4,7 +4,7 @@ import { AddPaymentsSection } from 'src/components/payments/add-payments-section
 import { PlanDetails } from 'src/components/payments/plan-details';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 import { type ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/v2/use-subscription';
 
 export default function SubscriptionPaymentPage() {
     const router = useRouter();

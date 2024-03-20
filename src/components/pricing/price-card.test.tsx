@@ -80,7 +80,7 @@ describe('PriceCard Component', () => {
             }),
         }));
 
-        vi.mock('src/hooks/use-subscription-v2', () => ({
+        vi.mock('src/hooks/v2/use-subscription', () => ({
             useSubscriptionV2: () => ({
                 createSubscription: createSubscriptionMock,
                 loading: false,
