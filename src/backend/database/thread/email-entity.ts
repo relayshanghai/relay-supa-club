@@ -80,6 +80,9 @@ export class EmailEntity {
                 if (typeof value === 'string') return JSON.parse(value);
                 return value;
             },
+            to(value: object) {
+                return JSON.stringify(value);
+            },
         },
     })
     data!: Email;

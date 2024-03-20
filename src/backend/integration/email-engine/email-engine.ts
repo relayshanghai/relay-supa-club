@@ -4,6 +4,10 @@ import type { AccountSearchPost, SearchEmailParam, SearchResponseMessage } from 
 import type { AccountMessage } from './account-get-message';
 import type { EmailEnginePaginatedAccount } from './account';
 import type { SendEmailRequestBody, SendEmailResponseBody } from './account-submit-message';
+import EmailHelperService from 'src/backend/domain/email/email-helper-service';
+import dayjs from 'dayjs';
+import { type OutboxGet } from 'types/email-engine/outbox-get';
+import { type OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
 
 export const EMAIL_ENGINE_API_URL = `${process.env.EMAIL_ENGINE_API_URL || 'http://localhost:4000'}/v1`;
 
@@ -111,5 +115,40 @@ export default class EmailEngineService {
             throw new Error(err.message);
         }
         return result.data;
+    }
+
+    async getOutbox({ page = 0, pageSize = 1000 }) {
+        const [err, result] = await awaitToError<AxiosError, AxiosResponse<OutboxGet>>(
+            this.apiClient.get(`/outbox?page=${page}&pageSize=${pageSize}`),
+        );
+        if (err) {
+            throw new Error(err.message);
+        }
+        return result.data;
+    }
+
+    async deleteOutbox(queueId: string): Promise<OutboxQueueidDelete> {
+        return this.apiClient.delete(`/outbox/${encodeURIComponent(queueId)}`);
+    }
+
+    async influencerReply(emailEngineAccountId: string, emails: SearchResponseMessage[]) {
+        const replies = (
+            await Promise.all(
+                emails.map(async (email) => {
+                    const message = await EmailEngineService.getService().getAccountMessageById(
+                        emailEngineAccountId,
+                        email.id,
+                    );
+                    const [, type] = await awaitToError(EmailHelperService.getService().getMessageType(message));
+                    if (type?.type === 'Reply') {
+                        return email;
+                    }
+                }),
+            )
+        )
+            .filter((d) => d)
+            .sort((a, b) => dayjs(a?.date).unix() - dayjs(b?.date).unix());
+
+        return replies;
     }
 }

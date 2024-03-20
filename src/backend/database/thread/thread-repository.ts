@@ -115,4 +115,15 @@ export default class ThreadRepository extends BaseRepository<ThreadEntity> {
             },
         };
     }
+
+    async getInfluencerByThreadId(threadId: string) {
+        return this.findOne({
+            where: {
+                threadId,
+            },
+            relations: {
+                sequenceInfluencer: true,
+            },
+        });
+    }
 }
