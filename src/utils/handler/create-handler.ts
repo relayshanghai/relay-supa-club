@@ -66,7 +66,7 @@ export const createHandler = (target: new () => any) => {
                     apm.setUserContext({
                         email: session.user.email,
                         id: session.user.id,
-                        username: row.companies?.name || undefined,
+                        username: row.company?.name || undefined,
                     });
                     apm.setCustomContext(row);
                 }
