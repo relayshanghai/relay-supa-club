@@ -8,6 +8,7 @@ import type { Nullable } from 'types/nullable';
 import type BaseRepository from 'src/backend/database/provider/base-repository';
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 export type TranslationFunction = (key: string, params?: Record<string, string>) => string;
+
 export interface Context {
     session?: Session | null;
     customerId?: string | null;
