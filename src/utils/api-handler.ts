@@ -19,6 +19,7 @@ import awaitToError from './await-to-error';
 import type { HttpError } from './error/http-error';
 import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
+import apm from 'elastic-apm-node';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -151,6 +152,11 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             });
         }
 
+        apm.setUserContext({
+            email: session.user.email,
+            id: session.user.id,
+        });
+        apm.setCustomContext(rows[0]);
         req.profile = rows[0];
     }
 
@@ -216,6 +222,12 @@ export const ApiHandlerWithContext =
                             return scope.setContext('User', context);
                         });
                     }
+                    apm.setUserContext({
+                        email: session.user.email,
+                        id: session.user.id,
+                        username: row.companies?.name || undefined,
+                    });
+                    apm.setCustomContext(row);
                 } else if (params.requireAuth) {
                     throw new UnauthorizedError('Unauthorized');
                 }

@@ -15,6 +15,7 @@ import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
+import apm from 'elastic-apm-node';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -27,6 +28,7 @@ export const createHandler = (target: new () => any) => {
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
                 const authMetadata = getAuthMetadata(instance, handlerStr);
+
                 if (authMetadata) {
                     await authMetadata.auth(req);
                 }
@@ -61,6 +63,12 @@ export const createHandler = (target: new () => any) => {
                             return scope.setContext('User', context);
                         });
                     }
+                    apm.setUserContext({
+                        email: session.user.email,
+                        id: session.user.id,
+                        username: row.companies?.name || undefined,
+                    });
+                    apm.setCustomContext(row);
                 }
                 const data = await instance[handlerStr].apply(this, [req, res]);
                 return data;
