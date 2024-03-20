@@ -118,6 +118,10 @@ export default class StripeService {
         return StripeService.client.subscriptions.del(subscriptionId);
     }
 
+    async getAvailablePromo() {
+        return StripeService.client.promotionCodes.list({ active: true });
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

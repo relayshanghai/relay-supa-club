@@ -15,7 +15,7 @@ import {
     STRIPE_SUBSCRIBE_RESPONSE,
     stripeSubscribeResponseInitialValue,
     useSubscriptionV2,
-} from 'src/hooks/use-subscription-v2';
+} from 'src/hooks/v2/use-subscription';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 
 const isCurrentPlan = (
