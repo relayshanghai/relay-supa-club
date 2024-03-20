@@ -94,8 +94,8 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
         setAddress(passedAddress);
     }, [passedAddress]);
 
-    const { id, funnelStatus, rateAmount, commissionRate, affiliateLink, scheduledPostDate } = influencer ?? {};
-    const { name, phoneNumber, addressLine1, city, state, postalCode, country, trackingCode } = address ?? {};
+    const { id, funnelStatus, rateAmount, commissionRate, affiliateLink, scheduledPostDate } = influencer || {};
+    const { name, phoneNumber, addressLine1, city, state, postalCode, country, trackingCode } = address || {};
 
     const funnelStatusController = useRef<Nullable<AbortController>>(null);
     const rateAmountController = useRef<Nullable<AbortController>>(null);
@@ -192,7 +192,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
         [address, updateAddressDebounced, updateAddress],
     );
 
-    const fullAddress = `${addressLine1 ?? ''}, ${city ?? ''}, ${state ?? ''}, ${postalCode ?? ''}, ${country ?? ''}`;
+    const fullAddress = `${addressLine1 || ''}, ${city || ''}, ${state || ''}, ${postalCode || ''}, ${country || ''}`;
 
     // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
     // const [notesOverlayOpen, setNotesOverlayOpen] = useState(false);
@@ -242,7 +242,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                         {t('profile.fee') || 'Fixed Fee (USD)'}
                         <Input
                             className="mt-2"
-                            value={rateAmount ?? undefined}
+                            value={rateAmount || ''}
                             onInput={(e) => {
                                 const value = processStringAsNumber(e.currentTarget.value);
                                 if (value === undefined) return;
@@ -260,7 +260,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                         {t('profile.commissionRate') || 'Commission Rate'}
                         <Input
                             className="mt-2"
-                            value={commissionRate ?? undefined}
+                            value={commissionRate || ''}
                             onInput={(e) => {
                                 const value = processStringAsNumber(e.currentTarget.value);
                                 if (value === undefined) return;
@@ -286,7 +286,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     {t('profile.affiliateLink') || 'Affiliate Link'}
                     <Input
                         className="mb-4 mt-2"
-                        value={affiliateLink ?? undefined}
+                        value={affiliateLink || ''}
                         onInput={(e) =>
                             handleUpdateInfluencer({ affiliateLink: e.currentTarget.value }, affiliateLinkController)
                         }
@@ -326,7 +326,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     {t('profile.name') || 'Name'}
                     <Input
                         className="mb-4 mt-2"
-                        value={name ?? undefined}
+                        value={name || ''}
                         onInput={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController)}
                         onBlur={(e) => handleUpdateAddress({ name: e.currentTarget.value }, nameController, false)}
                         placeholder="Eve Leroy"
@@ -337,7 +337,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     {t('profile.phoneNumber') || 'Name'}
                     <Input
                         className="mb-4 mt-2"
-                        value={phoneNumber ?? undefined}
+                        value={phoneNumber || ''}
                         onInput={(e) =>
                             handleUpdateAddress({ phoneNumber: e.currentTarget.value }, phoneNumberController)
                         }
@@ -353,7 +353,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     {t('profile.streetAddress') || 'Street Address'}
                     <Input
                         className="mb-4 mt-2"
-                        value={addressLine1 ?? undefined}
+                        value={addressLine1 || ''}
                         onInput={(e) =>
                             handleUpdateAddress({ addressLine1: e.currentTarget.value }, addressLine1Controller)
                         }
@@ -368,7 +368,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     <label className="text-grey-600  text-xs font-semibold">
                         {t('profile.city') || 'City'}
                         <Input
-                            value={city ?? undefined}
+                            value={city || ''}
                             onInput={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController)}
                             onBlur={(e) => handleUpdateAddress({ city: e.currentTarget.value }, cityController, false)}
                             placeholder="Chicago"
@@ -378,7 +378,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     <label className="text-grey-600 text-xs font-semibold">
                         {t('profile.state') || 'State'}
                         <Input
-                            value={state ?? undefined}
+                            value={state || ''}
                             onInput={(e) => handleUpdateAddress({ state: e.currentTarget.value }, stateController)}
                             onBlur={(e) =>
                                 handleUpdateAddress({ state: e.currentTarget.value }, stateController, false)
@@ -392,7 +392,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     <label className="text-grey-600 text-xs font-semibold">
                         {t('profile.postalCode') || 'Postal Code'}
                         <Input
-                            value={postalCode ?? undefined}
+                            value={postalCode || ''}
                             onInput={(e) =>
                                 handleUpdateAddress({ postalCode: e.currentTarget.value }, postalCodeController)
                             }
@@ -406,7 +406,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     <label className="text-grey-600 text-xs font-semibold">
                         {t('profile.country') || 'Country'}
                         <Input
-                            value={country ?? undefined}
+                            value={country || ''}
                             onInput={(e) => handleUpdateAddress({ country: e.currentTarget.value }, countryController)}
                             onBlur={(e) =>
                                 handleUpdateAddress({ country: e.currentTarget.value }, countryController, false)
@@ -421,7 +421,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
                     {t('profile.trackingCode') || 'Tracking Code'}
                     <Input
                         className="mb-4 mt-2"
-                        value={trackingCode ?? undefined}
+                        value={trackingCode || ''}
                         onInput={(e) =>
                             handleUpdateAddress({ trackingCode: e.currentTarget.value }, trackingCodeController)
                         }
