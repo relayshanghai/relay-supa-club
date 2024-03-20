@@ -19,7 +19,7 @@ import awaitToError from './await-to-error';
 import type { HttpError } from './error/http-error';
 import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
-import apm from 'elastic-apm-node';
+import apm from 'src/utils/apm';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //

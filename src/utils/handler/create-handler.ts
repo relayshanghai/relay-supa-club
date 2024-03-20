@@ -15,7 +15,7 @@ import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
-import apm from 'elastic-apm-node';
+import apm from 'src/utils/apm';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS=--require=elastic-apm-node/start-next.js next dev",
+    "dev": "next dev",
     "build": "next build",
-    "start": "NODE_OPTIONS=--require=elastic-apm-node/start-next.js next start",
+    "start": "next start",
     "lint:staged": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=44",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
