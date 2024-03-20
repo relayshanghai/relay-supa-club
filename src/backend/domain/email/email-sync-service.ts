@@ -159,7 +159,7 @@ export default class EmailSyncService {
                 toUpdate.lastReplyDate = new Date(newEmails[newEmails.length - 1].date);
                 toUpdate.lastReplyId = newEmails[newEmails.length - 1].id;
                 toUpdate.threadStatus = ThreadStatus.REPLIED;
-                this.deleteScheduledEmails(influencer?.id as string);
+                await this.deleteScheduledEmails(influencer?.id as string);
             }
         }
 
@@ -228,28 +228,31 @@ export default class EmailSyncService {
     }
 
     private async deleteScheduledEmails(influencerId: string) {
-        const sequenceEmails = await SequenceEmailRepository.getRepository().getSequenceByInfluencerId(influencerId);
+        try {
+            const sequenceEmails = await SequenceEmailRepository.getRepository().getSequenceByInfluencerId(
+                influencerId,
+            );
 
-        const jobIds = sequenceEmails.map((email) => email.job?.id).filter(isString);
-        if (jobIds.length > 0) {
-            await JobRepository.getRepository().delete(jobIds);
-        }
-
-        const toDelete = sequenceEmails.filter(
-            (email) => email.emailDeliveryStatus === 'Scheduled' || email.emailDeliveryStatus === 'Unscheduled',
-        );
-        const outbox = await EmailEngineService.getService().getOutbox({});
-        // If there are any scheduled emails in the outbox to this address, cancel them
-        const scheduledMessages = this.getScheduledMessages(outbox, toDelete);
-        if (scheduledMessages.length === 0) {
-            return;
-        }
-        for (const message of scheduledMessages) {
-            const { deleted } = await EmailEngineService.getService().deleteOutbox(message.queueId);
-            if (!deleted) {
-                throw new Error('failed to delete email from outbox');
+            const jobIds = sequenceEmails.map((email) => email.job?.id).filter(isString);
+            if (jobIds.length > 0) {
+                await JobRepository.getRepository().delete(jobIds);
             }
-            await SequenceEmailRepository.getRepository().delete({ emailMessageId: message.messageId });
+
+            const toDelete = sequenceEmails.filter(
+                (email) => email.emailDeliveryStatus === 'Scheduled' || email.emailDeliveryStatus === 'Unscheduled',
+            );
+            const outbox = await EmailEngineService.getService().getOutbox({});
+            // If there are any scheduled emails in the outbox to this address, cancel them
+            const scheduledMessages = this.getScheduledMessages(outbox, toDelete);
+            if (scheduledMessages.length === 0) {
+                return;
+            }
+            for (const message of scheduledMessages) {
+                await EmailEngineService.getService().deleteOutbox(message.queueId);
+                await SequenceEmailRepository.getRepository().delete({ emailMessageId: message.messageId });
+            }
+        } catch (error) {
+            logger.error('Error deleting scheduled emails', error);
         }
     }
 
