@@ -8,7 +8,7 @@ import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
-import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/use-subscription-v2';
+import { STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue } from 'src/hooks/v2/use-subscription';
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';

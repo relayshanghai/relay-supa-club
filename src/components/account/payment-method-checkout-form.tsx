@@ -3,7 +3,7 @@ import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
-import { type PaymentMethodResponse, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import toast from 'react-hot-toast';
 
 export default function CheckoutForm({ onCompletion }: { onCompletion: () => void }) {
@@ -12,7 +12,7 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: () => voi
 
     const [errorMessage, setErrorMessage] = useState();
 
-    const { addPaymentMethod, refreshPaymentMethodInfo } = useSubscriptionV2();
+    const { addPaymentMethod, refreshPaymentMethodInfo } = useSubscription();
 
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);

@@ -6,7 +6,7 @@ import { Button } from 'shadcn/components/ui/button';
 import { AddPaymentMethodModal } from './modal-add-payment-method';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import toast from 'react-hot-toast';
-import { type PaymentMethodResponse, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 
 const PaymentMethodDetails: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ paymentMethod }) => {
     let details = 'Unknown';
@@ -53,7 +53,7 @@ export const BillingDetails = () => {
         paymentMethodInfoLoading,
         refreshPaymentMethodInfo,
         removePaymentMethod,
-    } = useSubscriptionV2();
+    } = useSubscription();
     const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
         updateDefaultPaymentMethod(paymentMethodId);
         refreshPaymentMethodInfo((prev) => {

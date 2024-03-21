@@ -7,10 +7,10 @@ import { useUser } from 'src/hooks/use-user';
 import { emailRegex } from 'src/constants';
 import toast from 'react-hot-toast';
 import Label from './label';
-import { useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
 
 export const InvoiceDetails = () => {
-    const { customer, updateDefaultInvoiceEmail } = useSubscriptionV2();
+    const { customer, updateDefaultInvoiceEmail } = useSubscription();
 
     const { profile } = useUser();
 
