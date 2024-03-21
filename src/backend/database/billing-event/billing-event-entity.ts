@@ -1,8 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
+import type Stripe from 'stripe';
+
+export type StripeObjectData = Stripe.Charge | Stripe.Subscription | Stripe.Invoice;
 
 @Entity({ name: 'billing_events' })
-export class BillingEventEntity<T = any> {
+export class BillingEventEntity<T = StripeObjectData> {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
@@ -16,6 +19,19 @@ export class BillingEventEntity<T = any> {
     @Column({ name: 'type' })
     type!: string;
 
-    @Column({ name: 'data', type: 'jsonb' })
+    @Column({
+        //@ts-ignore
+        name: 'data',
+        type: 'jsonb',
+        transformer: {
+            from(value: object) {
+                if (typeof value === 'string') return JSON.parse(value);
+                return value;
+            },
+            to(value: object) {
+                return JSON.stringify(value);
+            },
+        },
+    })
     data!: T;
 }

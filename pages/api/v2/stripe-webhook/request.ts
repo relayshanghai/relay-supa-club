@@ -1,8 +1,18 @@
 import { IsOptional, IsString } from 'class-validator';
-import type Stripe from 'stripe';
+import { type StripeObjectData } from 'src/backend/database/billing-event/billing-event-entity';
 
-export class Data {
-    object!: Stripe.Charge;
+export enum StripeWebhookType {
+    CHARGE_SUCCEEDED = 'charge.succeeded',
+    CHARGE_FAILED = 'charge.failed',
+    INVOICE_PAID = 'invoice.paid',
+    INVOICE_PAYMENT_FAILED = 'invoice.payment_failed',
+    CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
+    CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
+    CUSTOMER_SUBSCRIPTION_TRIAL_WILL_END = 'customer.subscription.trial_will_end',
+}
+
+export class Data<T> {
+    object!: T;
 }
 
 export class Request {
@@ -13,7 +23,7 @@ export class Request {
     idempotency_key?: null;
 }
 
-export class StripeWebhookRequest {
+export class StripeWebhookRequest<TData = StripeObjectData> {
     @IsString()
     id!: string;
 
@@ -27,7 +37,7 @@ export class StripeWebhookRequest {
     created!: number;
 
     @IsOptional()
-    data!: Data;
+    data!: Data<TData>;
 
     @IsOptional()
     livemode!: boolean;
@@ -39,5 +49,5 @@ export class StripeWebhookRequest {
     request!: Request;
 
     @IsOptional()
-    type!: string;
+    type!: StripeWebhookType;
 }

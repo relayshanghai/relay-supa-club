@@ -3,10 +3,9 @@ import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
 import { BillingEventEntity } from './billing-event-entity';
 import type { EntityManager, EntityTarget } from 'typeorm';
-import type Stripe from 'stripe';
 
 @InjectInitializeDatabaseOnAllProps
-export default class BillingEventRepository extends BaseRepository<BillingEventEntity<Stripe.Charge>> {
+export default class BillingEventRepository extends BaseRepository<BillingEventEntity> {
     static repository = new BillingEventRepository();
     static getRepository(): BillingEventRepository {
         // when request context is not available, use the default repository, otherwise use the manager from the request context
