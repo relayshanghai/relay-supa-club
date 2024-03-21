@@ -22,6 +22,7 @@ export type CreateSubscriptionResponse = {
 export type PaymentMethodResponse = {
     paymentMethods?: Stripe.PaymentMethod[];
     defaultPaymentMethod: string;
+};
 export type ApplyCouponPayload = { coupon: string };
 export type ApplyCouponResponse = {
     id: string;
