@@ -67,7 +67,7 @@ export const PasswordDetails = () => {
                         A request to reset your password will be sent to the email address attached to your account.
                     </p>
                     <Button
-                        className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                        className="w-full bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
                         onClick={handleResetPassword}
                         disabled={generatingResetEmail}
                     >

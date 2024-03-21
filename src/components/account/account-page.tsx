@@ -12,29 +12,44 @@ import { PasswordDetails } from './account-password-details';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
     return (
-        <nav className="absolute top-32 mt-12 flex w-full max-w-xs flex-col 2xl:max-w-sm">
-            <div className="flex gap-2 p-3 pl-0 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700">
+        <nav className="absolute top-32 -ml-2 mt-12 flex w-full max-w-xs flex-col 2xl:max-w-sm">
+            <a
+                href="#subscription-details"
+                className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+            >
                 <Rocket className="h-5 w-5 flex-shrink-0" />
-                <a href="#subscription-details">Plan</a>
-            </div>
-            <div className="flex gap-2 p-3 pl-0 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700">
+                <p>Plan</p>
+            </a>
+            <a
+                href="#subscription-details"
+                className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+            >
                 <PaymentOutline className="h-5 w-5 flex-shrink-0" />
-                <a href="#subscription-details">Payment Methods</a>
-            </div>
+                <p>Payment Methods</p>
+            </a>
             {!clientRoleCompanyId && (
-                <div className="flex gap-2 p-3 pl-0 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700">
+                <a
+                    href="#personal-details"
+                    className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                >
                     <ProfileOutline className="h-5 w-5 flex-shrink-0" />
-                    <a href="#personal-details">Personal Info</a>
-                </div>
+                    <p>Personal Info</p>
+                </a>
             )}
-            <div className="flex gap-2 p-3 pl-0 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700">
+            <a
+                href="#company-details"
+                className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+            >
                 <Building className="h-5 w-5 flex-shrink-0" />
-                <a href="#company-details">Company Info</a>
-            </div>
-            <div className="flex gap-2 p-3 pl-0 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700">
+                <p>Company Info</p>
+            </a>
+            <a
+                href="#team-details"
+                className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+            >
                 <ProfileTeam className="h-5 w-5 flex-shrink-0" />
-                <a href="#team-details">Team Members</a>
-            </div>
+                <p>Team Members</p>
+            </a>
         </nav>
     );
 };

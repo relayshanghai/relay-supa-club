@@ -17,6 +17,7 @@ import { InfluencerSocialProfileEntity } from '../influencer/influencer-social-p
 import { AddressEntity } from '../influencer/address-entity';
 import { OutreachEmailTemplateVariableEntity } from '../sequence-email-template/sequence-email-template-variable-entity';
 import { SubscriptionEntity } from '../subcription/subscription-entity';
+import { UsageEntity } from '../usages/entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -50,6 +51,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             OutreachEmailTemplateVariableEntity,
             SubscriptionEntity,
             TemplateVariableEntity,
+            UsageEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

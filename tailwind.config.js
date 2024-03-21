@@ -63,7 +63,20 @@ module.exports = {
                     800: '#A11343',
                     900: '#87002C',
                 },
-
+                navy: {
+                    DEFAULT: '#2970FF',
+                    foreground: '#FFFFFF',
+                    50: '#E6F0FF',
+                    100: '#B3D1FF',
+                    200: '#80B3FF',
+                    300: '#4D94FF',
+                    400: '#1A76FF',
+                    500: '#2970FF',
+                    600: '#1E62E6',
+                    700: '#1A55C2',
+                    800: '#144699',
+                    900: '#103974',
+                },
                 tertiary: {
                     DEFAULT: '#4b5563',
                     foreground: '#F4F8FF',

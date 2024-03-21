@@ -1,6 +1,6 @@
 const account = {
     account: 'Account',
-    update: 'Update',
+    update: 'Update Personal Info',
     personal: {
         title: 'Personal Info',
         firstName: 'First name',
@@ -63,7 +63,7 @@ const account = {
         canceled: 'Canceled',
         paused: 'Paused',
         trial: 'Trial',
-        upgradeSubscription: 'Upgrade subscription',
+        upgradeSubscription: 'Upgrade or modify your plan',
         cancelSubscription: 'Cancel subscription',
         monthly: 'Monthly',
         quarterly: 'Quarterly',

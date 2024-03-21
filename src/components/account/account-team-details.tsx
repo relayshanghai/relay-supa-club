@@ -168,7 +168,7 @@ export const TeamDetails = () => {
                     {isAdmin(profile?.user_role) && (
                         <div className="flex w-full justify-end pt-4">
                             <Button
-                                className="flex items-center gap-2 bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                                className="flex items-center gap-2 bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
                                 onClick={() => {
                                     setShowAddMoreMembers(true);
                                     trackEvent(ACCOUNT_COMPANY_DETAILS('open addMoreMembers modal'));

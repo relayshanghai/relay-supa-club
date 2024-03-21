@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -37,7 +37,7 @@ export const SubscriptionDetails = () => {
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    const subscriptionEndDate = company?.subscription_end_date;
+    const subscriptionEndDate = useMemo(() => company?.subscription_end_date, [company]);
     const canceledNotExpired = (subscriptionEndDate && new Date(subscriptionEndDate) > new Date()) || false;
     const { usages, refreshUsages } = useUsages(
         true,
@@ -46,12 +46,17 @@ export const SubscriptionDetails = () => {
             : undefined,
     );
 
-    const statusColor =
-        canceledNotExpired || subscription?.status === 'canceled'
-            ? ' bg-red-100 text-red-700 border-red-200'
-            : subscription?.status === 'paused'
-            ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
-            : 'bg-green-100 text-green-700 border-green-200';
+    const statusColor = useMemo(() => {
+        if (canceledNotExpired || subscription?.status === 'canceled') {
+            return ' bg-red-100 text-red-700 border-red-200';
+        } else if (subscription?.status === 'active') {
+            return 'bg-green-100 text-green-700 border-green-200';
+        } else if (subscription?.status === 'trial') {
+            return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+        } else {
+            return 'bg-gray-100 text-gray-700 border-gray-200';
+        }
+    }, [canceledNotExpired, subscription]);
 
     useEffect(() => {
         refreshCompany();
@@ -74,13 +79,8 @@ export const SubscriptionDetails = () => {
                             <>
                                 <section className="flex">
                                     <div className="flex w-full flex-col items-start justify-between">
-                                        <h2 className="flex items-start gap-2 text-4xl font-semibold text-gray-900">
+                                        <h2 className="text-4xl font-semibold text-gray-900">
                                             {t(`account.plans.${subscription?.name.toLowerCase()}`)}
-                                            {subscription.status === 'trial' && (
-                                                <span className="rounded border border-gray-600 bg-gray-300 px-1 text-base text-gray-600">
-                                                    Trial
-                                                </span>
-                                            )}
                                         </h2>
                                         <h2 className="text-sm font-normal text-gray-600">
                                             {t(`account.plans.details`)}
@@ -93,9 +93,17 @@ export const SubscriptionDetails = () => {
                                                     ? t('account.subscription.canceled')
                                                     : t(`account.subscription.${subscription?.status}`)}
                                             </Tablet>
-                                            <Tablet customStyle={'bg-primary-100 text-primary-700 border-primary-200'}>
-                                                {t(`account.subscription.${subscription?.interval}`)}
-                                            </Tablet>
+                                            {!(
+                                                subscription.status === 'trial' ||
+                                                subscription.status === 'canceled' ||
+                                                subscription.status === 'paused'
+                                            ) && (
+                                                <Tablet
+                                                    customStyle={'bg-primary-100 text-primary-700 border-primary-200'}
+                                                >
+                                                    {t(`account.subscription.${subscription?.interval}`)}
+                                                </Tablet>
+                                            )}
                                         </div>
                                         <div className="text-sm">
                                             <span className="font-semibold text-gray-600">
@@ -132,7 +140,7 @@ export const SubscriptionDetails = () => {
                                         max={usages.profile.limit}
                                     />
                                     <span>
-                                        {usages.search.current}/{usages.search.limit} Reports
+                                        {usages.search.current}/{usages.search.limit} Searches
                                     </span>
                                     <Progress className="h-3" value={usages.search.current} max={usages.search.limit} />
                                 </section>

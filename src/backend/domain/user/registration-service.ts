@@ -20,6 +20,7 @@ import { unixEpochToISOString, isAdmin } from 'src/utils/utils';
 import { v4 } from 'uuid';
 import SequenceService from '../sequence/sequence-service';
 import type { AccountRole } from 'types';
+import { UsageRepository } from 'src/backend/database/usages/repository';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -221,6 +222,7 @@ export default class RegistrationService {
             throw new NotFoundError('Profile not found');
         }
         await supabase.auth.admin.deleteUser(teammateProfile.id);
+        await UsageRepository.getRepository().deleteUsagesByProfile(teammateProfile.id);
         const deletedUser = await ProfileRepository.getRepository().deleteProfileById(teammateProfile.id);
         return deletedUser;
     }

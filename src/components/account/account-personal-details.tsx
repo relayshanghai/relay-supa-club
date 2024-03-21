@@ -124,7 +124,7 @@ export const PersonalDetails = () => {
                         </section>
                         <div className="mb-6 flex w-full flex-row justify-end space-x-4">
                             <Button
-                                className="bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                                className="bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
                                 disabled={userDataLoading}
                                 onClick={handleUpdateProfile}
                             >
@@ -144,7 +144,7 @@ export const PersonalDetails = () => {
 
                         <div className="flex w-full flex-row justify-end space-x-4">
                             <Button
-                                className="bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                                className="bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
                                 onClick={handleUpdateEmail}
                             >
                                 {t('account.personal.updateEmail')}
