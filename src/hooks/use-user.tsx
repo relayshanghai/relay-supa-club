@@ -22,6 +22,7 @@ import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
 import { appCacheDBKey } from 'src/constants';
+import { useApiClient } from 'src/utils/api-client/request';
 
 export type SignupData = {
     email: string;
@@ -118,6 +119,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { trackEvent } = useRudderstack();
     const clientRoleData = useAtomValue(clientRoleAtom);
     const mixpanel = useMixpanel();
+    const { apiClient } = useApiClient();
     const { analytics } = useAnalytics();
     const { identify } = useSmartlook();
 
@@ -279,14 +281,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const signup = useCallback(
         async (body: SignupPostBody) => {
-            const res = await nextFetch<SignupPostResponse>(`signup`, {
-                method: 'POST',
-                body,
-            });
+            const [err, result] = await awaitToError(apiClient.post<SignupPostResponse>(`/users`, body));
+            if (err) {
+                throw new Error(err.message);
+            }
             refreshProfile();
-            return res;
+            return result.data;
         },
-        [refreshProfile],
+        [apiClient, refreshProfile],
     );
 
     return (

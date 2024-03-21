@@ -16,7 +16,7 @@ const ManagerPage = () => {
             ) : (
                 <>
                     <Banner
-                        buttonText={t('banner.button')}
+                        buttonText={t('banner.button') ?? ''}
                         title={t('banner.outreach.title')}
                         message={t('banner.outreach.descriptionManager')}
                     />

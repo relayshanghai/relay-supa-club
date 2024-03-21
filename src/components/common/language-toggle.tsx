@@ -7,9 +7,9 @@ import { ChangeLanguage } from '../../utils/analytics/events/change-language';
 import { languageCodeToHumanReadable } from '../../utils/utils';
 import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
 import { mapLangCode } from '../chatwoot/chatwoot-provider';
-import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY } from '../../constants';
+import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY, I18N_LANGUAGE_DETECTOR_KEY } from '../../constants';
 import i18n from 'i18n'; // importing this initializes i18n using i19n.init()
-
+import { useCookies } from 'react-cookie';
 export const useLocalization = () => {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -23,22 +23,27 @@ export const useLocalization = () => {
             }
         } else {
             const storedLanguage = localStorage.getItem(LOCAL_STORAGE_LANGUAGE_KEY);
+            const i18nLanguageDetector = localStorage.getItem(I18N_LANGUAGE_DETECTOR_KEY);
             if (storedLanguage !== null) {
                 i18n.changeLanguage(storedLanguage);
+            } else if (i18nLanguageDetector !== null) {
+                i18n.changeLanguage(i18nLanguageDetector);
             } else {
                 i18n.changeLanguage(); // triggers the language detector
             }
         }
     }, []);
+    const [, setCookie] = useCookies(['language']);
 
     useEffect(() => {
         i18n.on('languageChanged', (l) => {
             localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
             setBirdEatsBugLanguage(l);
             window.$chatwoot?.setLocale(mapLangCode(l));
+            setCookie('language', l);
         });
-
         return () => i18n.on('languageChanged', () => null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };
 

@@ -177,9 +177,9 @@ const SignUpPage = ({
             try {
                 setLoading(true);
 
-                const signupCompanyRes = await signup(data);
-                if (!signupCompanyRes?.cus_id) {
-                    throw new Error('no cus_id, error creating company');
+                const signupCompanyRes: any = await signup(data);
+                if (!signupCompanyRes?.cusId) {
+                    throw new Error('no cusId, error creating company');
                 } else {
                     await login(email, password);
                     return 'success';

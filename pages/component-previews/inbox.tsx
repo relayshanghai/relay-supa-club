@@ -46,7 +46,7 @@ type Message = BaseMessage & { isLocal?: true };
 const fileExtensionRegex = /.[^.\\/]*$/;
 
 export const getAttachmentStyle = (filename: string) => {
-    const extension = filename.match(fileExtensionRegex)?.[0].replace('.', '');
+    const extension = filename?.match(fileExtensionRegex)?.[0].replace('.', '');
     switch (extension) {
         case 'pdf':
             return 'bg-red-100 hover:bg-red-50 text-red-400 stroke-red-400';
@@ -497,7 +497,6 @@ const InboxPreview = () => {
         ) => {
             // If the previous page data is empty, we've reached the end and should not fetch more
             if (previousPageData && !previousPageData.threads.length) return null;
-
             // This function should return an array with the arguments for the fetcher
             // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
             return {
@@ -536,9 +535,9 @@ const InboxPreview = () => {
 
     const threadsInfo = useMemo(() => {
         return {
-            threads: data && data.flatMap((page) => page.threads),
-            totals: data && data[0]?.totals,
-            totalFiltered: data && data[0].totalFiltered,
+            threads: (data && data.length > 0 && data.flatMap((page) => page.threads)) || undefined,
+            totals: (data && data.length > 0 && data[0]?.totals) || undefined,
+            totalFiltered: (data && data.length > 0 && data[0].totalFiltered) || undefined,
         };
     }, [data]);
 
@@ -656,7 +655,7 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
-                                setSize(0);
+                                setSize(1);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}

@@ -3,6 +3,7 @@ import {
     sequence_influencers,
     sequences,
     template_variables,
+    thread_contacts,
     threads,
 } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
@@ -31,6 +32,14 @@ export const getThreads: DBQuery<GetThreadsFn> =
             isNotNull(threads.last_reply_id),
             isNotNull(threads.sequence_influencer_id),
             ne(sequence_influencers.funnel_status, 'In Sequence'),
+            inArray(
+                threads.thread_id,
+                db()
+                    .select({
+                        id: thread_contacts.thread_id,
+                    })
+                    .from(thread_contacts),
+            ),
         ];
 
         const page = filters?.page || 0;

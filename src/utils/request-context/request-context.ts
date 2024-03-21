@@ -3,17 +3,29 @@ import { AsyncLocalStorage } from 'async_hooks';
 import type { Session } from '@supabase/supabase-js';
 import awaitToError from '../await-to-error';
 import type { NextApiRequest } from 'next';
+import type { EntityManager, ObjectLiteral } from 'typeorm';
+import type { Nullable } from 'types/nullable';
+import type BaseRepository from 'src/backend/database/provider/base-repository';
+import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
+export type TranslationFunction = (key: string, params?: Record<string, string>) => string;
 
 export interface Context {
     session?: Session | null;
     customerId?: string | null;
+    profile?: ProfileEntity;
     companyId?: string | null;
     request?: NextApiRequest;
     requestUrl: string;
+    translation: TranslationFunction;
+    manager?: EntityManager;
+    repositories: Record<string, BaseRepository<ObjectLiteral>>;
+    logContext?: Record<string, any>;
 }
 const initialContext = (): Context => ({
     session: undefined,
     requestUrl: '',
+    translation: () => '',
+    repositories: {},
 });
 export class RequestContext {
     static contextMap: Map<string, Context> = new Map();
@@ -25,6 +37,9 @@ export class RequestContext {
         RequestContext.contextMap.delete(contextId);
         if (err) throw err;
         return res as T;
+    }
+    static t(key: string, params?: Record<string, string>): string {
+        return RequestContext.getContext().translation(key, params);
     }
     static getContext(): Context {
         const id = RequestContext.asyncLocalStorage.getStore();
@@ -43,6 +58,25 @@ export class RequestContext {
         RequestContext.contextMap.set(id, {
             ...context,
             ...data,
+        });
+    }
+    static getManager(): Nullable<EntityManager> {
+        const context = RequestContext.getContext();
+        return context.manager;
+    }
+    static setManager(manager?: EntityManager): void {
+        RequestContext.setContext({ manager });
+    }
+    static getRepository<R>(name: string): Nullable<R> {
+        const context = RequestContext.getContext();
+        return context.repositories[name] as Nullable<R>;
+    }
+    static registerRepository<R>(name: string, repository: R): void {
+        RequestContext.setContext({
+            repositories: {
+                ...RequestContext.getContext().repositories,
+                [name]: repository as BaseRepository<ObjectLiteral>,
+            },
         });
     }
 }
