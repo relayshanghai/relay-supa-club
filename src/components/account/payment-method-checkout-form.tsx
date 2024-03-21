@@ -3,19 +3,16 @@ import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
-import { useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
+import { type PaymentMethodResponse, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
 import toast from 'react-hot-toast';
-import { useSubscription } from 'src/hooks/use-subscription';
-import type { PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
 
 export default function CheckoutForm({ onCompletion }: { onCompletion: () => void }) {
     const stripe = useStripe();
     const elements = useElements();
 
     const [errorMessage, setErrorMessage] = useState();
-    const { refreshCustomerInfo } = useSubscription();
 
-    const { addPaymentMethod } = useSubscriptionV2();
+    const { addPaymentMethod, refreshPaymentMethodInfo } = useSubscriptionV2();
 
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
@@ -77,12 +74,12 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: () => voi
             return;
         }
         setIsLoading(false);
-        refreshCustomerInfo(
+        refreshPaymentMethodInfo(
             (prev) =>
                 ({
                     ...prev,
                     paymentMethods: prev?.paymentMethods ? [paymentMethod, ...prev.paymentMethods] : [paymentMethod],
-                } as PaymentMethodGetResponse),
+                } as PaymentMethodResponse),
         );
         toast.success(t('account.subscription.success'));
         onCompletion();
