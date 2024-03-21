@@ -145,11 +145,12 @@ export default class RegistrationService {
         profile.lastName = request.lastName;
         profile.email = request.email;
         profile.phone = request.phoneNumber;
+        profile.userRole = 'company_owner';
         const supportProfile = Object.assign(new ProfileEntity(), profile);
         const supportPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'password123!';
-        supportProfile.email = `support+`;
         supportProfile.phone = undefined;
         supportProfile.email = `support+${company.cusId?.toLowerCase().trim()}@boostbot.ai`;
+        supportProfile.userRole = 'company_owner';
         const [user, supportUser] = await Promise.all([
             supabase.auth.admin.createUser({
                 email: request.email,
