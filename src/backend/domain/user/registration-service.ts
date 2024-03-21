@@ -1,5 +1,5 @@
 import type { RegisterRequest } from 'pages/api/users/request';
-import type { DeleteTeammateRequest } from 'pages/api/v2/company/request';
+import type { DeleteTeammateRequest, UpdateTeammateRoleRequest } from 'pages/api/v2/company/request';
 import { CompanyEntity } from 'src/backend/database/company/company-entity';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import { ProfileEntity } from 'src/backend/database/profile/profile-entity';
@@ -40,6 +40,25 @@ export default class RegistrationService {
             return true;
         }
         throw new ConflictError(createCompanyErrors.companyWithSameNameExists);
+    }
+    async updateProfileRole(request: UpdateTeammateRoleRequest) {
+        const adminProfile = await ProfileRepository.getRepository().getProfileById(request.adminId);
+        const teammateProfile = await ProfileRepository.getRepository().getProfileById(request.teammateId);
+        if (!adminProfile || !teammateProfile) {
+            throw new NotFoundError('Profile not found');
+        }
+        if (!isAdmin(adminProfile.userRole as AccountRole)) {
+            throw new BadRequestError('Only Admins can change user roles');
+        }
+        await ProfileRepository.getRepository().update(
+            {
+                id: request.teammateId,
+            },
+            {
+                userRole: request.role,
+            },
+        );
+        return teammateProfile;
     }
 
     async sendOtp(phoneNumber: string) {

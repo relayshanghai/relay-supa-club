@@ -1,4 +1,3 @@
-import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
 import type { SubscriptionCancelPostBody, SubscriptionCancelPostResponse } from 'pages/api/subscriptions/cancel';
 import type { SubscriptionCreatePostBody, SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
@@ -6,31 +5,16 @@ import type {
     SubscriptionDiscountRenewPostBody,
     SubscriptionDiscountRenewPostResponse,
 } from 'pages/api/subscriptions/discount-renew';
-import type { PaymentMethodGetQueries, PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
 import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useCompany } from './use-company';
-import { useApiClient } from 'src/utils/api-client/request';
-import type { CreateSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
-import type Stripe from 'stripe';
 
 export const useSubscription = () => {
     const { company } = useCompany();
-    const { apiClient } = useApiClient();
     const { data: subscription, mutate } = useSWR(
         company?.id ? [company.id, 'subscriptions'] : null,
         async ([id, path]) => await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, { id }),
-    );
-    const {
-        data: customerInfo,
-        mutate: refreshCustomerInfo,
-        isLoading: loadingCustomerInfo,
-        isValidating: validatingCustomerInfo,
-    } = useSWR(
-        company?.id ? [company.id, 'subscriptions/payment-method'] : null,
-        async ([id, path]) =>
-            await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
     );
 
     const upgradeSubscription = useCallback(
@@ -45,22 +29,6 @@ export const useSubscription = () => {
             return res;
         },
         [mutate],
-    );
-
-    const updateDefaultInvoiceEmail = useCallback(
-        async (email: string) => {
-            if (!company?.id) throw new Error('No company found');
-            const res = await apiClient.put<
-                CreateSubscriptionRequest,
-                Stripe.Customer & {
-                    ipAddress: string;
-                }
-            >('/v2/subscriptions/customer', {
-                email,
-            });
-            return res;
-        },
-        [company?.id, apiClient],
     );
 
     const createSubscription = useCallback(
@@ -94,41 +62,6 @@ export const useSubscription = () => {
         return res;
     }, [company?.id, mutate]);
 
-    const setDefaultPaymentMethod = useCallback(
-        async (paymentMethodId: string) => {
-            if (!company?.id) throw new Error('No company found');
-            const res = await apiFetch(
-                'api/subscriptions/payment-method',
-                {
-                    body: {
-                        companyId: company?.id,
-                        paymentMethodId,
-                    },
-                },
-                {
-                    method: 'PUT',
-                },
-            );
-            return res;
-        },
-        [company?.id],
-    );
-
-    const removePaymentMethod = useCallback(async (paymentMethodId: string) => {
-        const res = await apiFetch(
-            'api/subscriptions/payment-method',
-            {
-                body: {
-                    paymentMethodId,
-                },
-            },
-            {
-                method: 'DELETE',
-            },
-        );
-        return res;
-    }, []);
-
     const cancelSubscription = useCallback(async () => {
         if (!subscription) throw new Error('No subscription found');
         if (!company?.id) throw new Error('No company found');
@@ -147,19 +80,10 @@ export const useSubscription = () => {
 
     return {
         subscription,
-        paymentMethods: customerInfo?.paymentMethods,
-        defaultPaymentMethod: customerInfo?.defaultPaymentMethod,
-        defaultInvoiceEmail: customerInfo?.defaultInvoiceEmail,
-        refreshCustomerInfo,
-        loadingCustomerInfo,
-        validatingCustomerInfo,
-        updateDefaultInvoiceEmail,
         refreshSubscription: mutate,
         createSubscription,
         createDiscountRenew,
         cancelSubscription,
-        setDefaultPaymentMethod,
-        removePaymentMethod,
         upgradeSubscription,
     };
 };

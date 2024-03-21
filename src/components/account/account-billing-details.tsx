@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useSubscription } from 'src/hooks/use-subscription';
 import type Stripe from 'stripe';
 import { Alipay, MasterCard, Plus, Visa } from '../icons';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from 'shadcn/components/ui/dialog';
@@ -7,7 +6,7 @@ import { Button } from 'shadcn/components/ui/button';
 import { AddPaymentMethodModal } from './modal-add-payment-method';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import toast from 'react-hot-toast';
-import type { PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
+import { type PaymentMethodResponse, useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
 
 const PaymentMethodDetails: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ paymentMethod }) => {
     let details = 'Unknown';
@@ -50,29 +49,29 @@ export const BillingDetails = () => {
     const {
         defaultPaymentMethod,
         paymentMethods,
-        loadingCustomerInfo,
-        refreshCustomerInfo,
-        setDefaultPaymentMethod,
+        updateDefaultPaymentMethod,
+        paymentMethodInfoLoading,
+        refreshPaymentMethodInfo,
         removePaymentMethod,
-    } = useSubscription();
+    } = useSubscriptionV2();
     const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
-        setDefaultPaymentMethod(paymentMethodId);
-        refreshCustomerInfo((prev) => {
+        updateDefaultPaymentMethod(paymentMethodId);
+        refreshPaymentMethodInfo((prev) => {
             return {
                 ...prev,
                 defaultPaymentMethod: paymentMethodId,
-            } as PaymentMethodGetResponse;
+            } as PaymentMethodResponse;
         });
     };
     const handleConfirmRemovePaymentMethod = async (paymentMethodId: string) => {
         removePaymentMethod(paymentMethodId).then(() => {
             toast.success('Payment method removed');
         });
-        refreshCustomerInfo((prev) => {
+        refreshPaymentMethodInfo((prev) => {
             return {
                 ...prev,
                 paymentMethods: prev?.paymentMethods?.filter((pm) => pm.id !== paymentMethodId) || [],
-            } as PaymentMethodGetResponse;
+            } as PaymentMethodResponse;
         });
     };
 
@@ -84,7 +83,7 @@ export const BillingDetails = () => {
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
                     <div className="flex flex-col space-y-4 rounded-lg bg-white pb-12 lg:w-3/4">
-                        {loadingCustomerInfo && (
+                        {paymentMethodInfoLoading && (
                             <div className="flex w-full flex-row items-center justify-between rounded-xl border p-6">
                                 <section className="flex items-center gap-3">
                                     <Skeleton className="h-10 w-10" />

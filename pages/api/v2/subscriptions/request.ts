@@ -39,3 +39,13 @@ export class CreatePaymentMethodRequest {
     @IsString()
     userAgent!: string;
 }
+
+export class UpdateDefaultPaymentMethodRequest {
+    @IsString()
+    paymentMethodId!: string;
+}
+
+export class RemovePaymentMethodRequest {
+    @IsString()
+    paymentMethodId!: string;
+}

@@ -44,8 +44,6 @@ const handler: NextApiHandler = async (req, res) => {
             } catch (error) {
                 return res.status(httpCodes.BAD_REQUEST).json({ message: 'Invalid id or role' });
             }
-        case 'DELETE':
-            break;
 
         default:
             return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});

@@ -4,13 +4,13 @@ import { isAdmin } from 'src/utils/utils';
 import { Button } from 'shadcn/components/ui/button';
 import { Input } from '../input';
 import { useUser } from 'src/hooks/use-user';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { emailRegex } from 'src/constants';
 import toast from 'react-hot-toast';
 import Label from './label';
+import { useSubscriptionV2 } from 'src/hooks/use-subscription-v2';
 
 export const InvoiceDetails = () => {
-    const { defaultInvoiceEmail, updateDefaultInvoiceEmail } = useSubscription();
+    const { customer, updateDefaultInvoiceEmail } = useSubscriptionV2();
 
     const { profile } = useUser();
 
@@ -20,14 +20,14 @@ export const InvoiceDetails = () => {
     const [invoiceEmailText, setInvoiceEmailText] = useState<string>('');
 
     useEffect(() => {
-        setInvoiceEmailText(defaultInvoiceEmail || '');
-    }, [defaultInvoiceEmail]);
+        setInvoiceEmailText(customer?.email || '');
+    }, [customer?.email]);
 
     const handleUpdateInvoiceEmail = useCallback(async () => {
-        if (!defaultInvoiceEmail) {
+        if (!customer?.email) {
             return;
         }
-        if (invoiceEmailText === defaultInvoiceEmail) {
+        if (invoiceEmailText === customer?.email) {
             return;
         }
         setUpdating(true);
@@ -40,7 +40,7 @@ export const InvoiceDetails = () => {
         } finally {
             setUpdating(false);
         }
-    }, [defaultInvoiceEmail, invoiceEmailText, updateDefaultInvoiceEmail, t]);
+    }, [customer?.email, invoiceEmailText, updateDefaultInvoiceEmail, t]);
 
     return (
         <section id="company-details" className="w-full">
@@ -77,7 +77,7 @@ export const InvoiceDetails = () => {
                             </div>
                         </>
                     ) : (
-                        <Label label="Invoice Email" value={defaultInvoiceEmail || ''} />
+                        <Label label="Invoice Email" value={customer?.email || ''} />
                     )}
                 </div>
             </section>

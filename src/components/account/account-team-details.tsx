@@ -34,13 +34,13 @@ export const TeamDetails = () => {
 
     const handleChangeRole = useCallback(
         async (teammateProfile: CompanyTeammatesGetResponse[number], role: 'company_owner' | 'company_teammate') => {
-            if (teammateProfile.user_role === role) {
+            if (teammateProfile.user_role === role || !profile?.id) {
                 return;
             }
-            await updateTeammate(teammateProfile.id, role);
+            await updateTeammate(profile?.id, teammateProfile.id, role);
             refreshTeammates();
         },
-        [refreshTeammates, updateTeammate],
+        [refreshTeammates, updateTeammate, profile?.id],
     );
 
     const handleDeleteUser = useCallback(

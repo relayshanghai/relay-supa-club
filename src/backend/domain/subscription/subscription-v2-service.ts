@@ -61,16 +61,44 @@ export default class SubscriptionV2Service {
         return setupIntent;
     }
 
-    async getDefaultPaymentMethod(cusId: string) {
+    @CompanyIdRequired()
+    async getCustomerPaymentMethods() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().getCustomerPaymentMethods(cusId);
+    }
+
+    @CompanyIdRequired()
+    async getDefaultPaymentMethod() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
         return await StripeService.getService().getDefaultPaymentMethod(cusId);
     }
 
-    async getDefaultInvoiceEmail(cusId: string) {
-        return await StripeService.getService().getDefaultInvoiceEmail(cusId);
+    @CompanyIdRequired()
+    async getCustomer() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().getCustomer(cusId);
     }
 
-    async setDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
-        return await StripeService.getService().setDefaultPaymentMethod(cusId, paymentMethodId);
+    @CompanyIdRequired()
+    async updateDefaultPaymentMethod(paymentMethodId: string) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().updateDefaultPaymentMethod(cusId, paymentMethodId);
     }
 
     async removePaymentMethod(paymentMethodId: string) {

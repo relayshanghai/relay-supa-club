@@ -13,6 +13,12 @@ export default class StripeService {
         return await StripeService.client.customers.update(cusId, params);
     }
 
+    async getCustomerPaymentMethods(cusId: string) {
+        return await StripeService.client.paymentMethods.list({
+            customer: cusId,
+        });
+    }
+
     async createConfirmedSetupIntent({
         cusId,
         paymentMethodType,
@@ -91,12 +97,12 @@ export default class StripeService {
         });
     }
 
-    async getDefaultInvoiceEmail(cusId: string) {
+    async getCustomer(cusId: string) {
         const customer = await StripeService.client.customers.retrieve(cusId);
         if (customer.deleted) {
             throw new NotFoundError('Customer not found');
         }
-        return customer.email;
+        return customer;
     }
 
     async removePaymentMethod(paymentMethodId: string) {
@@ -117,7 +123,7 @@ export default class StripeService {
         return customer.invoice_settings.default_payment_method;
     }
 
-    async setDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
+    async updateDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
         return await StripeService.client.customers.update(cusId, {
             invoice_settings: {
                 default_payment_method: paymentMethodId,
