@@ -63,10 +63,14 @@ export const userExists = async (email: string) => {
     params.append('email', email);
     const url = `profiles/exists?${params.toString()}`;
     try {
-        const res = await nextFetch<{ message: string } | { error: string }>(url, {
+        const res = await nextFetch<{ message?: string; error?: string }>(url, {
             method: 'get',
         });
-        if (res) {
+        if (res.error) {
+            return {
+                exists: true,
+            };
+        } else {
             return {
                 exists: false,
             };
