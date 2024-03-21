@@ -10,5 +10,8 @@
       "path": "/api/email-sync",
       "schedule": "*/15 * * * *"
     }
-  ]
+  ],
+  "experimental": {
+    "instrumentationHook": true
+  }
 }
