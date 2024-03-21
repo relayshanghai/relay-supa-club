@@ -16,6 +16,7 @@ import type Stripe from 'stripe';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import awaitToError from 'src/utils/await-to-error';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
+import { type UpdateSubscriptionRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;
@@ -324,5 +325,19 @@ export default class SubscriptionV2Service {
             },
         );
         await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async applyPromo(subscriptionId: string, request: UpdateSubscriptionRequest) {
+        const { data } = await StripeService.getService().getAvailablePromo();
+        const foundCoupon = data.find((promo) => promo.code === request.coupon);
+        if (!foundCoupon) {
+            throw new UnprocessableEntityError('Invalid promo code');
+        }
+        await StripeService.getService().updateSubscription(subscriptionId, {
+            coupon: foundCoupon.coupon.id,
+        });
+        return foundCoupon.coupon;
     }
 }

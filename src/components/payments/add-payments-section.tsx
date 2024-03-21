@@ -5,7 +5,7 @@ import { type ActiveSubscriptionTier, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { randomNumber } from 'src/utils/utils';
-import { PromoCodeSection } from './promo-code-section';
+import { PromoCodeSectionV2 } from './promo-code-section-v2';
 import CheckoutFormV2 from './checkout-form-v2';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
@@ -32,7 +32,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: ActiveSubscriptio
 
     return (
         <div className="w-80 lg:w-[28rem]">
-            <PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />
+            <PromoCodeSectionV2 selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />
             <div className="rounded shadow ">
                 <StripeElementsProvider stripe={stripePromise} options={cardOptions}>
                     <CheckoutFormV2 selectedPrice={selectedPrice} batchId={batchId} couponId={couponId} />

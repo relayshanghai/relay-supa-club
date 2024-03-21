@@ -27,6 +27,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeUpdateSubscriptionMock = vi.fn();
     const StripeDeleteSubscriptionMock = vi.fn();
     const StripeGetProductMetadataMock = vi.fn();
+    const StripeGetAvailablePromoMock = vi.fn();
     const SubscriptionRepositoryUpsertMock = vi.fn();
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
@@ -45,6 +46,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     StripeService.getService().retrieveSubscription = StripeGetLastSubscriptionMock;
     StripeService.getService().getPrice = StripeGetPriceMock;
     StripeService.getService().getProductMetadata = StripeGetProductMetadataMock;
+    StripeService.getService().getAvailablePromo = StripeGetAvailablePromoMock;
     SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
@@ -401,6 +403,93 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(err).not.toBeNull();
                 expect(err).toBeInstanceOf(NotFoundError);
                 expect(err.message).toBe('No subscription found');
+            });
+        });
+
+        describe(`applyPromo`, () => {
+            it(`should return coupon data`, async () => {
+                const getAvailablePromo = vi.spyOn(StripeService.getService(), 'getAvailablePromo');
+                getAvailablePromo.mockResolvedValue({
+                    data: [
+                        {
+                            code: '123',
+                            coupon: {
+                                id: 'coupon_1',
+                            },
+                        },
+                        {
+                            code: '456',
+                            coupon: {
+                                id: 'coupon_2',
+                            },
+                        },
+                    ],
+                } as Stripe.Response<Stripe.ApiList<Stripe.PromotionCode>>);
+                const updateSubscription = vi.spyOn(StripeService.getService(), 'updateSubscription');
+                updateSubscription.mockResolvedValue({} as Stripe.Response<Stripe.Subscription>);
+
+                const result = await SubscriptionV2Service.getService().applyPromo('sub_1', {
+                    coupon: '123',
+                });
+                expect(result.id).toBe('coupon_1');
+            });
+            it(`should return subsription not found`, async () => {
+                const getAvailablePromo = vi.spyOn(StripeService.getService(), 'getAvailablePromo');
+                getAvailablePromo.mockResolvedValue({
+                    data: [
+                        {
+                            code: '123',
+                            coupon: {
+                                id: 'coupon_1',
+                            },
+                        },
+                        {
+                            code: '456',
+                            coupon: {
+                                id: 'coupon_2',
+                            },
+                        },
+                    ],
+                } as Stripe.Response<Stripe.ApiList<Stripe.PromotionCode>>);
+                const updateSubscription = vi.spyOn(StripeService.getService(), 'updateSubscription');
+                updateSubscription.mockRejectedValue(new NotFoundError('subscription not found'));
+
+                const [err] = await awaitToError(
+                    SubscriptionV2Service.getService().applyPromo('sub_xx', {
+                        coupon: '123',
+                    }),
+                );
+                expect(err).toBeInstanceOf(NotFoundError);
+                expect(err.message).toBe('subscription not found');
+            });
+            it(`should return invalid promo code`, async () => {
+                const getAvailablePromo = vi.spyOn(StripeService.getService(), 'getAvailablePromo');
+                getAvailablePromo.mockResolvedValue({
+                    data: [
+                        {
+                            code: '123',
+                            coupon: {
+                                id: 'coupon_1',
+                            },
+                        },
+                        {
+                            code: '456',
+                            coupon: {
+                                id: 'coupon_2',
+                            },
+                        },
+                    ],
+                } as Stripe.Response<Stripe.ApiList<Stripe.PromotionCode>>);
+                const updateSubscription = vi.spyOn(StripeService.getService(), 'updateSubscription');
+                updateSubscription.mockResolvedValue({} as Stripe.Response<Stripe.Subscription>);
+
+                const [err] = await awaitToError(
+                    SubscriptionV2Service.getService().applyPromo('sub_xx', {
+                        coupon: '789',
+                    }),
+                );
+                expect(err).toBeInstanceOf(UnprocessableEntityError);
+                expect(err.message).toBe('Invalid promo code');
             });
         });
     });

@@ -22,6 +22,13 @@ export type CreateSubscriptionResponse = {
 export type PaymentMethodResponse = {
     paymentMethods?: Stripe.PaymentMethod[];
     defaultPaymentMethod: string;
+export type ApplyCouponPayload = { coupon: string };
+export type ApplyCouponResponse = {
+    id: string;
+    amount_off: null;
+    percent_off: number;
+    duration_in_months: number;
+    name: string;
 };
 
 export const STRIPE_SUBSCRIBE_RESPONSE = 'boostbot_stripe_secret_response';
@@ -168,4 +175,17 @@ export const useSubscription = () => {
         paymentMethodInfoLoading,
         paymentMethodInfoValidating,
     };
+    return { loading, error, createSubscription };
+};
+
+export const useCouponV2 = () => {
+    const { apiClient, loading, error } = useApiClient();
+    const applyCoupon = async (subscriptionId: string, payload: ApplyCouponPayload) => {
+        const [err, res] = await awaitToError(
+            apiClient.put<ApplyCouponResponse>(`/v2/subscriptions/${subscriptionId}/apply-promo`, payload),
+        );
+        if (err) return;
+        return res.data;
+    };
+    return { loading, error, applyCoupon };
 };
