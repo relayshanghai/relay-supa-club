@@ -54,9 +54,13 @@ const nextConfig = {
             destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/:path*` // Proxy to Backend
           }
         ]
+      },
+      experimental: {
+        instrumentationHook: true
       }
 };
 
 module.exports = nextConfig;
 
 module.exports = withSentryConfig(module.exports, { silent: true }, {});
+
