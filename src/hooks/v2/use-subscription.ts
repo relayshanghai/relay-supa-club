@@ -176,7 +176,6 @@ export const useSubscription = () => {
         paymentMethodInfoLoading,
         paymentMethodInfoValidating,
     };
-    return { loading, error, createSubscription };
 };
 
 export const useCouponV2 = () => {
