@@ -15,6 +15,8 @@ export class UpdateSubscriptionRequest {
     email!: string;
 }
 
+export class ChangeSubscriptionRequest extends CreateSubscriptionRequest {}
+
 export class PostConfirmationRequest {
     @IsString()
     paymentIntentId!: string;

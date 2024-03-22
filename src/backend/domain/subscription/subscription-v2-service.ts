@@ -16,7 +16,8 @@ import type Stripe from 'stripe';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import awaitToError from 'src/utils/await-to-error';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
-import { type UpdateSubscriptionRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
+import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
+import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;
@@ -331,7 +332,7 @@ export default class SubscriptionV2Service {
 
     @CompanyIdRequired()
     @UseLogger()
-    async applyPromo(subscriptionId: string, request: UpdateSubscriptionRequest) {
+    async applyPromo(subscriptionId: string, request: UpdateSubscriptionCouponRequest) {
         const { data } = await StripeService.getService().getAvailablePromo();
         const foundCoupon = data.find((promo) => promo.code === request.coupon);
         if (!foundCoupon) {
@@ -368,5 +369,49 @@ export default class SubscriptionV2Service {
         await StripeService.getService().updateSubscription(subscription.providerSubscriptionId, {
             cancel_at_period_end: false,
         });
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async changeSubscription(request: ChangeSubscriptionRequest) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        const stripeSubscription = await StripeService.getService().changeSubscription(
+            subscription.providerSubscriptionId,
+            {
+                priceId: request.priceId,
+                quantity: request.quantity ? request.quantity : 1,
+            },
+        );
+        await SubscriptionRepository.getRepository().update(
+            {
+                id: subscription.id,
+            },
+            {
+                quantity: stripeSubscription.items.data[0].quantity,
+                price: stripeSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                total:
+                    (stripeSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                    (stripeSubscription.items.data[0].quantity ?? 0),
+                subscriptionData: stripeSubscription,
+                activeAt: new Date(stripeSubscription.current_period_start * 1000),
+                pausedAt: new Date(stripeSubscription.current_period_end * 1000),
+            },
+        );
+        const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
+        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+        return {
+            providerSubscriptionId: stripeSubscription.id,
+            clientSecret: paymentIntent.client_secret,
+        };
     }
 }

@@ -2,6 +2,11 @@ import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import Stripe from 'stripe';
 
+export type ChangeSubscriptionRequestType = {
+    priceId: string;
+    quantity: number;
+};
+
 export default class StripeService {
     static service = new StripeService();
     static getService = () => StripeService.service;
@@ -83,6 +88,22 @@ export default class StripeService {
             id: subscription.id,
             clientSecret: paymentIntent.client_secret,
         };
+    }
+
+    async changeSubscription(subscriptionId: string, { priceId, quantity }: ChangeSubscriptionRequestType) {
+        const subscription = await this.retrieveSubscription(subscriptionId);
+        const items = subscription.items.data.map((item) => {
+            return {
+                id: item.id,
+                price: priceId,
+                quantity,
+            };
+        });
+        return this.updateSubscription(subscriptionId, {
+            items,
+            proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
+        });
     }
 
     async getSubscription(cusId: string) {
