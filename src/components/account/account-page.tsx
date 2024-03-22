@@ -25,7 +25,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                 className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <PaymentOutline className="h-5 w-5 flex-shrink-0" />
-                <p>Payment Methods</p>
+                <p>Billing</p>
             </a>
             {!clientRoleCompanyId && (
                 <a
@@ -33,7 +33,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                     className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
                 >
                     <ProfileOutline className="h-5 w-5 flex-shrink-0" />
-                    <p>Personal Info</p>
+                    <p>Profile</p>
                 </a>
             )}
             <a
@@ -41,14 +41,14 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                 className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <Building className="h-5 w-5 flex-shrink-0" />
-                <p>Company Info</p>
+                <p>Company</p>
             </a>
             <a
                 href="#team-details"
                 className="flex gap-2 py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <ProfileTeam className="h-5 w-5 flex-shrink-0" />
-                <p>Team Members</p>
+                <p>Team</p>
             </a>
         </nav>
     );

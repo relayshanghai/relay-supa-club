@@ -68,11 +68,11 @@ export const InvoiceDetails = () => {
                             </div>
                             <div className="flex w-full flex-row justify-end space-x-4">
                                 <Button
-                                    className='hover:bg-navy-300" bg-navy-200 font-semibold text-navy-500'
+                                    className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500'
                                     disabled={updating || error}
                                     onClick={handleUpdateInvoiceEmail}
                                 >
-                                    {t('account.update')}
+                                    Update billing info
                                 </Button>
                             </div>
                         </>

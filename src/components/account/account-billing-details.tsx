@@ -156,7 +156,7 @@ export const BillingDetails = () => {
                             onClick={() => {
                                 setNewPaymentModalOpenState(true);
                             }}
-                            className="w-full bg-blue-200 font-semibold text-blue-500 hover:bg-blue-300"
+                            className="w-full bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
                         >
                             <Plus className="mr-2 h-4 w-4" />
                             Add new payment method

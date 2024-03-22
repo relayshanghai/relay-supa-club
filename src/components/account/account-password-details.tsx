@@ -66,13 +66,16 @@ export const PasswordDetails = () => {
                     <p className="text-base font-normal text-gray-700">
                         A request to reset your password will be sent to the email address attached to your account.
                     </p>
-                    <Button
-                        className="w-full bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
-                        onClick={handleResetPassword}
-                        disabled={generatingResetEmail}
-                    >
-                        {t('login.changePassword')}
-                    </Button>
+                    <section className="flex w-full justify-end">
+                        <Button
+                            className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                            variant="outline"
+                            onClick={handleResetPassword}
+                            disabled={generatingResetEmail}
+                        >
+                            Send reset password email
+                        </Button>
+                    </section>
                 </div>
             </section>
         </section>

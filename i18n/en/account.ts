@@ -1,6 +1,6 @@
 const account = {
     account: 'Account',
-    update: 'Update Personal Info',
+    update: 'Update personal fnfo',
     personal: {
         title: 'Personal Info',
         firstName: 'First name',

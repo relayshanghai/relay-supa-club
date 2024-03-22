@@ -77,7 +77,7 @@ export const TeamDetails = () => {
                                         {isAdmin(profile?.user_role) ? (
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger>
-                                                    <section className="flex basis-1/5 items-center gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
+                                                    <section className="flex w-32 flex-shrink-0 flex-grow-0 basis-1/5 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
                                                         {isAdmin(teammateProfile?.user_role)
                                                             ? t('account.company.admin')
                                                             : t('account.company.member')}
@@ -168,14 +168,14 @@ export const TeamDetails = () => {
                     {isAdmin(profile?.user_role) && (
                         <div className="flex w-full justify-end pt-4">
                             <Button
-                                className="flex items-center gap-2 bg-navy-200 font-semibold text-navy-500 hover:bg-navy-300"
+                                className="flex items-center gap-2 bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
                                 onClick={() => {
                                     setShowAddMoreMembers(true);
                                     trackEvent(ACCOUNT_COMPANY_DETAILS('open addMoreMembers modal'));
                                 }}
                             >
                                 <ProfilePlus className="h-4 w-4 flex-shrink-0" />
-                                {t('account.company.addMoreMembers')}
+                                Invite teammate
                             </Button>
                         </div>
                     )}
