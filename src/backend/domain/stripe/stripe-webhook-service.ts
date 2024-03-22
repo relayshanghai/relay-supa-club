@@ -9,7 +9,8 @@ import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
 import dayjs from 'dayjs';
 import { logger } from 'src/backend/integration/logger';
-import { NotFoundError } from 'src/utils/error/http-error';
+import awaitToError from 'src/utils/await-to-error';
+import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
@@ -18,33 +19,42 @@ export class StripeWebhookService {
     }
 
     async handler(request: StripeWebhookRequest) {
-        try {
-            const company = await CompanyRepository.getRepository().findOne({
+        let err = null,
+            company = null;
+        [err, company] = await awaitToError(
+            CompanyRepository.getRepository().findOne({
                 where: {
                     cusId: request.data?.object.customer as string,
                 },
-            });
-            if (!company) {
-                throw new NotFoundError('Company not found');
-            }
-            await BillingEventRepository.getRepository().save({
-                company,
+            }),
+        );
+        logger.error('stripe webhook get company error', err);
+
+        [err] = await awaitToError(
+            BillingEventRepository.getRepository().save({
+                company: company as CompanyEntity,
                 data: request.data?.object,
                 provider: 'stripe',
                 type: request.type,
-            });
-            await SubscriptionRepository.getRepository().update(
+            }),
+        );
+        logger.error('stripe webhook save to billing event error', err);
+
+        [err] = await awaitToError(
+            SubscriptionRepository.getRepository().update(
                 {
-                    company,
+                    company: company as CompanyEntity,
                 },
                 {
                     providerLastEvent: new Date(request.created * 1000).toString(),
                 },
-            );
-            await this.handlingWebhookTypes(request);
-        } catch (error) {
-            logger.error('Error handling stripe webhook', error);
-        }
+            ),
+        );
+        logger.error('stripe webhook update subscription error', err);
+
+        [err] = await awaitToError(this.handlingWebhookTypes(request));
+        logger.error('stripe webhook error', err);
+
         return { message: 'Webhook received' };
     }
 

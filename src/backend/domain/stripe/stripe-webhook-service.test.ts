@@ -97,12 +97,14 @@ describe('StripeWebhookService', () => {
                 },
             } as StripeWebhookRequest;
 
-            vi.spyOn(CompanyRepository.getRepository(), 'findOne').mockResolvedValue(null);
+            vi.spyOn(CompanyRepository.getRepository(), 'findOne').mockRejectedValue(
+                new NotFoundError('Company not found'),
+            );
             const loggerMock = vi.spyOn(logger, 'error').mockReturnValue({} as winston.Logger);
 
             // Act & Assert
             await stripeWebhookService.handler(request);
-            expect(loggerMock).toBeCalledWith('Error handling stripe webhook', expect.any(NotFoundError));
+            expect(loggerMock).toBeCalledWith('stripe webhook get company error', expect.any(NotFoundError));
         });
 
         it('should log an error if an exception occurs during handling', async () => {
