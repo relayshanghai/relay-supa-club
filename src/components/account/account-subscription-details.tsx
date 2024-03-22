@@ -14,8 +14,16 @@ import { Progress } from 'shadcn/components/ui/progress';
 import { Rocket } from '../icons';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 
-const Tablet = ({ children, customStyle }: { children: React.ReactNode; customStyle: string }) => {
-    return <span className={`rounded-lg border px-2 py-0.5 text-sm font-medium ${customStyle}`}>{children}</span>;
+const Tablet = ({
+    children,
+    customStyle,
+    textSize = 'text-sm',
+}: {
+    children: React.ReactNode;
+    customStyle: string;
+    textSize?: string;
+}) => {
+    return <span className={`rounded-lg border px-2 py-0.5 font-medium ${customStyle} ${textSize}`}>{children}</span>;
 };
 
 export const SubscriptionDetails = () => {
@@ -47,14 +55,14 @@ export const SubscriptionDetails = () => {
     );
 
     const statusColor = useMemo(() => {
-        if (canceledNotExpired || subscription?.status === 'canceled') {
-            return ' bg-red-100 text-red-700 border-red-200';
+        if (canceledNotExpired && subscription?.status === 'canceled') {
+            return ' bg-red-100 text-red-700 border-red-200 text-sm';
         } else if (subscription?.status === 'active') {
-            return 'bg-green-100 text-green-700 border-green-200';
+            return 'bg-green-100 text-green-700 border-green-200 text-sm';
         } else if (subscription?.status === 'trial') {
-            return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+            return 'bg-yellow-100 text-yellow-700 border-yellow-200 text-sm';
         } else {
-            return 'bg-gray-100 text-gray-700 border-gray-200';
+            return 'bg-gray-100 text-gray-700 border-gray-200 text-sm';
         }
     }, [canceledNotExpired, subscription]);
 
@@ -79,8 +87,29 @@ export const SubscriptionDetails = () => {
                             <>
                                 <section className="flex">
                                     <div className="flex w-full flex-col items-start justify-between">
-                                        <h2 className="text-4xl font-semibold text-gray-900">
-                                            {t(`account.plans.${subscription?.name.toLowerCase()}`)}
+                                        <h2 className="flex items-start gap-3 text-4xl font-semibold text-gray-900">
+                                            <span>{t(`account.plans.${subscription?.name.toLowerCase()}`)}</span>
+                                            <Tablet customStyle={statusColor}>
+                                                {!canceledNotExpired
+                                                    ? t('account.subscription.canceled')
+                                                    : t(`account.subscription.${subscription?.status}`)}
+                                            </Tablet>
+                                            {subscription?.status === 'active' && canceledNotExpired && (
+                                                <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">
+                                                    <span className="font-semibold">
+                                                        {t('account.subscription.expirationDate')}
+                                                        {': '}
+                                                    </span>
+                                                    <span>
+                                                        {new Date(
+                                                            subscriptionEndDate ?? (periodEnd as string | number),
+                                                        ).toLocaleDateString(i18n.language, {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                        })}
+                                                    </span>
+                                                </Tablet>
+                                            )}
                                         </h2>
                                         <h2 className="text-sm font-normal text-gray-600">
                                             {t(`account.plans.details`)}
@@ -89,15 +118,11 @@ export const SubscriptionDetails = () => {
                                     <div className="flex w-full flex-col items-end gap-2">
                                         <div className="flex h-fit gap-3">
                                             <Tablet customStyle={statusColor}>
-                                                {subscriptionEndDate
+                                                {!canceledNotExpired
                                                     ? t('account.subscription.canceled')
                                                     : t(`account.subscription.${subscription?.status}`)}
                                             </Tablet>
-                                            {!(
-                                                subscription.status === 'trial' ||
-                                                subscription.status === 'canceled' ||
-                                                subscription.status === 'paused'
-                                            ) && (
+                                            {!['trial', 'canceled', 'paused'].includes(subscription.status) && (
                                                 <Tablet
                                                     customStyle={'bg-primary-100 text-primary-700 border-primary-200'}
                                                 >
