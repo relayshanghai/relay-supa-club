@@ -1,6 +1,6 @@
 import { createHandler } from 'src/utils/handler/create-handler';
 import { DELETE, GET, PATCH, POST, Status } from 'src/utils/handler/decorators/api-decorator';
-import { ChangeSubscriptionRequest, CreateSubscriptionRequest, UpdateSubscriptionRequest } from './request';
+import { ChangeSubscriptionRequest, CreateSubscriptionRequest } from './request';
 import httpCodes from 'src/constants/httpCodes';
 import SubscriptionV2Service from 'src/backend/domain/subscription/subscription-v2-service';
 import { Body } from 'src/utils/handler/decorators/api-body-decorator';
@@ -33,7 +33,7 @@ class SubscriptionHandler {
     }
 
     @PATCH()
-    @Status(httpCodes.NO_CONTENT)
+    @Status(httpCodes.OK)
     async updateSubscription(@Body(ChangeSubscriptionRequest) request: ChangeSubscriptionRequest) {
         return SubscriptionV2Service.getService().changeSubscription(request);
     }

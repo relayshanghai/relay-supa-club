@@ -102,6 +102,7 @@ export default class StripeService {
         return this.updateSubscription(subscriptionId, {
             items,
             proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
         });
     }
 
