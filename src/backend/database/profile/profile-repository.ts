@@ -56,4 +56,12 @@ export class ProfileRepository extends BaseRepository<ProfileEntity> {
     async deleteProfileById(id: string) {
         return this.delete({ id });
     }
+
+    isCompanyOwner(profiles: ProfileEntity[]) {
+        const foundCompanyOwner = profiles.find((profile) => profile.userRole === 'company_owner');
+        if (foundCompanyOwner) {
+            return foundCompanyOwner;
+        }
+        return profiles[0];
+    }
 }

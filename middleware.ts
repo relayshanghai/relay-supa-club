@@ -249,6 +249,8 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('users')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('stripe-webhook')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }

@@ -41,6 +41,9 @@ export class SubscriptionEntity<T = any> {
     @Column({ name: 'subscription_data', type: 'json' })
     subscriptionData!: T;
 
+    @Column({ name: 'provider_last_event', type: 'varchar', nullable: true })
+    providerLastEvent?: Nullable<string>;
+
     @Column({ type: 'timestamp', nullable: true, name: 'active_at' })
     activeAt?: Nullable<Date>;
 
