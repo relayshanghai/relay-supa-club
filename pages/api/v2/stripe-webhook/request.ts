@@ -1,5 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 import { type StripeObjectData } from 'src/backend/database/billing-event/billing-event-entity';
+import { type Nullable } from 'types/nullable';
 
 export enum StripeWebhookType {
     CHARGE_SUCCEEDED = 'charge.succeeded',
@@ -13,6 +14,7 @@ export enum StripeWebhookType {
 
 export class Data<T> {
     object!: T;
+    previous_attributes?: Nullable<T>;
 }
 
 export class Request {
