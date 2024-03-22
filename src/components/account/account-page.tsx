@@ -59,8 +59,8 @@ export const AccountPage = () => {
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
-        <div className="flex flex-col gap-3 bg-white px-8 lg:px-8">
-            <section className="sticky left-0 top-0 flex flex-col gap-3 bg-white pb-12">
+        <div className="flex flex-col gap-3 px-8 lg:px-8">
+            <section className="sticky left-0 top-0 flex flex-col gap-3 pb-12">
                 <div className="text-base font-semibold text-primary-700">Profile, Company and Subscriptions</div>
                 <div className="text-4xl font-bold">{t('account.account')}</div>
             </section>

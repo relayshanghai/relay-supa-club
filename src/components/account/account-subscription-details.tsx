@@ -1,10 +1,8 @@
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
-import { checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { Button } from 'shadcn/components/ui/button';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
@@ -13,6 +11,9 @@ import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
 import { Progress } from 'shadcn/components/ui/progress';
 import { Rocket } from '../icons';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
+import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import type Stripe from 'stripe';
 
 const Tablet = ({
     children,
@@ -26,11 +27,163 @@ const Tablet = ({
     return <span className={`rounded-lg border px-2 py-0.5 font-medium ${customStyle} ${textSize}`}>{children}</span>;
 };
 
+const PaymentTablets = ({
+    subscription,
+    handleCancelSubscription,
+}: {
+    subscription: SubscriptionEntity<Stripe.Subscription>;
+    handleCancelSubscription: () => void;
+}) => {
+    const { subscriptionData, activeAt, cancelledAt, pausedAt } = subscription;
+
+    const { t, i18n } = useTranslation();
+
+    const canceledNotExpired = (cancelledAt && new Date(cancelledAt) > new Date()) || false;
+
+    //@ts-ignore plan does exist on the object
+    const subscriptionInterval = subscriptionData.plan.interval || subscriptionData.items.data[0].plan.interval;
+    const subscriptionIntervalCount =
+        //@ts-ignore plan does exist on the object
+        subscriptionData.plan.interval_count || subscriptionData.items.data[0].plan.interval_count;
+    const interval =
+        //@ts-ignore plan does exist on the object
+        subscriptionInterval === 'month'
+            ? //@ts-ignore plan does exist on the object
+              subscriptionIntervalCount === 3
+                ? 'quarterly'
+                : 'monthly'
+            : subscriptionInterval === 'year'
+            ? 'annually'
+            : null;
+    if (!interval) {
+        throw new Error('Invalid interval');
+    }
+
+    if (cancelledAt && new Date() > new Date(cancelledAt)) {
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">Cancelled</Tablet>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">Cancelled on: </span>
+                    <span>
+                        {new Date(cancelledAt).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+            </section>
+        );
+    } else if (pausedAt && new Date() > new Date(pausedAt)) {
+        if (
+            subscriptionData.status === 'incomplete' ||
+            subscriptionData.status === 'incomplete_expired' ||
+            subscriptionData.status === 'past_due'
+        ) {
+            return (
+                <section className="flex w-full flex-col items-end gap-2">
+                    <section className="flex gap-3">
+                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Paused</Tablet>
+                        <Tablet customStyle="bg-red-100 text-red-700 border-red-200">Payment Failed</Tablet>
+                    </section>
+                    <p className="whitespace-nowrap">
+                        <span className="font-semibold">Payment due: </span>
+                        <span>
+                            {new Date(pausedAt).toLocaleDateString(i18n.language, {
+                                month: 'short',
+                                day: 'numeric',
+                            })}
+                        </span>
+                    </p>
+                </section>
+            );
+        }
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Paused</Tablet>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">Paused at: </span>
+                    <span>
+                        {new Date(pausedAt).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+            </section>
+        );
+    } else if (activeAt && new Date() > new Date(activeAt) && subscriptionData.status === 'active') {
+        if (cancelledAt && new Date() < new Date(cancelledAt)) {
+            return (
+                <section className="flex w-full flex-col items-end gap-2">
+                    <section className="flex gap-3">
+                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Active</Tablet>
+                        <Tablet customStyle="bg-red-100 text-red-700 border-red-200">
+                            <span>Cancels on: </span>
+                            <span>
+                                {new Date(cancelledAt).toLocaleDateString(i18n.language, {
+                                    month: 'short',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                        </Tablet>
+                    </section>
+                    <p className="whitespace-nowrap">No upcoming payments</p>
+                </section>
+            );
+        }
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <section className="flex gap-3">
+                    <Tablet customStyle="bg-green-100 text-green-700 border-green-200">Active</Tablet>
+                    <Tablet customStyle="bg-primary-100 text-primary-700 border-primary-200">
+                        {t(`account.subscription.${interval}`)}
+                    </Tablet>
+                </section>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">Renews on: </span>
+                    <span>
+                        {new Date(subscriptionData.current_period_end * 1000).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+                {!canceledNotExpired && (
+                    <p onClick={handleCancelSubscription} className="cursor-pointer text-sm font-semibold text-red-400">
+                        {t('account.subscription.cancelSubscription')}
+                    </p>
+                )}
+            </section>
+        );
+    } else if (!activeAt && subscriptionData.status === 'trialing' && subscriptionData.trial_end) {
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <Tablet customStyle="bg-navy-100 text-navy-700 border-navy-200">Free Trial</Tablet>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">Trial ends: </span>
+                    <span>
+                        {new Date(subscriptionData.trial_end * 1000).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+            </section>
+        );
+    }
+    return (
+        <section className="flex w-full flex-col items-end gap-2">
+            <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">Error getting subscription info</Tablet>
+        </section>
+    );
+};
+
 export const SubscriptionDetails = () => {
-    const { subscription } = useSubscription();
+    const { subscription, product } = useSubscription();
 
     const { company, refreshCompany } = useCompany();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
     const [showCancelModal, setShowCancelModal] = useState(false);
@@ -38,33 +191,18 @@ export const SubscriptionDetails = () => {
         setShowCancelModal(true);
         trackEvent(ACCOUNT_SUBSCRIPTION('open cancel subscription modal'));
     };
-    checkStripeAndDatabaseMatch(company, subscription);
 
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
-    const periodStart = unixEpochToISOString(subscription?.current_period_start);
-    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    const periodStart = unixEpochToISOString(subscription?.subscriptionData?.current_period_start);
+    const periodEnd = unixEpochToISOString(subscription?.subscriptionData?.current_period_end);
 
-    const subscriptionEndDate = useMemo(() => company?.subscription_end_date, [company]);
-    const canceledNotExpired = (subscriptionEndDate && new Date(subscriptionEndDate) > new Date()) || false;
     const { usages, refreshUsages } = useUsages(
         true,
         periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
             : undefined,
     );
-
-    const statusColor = useMemo(() => {
-        if (canceledNotExpired && subscription?.status === 'canceled') {
-            return ' bg-red-100 text-red-700 border-red-200 text-sm';
-        } else if (subscription?.status === 'active') {
-            return 'bg-green-100 text-green-700 border-green-200 text-sm';
-        } else if (subscription?.status === 'trial') {
-            return 'bg-yellow-100 text-yellow-700 border-yellow-200 text-sm';
-        } else {
-            return 'bg-gray-100 text-gray-700 border-gray-200 text-sm';
-        }
-    }, [canceledNotExpired, subscription]);
 
     useEffect(() => {
         refreshCompany();
@@ -87,74 +225,21 @@ export const SubscriptionDetails = () => {
                             <>
                                 <section className="flex">
                                     <div className="flex w-full flex-col items-start justify-between">
-                                        <h2 className="flex items-start gap-1 text-4xl font-semibold text-gray-900">
-                                            <span>{t(`account.plans.${subscription?.name.toLowerCase()}`)}</span>
-                                            <Tablet customStyle={statusColor}>
-                                                {canceledNotExpired
-                                                    ? t('account.subscription.canceled')
-                                                    : t(`account.subscription.${subscription?.status}`)}
-                                            </Tablet>
+                                        <h2 className="text-4xl font-semibold text-gray-900">
+                                            {product ? (
+                                                <span>{t(`account.plans.${product?.name.toLowerCase()}`)}</span>
+                                            ) : (
+                                                <Skeleton className="h-9 w-48 font-semibold text-gray-900" />
+                                            )}
                                         </h2>
                                         <h2 className="whitespace-nowrap text-sm font-normal text-gray-600">
                                             Fully automated discovery and email campaigns
                                         </h2>
                                     </div>
-                                    <div className="flex w-full flex-col items-end gap-2">
-                                        <div className="flex h-fit gap-3">
-                                            <Tablet customStyle={statusColor}>
-                                                {canceledNotExpired
-                                                    ? t('account.subscription.canceled')
-                                                    : t(`account.subscription.${subscription?.status}`)}
-                                            </Tablet>
-                                            {['trial', 'canceled', 'paused'].includes(subscription.status) ||
-                                            (subscription?.status === 'active' && canceledNotExpired) ? (
-                                                <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">
-                                                    <span className="font-semibold">
-                                                        Cancels at
-                                                        {': '}
-                                                    </span>
-                                                    <span>
-                                                        {new Date(
-                                                            subscriptionEndDate ?? (periodEnd as string | number),
-                                                        ).toLocaleDateString(i18n.language, {
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </span>
-                                                </Tablet>
-                                            ) : (
-                                                <Tablet
-                                                    customStyle={'bg-primary-100 text-primary-700 border-primary-200'}
-                                                >
-                                                    {t(`account.subscription.${subscription?.interval}`)}
-                                                </Tablet>
-                                            )}
-                                        </div>
-                                        <div className="text-sm">
-                                            <span className="font-semibold text-gray-600">
-                                                {subscription?.status === 'active' && !canceledNotExpired
-                                                    ? t('account.subscription.renewsOn')
-                                                    : t('account.subscription.expirationDate')}
-                                                {': '}
-                                            </span>
-                                            <span>
-                                                {new Date(
-                                                    subscriptionEndDate ?? (periodEnd as string | number),
-                                                ).toLocaleDateString(i18n.language, {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}
-                                            </span>
-                                        </div>
-                                        {!canceledNotExpired && (
-                                            <p
-                                                onClick={handleCancelSubscription}
-                                                className="cursor-pointer text-sm font-semibold text-red-400"
-                                            >
-                                                {t('account.subscription.cancelSubscription')}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <PaymentTablets
+                                        subscription={subscription}
+                                        handleCancelSubscription={handleCancelSubscription}
+                                    />
                                 </section>
 
                                 <section className="flex flex-col gap-3">

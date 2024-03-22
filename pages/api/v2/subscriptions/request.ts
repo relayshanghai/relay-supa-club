@@ -51,3 +51,8 @@ export class RemovePaymentMethodRequest {
     @IsString()
     paymentMethodId!: string;
 }
+
+export class GetProductRequest {
+    @IsString()
+    productId!: string;
+}

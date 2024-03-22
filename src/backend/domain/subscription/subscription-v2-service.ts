@@ -230,6 +230,11 @@ export default class SubscriptionV2Service {
         return subscription;
     }
 
+    async getProduct(productId: string) {
+        const product = await StripeService.getService().getProduct(productId);
+        return product;
+    }
+
     @CompanyIdRequired()
     @UseLogger()
     @UseTransaction()
