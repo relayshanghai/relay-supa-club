@@ -211,6 +211,10 @@ export default class SubscriptionV2Service {
                 throw new NotFoundError('No subscription found');
             }
 
+            if (lastSubscription.status === 'trialing') {
+                return;
+            }
+
             const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id as string);
             const product = await StripeService.getService().getProduct(price.product.toString());
 
