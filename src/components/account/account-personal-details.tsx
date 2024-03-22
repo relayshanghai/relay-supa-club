@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { emailRegex } from 'src/constants';
@@ -27,6 +27,8 @@ export const PersonalDetails = () => {
     const { loading: userDataLoading, profile, user, updateProfile, refreshProfile } = useUser();
     const { track } = useRudderstackTrack();
     const { appUrl } = useHostname();
+    const [personalDetailsSubmitButtonDisabled, setPersonalDetailsSubmitButtonDisabled] = useState(true);
+    const [emailSubmitButtonDisabled, setEmailSubmitButtonDisabled] = useState(true);
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -111,7 +113,17 @@ export const PersonalDetails = () => {
                                 placeholder={t('account.personal.firstNamePlaceholder') || ''}
                                 value={firstName}
                                 required
-                                onChange={(e) => setUserFieldValues('firstName', e.target.value)}
+                                onChange={(e) => {
+                                    setUserFieldValues('firstName', e.target.value);
+                                    if (
+                                        (e.target.value === profile?.first_name && lastName === profile.last_name) ||
+                                        e.target.value === ''
+                                    ) {
+                                        setPersonalDetailsSubmitButtonDisabled(true);
+                                        return;
+                                    }
+                                    setPersonalDetailsSubmitButtonDisabled(false);
+                                }}
                             />
                             <Input
                                 label={t('account.personal.lastName')}
@@ -119,13 +131,36 @@ export const PersonalDetails = () => {
                                 placeholder={t('account.personal.lastNamePlaceholder') || ''}
                                 value={lastName}
                                 required
-                                onChange={(e) => setUserFieldValues('lastName', e.target.value)}
+                                onChange={(e) => {
+                                    setUserFieldValues('lastName', e.target.value);
+                                    if (
+                                        (e.target.value === profile?.last_name && firstName === profile.first_name) ||
+                                        e.target.value === ''
+                                    ) {
+                                        setPersonalDetailsSubmitButtonDisabled(true);
+                                        return;
+                                    }
+                                    setPersonalDetailsSubmitButtonDisabled(false);
+                                }}
                             />
                         </section>
                         <div className="mb-6 flex w-full flex-row justify-end space-x-4">
+                            {(firstName !== profile?.first_name || lastName !== profile.last_name) && (
+                                <Button
+                                    className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setUserFieldValues('firstName', profile?.first_name || '');
+                                        setUserFieldValues('lastName', profile?.last_name || '');
+                                        setEmailSubmitButtonDisabled(true);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
                             <Button
                                 className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
-                                disabled={userDataLoading}
+                                disabled={userDataLoading || personalDetailsSubmitButtonDisabled}
                                 onClick={handleUpdateProfile}
                             >
                                 {t('account.update')}
@@ -139,13 +174,33 @@ export const PersonalDetails = () => {
                             placeholder={t('account.personal.emailPlaceholder') || ''}
                             value={email}
                             required
-                            onChange={(e) => setUserFieldValues('email', e.target.value)}
+                            onChange={(e) => {
+                                setUserFieldValues('email', e.target.value);
+                                if (e.target.value === profile?.email || e.target.value === '') {
+                                    setEmailSubmitButtonDisabled(true);
+                                    return;
+                                }
+                                setEmailSubmitButtonDisabled(false);
+                            }}
                         />
 
                         <div className="flex w-full flex-row justify-end space-x-4">
+                            {email !== profile?.email && (
+                                <Button
+                                    className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setUserFieldValues('email', profile?.email || '');
+                                        setEmailSubmitButtonDisabled(true);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
                             <Button
                                 className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
                                 onClick={handleUpdateEmail}
+                                disabled={emailSubmitButtonDisabled}
                             >
                                 {t('account.personal.updateEmail')}
                             </Button>

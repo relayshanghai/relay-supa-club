@@ -26,6 +26,7 @@ export const CompanyDetails = () => {
         website: '',
     });
     const [updating, setUpdating] = useState(false);
+    const [buttonDisabled, setButtonDisabled] = useState(true);
 
     useEffect(() => {
         if (company) {
@@ -85,7 +86,14 @@ export const CompanyDetails = () => {
                                     type="text"
                                     value={companyValues.name || ''}
                                     required
-                                    onChange={(e) => setCompanyFieldValues('name', e.target.value)}
+                                    onChange={(e) => {
+                                        setCompanyFieldValues('name', e.target.value);
+                                        if (e.target.value === company?.name || e.target.value === '') {
+                                            setButtonDisabled(true);
+                                            return;
+                                        }
+                                        setButtonDisabled(false);
+                                    }}
                                 />
                                 <Input
                                     label={t('account.company.website')}
@@ -93,13 +101,37 @@ export const CompanyDetails = () => {
                                     value={companyValues.website || ''}
                                     placeholder={t('account.company.websiteAddress') || ''}
                                     required
-                                    onChange={(e) => setCompanyFieldValues('website', e.target.value)}
+                                    onChange={(e) => {
+                                        setCompanyFieldValues('website', e.target.value);
+                                        if (e.target.value === company?.website || e.target.value === '') {
+                                            setButtonDisabled(true);
+                                            return;
+                                        }
+                                        setButtonDisabled(false);
+                                    }}
                                 />
                             </div>
                             <div className="flex w-full flex-row justify-end space-x-4">
+                                {(companyValues.name !== company?.name ||
+                                    companyValues.website !== company?.website) && (
+                                    <Button
+                                        disabled={userDataLoading || updating}
+                                        className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                        variant="outline"
+                                        onClick={() => {
+                                            resetCompanyValues({
+                                                name: company?.name || '',
+                                                website: company?.website || '',
+                                            });
+                                            setButtonDisabled(true);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                )}
                                 <Button
                                     className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500'
-                                    disabled={userDataLoading || updating}
+                                    disabled={userDataLoading || updating || buttonDisabled}
                                     onClick={handleUpdateCompany}
                                 >
                                     Update company info

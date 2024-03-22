@@ -87,7 +87,7 @@ export const SubscriptionDetails = () => {
                             <>
                                 <section className="flex">
                                     <div className="flex w-full flex-col items-start justify-between">
-                                        <h2 className="flex items-start gap-3 text-4xl font-semibold text-gray-900">
+                                        <h2 className="flex items-start gap-1 text-4xl font-semibold text-gray-900">
                                             <span>{t(`account.plans.${subscription?.name.toLowerCase()}`)}</span>
                                             <Tablet customStyle={statusColor}>
                                                 {canceledNotExpired

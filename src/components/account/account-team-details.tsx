@@ -17,6 +17,8 @@ import {
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown, ProfilePlus } from '../icons';
 import type { CompanyTeammatesGetResponse } from 'pages/api/company/teammates';
+import { truncatedText } from 'src/utils/outreach/helpers';
+import { Tooltip } from '../library';
 
 export const TeamDetails = () => {
     const { profile } = useUser();
@@ -70,10 +72,26 @@ export const TeamDetails = () => {
                                         key={teammateProfile.id}
                                         className="flex w-full flex-row items-center space-x-8 py-2"
                                     >
-                                        <p className="basis-1/5 text-sm font-medium">
-                                            {teammateProfile.first_name} {teammateProfile.last_name}
+                                        <p className="basis-1/5 whitespace-nowrap text-sm font-medium">
+                                            <Tooltip
+                                                content={teammateProfile.first_name + ' ' + teammateProfile.last_name}
+                                                position="top-left"
+                                            >
+                                                {truncatedText(
+                                                    teammateProfile.first_name + ' ' + teammateProfile.last_name,
+                                                    15,
+                                                )}
+                                            </Tooltip>
                                         </p>
-                                        <p className="basis-2/5 text-sm font-normal">{teammateProfile.email}</p>
+                                        <p className="flex w-full basis-2/5 justify-start whitespace-nowrap text-start text-sm font-normal">
+                                            <Tooltip
+                                                content={teammateProfile.email || ''}
+                                                position="top-left"
+                                                className="text-start"
+                                            >
+                                                {truncatedText(teammateProfile.email || '', 23)}
+                                            </Tooltip>
+                                        </p>
                                         {isAdmin(profile?.user_role) ? (
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger>
@@ -110,9 +128,9 @@ export const TeamDetails = () => {
                                                     : t('account.company.member')}
                                             </p>
                                         )}
-                                        {isAdmin(profile?.user_role) && !isAdmin(teammateProfile?.user_role) && (
+                                        {isAdmin(profile?.user_role) && !isAdmin(teammateProfile?.user_role) ? (
                                             <Dialog>
-                                                <DialogTrigger>
+                                                <DialogTrigger className="basis-1/5">
                                                     <button className="font-semibold text-red-400">Remove</button>
                                                 </DialogTrigger>
                                                 <DialogContent className="flex flex-col items-center">
@@ -141,6 +159,8 @@ export const TeamDetails = () => {
                                                     </div>
                                                 </DialogContent>
                                             </Dialog>
+                                        ) : (
+                                            <div className="basis-1/5" />
                                         )}
                                     </div>
                                 );

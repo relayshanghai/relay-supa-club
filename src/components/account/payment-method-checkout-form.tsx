@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
-import { useTranslation } from 'react-i18next';
 import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
-import toast from 'react-hot-toast';
 
-export default function CheckoutForm({ onCompletion }: { onCompletion: () => void }) {
+export default function CheckoutForm({ onCompletion }: { onCompletion: (success: boolean) => void }) {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -14,7 +12,6 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: () => voi
 
     const { addPaymentMethod, refreshPaymentMethodInfo } = useSubscription();
 
-    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
 
@@ -53,7 +50,7 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: () => voi
 
         if (!paymentMethodSetupIntent || !paymentMethodSetupIntent.client_secret) {
             setIsLoading(false);
-            toast.error(t('account.subscription.error'));
+            handleError('Failed to add payment method');
             return;
         }
         if (paymentMethodSetupIntent.status === 'requires_action') {
@@ -81,8 +78,7 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: () => voi
                     paymentMethods: prev?.paymentMethods ? [paymentMethod, ...prev.paymentMethods] : [paymentMethod],
                 } as PaymentMethodResponse),
         );
-        toast.success(t('account.subscription.success'));
-        onCompletion();
+        onCompletion(true);
     };
 
     return (
