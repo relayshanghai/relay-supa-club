@@ -7,6 +7,9 @@ import SubscriptionRepository from 'src/backend/database/subcription/subscriptio
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type BillingEventEntity } from 'src/backend/database/billing-event/billing-event-entity';
 import { type SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import { logger } from 'src/backend/integration/logger';
+import type winston from 'winston';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 vi.mock('../company/company-repository');
 vi.mock('../billing/billing-event-repository');
@@ -14,6 +17,7 @@ vi.mock('../subscription/subscription-repository');
 vi.mock('./stripe-service');
 vi.mock('../profile/profile-repository');
 vi.mock('./slack-service');
+vi.mock('../../integration/logger');
 
 describe('StripeWebhookService', () => {
     let stripeWebhookService: StripeWebhookService;
@@ -94,9 +98,11 @@ describe('StripeWebhookService', () => {
             } as StripeWebhookRequest;
 
             vi.spyOn(CompanyRepository.getRepository(), 'findOne').mockResolvedValue(null);
+            const loggerMock = vi.spyOn(logger, 'error').mockReturnValue({} as winston.Logger);
 
             // Act & Assert
-            await expect(stripeWebhookService.handler(request)).rejects.toThrow('Company not found');
+            await stripeWebhookService.handler(request);
+            expect(loggerMock).toBeCalledWith('Error handling stripe webhook', expect.any(NotFoundError));
         });
 
         it('should log an error if an exception occurs during handling', async () => {
