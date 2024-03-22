@@ -9,6 +9,7 @@ import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
 import dayjs from 'dayjs';
 import { logger } from 'src/backend/integration/logger';
+import { NotFoundError } from 'src/utils/error/http-error';
 
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
@@ -17,16 +18,15 @@ export class StripeWebhookService {
     }
 
     async handler(request: StripeWebhookRequest) {
-        const company = await CompanyRepository.getRepository().findOne({
-            where: {
-                cusId: request.data?.object.customer as string,
-            },
-        });
-        if (!company) {
-            throw new Error('Company not found');
-        }
-
         try {
+            const company = await CompanyRepository.getRepository().findOne({
+                where: {
+                    cusId: request.data?.object.customer as string,
+                },
+            });
+            if (!company) {
+                throw new NotFoundError('Company not found');
+            }
             await BillingEventRepository.getRepository().save({
                 company,
                 data: request.data?.object,
