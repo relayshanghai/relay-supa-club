@@ -64,7 +64,7 @@ export type PaymentMethod = {
 export type Metadata = object;
 
 export type BillingDetails = {
-    address: Address;
+    address: Address | null;
     email: null;
     name: null;
     phone: null;

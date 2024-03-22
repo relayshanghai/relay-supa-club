@@ -11,13 +11,29 @@ const PaymentCallback = () => {
     const { t } = useTranslation();
     const { apiClient } = useApiClient();
     const router = useRouter();
-    const { subscriptionId, payment_intent, payment_intent_client_secret, redirect_status } = router.query;
+    const {
+        subscriptionId,
+        payment_intent,
+        payment_intent_client_secret,
+        redirect_status,
+        setup_intent,
+        setup_intent_client_secret,
+    } = router.query;
     useEffect(() => {
         if (subscriptionId && payment_intent && payment_intent_client_secret && redirect_status) {
             postConfirmation();
+        } else if (redirect_status && setup_intent && setup_intent_client_secret) {
+            router.push(`/account`);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [subscriptionId, payment_intent, payment_intent_client_secret, redirect_status]);
+    }, [
+        subscriptionId,
+        payment_intent,
+        payment_intent_client_secret,
+        redirect_status,
+        setup_intent,
+        setup_intent_client_secret,
+    ]);
 
     const postConfirmation = async () => {
         const data = {

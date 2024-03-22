@@ -9,6 +9,59 @@ export default class StripeService {
         apiVersion: '2022-11-15',
     });
 
+    async updateCustomer(cusId: string, params: Stripe.CustomerUpdateParams) {
+        return await StripeService.client.customers.update(cusId, params);
+    }
+
+    async getCustomerPaymentMethods(cusId: string) {
+        return await StripeService.client.paymentMethods.list({
+            customer: cusId,
+        });
+    }
+
+    async createConfirmedSetupIntent({
+        cusId,
+        paymentMethodType,
+        paymentMethodId,
+        currency,
+        userAgent,
+        ipAddress,
+    }: {
+        cusId: string;
+        paymentMethodType: 'card' | 'alipay';
+        paymentMethodId: string;
+        currency: string;
+        userAgent: string;
+        ipAddress: string;
+    }) {
+        return await StripeService.client.setupIntents.create(
+            {
+                customer: cusId,
+                payment_method_types: [paymentMethodType],
+                confirm: true,
+                payment_method: paymentMethodId,
+                payment_method_options: {
+                    //@ts-ignore the alipay is not added to Stripe.PaymentMethodOptions but it should be according to the doc https://stripe.com/docs/billing/subscriptions/alipay#create-setup-intent
+                    alipay: {
+                        currency,
+                    },
+                },
+                usage: 'off_session',
+                mandate_data: {
+                    customer_acceptance: {
+                        type: 'online',
+                        online: {
+                            ip_address: ipAddress,
+                            user_agent: userAgent,
+                        },
+                    },
+                },
+                return_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscriptions/undefined/${paymentMethodType}/callbacks`,
+            },
+            undefined,
+        );
+    }
+
     async createSubscription(cusId: string, priceId: string, quantity = 1) {
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
@@ -35,6 +88,46 @@ export default class StripeService {
     async getSubscription(cusId: string) {
         return await StripeService.client.subscriptions.list({
             customer: cusId,
+        });
+    }
+
+    async attachPaymentMethod(cusId: string, paymentMethodId: string) {
+        return await StripeService.client.paymentMethods.attach(paymentMethodId, {
+            customer: cusId,
+        });
+    }
+
+    async getCustomer(cusId: string) {
+        const customer = await StripeService.client.customers.retrieve(cusId);
+        if (customer.deleted) {
+            throw new NotFoundError('Customer not found');
+        }
+        return customer;
+    }
+
+    async removePaymentMethod(paymentMethodId: string) {
+        return await StripeService.client.paymentMethods.detach(paymentMethodId);
+    }
+
+    async getPaymentMethods(cusId: string) {
+        return await StripeService.client.paymentMethods.list({
+            customer: cusId,
+        });
+    }
+
+    async getDefaultPaymentMethod(cusId: string) {
+        const customer = await StripeService.client.customers.retrieve(cusId);
+        if (customer.deleted) {
+            throw new NotFoundError('Customer not found');
+        }
+        return customer.invoice_settings.default_payment_method;
+    }
+
+    async updateDefaultPaymentMethod(cusId: string, paymentMethodId: string) {
+        return await StripeService.client.customers.update(cusId, {
+            invoice_settings: {
+                default_payment_method: paymentMethodId,
+            },
         });
     }
 

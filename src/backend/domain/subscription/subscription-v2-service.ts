@@ -1,6 +1,10 @@
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { CompanyIdRequired } from '../decorators/company-id';
-import type { CreateSubscriptionRequest, PostConfirmationRequest } from 'pages/api/v2/subscriptions/request';
+import type {
+    CreatePaymentMethodRequest,
+    CreateSubscriptionRequest,
+    PostConfirmationRequest,
+} from 'pages/api/v2/subscriptions/request';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
@@ -22,6 +26,86 @@ export default class SubscriptionV2Service {
         }
         return SubscriptionV2Service.service;
     }
+
+    @CompanyIdRequired()
+    async updateCustomer(data: Stripe.CustomerUpdateParams) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().updateCustomer(cusId, data);
+    }
+
+    @CompanyIdRequired()
+    async addPaymentMethod(request: CreatePaymentMethodRequest, ipAddress: string) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        const [setupError, setupIntent] = await awaitToError(
+            StripeService.getService().createConfirmedSetupIntent({
+                cusId,
+                paymentMethodType: request.paymentMethodType,
+                paymentMethodId: request.paymentMethodId,
+                currency: request.currency,
+                userAgent: request.userAgent,
+                ipAddress,
+            }),
+        );
+        if (setupError) {
+            throw new UnprocessableEntityError('entity is unprocessable', setupError);
+        }
+        await StripeService.getService().attachPaymentMethod(cusId, request.paymentMethodId);
+
+        return setupIntent;
+    }
+
+    @CompanyIdRequired()
+    async getCustomerPaymentMethods() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().getCustomerPaymentMethods(cusId);
+    }
+
+    @CompanyIdRequired()
+    async getDefaultPaymentMethod() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().getDefaultPaymentMethod(cusId);
+    }
+
+    @CompanyIdRequired()
+    async getCustomer() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().getCustomer(cusId);
+    }
+
+    @CompanyIdRequired()
+    async updateDefaultPaymentMethod(paymentMethodId: string) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (err || !cusId) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return await StripeService.getService().updateDefaultPaymentMethod(cusId, paymentMethodId);
+    }
+
+    async removePaymentMethod(paymentMethodId: string) {
+        return await StripeService.getService().removePaymentMethod(paymentMethodId);
+    }
+
     @CompanyIdRequired()
     @UseLogger()
     @UseTransaction()
@@ -44,7 +128,6 @@ export default class SubscriptionV2Service {
                 throw new BadRequestError('You are already subscribed to this plan');
             }
         }
-
         const subscription = await StripeService.getService().createSubscription(
             cusId,
             request.priceId,

@@ -39,4 +39,16 @@ export default class CompanyRepository extends BaseRepository<CompanyEntity> {
         }
         return company;
     }
+
+    async getCompanyById(id: string) {
+        const [err, company] = await awaitToError(
+            this.findOneByOrFail({
+                id,
+            }),
+        );
+        if (err) {
+            throw new NotFoundError('Company not found', err);
+        }
+        return company;
+    }
 }

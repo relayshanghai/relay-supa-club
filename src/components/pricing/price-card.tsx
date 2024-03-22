@@ -1,6 +1,6 @@
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { usePrices } from 'src/hooks/use-prices';
-import { useSubscription } from 'src/hooks/use-subscription';
+import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
@@ -14,7 +14,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import {
     STRIPE_SUBSCRIBE_RESPONSE,
     stripeSubscribeResponseInitialValue,
-    useSubscriptionV2,
+    useSubscription,
 } from 'src/hooks/v2/use-subscription';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
 
@@ -60,8 +60,8 @@ export const PriceCard = ({
     const { trackEvent } = useRudderstack();
 
     const { prices } = usePrices();
-    const { subscription, upgradeSubscription } = useSubscription();
-    const { createSubscription, loading: subscriptionV2Loading } = useSubscriptionV2();
+    const { subscription, upgradeSubscription } = useSubscriptionLegacy();
+    const { createSubscription, loading: subscriptionV2Loading } = useSubscription();
     const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
     const { company } = useCompany();
     const router = useRouter();

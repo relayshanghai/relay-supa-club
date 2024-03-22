@@ -1,4 +1,5 @@
 import type { RegisterRequest } from 'pages/api/users/request';
+import type { DeleteTeammateRequest, UpdateTeammateRoleRequest } from 'pages/api/v2/company/request';
 import { CompanyEntity } from 'src/backend/database/company/company-entity';
 import CompanyRepository from 'src/backend/database/company/company-repository';
 import { ProfileEntity } from 'src/backend/database/profile/profile-entity';
@@ -15,8 +16,11 @@ import { BadRequestError, ConflictError, NotFoundError } from 'src/utils/error/h
 import { serverLogger } from 'src/utils/logger-server';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { supabase } from 'src/utils/supabase-client';
-import { unixEpochToISOString } from 'src/utils/utils';
+import { unixEpochToISOString, isAdmin } from 'src/utils/utils';
 import { v4 } from 'uuid';
+import SequenceService from '../sequence/sequence-service';
+import type { AccountRole } from 'types';
+import { UsageRepository } from 'src/backend/database/usages/repository';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -37,6 +41,25 @@ export default class RegistrationService {
             return true;
         }
         throw new ConflictError(createCompanyErrors.companyWithSameNameExists);
+    }
+    async updateProfileRole(request: UpdateTeammateRoleRequest) {
+        const adminProfile = await ProfileRepository.getRepository().getProfileById(request.adminId);
+        const teammateProfile = await ProfileRepository.getRepository().getProfileById(request.teammateId);
+        if (!adminProfile || !teammateProfile) {
+            throw new NotFoundError('Profile not found');
+        }
+        if (!isAdmin(adminProfile.userRole as AccountRole)) {
+            throw new BadRequestError('Only Admins can change user roles');
+        }
+        await ProfileRepository.getRepository().update(
+            {
+                id: request.teammateId,
+            },
+            {
+                userRole: request.role,
+            },
+        );
+        return teammateProfile;
     }
 
     async sendOtp(phoneNumber: string) {
@@ -186,5 +209,21 @@ export default class RegistrationService {
         const createdProfile = await this.createProfile(request, createdCompany);
         await this.createBrevoContact(createdProfile, createdCompany);
         return createdCompany;
+    }
+
+    async deleteProfile(request: DeleteTeammateRequest) {
+        const adminProfile = await ProfileRepository.getRepository().getProfileById(request.adminId);
+        const teammateProfile = await ProfileRepository.getRepository().getProfileById(request.teammateId);
+        if (isAdmin(teammateProfile.userRole as AccountRole)) {
+            throw new BadRequestError('Cannot delete admin');
+        }
+        await SequenceService.getService().moveManager(adminProfile, teammateProfile);
+        if (!adminProfile || !teammateProfile) {
+            throw new NotFoundError('Profile not found');
+        }
+        await supabase.auth.admin.deleteUser(teammateProfile.id);
+        await UsageRepository.getRepository().deleteUsagesByProfile(teammateProfile.id);
+        const deletedUser = await ProfileRepository.getRepository().deleteProfileById(teammateProfile.id);
+        return deletedUser;
     }
 }
