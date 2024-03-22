@@ -8,6 +8,7 @@ import SlackService from 'src/backend/integration/slack/slack-service';
 import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
 import dayjs from 'dayjs';
+import { logger } from 'src/backend/integration/logger';
 
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
@@ -24,22 +25,27 @@ export class StripeWebhookService {
         if (!company) {
             throw new Error('Company not found');
         }
-        await BillingEventRepository.getRepository().save({
-            company,
-            data: request.data?.object,
-            provider: 'stripe',
-            type: request.type,
-        });
-        await SubscriptionRepository.getRepository().update(
-            {
+
+        try {
+            await BillingEventRepository.getRepository().save({
                 company,
-            },
-            {
-                providerLastEvent: new Date(request.created * 1000).toString(),
-            },
-        );
-        await this.handlingWebhookTypes(request);
-        return request;
+                data: request.data?.object,
+                provider: 'stripe',
+                type: request.type,
+            });
+            await SubscriptionRepository.getRepository().update(
+                {
+                    company,
+                },
+                {
+                    providerLastEvent: new Date(request.created * 1000).toString(),
+                },
+            );
+            await this.handlingWebhookTypes(request);
+        } catch (error) {
+            logger.error('Error handling stripe webhook', error);
+        }
+        return { message: 'Webhook received' };
     }
 
     private async handlingWebhookTypes(request: StripeWebhookRequest) {
