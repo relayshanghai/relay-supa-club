@@ -338,7 +338,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
         });
 
         describe(`cancelSubscription`, () => {
-            it(`should call deleteSubscription with the correct providerSubscriptionId`, async () => {
+            it(`should update the stripe subscription to cancel at the end of period`, async () => {
                 const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
                 findOneMock.mockResolvedValue({
                     id: 'sub_1',
@@ -396,6 +396,64 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 );
                 expect(update).toHaveBeenCalledWith('sub_1', {
                     cancel_at_period_end: true,
+                });
+            });
+            it(`should throw NotFoundError when no subscription found`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue(null);
+                const [err] = await awaitToError(SubscriptionV2Service.getService().cancelSubscription());
+                expect(err).not.toBeNull();
+                expect(err).toBeInstanceOf(NotFoundError);
+                expect(err.message).toBe('No subscription found');
+            });
+        });
+
+        describe(`resumeSubscription`, () => {
+            it(`should update the stripe subscription not to cancel at the end of period`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue({
+                    id: 'sub_1',
+                    company: {
+                        id: 'company_1',
+                    },
+                    providerSubscriptionId: 'sub_1',
+                } as SubscriptionEntity);
+
+                const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
+                updateMock.mockResolvedValue({
+                    raw: [],
+                    affected: 1,
+                    generatedMaps: [],
+                });
+
+                const update = vi.spyOn(StripeService.getService(), 'updateSubscription');
+                update.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                } as Stripe.Response<Stripe.Subscription>);
+
+                await SubscriptionV2Service.getService().resumeSubscription();
+                expect(findOneMock).toHaveBeenCalledWith({
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
+                expect(updateMock).toHaveBeenCalledWith(
+                    {
+                        id: 'sub_1',
+                    },
+                    {
+                        cancelledAt: null,
+                    },
+                );
+                expect(update).toHaveBeenCalledWith('sub_1', {
+                    cancel_at_period_end: false,
                 });
             });
             it(`should throw NotFoundError when no subscription found`, async () => {

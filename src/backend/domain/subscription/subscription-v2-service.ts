@@ -342,4 +342,31 @@ export default class SubscriptionV2Service {
         });
         return foundCoupon.coupon;
     }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async resumeSubscription() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        await SubscriptionRepository.getRepository().update(
+            {
+                id: subscription.id,
+            },
+            {
+                cancelledAt: null,
+            },
+        );
+        await StripeService.getService().updateSubscription(subscription.providerSubscriptionId, {
+            cancel_at_period_end: false,
+        });
+    }
 }
