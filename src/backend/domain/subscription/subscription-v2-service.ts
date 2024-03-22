@@ -211,6 +211,29 @@ export default class SubscriptionV2Service {
                 throw new NotFoundError('No subscription found');
             }
 
+            if (lastSubscription.status === 'trialing') {
+                const trialSubscription = {
+                    company: {
+                        id: companyId,
+                    },
+                    provider: 'stripe',
+                    providerSubscriptionId: lastSubscription.id,
+                    paymentMethod: null,
+                    quantity: lastSubscription.items.data[0].quantity,
+                    price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                    total:
+                        (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                        (lastSubscription?.items?.data?.[0].quantity ?? 0),
+                    lastSubscription: lastSubscription,
+                    discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
+                    coupon: lastSubscription.discount?.coupon?.id,
+                    activeAt: null,
+                    pausedAt: null,
+                    cancelledAt: lastSubscription.cancel_at ? new Date(lastSubscription.cancel_at * 1000) : undefined,
+                };
+                return trialSubscription;
+            }
+
             const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id as string);
             const product = await StripeService.getService().getProduct(price.product.toString());
 
