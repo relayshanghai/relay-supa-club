@@ -228,7 +228,7 @@ export default class SubscriptionV2Service {
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: null,
-                    pausedAt: lastSubscription.pause_collection?.behavior === 'void' ? new Date() : undefined,
+                    pausedAt: null,
                     cancelledAt: lastSubscription.cancel_at ? new Date(lastSubscription.cancel_at * 1000) : undefined,
                 };
                 return trialSubscription;
