@@ -96,7 +96,12 @@ export const PriceCard = ({
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })
             .catch((error) => {
-                toast.error(t('pricing.createSubscriptionFailed'));
+                const errorStatus = error.response?.status;
+                if (errorStatus === 400) {
+                    toast.error(t('pricing.upgradeFailedAlreadySubscribed'));
+                } else {
+                    toast.error(t('pricing.upgradeFailed'));
+                }
                 clientLogger(`createSubscription error: ${error}`);
             });
     };

@@ -28,6 +28,7 @@ const pricing = {
     upgrade: '立即升级',
     upgradeSuccess: '升级成功',
     upgradeFailed: '升级失败，请提交错误报告',
+    upgradeFailedAlreadySubscribed: '您已订阅此套餐',
     buyNow: '立即购买',
     contactUs: '联系我们',
     popular: '热门',

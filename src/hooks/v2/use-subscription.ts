@@ -64,7 +64,7 @@ export const useSubscription = () => {
     });
     const createSubscription = async (payload: CreateSubscriptionPayload) => {
         const [err, res] = await awaitToError(apiClient.post<CreateSubscriptionResponse>('/v2/subscriptions', payload));
-        if (err) return;
+        if (err) throw err;
         return res.data;
     };
     const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
