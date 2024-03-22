@@ -94,10 +94,23 @@ export const SubscriptionDetails = () => {
                                                     ? t('account.subscription.canceled')
                                                     : t(`account.subscription.${subscription?.status}`)}
                                             </Tablet>
-                                            {subscription?.status === 'active' && canceledNotExpired && (
+                                        </h2>
+                                        <h2 className="whitespace-nowrap text-sm font-normal text-gray-600">
+                                            Fully automated discovery and email campaigns
+                                        </h2>
+                                    </div>
+                                    <div className="flex w-full flex-col items-end gap-2">
+                                        <div className="flex h-fit gap-3">
+                                            <Tablet customStyle={statusColor}>
+                                                {!canceledNotExpired
+                                                    ? t('account.subscription.canceled')
+                                                    : t(`account.subscription.${subscription?.status}`)}
+                                            </Tablet>
+                                            {['trial', 'canceled', 'paused'].includes(subscription.status) ||
+                                            (subscription?.status === 'active' && canceledNotExpired) ? (
                                                 <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">
                                                     <span className="font-semibold">
-                                                        {t('account.subscription.expirationDate')}
+                                                        Cancels at
                                                         {': '}
                                                     </span>
                                                     <span>
@@ -109,20 +122,7 @@ export const SubscriptionDetails = () => {
                                                         })}
                                                     </span>
                                                 </Tablet>
-                                            )}
-                                        </h2>
-                                        <h2 className="text-sm font-normal text-gray-600">
-                                            {t(`account.plans.details`)}
-                                        </h2>
-                                    </div>
-                                    <div className="flex w-full flex-col items-end gap-2">
-                                        <div className="flex h-fit gap-3">
-                                            <Tablet customStyle={statusColor}>
-                                                {!canceledNotExpired
-                                                    ? t('account.subscription.canceled')
-                                                    : t(`account.subscription.${subscription?.status}`)}
-                                            </Tablet>
-                                            {!['trial', 'canceled', 'paused'].includes(subscription.status) && (
+                                            ) : (
                                                 <Tablet
                                                     customStyle={'bg-primary-100 text-primary-700 border-primary-200'}
                                                 >
@@ -146,12 +146,14 @@ export const SubscriptionDetails = () => {
                                                 })}
                                             </span>
                                         </div>
-                                        <p
-                                            onClick={handleCancelSubscription}
-                                            className="cursor-pointer text-sm font-semibold text-red-400"
-                                        >
-                                            {t('account.subscription.cancelSubscription')}
-                                        </p>
+                                        {!canceledNotExpired && (
+                                            <p
+                                                onClick={handleCancelSubscription}
+                                                className="cursor-pointer text-sm font-semibold text-red-400"
+                                            >
+                                                {t('account.subscription.cancelSubscription')}
+                                            </p>
+                                        )}
                                     </div>
                                 </section>
 

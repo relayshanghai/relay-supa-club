@@ -102,7 +102,7 @@ export const CompanyDetails = () => {
                                     disabled={userDataLoading || updating}
                                     onClick={handleUpdateCompany}
                                 >
-                                    {t('account.update')}
+                                    Update company info
                                 </Button>
                             </div>
                         </>

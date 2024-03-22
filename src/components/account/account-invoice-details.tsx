@@ -44,7 +44,7 @@ export const InvoiceDetails = () => {
 
     return (
         <section id="company-details" className="w-full">
-            <p className="pb-6 font-semibold">Invoice Info</p>
+            <p className="pb-6 font-semibold">Billing Info</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <div className="relative flex flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4">
@@ -52,7 +52,7 @@ export const InvoiceDetails = () => {
                         <>
                             <div className="w-full">
                                 <Input
-                                    label="Invoice Email"
+                                    label="Invoice receiving email"
                                     type="email"
                                     value={invoiceEmailText || ''}
                                     required
