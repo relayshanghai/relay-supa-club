@@ -552,5 +552,119 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(err.message).toBe('Invalid promo code');
             });
         });
+
+        describe(`changeSubscription`, () => {
+            it(`should success if request is valid`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue({
+                    id: 'sub_1',
+                    company: {
+                        id: 'company_1',
+                    },
+                    providerSubscriptionId: 'sub_1',
+                } as SubscriptionEntity);
+
+                const retrieveSubscriptionMock = vi.spyOn(StripeService.getService(), 'retrieveSubscription');
+                retrieveSubscriptionMock.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                    customer: 'cus_1',
+                    current_period_end: 1712811791,
+                } as Stripe.Response<Stripe.Subscription>);
+
+                const changeSubscriptionMock = vi.spyOn(StripeService.getService(), 'changeSubscription');
+                changeSubscriptionMock.mockResolvedValue({
+                    id: 'sub_1',
+                    items: {
+                        data: [
+                            {
+                                price: {
+                                    id: 'price_1',
+                                    unit_amount: 100,
+                                },
+                                quantity: 1,
+                            },
+                        ],
+                    },
+                    current_period_start: 1710133391,
+                    current_period_end: 1712811791,
+                    latest_invoice: {
+                        payment_intent: {
+                            client_secret: 'xxx',
+                        },
+                    },
+                } as Stripe.Response<Stripe.Subscription>);
+
+                const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
+                updateMock.mockResolvedValue({
+                    raw: [],
+                    affected: 1,
+                    generatedMaps: [],
+                });
+
+                const result = await SubscriptionV2Service.getService().changeSubscription({
+                    priceId: 'price_1',
+                    quantity: 1,
+                });
+                expect(result.clientSecret).toBe('xxx');
+                expect(result.providerSubscriptionId).toBe('sub_1');
+                expect(findOneMock).toHaveBeenCalledWith({
+                    where: {
+                        company: {
+                            id: 'company_1',
+                        },
+                    },
+                });
+                expect(updateMock).toHaveBeenCalledWith(
+                    {
+                        id: 'sub_1',
+                    },
+                    {
+                        quantity: 1,
+                        price: 100,
+                        total: 100,
+                        subscriptionData: {
+                            id: 'sub_1',
+                            items: {
+                                data: [
+                                    {
+                                        price: {
+                                            id: 'price_1',
+                                            unit_amount: 100,
+                                        },
+                                        quantity: 1,
+                                    },
+                                ],
+                            },
+                            current_period_start: 1710133391,
+                            current_period_end: 1712811791,
+                            latest_invoice: {
+                                payment_intent: {
+                                    client_secret: 'xxx',
+                                },
+                            },
+                        },
+                        activeAt: new Date(1710133391 * 1000),
+                        pausedAt: new Date(1712811791 * 1000),
+                    },
+                );
+                expect(changeSubscriptionMock).toHaveBeenCalledWith('sub_1', {
+                    priceId: 'price_1',
+                    quantity: 1,
+                });
+            });
+            it(`should throw NotFoundError when no subscription found`, async () => {
+                const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
+                findOneMock.mockResolvedValue(null);
+                const [err] = await awaitToError(SubscriptionV2Service.getService().cancelSubscription());
+                expect(err).not.toBeNull();
+                expect(err).toBeInstanceOf(NotFoundError);
+                expect(err.message).toBe('No subscription found');
+            });
+        });
     });
 });
