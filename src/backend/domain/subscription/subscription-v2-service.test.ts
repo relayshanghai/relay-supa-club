@@ -367,8 +367,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     generatedMaps: [],
                 });
 
-                const deleteSubscriptionMock = vi.spyOn(StripeService.getService(), 'deleteSubscription');
-                deleteSubscriptionMock.mockResolvedValue({
+                const update = vi.spyOn(StripeService.getService(), 'updateSubscription');
+                update.mockResolvedValue({
                     lastResponse: {
                         statusCode: 200,
                         headers: {},
@@ -394,7 +394,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         cancelledAt: new Date(1712811791 * 1000),
                     },
                 );
-                expect(deleteSubscriptionMock).toHaveBeenCalledWith('sub_1');
+                expect(update).toHaveBeenCalledWith('sub_1', {
+                    cancel_at_period_end: true,
+                });
             });
             it(`should throw NotFoundError when no subscription found`, async () => {
                 const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');

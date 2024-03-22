@@ -324,7 +324,9 @@ export default class SubscriptionV2Service {
                 cancelledAt: new Date(stripeSubscription.current_period_end * 1000),
             },
         );
-        await StripeService.getService().deleteSubscription(subscription.providerSubscriptionId);
+        await StripeService.getService().updateSubscription(subscription.providerSubscriptionId, {
+            cancel_at_period_end: true,
+        });
     }
 
     @CompanyIdRequired()
