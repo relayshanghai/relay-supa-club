@@ -115,7 +115,7 @@ export class StripeWebhookService {
 
         if (type === StripeWebhookType.INVOICE_PAYMENT_FAILED) {
             const company = subscription.company;
-            const profile = ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+            const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
             await SlackService.getService().sendFailedRecurringMessage({
                 company,
                 profile,
@@ -141,7 +141,7 @@ export class StripeWebhookService {
             throw new Error('Subscription not found');
         }
         const company = subscription.company;
-        const profile = ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         await SlackService.getService().sendSignupMessage({ company, profile });
     }
 
@@ -158,7 +158,7 @@ export class StripeWebhookService {
             throw new Error('Subscription not found');
         }
         const company = subscription.company;
-        const profile = ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         if (data.object.cancel_at !== null && data.object.status === 'active') {
             await SlackService.getService().sendCancelSubscriptionMessage({
                 company,
@@ -194,7 +194,7 @@ export class StripeWebhookService {
             throw new Error('Subscription not found');
         }
         const company = subscription.company;
-        const profile = ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const date = dayjs.unix(data.object.trial_end as number);
         const diffInDays = dayjs().diff(date, 'day');
         await SlackService.getService().sendTrialEndingMessage({
