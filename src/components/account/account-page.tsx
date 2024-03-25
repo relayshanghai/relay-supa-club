@@ -11,6 +11,7 @@ import { BillingDetails } from './account-billing-details';
 import { PasswordDetails } from './account-password-details';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
+    const { t } = useTranslation();
     return (
         <nav className="absolute top-32 -ml-2 mt-12 flex w-full max-w-xs flex-col 2xl:max-w-sm">
             <a
@@ -18,14 +19,14 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                 className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <Rocket className="h-5 w-5 flex-shrink-0" />
-                <p>Plan</p>
+                <p>{t('account.sidebar.plan')}</p>
             </a>
             <a
                 href="#subscription-details"
                 className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <PaymentOutline className="h-5 w-5 flex-shrink-0" />
-                <p>Billing</p>
+                <p>{t('account.sidebar.billing')}</p>
             </a>
             {!clientRoleCompanyId && (
                 <a
@@ -33,7 +34,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                     className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
                 >
                     <ProfileOutline className="h-5 w-5 flex-shrink-0" />
-                    <p>Profile</p>
+                    <p>{t('account.sidebar.profile')}</p>
                 </a>
             )}
             <a
@@ -41,14 +42,14 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                 className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <Building className="h-5 w-5 flex-shrink-0" />
-                <p>Company</p>
+                <p>{t('account.sidebar.company')}</p>
             </a>
             <a
                 href="#team-details"
                 className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
             >
                 <ProfileTeam className="h-5 w-5 flex-shrink-0" />
-                <p>Team</p>
+                <p>{t('account.sidebar.team')}</p>
             </a>
         </nav>
     );
@@ -61,7 +62,9 @@ export const AccountPage = () => {
     return (
         <div className="flex flex-col gap-3 px-8 lg:px-8">
             <section className="sticky left-0 top-0 flex flex-col gap-3 pb-12">
-                <div className="text-base font-semibold text-primary-700">Profile, Company and Subscriptions</div>
+                <div className="text-base font-semibold text-primary-700">
+                    {t('account.paymentCompanySubscription')}
+                </div>
                 <div className="text-4xl font-bold">{t('account.account')}</div>
             </section>
             <AccountPageNavbar clientRoleCompanyId={clientRoleData.companyId} />

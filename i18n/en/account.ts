@@ -134,6 +134,11 @@ const account = {
         discovery: 'Discovery',
         outreach: 'Outreach',
     },
+    planDescriptions: {
+        discoveryTrial: 'AI powered search and analysis',
+        discovery: 'AI powered search and analysis',
+        outreach: 'Fully automated discovery and email campaigns',
+    },
     enableAlipay: 'Enable Alipay Agreement',
     processingMessage: `We are currently processing your payment.
 
@@ -141,6 +146,40 @@ Thank you for your patience.`,
     generalPaymentError: 'Something went wrong in the process, please try again or use another payment method.',
     authorizationPaymentError:
         'Your Alipay payment authorization failed, please try again or use another payment method.',
+    paymentCompanySubscription: 'Profile, Company and Subscriptions',
+    sidebar: {
+        plan: 'Plan',
+        billing: 'Billing',
+        profile: 'Profile',
+        company: 'Company',
+        team: 'Team',
+    },
+    paymentMethodCard: {
+        title: 'Payment Methods',
+        addPaymentMethod: 'Add new payment method',
+    },
+    paymentMethodModal: {
+        title: 'Add Payment Method',
+    },
+    planSection: {
+        reportsCount: 'Reports',
+        searchesCount: 'Searches',
+        trialEnds: 'Trial Ends',
+        canceledOn: 'Canceled on: {{date}}',
+        cancelsOn: 'Cancels on: {{date}}',
+        paymentFailed: 'Payment Failed',
+        paymentDue: 'Payment Due: {{date}}',
+        pausedAt: 'Paused at: {{date}}',
+        noUpcomingPayments: 'No upcoming payments',
+        renewsOn: 'Renews on: {{date}}',
+        errorGettingSubscription: 'Error getting subscription info',
+    },
+    billingInfoSection: {
+        title: 'Billing Info',
+    },
+    companyInfoSection: {
+        title: 'Company Info',
+    },
 };
 
 export default account;

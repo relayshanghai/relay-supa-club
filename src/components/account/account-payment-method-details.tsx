@@ -7,6 +7,7 @@ import { AddPaymentMethodModal } from './modal-add-payment-method';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import toast from 'react-hot-toast';
 import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
+import { useTranslation } from 'react-i18next';
 
 const PaymentMethodInfo: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ paymentMethod }) => {
     let details = 'Unknown';
@@ -45,7 +46,7 @@ const PaymentMethodIcon: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ 
 
 export const PaymentMethodDetails = () => {
     const [newPaymentModalOpenState, setNewPaymentModalOpenState] = useState(false);
-
+    const { t } = useTranslation();
     const {
         defaultPaymentMethod,
         paymentMethods,
@@ -78,7 +79,7 @@ export const PaymentMethodDetails = () => {
     return (
         <section id="subscription-details" className="w-full">
             <AddPaymentMethodModal open={newPaymentModalOpenState} setOpen={setNewPaymentModalOpenState} />
-            <p className="pb-6 font-semibold">Payment Methods</p>
+            <p className="pb-6 font-semibold">{t('account.paymentMethodCard.title')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
@@ -159,7 +160,7 @@ export const PaymentMethodDetails = () => {
                             className="w-full bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
                         >
                             <Plus className="mr-2 h-4 w-4" />
-                            Add new payment method
+                            {t('account.paymentMethodCard.addPaymentMethod')}
                         </Button>
                     </section>
                 </section>
