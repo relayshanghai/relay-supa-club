@@ -78,6 +78,11 @@ export const useSubscription = () => {
 
         return res;
     });
+    const cancelSubscription = async () => {
+        const [err, res] = await awaitToError(apiClient.delete('/v2/subscriptions'));
+        if (err) throw err;
+        return res.data;
+    };
     const addPaymentMethod = async ({
         paymentMethodId,
         paymentMethodType,
@@ -193,6 +198,7 @@ export const useSubscription = () => {
         paymentMethodInfoValidating,
         product,
         refreshProduct,
+        cancelSubscription,
     };
 };
 
