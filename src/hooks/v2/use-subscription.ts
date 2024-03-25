@@ -1,6 +1,8 @@
+import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type { AxiosResponse } from 'axios';
 import type {
     CreatePaymentMethodRequest,
+    GetProductRequest,
     RemovePaymentMethodRequest,
     UpdateDefaultPaymentMethodRequest,
     UpdateSubscriptionRequest,
@@ -69,7 +71,7 @@ export const useSubscription = () => {
     };
     const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
         const [err, res] = await awaitToError(
-            apiClient.get<Stripe.Subscription>('/v2/subscriptions').then((res) => res.data),
+            apiClient.get<SubscriptionEntity<Stripe.Subscription>>('/v2/subscriptions').then((res) => res.data),
         );
 
         if (err) return;
@@ -100,6 +102,20 @@ export const useSubscription = () => {
 
         return res.data;
     };
+
+    const { data: product, mutate: refreshProduct } = useSWR(
+        subscription ? '/v2/subscriptions/product' : null,
+        async () => {
+            const productId = subscription?.subscriptionData.items.data[0].price.product as string;
+            const [err, res] = await awaitToError(
+                apiClient.get<GetProductRequest, AxiosResponse<Stripe.Product>>(
+                    `/v2/subscriptions/product?productId=${productId}`,
+                ),
+            );
+            if (err) return;
+            return res.data;
+        },
+    );
 
     const updateDefaultInvoiceEmail = useCallback(
         async (email: string) => {
@@ -175,6 +191,8 @@ export const useSubscription = () => {
         customerValidating,
         paymentMethodInfoLoading,
         paymentMethodInfoValidating,
+        product,
+        refreshProduct,
     };
 };
 
