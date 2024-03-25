@@ -74,7 +74,7 @@ export const CompanyDetails = () => {
 
     return (
         <section id="company-details" className="w-full">
-            <p className="pb-6 font-semibold">Company Info</p>
+            <p className="pb-6 font-semibold">{t('account.companyInfoSection.title')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <div className="relative flex flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4">

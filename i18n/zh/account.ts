@@ -63,7 +63,7 @@ const account = {
         canceled: '已取消',
         paused: '已暂停',
         trial: '试用',
-        upgradeSubscription: '升级订阅',
+        upgradeSubscription: '升级或修改您的套餐',
         cancelSubscription: '取消订阅',
         monthly: '每月',
         quarterly: '每季度',
@@ -134,10 +134,49 @@ const account = {
         discovery: '探索方案',
         outreach: '拓展方案',
     },
+    planDescriptions: {
+        discoveryTrial: '人工智能驱动的搜索和分析',
+        discovery: '人工智能驱动的搜索和分析',
+        outreach: '全自动化搜索发现红人与电子邮件推广',
+    },
     enableAlipay: '前往支付宝验证',
     processingMessage: '我们正在处理您的付款。感谢您的耐心等待。',
     generalPaymentError: '付款失败，请选择其他付款方式或稍后再试。',
     authorizationPaymentError: '支付宝授权失败，请选择其他付款方式或稍后再试。',
+    paymentCompanySubscription: '账户信息、公司及订阅',
+    sidebar: {
+        plan: '套餐',
+        billing: '付费',
+        profile: '账户信息',
+        company: '公司',
+        team: '团队',
+    },
+    paymentMethodCard: {
+        title: '付款方式',
+        addPaymentMethod: '添加新的付款方式',
+    },
+    paymentMethodModal: {
+        title: 'Add Payment Method',
+    },
+    planSection: {
+        reportsCount: '份报告',
+        searchesCount: '次搜索',
+        trialEnds: '试用期结束日期',
+        canceledOn: '取消日期',
+        cancelsOn: '取消日期',
+        paymentFailed: '付款失败',
+        paymentDue: '款项应付日期',
+        pausedAt: '暂停日期',
+        noUpcomingPayments: '暂无需要支付的款项',
+        renewsOn: '续订日期',
+        errorGettingSubscription: '获取订阅信息时出错',
+    },
+    billingInfoSection: {
+        title: '账单信息',
+    },
+    companyInfoSection: {
+        title: '公司信息',
+    },
 };
 
 export default account;

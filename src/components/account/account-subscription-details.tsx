@@ -62,9 +62,11 @@ const PaymentTablets = ({
     if (cancelledAt && new Date() > new Date(cancelledAt)) {
         return (
             <section className="flex w-full flex-col items-end gap-2">
-                <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">Cancelled</Tablet>
+                <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">
+                    {t('account.subscription.canceled')}
+                </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">Cancelled on: </span>
+                    <span className="font-semibold">{t('account.planSection.canceledOn')}: </span>
                     <span>
                         {new Date(cancelledAt).toLocaleDateString(i18n.language, {
                             month: 'short',
@@ -83,11 +85,15 @@ const PaymentTablets = ({
             return (
                 <section className="flex w-full flex-col items-end gap-2">
                     <section className="flex gap-3">
-                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Paused</Tablet>
-                        <Tablet customStyle="bg-red-100 text-red-700 border-red-200">Payment Failed</Tablet>
+                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">
+                            {t('account.subscription.paused')}
+                        </Tablet>
+                        <Tablet customStyle="bg-red-100 text-red-700 border-red-200">
+                            {t('account.planSection.paymentFailed')}
+                        </Tablet>
                     </section>
                     <p className="whitespace-nowrap">
-                        <span className="font-semibold">Payment due: </span>
+                        <span className="font-semibold">{t('account.planSection.paymentDue')}: </span>
                         <span>
                             {new Date(pausedAt).toLocaleDateString(i18n.language, {
                                 month: 'short',
@@ -100,9 +106,11 @@ const PaymentTablets = ({
         }
         return (
             <section className="flex w-full flex-col items-end gap-2">
-                <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Paused</Tablet>
+                <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">
+                    {t('account.subscription.paused')}
+                </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">Paused at: </span>
+                    <span className="font-semibold">{t('account.planSection.pausedAt')}: </span>
                     <span>
                         {new Date(pausedAt).toLocaleDateString(i18n.language, {
                             month: 'short',
@@ -117,9 +125,11 @@ const PaymentTablets = ({
             return (
                 <section className="flex w-full flex-col items-end gap-2">
                     <section className="flex gap-3">
-                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">Active</Tablet>
+                        <Tablet customStyle="bg-yellow-100 text-yellow-700 border-yellow-200">
+                            {t('account.subscription.active')}
+                        </Tablet>
                         <Tablet customStyle="bg-red-100 text-red-700 border-red-200">
-                            <span>Cancels on: </span>
+                            <span>{t('account.planSection.cancelsOn')}: </span>
                             <span>
                                 {new Date(cancelledAt).toLocaleDateString(i18n.language, {
                                     month: 'short',
@@ -128,20 +138,22 @@ const PaymentTablets = ({
                             </span>
                         </Tablet>
                     </section>
-                    <p className="whitespace-nowrap">No upcoming payments</p>
+                    <p className="whitespace-nowrap">{t('account.planSection.noUpcomingPayments')}</p>
                 </section>
             );
         }
         return (
             <section className="flex w-full flex-col items-end gap-2">
                 <section className="flex gap-3">
-                    <Tablet customStyle="bg-green-100 text-green-700 border-green-200">Active</Tablet>
+                    <Tablet customStyle="bg-green-100 text-green-700 border-green-200">
+                        {t('account.subscription.active')}
+                    </Tablet>
                     <Tablet customStyle="bg-primary-100 text-primary-700 border-primary-200">
                         {t(`account.subscription.${interval}`)}
                     </Tablet>
                 </section>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">Renews on: </span>
+                    <span className="font-semibold">{t('account.planSection.renewsOn')}: </span>
                     <span>
                         {new Date(subscriptionData.current_period_end * 1000).toLocaleDateString(i18n.language, {
                             month: 'short',
@@ -159,9 +171,11 @@ const PaymentTablets = ({
     } else if (!activeAt && subscriptionData.status === 'trialing' && subscriptionData.trial_end) {
         return (
             <section className="flex w-full flex-col items-end gap-2">
-                <Tablet customStyle="bg-navy-100 text-navy-700 border-navy-200">Free Trial</Tablet>
+                <Tablet customStyle="bg-navy-100 text-navy-700 border-navy-200">
+                    {t('account.subscription.freeTrial')}
+                </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">Trial ends: </span>
+                    <span className="font-semibold">{t('account.planSection.trialEnds')}: </span>
                     <span>
                         {new Date(subscriptionData.trial_end * 1000).toLocaleDateString(i18n.language, {
                             month: 'short',
@@ -174,7 +188,9 @@ const PaymentTablets = ({
     }
     return (
         <section className="flex w-full flex-col items-end gap-2">
-            <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">Error getting subscription info</Tablet>
+            <Tablet customStyle="bg-gray-100 text-gray-700 border-gray-200">
+                {t('account.planSection.errorGettingSubscription')}
+            </Tablet>
         </section>
     );
 };
@@ -211,7 +227,7 @@ export const SubscriptionDetails = () => {
 
     return (
         <section id="subscription-details" className="w-full">
-            <p className="pb-6 font-semibold">Plan</p>
+            <p className="pb-6 font-semibold">{t('account.sidebar.plan')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
@@ -233,7 +249,7 @@ export const SubscriptionDetails = () => {
                                             )}
                                         </h2>
                                         <h2 className="whitespace-nowrap text-sm font-normal text-gray-600">
-                                            Fully automated discovery and email campaigns
+                                            {t(`account.planDescriptions.${product?.name.toLowerCase()}`)}
                                         </h2>
                                     </div>
                                     <PaymentTablets
@@ -244,7 +260,8 @@ export const SubscriptionDetails = () => {
 
                                 <section className="flex flex-col gap-3">
                                     <span>
-                                        {usages.profile.current}/{usages.profile.limit} Reports
+                                        {usages.profile.current}/{usages.profile.limit}{' '}
+                                        {t('account.planSection.reportsCount')}
                                     </span>
                                     <Progress
                                         className="h-3"
@@ -252,7 +269,8 @@ export const SubscriptionDetails = () => {
                                         max={usages.profile.limit}
                                     />
                                     <span>
-                                        {usages.search.current}/{usages.search.limit} Searches
+                                        {usages.search.current}/{usages.search.limit}{' '}
+                                        {t('account.planSection.searchesCount')}
                                     </span>
                                     <Progress className="h-3" value={usages.search.current} max={usages.search.limit} />
                                 </section>
