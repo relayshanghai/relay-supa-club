@@ -83,7 +83,7 @@ export const PaymentMethodDetails = () => {
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
                 <section className="flex w-full flex-col items-end">
-                    <div className="flex flex-col space-y-4 rounded-lg bg-white pb-12 lg:w-3/4">
+                    <div className="mb-12 flex flex-col space-y-4 rounded-lg lg:w-3/4">
                         {paymentMethodInfoLoading && (
                             <div className="flex w-full flex-row items-center justify-between rounded-xl border p-6">
                                 <section className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export const PaymentMethodDetails = () => {
                             return (
                                 <div
                                     key={paymentMethod.id}
-                                    className="flex w-full flex-row items-center justify-between rounded-xl border p-6"
+                                    className="flex w-full flex-row items-center justify-between rounded-xl border bg-white p-6"
                                 >
                                     <section className="flex items-center gap-3">
                                         <PaymentMethodIcon paymentMethod={paymentMethod} />
