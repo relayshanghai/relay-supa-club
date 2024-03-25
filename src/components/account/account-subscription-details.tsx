@@ -66,12 +66,11 @@ const PaymentTablets = ({
                     {t('account.subscription.canceled')}
                 </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">
-                        {t('account.planSection.canceledOn', {
-                            date: new Date(cancelledAt).toLocaleDateString(i18n.language, {
-                                month: 'short',
-                                day: 'numeric',
-                            }),
+                    <span className="font-semibold">{t('account.planSection.canceledOn')}: </span>
+                    <span>
+                        {new Date(cancelledAt).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
                         })}
                     </span>
                 </p>
@@ -94,14 +93,12 @@ const PaymentTablets = ({
                         </Tablet>
                     </section>
                     <p className="whitespace-nowrap">
-                        <span className="font-semibold">
-                            {t('account.planSection.paymentDue', {
-                                date: new Date(pausedAt).toLocaleDateString(i18n.language, {
-                                    month: 'short',
-                                    day: 'numeric',
-                                }),
+                        <span className="font-semibold">{t('account.planSection.paymentDue')}: </span>
+                        <span>
+                            {new Date(pausedAt).toLocaleDateString(i18n.language, {
+                                month: 'short',
+                                day: 'numeric',
                             })}
-                            :{' '}
                         </span>
                     </p>
                 </section>
@@ -113,14 +110,12 @@ const PaymentTablets = ({
                     {t('account.subscription.paused')}
                 </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">
-                        {t('account.planSection.pausedAt', {
-                            date: new Date(pausedAt).toLocaleDateString(i18n.language, {
-                                month: 'short',
-                                day: 'numeric',
-                            }),
+                    <span className="font-semibold">{t('account.planSection.pausedAt')}: </span>
+                    <span>
+                        {new Date(pausedAt).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
                         })}
-                        :{' '}
                     </span>
                 </p>
             </section>
@@ -134,14 +129,12 @@ const PaymentTablets = ({
                             {t('account.subscription.active')}
                         </Tablet>
                         <Tablet customStyle="bg-red-100 text-red-700 border-red-200">
+                            <span>{t('account.planSection.cancelsOn')}: </span>
                             <span>
-                                {t('account.planSection.cancelsOn', {
-                                    date: new Date(cancelledAt).toLocaleDateString(i18n.language, {
-                                        month: 'short',
-                                        day: 'numeric',
-                                    }),
+                                {new Date(cancelledAt).toLocaleDateString(i18n.language, {
+                                    month: 'short',
+                                    day: 'numeric',
                                 })}
-                                :{' '}
                             </span>
                         </Tablet>
                     </section>
@@ -160,17 +153,12 @@ const PaymentTablets = ({
                     </Tablet>
                 </section>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">
-                        {t('account.planSection.renewsOn', {
-                            date: new Date(subscriptionData.current_period_end * 1000).toLocaleDateString(
-                                i18n.language,
-                                {
-                                    month: 'short',
-                                    day: 'numeric',
-                                },
-                            ),
+                    <span className="font-semibold">{t('account.planSection.renewsOn')}: </span>
+                    <span>
+                        {new Date(subscriptionData.current_period_end * 1000).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
                         })}
-                        :{' '}
                     </span>
                 </p>
                 {!canceledNotExpired && (
@@ -187,14 +175,12 @@ const PaymentTablets = ({
                     {t('account.subscription.freeTrial')}
                 </Tablet>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">
-                        {t('account.planSection.trialEnds', {
-                            date: new Date(subscriptionData.trial_end * 1000).toLocaleDateString(i18n.language, {
-                                month: 'short',
-                                day: 'numeric',
-                            }),
+                    <span className="font-semibold">{t('account.planSection.trialEnds')}: </span>
+                    <span>
+                        {new Date(subscriptionData.trial_end * 1000).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
                         })}
-                        :{' '}
                     </span>
                 </p>
             </section>
