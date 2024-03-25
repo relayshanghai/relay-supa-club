@@ -224,12 +224,12 @@ export default class SubscriptionV2Service {
                     total:
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                         (lastSubscription?.items?.data?.[0].quantity ?? 0),
-                    lastSubscription: lastSubscription,
+                    subscriptionData: lastSubscription,
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: null,
                     pausedAt: null,
-                    cancelledAt: lastSubscription.cancel_at ? new Date(lastSubscription.cancel_at * 1000) : undefined,
+                    cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
                 };
                 return trialSubscription;
             }
