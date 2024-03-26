@@ -83,6 +83,11 @@ export const useSubscription = () => {
         if (err) throw err;
         return res.data;
     };
+    const resumeSubscription = async () => {
+        const [err, res] = await awaitToError(apiClient.put('/v2/subscriptions/resume'));
+        if (err) throw err;
+        return res.data;
+    };
     const addPaymentMethod = async ({
         paymentMethodId,
         paymentMethodType,
@@ -199,6 +204,7 @@ export const useSubscription = () => {
         product,
         refreshProduct,
         cancelSubscription,
+        resumeSubscription,
     };
 };
 
