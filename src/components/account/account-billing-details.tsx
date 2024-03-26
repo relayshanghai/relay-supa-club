@@ -45,7 +45,7 @@ export const BillingDetails = () => {
     }, [customer?.email, invoiceEmailText, updateDefaultInvoiceEmail, t]);
 
     return (
-        <section id="company-details" className="w-full">
+        <section id="billing-details" className="w-full">
             <p className="pb-6 font-semibold">{t('account.billingInfoSection.title')}</p>
             <hr className="pb-5" />
             <section className="flex w-full justify-end">
@@ -92,7 +92,7 @@ export const BillingDetails = () => {
                                     </Button>
                                 )}
                                 <Button
-                                    className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500'
+                                    className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500'
                                     disabled={updating || error || buttonDisabled}
                                     onClick={handleUpdateInvoiceEmail}
                                 >

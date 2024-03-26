@@ -159,7 +159,7 @@ export const PersonalDetails = () => {
                                 </Button>
                             )}
                             <Button
-                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
+                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500"
                                 disabled={userDataLoading || personalDetailsSubmitButtonDisabled}
                                 onClick={handleUpdateProfile}
                             >
@@ -198,7 +198,7 @@ export const PersonalDetails = () => {
                                 </Button>
                             )}
                             <Button
-                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
+                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500"
                                 onClick={handleUpdateEmail}
                                 disabled={emailSubmitButtonDisabled}
                             >
