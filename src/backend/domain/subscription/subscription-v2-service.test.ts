@@ -593,11 +593,19 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     current_period_start: 1710133391,
                     current_period_end: 1712811791,
                     latest_invoice: {
-                        payment_intent: {
-                            client_secret: 'xxx',
-                        },
+                        payment_intent: {},
                     },
                 } as Stripe.Response<Stripe.Subscription>);
+
+                StripeGetProductMetadataMock.mockResolvedValue({
+                    name: 'Outreach',
+                    searches: '100000000',
+                    profiles: '100000000',
+                    ai_emails: '100000000',
+                    trial_searches: '100000000',
+                    trial_profiles: '100000000',
+                    trial_ai_emails: '100000000',
+                });
 
                 const updateMock = vi.spyOn(SubscriptionRepository.getRepository(), 'update');
                 updateMock.mockResolvedValue({
@@ -610,7 +618,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     priceId: 'price_1',
                     quantity: 1,
                 });
-                expect(result.clientSecret).toBe('xxx');
                 expect(result.providerSubscriptionId).toBe('sub_1');
                 expect(findOneMock).toHaveBeenCalledWith({
                     where: {
@@ -643,9 +650,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             current_period_start: 1710133391,
                             current_period_end: 1712811791,
                             latest_invoice: {
-                                payment_intent: {
-                                    client_secret: 'xxx',
-                                },
+                                payment_intent: {},
                             },
                         },
                         activeAt: new Date(1710133391 * 1000),
