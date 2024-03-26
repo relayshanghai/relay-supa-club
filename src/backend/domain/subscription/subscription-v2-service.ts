@@ -345,17 +345,21 @@ export default class SubscriptionV2Service {
         const stripeSubscription = await StripeService.getService().retrieveSubscription(
             subscription.providerSubscriptionId,
         );
+        const updatedSubscription = await StripeService.getService().updateSubscription(
+            subscription.providerSubscriptionId,
+            {
+                cancel_at_period_end: true,
+            },
+        );
         await SubscriptionRepository.getRepository().update(
             {
                 id: subscription.id,
             },
             {
+                subscriptionData: updatedSubscription,
                 cancelledAt: new Date(stripeSubscription.current_period_end * 1000),
             },
         );
-        await StripeService.getService().updateSubscription(subscription.providerSubscriptionId, {
-            cancel_at_period_end: true,
-        });
     }
 
     @CompanyIdRequired()
@@ -386,17 +390,21 @@ export default class SubscriptionV2Service {
         if (!subscription) {
             throw new NotFoundError('No subscription found');
         }
+        const updatedSubscription = await StripeService.getService().updateSubscription(
+            subscription.providerSubscriptionId,
+            {
+                cancel_at_period_end: false,
+            },
+        );
         await SubscriptionRepository.getRepository().update(
             {
                 id: subscription.id,
             },
             {
+                subscriptionData: updatedSubscription,
                 cancelledAt: null,
             },
         );
-        await StripeService.getService().updateSubscription(subscription.providerSubscriptionId, {
-            cancel_at_period_end: false,
-        });
     }
 
     @CompanyIdRequired()

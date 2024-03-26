@@ -65,6 +65,7 @@ const account = {
         trial: 'Trial',
         upgradeSubscription: 'Upgrade or modify your plan',
         cancelSubscription: 'Cancel subscription',
+        resumeSubscription: 'Don’t cancel my subscription!',
         monthly: 'Monthly',
         quarterly: 'Quarterly',
         annually: 'Annually',
@@ -91,6 +92,8 @@ const account = {
         upgrade: 'Upgrade',
         upgradeSuccess: 'Upgrade success',
         upgradeSubscriptionError: 'Unable to upgrade subscription',
+        resumeSubscriptionSuccess: 'Subscription successfully resumed!',
+        resumeSubscriptionError: 'Unable to resume subscription',
     },
     invite: {
         title: 'Invite Members',
