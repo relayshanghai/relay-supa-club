@@ -84,6 +84,16 @@ describe('PriceCard Component', () => {
             useSubscription: () => ({
                 createSubscription: createSubscriptionMock,
                 loading: false,
+                subscription: {
+                    subscriptionData: {
+                        plan: {
+                            interval: 'month',
+                            interval_count: 1,
+                        },
+                        status: 'canceled',
+                    },
+                },
+                product: { name: 'Outreach' },
             }),
             STRIPE_SUBSCRIBE_RESPONSE: 'boostbot_stripe_secret_response',
             stripeSubscribeResponseInitialValue: {},
