@@ -128,6 +128,7 @@ export { default as AlipayIcon } from './AlipayIcon';
 export { default as Hourglass } from './Hourglass';
 export { default as PausedCircleOutline } from './PausedCircleOutline';
 export { default as CrossedCircleOutline } from './CrossedCircleOutline';
+export { default as CheckCircleOutline } from './CheckCircleOutline';
 export { default as CheckedCircleOutline } from './CheckedCircleOutline';
 export { default as ClockCheckedOutline } from './ClockCheckedOutline';
 export { default as PaymentFailedOutline } from './PaymentFailedOutline';
