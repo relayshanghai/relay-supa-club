@@ -78,7 +78,9 @@ export const useSubscription = () => {
     };
     const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
         const [err, res] = await awaitToError(
-            apiClient.get<SubscriptionEntity<Stripe.Subscription>>('/v2/subscriptions').then((res) => res.data),
+            apiClient
+                .get<SubscriptionEntity<Stripe.Subscription & { plan: Stripe.Plan }>>('/v2/subscriptions')
+                .then((res) => res.data),
         );
 
         if (err) return;

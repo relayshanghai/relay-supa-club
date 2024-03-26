@@ -3,7 +3,6 @@ import { usePrices } from 'src/hooks/use-prices';
 import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
-import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -17,14 +16,29 @@ import {
     useSubscription,
 } from 'src/hooks/v2/use-subscription';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
+import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import type Stripe from 'stripe';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
     period: ActiveSubscriptionPeriod,
-    subscription?: SubscriptionGetResponse,
+    subscription?: SubscriptionEntity<Stripe.Subscription & { plan: Stripe.Plan }>,
+    product?: Stripe.Product,
 ) => {
     const tierName = tier === 'discovery' ? 'Discovery' : 'Outreach';
-    return subscription?.name === tierName && subscription.interval === period && subscription.status === 'active';
+    const subscriptionInterval = subscription?.subscriptionData.plan.interval;
+    const subscriptionIntervalCount = subscription?.subscriptionData.plan.interval_count;
+    let interval = null;
+    if (subscriptionInterval === 'month') {
+        if (subscriptionIntervalCount === 3) {
+            interval = 'quarterly';
+        } else {
+            interval = 'monthly';
+        }
+    } else if (subscriptionInterval === 'year') {
+        interval = 'annually';
+    }
+    return product?.name === tierName && interval === period && subscription?.subscriptionData.status === 'active';
 };
 
 const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
@@ -32,16 +46,17 @@ const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused']
 const disableButton = (
     tier: ActiveSubscriptionTier,
     period: ActiveSubscriptionPeriod,
-    subscription?: SubscriptionGetResponse,
+    subscription?: SubscriptionEntity<Stripe.Subscription & { plan: Stripe.Plan }>,
     company?: CompanyDB,
+    product?: Stripe.Product,
 ) => {
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
-    if (!subscription?.name || !subscription.interval || !subscription.status) {
+    if (!product?.name || !subscription?.subscriptionData.plan.interval || !subscription.subscriptionData.status) {
         return true;
     }
-    if (isCurrentPlan(tier, period, subscription)) {
+    if (isCurrentPlan(tier, period, subscription, product)) {
         return true;
     }
     return false;
@@ -60,8 +75,10 @@ export const PriceCard = ({
     const { trackEvent } = useRudderstack();
 
     const { prices } = usePrices();
-    const { subscription, refreshSubscription } = useSubscriptionLegacy();
+    const { refreshSubscription } = useSubscriptionLegacy();
     const {
+        subscription,
+        product,
         createSubscription,
         loading: subscriptionV2Loading,
         changeSubscription,
@@ -74,7 +91,7 @@ export const PriceCard = ({
     const key: PriceKey = priceTier;
     const price = prices[key];
     const currency = price.currency;
-    const subscriptionStatus = subscription?.status;
+    const subscriptionStatus = subscription?.subscriptionData.status;
     const companySubscriptionStatus = company?.subscription_status;
 
     // TODO: add check for payment method?
@@ -82,7 +99,7 @@ export const PriceCard = ({
         // subscriptionStatus should be more source of truth because it is a call directly to stripe...
         subscriptionStatus === 'canceled' ||
         companySubscriptionStatus === 'canceled' ||
-        subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'trialing' ||
         companySubscriptionStatus === 'trial' ||
         // TODO: check if paused can happen on existing subscription
         subscriptionStatus === 'paused' ||
@@ -94,8 +111,8 @@ export const PriceCard = ({
         createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
-                    clientSecret: res?.clientSecret as string,
-                    ipAddress: res?.ipAddress as string,
+                    clientSecret: res?.clientSecret,
+                    ipAddress: res?.ipAddress,
                     plan: priceTier,
                 });
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
@@ -133,7 +150,9 @@ export const PriceCard = ({
             triggerUpgradeSubscription();
         } else {
             toast.error('unhandled subscription case');
-            clientLogger(`unhandled subscription case: ${subscription?.status} ${company?.subscription_status}`);
+            clientLogger(
+                `unhandled subscription case: ${subscription?.subscriptionData.status} ${company?.subscription_status}`,
+            );
         }
     };
     return (
@@ -161,12 +180,14 @@ export const PriceCard = ({
                 {!landingPage && (
                     <Button
                         onClick={handleUpgradeClicked}
-                        disabled={disableButton(priceTier, period, subscription, company) || subscriptionV2Loading}
+                        disabled={
+                            disableButton(priceTier, period, subscription, company, product) || subscriptionV2Loading
+                        }
                         loading={subscriptionV2Loading}
                         className="mt-auto"
                         data-testid="upgrade-button"
                     >
-                        {isCurrentPlan(priceTier, period, subscription)
+                        {isCurrentPlan(priceTier, period, subscription, product)
                             ? t('pricing.yourCurrentPlan')
                             : t('pricing.upgrade')}
                     </Button>
