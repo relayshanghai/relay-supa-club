@@ -69,6 +69,13 @@ export const useSubscription = () => {
         if (err) throw err;
         return res.data;
     };
+    const changeSubscription = async (payload: CreateSubscriptionPayload) => {
+        const [err, res] = await awaitToError(
+            apiClient.patch<CreateSubscriptionResponse>('/v2/subscriptions', payload),
+        );
+        if (err) throw err;
+        return res.data;
+    };
     const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
         const [err, res] = await awaitToError(
             apiClient.get<SubscriptionEntity<Stripe.Subscription>>('/v2/subscriptions').then((res) => res.data),
@@ -199,6 +206,7 @@ export const useSubscription = () => {
         product,
         refreshProduct,
         cancelSubscription,
+        changeSubscription,
     };
 };
 

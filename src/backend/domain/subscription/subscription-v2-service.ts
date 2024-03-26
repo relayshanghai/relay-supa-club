@@ -318,7 +318,7 @@ export default class SubscriptionV2Service {
                 searchesLimit: productMetadata.searches,
                 trialProfilesLimit: productMetadata.trial_profiles,
                 trialSearchesLimit: productMetadata.trial_searches,
-                subscriptionPlan: productMetadata.name as string,
+                subscriptionPlan: productMetadata.name,
             },
         );
 
@@ -420,6 +420,7 @@ export default class SubscriptionV2Service {
                 quantity: request.quantity ? request.quantity : 1,
             },
         );
+        const productMetadata = await StripeService.getService().getProductMetadata(stripeSubscription.id);
         await SubscriptionRepository.getRepository().update(
             {
                 id: subscription.id,
@@ -435,11 +436,21 @@ export default class SubscriptionV2Service {
                 pausedAt: new Date(stripeSubscription.current_period_end * 1000),
             },
         );
-        const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
-        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+        await CompanyRepository.getRepository().update(
+            {
+                id: companyId,
+            },
+            {
+                subscriptionStatus: stripeSubscription.status as string,
+                profilesLimit: productMetadata.profiles,
+                searchesLimit: productMetadata.searches,
+                trialProfilesLimit: productMetadata.trial_profiles,
+                trialSearchesLimit: productMetadata.trial_searches,
+                subscriptionPlan: productMetadata.name,
+            },
+        );
         return {
             providerSubscriptionId: stripeSubscription.id,
-            clientSecret: paymentIntent.client_secret,
         };
     }
 }

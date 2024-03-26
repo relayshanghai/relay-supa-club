@@ -60,8 +60,13 @@ export const PriceCard = ({
     const { trackEvent } = useRudderstack();
 
     const { prices } = usePrices();
-    const { subscription, upgradeSubscription } = useSubscriptionLegacy();
-    const { createSubscription, loading: subscriptionV2Loading } = useSubscription();
+    const { subscription, refreshSubscription } = useSubscriptionLegacy();
+    const {
+        createSubscription,
+        loading: subscriptionV2Loading,
+        changeSubscription,
+        refreshSubscription: refreshSubscriptionV2,
+    } = useSubscription();
     const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
     const { company } = useCompany();
     const router = useRouter();
@@ -107,9 +112,11 @@ export const PriceCard = ({
     };
 
     const triggerUpgradeSubscription = () => {
-        upgradeSubscription(prices[priceTier].priceIds.monthly)
+        changeSubscription({ priceId: prices[priceTier].priceIds.monthly, quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
+                refreshSubscription();
+                refreshSubscriptionV2();
             })
             .catch((error) => {
                 toast.error(t('pricing.upgradeFailed'));
