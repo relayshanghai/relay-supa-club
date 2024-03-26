@@ -27,13 +27,26 @@ export class UnauthorizedError extends HttpError {
     }
 }
 
+export class NotFoundError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.NOT_FOUND, originError);
+    }
+}
+
+export class PreconditionError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.PRECONDITION_FAILED, originError);
+    }
+}
+
 export class ConflictError extends HttpError {
     constructor(message: string, originError?: Error) {
         super(message, httpCodes.CONFLICT, originError);
     }
 }
-export class NotFoundError extends HttpError {
+
+export class UnprocessableEntityError extends HttpError {
     constructor(message: string, originError?: Error) {
-        super(message, httpCodes.NOT_FOUND, originError);
+        super(message, httpCodes.UNPROCESSABLE_ENTITY, originError);
     }
 }

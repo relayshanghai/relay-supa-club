@@ -17,6 +17,12 @@ if (!EMAIL_ENGINE_API_KEY) {
     throw new Error('EMAIL_ENGINE_API_KEY is not defined');
 }
 
+export type EmailTemplate = {
+    name: string;
+    subject: string;
+    html: string;
+};
+
 export default class EmailEngineService {
     static service: EmailEngineService = new EmailEngineService();
     static getService(): EmailEngineService {
@@ -29,6 +35,40 @@ export default class EmailEngineService {
             access_token: EMAIL_ENGINE_API_KEY,
         },
     });
+
+    /**
+     *
+     * @param template
+     * @returns inserted id from email engine
+     */
+    async createTemplate(template: EmailTemplate): Promise<string> {
+        const response = await this.apiClient.post('/templates/template', {
+            account: null,
+            name: template.name,
+            description: '',
+            format: 'html',
+            content: {
+                subject: template.subject,
+                text: '',
+                html: template.html,
+                previewText: '',
+            },
+        });
+        return response.data.id;
+    }
+    async updateTemplate(id: string, template: EmailTemplate): Promise<void> {
+        await this.apiClient.put(`/templates/template/${id}`, {
+            name: template.name,
+            description: '',
+            format: 'html',
+            content: {
+                subject: template.subject,
+                text: '',
+                html: template.html,
+                previewText: '',
+            },
+        });
+    }
 
     async getAccounts(page = 0) {
         const [err, result] = await awaitToError<AxiosError, AxiosResponse<EmailEnginePaginatedAccount>>(

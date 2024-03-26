@@ -48,4 +48,20 @@ export class ProfileRepository extends BaseRepository<ProfileEntity> {
         }
         return true;
     }
+
+    async getProfileById(id: string) {
+        return this.findOneByOrFail({ id });
+    }
+
+    async deleteProfileById(id: string) {
+        return this.delete({ id });
+    }
+
+    async isCompanyOwner(profiles: ProfileEntity[]) {
+        const foundCompanyOwner = profiles.find((profile) => profile.userRole === 'company_owner');
+        if (foundCompanyOwner) {
+            return foundCompanyOwner;
+        }
+        return profiles[0];
+    }
 }

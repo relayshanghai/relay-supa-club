@@ -31,7 +31,7 @@ export type AudienceGenderWeighted = z.input<typeof audience_gender> | undefined
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
-export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach';
+export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach' | 'addPayment';
 export type RelayPlan = {
     currency: string;
     prices: {

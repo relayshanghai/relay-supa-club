@@ -51,7 +51,8 @@ const inbox = {
         error: 'Error when downloading attachment',
     },
     save: 'Save',
-    edit: 'Save changes',
+    edit: 'Edit',
+    saveChanges: 'Save changes',
     remove: 'Remove',
 };
 

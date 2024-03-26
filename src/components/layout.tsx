@@ -86,7 +86,7 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
                 profileFirstName={profile?.first_name}
             />
             <div className="flex w-full max-w-full flex-col overflow-hidden">
-                <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
+                <nav className="z-30 flex items-center justify-between bg-white shadow-gray-200">
                     <div className="flex items-center">
                         <p className="flex flex-row items-center gap-2 pl-4">
                             {routerPath.includes('influencer') ? (
@@ -133,7 +133,7 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
                         </button>
                         <LanguageToggle />
                     </div>
-                </div>
+                </nav>
                 {titleFlag && titleFlag}
                 <div className="h-full w-full overflow-auto">{children}</div>
             </div>

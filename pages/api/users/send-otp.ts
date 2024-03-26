@@ -1,8 +1,10 @@
-import { Body, CookieParser, POST } from 'src/utils/handler/decorators/api-decorator';
+import { POST } from 'src/utils/handler/decorators/api-decorator';
 import { type OtpCookieStore, SendOtpRequest } from './request';
 import RegistrationService from 'src/backend/domain/user/registration-service';
 import type { Cookies } from 'src/utils/handler/cookie';
 import { createHandler } from 'src/utils/handler/create-handler';
+import { CookieParser } from 'src/utils/handler/decorators/api-cookie-decorator';
+import { Body } from 'src/utils/handler/decorators/api-body-decorator';
 
 export class SentOtpHandler {
     @POST()

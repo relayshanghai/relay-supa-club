@@ -1,6 +1,9 @@
 import type { DataSourceOptions } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { ProfileEntity } from '../profile/profile-entity';
+import { ProductEntity } from '../product/product-entity';
+import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
+import { TemplateVariableEntity } from '../template-variable/template-variable-entity';
 import { ThreadEntity } from '../thread/thread-entity';
 import { SequenceEmailEntity } from '../sequence/sequence-email-entity';
 import { SequenceEntity } from '../sequence/sequence-entity';
@@ -12,7 +15,10 @@ import { SequenceStepEntity } from '../sequence/sequence-step-entity';
 import { EmailEntity } from '../thread/email-entity';
 import { InfluencerSocialProfileEntity } from '../influencer/influencer-social-profile-entity';
 import { AddressEntity } from '../influencer/address-entity';
-import { SequenceTemplateVariableEntity } from '../sequence/sequence-template-variable';
+import { OutreachEmailTemplateVariableEntity } from '../sequence-email-template/sequence-email-template-variable-entity';
+import { SubscriptionEntity } from '../subcription/subscription-entity';
+import { UsageEntity } from '../usages/entity';
+import { BillingEventEntity } from '../billing-event/billing-event-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -28,8 +34,10 @@ export const datasourceOptions = (): DataSourceOptions => {
         entities: [
             CompanyEntity,
             ProfileEntity,
-            ThreadEntity,
-            SequenceEmailEntity,
+            ProductEntity,
+            SequenceStepEntity,
+            OutreachEmailTemplateEntity,
+            TemplateVariableEntity,
             SequenceEntity,
             ThreadEntity,
             ThreadContactEntity,
@@ -37,12 +45,15 @@ export const datasourceOptions = (): DataSourceOptions => {
             SequenceInfluencerEntity,
             InfluencerEntity,
             JobEntity,
-            SequenceStepEntity,
             EmailEntity,
             SequenceEmailEntity,
             InfluencerSocialProfileEntity,
             AddressEntity,
-            SequenceTemplateVariableEntity,
+            OutreachEmailTemplateVariableEntity,
+            SubscriptionEntity,
+            TemplateVariableEntity,
+            UsageEntity,
+            BillingEventEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

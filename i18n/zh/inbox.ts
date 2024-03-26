@@ -51,7 +51,8 @@ const inbox = {
         error: '下载附件时出错',
     },
     save: '保存',
-    edit: '保存更改',
+    edit: '修改',
+    saveChanges: '保存更改',
     remove: '移除',
 };
 

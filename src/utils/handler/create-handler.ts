@@ -80,6 +80,7 @@ export const createHandler = (target: new () => any) => {
             serverLogger(error, (scope) => {
                 return scope.setTag('error_code_tag', e.tag);
             });
+
             return res.status(e.httpCode).json({
                 ...error,
                 message: error.message,

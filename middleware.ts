@@ -192,8 +192,7 @@ export async function middleware(req: NextRequest) {
         const redirectUrl = req.nextUrl.clone();
 
         if (req.nextUrl.pathname.includes('api')) {
-            return res;
-            // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
         redirectUrl.pathname = '/logout';
@@ -248,12 +247,12 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('logout')) {
             return res;
-        }
-        if (req.nextUrl.pathname.includes('users')) {
+        } else if (req.nextUrl.pathname.includes('users')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('stripe-webhook')) {
             return res;
         }
-        return res;
-        // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();

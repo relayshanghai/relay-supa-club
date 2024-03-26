@@ -1,6 +1,6 @@
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { usePrices } from 'src/hooks/use-prices';
-import { useSubscription } from 'src/hooks/use-subscription';
+import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
@@ -11,6 +11,12 @@ import { useCompany } from 'src/hooks/use-company';
 import { type CompanyDB } from 'src/utils/api/db';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
+import {
+    STRIPE_SUBSCRIBE_RESPONSE,
+    stripeSubscribeResponseInitialValue,
+    useSubscription,
+} from 'src/hooks/v2/use-subscription';
+import { useLocalStorage } from 'src/hooks/use-localstorage';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -54,7 +60,9 @@ export const PriceCard = ({
     const { trackEvent } = useRudderstack();
 
     const { prices } = usePrices();
-    const { subscription, upgradeSubscription } = useSubscription();
+    const { subscription, upgradeSubscription } = useSubscriptionLegacy();
+    const { createSubscription, loading: subscriptionV2Loading } = useSubscription();
+    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
     const { company } = useCompany();
     const router = useRouter();
     type PriceKey = keyof typeof prices;
@@ -77,22 +85,45 @@ export const PriceCard = ({
 
     const shouldUpgrade = subscriptionStatus === 'active' || companySubscriptionStatus === 'active';
 
+    const triggerCreateSubscription = () => {
+        createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
+            .then((res) => {
+                setStripeSecretResponse({
+                    clientSecret: res?.clientSecret as string,
+                    ipAddress: res?.ipAddress as string,
+                    plan: priceTier,
+                });
+                router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
+            })
+            .catch((error) => {
+                const errorStatus = error.response?.status;
+                if (errorStatus === 400) {
+                    toast.error(t('pricing.upgradeFailedAlreadySubscribed'));
+                } else {
+                    toast.error(t('pricing.upgradeFailed'));
+                }
+                clientLogger(`createSubscription error: ${error}`);
+            });
+    };
+
+    const triggerUpgradeSubscription = () => {
+        upgradeSubscription(prices[priceTier].priceIds.monthly)
+            .then(() => {
+                toast.success(t('pricing.upgradeSuccess'));
+            })
+            .catch((error) => {
+                toast.error(t('pricing.upgradeFailed'));
+                clientLogger(`upgradeSubscription error: ${error}`);
+            });
+    };
+
     const handleUpgradeClicked = () => {
         // @note previous name: Pricing Page, clicked on upgrade
         trackEvent('Select Upgrade Plan', { plan: priceTier });
         if (shouldAddPayment) {
-            router.push(`/payments?plan=${priceTier}`);
-            return;
+            triggerCreateSubscription();
         } else if (shouldUpgrade) {
-            upgradeSubscription(prices[priceTier].priceIds.monthly)
-                .then(() => {
-                    toast.success(t('pricing.upgradeSuccess'));
-                })
-                .catch((error) => {
-                    toast.error(t('pricing.upgradeFailed'));
-                    clientLogger(`upgradeSubscription error: ${error}`);
-                });
-            return;
+            triggerUpgradeSubscription();
         } else {
             toast.error('unhandled subscription case');
             clientLogger(`unhandled subscription case: ${subscription?.status} ${company?.subscription_status}`);
@@ -100,7 +131,10 @@ export const PriceCard = ({
     };
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
-            <div className="relative flex min-h-full flex-col overflow-hidden rounded-lg border-2 bg-white  p-6">
+            <div
+                data-testid="price-card-wrapper"
+                className="relative flex min-h-full flex-col overflow-hidden rounded-lg border-2 bg-white  p-6"
+            >
                 <h1 className="relative w-fit text-4xl font-semibold text-gray-800">
                     {t(`pricing.${priceTier}.title`)}
                     <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">
@@ -120,8 +154,10 @@ export const PriceCard = ({
                 {!landingPage && (
                     <Button
                         onClick={handleUpgradeClicked}
-                        disabled={disableButton(priceTier, period, subscription, company)}
+                        disabled={disableButton(priceTier, period, subscription, company) || subscriptionV2Loading}
+                        loading={subscriptionV2Loading}
                         className="mt-auto"
+                        data-testid="upgrade-button"
                     >
                         {isCurrentPlan(priceTier, period, subscription)
                             ? t('pricing.yourCurrentPlan')

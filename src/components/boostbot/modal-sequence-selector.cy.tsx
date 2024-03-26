@@ -15,6 +15,7 @@ describe('ModalSequenceSelector', () => {
                 manager_first_name: null,
                 manager_id: null,
                 updated_at: '2022-01-01',
+                product_id: 'product_1',
             },
             {
                 id: '2',
@@ -26,6 +27,7 @@ describe('ModalSequenceSelector', () => {
                 manager_first_name: null,
                 manager_id: null,
                 updated_at: '2022-01-01',
+                product_id: 'product_1',
             },
         ];
 

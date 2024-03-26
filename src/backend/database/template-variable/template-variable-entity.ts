@@ -2,23 +2,23 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
     ManyToOne,
     JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
     type Relation,
 } from 'typeorm';
-import { SequenceEntity } from './sequence-entity'; // Adjust the import path as necessary
+import { SequenceEntity } from '../sequence/sequence-entity';
 
 @Entity('template_variables')
-export class SequenceTemplateVariableEntity {
+export class TemplateVariableEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt!: Date;
 
     @Column({ type: 'text', nullable: false })
@@ -30,10 +30,10 @@ export class SequenceTemplateVariableEntity {
     @Column({ type: 'text', nullable: false })
     key!: string;
 
+    @JoinColumn({ name: 'sequence_id' })
     @ManyToOne(() => SequenceEntity, (sequence) => sequence.templateVariables, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'sequence_id' }) // This column is a foreign key to the 'sequences' table
     sequence!: Relation<SequenceEntity>;
 
-    @Column({ type: 'boolean', default: true })
+    @Column({ type: 'boolean', nullable: false, default: true })
     required!: boolean;
 }

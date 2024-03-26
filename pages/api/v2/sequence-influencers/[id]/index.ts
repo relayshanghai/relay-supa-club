@@ -1,8 +1,10 @@
 import { createHandler } from 'src/utils/handler/create-handler';
-import { Body, PATCH, Path, Status } from 'src/utils/handler/decorators/api-decorator';
+import { PATCH, Status } from 'src/utils/handler/decorators/api-decorator';
 import { UpdateSequenceInfluencerRequest } from './request';
 import SequenceInfluencerService from 'src/backend/domain/outreach/sequence-influencer-service';
 import httpCodes from 'src/constants/httpCodes';
+import { Path } from 'src/utils/handler/decorators/api-path-decorator';
+import { Body } from 'src/utils/handler/decorators/api-body-decorator';
 
 class SequenceInfluencerIdHandler {
     @PATCH()

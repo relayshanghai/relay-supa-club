@@ -20,6 +20,7 @@ import faq from './faq';
 import discoveryfaq from './discovery-faq';
 import banner from './banner';
 import geolocations from './geolocations';
+import subscription from './subscription';
 
 const translations = {
     translation: {
@@ -45,6 +46,7 @@ const translations = {
         discoveryfaq,
         banner,
         geolocations,
+        subscription,
     },
 };
 export default translations;

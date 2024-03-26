@@ -3,100 +3,12 @@ import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validateRequest } from '../validator';
 import { getCookieFunction, setCookieFunction } from '../cookie';
-const bodyMetadataKey = Symbol('body');
-interface ParameterType {
-    parameterIndex: number;
-    classType: new () => any;
-    key?: string;
-}
-export const Body =
-    (classType: new () => any): ParameterDecorator =>
-    (target, propertyKey, parameterIndex) => {
-        Reflect.defineMetadata(
-            bodyMetadataKey,
-            {
-                parameterIndex,
-                classType,
-            } as ParameterType,
-            target,
-            propertyKey as symbol,
-        );
-    };
-
-const getBodyParameter = (target: any, propertyKey: string | symbol): ParameterType => {
-    return Reflect.getMetadata(bodyMetadataKey, target, propertyKey);
-};
-
-const cookieMetadataKey = Symbol('cookie');
-export const Cookie =
-    (key?: string): ParameterDecorator =>
-    (target, propertyKey, parameterIndex) => {
-        Reflect.defineMetadata(
-            cookieMetadataKey,
-            {
-                parameterIndex,
-                key,
-            } as ParameterType,
-            target,
-            propertyKey as symbol,
-        );
-    };
-
-const getCookieParameter = (target: any, propertyKey: string | symbol): ParameterType => {
-    return Reflect.getMetadata(cookieMetadataKey, target, propertyKey);
-};
-
-const cookieParserMetadataKey = Symbol('cookie-parser');
-export const CookieParser = (): ParameterDecorator => (target, propertyKey, parameterIndex) => {
-    Reflect.defineMetadata(cookieParserMetadataKey, parameterIndex, target, propertyKey as symbol);
-};
-
-const getCookieParserParameter = (target: any, propertyKey: string | symbol): number => {
-    return Reflect.getMetadata(cookieParserMetadataKey, target, propertyKey);
-};
-
-const query = Symbol('query');
-export const Query =
-    (classType: new () => any): ParameterDecorator =>
-    (target, propertyKey, parameterIndex) => {
-        Reflect.defineMetadata(
-            query,
-            {
-                parameterIndex,
-                classType,
-            } as ParameterType,
-            target,
-            propertyKey as symbol,
-        );
-    };
-
-const getQueryParameter = (target: any, propertyKey: string | symbol): ParameterType => {
-    return Reflect.getMetadata(query, target, propertyKey);
-};
-
-const path = Symbol('path');
-export const Path =
-    (pathParameterName: string): ParameterDecorator =>
-    (target, propertyKey, parameterIndex) => {
-        const pathMeta = getPathParametersMeta(target, propertyKey as symbol);
-        pathMeta.push({
-            parameterIndex,
-            pathParameter: pathParameterName,
-        });
-        Reflect.defineMetadata(path, pathMeta, target, propertyKey as symbol);
-    };
-
-const getPathParametersMeta = (
-    target: any,
-    propertyKey: string | symbol,
-): [
-    {
-        parameterIndex: number;
-        pathParameter: string;
-    },
-] => {
-    return Reflect.getMetadata(path, target, propertyKey) || [];
-};
+import { getBodyParameter } from './api-body-decorator';
+import { getQueryParameter } from './api-query-decorator';
+import { getCookieParameter, getCookieParserParameter } from './api-cookie-decorator';
+import { getPathParametersMeta } from './api-path-decorator';
+import { getHeaderParameter } from './api-header-decorator';
+import { getIpAddressParameter } from './api-request-ip-decorator';
 
 const getClassValue = async (targetClass: new () => any, request: any) => {
     const data = plainToInstance(targetClass, request);
@@ -138,6 +50,18 @@ const handleApiDescriptor: MethodDecorator = (target, propertyKey, descriptor: P
         getPathParametersMeta(target, propertyKey).forEach((params) => {
             args[params.parameterIndex] = req.query[params.pathParameter];
         });
+        const headerParameter = getHeaderParameter(target, propertyKey);
+        if (headerParameter) {
+            const header = req.headers;
+            if (headerParameter.key) {
+                args[headerParameter.parameterIndex] = header[headerParameter.key];
+            } else args[headerParameter.parameterIndex] = header;
+        }
+        const ipAddressParameter = getIpAddressParameter(target, propertyKey);
+        if (ipAddressParameter !== undefined) {
+            args[ipAddressParameter] = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        }
+
         const response = await originalMethod.apply(this, args);
         return response;
     };

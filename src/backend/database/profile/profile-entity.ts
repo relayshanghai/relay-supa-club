@@ -52,8 +52,8 @@ export class ProfileEntity {
     @Column({ name: 'sequence_send_email', nullable: true })
     sequenceSendEmail?: string;
 
-    @OneToMany(() => SequenceEntity, (sequence) => sequence.manager)
-    sequences?: Relation<SequenceEntity>;
+    @OneToMany(() => SequenceEntity, (sequence) => sequence.manager, { cascade: true })
+    sequences?: SequenceEntity[];
 
     @OneToMany(() => JobEntity, (job) => job.owner)
     jobs?: Relation<JobEntity>;

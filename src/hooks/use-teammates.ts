@@ -3,9 +3,13 @@ import { nextFetchWithQueries } from 'src/utils/fetcher';
 
 import { useCompany } from './use-company';
 import { useCallback, useEffect, useState } from 'react';
+import awaitToError from 'src/utils/await-to-error';
+import { useApiClient } from 'src/utils/api-client/request';
 
 export const useTeammates = () => {
     const { company } = useCompany();
+
+    const { apiClient } = useApiClient();
 
     const [teammates, setTeammates] = useState<CompanyTeammatesGetResponse>([]);
 
@@ -24,6 +28,26 @@ export const useTeammates = () => {
         setTeammates(result);
     }, [company?.id]);
 
+    const updateTeammate = useCallback(
+        async (adminId: string, teammateId: string, role: 'company_owner' | 'company_teammate') => {
+            const [err] = await awaitToError(
+                apiClient.put('v2/company/teammates', {
+                    adminId,
+                    teammateId,
+                    role,
+                }),
+            );
+            if (err) {
+                throw err;
+            }
+        },
+        [apiClient],
+    );
+
+    const deleteTeammate = (adminId: string, teammateId: string) => {
+        return apiClient.delete(`v2/company/teammates?adminId=${adminId}&teammateId=${teammateId}`);
+    };
+
     useEffect(() => {
         refreshTeammates();
     }, [refreshTeammates]);
@@ -31,5 +55,7 @@ export const useTeammates = () => {
     return {
         teammates,
         refreshTeammates,
+        updateTeammate,
+        deleteTeammate,
     };
 };

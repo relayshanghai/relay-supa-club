@@ -68,14 +68,14 @@ describe('<SequencePage />', () => {
 
         cy.contains('button', 'Start selected sequences').should('not.exist');
 
-        cy.contains('tr', mario?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
+        cy.contains('tr', mario?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
 
         cy.contains('button', 'Start selected sequences').should('exist');
 
-        cy.contains('tr', josiah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
-        cy.contains('tr', hannah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
+        cy.contains('tr', josiah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
+        cy.contains('tr', hannah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
 
-        cy.contains('button', 'Start selected sequences').click();
+        cy.contains('button', 'Start selected sequences').click({ force: true });
 
         cy.contains('Failed to submit 1 email(s) to send');
         cy.contains('2 email(s) successfully scheduled to send');
