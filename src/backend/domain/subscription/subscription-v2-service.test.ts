@@ -391,6 +391,14 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         id: 'sub_1',
                     },
                     {
+                        subscriptionData: {
+                            lastResponse: {
+                                statusCode: 200,
+                                headers: {},
+                                requestId: 'req_1',
+                            },
+                            id: 'sub_1',
+                        },
                         cancelledAt: new Date(1712811791 * 1000),
                     },
                 );
@@ -449,6 +457,14 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         id: 'sub_1',
                     },
                     {
+                        subscriptionData: {
+                            lastResponse: {
+                                statusCode: 200,
+                                headers: {},
+                                requestId: 'req_1',
+                            },
+                            id: 'sub_1',
+                        },
                         cancelledAt: null,
                     },
                 );

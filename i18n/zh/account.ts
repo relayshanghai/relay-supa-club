@@ -65,6 +65,7 @@ const account = {
         trial: '试用',
         upgradeSubscription: '升级或修改您的套餐',
         cancelSubscription: '取消订阅',
+        resumeSubscription: '请别取消我的订阅！',
         monthly: '每月',
         quarterly: '每季度',
         annually: '每年',
@@ -91,6 +92,8 @@ const account = {
         upgrade: '升级订阅',
         upgradeSuccess: '升级成功',
         upgradeSubscriptionError: '升级订阅失败',
+        resumeSubscriptionSuccess: '成功恢复订阅！',
+        resumeSubscriptionError: '无法恢复订阅',
     },
     invite: {
         title: '邀请成员加入',
