@@ -157,7 +157,7 @@ export const PaymentMethodDetails = () => {
                             onClick={() => {
                                 setNewPaymentModalOpenState(true);
                             }}
-                            className="w-full bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100"
+                            className="w-full bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:bg-gray-100 disabled:text-gray-500"
                         >
                             <Plus className="mr-2 h-4 w-4" />
                             {t('account.paymentMethodCard.addPaymentMethod')}

@@ -135,7 +135,9 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
                     </div>
                 </nav>
                 {titleFlag && titleFlag}
-                <div className="h-full w-full overflow-auto">{children}</div>
+                <div id="layout-wrapper" className="h-full w-full overflow-auto">
+                    {children}
+                </div>
             </div>
             <ClientRoleWarning />
         </div>

@@ -9,21 +9,62 @@ import { Building, PaymentOutline, ProfileOutline, ProfileTeam, Rocket } from '.
 import { PaymentMethodDetails } from './account-payment-method-details';
 import { BillingDetails } from './account-billing-details';
 import { PasswordDetails } from './account-password-details';
+import { useEffect, useState } from 'react';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
     const { t } = useTranslation();
+    const [activeTab, setActiveTab] = useState('subscription-details');
+
+    useEffect(() => {
+        const layoutWrapper = document.getElementById('layout-wrapper');
+        if (!layoutWrapper) return;
+        const handleScroll = () => {
+            const subscriptionDetails = document.getElementById('subscription-details');
+            const billingDetails = document.getElementById('billing-details');
+            const personalDetails = document.getElementById('personal-details');
+            const companyDetails = document.getElementById('company-details');
+            const teamDetails = document.getElementById('team-details');
+
+            if (!subscriptionDetails || !billingDetails || !personalDetails || !companyDetails || !teamDetails) return;
+
+            const isInViewport = (element: any) => {
+                const rect = element.getBoundingClientRect();
+                return rect.top >= 0 && rect.bottom <= window.innerHeight;
+            };
+
+            if (isInViewport(subscriptionDetails)) {
+                setActiveTab('subscription-details');
+            } else if (isInViewport(billingDetails)) {
+                setActiveTab('billing-details');
+            } else if (isInViewport(personalDetails)) {
+                setActiveTab('personal-details');
+            } else if (isInViewport(companyDetails)) {
+                setActiveTab('company-details');
+            } else if (isInViewport(teamDetails)) {
+                setActiveTab('team-details');
+            }
+        };
+
+        layoutWrapper.addEventListener('scroll', handleScroll);
+        return () => layoutWrapper.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <nav className="absolute top-32 -ml-2 mt-12 flex w-full max-w-xs flex-col 2xl:max-w-sm">
+        <nav className={`absolute top-32  -ml-2 mt-12 flex w-full max-w-xs flex-col 2xl:max-w-sm`}>
             <a
                 href="#subscription-details"
-                className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                className={`flex gap-2 ${
+                    activeTab === 'subscription-details' && 'bg-primary-50 text-primary-700'
+                } rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <Rocket className="h-5 w-5 flex-shrink-0" />
                 <p>{t('account.sidebar.plan')}</p>
             </a>
             <a
-                href="#subscription-details"
-                className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                href="#billing-details"
+                className={`${
+                    activeTab === 'billing-details' && 'bg-primary-50 text-primary-700'
+                } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <PaymentOutline className="h-5 w-5 flex-shrink-0" />
                 <p>{t('account.sidebar.billing')}</p>
@@ -31,7 +72,9 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             {!clientRoleCompanyId && (
                 <a
                     href="#personal-details"
-                    className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                    className={`${
+                        activeTab === 'personal-details' && 'bg-primary-50 text-primary-700'
+                    } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
                 >
                     <ProfileOutline className="h-5 w-5 flex-shrink-0" />
                     <p>{t('account.sidebar.profile')}</p>
@@ -39,14 +82,18 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             )}
             <a
                 href="#company-details"
-                className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                className={`${
+                    activeTab === 'company-details' && 'bg-primary-50 text-primary-700'
+                } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <Building className="h-5 w-5 flex-shrink-0" />
                 <p>{t('account.sidebar.company')}</p>
             </a>
             <a
                 href="#team-details"
-                className="flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700"
+                className={`${
+                    activeTab === 'team-details' && 'bg-primary-50 text-primary-700'
+                } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <ProfileTeam className="h-5 w-5 flex-shrink-0" />
                 <p>{t('account.sidebar.team')}</p>
@@ -60,7 +107,7 @@ export const AccountPage = () => {
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
-        <div className="flex flex-col gap-3 px-8 lg:px-8">
+        <div className="flex flex-col gap-3 bg-white px-8 lg:px-8">
             <section className="sticky left-0 top-0 flex flex-col gap-3 pb-12">
                 <div className="text-base font-semibold text-primary-700">
                     {t('account.paymentCompanySubscription')}

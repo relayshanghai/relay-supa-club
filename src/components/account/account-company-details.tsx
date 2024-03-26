@@ -116,7 +116,7 @@ export const CompanyDetails = () => {
                                     companyValues.website !== company?.website) && (
                                     <Button
                                         disabled={userDataLoading || updating}
-                                        className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                        className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500 disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500"
                                         variant="outline"
                                         onClick={() => {
                                             resetCompanyValues({
@@ -130,7 +130,7 @@ export const CompanyDetails = () => {
                                     </Button>
                                 )}
                                 <Button
-                                    className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500'
+                                    className='hover:bg-navy-100" bg-navy-50 font-semibold text-navy-500 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500'
                                     disabled={userDataLoading || updating || buttonDisabled}
                                     onClick={handleUpdateCompany}
                                 >
