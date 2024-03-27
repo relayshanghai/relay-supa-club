@@ -70,7 +70,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 const getSequencesMock = vi.spyOn(SequenceRepository.getRepository(), 'getSequences');
                 getSequencesMock.mockResolvedValue({
                     sequences: [mockSequenceData as unknown as SequenceEntityWithInfluencerCount],
-                    totalCount: 1,
+                    totalCount: 10,
                 });
 
                 const result = await SequenceService.getService().get({
@@ -80,7 +80,7 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
                 expect(result).toEqual({
                     page: 1,
                     size: 10,
-                    totalItems: 1,
+                    totalItems: 10,
                     items: [
                         {
                             id: 'sequence_id_1',

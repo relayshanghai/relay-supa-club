@@ -33,6 +33,9 @@ export default class SequenceService {
             ...request,
             companyId,
         });
+        if (request.page * request.size > totalCount) {
+            throw new NotFoundError('No sequences found at this page number');
+        }
         return {
             page: request.page,
             size: request.size,
