@@ -2,6 +2,7 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { type EntityManager, type EntityTarget, In } from 'typeorm';
+import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
 
 export default class SequenceInfluencerRepository extends BaseRepository<SequenceInfluencerEntity> {
     static repository = new SequenceInfluencerRepository();
@@ -30,6 +31,20 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             where: {
                 email: In(email),
             },
+        });
+    }
+
+    async getSequenceInfluencersBySequenceId(request: GetInfluencersRequest & { sequenceId: string }) {
+        const { sequenceId, page, limit } = request;
+        return this.find({
+            where: {
+                sequence: { id: sequenceId },
+            },
+            order: {
+                updatedAt: 'DESC',
+            },
+            skip: (page - 1) * limit,
+            take: limit,
         });
     }
 }
