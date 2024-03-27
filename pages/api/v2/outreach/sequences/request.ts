@@ -60,7 +60,6 @@ export class GetSequenceResponse {
     @IsNumber()
     totalItems!: number;
     @IsArray()
-    @ValidateNested({ each: true })
     items!: {
         id: string;
         name: string;
