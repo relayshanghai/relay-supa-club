@@ -11,7 +11,7 @@ import ProductRepository from 'src/backend/database/product/product-repository';
 import SequenceService from './sequence-service';
 import { NotFoundError } from 'src/utils/error/http-error';
 import SequenceStepRepository from 'src/backend/database/sequence/sequence-step-repository';
-import { type SequenceRequest } from 'pages/api/outreach/sequences/request';
+import { type SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 import TemplateVariableRepository from 'src/backend/database/template-variable/template-variable-repository';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';

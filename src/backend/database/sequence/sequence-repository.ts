@@ -3,7 +3,7 @@ import BaseRepository from '../provider/base-repository';
 import { ILike, type EntityManager, type EntityTarget } from 'typeorm';
 import { SequenceEntity } from './sequence-entity';
 import type { ProfileEntity } from '../profile/profile-entity';
-import { type GetSequenceRequest } from 'pages/api/outreach/sequences/request';
+import { type GetSequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 
 type GetSequenceWhereClause = {
     company: {

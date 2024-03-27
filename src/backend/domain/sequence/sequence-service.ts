@@ -4,7 +4,7 @@ import type {
     SequenceTemplate,
     Variable,
     GetSequenceResponse,
-} from 'pages/api/outreach/sequences/request';
+} from 'pages/api/v2/outreach/sequences/request';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
