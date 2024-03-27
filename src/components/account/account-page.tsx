@@ -29,7 +29,10 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
 
             const isInViewport = (element: any) => {
                 const rect = element.getBoundingClientRect();
-                return rect.top >= 0 && rect.bottom <= window.innerHeight;
+                return (
+                    rect.top >= layoutWrapper.getBoundingClientRect().top &&
+                    rect.bottom <= layoutWrapper.getBoundingClientRect().bottom
+                );
             };
 
             let activeTabs: string[] = [];
