@@ -1,8 +1,20 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
-import { type EntityManager, type EntityTarget } from 'typeorm';
+import { ILike, type EntityManager, type EntityTarget } from 'typeorm';
 import { SequenceEntity } from './sequence-entity';
 import type { ProfileEntity } from '../profile/profile-entity';
+import { type GetSequenceRequest } from 'pages/api/outreach/sequences/request';
+
+type GetSequenceWhereClause = {
+    company: {
+        id: string;
+    };
+    name?: any;
+};
+
+export type SequenceEntityWithInfluencerCount = SequenceEntity & {
+    totalInfluencers: number;
+};
 
 export default class SequenceRepository extends BaseRepository<SequenceEntity> {
     static repository = new SequenceRepository();
@@ -33,6 +45,41 @@ export default class SequenceRepository extends BaseRepository<SequenceEntity> {
             },
         );
     }
+
+    async getSequences(
+        request: GetSequenceRequest & {
+            companyId: string;
+        },
+    ) {
+        const { page, size, name, companyId } = request;
+
+        let whereClause: GetSequenceWhereClause = {
+            company: {
+                id: companyId,
+            },
+        };
+
+        if (name) {
+            whereClause = {
+                ...whereClause,
+                name: ILike(`%${name}%`),
+            };
+        }
+
+        const [sequences, totalCount] = await this.createQueryBuilder('sequence')
+            .leftJoinAndSelect('sequence.product', 'product')
+            .loadRelationCountAndMap('sequence.totalInfluencers', 'sequence.sequenceInfluencers')
+            .where(whereClause)
+            .orderBy('sequence.createdAt', 'DESC')
+            .skip((page - 1) * size)
+            .take(size)
+            .getManyAndCount();
+
+        const sequencesWithInfluencerCount = sequences as SequenceEntityWithInfluencerCount[];
+
+        return { sequences: sequencesWithInfluencerCount, totalCount };
+    }
+
     constructor(target: EntityTarget<SequenceEntity> = SequenceEntity, manager?: EntityManager) {
         super(target, manager);
     }

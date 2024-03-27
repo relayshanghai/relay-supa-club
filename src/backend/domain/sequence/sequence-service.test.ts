@@ -1,7 +1,9 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import awaitToError from 'src/utils/await-to-error';
-import SequenceRepository from 'src/backend/database/sequence/sequence-repository';
+import SequenceRepository, {
+    type SequenceEntityWithInfluencerCount,
+} from 'src/backend/database/sequence/sequence-repository';
 import type { SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
@@ -38,6 +40,66 @@ describe('src/backend/domain/sequence/sequence-service.ts', () => {
         });
     });
     describe('SequenceService', () => {
+        describe('get', () => {
+            afterEach(() => {
+                vi.resetAllMocks();
+            });
+            it('should get sequences when request is valid', async () => {
+                const mockSequenceData = {
+                    name: 'new sequence',
+                    productId: 'product_1',
+                    sequenceTemplates: [],
+                    variables: [],
+                    autoStart: false,
+                    totalInfluencers: 0,
+                    company: {
+                        id: 'company_1',
+                    },
+                    product: {
+                        id: 'product_1',
+                    },
+                    manager: {
+                        id: 'user_1',
+                    },
+                    managerFirstName: 'John',
+                    id: 'sequence_id_1',
+                    createdAt: '2024-02-29T08:58:59.251Z',
+                    updatedAt: '2024-02-29T08:58:59.251Z',
+                    deleted: false,
+                };
+                const getSequencesMock = vi.spyOn(SequenceRepository.getRepository(), 'getSequences');
+                getSequencesMock.mockResolvedValue({
+                    sequences: [mockSequenceData as unknown as SequenceEntityWithInfluencerCount],
+                    totalCount: 1,
+                });
+
+                const result = await SequenceService.getService().get({
+                    page: 1,
+                    size: 10,
+                });
+                expect(result).toEqual({
+                    page: 1,
+                    size: 10,
+                    totalItems: 1,
+                    items: [
+                        {
+                            id: 'sequence_id_1',
+                            name: 'new sequence',
+                            product: {
+                                id: 'product_1',
+                            },
+                            autoStart: false,
+                            totalInfluencers: 0,
+                        },
+                    ],
+                });
+                expect(SequenceRepository.getRepository().getSequences).toBeCalledWith({
+                    page: 1,
+                    size: 10,
+                    companyId: 'company_1',
+                });
+            });
+        });
         describe('create', () => {
             afterEach(() => {
                 vi.resetAllMocks();
