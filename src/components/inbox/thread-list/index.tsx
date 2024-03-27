@@ -5,7 +5,7 @@ import { type FilterRequest, ThreadListFilter } from './filter/thread-list-filte
 import { ThreadStatusRequest } from 'pages/api/v2/threads/request';
 import { useThread } from 'src/hooks/v2/use-thread';
 import ThreadListContainer from './thread-list-container';
-
+import { debounce } from 'lodash';
 export default function ThreadList() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [filter, setFilters] = useState<FilterRequest>({
@@ -15,17 +15,24 @@ export default function ThreadList() {
     });
     const [page, setPage] = useState<number>(1);
     const { threads, getAllThread, loading, isNextAvailable, messageCount } = useThread();
-    const triggerGetThread = useCallback(() => {
-        if (loading) return;
-        getAllThread({
-            searchTerm,
-            ...filter,
-            page: page,
-            size: 30,
-        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const triggerGetThread = useCallback(
+        debounce((searchTerm, filter, page) => {
+            if (loading) return;
+            getAllThread({
+                searchTerm,
+                ...filter,
+                page: page,
+                size: 30,
+            });
+        }, 1),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm, filter, page]);
-    useEffect(triggerGetThread, [searchTerm, filter, page, triggerGetThread]);
+        [],
+    );
+
+    useEffect(() => {
+        triggerGetThread(searchTerm, filter, page);
+    }, [searchTerm, filter, page, triggerGetThread]);
 
     const onThreadContainerScroll: UIEventHandler<HTMLDivElement> = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
