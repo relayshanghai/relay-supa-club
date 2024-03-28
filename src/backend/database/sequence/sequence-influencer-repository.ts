@@ -35,16 +35,17 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
     }
 
     async getSequenceInfluencersBySequenceId(request: GetInfluencersRequest & { sequenceId: string }) {
-        const { sequenceId, page, limit } = request;
-        return this.find({
-            where: {
-                sequence: { id: sequenceId },
+        const { sequenceId, page, size } = request;
+        return this.getPaginated(
+            { page, size },
+            {
+                where: {
+                    sequence: { id: sequenceId },
+                },
+                order: {
+                    updatedAt: 'DESC',
+                },
             },
-            order: {
-                updatedAt: 'DESC',
-            },
-            skip: (page - 1) * limit,
-            take: limit,
-        });
+        );
     }
 }
