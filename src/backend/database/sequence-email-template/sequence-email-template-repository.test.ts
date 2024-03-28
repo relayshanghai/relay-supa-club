@@ -5,7 +5,7 @@ import { type OutreachEmailTemplateEntity, Step } from './sequence-email-templat
 import awaitToError from 'src/utils/await-to-error';
 import { PreconditionError } from 'src/utils/error/http-error';
 import { In } from 'typeorm';
-import { type Variable } from 'pages/api/outreach/sequences/request';
+import { type Variable } from 'pages/api/v2/outreach/sequences/request';
 
 describe('src/backend/database/sequence-email-template/sequence-email-template-repository.ts', () => {
     const getContextMock = vi.fn();
