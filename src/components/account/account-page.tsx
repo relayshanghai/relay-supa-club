@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState('subscription-details');
+    const [activeTab, setActiveTab] = useState(['subscription-details']);
 
     useEffect(() => {
         const layoutWrapper = document.getElementById('layout-wrapper');
@@ -29,20 +29,45 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
 
             const isInViewport = (element: any) => {
                 const rect = element.getBoundingClientRect();
-                return rect.top >= 0 && rect.bottom <= window.innerHeight;
+                return (
+                    rect.top >= layoutWrapper.getBoundingClientRect().top &&
+                    rect.bottom <= layoutWrapper.getBoundingClientRect().bottom
+                );
             };
 
+            let activeTabs: string[] = [];
+
             if (isInViewport(subscriptionDetails)) {
-                setActiveTab('subscription-details');
-            } else if (isInViewport(billingDetails)) {
-                setActiveTab('billing-details');
-            } else if (isInViewport(personalDetails)) {
-                setActiveTab('personal-details');
-            } else if (isInViewport(companyDetails)) {
-                setActiveTab('company-details');
-            } else if (isInViewport(teamDetails)) {
-                setActiveTab('team-details');
+                activeTabs.push('subscription-details');
+            } else {
+                activeTabs = activeTabs.filter((tab) => tab !== 'subscription-details');
             }
+
+            if (isInViewport(billingDetails)) {
+                activeTabs.push('billing-details');
+            } else {
+                activeTabs = activeTabs.filter((tab) => tab !== 'billing-details');
+            }
+
+            if (isInViewport(personalDetails)) {
+                activeTabs.push('personal-details');
+            } else {
+                activeTabs = activeTabs.filter((tab) => tab !== 'personal-details');
+            }
+
+            if (isInViewport(companyDetails)) {
+                activeTabs.push('company-details');
+            } else {
+                activeTabs = activeTabs.filter((tab) => tab !== 'company-details');
+            }
+
+            if (isInViewport(teamDetails)) {
+                activeTabs.push('team-details');
+            } else {
+                activeTabs = activeTabs.filter((tab) => tab !== 'team-details');
+            }
+
+            setActiveTab(activeTabs);
         };
 
         layoutWrapper.addEventListener('scroll', handleScroll);
@@ -54,7 +79,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             <a
                 href="#subscription-details"
                 className={`flex gap-2 ${
-                    activeTab === 'subscription-details' && 'bg-primary-50 text-primary-700'
+                    activeTab.includes('subscription-details') && 'bg-primary-50 text-primary-700'
                 } rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <Rocket className="h-5 w-5 flex-shrink-0" />
@@ -63,7 +88,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             <a
                 href="#billing-details"
                 className={`${
-                    activeTab === 'billing-details' && 'bg-primary-50 text-primary-700'
+                    activeTab.includes('billing-details') && 'bg-primary-50 text-primary-700'
                 } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <PaymentOutline className="h-5 w-5 flex-shrink-0" />
@@ -73,7 +98,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
                 <a
                     href="#personal-details"
                     className={`${
-                        activeTab === 'personal-details' && 'bg-primary-50 text-primary-700'
+                        activeTab.includes('personal-details') && 'bg-primary-50 text-primary-700'
                     } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
                 >
                     <ProfileOutline className="h-5 w-5 flex-shrink-0" />
@@ -83,7 +108,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             <a
                 href="#company-details"
                 className={`${
-                    activeTab === 'company-details' && 'bg-primary-50 text-primary-700'
+                    activeTab.includes('company-details') && 'bg-primary-50 text-primary-700'
                 } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <Building className="h-5 w-5 flex-shrink-0" />
@@ -92,7 +117,7 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
             <a
                 href="#team-details"
                 className={`${
-                    activeTab === 'team-details' && 'bg-primary-50 text-primary-700'
+                    activeTab.includes('team-details') && 'bg-primary-50 text-primary-700'
                 } flex gap-2 rounded-md py-3 pl-2 text-sm font-semibold text-gray-400 transition-all hover:bg-primary-50 hover:text-primary-700`}
             >
                 <ProfileTeam className="h-5 w-5 flex-shrink-0" />
@@ -115,7 +140,7 @@ export const AccountPage = () => {
                 <div className="text-4xl font-bold">{t('account.account')}</div>
             </section>
             <AccountPageNavbar clientRoleCompanyId={clientRoleData.companyId} />
-            <div className="mt-12 flex w-full gap-8">
+            <div className="mb-[360px] mt-12 flex w-full gap-8">
                 <div aria-hidden className="display-none h-2 w-full max-w-xs flex-col opacity-0 2xl:max-w-sm" />
                 <section className="flex w-full flex-col gap-8">
                     <SubscriptionDetails />
