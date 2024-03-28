@@ -1,5 +1,6 @@
-import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import type { ProductEntity } from 'src/backend/database/product/product-entity';
 
 export class SequenceTemplate {
     @IsString()
@@ -35,4 +36,35 @@ export class SequenceRequest {
     @IsOptional()
     @IsBoolean()
     autoStart?: boolean;
+}
+
+export class GetSequenceRequest {
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    page = 1;
+
+    @Transform(({ value }) => Number(value))
+    @IsNumber()
+    size = 10;
+
+    @IsOptional()
+    @IsString()
+    name?: string = '';
+}
+
+export class GetSequenceResponse {
+    @IsNumber()
+    page!: number;
+    @IsNumber()
+    size!: number;
+    @IsNumber()
+    totalItems!: number;
+    @IsArray()
+    items!: {
+        id: string;
+        name: string;
+        product: ProductEntity;
+        autoStart: boolean;
+        totalInfluencers: number;
+    }[];
 }

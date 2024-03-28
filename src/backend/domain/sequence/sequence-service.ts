@@ -1,4 +1,10 @@
-import type { SequenceRequest, SequenceTemplate, Variable } from 'pages/api/v2/outreach/sequences/request';
+import type {
+    SequenceRequest,
+    GetSequenceRequest,
+    SequenceTemplate,
+    Variable,
+    GetSequenceResponse,
+} from 'pages/api/v2/outreach/sequences/request';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
@@ -20,6 +26,30 @@ export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
     static getService(): SequenceService {
         return SequenceService.service;
+    }
+
+    @CompanyIdRequired()
+    async get(request: GetSequenceRequest): Promise<GetSequenceResponse> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const { sequences, totalCount } = await SequenceRepository.getRepository().getSequences({
+            ...request,
+            companyId,
+        });
+        if (request.page * request.size > totalCount) {
+            throw new NotFoundError('No sequences found at this page number');
+        }
+        return {
+            page: request.page,
+            size: request.size,
+            totalItems: totalCount,
+            items: sequences.map((sequence) => ({
+                id: sequence.id,
+                name: sequence.name,
+                product: sequence.product as ProductEntity,
+                autoStart: sequence.autoStart,
+                totalInfluencers: sequence.totalInfluencers,
+            })),
+        };
     }
 
     @UseTransaction()
