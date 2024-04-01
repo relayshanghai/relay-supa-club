@@ -11,6 +11,8 @@ import dayjs from 'dayjs';
 import { logger } from 'src/backend/integration/logger';
 import awaitToError from 'src/utils/await-to-error';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
+import SubscriptionV2Service from '../subscription/subscription-v2-service';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
@@ -28,7 +30,8 @@ export class StripeWebhookService {
                 },
             }),
         );
-        logger.error('stripe webhook get company error', err);
+        if (err) logger.error('stripe webhook get company error', err);
+        if (company) RequestContext.setContext({ companyId: company.id });
 
         [err] = await awaitToError(
             BillingEventRepository.getRepository().save({
@@ -40,7 +43,7 @@ export class StripeWebhookService {
                 updatedAt: new Date(),
             }),
         );
-        logger.error('stripe webhook save to billing event error', err);
+        if (err) logger.error('stripe webhook save to billing event error', err);
 
         [err] = await awaitToError(
             SubscriptionRepository.getRepository().update(
@@ -52,10 +55,10 @@ export class StripeWebhookService {
                 },
             ),
         );
-        logger.error('stripe webhook update subscription error', err);
+        if (err) logger.error('stripe webhook update subscription error', err);
 
         [err] = await awaitToError(this.handlingWebhookTypes(request));
-        logger.error('stripe webhook error', err);
+        if (err) logger.error('stripe webhook error', err);
 
         return { message: 'Webhook received' };
     }
@@ -64,7 +67,7 @@ export class StripeWebhookService {
         switch (request.type) {
             case StripeWebhookType.CHARGE_SUCCEEDED:
             case StripeWebhookType.INVOICE_PAID:
-                return this.chargeSucceededHandler(request.data);
+                return this.chargeSucceededHandler(request.data as StripeWebhookRequest<Stripe.Invoice>['data']);
             case StripeWebhookType.CHARGE_FAILED:
             case StripeWebhookType.INVOICE_PAYMENT_FAILED:
                 return this.chargeFailedHandler(
@@ -86,7 +89,7 @@ export class StripeWebhookService {
         }
     }
 
-    private async chargeSucceededHandler(data: StripeWebhookRequest['data']) {
+    private async chargeSucceededHandler(data: StripeWebhookRequest<Stripe.Invoice>['data']) {
         const subscription = await SubscriptionRepository.getRepository().findOne({
             where: {
                 company: {
@@ -94,18 +97,29 @@ export class StripeWebhookService {
                 },
             },
         });
-        if (!subscription) {
-            throw new Error('Subscription not found');
+        if (subscription) {
+            const stripeSubscription = await StripeService.getService().retrieveSubscription(
+                subscription.providerSubscriptionId,
+            );
+            if (!stripeSubscription) {
+                throw new Error('Stripe subscription not found');
+            }
+            subscription.pausedAt = new Date(stripeSubscription.current_period_end * 1000);
+            subscription.cancelledAt = null;
+            await SubscriptionRepository.getRepository().save(subscription);
+            return;
         }
-        const stripeSubscription = await StripeService.getService().retrieveSubscription(
-            subscription.providerSubscriptionId,
-        );
-        if (!stripeSubscription) {
-            throw new Error('Stripe subscription not found');
+        const { companyId } = RequestContext.getContext();
+        if (!companyId) {
+            throw new Error('Company not found');
         }
-        subscription.pausedAt = new Date(stripeSubscription.current_period_end * 1000);
-        subscription.cancelledAt = null;
-        await SubscriptionRepository.getRepository().save(subscription);
+        await SubscriptionV2Service.getService().storeSubscription({
+            companyId,
+            cusId: data?.object.customer as string,
+            request: {
+                subscriptionId: data?.object.subscription as string,
+            },
+        });
     }
 
     private async chargeFailedHandler(
