@@ -11,6 +11,13 @@ import {
     Step,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuTrigger,
+} from 'shadcn/components/ui/dropdown-menu';
 
 type SequenceAccordionProps = {
     title: string;
@@ -21,6 +28,7 @@ type SequenceAccordionProps = {
 type SequenceStepItemProps = {
     title: string;
     description: string;
+    onDelete: () => void;
 };
 
 type SequenceStepDurationProps = {
@@ -61,7 +69,13 @@ const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, step }) =
                         <div
                             className="inline-flex w-full space-x-2 hover:cursor-pointer"
                             onClick={() => {
-                                if (stagedSequenceEmailTemplates.find((s) => s.step === step)) {
+                                stagedSequenceEmailTemplates.forEach((old, i) => {
+                                    if (!old) {
+                                        stagedSequenceEmailTemplates[i] = { ...d, step: step };
+                                    }
+                                });
+                                const foundSequenceStep = stagedSequenceEmailTemplates.find((s) => s.step === step);
+                                if (foundSequenceStep) {
                                     const s = stagedSequenceEmailTemplates;
                                     const index = s.findIndex((e) => e.step === step);
                                     s[index] = { ...d, step: step };
@@ -103,11 +117,30 @@ const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, step }) =
     );
 };
 
-const SequenceStepItem: FC<SequenceStepItemProps> = ({ title, description }) => {
+const SequenceStepItem: FC<SequenceStepItemProps> = ({ title, description, onDelete }) => {
+    const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
     return (
         <div className="inline-flex h-[88px] w-[440px] items-start justify-start gap-1 rounded-xl border-2 border-gray-200 bg-white py-4 pl-4 pr-3">
             <div className="relative flex h-[52px] shrink grow basis-0 items-start justify-start gap-4">
-                <DotsHorizontal className="absolute right-1 top-1 h-4 w-4 rotate-90 stroke-gray-300" />
+                <div className="absolute right-1 top-1 ">
+                    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                        <DropdownMenuTrigger>
+                            <DotsHorizontal className="h-4 w-4 rotate-90 stroke-gray-300" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuContent className="text-sm" align="end">
+                                <DropdownMenuItem
+                                    onSelect={() => {
+                                        onDelete();
+                                    }}
+                                    className="flex text-sm"
+                                >
+                                    Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenu>
+                </div>
                 <div className="inline-flex flex-col items-center justify-center gap-2.5 rounded-[28px] border-4 border-violet-50 bg-violet-100 p-2 mix-blend-multiply">
                     <BoostbotSelected className="h-4 w-4" strokeWidth={2} />
                 </div>
@@ -165,13 +198,20 @@ const CampaignModalStepOne = () => {
     } = useSequenceEmailTemplates({
         step: Step.SECOND_FOLLOW_UP,
     });
-    const { stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
+    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
 
     useEffect(() => {
         refreshOutreachEmailTemplates();
         refreshFirstFollowUpEmailTemplates();
         refreshSecondFollowUpEmailTemplates();
     }, []);
+
+    const onDelete = (id: string) => {
+        const index = stagedSequenceEmailTemplates.findIndex((d) => d.id === id);
+        const s = stagedSequenceEmailTemplates;
+        s[index] = null as any;
+        setStagedSequenceEmailTemplate(s);
+    };
 
     return (
         <>
@@ -202,14 +242,23 @@ const CampaignModalStepOne = () => {
                         </Accordion>
                     </div>
                     <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
-                        {stagedSequenceEmailTemplates.map((d, i) => (
-                            <div className="flex w-fit flex-col items-center" key={d.id}>
-                                <SequenceStepItem title={d.name} description={d.description as string} />
-                                {i !== stagedSequenceEmailTemplates.length - 1 && (
-                                    <SequenceStepDuration duration={24} />
-                                )}
-                            </div>
-                        ))}
+                        {stagedSequenceEmailTemplates.map((d, i) => {
+                            if (!d) {
+                                return <></>;
+                            }
+                            return (
+                                <div className="flex w-fit flex-col items-center" key={d.id}>
+                                    <SequenceStepItem
+                                        title={d.name}
+                                        description={d.description as string}
+                                        onDelete={() => onDelete(d.id)}
+                                    />
+                                    {i !== stagedSequenceEmailTemplates.length - 1 && (
+                                        <SequenceStepDuration duration={24} />
+                                    )}
+                                </div>
+                            );
+                        })}
                         {stagedSequenceEmailTemplates.length === 3 && (
                             <>
                                 <SequenceStepDuration duration={24} />{' '}

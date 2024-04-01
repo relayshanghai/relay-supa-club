@@ -147,12 +147,7 @@ export const CreateCampaignModal = ({
     setShowCreateCampaignModal: (showCreateCampaignModal: boolean) => void;
 }) => {
     return (
-        <Modal
-            visible={showCreateCampaignModal}
-            onClose={() => setShowCreateCampaignModal(false)}
-            padding={0}
-            maxWidth="!w-[960px]"
-        >
+        <Modal visible={showCreateCampaignModal} onClose={() => null} padding={0} maxWidth="!w-[960px]">
             <div className="rounded-lg">
                 <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start shadow">
                     <div
