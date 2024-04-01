@@ -1,4 +1,10 @@
-import type { SequenceRequest, SequenceTemplate, Variable } from 'pages/api/outreach/sequences/request';
+import type {
+    SequenceRequest,
+    GetSequenceRequest,
+    SequenceTemplate,
+    Variable,
+    GetSequenceResponse,
+} from 'pages/api/v2/outreach/sequences/request';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
@@ -13,11 +19,37 @@ import TemplateVariableRepository from 'src/backend/database/template-variable/t
 import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
+import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
+import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
     static getService(): SequenceService {
         return SequenceService.service;
+    }
+
+    @CompanyIdRequired()
+    async get(request: GetSequenceRequest): Promise<GetSequenceResponse> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const { sequences, totalCount } = await SequenceRepository.getRepository().getSequences({
+            ...request,
+            companyId,
+        });
+        if (request.page * request.size > totalCount) {
+            throw new NotFoundError('No sequences found at this page number');
+        }
+        return {
+            page: request.page,
+            size: request.size,
+            totalItems: totalCount,
+            items: sequences.map((sequence) => ({
+                id: sequence.id,
+                name: sequence.name,
+                product: sequence.product as ProductEntity,
+                autoStart: sequence.autoStart,
+                totalInfluencers: sequence.totalInfluencers,
+            })),
+        };
     }
 
     @UseTransaction()
@@ -57,6 +89,23 @@ export default class SequenceService {
             templateVariables as Variable[],
         );
         return sequence;
+    }
+
+    @CompanyIdRequired()
+    async getSequenceInfluencers(request: GetInfluencersRequest, sequenceId: string) {
+        const sequence = await SequenceRepository.getRepository().findOneOrFail({ where: { id: sequenceId } });
+        if (!sequence) {
+            throw new NotFoundError('Invalid sequenceID');
+        }
+        const sequenceInfluencers =
+            await SequenceInfluencerRepository.getRepository().getSequenceInfluencersBySequenceId({
+                ...request,
+                sequenceId,
+            });
+        if (!sequenceInfluencers) {
+            throw new NotFoundError('No influencers found at given page');
+        }
+        return sequenceInfluencers;
     }
 
     async moveManager(originalProfile: ProfileEntity, newProfile: ProfileEntity) {

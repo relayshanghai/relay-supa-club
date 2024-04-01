@@ -21,8 +21,10 @@ import {
 } from '../icons';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
+import dayjs from 'dayjs';
 import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
+import toast from 'react-hot-toast';
 
 const Tablet = ({
     children,
@@ -220,7 +222,7 @@ const PaymentTablets = ({
 };
 
 export const SubscriptionDetails = () => {
-    const { subscription, product } = useSubscription();
+    const { subscription, product, resumeSubscription, refreshSubscription } = useSubscription();
 
     const { company, refreshCompany } = useCompany();
     const { t } = useTranslation();
@@ -248,6 +250,21 @@ export const SubscriptionDetails = () => {
         refreshCompany();
         refreshUsages();
     }, [company, refreshCompany, refreshUsages]);
+
+    const isAboutToCanceled = () =>
+        dayjs().isBefore(subscription?.cancelledAt) && subscription?.subscriptionData.cancel_at_period_end;
+
+    const onResumeSubscription = () => {
+        resumeSubscription()
+            .then(() => {
+                trackEvent('Resume Subscription');
+                toast.success(t('account.subscription.resumeSubscriptionSuccess'));
+                refreshSubscription();
+            })
+            .catch(() => {
+                toast.error(t('account.subscription.resumeSubscriptionError'));
+            });
+    };
 
     return (
         <section id="subscription-details" className="w-full">
@@ -327,18 +344,28 @@ export const SubscriptionDetails = () => {
                             </>
                         )}
                     </div>
-                    <Link className="mt-11" href="/upgrade">
+                    {isAboutToCanceled() ? (
                         <Button
-                            className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300"
-                            onClick={() =>
-                                // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page
-                                trackEvent('Start Upgrade Subscription')
-                            }
+                            className="mt-11 bg-accent-500 font-semibold text-white hover:bg-accent-300"
+                            onClick={() => onResumeSubscription()}
                         >
                             <Rocket className="mr-2 h-4 w-4 text-white" />
-                            {t('account.subscription.upgradeSubscription')}
+                            {t('account.subscription.resumeSubscription')}
                         </Button>
-                    </Link>
+                    ) : (
+                        <Link className="mt-11" href="/upgrade">
+                            <Button
+                                className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300"
+                                onClick={() =>
+                                    // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page
+                                    trackEvent('Start Upgrade Subscription')
+                                }
+                            >
+                                <Rocket className="mr-2 h-4 w-4 text-white" />
+                                {t('account.subscription.upgradeSubscription')}
+                            </Button>
+                        </Link>
+                    )}
                 </section>
             </section>
         </section>

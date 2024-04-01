@@ -69,9 +69,18 @@ export const useSubscription = () => {
         if (err) throw err;
         return res.data;
     };
+    const changeSubscription = async (payload: CreateSubscriptionPayload) => {
+        const [err, res] = await awaitToError(
+            apiClient.patch<CreateSubscriptionResponse>('/v2/subscriptions', payload),
+        );
+        if (err) throw err;
+        return res.data;
+    };
     const { data: subscription, mutate: refreshSubscription } = useSWR('/v2/subscriptions', async () => {
         const [err, res] = await awaitToError(
-            apiClient.get<SubscriptionEntity<Stripe.Subscription>>('/v2/subscriptions').then((res) => res.data),
+            apiClient
+                .get<SubscriptionEntity<Stripe.Subscription & { plan: Stripe.Plan }>>('/v2/subscriptions')
+                .then((res) => res.data),
         );
 
         if (err) return;
@@ -80,6 +89,11 @@ export const useSubscription = () => {
     });
     const cancelSubscription = async () => {
         const [err, res] = await awaitToError(apiClient.delete('/v2/subscriptions'));
+        if (err) throw err;
+        return res.data;
+    };
+    const resumeSubscription = async () => {
+        const [err, res] = await awaitToError(apiClient.put('/v2/subscriptions/resume'));
         if (err) throw err;
         return res.data;
     };
@@ -199,6 +213,8 @@ export const useSubscription = () => {
         product,
         refreshProduct,
         cancelSubscription,
+        changeSubscription,
+        resumeSubscription,
     };
 };
 

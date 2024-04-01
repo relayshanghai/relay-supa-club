@@ -3,7 +3,7 @@ import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
 import { OutreachEmailTemplateEntity } from './sequence-email-template-entity';
 import { In, type EntityManager, type EntityTarget } from 'typeorm';
-import type { SequenceTemplate, Variable } from 'pages/api/outreach/sequences/request';
+import type { SequenceTemplate, Variable } from 'pages/api/v2/outreach/sequences/request';
 import type { OutreachEmailTemplateVariableEntity } from './sequence-email-template-variable-entity';
 import { PreconditionError } from 'src/utils/error/http-error';
 
