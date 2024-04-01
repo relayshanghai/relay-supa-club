@@ -75,6 +75,8 @@ describe('StripeWebhookService', () => {
                 data: request.data?.object,
                 provider: 'stripe',
                 type: request.type,
+                createdAt: expect.any(Date),
+                updatedAt: expect.any(Date),
             });
             expect(SubscriptionRepository.getRepository().update).toHaveBeenCalledWith(
                 {
