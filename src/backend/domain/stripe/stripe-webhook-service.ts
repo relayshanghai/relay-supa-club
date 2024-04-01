@@ -36,6 +36,8 @@ export class StripeWebhookService {
                 data: request.data?.object,
                 provider: 'stripe',
                 type: request.type,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             }),
         );
         logger.error('stripe webhook save to billing event error', err);
