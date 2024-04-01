@@ -205,7 +205,11 @@ export default class SubscriptionV2Service {
             },
         });
         if (!subscription) {
-            const lastSubscription = await StripeService.getService().getLastSubscription(cusId);
+            let lastSubscription = await StripeService.getService().getLastSubscription(cusId);
+
+            if (!lastSubscription) {
+                lastSubscription = await StripeService.getService().getCanceledSubscription(cusId);
+            }
 
             if (!lastSubscription || lastSubscription.items.data.length === 0) {
                 throw new NotFoundError('No subscription found');
@@ -230,6 +234,27 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
+                };
+                return trialSubscription;
+            } else if (lastSubscription.status === 'canceled') {
+                const trialSubscription = {
+                    company: {
+                        id: companyId,
+                    },
+                    provider: 'stripe',
+                    providerSubscriptionId: lastSubscription.id,
+                    paymentMethod: null,
+                    quantity: lastSubscription.items.data[0].quantity,
+                    price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                    total:
+                        (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                        (lastSubscription?.items?.data?.[0].quantity ?? 0),
+                    subscriptionData: lastSubscription,
+                    discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
+                    coupon: lastSubscription.discount?.coupon?.id,
+                    activeAt: null,
+                    pausedAt: null,
+                    cancelledAt: lastSubscription.canceled_at ? new Date(lastSubscription.canceled_at * 1000) : null,
                 };
                 return trialSubscription;
             }
