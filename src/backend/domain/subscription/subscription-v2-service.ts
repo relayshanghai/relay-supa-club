@@ -289,15 +289,37 @@ export default class SubscriptionV2Service {
     async postConfirmation(request: PostConfirmationRequest) {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
-        if (request.redirectStatus != 'succeeded') {
+        if (request.redirectStatus != 'succeeded' && request.redirectStatus != 'pending') {
             await StripeService.getService().cancelSubscription(cusId);
             throw new UnprocessableEntityError('entity is unprocessable');
+        } else if (request.redirectStatus === 'pending') {
+            const subs = await StripeService.getService().getSubscription(cusId);
+            const subscription = subs.data.length ? subs.data[0] : undefined;
+            if (subscription && subscription.status !== 'active') {
+                return;
+            }
         }
+
         const paymentIntent = await StripeService.getService().getPaymentIntent(request.paymentIntentId);
         await StripeService.getService().updateSubscription(request.subscriptionId, {
             default_payment_method: paymentIntent.payment_method as string,
         });
+        await this.storeSubscription({
+            companyId,
+            cusId,
+            request,
+        });
+    }
 
+    async storeSubscription({
+        companyId,
+        cusId,
+        request,
+    }: {
+        companyId: string;
+        cusId: string;
+        request: Pick<PostConfirmationRequest, 'subscriptionId'>;
+    }) {
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
 
