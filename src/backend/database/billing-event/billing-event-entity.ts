@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+    UpdateDateColumn,
+    CreateDateColumn,
+} from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import type Stripe from 'stripe';
 
@@ -34,4 +42,10 @@ export class BillingEventEntity<T = StripeObjectData> {
         },
     })
     data!: T;
+
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+    createdAt!: Date;
+
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
+    updatedAt!: Date;
 }
