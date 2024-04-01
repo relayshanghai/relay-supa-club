@@ -216,6 +216,10 @@ export default class StripeService {
         return this.getSubscriptionByStatus(customerId, 'incomplete');
     }
 
+    async getCanceledSubscription(customerId: string) {
+        return this.getSubscriptionByStatus(customerId, 'canceled');
+    }
+
     async cancelSubscription(customerId: string) {
         const [err, existingSubscription] = await awaitToError(this.getSubscriptionByStatus(customerId));
         if (err || !existingSubscription) {
