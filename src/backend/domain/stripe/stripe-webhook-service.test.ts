@@ -10,6 +10,7 @@ import { type SubscriptionEntity } from 'src/backend/database/subcription/subscr
 import { logger } from 'src/backend/integration/logger';
 import type winston from 'winston';
 import { NotFoundError } from 'src/utils/error/http-error';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 vi.mock('../company/company-repository');
 vi.mock('../billing/billing-event-repository');
@@ -24,6 +25,12 @@ describe('StripeWebhookService', () => {
 
     beforeEach(() => {
         stripeWebhookService = StripeWebhookService.getService();
+        const getContextMock = vi.fn();
+        RequestContext.getContext = getContextMock;
+        RequestContext.setContext = vi.fn().mockReturnValue(undefined);
+        getContextMock.mockReturnValue({
+            companyId: 'company_1',
+        });
     });
 
     afterEach(() => {
@@ -75,6 +82,8 @@ describe('StripeWebhookService', () => {
                 data: request.data?.object,
                 provider: 'stripe',
                 type: request.type,
+                createdAt: expect.any(Date),
+                updatedAt: expect.any(Date),
             });
             expect(SubscriptionRepository.getRepository().update).toHaveBeenCalledWith(
                 {
