@@ -95,7 +95,7 @@ jobs:
 
             - name: Link project
               run: |
-                  supabase link --project-ref=$SUPABASE_PROJECT_ID
+                  supabase link --project-ref=$SUPABASE_PROJECT_ID --debug
 
             - name: Check linked project
               run: ./supabase/db.sh get_proj
