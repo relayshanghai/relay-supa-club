@@ -80,7 +80,7 @@ export class StripeWebhookService {
                 );
             case StripeWebhookType.CUSTOMER_SUBSCRIPTION_UPDATED:
                 return this.customerSubscriptionUpdatedHandler(
-                    request.data as StripeWebhookRequest<Stripe.Subscription>['data'],
+                    request.data as StripeWebhookRequest<Stripe.Subscription & { plan: Stripe.Plan }>['data'],
                 );
             case StripeWebhookType.CUSTOMER_SUBSCRIPTION_TRIAL_WILL_END:
                 return this.customerSubscriptionTrialWillEndHandler(
@@ -166,7 +166,9 @@ export class StripeWebhookService {
         await SlackService.getService().sendSignupMessage({ company, profile });
     }
 
-    private async customerSubscriptionUpdatedHandler(data: StripeWebhookRequest<Stripe.Subscription>['data']) {
+    private async customerSubscriptionUpdatedHandler(
+        data: StripeWebhookRequest<Stripe.Subscription & { plan: Stripe.Plan }>['data'],
+    ) {
         const previousData = { items: data.previous_attributes?.items } as Stripe.Subscription;
         if (!previousData) {
             throw new Error('Previous subscription not found');
@@ -183,6 +185,17 @@ export class StripeWebhookService {
             throw new Error('Company not found');
         }
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        const currentPlanId = data?.object.plan.id;
+        const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
+        if (previousData && previousPlanId && currentPlanId !== previousPlanId) {
+            await SlackService.getService().sendChangePlanMessage({
+                company,
+                profile,
+                newSubscription: data.object,
+                oldSubscription: previousData,
+            });
+            return;
+        }
         if (data.object.cancel_at !== null && data.object.status === 'active') {
             await SlackService.getService().sendCancelSubscriptionMessage({
                 company,
@@ -195,13 +208,6 @@ export class StripeWebhookService {
                 company,
                 profile,
                 subscription: data.object,
-            });
-        } else {
-            await SlackService.getService().sendChangePlanMessage({
-                company,
-                profile,
-                newSubscription: data.object,
-                oldSubscription: previousData,
             });
         }
     }
