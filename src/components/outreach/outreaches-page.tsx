@@ -14,9 +14,6 @@ import { Layout } from '../layout';
 import { CreateCampaignModal } from './create-campaign-modal';
 import { SequenceStats } from './sequence-stats';
 import SequencesTable from './outreaches-table';
-import { FaqModal } from '../library';
-import faq from 'i18n/en/faq';
-import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
@@ -31,20 +28,18 @@ export const OutreachesPage = () => {
     const { deleteSequence } = useSequence();
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { sequenceInfluencers } = useSequenceInfluencers(sequences?.map((sequence) => sequence.id) || []);
-
+    const { profile } = useUser();
     const { allSequenceEmails } = useSequenceEmails();
+    const { track } = useRudderstackTrack();
+
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { profile } = useUser();
-
-    const { push } = useRouter();
+    const [, setShowNeedHelp] = useState<boolean>(false);
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateCampaignModal(true);
     };
-
-    const { track } = useRudderstackTrack();
 
     const handleDeleteSequence = async () => {
         try {
@@ -58,8 +53,6 @@ export const OutreachesPage = () => {
         }
         refreshSequences(sequences?.filter((sequence) => !selection.includes(sequence.id)));
     };
-
-    const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
 
     const replyRate = useMemo(
         () => calculateReplyRate(sequenceInfluencers, allSequenceEmails),
@@ -80,18 +73,6 @@ export const OutreachesPage = () => {
                 setShow={setShowDeleteModal}
                 handleDelete={handleDeleteSequence}
             />
-            <FaqModal
-                title={t('faq.sequencesTitle')}
-                visible={showNeedHelp}
-                onClose={() => setShowNeedHelp(false)}
-                content={faq.sequences.map((_, i) => ({
-                    title: t(`faq.sequences.${i}.title`),
-                    detail: t(`faq.sequences.${i}.detail`),
-                }))}
-                getMoreInfoButtonText={t('faq.sequencesGetMoreInfo') || ''}
-                getMoreInfoButtonAction={() => push('/guide')}
-                source="Sequences"
-            />
             <CreateCampaignModal
                 title={t('outreaches.sequenceModal') as string}
                 showCreateCampaignModal={showCreateCampaignModal}
@@ -100,7 +81,10 @@ export const OutreachesPage = () => {
             <div className=" mx-6 flex flex-col space-y-4 py-6">
                 <div className="flex w-full justify-between">
                     <div className="mb-6 md:w-1/2">
-                        <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">
+                        <h1
+                            className="mr-4 self-center text-3xl font-semibold text-gray-800"
+                            data-testid="outreach-text"
+                        >
                             {t('outreaches.outreaches')}
                         </h1>
                     </div>
@@ -112,6 +96,7 @@ export const OutreachesPage = () => {
                                 track(ClickNeedHelp);
                             }}
                             className="flex items-center"
+                            data-testid="template-library-button"
                         >
                             {t('outreaches.templateLibrary')}
                         </Button>
@@ -154,6 +139,7 @@ export const OutreachesPage = () => {
                         onClick={handleOpenCreateSequenceModal}
                         variant="ghost"
                         className="flex items-center !bg-blue-50"
+                        data-testid="create-campaign-button"
                     >
                         <p className="self-center text-blue-600">{t('outreaches.createNewCampaign')}</p>
                     </Button>

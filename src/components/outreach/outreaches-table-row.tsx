@@ -13,7 +13,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
-export const SequencesTableRow = ({
+export const OutreachesTableRow = ({
     sequence,
     onCheckboxChange,
     checked,

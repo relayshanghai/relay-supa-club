@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import type { Sequence } from 'src/utils/api/db';
 import { sequencesIndexColumns } from './constants';
-import { SequencesTableRow } from './outreaches-table-row';
+import { OutreachesTableRow } from './outreaches-table-row';
 import { useCallback } from 'react';
 
-const SequencesTable = ({
+const OutreachesTable = ({
     sequences,
     selection,
     setSelection,
@@ -58,7 +58,7 @@ const SequencesTable = ({
                 </thead>
                 <tbody>
                     {sequences?.map((sequence) => (
-                        <SequencesTableRow
+                        <OutreachesTableRow
                             key={sequence.id}
                             sequence={sequence}
                             checked={selection.includes(sequence.id)}
@@ -71,4 +71,4 @@ const SequencesTable = ({
     );
 };
 
-export default SequencesTable;
+export default OutreachesTable;
