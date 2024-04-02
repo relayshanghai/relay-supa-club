@@ -168,6 +168,9 @@ export class StripeWebhookService {
 
     private async customerSubscriptionUpdatedHandler(data: StripeWebhookRequest<Stripe.Subscription>['data']) {
         const previousData = { items: data.previous_attributes?.items } as Stripe.Subscription;
+        if (!previousData) {
+            throw new Error('Previous subscription not found');
+        }
         const company = await CompanyRepository.getRepository().findOne({
             where: {
                 cusId: data?.object.customer as string,
