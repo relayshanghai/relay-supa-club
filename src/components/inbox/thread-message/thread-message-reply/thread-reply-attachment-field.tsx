@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useRef } from 'react';
 import { Input } from 'shadcn/components/ui/input';
 import type { AttachmentFile } from 'src/utils/outreach/types';
-
+import * as randomstring from 'randomstring';
 export type AttachmentFieldRenderParams = {
     /**
      * Opens a field.
@@ -28,12 +28,11 @@ export default function ThreadReplyAttachmentField({ onChange, render, ...props 
                 // prevent conflict error add timestamp to filename before extension
                 const filename = file.name.split('.');
                 const extension = filename[filename.length - 1];
-                const name = filename.slice(0, filename.length - 1).join('.');
-                const generatedFilename = `${name}-${new Date().getTime()}.${extension}`;
+                const name = `${randomstring.generate()}-${new Date().getTime()}.${extension}`;
                 return {
                     content: file,
                     id: file.name,
-                    filename: generatedFilename,
+                    filename: name,
                 };
             });
 
