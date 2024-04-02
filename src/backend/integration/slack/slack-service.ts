@@ -138,7 +138,7 @@ export default class SlackService {
                     type: 'header',
                     text: {
                         type: 'plain_text',
-                        text: `TRIAL EXPIRING IN ${trialDayExpiring} DAYS`,
+                        text: `TRIAL EXPIRING IN ${trialDayExpiring} DAY${trialDayExpiring > 1 ? 'S' : ''}`,
                         emoji: true,
                     },
                 },
