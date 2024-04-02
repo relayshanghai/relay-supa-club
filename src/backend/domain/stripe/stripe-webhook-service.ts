@@ -151,39 +151,34 @@ export class StripeWebhookService {
     }
 
     private async customerSubscriptionCreatedHandler(data: StripeWebhookRequest<Stripe.Subscription>['data']) {
-        const subscription = await SubscriptionRepository.getRepository().findOne({
+        const company = await CompanyRepository.getRepository().findOne({
             where: {
-                company: {
-                    cusId: data?.object.customer as string,
-                },
+                cusId: data?.object.customer as string,
             },
             relations: {
-                company: {
-                    profiles: true,
-                },
+                profiles: true,
             },
         });
-        if (!subscription) {
-            throw new Error('Subscription not found');
+        if (!company) {
+            throw new Error('Company not found');
         }
-        const company = subscription.company;
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         await SlackService.getService().sendSignupMessage({ company, profile });
     }
 
     private async customerSubscriptionUpdatedHandler(data: StripeWebhookRequest<Stripe.Subscription>['data']) {
         const previousData = { items: data.previous_attributes?.items } as Stripe.Subscription;
-        const subscription = await SubscriptionRepository.getRepository().findOne({
+        const company = await CompanyRepository.getRepository().findOne({
             where: {
-                company: {
-                    cusId: data?.object.customer as string,
-                },
+                cusId: data?.object.customer as string,
+            },
+            relations: {
+                profiles: true,
             },
         });
-        if (!subscription) {
-            throw new Error('Subscription not found');
+        if (!company) {
+            throw new Error('Company not found');
         }
-        const company = subscription.company;
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         if (data.object.cancel_at !== null && data.object.status === 'active') {
             await SlackService.getService().sendCancelSubscriptionMessage({
@@ -209,17 +204,17 @@ export class StripeWebhookService {
     }
 
     private async customerSubscriptionTrialWillEndHandler(data: StripeWebhookRequest<Stripe.Subscription>['data']) {
-        const subscription = await SubscriptionRepository.getRepository().findOne({
+        const company = await CompanyRepository.getRepository().findOne({
             where: {
-                company: {
-                    cusId: data?.object.customer as string,
-                },
+                cusId: data?.object.customer as string,
+            },
+            relations: {
+                profiles: true,
             },
         });
-        if (!subscription) {
-            throw new Error('Subscription not found');
+        if (!company) {
+            throw new Error('Company not found');
         }
-        const company = subscription.company;
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const date = dayjs.unix(data.object.trial_end as number);
         const diffInDays = dayjs().diff(date, 'day');
