@@ -9,6 +9,7 @@ import {
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
 import { EmailTemplateDetailModal } from '../../email-template-detail-modal';
+import { useTranslation } from 'react-i18next';
 
 type SequenceAccordionProps = {
     title: string;
@@ -17,6 +18,7 @@ type SequenceAccordionProps = {
 };
 
 export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, step }) => {
+    const { t } = useTranslation();
     const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
     const { sequenceEmailTemplate, setSequenceEmailTemplate, getSequenceEmailTemplate } = useSequenceEmailTemplates({
         step,
@@ -82,7 +84,7 @@ export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, st
                 <AccordionContent className="hover:curson-pointer ml-5 w-[250px] py-3 pl-5 pr-3 font-['Poppins'] text-xs font-semibold leading-tight tracking-tight text-gray-700">
                     <div className="inline-flex space-x-2 text-gray-400">
                         <Plus className="h-4 w-4" strokeWidth={2} />
-                        <span>Create new template</span>
+                        <span>{t('outreaches.createNewTemplate')}</span>
                     </div>
                 </AccordionContent>
             </AccordionItem>

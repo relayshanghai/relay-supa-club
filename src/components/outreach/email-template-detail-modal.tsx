@@ -7,6 +7,8 @@ import {
     type OutreachEmailTemplateEntity,
     type Step,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import { useTranslation } from 'react-i18next';
+import { useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
 
 export const EmailTemplateDetailModal = ({
     showEmailTemplateDetailModal,
@@ -17,6 +19,26 @@ export const EmailTemplateDetailModal = ({
     setShowEmailTemplateDetailModal: (showEmailTemplateDetailModal: boolean) => void;
     data: OutreachEmailTemplateEntity & { step: Step };
 }) => {
+    const { t } = useTranslation();
+    const { setStagedSequenceEmailTemplate, stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
+
+    const addToSequence = () => {
+        stagedSequenceEmailTemplates.forEach((old, i) => {
+            if (!old) {
+                stagedSequenceEmailTemplates[i] = { ...data, step: data.step };
+            }
+        });
+        const foundSequenceStep = stagedSequenceEmailTemplates.find((s) => s.step === data.step);
+        if (foundSequenceStep) {
+            const s = stagedSequenceEmailTemplates;
+            const index = s.findIndex((e) => e.step === data.step);
+            s[index] = { ...data, step: data.step };
+            setStagedSequenceEmailTemplate(s);
+            return;
+        }
+        setStagedSequenceEmailTemplate([...stagedSequenceEmailTemplates, { ...data, step: data.step }]);
+    };
+
     return (
         <Modal
             visible={showEmailTemplateDetailModal}
@@ -84,17 +106,21 @@ export const EmailTemplateDetailModal = ({
                                 data-testid="modify-template-button"
                             >
                                 <PencilSquareIcon className="mr-1 h-4 w-4 stroke-violet-600" />{' '}
-                                <span>Modify Template</span>
+                                <span>{t('outreaches.modifyTemplate')}</span>
                             </Button>
                             <Button
                                 type="button"
                                 variant="primary"
                                 className="inline-flex items-center border-none !bg-pink-500 !p-2"
                                 data-testid="use-in-sequence-button"
+                                onClick={() => {
+                                    addToSequence();
+                                    setShowEmailTemplateDetailModal(false);
+                                }}
                             >
                                 {'{'}
                                 <CheckIcon className="h-4 w-4 stroke-white" />
-                                {'}'} <span className="ml-1">Use in sequence</span>
+                                {'}'} <span className="ml-1">{t('outreaches.useInSequence')}</span>
                             </Button>
                         </div>
                     </div>

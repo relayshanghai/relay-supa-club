@@ -10,8 +10,9 @@ import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from '
 import { SequenceAccordion } from './components/sequence-accordion';
 import { SequenceStepDuration } from './components/sequence-step-duration';
 import { SequenceStepItem } from './components/sequence-step-item';
+import { useTranslation } from 'react-i18next';
 
-const CampaignModalStepOne = () => {
+const CampaignModalStepOne = ({ setModalOpen }: { setModalOpen: (visible: boolean) => void }) => {
     const {
         sequenceEmailTemplates: outreachEmailTemplates,
         refreshSequenceEmailTemplates: refreshOutreachEmailTemplates,
@@ -31,6 +32,7 @@ const CampaignModalStepOne = () => {
         step: Step.SECOND_FOLLOW_UP,
     });
     const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
+    const { t } = useTranslation();
 
     useEffect(() => {
         refreshOutreachEmailTemplates();
@@ -52,22 +54,22 @@ const CampaignModalStepOne = () => {
                     <div className="inline-flex w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
                         <div className="inline-flex items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
                             <div className="font-['Poppins'] text-base font-semibold tracking-tight text-gray-700">
-                                Templates
+                                {t('outreaches.templates')}
                             </div>
                         </div>
                         <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
                             <SequenceAccordion
-                                title="Outreach"
+                                title={t('outreaches.steps.Outreach')}
                                 items={outreachEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                                 step={Step.OUTREACH}
                             />
                             <SequenceAccordion
-                                title="1st Follow-up"
+                                title={t('outreaches.steps.firstFollowUp')}
                                 items={firstFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                                 step={Step.FIRST_FOLLOW_UP}
                             />
                             <SequenceAccordion
-                                title="2nd Follow-up"
+                                title={t('outreaches.steps.secondFollowUp')}
                                 items={secondFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                                 step={Step.SECOND_FOLLOW_UP}
                             />
@@ -95,21 +97,26 @@ const CampaignModalStepOne = () => {
                             <>
                                 <SequenceStepDuration duration={24} />{' '}
                                 <span className="font-['Poppins'] text-xs font-semibold leading-tight tracking-tight text-gray-600">
-                                    Influencer will be marked as ‘Ignored’ and removed from campaign
+                                    {t('outreaches.influencerIgnored')}
                                 </span>
                             </>
                         )}
 
                         <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
-                            <Button type="button" variant="neutral" className="inline-flex !p-2 text-sm !text-gray-400">
-                                Back
+                            <Button
+                                type="button"
+                                variant="neutral"
+                                className="inline-flex !p-2 text-sm !text-gray-400"
+                                onClick={() => setModalOpen(false)}
+                            >
+                                {t('outreaches.back')}
                             </Button>
                             <Button
                                 type="button"
                                 variant="primary"
                                 className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             >
-                                <span className="ml-1">Save sequence templates</span>
+                                <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>
                             </Button>
                         </div>
                     </div>

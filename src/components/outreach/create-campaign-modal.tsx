@@ -23,7 +23,7 @@ export const CreateCampaignModal = ({
                     </div>
                     <ModalHeader step="1" />
                     {/* body start */}
-                    <CampaignModalStepOne />
+                    <CampaignModalStepOne setModalOpen={(v) => setShowCreateCampaignModal(v)} />
                     {/* body end */}
                 </div>
             </div>

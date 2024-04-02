@@ -1,5 +1,6 @@
 import { type FC } from 'react';
 import { CheckIcon } from '../icons';
+import { useTranslation } from 'react-i18next';
 
 type ModalHeaderProps = {
     step: '1' | '2' | '3';
@@ -32,6 +33,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({ step }) => {
             center: <CheckIcon className="flex h-4 w-4 stroke-white" />,
         },
     };
+    const { t } = useTranslation();
 
     const defineStep = (step: '1' | '2' | '3', currentStep: '1' | '2' | '3') => {
         if (step === currentStep) return stepStyles.active;
@@ -74,14 +76,14 @@ export const ModalHeader: FC<ModalHeaderProps> = ({ step }) => {
                                     }`}
                                     data-testid="step-1-active-indicator"
                                 >
-                                    Choose a starting point
+                                    {t('outreaches.chooseStartingPoint')}
                                 </div>
                                 <div
                                     className={`self-stretch text-center font-['Poppins'] text-xs font-normal leading-none ${
                                         defineStep('1', step).text
                                     }`}
                                 >
-                                    Starter or blank slate
+                                    {t('outreaches.starterOrBlank')}
                                 </div>
                             </div>
                         </div>
@@ -104,14 +106,14 @@ export const ModalHeader: FC<ModalHeaderProps> = ({ step }) => {
                                     }`}
                                     data-testid="step-2-active-indicator"
                                 >
-                                    Name your template
+                                    {t('outreaches.nameYourTemplate')}
                                 </div>
                                 <div
                                     className={`self-stretch text-center font-['Poppins'] text-xs font-normal leading-none ${
                                         defineStep('2', step).text
                                     }`}
                                 >
-                                    Name and brief description
+                                    {t('outreaches.nameAndBriefDescription')}
                                 </div>
                             </div>
                         </div>
@@ -134,14 +136,14 @@ export const ModalHeader: FC<ModalHeaderProps> = ({ step }) => {
                                     }`}
                                     data-testid="step-3-active-indicator"
                                 >
-                                    Set template variables
+                                    {t('outreaches.setTemplateVariables')}
                                 </div>
                                 <div
                                     className={`self-stretch text-center font-['Poppins'] text-xs font-normal leading-none ${
                                         defineStep('3', step).text
                                     }`}
                                 >
-                                    Can do now or later
+                                    {t('outreaches.canDoNowOrLater')}
                                 </div>
                             </div>
                         </div>
