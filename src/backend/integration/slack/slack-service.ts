@@ -16,7 +16,6 @@ export default class SlackService {
 
     private client = axios.create();
     private sendMessage(url: string, message: SlackMessage) {
-        return;
         return this.client.post(url, message);
     }
 
