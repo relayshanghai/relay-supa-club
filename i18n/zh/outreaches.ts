@@ -19,7 +19,7 @@ const outreaches = {
     subjectLine: '主题栏',
     modifyTemplate: '修改邮件模版',
     useInSequence: '在邮件进程管理中使用',
-    waitBussinessDays: '请等待{{- days}}个工作日',
+    waitBussinessDays: '<0>请等待</0><1>{{days}}</1><0>个工作日</0>',
     steps: {
         Outreach: '首封外联邮件',
         firstFollowUp: '第一次跟进',

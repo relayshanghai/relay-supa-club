@@ -19,7 +19,7 @@ const outreaches = {
     subjectLine: 'Subject Line',
     modifyTemplate: 'Modify Template',
     useInSequence: 'Use in sequence',
-    waitBussinessDays: 'Wait {{- days}} business days',
+    waitBussinessDays: '<0>Wait</0> <1>{{days}}</1> <0>business days</0>',
     steps: {
         Outreach: 'Outreach',
         firstFollowUp: '1st Follow-up',
