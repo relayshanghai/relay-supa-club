@@ -184,7 +184,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                             allCampaignCreators={allCampaignCreators}
                         />
                         <Head>
-                            <title>{report?.user_profile.fullname || BOOSTBOT_DOMAIN}</title>
+                            <title>{report?.user_profile?.fullname || BOOSTBOT_DOMAIN}</title>
                         </Head>
                         <TitleSection
                             user_profile={report.user_profile}
