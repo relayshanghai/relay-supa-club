@@ -1,4 +1,4 @@
-import { IsEmail, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 import { RequestContext } from 'src/utils/request-context/request-context';
 
 export class RegisterRequest {
@@ -23,6 +23,10 @@ export class RegisterRequest {
 
     @IsString()
     password!: string;
+
+    @IsString()
+    @IsOptional()
+    rewardfulReferral?: string;
 }
 
 export class SendOtpRequest {

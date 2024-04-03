@@ -65,12 +65,18 @@ export default class RegistrationService {
     async sendOtp(phoneNumber: string) {
         await TwilioService.getService().sendOtp(phoneNumber);
     }
-    async createStripeCustomerAndSubscription(companyName: string, companyId: string, email: string) {
+    async createStripeCustomerAndSubscription(
+        companyName: string,
+        companyId: string,
+        email: string,
+        referral?: string,
+    ) {
         const customer = await stripeClient.customers.create({
             name: companyName,
             email,
             metadata: {
                 company_id: companyId,
+                referral: referral || null,
             },
         });
 
@@ -105,6 +111,7 @@ export default class RegistrationService {
             request.companyName,
             companyId,
             request.email,
+            request.rewardfulReferral,
         );
         const { searches, profiles, trial_searches: trialSearches, trial_profiles: trialProfiles } = DISCOVERY_PLAN;
 
