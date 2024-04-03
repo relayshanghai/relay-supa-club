@@ -39,6 +39,7 @@ export default class TemplateService {
         });
         const created = await OutreachTemplateRepository.getRepository().create({
             company_id: companyId,
+            description: template.description,
             email_engine_template_id: emailEngineId,
             step: template.step,
             subject: template.subject,
