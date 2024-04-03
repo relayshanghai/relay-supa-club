@@ -29,5 +29,6 @@ const outreaches = {
     },
     back: '返回',
     remove: '移除',
+    saveAndContinue: 'Save and continue',
 };
 export default outreaches;

@@ -29,6 +29,7 @@ const outreaches = {
     },
     back: 'Back',
     remove: 'Remove',
+    saveAndContinue: 'Save and continue',
 };
 
 export default outreaches;
