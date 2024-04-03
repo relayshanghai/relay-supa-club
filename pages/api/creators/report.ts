@@ -21,6 +21,7 @@ import {
     rudderstack,
 } from 'src/utils/rudderstack';
 import { ApiHandler } from 'src/utils/api-handler';
+import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -166,11 +167,27 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     if (!data?.success) throw new Error('Failed to find report');
 
+    data = {
+        ...data,
+        user_profile: {
+            ...data.user_profile,
+            url: generateUrlIfTiktok(data.user_profile.url, data.user_profile.handle ?? data.user_profile.username),
+        },
+    };
+
     const { influencer, socialProfile } = await tryToSaveInfluencer(data);
 
     await trackAndSnap(track, req, res, events, data);
 
-    return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
+    return res.status(httpCodes.OK).json({
+        ...data,
+        createdAt,
+        influencer,
+        socialProfile: {
+            ...socialProfile,
+            url: generateUrlIfTiktok(socialProfile?.url, socialProfile?.username),
+        },
+    });
 }
 
 export default ApiHandler({
