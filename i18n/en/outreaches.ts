@@ -19,7 +19,7 @@ const outreaches = {
     subjectLine: 'Subject Line',
     modifyTemplate: 'Modify Template',
     useInSequence: 'Use in sequence',
-    waitBussinessDays: 'Wait x business days',
+    waitBussinessDays: 'Wait {{- days}} business days',
     steps: {
         Outreach: 'Outreach',
         firstFollowUp: '1st Follow-up',
@@ -28,6 +28,7 @@ const outreaches = {
         fourthFollowUp: '4th Follow-up',
     },
     back: 'Back',
+    remove: 'Remove',
 };
 
 export default outreaches;

@@ -8,6 +8,7 @@ import {
     DropdownMenuPortal,
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
+import { useTranslation } from 'react-i18next';
 
 type SequenceStepItemProps = {
     title: string;
@@ -16,6 +17,7 @@ type SequenceStepItemProps = {
 };
 
 export const SequenceStepItem: FC<SequenceStepItemProps> = ({ title, description, onDelete }) => {
+    const { t } = useTranslation();
     const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
     return (
         <div className="inline-flex h-[88px] w-[440px] items-start justify-start gap-1 rounded-xl border-2 border-gray-200 bg-white py-4 pl-4 pr-3">
@@ -34,7 +36,7 @@ export const SequenceStepItem: FC<SequenceStepItemProps> = ({ title, description
                                     className="flex text-sm"
                                     data-testid="delete-button"
                                 >
-                                    Delete
+                                    {t('outreaches.remove')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenuPortal>
