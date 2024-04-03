@@ -18,21 +18,16 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 const regexExcludeEmailDomain = /^(.*?)@(?:([^.]+)\.boostbot\.ai|boostbot\.ai|relay\.club)\b/;
 const regexExcludeEmailUsername = /\b[\w.+]*(?:test|qa)[\w.+]*@\w+\.\w+\b/;
 
-type StripeWebhookEnvironment = 'local' | 'staging' | 'production';
-
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
-    public static readonly stripeEnvironment: StripeWebhookEnvironment =
-        (process.env.STRIPE_WEBHOOK_ENVIRONMENT as StripeWebhookEnvironment) ?? 'production';
-    public static readonly allowedEnvs = process.env.STRIPE_WEBHOOK_ENV_ALLOWED_TO_SEND_TO_SLACK ?? 'production';
+    public static readonly allowedToSend = process.env.STRIPE_WEBHOOK_ALLOWED_TO_SEND_TO_SLACK ?? 'false';
 
     static getService(): StripeWebhookService {
         return StripeWebhookService.service;
     }
 
     allowedToSendToSlack(email: string) {
-        const allowedToSend = StripeWebhookService.allowedEnvs ? StripeWebhookService.allowedEnvs.split(',') : [];
-        if (allowedToSend.includes(StripeWebhookService.stripeEnvironment)) {
+        if (StripeWebhookService.allowedToSend === 'true') {
             return !regexExcludeEmailDomain.test(email) && !regexExcludeEmailUsername.test(email);
         }
     }
