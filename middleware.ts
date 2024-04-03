@@ -14,6 +14,8 @@ const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai
 
 const BANNED_USERS: string[] = [];
 
+type SubscriptionStatus = 'active' | 'trial' | 'trialing' | 'canceled' | 'paused' | 'awaiting_payment_method';
+
 /**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
@@ -29,7 +31,7 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
             .eq('id', profile.company_id)
             .single();
         return {
-            subscriptionStatus: company?.subscription_status,
+            subscriptionStatus: company?.subscription_status as SubscriptionStatus,
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
@@ -73,6 +75,7 @@ const checkOnboardingStatus = async (
     } else if (
         subscriptionStatus === 'active' ||
         subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'trialing' ||
         subscriptionStatus === 'canceled' ||
         subscriptionStatus === 'paused'
     ) {
