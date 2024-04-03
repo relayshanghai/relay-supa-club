@@ -14,10 +14,18 @@ import { type CompanyEntity } from 'src/backend/database/company/company-entity'
 import SubscriptionV2Service from '../subscription/subscription-v2-service';
 import { RequestContext } from 'src/utils/request-context/request-context';
 
+// regex for exclude email with support+cus, QA, Test, relay.club, boostbot.ai
+const regexExcludeEmailDomain = /^(.*?)@(?:([^.]+)\.boostbot\.ai|boostbot\.ai|relay\.club)\b/;
+const regexExcludeEmailUsername = /\w*(?:test|qa)\w*@\w+\.\w+\b/;
+
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
     static getService(): StripeWebhookService {
         return StripeWebhookService.service;
+    }
+
+    allowedToSendToSlack(email: string) {
+        return !regexExcludeEmailDomain.test(email) && !regexExcludeEmailUsername.test(email);
     }
 
     async handler(request: StripeWebhookRequest) {
@@ -142,6 +150,7 @@ export class StripeWebhookService {
         if (type === StripeWebhookType.INVOICE_PAYMENT_FAILED) {
             const company = subscription.company;
             const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+            if (!this.allowedToSendToSlack(profile.email as string)) return;
             await SlackService.getService().sendFailedRecurringMessage({
                 company,
                 profile,
@@ -163,6 +172,7 @@ export class StripeWebhookService {
             throw new Error('Company not found');
         }
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        if (!this.allowedToSendToSlack(profile.email as string)) return;
         await SlackService.getService().sendSignupMessage({ company, profile });
     }
 
@@ -187,6 +197,7 @@ export class StripeWebhookService {
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const currentPlanId = data?.object.plan.id;
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
+        if (!this.allowedToSendToSlack(profile.email as string)) return;
         if (previousData && previousPlanId && currentPlanId !== previousPlanId) {
             await SlackService.getService().sendChangePlanMessage({
                 company,
@@ -227,6 +238,7 @@ export class StripeWebhookService {
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const date = dayjs.unix(data.object.trial_end as number);
         const diffInDays = dayjs().diff(date, 'day');
+        if (!this.allowedToSendToSlack(profile.email as string)) return;
         await SlackService.getService().sendTrialEndingMessage({
             company,
             profile,
