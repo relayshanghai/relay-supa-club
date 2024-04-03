@@ -44,6 +44,7 @@ import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-
 import { useAtom } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import type { KeyedMutator } from 'swr';
+import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -331,7 +332,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
-                                href={sequenceInfluencer.url ?? ''}
+                                href={generateUrlIfTiktok(sequenceInfluencer.url, sequenceInfluencer.username ?? '')}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
