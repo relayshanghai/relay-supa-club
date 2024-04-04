@@ -66,6 +66,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
             if (res.error) {
                 return {
                     exists: true,
+                    mail: res.error,
                 };
             } else {
                 return {
