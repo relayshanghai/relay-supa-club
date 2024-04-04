@@ -60,10 +60,14 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
     const companyExists = async (name: string) => {
         try {
-            const res = await nextFetch<{ message: string } | { error: string }>(`company/exists?name=${name}`, {
+            const res = await nextFetch<{ message?: string; error?: string }>(`company/exists?name=${name}`, {
                 method: 'get',
             });
-            if (res) {
+            if (res.error) {
+                return {
+                    exists: true,
+                };
+            } else {
                 return {
                     exists: false,
                 };
