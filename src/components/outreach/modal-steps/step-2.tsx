@@ -10,7 +10,7 @@ import { type ModalStepProps } from '../create-campaign-modal';
 export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
     return (
-        <div className="flex h-full w-full justify-center">
+        <div className="flex h-full w-full justify-center" data-testid="step2-outreach-form">
             <div className="mt-20 inline-flex h-[366px] w-[512px] flex-col items-start justify-start rounded-2xl bg-white p-3 shadow">
                 <div className="inline-flex items-start justify-between self-stretch pl-6 pr-2 pt-6">
                     <div className="flex h-[30px] shrink grow basis-0 items-start justify-start gap-1">
@@ -55,20 +55,6 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                         </div>
                                         <div className="inline-flex h-10 items-center justify-start gap-1 self-stretch">
                                             <Switch />
-                                            {/* <div className="flex w-[146px] items-center justify-start gap-4 self-stretch">
-                                                <div className="font-['Poppins'] text-base font-medium tracking-tight text-gray-300">
-                                                    Off
-                                                </div>
-                                                <div className="inline-flex flex-col items-center justify-end gap-2.5 self-stretch">
-                                                    <div className="inline-flex items-start justify-start rounded-[999px] bg-violet-500 p-0.5">
-                                                        <div className="h-8 w-8 rounded-[999px] shadow" />
-                                                        <div className="h-8 w-8 rounded-[999px] bg-white" />
-                                                    </div>
-                                                </div>
-                                                <div className="font-['Poppins'] text-base font-medium tracking-tight text-violet-700">
-                                                    On
-                                                </div>
-                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

@@ -49,8 +49,11 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
     };
 
     return (
-        <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4">
-            <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start rounded-lg bg-white shadow">
+        <div
+            className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
+            data-testid="step1-outreach-form"
+        >
+            <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg bg-white shadow">
                 <div className="inline-flex w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
                     <div className="inline-flex items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
                         <div className="font-['Poppins'] text-base font-semibold tracking-tight text-gray-700">
@@ -81,7 +84,11 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             return <></>;
                         }
                         return (
-                            <div className="flex w-fit flex-col items-center" key={d.id}>
+                            <div
+                                className="flex w-fit flex-col items-center"
+                                key={d.id}
+                                data-testid={`test-id-${d.id}`}
+                            >
                                 <SequenceStepItem
                                     title={d.name}
                                     description={d.description as string}
@@ -108,6 +115,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             variant="neutral"
                             className="inline-flex !p-2 text-sm !text-gray-400"
                             onClick={() => setModalOpen(false)}
+                            data-testid="back-button"
                         >
                             {t('outreaches.back')}
                         </Button>
@@ -115,6 +123,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             type="button"
                             variant="primary"
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
+                            data-testid="next-button"
                             onClick={() => onNextStep()}
                         >
                             <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>
