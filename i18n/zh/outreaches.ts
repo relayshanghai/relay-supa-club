@@ -1,7 +1,7 @@
 const outreaches = {
     sequenceName: '序列名称',
     outreaches: '外联推广活动',
-    templateLibrary: 'Template Library',
+    templateLibrary: '模板库',
     createNewCampaign: '创建新的推广活动',
     deleteConfirm: '确认删除？',
     deleteSuccess: '删除成功',
@@ -29,6 +29,6 @@ const outreaches = {
     },
     back: '返回',
     remove: '移除',
-    saveAndContinue: 'Save and continue',
+    saveAndContinue: '保存并继续',
 };
 export default outreaches;
