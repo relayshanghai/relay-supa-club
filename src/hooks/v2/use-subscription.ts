@@ -19,6 +19,7 @@ export type CreateSubscriptionResponse = {
     providerSubscriptionId: string;
     clientSecret: string;
     ipAddress: string;
+    coupon?: string;
 };
 
 export type PaymentMethodResponse = {
@@ -35,7 +36,12 @@ export type ApplyCouponResponse = {
 };
 
 export const STRIPE_SUBSCRIBE_RESPONSE = 'boostbot_stripe_secret_response';
-export const stripeSubscribeResponseInitialValue = { clientSecret: '', ipAddress: '', plan: '' };
+export const stripeSubscribeResponseInitialValue: {
+    clientSecret: string;
+    ipAddress: string;
+    plan: string;
+    coupon?: string;
+} = { clientSecret: '', ipAddress: '', plan: '', coupon: undefined };
 
 export const useSubscription = () => {
     const { apiClient, loading, error } = useApiClient();

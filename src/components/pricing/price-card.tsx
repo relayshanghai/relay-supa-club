@@ -114,6 +114,7 @@ export const PriceCard = ({
                     clientSecret: res?.clientSecret,
                     ipAddress: res?.ipAddress,
                     plan: priceTier,
+                    coupon: res?.coupon,
                 });
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })

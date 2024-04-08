@@ -1,6 +1,7 @@
 import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import Stripe from 'stripe';
+import type { Nullable } from 'types/nullable';
 
 export type ChangeSubscriptionRequestType = {
     priceId: string;
@@ -67,7 +68,8 @@ export default class StripeService {
         );
     }
 
-    async createSubscription(cusId: string, priceId: string, quantity = 1) {
+    async createSubscription(cusId: string, priceId: string, quantity = 1, coupon: Nullable<string> = undefined) {
+        const c = coupon ?? undefined;
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
             items: [
@@ -81,6 +83,7 @@ export default class StripeService {
             },
             payment_behavior: 'default_incomplete',
             expand: ['latest_invoice.payment_intent'],
+            coupon: c,
         });
         const invoice = subscription.latest_invoice as Stripe.Invoice;
         const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
