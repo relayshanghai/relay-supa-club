@@ -8,14 +8,9 @@ import { Spinner } from '../icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ApplyPromoCode } from 'src/utils/analytics/events';
 import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import {
-    STRIPE_SUBSCRIBE_RESPONSE,
-    stripeSubscribeResponseInitialValue,
-    useCouponV2,
-} from 'src/hooks/v2/use-subscription';
+import { useCouponV2, useLocalStorageSubscribeResponse } from 'src/hooks/v2/use-subscription';
 import { useRouter } from 'next/router';
 import awaitToError from 'src/utils/await-to-error';
-import { useLocalStorage } from 'src/hooks/use-localstorage';
 
 export const PromoCodeSectionV2 = ({
     selectedPrice,
@@ -30,7 +25,7 @@ export const PromoCodeSectionV2 = ({
     const {
         query: { subscriptionId },
     } = useRouter();
-    const [stripeSubscribeResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
+    const [stripeSubscribeResponse] = useLocalStorageSubscribeResponse();
     const [promoCode, setPromoCode] = useState<string>(stripeSubscribeResponse.coupon ?? '');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');

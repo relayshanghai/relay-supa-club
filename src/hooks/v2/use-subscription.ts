@@ -13,6 +13,7 @@ import awaitToError from 'src/utils/await-to-error';
 import type Stripe from 'stripe';
 import useSWR from 'swr';
 import { useCompany } from '../use-company';
+import { useLocalStorage } from '../use-localstorage';
 
 export type CreateSubscriptionPayload = { priceId: string; quantity: number };
 export type CreateSubscriptionResponse = {
@@ -42,7 +43,8 @@ export const stripeSubscribeResponseInitialValue: {
     plan: string;
     coupon?: string;
 } = { clientSecret: '', ipAddress: '', plan: '', coupon: undefined };
-
+export const useLocalStorageSubscribeResponse = () =>
+    useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
 export const useSubscription = () => {
     const { apiClient, loading, error } = useApiClient();
     const { company } = useCompany();

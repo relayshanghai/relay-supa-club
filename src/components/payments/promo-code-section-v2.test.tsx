@@ -39,7 +39,9 @@ vi.mock('src/hooks/v2/use-subscription', () => ({
         applyCoupon: applyCouponMock,
     }),
 }));
-
+vi.mock('src/hooks/use-localstorage', () => ({
+    useLocalstorage: vi.fn().mockReturnValue([{}]),
+}));
 const selectedPrice = {
     currency: 'cny',
     prices: { monthly: '799' },
