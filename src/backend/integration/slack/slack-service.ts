@@ -257,7 +257,7 @@ export default class SlackService {
                     fields: [
                         {
                             type: 'mrkdwn',
-                            text: `Cancels At: *${new Date((subscription.cancel_at as number) + 1000)}*`,
+                            text: `Cancels At: *${new Date((subscription.cancel_at as number) * 1000)}*`,
                         },
                         {
                             type: 'mrkdwn',
@@ -312,7 +312,7 @@ export default class SlackService {
                     fields: [
                         {
                             type: 'mrkdwn',
-                            text: `Next Payment: *${new Date(subscription.current_period_end + 1000)}*`,
+                            text: `Next Payment: *${new Date(subscription.current_period_end * 1000)}*`,
                         },
                         {
                             type: 'mrkdwn',

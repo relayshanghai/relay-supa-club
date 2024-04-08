@@ -25,6 +25,7 @@ const pageNameMap: { [key: string]: string } = {
     inbox: 'inbox',
     guide: 'guide',
     boostbot: 'boostbot',
+    outreach: 'outreach-campaigns',
 };
 
 export interface LayoutProps {

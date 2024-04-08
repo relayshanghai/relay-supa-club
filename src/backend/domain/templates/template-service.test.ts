@@ -90,6 +90,7 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     template: '<p>some html</p>',
                     variableIds: [],
                     name: 'some name',
+                    description: 'some description',
                 });
             });
         });
