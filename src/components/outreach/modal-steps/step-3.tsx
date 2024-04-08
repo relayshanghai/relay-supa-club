@@ -5,6 +5,10 @@ import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from '../create-campaign-modal';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
+import { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
+import SequenceEmailVariable from './components/sequence-email-variables';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
@@ -40,6 +44,33 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
+                    <div className="w-full">
+                        <Tabs defaultValue={Step.OUTREACH} className="">
+                            <TabsList className="grid w-full grid-cols-3">
+                                <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
+                                    <SendOutline className="h-4 w-4 -rotate-45" strokeWidth={2} />
+                                    {t('outreaches.steps.Outreach')}
+                                </TabsTrigger>
+                                <TabsTrigger className="flex gap-5" value={Step.FIRST_FOLLOW_UP}>
+                                    <ClockCheckedOutline className="h-4 w-4 self-center stroke-black" />
+                                    {t('outreaches.steps.firstFollowUp')}
+                                </TabsTrigger>
+                                <TabsTrigger className="flex gap-5" value={Step.SECOND_FOLLOW_UP}>
+                                    <Bell className="h-4 w-4 self-center" />
+                                    {t('outreaches.steps.secondFollowUp')}
+                                </TabsTrigger>
+                            </TabsList>
+                            <TabsContent value={Step.OUTREACH}>
+                                <SequenceEmailVariable />
+                            </TabsContent>
+                            <TabsContent value={Step.FIRST_FOLLOW_UP}>
+                                <SequenceEmailVariable />
+                            </TabsContent>
+                            <TabsContent value={Step.SECOND_FOLLOW_UP}>
+                                <SequenceEmailVariable />
+                            </TabsContent>
+                        </Tabs>
+                    </div>
                     <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
                         <Button
                             type="button"

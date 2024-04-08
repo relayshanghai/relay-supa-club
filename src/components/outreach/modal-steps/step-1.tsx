@@ -12,6 +12,7 @@ import { SequenceStepDuration } from './components/sequence-step-duration';
 import { SequenceStepItem } from './components/sequence-step-item';
 import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from '../create-campaign-modal';
+import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
 
 export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const {
@@ -65,16 +66,19 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             title={t('outreaches.steps.Outreach')}
                             items={outreachEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                             step={Step.OUTREACH}
+                            icon={<SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />}
                         />
                         <SequenceAccordion
                             title={t('outreaches.steps.firstFollowUp')}
                             items={firstFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                             step={Step.FIRST_FOLLOW_UP}
+                            icon={<ClockCheckedOutline className="h-4 w-4 self-center stroke-black" />}
                         />
                         <SequenceAccordion
                             title={t('outreaches.steps.secondFollowUp')}
                             items={secondFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
                             step={Step.SECOND_FOLLOW_UP}
+                            icon={<Bell className="h-4 w-4 self-center" />}
                         />
                     </Accordion>
                 </div>

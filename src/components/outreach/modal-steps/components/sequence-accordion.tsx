@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, type FC } from 'react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
-import { BoostbotSelected, Expand, Plus, SendOutline } from 'src/components/icons';
-import Bell from 'src/components/icons/Bell';
+import { BoostbotSelected, Expand, Plus } from 'src/components/icons';
 import {
     type OutreachEmailTemplateEntity,
     type Step,
@@ -15,9 +14,10 @@ type SequenceAccordionProps = {
     title: string;
     items: OutreachEmailTemplateEntity[];
     step: Step;
+    icon: JSX.Element;
 };
 
-export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, step }) => {
+export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, step, icon }) => {
     const { t } = useTranslation();
     const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
     const { sequenceEmailTemplate, setSequenceEmailTemplate, getSequenceEmailTemplate } = useSequenceEmailTemplates({
@@ -34,11 +34,7 @@ export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, st
             <AccordionItem value={title.replace(/[\s-]/g, '').toLowerCase()}>
                 <AccordionTrigger className="ml-6 shrink grow basis-0 font-['Poppins'] text-base font-semibold tracking-tight text-violet-600 hover:no-underline">
                     <div className="inline-flex space-x-2">
-                        {title === 'Outreach' ? (
-                            <SendOutline className="h-4 w-4 -rotate-45" strokeWidth={2} />
-                        ) : (
-                            <Bell className="h-4 w-4 self-center" />
-                        )}
+                        {icon}
                         <span>{title}</span>
                     </div>
                 </AccordionTrigger>

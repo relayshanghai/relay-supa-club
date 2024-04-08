@@ -134,3 +134,4 @@ export { default as ClockCheckedOutline } from './ClockCheckedOutline';
 export { default as PaymentFailedOutline } from './PaymentFailedOutline';
 export { default as CalendarChecked } from './CalendarChecked';
 export { default as Retry } from './Retry';
+export { default as Bell } from './Bell';
