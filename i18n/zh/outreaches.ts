@@ -30,5 +30,11 @@ const outreaches = {
     back: '返回',
     remove: '移除',
     saveAndContinue: '保存并继续',
+    setupSequence: 'Set up your new sequence',
+    autoStart: 'Auto-Start',
+    product: '产品',
+    templateVariables: 'Template Variables',
+    skipForNow: 'Skip for now',
+    saveAndFinish: 'Save values and finish',
 };
 export default outreaches;

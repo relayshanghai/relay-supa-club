@@ -15,7 +15,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                 <div className="inline-flex items-start justify-between self-stretch pl-6 pr-2 pt-6">
                     <div className="flex h-[30px] shrink grow basis-0 items-start justify-start gap-1">
                         <div className="text-center font-['Poppins'] text-xl font-semibold tracking-tight text-gray-600">
-                            Set up your new sequence
+                            {t('outreaches.setupSequence')}
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                 <div className="inline-flex items-start justify-center gap-6 self-stretch">
                                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                                         <Input
-                                            label="Sequence Name"
+                                            label={t('outreaches.sequenceName')}
                                             type="text"
                                             value={''}
                                             onChange={() => null}
@@ -38,7 +38,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                 <div className="inline-flex items-start justify-center gap-6 self-stretch">
                                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
                                         <Input
-                                            label="Product"
+                                            label={t('outreaches.product')}
                                             type="text"
                                             value={''}
                                             onChange={() => null}
@@ -49,7 +49,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-end gap-1">
                                         <div className="inline-flex items-start justify-start gap-1">
                                             <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-500">
-                                                Auto-Start
+                                            {t('outreaches.autoStart')}
                                             </div>
                                             <div className="relative h-3 w-3" />
                                         </div>

@@ -4,6 +4,7 @@ import { CampaignModalStepOne } from './modal-steps/step-1';
 import { CampaignModalStepTwo } from './modal-steps/step-2';
 import { ModalHeader } from './create-campaign-modal-header';
 import { useState } from 'react';
+import { CampaignModalStepThree } from './modal-steps/step-3';
 
 export type ModalStepProps = {
     setModalOpen: (visible: boolean) => void;
@@ -50,7 +51,13 @@ export const CreateCampaignModal = ({
                             setModalOpen={(v) => setShowCreateCampaignModal(v)}
                         />
                     )}
-
+                    {step === 3 && (
+                        <CampaignModalStepThree
+                            onNextStep={onNextStep}
+                            onPrevStep={onPrevStep}
+                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
+                        />
+                    )}
                     {/* body end */}
                 </div>
             </div>
