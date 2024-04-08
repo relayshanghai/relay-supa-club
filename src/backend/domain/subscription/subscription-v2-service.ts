@@ -133,7 +133,7 @@ export default class SubscriptionV2Service {
         }
         const stripeCustomer = await StripeService.getService().getCustomer(cusId);
         let coupon: Nullable<string> = null;
-        if (stripeCustomer.metadata.referral) {
+        if (stripeCustomer?.metadata?.referral) {
             coupon = REWARDFUL_COUPON_CODE;
         }
         const subscription = await StripeService.getService().createSubscription(
