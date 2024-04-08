@@ -2,7 +2,6 @@
 import { type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
-import { type OutreachEmailTemplateEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from '../create-campaign-modal';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
@@ -25,7 +24,18 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                     <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
                         <SequenceVariableAccordion
                             title={'Product'}
-                            items={[] ?? ([] as OutreachEmailTemplateEntity[])}
+                            items={[
+                                {
+                                    id: '1',
+                                    name: 'Product Name',
+                                    category: 'product',
+                                },
+                                {
+                                    id: '2',
+                                    name: 'Manager First English Name',
+                                    category: 'product',
+                                },
+                            ]}
                         />
                     </Accordion>
                 </div>
