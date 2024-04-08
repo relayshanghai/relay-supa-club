@@ -30,11 +30,11 @@ const outreaches = {
     back: '返回',
     remove: '移除',
     saveAndContinue: '保存并继续',
-    setupSequence: 'Set up your new sequence',
-    autoStart: 'Auto-Start',
+    setupSequence: '设置您新的邮件进程管理序列',
+    autoStart: '自动开启',
     product: '产品',
-    templateVariables: 'Template Variables',
-    skipForNow: 'Skip for now',
-    saveAndFinish: 'Save values and finish',
+    templateVariables: '模板变量',
+    skipForNow: '暂时跳过',
+    saveAndFinish: '保存设定并完成',
 };
 export default outreaches;
