@@ -61,13 +61,13 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent value={Step.OUTREACH}>
-                                <SequenceEmailVariable />
+                                <SequenceEmailVariable step={Step.OUTREACH} />
                             </TabsContent>
                             <TabsContent value={Step.FIRST_FOLLOW_UP}>
-                                <SequenceEmailVariable />
+                                <SequenceEmailVariable step={Step.FIRST_FOLLOW_UP} />
                             </TabsContent>
                             <TabsContent value={Step.SECOND_FOLLOW_UP}>
-                                <SequenceEmailVariable />
+                                <SequenceEmailVariable step={Step.SECOND_FOLLOW_UP} />
                             </TabsContent>
                         </Tabs>
                     </div>
