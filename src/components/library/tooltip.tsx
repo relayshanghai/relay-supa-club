@@ -7,6 +7,7 @@ export type ToolTipPositionUnion =
     | 'top-left'
     | 'bottom-right'
     | 'bottom-left'
+    | 'bottom-center'
     | 'left'
     | 'right'
     | 'inset-right'
@@ -42,6 +43,8 @@ const positionClass = (position?: string) =>
         ? 'bottom-0 left-[110%]'
         : position === 'inset-right'
         ? 'bottom-0 left-[80%]'
+        : position === 'bottom-center'
+        ? 'top-[120%] left-[-50%]'
         : 'bottom-0 right-[80%]';
 
 /** Wrap this around the component that you'd like to have the tooltip appear over when hovered. see `pages/component-previews/library.tsx` for examples*/
