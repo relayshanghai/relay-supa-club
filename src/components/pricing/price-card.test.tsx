@@ -97,6 +97,12 @@ describe('PriceCard Component', () => {
             }),
             STRIPE_SUBSCRIBE_RESPONSE: 'boostbot_stripe_secret_response',
             stripeSubscribeResponseInitialValue: {},
+            useLocalStorageSubscribeResponse: () => [
+                {},
+                () => {
+                    return null;
+                },
+            ],
         }));
 
         vi.mock('src/hooks/use-rudderstack', () => ({

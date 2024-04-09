@@ -47,6 +47,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     StripeService.getService().getPrice = StripeGetPriceMock;
     StripeService.getService().getProductMetadata = StripeGetProductMetadataMock;
     StripeService.getService().getAvailablePromo = StripeGetAvailablePromoMock;
+    StripeService.getService().getCustomer = vi.fn().mockResolvedValue({
+        metadata: {},
+    });
     SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;

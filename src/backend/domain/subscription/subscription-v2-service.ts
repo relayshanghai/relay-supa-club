@@ -18,6 +18,8 @@ import awaitToError from 'src/utils/await-to-error';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
 import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
+import type { Nullable } from 'types/nullable';
+const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;
@@ -129,6 +131,11 @@ export default class SubscriptionV2Service {
                 throw new BadRequestError('You are already subscribed to this plan');
             }
         }
+        const stripeCustomer = await StripeService.getService().getCustomer(cusId);
+        let coupon: Nullable<string> = null;
+        if (stripeCustomer?.metadata?.referral) {
+            coupon = REWARDFUL_COUPON_CODE;
+        }
         const subscription = await StripeService.getService().createSubscription(
             cusId,
             request.priceId,
@@ -137,6 +144,7 @@ export default class SubscriptionV2Service {
         return {
             providerSubscriptionId: subscription.id,
             clientSecret: subscription.clientSecret,
+            coupon,
         };
     }
 
