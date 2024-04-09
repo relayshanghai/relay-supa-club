@@ -225,9 +225,7 @@ export default class SubscriptionV2Service {
 
             if (lastSubscription.status === 'trialing') {
                 const trialSubscription = {
-                    company: {
-                        id: companyId,
-                    },
+                    companyId,
                     provider: 'stripe',
                     providerSubscriptionId: lastSubscription.id,
                     paymentMethod: null,
@@ -246,9 +244,7 @@ export default class SubscriptionV2Service {
                 return trialSubscription;
             } else if (lastSubscription.status === 'canceled') {
                 const trialSubscription = {
-                    company: {
-                        id: companyId,
-                    },
+                    companyId,
                     provider: 'stripe',
                     providerSubscriptionId: lastSubscription.id,
                     paymentMethod: null,

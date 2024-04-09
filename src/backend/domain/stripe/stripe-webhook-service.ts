@@ -43,6 +43,7 @@ export class StripeWebhookService {
             }),
         );
         if (err) logger.error('stripe webhook get company error', err);
+        if (!company) return { message: 'Webhook received with no company' };
         if (company) RequestContext.setContext({ companyId: company.id });
 
         [err] = await awaitToError(
@@ -122,9 +123,8 @@ export class StripeWebhookService {
             return;
         }
         const { companyId } = RequestContext.getContext();
-        if (!companyId) {
-            throw new Error('Company not found');
-        }
+        if (!companyId) throw new Error('Company not found');
+        if (!subscription) throw new Error('Subscription not found');
         await SubscriptionV2Service.getService().storeSubscription({
             companyId,
             cusId: data?.object.customer as string,
@@ -203,6 +203,7 @@ export class StripeWebhookService {
         const currentPlanId = data?.object.plan.id;
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
         if (!this.allowedToSendToSlack(profile.email as string)) return;
+        if (previousAttributes?.status === 'incomplete') return;
         if (previousSubscription && previousPlanId && currentPlanId !== previousPlanId) {
             await SlackService.getService().sendChangePlanMessage({
                 company,
