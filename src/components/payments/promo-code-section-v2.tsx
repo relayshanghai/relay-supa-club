@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { numberFormatter } from 'src/utils/formatter';
 import type { NewRelayPlan } from 'types';
@@ -7,7 +8,7 @@ import { Spinner } from '../icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ApplyPromoCode } from 'src/utils/analytics/events';
 import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { useCouponV2 } from 'src/hooks/v2/use-subscription';
+import { useCouponV2, useLocalStorageSubscribeResponse } from 'src/hooks/v2/use-subscription';
 import { useRouter } from 'next/router';
 import awaitToError from 'src/utils/await-to-error';
 
@@ -24,7 +25,8 @@ export const PromoCodeSectionV2 = ({
     const {
         query: { subscriptionId },
     } = useRouter();
-    const [promoCode, setPromoCode] = useState<string>('');
+    const [stripeSubscribeResponse] = useLocalStorageSubscribeResponse();
+    const [promoCode, setPromoCode] = useState<string>(stripeSubscribeResponse.coupon ?? '');
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
@@ -42,7 +44,7 @@ export const PromoCodeSectionV2 = ({
             setCouponId(couponResponse.id);
             const percentageOff = couponResponse.percent_off;
             const validMonths = couponResponse.duration_in_months;
-            const validDurationText = t('account.payments.validDuration', { validMonths });
+            const validDurationText = t('account.payments.validDuration', { validMonths: validMonths || 1 });
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
@@ -65,7 +67,11 @@ export const PromoCodeSectionV2 = ({
             handleSubmit(promoCode);
         }
     };
-
+    useEffect(() => {
+        if (stripeSubscribeResponse.coupon) {
+            handleSubmit(promoCode);
+        }
+    }, []);
     return (
         <div className="mb-3">
             <div className="flex flex-col ">

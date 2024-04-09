@@ -8,6 +8,7 @@ const { pushMock, reactUseStateMock, applyCouponMock } = vi.hoisted(() => {
         pushMock: vi.fn(),
         reactUseStateMock: vi.fn(),
         applyCouponMock: vi.fn(),
+        useLocalStorageSubscribeResponseMock: vi.fn().mockReturnValue([{}, () => []]),
     };
 });
 
@@ -38,8 +39,13 @@ vi.mock('src/hooks/v2/use-subscription', () => ({
     useCouponV2: () => ({
         applyCoupon: applyCouponMock,
     }),
+    useLocalStorageSubscribeResponse: () => [
+        {},
+        () => {
+            return null;
+        },
+    ],
 }));
-
 const selectedPrice = {
     currency: 'cny',
     prices: { monthly: '799' },
@@ -52,7 +58,7 @@ const MockComponent = () => {
     return <PromoCodeSectionV2 selectedPrice={selectedPrice} priceTier="outreach" setCouponId={() => null} />;
 };
 
-describe('CheckoutFormV2 Component', () => {
+describe('PromoCodeSectionV2 Component', () => {
     afterEach(() => {
         cleanup();
     });

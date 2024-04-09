@@ -13,12 +13,14 @@ import awaitToError from 'src/utils/await-to-error';
 import type Stripe from 'stripe';
 import useSWR from 'swr';
 import { useCompany } from '../use-company';
+import { useLocalStorage } from '../use-localstorage';
 
 export type CreateSubscriptionPayload = { priceId: string; quantity: number };
 export type CreateSubscriptionResponse = {
     providerSubscriptionId: string;
     clientSecret: string;
     ipAddress: string;
+    coupon?: string;
 };
 
 export type PaymentMethodResponse = {
@@ -35,8 +37,14 @@ export type ApplyCouponResponse = {
 };
 
 export const STRIPE_SUBSCRIBE_RESPONSE = 'boostbot_stripe_secret_response';
-export const stripeSubscribeResponseInitialValue = { clientSecret: '', ipAddress: '', plan: '' };
-
+export const stripeSubscribeResponseInitialValue: {
+    clientSecret: string;
+    ipAddress: string;
+    plan: string;
+    coupon?: string;
+} = { clientSecret: '', ipAddress: '', plan: '', coupon: undefined };
+export const useLocalStorageSubscribeResponse = () =>
+    useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
 export const useSubscription = () => {
     const { apiClient, loading, error } = useApiClient();
     const { company } = useCompany();

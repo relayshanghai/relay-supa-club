@@ -43,6 +43,7 @@ export class StripeWebhookService {
             }),
         );
         if (err) logger.error('stripe webhook get company error', err);
+        if (!company) return { message: 'Webhook received with no company' };
         if (company) RequestContext.setContext({ companyId: company.id });
 
         [err] = await awaitToError(
@@ -122,9 +123,8 @@ export class StripeWebhookService {
             return;
         }
         const { companyId } = RequestContext.getContext();
-        if (!companyId) {
-            throw new Error('Company not found');
-        }
+        if (!companyId) throw new Error('Company not found');
+        if (!subscription) throw new Error('Subscription not found');
         await SubscriptionV2Service.getService().storeSubscription({
             companyId,
             cusId: data?.object.customer as string,
@@ -183,8 +183,9 @@ export class StripeWebhookService {
     private async customerSubscriptionUpdatedHandler(
         data: StripeWebhookRequest<Stripe.Subscription & { plan: Stripe.Plan }>['data'],
     ) {
-        const previousData = { items: data.previous_attributes?.items } as Stripe.Subscription;
-        if (!previousData) {
+        const previousAttributes = data.previous_attributes;
+        const previousSubscription = { items: previousAttributes?.items } as Stripe.Subscription;
+        if (!previousSubscription) {
             throw new Error('Previous subscription not found');
         }
         const company = await CompanyRepository.getRepository().findOne({
@@ -202,23 +203,21 @@ export class StripeWebhookService {
         const currentPlanId = data?.object.plan.id;
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
         if (!this.allowedToSendToSlack(profile.email as string)) return;
-        if (previousData && previousPlanId && currentPlanId !== previousPlanId) {
+        if (previousAttributes?.status === 'incomplete') return;
+        if (previousSubscription && previousPlanId && currentPlanId !== previousPlanId) {
             await SlackService.getService().sendChangePlanMessage({
                 company,
                 profile,
                 newSubscription: data.object,
-                oldSubscription: previousData,
+                oldSubscription: previousSubscription,
             });
-            return;
-        }
-        if (data.object.cancel_at !== null && data.object.status === 'active') {
+        } else if (data.object.cancel_at !== null && data.object.status === 'active') {
             await SlackService.getService().sendCancelSubscriptionMessage({
                 company,
                 profile,
                 subscription: data.object,
             });
-        }
-        if (data.object.cancel_at === null && data.object.status === 'active' && previousData.cancel_at !== null) {
+        } else if (data.object.cancel_at === null && data.object.status === 'active') {
             await SlackService.getService().sendResumeSubscriptionMessage({
                 company,
                 profile,

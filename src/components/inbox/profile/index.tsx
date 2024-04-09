@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/t
 import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
 import { Youtube, Tiktok, Instagram, BorderedTick, Spinner } from 'src/components/icons';
 import Link from 'next/link';
-import { truncatedText } from 'src/utils/outreach/helpers';
+import { generateUrlIfTiktok, truncatedText } from 'src/utils/outreach/helpers';
 import { useTranslation } from 'react-i18next';
 import ProfileManage from './profile-manage/profile-manage';
 import { useManageProfileUpdating } from 'src/hooks/v2/use-sequence-influencer';
@@ -12,6 +12,7 @@ import { useThreadStore } from 'src/hooks/v2/use-thread';
 import type { ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import type { AddressEntity } from 'src/backend/database/influencer/address-entity';
 import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import { Tooltip } from 'src/components/library';
 
 export type ProfileValue = {
     shippingDetails: ProfileChannelSection;
@@ -55,30 +56,48 @@ export default function Profile() {
                         <Icon className="absolute -bottom-1 -right-1 h-8 w-8" />
                     </section>
                     <div className="z-10 flex flex-col justify-between gap-2">
-                        <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
-                            {truncatedText(
+                        <Tooltip
+                            content={
                                 sequenceInfluencer?.influencerSocialProfile?.name ??
-                                    sequenceInfluencer?.influencerSocialProfile?.username ??
-                                    '',
-                                10,
-                            )}
-                        </h1>
+                                sequenceInfluencer?.influencerSocialProfile?.username ??
+                                ''
+                            }
+                            position="bottom-center"
+                            contentSize="small"
+                        >
+                            <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
+                                {truncatedText(
+                                    sequenceInfluencer?.influencerSocialProfile?.name ??
+                                        sequenceInfluencer?.influencerSocialProfile?.username ??
+                                        '',
+                                    10,
+                                )}
+                            </h1>
+                        </Tooltip>
                         <div className="flex flex-col">
-                            {sequenceInfluencer?.influencerSocialProfile?.url ? (
-                                <Link
-                                    href={sequenceInfluencer?.influencerSocialProfile?.url}
-                                    className="text-lg font-medium text-primary-500"
-                                >
-                                    <span className="text-pink-500">@</span>
-                                    {truncatedText(sequenceInfluencer?.influencerSocialProfile?.username ?? '', 10)}
-                                </Link>
-                            ) : (
-                                <p className="text-lg font-medium text-primary-500">
-                                    <span className="text-pink-500">@</span>
-                                    {truncatedText(sequenceInfluencer?.influencerSocialProfile?.username ?? '', 10)}
-                                </p>
-                            )}
-
+                            <Tooltip
+                                content={sequenceInfluencer?.influencerSocialProfile?.username ?? ''}
+                                position="bottom-center"
+                                contentSize="small"
+                            >
+                                {sequenceInfluencer?.influencerSocialProfile?.url ? (
+                                    <Link
+                                        href={generateUrlIfTiktok(
+                                            sequenceInfluencer?.influencerSocialProfile?.url,
+                                            sequenceInfluencer?.influencerSocialProfile?.username,
+                                        )}
+                                        className="text-lg font-medium text-primary-500"
+                                    >
+                                        <span className="text-pink-500">@</span>
+                                        {truncatedText(sequenceInfluencer?.influencerSocialProfile?.username ?? '', 10)}
+                                    </Link>
+                                ) : (
+                                    <p className="text-lg font-medium text-primary-500">
+                                        <span className="text-pink-500">@</span>
+                                        {truncatedText(sequenceInfluencer?.influencerSocialProfile?.username ?? '', 10)}
+                                    </p>
+                                )}
+                            </Tooltip>
                             <Link
                                 href={`/sequences/${sequenceInfluencer?.sequence.id}`}
                                 className="text-sm text-gray-400 underline"

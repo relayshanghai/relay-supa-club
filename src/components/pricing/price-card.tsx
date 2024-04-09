@@ -10,12 +10,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { type CompanyDB } from 'src/utils/api/db';
 import toast from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
-import {
-    STRIPE_SUBSCRIBE_RESPONSE,
-    stripeSubscribeResponseInitialValue,
-    useSubscription,
-} from 'src/hooks/v2/use-subscription';
-import { useLocalStorage } from 'src/hooks/use-localstorage';
+import { useLocalStorageSubscribeResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
 
@@ -84,7 +79,7 @@ export const PriceCard = ({
         changeSubscription,
         refreshSubscription: refreshSubscriptionV2,
     } = useSubscription();
-    const [, setStripeSecretResponse] = useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
+    const [, setStripeSecretResponse] = useLocalStorageSubscribeResponse();
     const { company } = useCompany();
     const router = useRouter();
     type PriceKey = keyof typeof prices;
@@ -114,6 +109,7 @@ export const PriceCard = ({
                     clientSecret: res?.clientSecret,
                     ipAddress: res?.ipAddress,
                     plan: priceTier,
+                    coupon: res?.coupon,
                 });
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })

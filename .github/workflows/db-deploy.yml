@@ -24,6 +24,7 @@ jobs:
         env:
             NEXT_PUBLIC_FEAT_RECOMMENDED: true
             NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+            SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
 
         strategy:
             matrix:

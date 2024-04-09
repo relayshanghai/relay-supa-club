@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { validateSignupInput } from 'src/utils/validation/signup';
@@ -74,7 +74,7 @@ const SignUpPage = ({
     const [phoneNumber, setPhoneNumber, removePhoneNumber] = usePersistentState('phoneNumber', '');
     const [companyName, setCompanyName, removeCompanyName] = usePersistentState('companyName', '');
     const [companyWebsite, setCompanyWebsite, removeCompanyWebsite] = usePersistentState('companyWebsite', '');
-
+    const [rewardfulReferral, setRewardfulReferral] = useState<string>();
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
             switch (type) {
@@ -159,6 +159,7 @@ const SignUpPage = ({
         phoneNumber,
         companyName,
         companyWebsite,
+        rewardfulReferral,
     };
 
     //TODO: phone validation need to be updated
@@ -227,7 +228,14 @@ const SignUpPage = ({
             companyWebsite,
         });
     };
-
+    useEffect(() => {
+        (window as any).rewardful('ready', function () {
+            setRewardfulReferral((window as any).Rewardful.referral);
+        });
+        return () => {
+            (window as any).rewardful('destroy');
+        };
+    }, []);
     return (
         <div>
             {steps.map(
