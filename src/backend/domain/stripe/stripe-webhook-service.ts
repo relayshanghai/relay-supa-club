@@ -204,12 +204,33 @@ export class StripeWebhookService {
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
         if (!this.allowedToSendToSlack(profile.email as string)) return;
         if (previousAttributes?.status === 'incomplete') return;
-        if (previousSubscription && previousPlanId && currentPlanId !== previousPlanId) {
+
+        // get the difference in days between the current period end and the previous period end
+        let diffInDays = null;
+        if (previousAttributes?.current_period_end) {
+            diffInDays = dayjs(dayjs.unix(data.object.current_period_end)).diff(
+                dayjs.unix(previousAttributes?.current_period_end as number),
+                'day',
+            );
+        }
+
+        if (previousSubscription && previousSubscription.items && previousPlanId && currentPlanId !== previousPlanId) {
             await SlackService.getService().sendChangePlanMessage({
                 company,
                 profile,
                 newSubscription: data.object,
                 oldSubscription: previousSubscription,
+            });
+        } else if (
+            diffInDays &&
+            diffInDays >= 30 &&
+            previousAttributes?.latest_invoice &&
+            data.object.status === 'active'
+        ) {
+            await SlackService.getService().sendRenewSubscriptionMessage({
+                company,
+                profile,
+                subscription: data.object,
             });
         } else if (data.object.cancel_at !== null && data.object.status === 'active') {
             await SlackService.getService().sendCancelSubscriptionMessage({

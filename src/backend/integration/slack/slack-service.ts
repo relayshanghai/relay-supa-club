@@ -340,4 +340,59 @@ export default class SlackService {
         };
         await this.sendMessage(slackAccountSubscriptionCancellations, messageBody);
     }
+
+    async sendRenewSubscriptionMessage({
+        company,
+        profile,
+        subscription,
+    }: {
+        company: CompanyEntity;
+        profile: ProfileEntity;
+        subscription: Stripe.Subscription;
+    }) {
+        const newPrice = subscription.items.data[0].price;
+        const newProduct = await StripeService.getService().getProduct(newPrice.product as string);
+        const messageBody: SlackMessage = {
+            blocks: [
+                {
+                    type: 'header',
+                    text: {
+                        type: 'plain_text',
+                        text: `${newProduct.name.toUpperCase()} USER HAS RENEW THEIR SUBSCRIPTION`,
+                        emoji: true,
+                    },
+                },
+                {
+                    type: 'section',
+                    fields: [
+                        {
+                            type: 'mrkdwn',
+                            text: `Next Payment: *${new Date(subscription.current_period_end * 1000)}*`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `Company Name: *${company.name}*`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `Stripe Account: https://dashboard.stripe.com/customers/${company.cusId}`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `User Name: *${profile.firstName} ${profile.lastName}*`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `Email: *${profile.email}*`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `Phone: *${profile.phone}*`,
+                        },
+                    ],
+                },
+            ],
+        };
+        await this.sendMessage(slackAccountSubscriptionCancellations, messageBody);
+    }
 }
