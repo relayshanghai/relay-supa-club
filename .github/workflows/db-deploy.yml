@@ -14,7 +14,6 @@ env:
     SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
     SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
-    SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
     EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
     EMAIL_ENGINE_API_URL: https://email.relay.club
 
@@ -25,6 +24,7 @@ jobs:
         env:
             NEXT_PUBLIC_FEAT_RECOMMENDED: true
             NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+            SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
 
         strategy:
             matrix:
