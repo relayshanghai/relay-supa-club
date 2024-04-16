@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
-import type { LegacyRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRudderstackTrack } from '../../hooks/use-rudderstack';
-import { LanguageToggleIcon } from '../icons';
+import { ChevronDown, LanguageToggleIcon } from '../icons';
 import { useTranslation } from 'react-i18next';
 import { ChangeLanguage } from '../../utils/analytics/events/change-language';
 import { languageCodeToHumanReadable } from '../../utils/utils';
@@ -10,6 +9,12 @@ import { mapLangCode } from '../chatwoot/chatwoot-provider';
 import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY, I18N_LANGUAGE_DETECTOR_KEY } from '../../constants';
 import i18n from 'i18n'; // importing this initializes i18n using i19n.init()
 import { useCookies } from 'react-cookie';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from 'shadcn/components/ui/dropdown-menu';
 export const useLocalization = () => {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -47,36 +52,58 @@ export const useLocalization = () => {
     }, []);
 };
 
+export interface Language {
+    lang: string;
+    label: string;
+}
+
+export const Languages = [
+    {
+        lang: enUS,
+        label: 'English',
+    },
+    {
+        lang: zhCN,
+        label: '中文',
+    },
+];
+
 export const LanguageToggle = () => {
     const { track } = useRudderstackTrack();
     const { i18n } = useTranslation();
-    const toggleLanguage = (value: string) => {
+    const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+        i18n.language === enUS ? Languages[0] : Languages[1],
+    );
+    const toggleLanguage = (value: Language) => {
         track(ChangeLanguage, {
             current_language: languageCodeToHumanReadable(i18n.language),
-            selected_language: languageCodeToHumanReadable(value),
+            selected_language: languageCodeToHumanReadable(value.lang),
         });
-        i18n.changeLanguage(value);
+        setSelectedLanguage(value);
+        i18n.changeLanguage(value.lang);
     };
-
-    const languageButtonRef: LegacyRef<HTMLButtonElement> = useRef(null);
-
     return (
         <div>
-            <div className="relative flex flex-col items-center">
-                <button
-                    ref={languageButtonRef}
-                    onClick={() => {
-                        if (i18n.language === zhCN) {
-                            toggleLanguage(enUS);
-                        } else {
-                            toggleLanguage(zhCN);
-                        }
-                    }}
-                    data-testid="language-toggle"
-                >
-                    <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-400 hover:stroke-primary-600" />
-                </button>
-            </div>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <section className="flex w-32 flex-shrink-0 flex-grow-0 basis-1/5 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
+                        <LanguageToggleIcon className="h-4 w-4 text-black" />
+                        {selectedLanguage.label}
+                        <ChevronDown className="h-4 w-4 text-black" />
+                    </section>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="text-sm">
+                    {Languages.map((l) => (
+                        <DropdownMenuItem
+                            key={l.lang}
+                            onSelect={() => toggleLanguage(l)}
+                            className="focus:text-accent-black cursor-pointer text-sm focus:bg-white"
+                        >
+                            {l.label}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     );
 };

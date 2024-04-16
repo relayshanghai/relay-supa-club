@@ -263,7 +263,7 @@ export default function ProfileChannel({ ...props }: Props) {
                         </Tooltip>
                     </div>
                     <div className={`w-full`}>
-                        {props.profile.influencer_niche_graph?.length === 0 ? (
+                        {!props.profile.influencer_niche_graph || props.profile.influencer_niche_graph.length === 0 ? (
                             <div className="relative flex h-[280px] w-80 items-center justify-center">
                                 <p className="left-[42%] top-[45%] flex text-center text-lg font-semibold">
                                     {t('boostbot.modal.noNichesFound')}
