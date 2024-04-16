@@ -31,14 +31,12 @@ export const updateSequenceInfluencerCall: DBQuery<
     return result[0];
 };
 
-export const deleteSequenceInfluencersCall: DBQuery<(ids: string[]) => Promise<SequenceInfluencer>> =
+export const deleteSequenceInfluencersCall: DBQuery<(ids: string[]) => Promise<void>> =
     (databaseInstance) => async (ids) => {
         const result = await db(databaseInstance)
             .delete(sequence_influencers)
             .where(inArray(sequence_influencers.id, ids))
             .returning();
 
-        if (result.length !== 1) throw new Error('Error in deleting row');
-
-        return result[0];
+        if (result.length == 0) throw new Error('Error in deleting row');
     };
