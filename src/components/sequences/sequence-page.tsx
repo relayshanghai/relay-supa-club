@@ -376,7 +376,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [sequenceInfluencers, sequenceEmails],
     );
 
-    const [showSlowBanner, setShowSlowBanner] = useState(true);
+    const [showSlowBanner, setShowSlowBanner] = useState(false);
 
     return (
         <Layout>
