@@ -6,6 +6,13 @@ import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { type FC } from 'react';
 import { type ModalStepProps } from '../create-campaign-modal';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from 'shadcn/components/ui/dropdown-menu';
+import { ChevronDown, Plus } from 'src/components/icons';
 
 export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
@@ -37,19 +44,45 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                 </div>
                                 <div className="inline-flex items-start justify-center gap-6 self-stretch">
                                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                                        <Input
-                                            label={t('outreaches.product')}
-                                            type="text"
-                                            value={''}
-                                            onChange={() => null}
-                                            placeholder={'eg. Mavic Pro 3'}
-                                            data-testid="sequence-name-input"
-                                        />
+                                        <div className="text-sm font-medium text-gray-700">
+                                            {t('outreaches.product')}
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className="flex w-full">
+                                                <section className="flex w-full flex-shrink-0 flex-grow-0 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
+                                                    <span className="text-sm font-normal text-gray-400">
+                                                        eg. Mavic Pro 3
+                                                    </span>{' '}
+                                                    <ChevronDown className="h-4 w-4 text-black" />
+                                                </section>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-[210px]">
+                                                <DropdownMenuItem
+                                                    onSelect={() => {
+                                                        // action here
+                                                    }}
+                                                    className="flex w-full"
+                                                >
+                                                    Product 1
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onSelect={() => {
+                                                        //
+                                                    }}
+                                                    className="flex w-full cursor-pointer focus:bg-white"
+                                                >
+                                                    <div className="inline-flex space-x-2 text-gray-400">
+                                                        <Plus className="h-4 w-4" strokeWidth={2} />
+                                                        <span className="">{t('outreaches.addNewProduct')}</span>
+                                                    </div>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-end gap-1">
                                         <div className="inline-flex items-start justify-start gap-1">
                                             <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-500">
-                                            {t('outreaches.autoStart')}
+                                                {t('outreaches.autoStart')}
                                             </div>
                                             <div className="relative h-3 w-3" />
                                         </div>

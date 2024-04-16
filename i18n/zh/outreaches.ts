@@ -36,5 +36,6 @@ const outreaches = {
     templateVariables: '模板变量',
     skipForNow: '暂时跳过',
     saveAndFinish: '保存设定并完成',
+    addNewProduct: 'Add new product',
 };
 export default outreaches;

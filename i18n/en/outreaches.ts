@@ -36,6 +36,7 @@ const outreaches = {
     templateVariables: 'Template Variables',
     skipForNow: 'Skip for now',
     saveAndFinish: 'Save values and finish',
+    addNewProduct: 'Add new product',
 };
 
 export default outreaches;
