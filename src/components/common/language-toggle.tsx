@@ -64,7 +64,7 @@ export const Languages = [
     },
     {
         lang: zhCN,
-        label: '日本語',
+        label: '中文',
     },
 ];
 
