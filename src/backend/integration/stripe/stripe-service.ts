@@ -263,11 +263,8 @@ export default class StripeService {
 
     async removeExistingInvoiceBySubscription(subscriptionId: string) {
         const draftInvoices = await this.getDraftInvoiceBySubscription(subscriptionId);
-        const openInvoices = await this.getOpenInvoiceBySubscription(subscriptionId);
-        const mergedInvoices = [...draftInvoices.data, ...openInvoices.data];
-        if (draftInvoices) {
-            await this.deleteInvoices(mergedInvoices.map((invoice) => invoice.id));
-        }
+        const invoices = [...draftInvoices.data];
+        await this.deleteInvoices(invoices.map((invoice) => invoice.id));
     }
 
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
