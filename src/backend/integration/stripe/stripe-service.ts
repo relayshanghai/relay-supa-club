@@ -243,9 +243,17 @@ export default class StripeService {
         return StripeService.client.promotionCodes.list({ active: true });
     }
 
-    async getInvoiceBySubscription(subscriptionId: string) {
+    async getDraftInvoiceBySubscription(subscriptionId: string) {
         return StripeService.client.invoices.list({
             subscription: subscriptionId,
+            status: 'draft',
+        });
+    }
+
+    async getOpenInvoiceBySubscription(subscriptionId: string) {
+        return StripeService.client.invoices.list({
+            subscription: subscriptionId,
+            status: 'open',
         });
     }
 
@@ -254,9 +262,11 @@ export default class StripeService {
     }
 
     async removeExistingInvoiceBySubscription(subscriptionId: string) {
-        const existingInvoice = await this.getInvoiceBySubscription(subscriptionId);
-        if (existingInvoice) {
-            await this.deleteInvoices(existingInvoice.data.map((invoice) => invoice.id));
+        const draftInvoices = await this.getDraftInvoiceBySubscription(subscriptionId);
+        const openInvoices = await this.getOpenInvoiceBySubscription(subscriptionId);
+        const mergedInvoices = [...draftInvoices.data, ...openInvoices.data];
+        if (draftInvoices) {
+            await this.deleteInvoices(mergedInvoices.map((invoice) => invoice.id));
         }
     }
 
