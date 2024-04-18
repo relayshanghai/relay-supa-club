@@ -28,6 +28,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const StripeDeleteSubscriptionMock = vi.fn();
     const StripeGetProductMetadataMock = vi.fn();
     const StripeGetAvailablePromoMock = vi.fn();
+    const StripeRemoveExistingInvoiceBySubscriptionMock = vi.fn();
     const SubscriptionRepositoryUpsertMock = vi.fn();
     const SubscriptionRepositoryDeleteMock = vi.fn();
     const CancelSubscriptionMock = vi.fn();
@@ -50,6 +51,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     StripeService.getService().getCustomer = vi.fn().mockResolvedValue({
         metadata: {},
     });
+    StripeService.getService().removeExistingInvoiceBySubscription = StripeRemoveExistingInvoiceBySubscriptionMock;
     SubscriptionRepository.getRepository().upsert = SubscriptionRepositoryUpsertMock;
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;

@@ -243,6 +243,30 @@ export default class StripeService {
         return StripeService.client.promotionCodes.list({ active: true });
     }
 
+    async getDraftInvoiceBySubscription(subscriptionId: string) {
+        return StripeService.client.invoices.list({
+            subscription: subscriptionId,
+            status: 'draft',
+        });
+    }
+
+    async getOpenInvoiceBySubscription(subscriptionId: string) {
+        return StripeService.client.invoices.list({
+            subscription: subscriptionId,
+            status: 'open',
+        });
+    }
+
+    async deleteInvoices(invoiceIds: string[]) {
+        return Promise.all(invoiceIds.map((id) => StripeService.client.invoices.del(id)));
+    }
+
+    async removeExistingInvoiceBySubscription(subscriptionId: string) {
+        const draftInvoices = await this.getDraftInvoiceBySubscription(subscriptionId);
+        const invoices = [...draftInvoices.data];
+        await this.deleteInvoices(invoices.map((invoice) => invoice.id));
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,
