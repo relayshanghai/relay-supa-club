@@ -376,6 +376,7 @@ export default class SubscriptionV2Service {
         const [, trialSubscription] = await awaitToError(StripeService.getService().getTrialSubscription(cusId));
         if (trialSubscription) {
             await StripeService.getService().removeExistingInvoiceBySubscription(request.subscriptionId);
+            await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
     }
