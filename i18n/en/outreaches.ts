@@ -37,6 +37,19 @@ const outreaches = {
     skipForNow: 'Skip for now',
     saveAndFinish: 'Save values and finish',
     addNewProduct: 'Add new product',
+    productModal: {
+        addProduct: 'Add a product',
+        productLinkDescription:
+            'We link your products to searches and sequences to track performance, and help improve search results.',
+        productName: 'Product Name',
+        enterProductName: 'Enter Product Name',
+        price: 'Price',
+        enterPrice: 'Enter price',
+        productDescription: 'Product Description',
+        shortProductDescription: 'Short, clear product description',
+        shopLink: 'Shop Link',
+        shopLinkDescription: 'The products Amazon, Shopify, or other store link',
+    },
 };
 
 export default outreaches;

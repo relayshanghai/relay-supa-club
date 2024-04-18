@@ -1,65 +1,123 @@
+import { type FC } from 'react';
 import { Cross } from '../icons';
 import { Modal } from '../modal';
-import { CampaignModalStepOne } from './modal-steps/step-1';
-import { CampaignModalStepTwo } from './modal-steps/step-2';
-import { ModalHeader } from './create-campaign-modal-header';
-import { useState } from 'react';
-import { CampaignModalStepThree } from './modal-steps/step-3';
+import { Input } from '../input';
+import { Button } from '../button';
+import { useTranslation } from 'react-i18next';
 
-export type ModalStepProps = {
+export type ModalProductProps = {
+    modalOpen: boolean;
     setModalOpen: (visible: boolean) => void;
-    onNextStep: () => void;
-    onPrevStep: () => void;
 };
 
-export const CreateCampaignModal = ({
-    showCreateCampaignModal,
-    setShowCreateCampaignModal,
-}: {
-    title: string;
-    showCreateCampaignModal: boolean;
-    setShowCreateCampaignModal: (showCreateCampaignModal: boolean) => void;
-}) => {
-    const [step, setStep] = useState<number>(1);
-
-    const onNextStep = () => setStep(step + 1);
-    const onPrevStep = () => setStep(step - 1);
-
+export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalOpen }) => {
+    const { t } = useTranslation();
     return (
-        <Modal visible={showCreateCampaignModal} onClose={() => null} padding={0} maxWidth="!w-[960px]">
-            <div className="rounded-lg">
-                <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start bg-violet-50 shadow">
-                    <div
-                        className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer"
-                        onClick={() => setShowCreateCampaignModal(false)}
-                    >
-                        <Cross className="flex h-6 w-6 fill-white stroke-white" />
-                    </div>
-                    <ModalHeader step={step.toString() as '1' | '2' | '3'} />
-                    {/* body start */}
-                    {step === 1 && (
-                        <CampaignModalStepOne
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {step === 2 && (
-                        <CampaignModalStepTwo
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {step === 3 && (
-                        <CampaignModalStepThree
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {/* body end */}
+        <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
+            <div className="relative inline-flex h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50">
+                <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setModalOpen(false)}>
+                    <Cross className="flex h-6 w-6 fill-gray-400 stroke-white" />
                 </div>
+
+                {/* title section */}
+                <div className="inline-flex items-start justify-between self-stretch pl-6 pr-2 pt-6">
+                    <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                        <div className="inline-flex items-start justify-start gap-1">
+                            <div className="text-center font-['Poppins'] text-xl font-semibold tracking-tight text-gray-600">
+                                Add a product
+                            </div>
+                            <div className="relative h-4 w-4" />
+                        </div>
+                        <div className="w-80 font-['Poppins'] text-xs font-normal leading-tight tracking-tight text-gray-600">
+                            We link your products to searches and sequences to track performance, and help improve
+                            search results.
+                        </div>
+                    </div>
+                    <div className="inline-flex w-6 flex-col items-end justify-start gap-2.5 self-stretch">
+                        <div className="relative h-6 w-6" />
+                    </div>
+                </div>
+                {/* title section */}
+
+                {/* form section */}
+                <div className="mb-6 flex h-[228px] flex-col items-start justify-start gap-3 self-stretch p-6">
+                    <div className="inline-flex items-start justify-center gap-6 self-stretch">
+                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                            <Input
+                                noBottomMargin
+                                label={'Product Name'}
+                                type="text"
+                                value={''}
+                                onChange={() => null}
+                                placeholder={'Enter Product Name'}
+                                data-testid="product-name-input"
+                            />
+                        </div>
+                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                            <Input
+                                noBottomMargin
+                                label={'Price'}
+                                type="text"
+                                value={''}
+                                onChange={() => null}
+                                placeholder={'Enter price'}
+                                data-testid="product-name-input"
+                            />
+                        </div>
+                    </div>
+                    <div className="inline-flex items-start justify-center gap-6 self-stretch">
+                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                            <Input
+                                noBottomMargin
+                                label={'Product Description'}
+                                type="text"
+                                value={''}
+                                onChange={() => null}
+                                placeholder={'Short, clear product description'}
+                                data-testid="product-name-input"
+                            />
+                        </div>
+                    </div>
+                    <div className="inline-flex items-start justify-center gap-6 self-stretch">
+                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                            <Input
+                                noBottomMargin
+                                label={'Shop Link'}
+                                type="text"
+                                value={''}
+                                onChange={() => null}
+                                placeholder={'The products Amazon, Shopify, or other store link'}
+                                data-testid="product-name-input"
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* form section */}
+
+                {/* submit button section */}
+                <div className="flex h-[84px] flex-col items-end justify-center gap-6 self-stretch p-6">
+                    <div className="inline-flex h-9 items-start justify-start gap-2">
+                        <Button
+                            type="button"
+                            variant="neutral"
+                            className="inline-flex !p-2 text-sm !text-gray-400"
+                            onClick={() => setModalOpen(false)}
+                            data-testid="back-button"
+                        >
+                            {t('outreaches.back')}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="primary"
+                            className="inline-flex items-center border-none !bg-pink-500 !p-2"
+                            data-testid="next-button"
+                            onClick={() => null}
+                        >
+                            {t('outreaches.saveAndContinue')}
+                        </Button>
+                    </div>
+                </div>
+                {/* submit button section */}
             </div>
         </Modal>
     );
