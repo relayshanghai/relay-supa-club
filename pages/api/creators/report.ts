@@ -22,6 +22,7 @@ import {
 } from 'src/utils/rudderstack';
 import { ApiHandler } from 'src/utils/api-handler';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
+import awaitToError from 'src/utils/await-to-error';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -139,10 +140,14 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     let createdAt = '';
 
     trackListReports();
-    const reportMetadata: CreatorReportsMetadata = await fetchReportsMetadata({ req, res, metadata: { pageUrl } })(
-        platform,
-        creator_id,
+    const [err, reportMetadata] = await awaitToError<Error, CreatorReportsMetadata>(
+        fetchReportsMetadata({ req, res, metadata: { pageUrl } })(platform, creator_id),
     );
+
+    if (err) {
+        serverLogger(err, 'error');
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'cannot_process_report' });
+    }
 
     report_id = reportMetadata?.results[0]?.id ?? '';
     createdAt = reportMetadata?.results[0]?.created_at ?? '';
