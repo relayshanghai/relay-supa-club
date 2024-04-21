@@ -21,6 +21,7 @@ import { v4 } from 'uuid';
 import SequenceService from '../sequence/sequence-service';
 import type { AccountRole } from 'types';
 import { UsageRepository } from 'src/backend/database/usages/repository';
+import RecaptchaService from 'src/backend/integration/recaptcha/recaptcha-service';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -62,7 +63,11 @@ export default class RegistrationService {
         return teammateProfile;
     }
 
-    async sendOtp(phoneNumber: string) {
+    async sendOtp(phoneNumber: string, recaptchaToken: string) {
+        const success = await RecaptchaService.getService().validate(recaptchaToken);
+        if (!success) {
+            throw new BadRequestError(RequestContext.t('signup.recaptchaError'));
+        }
         await TwilioService.getService().sendOtp(phoneNumber);
     }
     async createStripeCustomerAndSubscription(param: RegisterRequest & { companyId: string }) {

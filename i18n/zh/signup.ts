@@ -73,5 +73,6 @@ const signup = {
     didntGetTheOtp: '没有收到验证码?',
     phoneNumberAlreadyInUse: '电话号码已被使用，请试试其它号码。',
     phoneNumberIsInvalid: '无效电话号码，请试试其它号码。',
+    recaptchaError: '未验证Recaptcha',
 };
 export default signup;

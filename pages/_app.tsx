@@ -17,7 +17,7 @@ import chatwootConfig from 'chatwoot.config';
 import { AnalyticsProvider, useDeviceId } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
-
+import { ReCaptchaProvider } from 'next-recaptcha-v3';
 // Use your Rewardful API Key
 const API_KEY = process.env.NEXT_PUBLIC_REWARDFUL_API_KEY;
 
@@ -94,9 +94,11 @@ function MyApp({
                         <CacheProvider>
                             <UserProvider>
                                 <ChatwootProvider {...chatwootConfig}>
-                                    <CompanyProvider>
-                                        <Component {...pageProps} />
-                                    </CompanyProvider>
+                                    <ReCaptchaProvider>
+                                        <CompanyProvider>
+                                            <Component {...pageProps} />
+                                        </CompanyProvider>
+                                    </ReCaptchaProvider>
                                 </ChatwootProvider>
                             </UserProvider>
                         </CacheProvider>

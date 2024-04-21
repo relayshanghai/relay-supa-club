@@ -35,6 +35,10 @@ export class SendOtpRequest {
         message: () => RequestContext.t('signup.phoneNumberIsInvalid'),
     })
     phoneNumber!: string;
+
+    @IsString()
+    @IsOptional()
+    recaptchaToken!: string;
 }
 
 export class VerifyOtpRequest {

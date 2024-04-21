@@ -4,13 +4,13 @@ import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 
 export const useOtp = () => {
-    const { apiClient, loading, error } = useApiClient();
+    const { apiClient, loading, error, setError } = useApiClient();
     const [isVerified, setIsVerified] = useState(false);
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [counter, setCounter] = useState(0);
-    const sendOtp = async (phoneNumber: string) => {
+    const sendOtp = async (phoneNumber: string, recaptchaToken?: string) => {
         setIsOtpSent(false);
-        const [err] = await awaitToError(apiClient.post('/users/send-otp', { phoneNumber }));
+        const [err] = await awaitToError(apiClient.post('/users/send-otp', { phoneNumber, recaptchaToken }));
         if (err) return;
         setIsOtpSent(true);
         startInterval();
@@ -32,5 +32,5 @@ export const useOtp = () => {
             clearInterval(interval);
         }, 60000);
     };
-    return { sendOtp, loading, verify, isVerified, isOtpSent, setIsVerified, setIsOtpSent, counter, error };
+    return { sendOtp, loading, verify, isVerified, isOtpSent, setIsVerified, setIsOtpSent, counter, error, setError };
 };

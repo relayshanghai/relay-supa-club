@@ -10,7 +10,7 @@ export class SentOtpHandler {
     @POST()
     async sendOtp(@CookieParser() cookie: Cookies, @Body(SendOtpRequest) request: SendOtpRequest) {
         await RegistrationService.getService().isPhoneNumberDoesNotExist(request.phoneNumber);
-        await RegistrationService.getService().sendOtp(request.phoneNumber);
+        await RegistrationService.getService().sendOtp(request.phoneNumber, request.recaptchaToken);
         cookie.set('otpFlow', {
             phoneNumber: request.phoneNumber,
             verified: false,
