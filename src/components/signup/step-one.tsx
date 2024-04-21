@@ -9,7 +9,7 @@ import PhoneNumberInput from '../phone-number-input';
 import { useOtp } from 'src/hooks/use-otp';
 import OtpInput from '../otp-input';
 import Link from 'next/link';
-import { useReCaptcha, ReCaptcha } from 'next-recaptcha-v3';
+import { useReCaptcha } from 'next-recaptcha-v3';
 
 export const StepOne = ({
     firstName,
@@ -35,15 +35,15 @@ export const StepOne = ({
     const phoneNumberRef = useRef<HTMLInputElement>(null);
     const { loading: otpLoading, sendOtp, verify, counter, isOtpSent, setIsOtpSent, error } = useOtp();
     const [code, setCode] = useState('');
-    const [recaptchaToken, setRecaptchaToken] = useState<string>();
 
     const submitDisabled = invalidFormInput || loading || otpLoading || !isOtpSent || code.length !== 6;
     useEffect(() => {
         if (phoneNumber) setIsOtpSent(false);
     }, [phoneNumber, setIsOtpSent]);
-
+    const { executeRecaptcha } = useReCaptcha();
     const triggerSendOtp = async () => {
         setCode('');
+        const recaptchaToken = await executeRecaptcha('page_view');
         await sendOtp(phoneNumber, recaptchaToken);
     };
     const triggerVerify = async () => {
@@ -127,12 +127,6 @@ export const StepOne = ({
                     </div>
                 </div>
             )}
-            <ReCaptcha
-                onValidate={(t) => {
-                    setRecaptchaToken(t);
-                }}
-                action="page_view"
-            />
             {error && <p className="text-sm text-red-500">{error}</p>}
             {recaptchaError && <p className="text-sm text-red-500">{t('signup.recaptchaError')}</p>}
             <Button disabled={submitDisabled} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
