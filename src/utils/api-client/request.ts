@@ -25,5 +25,5 @@ export const useApiClient = () => {
             throw error;
         },
     );
-    return { apiClient, loading, error };
+    return { apiClient, loading, error, setError };
 };
