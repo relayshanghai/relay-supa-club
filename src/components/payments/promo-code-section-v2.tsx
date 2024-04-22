@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { numberFormatter } from 'src/utils/formatter';
 import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
@@ -13,7 +12,6 @@ import { useRouter } from 'next/router';
 import awaitToError from 'src/utils/await-to-error';
 
 export const PromoCodeSectionV2 = ({
-    selectedPrice,
     setCouponId,
     priceTier,
 }: {
@@ -21,7 +19,7 @@ export const PromoCodeSectionV2 = ({
     setCouponId: (value: string) => void;
     priceTier: ActiveSubscriptionTier;
 }) => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const {
         query: { subscriptionId },
     } = useRouter();
@@ -30,15 +28,11 @@ export const PromoCodeSectionV2 = ({
     const [promoCodeMessage, setPromoCodeMessage] = useState<string>('');
     const [promoCodeMessageCls, setPromoCodeMessageCls] = useState<string>('text-gray-500');
     const [promoCodeInputCls, setPromoCodeInputCls] = useState<string>('focus:border-primary-500');
-    const en = i18n.language?.toLowerCase().includes('en');
     const { track } = useRudderstackTrack();
     const { loading, applyCoupon } = useCouponV2();
 
     const handleSubmit = async (promoCode: string) => {
         const [, couponResponse] = await awaitToError(applyCoupon(subscriptionId as string, { coupon: promoCode }));
-        const calcAmountDeducted = (amount: number, percentageOff: number) => {
-            return numberFormatter(amount * (percentageOff / 100));
-        };
 
         if (couponResponse) {
             setCouponId(couponResponse.id);
@@ -48,10 +42,7 @@ export const PromoCodeSectionV2 = ({
             setPromoCodeMessageCls('text-green-600');
             setPromoCodeInputCls('focus:border-green-600 border-green-600');
             setPromoCodeMessage(
-                ` ${percentageOff}% ${t('account.payments.offCn')} (${en ? '$' : '¥'}${calcAmountDeducted(
-                    parseInt(selectedPrice.prices.monthly),
-                    percentageOff ?? 0,
-                )}) ${t('account.payments.offEn')}${validDurationText}`,
+                ` ${percentageOff}% ${t('account.payments.offCn')} ${t('account.payments.offEn')}${validDurationText}`,
             );
             track(ApplyPromoCode, { selected_plan: priceTier, promo_code: promoCode });
         } else {
