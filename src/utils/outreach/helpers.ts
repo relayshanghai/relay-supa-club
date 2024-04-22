@@ -6,5 +6,8 @@ export const generateUrlIfTiktok = (url?: string | null, username?: string | nul
     if (!url) {
         return '';
     }
+    if (url.includes('https://m.tiktok.com')) {
+        return `https://www.tiktok.com/@${username}`;
+    }
     return url.includes('https://www.tiktok.com/@') ? `https://www.tiktok.com/@${username}` : url;
 };
