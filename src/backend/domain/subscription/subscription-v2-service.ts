@@ -140,6 +140,7 @@ export default class SubscriptionV2Service {
             cusId,
             request.priceId,
             request.quantity,
+            request.coupon,
         );
         return {
             providerSubscriptionId: subscription.id,
@@ -423,10 +424,18 @@ export default class SubscriptionV2Service {
         if (!foundCoupon) {
             throw new UnprocessableEntityError('Invalid promo code');
         }
-        await StripeService.getService().updateSubscription(subscriptionId, {
+        const subscription: Stripe.Response<Stripe.Subscription & { plan: Stripe.Plan }> =
+            (await StripeService.getService().retrieveSubscription(subscriptionId)) as Stripe.Response<
+                Stripe.Subscription & { plan: Stripe.Plan }
+            >;
+
+        const newSubscription = await this.createSubscription({
+            priceId: subscription.items.data[0].price.id,
+            quantity: subscription.items.data[0].quantity,
             coupon: foundCoupon.coupon.id,
         });
-        return foundCoupon.coupon;
+        await StripeService.getService().deleteSubscription(subscription.id);
+        return { ...newSubscription, coupon: foundCoupon.coupon };
     }
 
     @CompanyIdRequired()
