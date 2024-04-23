@@ -8,6 +8,10 @@ export class CreateSubscriptionRequest {
     @IsPositive()
     @IsOptional()
     quantity?: number;
+
+    @IsString()
+    @IsOptional()
+    coupon?: string;
 }
 
 export class UpdateSubscriptionRequest {

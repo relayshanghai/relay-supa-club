@@ -3,12 +3,13 @@ import { render, cleanup, act, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PromoCodeSectionV2 } from './promo-code-section-v2';
 
-const { pushMock, reactUseStateMock, applyCouponMock } = vi.hoisted(() => {
+const { pushMock, reactUseStateMock, applyCouponMock, setApplyCouponResponseMock } = vi.hoisted(() => {
     return {
         pushMock: vi.fn(),
         reactUseStateMock: vi.fn(),
         applyCouponMock: vi.fn(),
         useLocalStorageSubscribeResponseMock: vi.fn().mockReturnValue([{}, () => []]),
+        setApplyCouponResponseMock: vi.fn().mockReturnValue([{}, () => []]),
     };
 });
 
@@ -45,6 +46,20 @@ vi.mock('src/hooks/v2/use-subscription', () => ({
             return null;
         },
     ],
+}));
+vi.mock('src/hooks/v2/use-subscription', () => ({
+    useCouponV2: () => ({
+        applyCoupon: applyCouponMock,
+    }),
+    useLocalStorageSubscribeResponse: () => [
+        {},
+        () => {
+            return null;
+        },
+    ],
+    useApplyCouponResponseStore: () => ({
+        setApplyCouponResponse: setApplyCouponResponseMock,
+    }),
 }));
 const selectedPrice = {
     currency: 'cny',

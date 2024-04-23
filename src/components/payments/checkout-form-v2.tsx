@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
@@ -7,7 +7,11 @@ import type { NewRelayPlan } from 'types';
 import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 import { InputPaymentInfo } from 'src/utils/analytics/events/onboarding/input-payment-info';
-import { stripeSubscribeResponseInitialValue, useLocalStorageSubscribeResponse } from 'src/hooks/v2/use-subscription';
+import {
+    stripeSubscribeResponseInitialValue,
+    useApplyCouponResponseStore,
+    useLocalStorageSubscribeResponse,
+} from 'src/hooks/v2/use-subscription';
 import { useRouter } from 'next/router';
 import { PayForUpgradedPlan } from 'src/utils/analytics/events';
 import awaitToError from 'src/utils/await-to-error';
@@ -33,7 +37,18 @@ const CheckoutFormV2 = ({
     const [formReady, setFormReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
     const [paymentType, setPaymentType] = useState<PaymentType>('card');
+    const { applyCouponResponse } = useApplyCouponResponseStore();
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorageSubscribeResponse();
+
+    useEffect(() => {
+        setStripeSubscribeResponse({
+            clientSecret: applyCouponResponse.clientSecret,
+            ipAddress: applyCouponResponse.ipAddress,
+            plan: applyCouponResponse.plan as string,
+            coupon: applyCouponResponse.coupon,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [applyCouponResponse]);
 
     const handleError = (error: any) => {
         setIsLoading(false);

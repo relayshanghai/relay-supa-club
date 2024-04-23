@@ -14,6 +14,7 @@ import type Stripe from 'stripe';
 import useSWR from 'swr';
 import { useCompany } from '../use-company';
 import { useLocalStorage } from '../use-localstorage';
+import { create } from 'zustand';
 
 export type CreateSubscriptionPayload = { priceId: string; quantity: number };
 export type CreateSubscriptionResponse = {
@@ -27,13 +28,17 @@ export type PaymentMethodResponse = {
     paymentMethods?: Stripe.PaymentMethod[];
     defaultPaymentMethod: string;
 };
-export type ApplyCouponPayload = { coupon: string };
-export type ApplyCouponResponse = {
+export type Coupon = {
     id: string;
     amount_off: null;
     percent_off: number;
     duration_in_months: number;
     name: string;
+};
+export type ApplyCouponPayload = { coupon: string };
+export type ApplyCouponResponse = CreateSubscriptionResponse & {
+    plan?: string;
+    coupon: Coupon;
 };
 
 export const STRIPE_SUBSCRIBE_RESPONSE = 'boostbot_stripe_secret_response';
@@ -43,6 +48,7 @@ export const stripeSubscribeResponseInitialValue: {
     plan: string;
     coupon?: string;
 } = { clientSecret: '', ipAddress: '', plan: '', coupon: undefined };
+
 export const useLocalStorageSubscribeResponse = () =>
     useLocalStorage(STRIPE_SUBSCRIBE_RESPONSE, stripeSubscribeResponseInitialValue);
 export const useSubscription = () => {
@@ -226,6 +232,16 @@ export const useSubscription = () => {
     };
 };
 
+interface ApplyCouponStore {
+    applyCouponResponse: ApplyCouponResponse;
+    setApplyCouponResponse: (response: ApplyCouponResponse) => void;
+    resetApplyCouponResponse: () => void;
+}
+export const useApplyCouponResponseStore = create<ApplyCouponStore>((set) => ({
+    applyCouponResponse: {} as ApplyCouponResponse,
+    setApplyCouponResponse: (response: ApplyCouponResponse) => set({ applyCouponResponse: response }),
+    resetApplyCouponResponse: () => set({ applyCouponResponse: {} as ApplyCouponResponse }),
+}));
 export const useCouponV2 = () => {
     const { apiClient, loading, error } = useApiClient();
     const applyCoupon = async (subscriptionId: string, payload: ApplyCouponPayload) => {

@@ -506,13 +506,52 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         },
                     ],
                 } as Stripe.Response<Stripe.ApiList<Stripe.PromotionCode>>);
-                const updateSubscription = vi.spyOn(StripeService.getService(), 'updateSubscription');
-                updateSubscription.mockResolvedValue({} as Stripe.Response<Stripe.Subscription>);
+                const retrieveSubscription = vi.spyOn(StripeService.getService(), 'retrieveSubscription');
+                retrieveSubscription.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                    customer: 'cus_1',
+                    current_period_end: 1712811791,
+                    items: {
+                        data: [
+                            {
+                                price: {
+                                    id: 'price_1',
+                                    unit_amount: 100,
+                                },
+                                quantity: 1,
+                            },
+                        ],
+                    },
+                } as Stripe.Response<Stripe.Subscription>);
+
+                const createSubscription = vi.spyOn(SubscriptionV2Service.getService(), 'createSubscription');
+                createSubscription.mockResolvedValue({
+                    clientSecret: 'some secret',
+                    providerSubscriptionId: 'sub_1',
+                    coupon: null,
+                });
+
+                const deleteSubscription = vi.spyOn(StripeService.getService(), 'deleteSubscription');
+                deleteSubscription.mockResolvedValue({
+                    lastResponse: {
+                        statusCode: 200,
+                        headers: {},
+                        requestId: 'req_1',
+                    },
+                    id: 'sub_1',
+                    customer: 'cus_1',
+                    current_period_end: 1712811791,
+                } as Stripe.Response<Stripe.Subscription>);
 
                 const result = await SubscriptionV2Service.getService().applyPromo('sub_1', {
                     coupon: '123',
                 });
-                expect(result.id).toBe('coupon_1');
+                expect(result.coupon.id).toBe('coupon_1');
             });
             it(`should return subsription not found`, async () => {
                 const getAvailablePromo = vi.spyOn(StripeService.getService(), 'getAvailablePromo');
@@ -532,8 +571,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         },
                     ],
                 } as Stripe.Response<Stripe.ApiList<Stripe.PromotionCode>>);
-                const updateSubscription = vi.spyOn(StripeService.getService(), 'updateSubscription');
-                updateSubscription.mockRejectedValue(new NotFoundError('subscription not found'));
+                const retrieveSubscription = vi.spyOn(StripeService.getService(), 'retrieveSubscription');
+                retrieveSubscription.mockRejectedValue(new NotFoundError('subscription not found'));
 
                 const [err] = await awaitToError(
                     SubscriptionV2Service.getService().applyPromo('sub_xx', {
