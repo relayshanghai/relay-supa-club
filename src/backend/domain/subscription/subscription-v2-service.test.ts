@@ -17,7 +17,6 @@ vi.mock('src/backend/database/provider/transaction-decorator', () => ({
 describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, async () => {
     const StripeCreateSubscriptionMock = vi.fn();
     const SubscriptionRepositoryFindOneMock = vi.fn();
-    const SubscriptionRepositoryGetStatusMock = vi.fn();
     const StripeGetPaymentIntentMock = vi.fn();
     const StripeRetrieveSubscriptionMock = vi.fn();
     const StripeGetTrialSubscriptionMock = vi.fn();
@@ -36,7 +35,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const CompanyRepositoryUpdateMock = vi.fn();
     const CompanyRepositoryGetOneMock = vi.fn();
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
-    SubscriptionRepository.prototype.getStatus = SubscriptionRepositoryGetStatusMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
     StripeService.getService().retrieveSubscription = StripeRetrieveSubscriptionMock;
@@ -96,8 +94,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             data: [{ price: { id: 'price_1' } }],
                         },
                     },
+                    status: 'ACTIVE',
                 });
-                SubscriptionRepositoryGetStatusMock.mockResolvedValue('ACTIVE');
                 const [err] = await awaitToError(
                     SubscriptionV2Service.getService().createSubscription({
                         priceId: 'price_1',
@@ -324,9 +322,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             ],
                         },
                     },
+                    status: 'ACTIVE',
                 };
                 SubscriptionRepositoryFindOneMock.mockResolvedValue(stripeSubscription);
-                SubscriptionRepositoryGetStatusMock.mockResolvedValue('ACTIVE');
                 StripeService.client.subscriptions.list = vi.fn().mockResolvedValue(stripeSubscription);
 
                 const result = await SubscriptionV2Service.getService().getSubscription();
@@ -340,9 +338,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             data: [{ price: { id: 'price_1' } }],
                         },
                     },
+                    status: 'ACTIVE',
                 };
                 SubscriptionRepositoryFindOneMock.mockResolvedValue(subscriptionData);
-                SubscriptionRepositoryGetStatusMock.mockResolvedValue('ACTIVE');
                 const result = await SubscriptionV2Service.getService().getSubscription();
                 expect((result as any).subscriptionData).toBe(subscriptionData.subscriptionData);
                 expect((result as any).status).toBe('ACTIVE');

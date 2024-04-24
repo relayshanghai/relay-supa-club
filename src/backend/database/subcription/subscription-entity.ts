@@ -1,9 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, VirtualColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity, AfterLoad } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { type Nullable } from 'types/nullable';
 
+export enum SubscriptionStatus {
+    TRIAL = 'TRIAL',
+    TRIAL_EXPIRED = 'TRIAL_EXPIRED',
+    ACTIVE = 'ACTIVE',
+    PASS_DUE = 'PASS_DUE',
+    CANCELLED = 'CANCELLED',
+    UNKNOWN = 'UNKNOWN',
+}
+
 @Entity({ name: 'subscriptions' })
-export class SubscriptionEntity<T = any> {
+export class SubscriptionEntity<T = any> extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
@@ -53,18 +62,27 @@ export class SubscriptionEntity<T = any> {
     @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
     cancelledAt?: Nullable<Date>;
 
-    @VirtualColumn({
-        type: 'varchar',
-        query: (
-            alias,
-        ) => `SELECT CASE WHEN ${alias}.active_at IS NULL AND CURRENT_TIMESTAMP < ${alias}.cancelled_at THEN 'TRIAL' " +
-        "WHEN ${alias}.active_at IS NULL AND CURRENT_TIMESTAMP > ${alias}.cancelled_at THEN 'TRIAL_EXPIRED' " +
-        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP < ${alias}.paused_at THEN 'ACTIVE' " +
-        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP >= ${alias}.paused_at AND ${alias}.cancelled_at IS NULL THEN 'PASS_DUE' " +
-        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP >= ${alias}.cancelled_at THEN 'CANCELLED' " +
-        "ELSE 'UNKNOWN' END FROM subscriptions ${alias} WHERE ${alias}.id = subscriptions.id`,
-    })
-    status!: string;
+    @AfterLoad()
+    setStatus() {
+        let s = SubscriptionStatus.UNKNOWN;
+        const currentTime = new Date();
+        const activeAt = this.activeAt as Date;
+        const cancelledAt = this.cancelledAt as Date;
+        const pausedAt = this.pausedAt as Date;
+        if (activeAt === null && currentTime < cancelledAt) {
+            s = SubscriptionStatus.TRIAL;
+        } else if (activeAt === null && currentTime > cancelledAt) {
+            s = SubscriptionStatus.TRIAL_EXPIRED;
+        } else if (activeAt !== null && currentTime < pausedAt) {
+            s = SubscriptionStatus.ACTIVE;
+        } else if (activeAt !== null && pausedAt !== null && currentTime >= pausedAt && cancelledAt === null) {
+            s = SubscriptionStatus.PASS_DUE;
+        } else if (activeAt !== null && cancelledAt !== null && currentTime >= cancelledAt) {
+            s = SubscriptionStatus.CANCELLED;
+        }
+        this.status = s;
+    }
+    status!: SubscriptionStatus;
 
     static getSubscriptionEntity<T>(e: SubscriptionEntity): SubscriptionEntity<T> {
         return e as SubscriptionEntity<T>;
