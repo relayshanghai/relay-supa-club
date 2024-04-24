@@ -247,6 +247,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
+                    status: 'TRIAL',
                 };
                 return trialSubscription;
             } else if (lastSubscription.status === 'canceled') {
@@ -266,6 +267,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.canceled_at ? new Date(lastSubscription.canceled_at * 1000) : null,
+                    status: 'CANCELLED',
                 };
                 return trialSubscription;
             }
