@@ -122,10 +122,10 @@ export default class SubscriptionV2Service {
                 },
             },
         });
-        if (!existedSubscription) {
-            throw new NotFoundError('No subscription found');
+        let status = null;
+        if (existedSubscription) {
+            status = await SubscriptionRepository.getRepository().getStatus(existedSubscription.id);
         }
-        const status = await SubscriptionRepository.getRepository().getStatus(existedSubscription.id);
         if (existedSubscription && status === 'ACTIVE') {
             const stripeSubscriptionEntity =
                 SubscriptionEntity.getSubscriptionEntity<StripeSubscription>(existedSubscription);
