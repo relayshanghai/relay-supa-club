@@ -148,7 +148,8 @@ export class StripeWebhookService {
         if (!subscription) {
             throw new Error('Subscription not found');
         }
-        subscription.cancelledAt = new Date();
+        subscription.pausedAt = new Date();
+        subscription.cancelledAt = null;
         await SubscriptionRepository.getRepository().save(subscription);
 
         if (type === StripeWebhookType.INVOICE_PAYMENT_FAILED) {
