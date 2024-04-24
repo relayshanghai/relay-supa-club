@@ -1,5 +1,6 @@
+/* eslint-disable react/self-closing-comp */
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { usePrices } from 'src/hooks/use-prices';
+import { useLocalStorageSelectedPrice, usePrices } from 'src/hooks/use-prices';
 import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
@@ -68,7 +69,8 @@ export const PriceCard = ({
 }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
-    const { prices } = usePrices();
+    const { company } = useCompany();
+    const { prices, loading: priceLoading } = usePrices(company?.currency || 'cny');
     const { refreshSubscription } = useSubscriptionLegacy();
     const {
         subscription,
@@ -79,9 +81,46 @@ export const PriceCard = ({
         refreshSubscription: refreshSubscriptionV2,
     } = useSubscription();
     const [, setStripeSecretResponse] = useLocalStorageSubscribeResponse();
-    const { company } = useCompany();
+    const [, setSelectedPrice] = useLocalStorageSelectedPrice();
     const router = useRouter();
+    if (priceLoading || !prices)
+        return (
+            <div className="max-w-lg animate-pulse space-y-2.5">
+                <div className="flex w-full items-center">
+                    <div className="h-2.5 w-32 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[480px] items-center">
+                    <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[400px] items-center">
+                    <div className="h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[480px] items-center">
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[440px] items-center">
+                    <div className="ms-2 h-2.5 w-32 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                </div>
+                <div className="flex w-full max-w-[360px] items-center">
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <span className="sr-only">Loading...</span>
+            </div>
+        );
     type PriceKey = keyof typeof prices;
+
     const key: PriceKey = priceTier;
     const price = prices[key];
     const currency = price.currency;
@@ -102,15 +141,15 @@ export const PriceCard = ({
     const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 
     const triggerCreateSubscription = () => {
+        setSelectedPrice(price);
         createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
             .then((res) => {
-                if (res.clientSecret)
-                    setStripeSecretResponse({
-                        clientSecret: res?.clientSecret,
-                        ipAddress: res?.ipAddress,
-                        plan: priceTier,
-                        coupon: res?.coupon,
-                    });
+                setStripeSecretResponse({
+                    clientSecret: res?.clientSecret,
+                    ipAddress: res?.ipAddress,
+                    plan: priceTier,
+                    coupon: res?.coupon,
+                });
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })
             .catch((error) => {

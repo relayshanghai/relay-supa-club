@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 import { RequestContext } from 'src/utils/request-context/request-context';
 
 export class RegisterRequest {
@@ -27,6 +27,9 @@ export class RegisterRequest {
     @IsString()
     @IsOptional()
     rewardfulReferral?: string;
+
+    @IsEnum(['usd', 'cny'])
+    currency!: string;
 }
 
 export class SendOtpRequest {

@@ -1,2 +1,2 @@
-ALTER TABLE "public"."profile" ADD COLUMN "currency" TEXT;
-ALTER TABLE "public"."profile" ADD COLUMN "language" TEXT;
+ALTER TABLE "public"."companies" ADD COLUMN "currency" TEXT NULL DEFAULT 'cny';
+ALTER TABLE "public"."profiles" ADD COLUMN "language" TEXT NULL;

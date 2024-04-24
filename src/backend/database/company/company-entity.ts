@@ -86,4 +86,7 @@ export class CompanyEntity {
 
     @OneToMany(() => SequenceInfluencerEntity, (sequenceInfluencer) => sequenceInfluencer.company, { cascade: true })
     sequenceInfluencers!: SequenceInfluencerEntity[];
+
+    @Column({ name: 'currency', nullable: true })
+    currency?: string;
 }

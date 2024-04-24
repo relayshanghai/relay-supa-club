@@ -85,11 +85,11 @@ export default class RegistrationService {
             throw new Error(createCompanyErrors.unableToMakeStripeCustomer);
         }
 
-        const { trial_days, priceId } = DISCOVERY_PLAN;
-
+        const { trial_days, priceId, priceIdUsd } = DISCOVERY_PLAN;
+        const selectedPriceId = param.currency === 'usd' ? priceIdUsd : priceId;
         const subscription = await stripeClient.subscriptions.create({
             customer: customer.id,
-            items: [{ price: priceId }],
+            items: [{ price: selectedPriceId }],
             proration_behavior: 'create_prorations',
             trial_period_days: Number(trial_days),
             trial_settings: {
@@ -125,6 +125,7 @@ export default class RegistrationService {
         company.trialProfilesLimit = trialProfiles;
         company.trialSearchesLimit = trialSearches;
         company.subscriptionStatus = 'trial';
+        company.currency = request.currency;
         const subscriptionStartDate = unixEpochToISOString(subscription.trial_start, subscription.start_date);
         if (subscriptionStartDate) {
             company.subscriptionStartDate = new Date(subscriptionStartDate);

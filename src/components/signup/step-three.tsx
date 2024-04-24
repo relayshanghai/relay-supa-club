@@ -10,6 +10,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { clientLogger } from 'src/utils/logger-client';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
+import Select from '../form/select';
 
 const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void }) => {
     const { t } = useTranslation();
@@ -112,6 +113,7 @@ const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void })
 export const StepThree = ({
     companyName,
     companyWebsite,
+    currency,
     setAndValidate,
     validationErrors,
     loading,
@@ -119,6 +121,7 @@ export const StepThree = ({
 }: {
     companyName: string;
     companyWebsite: string;
+    currency: string;
     setAndValidate: (type: SignupInputTypes, value: string) => void;
     validationErrors: SignUpValidationErrors;
     loading: boolean;
@@ -205,6 +208,21 @@ export const StepThree = ({
                         termsRef?.current?.focus();
                     }
                 }}
+            />
+            <Select
+                onChange={(value) => setAndValidate('currency', value)}
+                value={currency}
+                label={t('signup.currency')}
+                options={[
+                    {
+                        value: 'usd',
+                        label: 'USD',
+                    },
+                    {
+                        value: 'cny',
+                        label: 'RMB',
+                    },
+                ]}
             />
             <input
                 ref={termsRef}
