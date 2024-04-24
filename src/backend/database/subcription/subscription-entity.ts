@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity, AfterLoad } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, AfterLoad } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { type Nullable } from 'types/nullable';
 
@@ -12,7 +12,7 @@ export enum SubscriptionStatus {
 }
 
 @Entity({ name: 'subscriptions' })
-export class SubscriptionEntity<T = any> extends BaseEntity {
+export class SubscriptionEntity<T = any> {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
