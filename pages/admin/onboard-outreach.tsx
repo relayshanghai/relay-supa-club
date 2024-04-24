@@ -1,4 +1,3 @@
-import type { AdminGetCompanyQueries, AdminGetCompanyResponse } from 'pages/api/admin/company';
 import type { AdminGetProfileQueries, AdminGetProfileResponse, AdminPutProfileResponse } from 'pages/api/admin/profile';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
@@ -7,8 +6,7 @@ import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { emailRegex } from 'src/constants';
-import type { CompanyDB } from 'src/utils/api/db';
-import { type ProfileDB } from 'src/utils/api/db';
+import { type CompanyDB, type ProfileDB } from 'src/utils/api/db';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 
 const validateNumberAsString = (input: string) => {
@@ -43,37 +41,9 @@ const validateEmailEngineAccountId = (emailEngineAccountId: string | null) => {
     return true;
 };
 
-const OnboardOutreach = () => {
-    const [profile, setProfile] = useState<ProfileDB | null>(null);
-    const [company, setCompany] = useState<CompanyDB | null>(null);
-    const [fetchingProfile, setFetchingProfile] = useState<boolean>(false);
+const ProfileContainer = ({ initialProfile }: { initialProfile: ProfileDB }) => {
+    const [profile, setProfile] = useState(initialProfile);
     const [submittingProfile, setSubmittingProfile] = useState<boolean>(false);
-    const [email, setEmail] = useState<string>('');
-    const fetchProfileAndCompany: FormEventHandler<HTMLFormElement> = async (e) => {
-        e.preventDefault();
-        setFetchingProfile(true);
-        try {
-            const res = await nextFetchWithQueries<AdminGetProfileQueries, AdminGetProfileResponse>('admin/profile', {
-                email,
-            });
-            if (res.email) {
-                setProfile(res);
-            }
-            if (res.company_id) {
-                const companyRes = await nextFetchWithQueries<AdminGetCompanyQueries, AdminGetCompanyResponse>(
-                    'admin/company',
-                    { companyId: res.company_id },
-                );
-                if (companyRes.profiles_limit) {
-                    setCompany(companyRes);
-                }
-            }
-        } catch (error) {
-            alert(error);
-        }
-        setFetchingProfile(false);
-    };
-
     const updateProfile: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
         setSubmittingProfile(true);
@@ -94,7 +64,6 @@ const OnboardOutreach = () => {
                 body: profile,
             });
             if (res.email) {
-                setProfile(res);
                 toast.success('Profile updated');
             }
         } catch (error) {
@@ -103,10 +72,68 @@ const OnboardOutreach = () => {
             setSubmittingProfile(false);
         }
     };
+    return (
+        <>
+            <div className="flex max-w-md flex-col space-y-4 pt-6">
+                <h2 className="text-lg font-bold">Update profile: {profile.email}</h2>
+                <form onSubmit={updateProfile} className="flex flex-col space-y-4">
+                    <label htmlFor="email_engine_account_id">email_engine_account_id</label>
+                    <input
+                        id="email_engine_account_id"
+                        type="text"
+                        value={profile.email_engine_account_id ?? ''}
+                        onChange={(e) =>
+                            setProfile({
+                                ...profile,
+                                email_engine_account_id: cleanUserInput(e.target.value),
+                            })
+                        }
+                    />
+                    <label htmlFor="sequence_send_email">sequence_send_email</label>
+                    <input
+                        id="sequence_send_email"
+                        type="text"
+                        value={profile.sequence_send_email ?? ''}
+                        onChange={(e) =>
+                            setProfile({ ...profile, sequence_send_email: cleanUserInput(e.target.value) })
+                        }
+                    />
+                    <Button disabled={submittingProfile} type="submit">
+                        Submit
+                    </Button>
+                </form>
+            </div>
+        </>
+    );
+};
+
+const OnboardOutreach = () => {
+    const [profiles, setProfiles] = useState<ProfileDB[] | null>(null);
+    const [fetchingProfile, setFetchingProfile] = useState<boolean>(false);
+    const [isSubmittingCompany, setSubmittingCompany] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>('');
+    const [company, setCompany] = useState<CompanyDB>();
+
+    const fetchProfileAndCompany: FormEventHandler<HTMLFormElement> = async (e) => {
+        e.preventDefault();
+        setFetchingProfile(true);
+        try {
+            const res = await nextFetchWithQueries<AdminGetProfileQueries, AdminGetProfileResponse>('admin/profile', {
+                email,
+            });
+            setProfiles(res);
+            if (res.length > 0) {
+                setCompany(res[0].company);
+            }
+        } catch (error) {
+            alert(error);
+        }
+        setFetchingProfile(false);
+    };
 
     const updateCompany: FormEventHandler<HTMLFormElement> = async (e) => {
+        setSubmittingCompany(true);
         e.preventDefault();
-        setSubmittingProfile(true);
         try {
             if (!company) {
                 return;
@@ -132,16 +159,14 @@ const OnboardOutreach = () => {
                 body: company,
             });
             if (res.email) {
-                setProfile(res);
                 toast.success('Profile updated');
             }
         } catch (error) {
             alert(error);
         } finally {
-            setSubmittingProfile(false);
+            setSubmittingCompany(false);
         }
     };
-
     return (
         <Layout>
             <div className="p-6">
@@ -151,36 +176,8 @@ const OnboardOutreach = () => {
                     <Button type="submit">Submit</Button>
                 </form>
                 <>
-                    {profile ? (
-                        <div className="flex max-w-md flex-col space-y-4 pt-6">
-                            <h2 className="text-lg font-bold">Update profile: {profile.email}</h2>
-                            <form onSubmit={updateProfile} className="flex flex-col space-y-4">
-                                <label htmlFor="email_engine_account_id">email_engine_account_id</label>
-                                <input
-                                    id="email_engine_account_id"
-                                    type="text"
-                                    value={profile.email_engine_account_id ?? ''}
-                                    onChange={(e) =>
-                                        setProfile({
-                                            ...profile,
-                                            email_engine_account_id: cleanUserInput(e.target.value),
-                                        })
-                                    }
-                                />
-                                <label htmlFor="sequence_send_email">sequence_send_email</label>
-                                <input
-                                    id="sequence_send_email"
-                                    type="text"
-                                    value={profile.sequence_send_email ?? ''}
-                                    onChange={(e) =>
-                                        setProfile({ ...profile, sequence_send_email: cleanUserInput(e.target.value) })
-                                    }
-                                />
-                                <Button disabled={submittingProfile} type="submit">
-                                    Submit
-                                </Button>
-                            </form>
-                        </div>
+                    {profiles && profiles.length > 0 ? (
+                        profiles.map((profile) => <ProfileContainer key={profile.id} initialProfile={profile} />)
                     ) : !fetchingProfile ? (
                         <div>no profile</div>
                     ) : (
@@ -188,10 +185,11 @@ const OnboardOutreach = () => {
                             fetching profile <Spinner className="h-5 w-5 fill-primary-600 text-white" />
                         </div>
                     )}
-                    {company ? (
-                        <div>
+                </>
+                <div>
+                    {company && (
+                        <>
                             <h2 className="text-lg font-bold">Company: {company.name}</h2>
-                            <div>profiles_limit: {company.profiles_limit}</div>
                             <form onSubmit={updateCompany} className="flex flex-col space-y-4">
                                 <label htmlFor="profiles_limit">profiles_limit</label>
                                 <input
@@ -242,15 +240,13 @@ const OnboardOutreach = () => {
                                     }
                                 />
 
-                                <Button disabled={submittingProfile} type="submit">
+                                <Button disabled={isSubmittingCompany} type="submit">
                                     Submit
                                 </Button>
                             </form>
-                        </div>
-                    ) : (
-                        <div>no company</div>
+                        </>
                     )}
-                </>
+                </div>
             </div>
         </Layout>
     );

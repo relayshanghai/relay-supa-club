@@ -6,7 +6,7 @@ import { supabase } from 'src/utils/supabase-client';
 export type AdminGetProfileQueries = {
     email: string;
 };
-export type AdminGetProfileResponse = ProfileDB;
+export type AdminGetProfileResponse = ProfileDB[];
 
 export type AdminPutProfileBody = ProfileDB;
 
@@ -17,18 +17,18 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     if (!body.email) {
         return res.status(400).json({ message: 'Email is required' });
     }
-
-    const { data: profile, error: profileError } = await supabase
+    let query = supabase
         .from('profiles')
-        .select()
-        .limit(1)
-        .eq('email', body.email)
-        .single();
+        .select('*,company:companies!inner(*)')
+        .order('created_at', { ascending: true });
+
+    if (body.email.includes('@')) query = query.eq('email', body.email);
+    else query = query.eq('company.cus_id', body.email);
+    const { data: profile, error: profileError } = await query;
     if (!profile || profileError) {
         return res.status(500).json({ message: JSON.stringify(profileError) });
     }
-    const returnObject: AdminGetProfileResponse = profile;
-    return res.status(200).json(returnObject);
+    return res.status(200).json(profile);
 }
 
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -51,7 +51,7 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
     if (!profile.email?.includes('support+cus_id')) {
         const { data: companyProfiles } = await supabase
             .from('profiles')
-            .select()
+            .select('*, company:companies!inner(*)')
             .eq('company_id', profile.company_id)
             .neq('email', profile.email);
         const serviceAccount = companyProfiles?.find((p) => p.email?.includes('support+cus_id'));
@@ -61,8 +61,7 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
                 .update({ id: serviceAccount.id, email_engine_account_id, sequence_send_email });
         }
     }
-    const returnObject: AdminPutProfileResponse = profile;
-    return res.status(200).json(returnObject);
+    return res.status(200).json(profile);
 }
 
 export default ApiHandler({
