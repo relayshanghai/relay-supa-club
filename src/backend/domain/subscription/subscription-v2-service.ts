@@ -224,7 +224,7 @@ export default class SubscriptionV2Service {
                 throw new NotFoundError('No subscription found');
             }
 
-            if (lastSubscription.status === 'trialing') {
+            if (lastSubscription.status === 'trialing' || lastSubscription.status === 'incomplete') {
                 const trialSubscription = {
                     companyId,
                     provider: 'stripe',
