@@ -41,6 +41,7 @@ const CheckoutFormV2 = ({
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorageSubscribeResponse();
 
     useEffect(() => {
+        if (!applyCouponResponse) return;
         setStripeSubscribeResponse({
             clientSecret: applyCouponResponse.clientSecret,
             ipAddress: applyCouponResponse.ipAddress,
