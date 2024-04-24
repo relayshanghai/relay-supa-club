@@ -68,7 +68,6 @@ export const PriceCard = ({
 }) => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
-
     const { prices } = usePrices();
     const { refreshSubscription } = useSubscriptionLegacy();
     const {
@@ -105,12 +104,13 @@ export const PriceCard = ({
     const triggerCreateSubscription = () => {
         createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
             .then((res) => {
-                setStripeSecretResponse({
-                    clientSecret: res?.clientSecret,
-                    ipAddress: res?.ipAddress,
-                    plan: priceTier,
-                    coupon: res?.coupon,
-                });
+                if (res.clientSecret)
+                    setStripeSecretResponse({
+                        clientSecret: res?.clientSecret,
+                        ipAddress: res?.ipAddress,
+                        plan: priceTier,
+                        coupon: res?.coupon,
+                    });
                 router.push(`/subscriptions/${res?.providerSubscriptionId}/payments`);
             })
             .catch((error) => {

@@ -1,11 +1,11 @@
 import axios, { type AxiosError } from 'axios';
 import { useState } from 'react';
 
-export const useApiClient = () => {
+export const useApiClient = (baseUrl?: string) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string[] | string>();
     const apiClient = axios.create({
-        baseURL: '/api',
+        baseURL: baseUrl || '/api',
     });
     apiClient.interceptors.request.use((config) => {
         setLoading(true);

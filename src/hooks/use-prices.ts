@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,26 +65,26 @@ export const priceDetails: PriceDetails = {
 export const usePrices = () => {
     const { i18n } = useTranslation();
     const en = i18n.language?.toLowerCase().includes('en');
-
+    const currency = en ? 'usd' : 'cny';
     const defaultPrices = useMemo(
         () => ({
             discovery: {
                 currency: en ? 'usd' : 'cny',
-                prices: { monthly: en ? '41' : '299' },
+                prices: { monthly: en ? '42' : '299' },
                 profiles: '',
                 searches: '',
                 priceIds: { monthly: STRIPE_PRICE_MONTHLY_DISCOVERY },
             },
             outreach: {
                 currency: en ? 'usd' : 'cny',
-                prices: { monthly: en ? '110' : '799' },
+                prices: { monthly: en ? '115' : '799' },
                 profiles: '',
                 searches: '',
                 priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
             },
             addPayment: {
                 currency: en ? 'usd' : 'cny',
-                prices: { monthly: en ? '0' : '0' },
+                prices: { monthly: '0' },
                 profiles: '',
                 searches: '',
                 priceIds: { monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT },
@@ -100,8 +101,8 @@ export const usePrices = () => {
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
             // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
             const prices = {
-                discovery: data.discovery.find((plan) => plan.currency === 'cny') || defaultPrices.discovery,
-                outreach: data.outreach.find((plan) => plan.currency === 'cny') || defaultPrices.outreach,
+                discovery: data.discovery.find((plan) => plan.currency === currency) || defaultPrices.discovery,
+                outreach: data.outreach.find((plan) => plan.currency === currency) || defaultPrices.outreach,
                 addPayment: defaultPrices.addPayment,
             };
 

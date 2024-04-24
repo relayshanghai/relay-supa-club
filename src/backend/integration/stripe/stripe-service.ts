@@ -70,6 +70,9 @@ export default class StripeService {
 
     async createSubscription(cusId: string, priceId: string, quantity = 1, coupon: Nullable<string> = undefined) {
         const c = coupon ?? undefined;
+        const paymentMethodsTypes: Stripe.SubscriptionCreateParams.PaymentSettings.PaymentMethodType[] = ['card'];
+        // do not add alipay when the currency is usd
+        if (this.priceCurrency(priceId) === 'cny') paymentMethodsTypes.push('alipay' as any);
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
             items: [
@@ -79,7 +82,7 @@ export default class StripeService {
                 },
             ],
             payment_settings: {
-                payment_method_types: ['card', 'alipay' as any],
+                payment_method_types: paymentMethodsTypes,
             },
             payment_behavior: 'default_incomplete',
             expand: ['latest_invoice.payment_intent'],
@@ -274,5 +277,13 @@ export default class StripeService {
             expand: ['data.plan.product'],
         });
         return subscription.data[0];
+    }
+    priceCurrency(priceId: string) {
+        if (
+            priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DISCOVERY_USD &&
+            priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_OUTREACH_USD
+        )
+            return 'usd';
+        return 'cny';
     }
 }

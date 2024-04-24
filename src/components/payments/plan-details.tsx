@@ -9,13 +9,13 @@ export const PlanDetails = ({ priceTier }: { priceTier: ActiveSubscriptionTier }
     let price;
     switch (priceTier) {
         case 'discovery':
-            price = en ? '$41' : '¥299';
+            price = en ? '42USD' : '¥299';
             break;
         case 'addPayment':
             price = en ? '$0' : '¥0';
             break;
         default:
-            price = en ? '$110' : '¥799';
+            price = en ? '115USD' : '¥799';
     }
 
     return (
