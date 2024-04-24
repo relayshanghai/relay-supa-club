@@ -199,6 +199,21 @@ export class StripeWebhookService {
         if (!company) {
             throw new Error('Company not found');
         }
+        const eventSubscription = data.object;
+        await SubscriptionRepository.getRepository().update(
+            {
+                company: company as CompanyEntity,
+            },
+            {
+                pausedAt: eventSubscription.current_period_end
+                    ? new Date(eventSubscription.current_period_end * 1000)
+                    : null,
+                cancelledAt:
+                    eventSubscription.canceled_at && eventSubscription.canceled_at < dayjs().unix()
+                        ? new Date(eventSubscription.canceled_at * 1000)
+                        : null,
+            },
+        );
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const currentPlanId = data?.object.plan.id;
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;

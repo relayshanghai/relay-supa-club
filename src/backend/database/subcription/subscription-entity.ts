@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, VirtualColumn } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { type Nullable } from 'types/nullable';
 
@@ -52,6 +52,19 @@ export class SubscriptionEntity<T = any> {
 
     @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
     cancelledAt?: Nullable<Date>;
+
+    @VirtualColumn({
+        type: 'varchar',
+        query: (
+            alias,
+        ) => `SELECT CASE WHEN ${alias}.active_at IS NULL AND CURRENT_TIMESTAMP < ${alias}.cancelled_at THEN 'TRIAL' " +
+        "WHEN ${alias}.active_at IS NULL AND CURRENT_TIMESTAMP > ${alias}.cancelled_at THEN 'TRIAL_EXPIRED' " +
+        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP < ${alias}.paused_at THEN 'ACTIVE' " +
+        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP >= ${alias}.paused_at AND ${alias}.cancelled_at IS NULL THEN 'PASS_DUE' " +
+        "WHEN ${alias}.active_at IS NOT NULL AND CURRENT_TIMESTAMP >= ${alias}.cancelled_at THEN 'CANCELLED' " +
+        "ELSE 'UNKNOWN' END FROM subscriptions ${alias} WHERE ${alias}.id = subscriptions.id`,
+    })
+    status!: string;
 
     static getSubscriptionEntity<T>(e: SubscriptionEntity): SubscriptionEntity<T> {
         return e as SubscriptionEntity<T>;

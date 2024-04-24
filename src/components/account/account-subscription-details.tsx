@@ -90,44 +90,20 @@ const PaymentTablets = ({
             </section>
         );
     } else if (pausedAt && new Date() > new Date(pausedAt)) {
-        if (
-            subscriptionData.status === 'incomplete' ||
-            subscriptionData.status === 'incomplete_expired' ||
-            subscriptionData.status === 'past_due'
-        ) {
-            return (
-                <section className="flex w-full flex-col items-end gap-2">
-                    <section className="flex gap-3">
-                        <Tablet customStyle="bg-yellow-100 flex items-center gap-2 text-yellow-700 border-yellow-200">
-                            <PausedCircleOutline className="h-4 w-4 text-yellow-700" />
-                            {t('account.subscription.paused')}
-                        </Tablet>
-                        <Tablet customStyle="bg-red-100 flex items-center gap-2 text-red-700 border-red-200">
-                            <PaymentFailedOutline className="h-4 w-4 text-red-700" />
-                            {t('account.planSection.paymentFailed')}
-                        </Tablet>
-                    </section>
-                    <p className="whitespace-nowrap">
-                        <span className="font-semibold">{t('account.planSection.paymentDue')}: </span>
-                        <span>
-                            {new Date(pausedAt).toLocaleDateString(i18n.language, {
-                                month: 'short',
-                                day: 'numeric',
-                            })}
-                        </span>
-                    </p>
-                    <p> </p>
-                </section>
-            );
-        }
         return (
             <section className="flex w-full flex-col items-end gap-2">
-                <Tablet customStyle="bg-yellow-100 text-yellow-700 flex items-center gap-2 border-yellow-200">
-                    <PausedCircleOutline className="h-4 w-4 text-yellow-700" />
-                    {t('account.subscription.paused')}
-                </Tablet>
+                <section className="flex gap-3">
+                    <Tablet customStyle="bg-yellow-100 flex items-center gap-2 text-yellow-700 border-yellow-200">
+                        <PausedCircleOutline className="h-4 w-4 text-yellow-700" />
+                        {t('account.subscription.paused')}
+                    </Tablet>
+                    <Tablet customStyle="bg-red-100 flex items-center gap-2 text-red-700 border-red-200">
+                        <PaymentFailedOutline className="h-4 w-4 text-red-700" />
+                        {t('account.planSection.paymentFailed')}
+                    </Tablet>
+                </section>
                 <p className="whitespace-nowrap">
-                    <span className="font-semibold">{t('account.planSection.pausedAt')}: </span>
+                    <span className="font-semibold">{t('account.planSection.paymentDue')}: </span>
                     <span>
                         {new Date(pausedAt).toLocaleDateString(i18n.language, {
                             month: 'short',
