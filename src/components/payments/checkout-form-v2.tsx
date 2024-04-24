@@ -41,13 +41,13 @@ const CheckoutFormV2 = ({
     const [stripeSubscribeResponse, setStripeSubscribeResponse] = useLocalStorageSubscribeResponse();
 
     useEffect(() => {
-        applyCouponResponse.clientSecret &&
-            setStripeSubscribeResponse({
-                clientSecret: applyCouponResponse.clientSecret,
-                ipAddress: applyCouponResponse.ipAddress,
-                plan: applyCouponResponse.plan as string,
-                coupon: applyCouponResponse.coupon,
-            });
+        if (!applyCouponResponse) return;
+        setStripeSubscribeResponse({
+            clientSecret: applyCouponResponse.clientSecret,
+            ipAddress: applyCouponResponse.ipAddress,
+            plan: applyCouponResponse.plan as string,
+            coupon: applyCouponResponse.coupon,
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyCouponResponse]);
 

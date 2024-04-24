@@ -15,6 +15,7 @@ import useSWR from 'swr';
 import { useCompany } from '../use-company';
 import { useLocalStorage } from '../use-localstorage';
 import { create } from 'zustand';
+import type { Nullable } from 'vitest';
 
 export type CreateSubscriptionPayload = { priceId: string; quantity: number };
 export type CreateSubscriptionResponse = {
@@ -233,14 +234,14 @@ export const useSubscription = () => {
 };
 
 interface ApplyCouponStore {
-    applyCouponResponse: ApplyCouponResponse;
+    applyCouponResponse: Nullable<ApplyCouponResponse>;
     setApplyCouponResponse: (response: ApplyCouponResponse) => void;
     resetApplyCouponResponse: () => void;
 }
 export const useApplyCouponResponseStore = create<ApplyCouponStore>((set) => ({
-    applyCouponResponse: {} as ApplyCouponResponse,
+    applyCouponResponse: null,
     setApplyCouponResponse: (response: ApplyCouponResponse) => set({ applyCouponResponse: response }),
-    resetApplyCouponResponse: () => set({ applyCouponResponse: {} as ApplyCouponResponse }),
+    resetApplyCouponResponse: () => set({ applyCouponResponse: null }),
 }));
 export const useCouponV2 = () => {
     const { apiClient, loading, error } = useApiClient();
