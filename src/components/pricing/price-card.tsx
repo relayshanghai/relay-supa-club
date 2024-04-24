@@ -33,7 +33,7 @@ const isCurrentPlan = (
     } else if (subscriptionInterval === 'year') {
         interval = 'annually';
     }
-    return product?.name === tierName && interval === period && subscription?.subscriptionData.status === 'active';
+    return product?.name === tierName && interval === period && subscription?.status === 'ACTIVE';
 };
 
 const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
@@ -48,7 +48,7 @@ const disableButton = (
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
-    if (!product?.name || !subscription?.subscriptionData.plan.interval || !subscription.subscriptionData.status) {
+    if (!product?.name || !subscription?.status) {
         return true;
     }
     if (isCurrentPlan(tier, period, subscription, product)) {
@@ -86,21 +86,21 @@ export const PriceCard = ({
     const key: PriceKey = priceTier;
     const price = prices[key];
     const currency = price.currency;
-    const subscriptionStatus = subscription?.subscriptionData.status;
+    const subscriptionStatus = subscription?.status;
     const companySubscriptionStatus = company?.subscription_status;
 
     // TODO: add check for payment method?
     const shouldAddPayment =
         // subscriptionStatus should be more source of truth because it is a call directly to stripe...
-        subscriptionStatus === 'canceled' ||
+        subscriptionStatus === 'CANCELLED' ||
         companySubscriptionStatus === 'canceled' ||
-        subscriptionStatus === 'trialing' ||
+        subscriptionStatus === 'TRIAL' ||
         companySubscriptionStatus === 'trial' ||
         // TODO: check if paused can happen on existing subscription
-        subscriptionStatus === 'paused' ||
+        subscriptionStatus === 'PASS_DUE' ||
         companySubscriptionStatus === 'paused';
 
-    const shouldUpgrade = subscriptionStatus === 'active' || companySubscriptionStatus === 'active';
+    const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 
     const triggerCreateSubscription = () => {
         createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })

@@ -122,7 +122,11 @@ export default class SubscriptionV2Service {
                 },
             },
         });
+        let status = null;
         if (existedSubscription) {
+            status = await SubscriptionRepository.getRepository().getStatus(existedSubscription.id);
+        }
+        if (existedSubscription && status === 'ACTIVE') {
             const stripeSubscriptionEntity =
                 SubscriptionEntity.getSubscriptionEntity<StripeSubscription>(existedSubscription);
             if (
@@ -175,7 +179,7 @@ export default class SubscriptionV2Service {
                 trialSearchesLimit: limits.trialSearchesLimit,
             },
         );
-        return await SubscriptionRepository.getRepository().save({
+        const newSubs = await SubscriptionRepository.getRepository().save({
             company: {
                 id: companyId,
             },
@@ -199,6 +203,8 @@ export default class SubscriptionV2Service {
             pausedAt: subscriptionData.pause_collection?.behavior === 'void' ? new Date() : undefined,
             cancelledAt: subscriptionData.cancel_at ? new Date(subscriptionData.cancel_at * 1000) : undefined,
         });
+        newSubs.status = await SubscriptionRepository.getRepository().getStatus(newSubs.id);
+        return newSubs;
     }
 
     @CompanyIdRequired()
@@ -241,6 +247,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
+                    status: 'TRIAL',
                 };
                 return trialSubscription;
             } else if (lastSubscription.status === 'canceled') {
@@ -260,6 +267,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.canceled_at ? new Date(lastSubscription.canceled_at * 1000) : null,
+                    status: 'CANCELLED',
                 };
                 return trialSubscription;
             }
@@ -280,7 +288,8 @@ export default class SubscriptionV2Service {
                 trialSearchesLimit: trial_searches,
             });
         }
-        return subscription;
+        const status = await SubscriptionRepository.getRepository().getStatus(subscription.id);
+        return { ...subscription, status };
     }
 
     async getProduct(productId: string) {
