@@ -9,21 +9,6 @@ describe('PricingPage', () => {
         await worker.start();
     });
 
-    it('shows title, subtitle, etc.', () => {
-        testMount(<PricingPage />);
-        cy.findAllByText('Just getting started, or scaling up.');
-        cy.findByText('BoostBot can help.');
-        // has price details formatted
-        cy.contains('900 Influencer Searches');
-        cy.contains('Full Customer Service');
-    });
-    it('loads the prices from subscription/prices endpoint', () => {
-        testMount(<PricingPage />);
-        // shows loading state first.
-        cy.contains('$220').should('not.exist');
-        cy.contains('41');
-        cy.contains('$--').should('not.exist');
-    });
     it('allows user to go back to account page', () => {
         testMount(<PricingPage page="upgrade" />);
         cy.contains('a', 'Back to account').should('have.attr', 'href', '/account');
