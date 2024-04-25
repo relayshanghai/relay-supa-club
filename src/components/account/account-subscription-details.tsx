@@ -285,7 +285,7 @@ export const SubscriptionDetails = () => {
                                         {usages.search.current}/{usages.search.limit}{' '}
                                         {t('account.planSection.searchesCount')}
                                     </span>
-                                    <Progress className="h-3" value={usages.search.current} max={usages.search.limit} />
+                                    <Progress className="h-3" value={usages.search.current / usages.search.limit} />
                                 </section>
                             </>
                         ) : (
