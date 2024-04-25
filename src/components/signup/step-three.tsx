@@ -212,6 +212,7 @@ export const StepThree = ({
             <Select
                 onChange={(value) => setAndValidate('currency', value)}
                 value={currency}
+                hint={t('signup.currencyHint')}
                 label={t('signup.currency')}
                 options={[
                     {
