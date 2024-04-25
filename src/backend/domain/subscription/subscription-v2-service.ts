@@ -162,8 +162,6 @@ export default class SubscriptionV2Service {
             trialSearchesLimit?: string;
         },
     ) {
-        if (subscriptionData.status === 'trialing') {
-        }
         await CompanyRepository.getRepository().update(
             {
                 id: companyId,

@@ -398,6 +398,7 @@ export interface Database {
           trial_searches_limit: string
           updated_at: string | null
           website: string | null
+          currency: string
         }
         Insert: {
           ai_email_generator_limit?: string

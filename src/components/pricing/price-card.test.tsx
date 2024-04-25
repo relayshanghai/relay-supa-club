@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PriceCard } from './price-card';
-
 let createSubscriptionMock = vi.fn();
 const pushMock = vi.fn();
 describe('PriceCard Component', () => {
@@ -29,6 +28,7 @@ describe('PriceCard Component', () => {
                         priceIds: { monthly: 'price_monthly_2' },
                     },
                 },
+                loading: false,
             }),
             priceDetails: {
                 discovery: [
@@ -54,6 +54,12 @@ describe('PriceCard Component', () => {
                     { title: 'fullCustomerService', icon: 'check' },
                 ],
             },
+            useLocalStorageSelectedPrice: () => [
+                {},
+                () => {
+                    return null;
+                },
+            ],
         }));
 
         createSubscriptionMock = vi.fn().mockResolvedValue({
