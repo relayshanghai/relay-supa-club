@@ -14,7 +14,7 @@ import type {
     TemplateVariable,
 } from 'src/utils/api/db';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline } from '../icons';
+import { DeleteOutline, SendOutline, Retry } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -75,6 +75,24 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
         : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
 
+const ErrorDisplay: React.FC<{ message: string; onClick: () => void }> = ({ message, onClick }) => {
+    const { t } = useTranslation();
+    if (message === 'server_busy') {
+        return (
+            <div className="flex items-center gap-2">
+                <div className="text-red-500">{t('sequences.reportServerBusy')}</div>
+
+                <Tooltip content={t('sequences.retryButton')} detail={t('sequences.clickToRetry')} position="right">
+                    <Button data-testid={`retry-button`} onClick={onClick} className={'!px-1 !py-2'}>
+                        <Retry className="mx-2 h-5 stroke-2 text-white" />
+                    </Button>
+                </Tooltip>
+            </div>
+        );
+    }
+    return <div className="text-red-500">{message}</div>;
+};
+
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,
     sequenceInfluencer,
@@ -101,7 +119,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile, errorMessage } = useReport({
+    const { report, socialProfile, errorMessage, refreshReport, loading } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
@@ -344,7 +362,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {isDuplicateInfluencer ? (
+                            {loading ? (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                            ) : isDuplicateInfluencer ? (
                                 <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
@@ -357,14 +377,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : errorMessage ? (
-                                <div className="text-red-500">{errorMessage}</div>
+                                <ErrorDisplay
+                                    message={errorMessage}
+                                    onClick={() => {
+                                        refreshReport();
+                                    }}
+                                />
                             ) : (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
                             )}
                         </td>
 
                         <td className="max-w-[200px] overflow-hidden whitespace-nowrap px-6 py-4 text-gray-600">
-                            {!missingSocialProfileInfo ? (
+                            {!missingSocialProfileInfo || !loading ? (
                                 sequenceInfluencer.tags?.map((tag) => (
                                     <span
                                         key={tag}
