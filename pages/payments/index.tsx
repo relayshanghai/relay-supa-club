@@ -25,7 +25,7 @@ export default function PaymentPage() {
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
             left={routing ? <></> : <PlanDetails priceTier={priceTier} />}
-            right={routing ? <></> : <AddPaymentsSection priceTier={priceTier} />}
+            right={routing ? <></> : <AddPaymentsSection />}
         />
     );
 }

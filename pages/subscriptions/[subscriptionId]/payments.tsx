@@ -19,7 +19,7 @@ export default function SubscriptionPaymentPage() {
         <LoginSignupLayout
             leftBgColor="bg-primary-500"
             left={isReady ? <PlanDetails priceTier={priceTier as ActiveSubscriptionTier} /> : <></>}
-            right={isReady ? <AddPaymentsSection priceTier={priceTier as ActiveSubscriptionTier} /> : <></>}
+            right={isReady ? <AddPaymentsSection /> : <></>}
         />
     );
 }

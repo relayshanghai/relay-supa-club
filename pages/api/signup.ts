@@ -48,6 +48,7 @@ const SignupPostBody = z.object({
     companyWebsite: z.string().optional(),
     category: z.string().optional(),
     rewardfulReferal: z.string().optional(),
+    currency: z.string().optional(),
 });
 
 export type SignupPostBody = z.input<typeof SignupPostBody>;

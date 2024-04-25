@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { NewRelayPlan } from 'types';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ApplyPromoCode } from 'src/utils/analytics/events';
-import type { ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import {
     type Coupon,
     useCouponV2,
@@ -25,14 +23,7 @@ const getCoupon = (coupon: Coupon | string): string | undefined => {
     }
 };
 
-export const PromoCodeSectionV2 = ({
-    setCouponId,
-    priceTier,
-}: {
-    selectedPrice: NewRelayPlan;
-    setCouponId: (value: string) => void;
-    priceTier: ActiveSubscriptionTier;
-}) => {
+export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: string) => void }) => {
     const { t } = useTranslation();
     const {
         query: { subscriptionId },
@@ -66,18 +57,18 @@ export const PromoCodeSectionV2 = ({
                 clientSecret: couponResponse?.clientSecret,
                 ipAddress: couponResponse?.ipAddress,
                 providerSubscriptionId: subscriptionId as string,
-                plan: priceTier,
+                plan: stripeSubscribeResponse.plan,
                 coupon: couponResponse?.coupon,
             });
             setStripeSubscribeResponse({
                 clientSecret: couponResponse?.clientSecret,
                 ipAddress: couponResponse?.ipAddress,
-                plan: priceTier,
+                plan: stripeSubscribeResponse.plan,
                 coupon: couponResponse?.coupon,
             });
 
             push(`/subscriptions/${couponResponse.providerSubscriptionId}/payments`);
-            track(ApplyPromoCode, { selected_plan: priceTier, promo_code: promoCode });
+            track(ApplyPromoCode, { selected_plan: stripeSubscribeResponse.plan, promo_code: promoCode });
         } else {
             setPromoCodeMessage(t('account.payments.invalidPromoCode') || '');
             setPromoCodeMessageCls('text-red-500');

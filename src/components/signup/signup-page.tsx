@@ -27,6 +27,7 @@ export interface SignUpValidationErrors {
     phoneNumber?: string;
     companyName: string;
     companyWebsite?: string;
+    currency?: string;
 }
 
 const signupErrors = {
@@ -61,7 +62,8 @@ const SignUpPage = ({
     setCurrentStep: (step: number) => void;
     selectedPriceId: string;
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const en = i18n.language?.includes('en');
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { login, logout, signup } = useUser();
@@ -74,6 +76,10 @@ const SignUpPage = ({
     const [phoneNumber, setPhoneNumber, removePhoneNumber] = usePersistentState('phoneNumber', '');
     const [companyName, setCompanyName, removeCompanyName] = usePersistentState('companyName', '');
     const [companyWebsite, setCompanyWebsite, removeCompanyWebsite] = usePersistentState('companyWebsite', '');
+    const [currency, setCurrency] = useState(!en ? 'cny' : 'usd');
+    useEffect(() => {
+        setCurrency(!en ? 'cny' : 'usd');
+    }, [en]);
     const [rewardfulReferral, setRewardfulReferral] = useState<string>();
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
@@ -101,6 +107,9 @@ const SignUpPage = ({
                     break;
                 case 'companyWebsite':
                     setCompanyWebsite(value);
+                    break;
+                case 'currency':
+                    setCurrency(value);
                     break;
                 default:
                     break;
@@ -147,6 +156,7 @@ const SignUpPage = ({
         phoneNumber: '',
         companyName: '',
         companyWebsite: '',
+        currency: '',
     });
     const [loading, setLoading] = useState(false);
 
@@ -160,6 +170,7 @@ const SignUpPage = ({
         companyName,
         companyWebsite,
         rewardfulReferral,
+        currency,
     };
 
     //TODO: phone validation need to be updated
@@ -206,7 +217,7 @@ const SignUpPage = ({
 
     const onNext = async () => {
         if (currentStep === PROFILE_FORM_STEP) {
-            await logout(false);
+            logout(false);
         }
         if (currentStep === COMPANY_FORM_STEP) {
             const result = await handleSignup(formData);
@@ -218,7 +229,7 @@ const SignUpPage = ({
             setCurrentStep(currentStep + 1);
         }
 
-        await track(CompleteSignupStep, {
+        track(CompleteSignupStep, {
             current_step: currentStep,
             firstName,
             lastName,
@@ -272,6 +283,7 @@ const SignUpPage = ({
                                 <StepThree
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
+                                    currency={currency}
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
                                     loading={loading}

@@ -9,7 +9,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
-import type { ProfileDB, CompanyDB } from 'src/utils/api/db/types';
+import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
@@ -34,7 +34,7 @@ export type SignupData = {
     };
 };
 
-export type ProfileWithCompany = ProfileDB & { company: CompanyDB | null };
+export type ProfileWithCompany = ProfileDB;
 
 export interface IUserContext {
     user: User | null;

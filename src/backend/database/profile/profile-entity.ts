@@ -57,4 +57,7 @@ export class ProfileEntity {
 
     @OneToMany(() => JobEntity, (job) => job.owner)
     jobs?: Relation<JobEntity>;
+
+    @Column({ name: 'language', nullable: true })
+    language?: string;
 }
