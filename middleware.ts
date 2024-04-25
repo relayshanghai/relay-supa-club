@@ -254,6 +254,8 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('stripe-webhook')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('sync-email')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
