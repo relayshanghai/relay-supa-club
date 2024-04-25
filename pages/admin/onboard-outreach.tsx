@@ -122,7 +122,7 @@ const OnboardOutreach = () => {
                 email,
             });
             setProfiles(res);
-            if (res.length > 0) {
+            if (res.length > 0 && res[0].company) {
                 setCompany(res[0].company);
             }
         } catch (error) {
