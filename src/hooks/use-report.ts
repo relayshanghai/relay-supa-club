@@ -36,6 +36,7 @@ export type UseReport = ({
     socialProfile?: InfluencerSocialProfileRow;
     errorMessage: string;
     usageExceeded: boolean;
+    refreshReport: () => Promise<CreatorsReportGetResponse | undefined>;
 };
 
 export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
@@ -72,7 +73,9 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                 } else if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                     setErrorMessage(t(error.message) || '');
-                } else setErrorMessage(t('creators.failedToFetchReport') || '');
+                } else {
+                    setErrorMessage('server_busy');
+                }
             }
         },
         {
@@ -95,6 +98,6 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
         usageExceeded,
         influencer,
         socialProfile,
-        refreshReport: mutate,
+        refreshReport: mutate as unknown as () => Promise<CreatorsReportGetResponse | undefined>,
     };
 };
