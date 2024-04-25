@@ -9,7 +9,7 @@ import { UseTransaction } from 'src/backend/database/provider/transaction-decora
 import { RequestContext } from 'src/utils/request-context/request-context';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
 import { BadRequestError, NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-error';
-import { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import { SubscriptionEntity, SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 import type { StripeSubscription } from 'src/backend/integration/stripe/type';
 import StripeService from 'src/backend/integration/stripe/stripe-service';
 import type Stripe from 'stripe';
@@ -122,11 +122,7 @@ export default class SubscriptionV2Service {
                 },
             },
         });
-        let status = null;
-        if (existedSubscription) {
-            status = await SubscriptionRepository.getRepository().getStatus(existedSubscription.id);
-        }
-        if (existedSubscription && status === 'ACTIVE') {
+        if (existedSubscription && existedSubscription.status === 'ACTIVE') {
             const stripeSubscriptionEntity =
                 SubscriptionEntity.getSubscriptionEntity<StripeSubscription>(existedSubscription);
             if (
@@ -177,7 +173,7 @@ export default class SubscriptionV2Service {
                 trialSearchesLimit: limits.trialSearchesLimit,
             },
         );
-        const newSubs = await SubscriptionRepository.getRepository().save({
+        await SubscriptionRepository.getRepository().save({
             company: {
                 id: companyId,
             },
@@ -198,10 +194,18 @@ export default class SubscriptionV2Service {
             activeAt: subscriptionData.current_period_start
                 ? new Date(subscriptionData.current_period_start * 1000)
                 : undefined,
-            pausedAt: subscriptionData.pause_collection?.behavior === 'void' ? new Date() : undefined,
+            pausedAt: subscriptionData.current_period_end
+                ? new Date(subscriptionData.current_period_end * 1000)
+                : undefined,
             cancelledAt: subscriptionData.cancel_at ? new Date(subscriptionData.cancel_at * 1000) : undefined,
         });
-        newSubs.status = await SubscriptionRepository.getRepository().getStatus(newSubs.id);
+        const newSubs = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
         return newSubs;
     }
 
@@ -245,7 +249,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
-                    status: 'TRIAL',
+                    status: SubscriptionStatus.TRIAL,
                 };
                 return trialSubscription;
             } else if (lastSubscription.status === 'canceled') {
@@ -265,7 +269,7 @@ export default class SubscriptionV2Service {
                     activeAt: null,
                     pausedAt: null,
                     cancelledAt: lastSubscription.canceled_at ? new Date(lastSubscription.canceled_at * 1000) : null,
-                    status: 'CANCELLED',
+                    status: SubscriptionStatus.CANCELLED,
                 };
                 return trialSubscription;
             }
@@ -286,8 +290,7 @@ export default class SubscriptionV2Service {
                 trialSearchesLimit: trial_searches,
             });
         }
-        const status = await SubscriptionRepository.getRepository().getStatus(subscription.id);
-        return { ...subscription, status };
+        return subscription;
     }
 
     async getProduct(productId: string) {

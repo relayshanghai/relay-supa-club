@@ -11,7 +11,18 @@ export default function ThreadMessageListItem({ message, myEmail }: { message: E
     const [quoteExpanded, setQuoteExpanded] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
     const parser = new DOMParser();
-    const emailDoc = parser.parseFromString(message.text.html, 'text/html');
+
+    const getMessageOnlyFromPlainText = (html: string) => {
+        if (!html) return '';
+        const index = html.indexOf('\n\nOn');
+        if (index !== -1) {
+            html = html.substring(0, index);
+        }
+        return html.replace(/\n/g, '<br />');
+    };
+
+    const plain = getMessageOnlyFromPlainText(message.text.plain as string);
+    const emailDoc = parser.parseFromString(message.text.html ?? `${plain}`, 'text/html');
 
     // Extract the quoted part
     const gmailQuotedPart = emailDoc.querySelector('.gmail_quote');

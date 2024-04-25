@@ -280,16 +280,12 @@ export const SubscriptionDetails = () => {
                                         {usages.profile.current}/{usages.profile.limit}{' '}
                                         {t('account.planSection.reportsCount')}
                                     </span>
-                                    <Progress
-                                        className="h-3"
-                                        value={usages.profile.current}
-                                        max={usages.profile.limit}
-                                    />
+                                    <Progress className="h-3" value={usages.profile.current / usages.profile.limit} />
                                     <span>
                                         {usages.search.current}/{usages.search.limit}{' '}
                                         {t('account.planSection.searchesCount')}
                                     </span>
-                                    <Progress className="h-3" value={usages.search.current} max={usages.search.limit} />
+                                    <Progress className="h-3" value={usages.search.current / usages.search.limit} />
                                 </section>
                             </>
                         ) : (
