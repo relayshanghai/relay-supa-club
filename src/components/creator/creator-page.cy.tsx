@@ -39,7 +39,7 @@ describe('<CreatorPage />', () => {
             }),
         );
         testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
-        cy.contains('Failed to fetch report');
+        cy.contains('server_busy');
     });
 });
 // Prevent TypeScript from reading file as legacy script
