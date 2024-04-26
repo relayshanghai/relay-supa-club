@@ -207,14 +207,24 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         [previewPage, emailTemplates, sequenceId, sequenceName, track],
     );
 
+    const templateVariableCustomHandler = (variable: TemplateVariableInsert) => {
+        if (variable.name === 'productLink') {
+            const hadProtocol = variable.value.includes('http://') || variable.value.includes('https://');
+            if (!hadProtocol) {
+                return { ...variable, value: `https://${variable.value}` };
+            }
+        }
+        return variable;
+    };
+
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
             const updatedValues =
                 templateVariables?.map((originalValue) => {
                     const key = originalValue.key as DefaultTemplateVariableKey;
-                    if (variables[key] && variables[key]?.value !== originalValue.value) {
-                        return variables[key].value;
+                    if (variables[key] && templateVariableCustomHandler(variables[key]).value !== originalValue.value) {
+                        return templateVariableCustomHandler(variables[key]).value;
                     }
                 }) ?? [];
             const updates: Promise<any>[] = Object.values(variables).map((variable) => {
@@ -223,10 +233,12 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                     if (existingRecord.value === variable.value) {
                         return Promise.resolve();
                     }
-                    return updateTemplateVariable({ ...existingRecord, value: variable.value });
+                    return updateTemplateVariable(
+                        templateVariableCustomHandler({ ...existingRecord, value: variable.value }),
+                    );
                 }
 
-                return insertTemplateVariable([variable]);
+                return insertTemplateVariable([templateVariableCustomHandler(variable)]);
             });
 
             await Promise.all(updates).catch((error) => {
