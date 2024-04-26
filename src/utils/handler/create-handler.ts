@@ -1,3 +1,4 @@
+import 'elastic-apm-node';
 import type { NextApiResponse } from 'next';
 import { createErrorObject } from '../api-handler';
 import type { RelayApiRequest } from '../api-handler';
