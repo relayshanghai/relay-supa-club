@@ -51,7 +51,10 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         marketingManagerName,
         productName,
         productDescription,
-        productLink,
+        productLink: {
+            ...productLink,
+            value: productLink.value.replace('https://', '').replace('http://', ''),
+        },
         productPrice,
         // influencerNiche,
     };
@@ -207,26 +210,41 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         [previewPage, emailTemplates, sequenceId, sequenceName, track],
     );
 
+    const templateVariableCustomInputHandler = (variable: TemplateVariableInsert) => {
+        if (variable.name === 'productLink') {
+            const hadProtocol = variable.value.includes('http://') || variable.value.includes('https://');
+            if (!hadProtocol) {
+                return { ...variable, value: `https://${variable.value}` };
+            }
+        }
+        return variable;
+    };
+
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
             const updatedValues =
                 templateVariables?.map((originalValue) => {
                     const key = originalValue.key as DefaultTemplateVariableKey;
-                    if (variables[key] && variables[key]?.value !== originalValue.value) {
-                        return variables[key].value;
+                    if (
+                        variables[key] &&
+                        templateVariableCustomInputHandler(variables[key]).value !== originalValue.value
+                    ) {
+                        return templateVariableCustomInputHandler(variables[key]).value;
                     }
                 }) ?? [];
             const updates: Promise<any>[] = Object.values(variables).map((variable) => {
                 const existingRecord = templateVariables?.find((v) => v.key === variable.key);
                 if (existingRecord) {
-                    if (existingRecord.value === variable.value) {
+                    if (templateVariableCustomInputHandler(existingRecord).value === variable.value) {
                         return Promise.resolve();
                     }
-                    return updateTemplateVariable({ ...existingRecord, value: variable.value });
+                    return updateTemplateVariable(
+                        templateVariableCustomInputHandler({ ...existingRecord, value: variable.value }),
+                    );
                 }
 
-                return insertTemplateVariable([variable]);
+                return insertTemplateVariable([templateVariableCustomInputHandler(variable)]);
             });
 
             await Promise.all(updates).catch((error) => {
