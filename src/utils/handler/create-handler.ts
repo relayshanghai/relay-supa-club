@@ -36,7 +36,7 @@ export const createHandler = (target: new () => any) => {
                 i18n.changeLanguage(language);
 
                 const { appUrl } = getHostnameFromRequest(req);
-                RequestContext.setContext({ request: req, requestUrl: appUrl, translation: i18n.t });
+                RequestContext.setContext({ request: req, response: res, requestUrl: appUrl, translation: i18n.t });
                 const {
                     data: { session },
                 } = await req.supabase.auth.getSession();
