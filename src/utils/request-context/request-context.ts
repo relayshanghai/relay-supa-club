@@ -2,7 +2,7 @@ import * as UUID from 'uuid';
 import { AsyncLocalStorage } from 'async_hooks';
 import type { Session } from '@supabase/supabase-js';
 import awaitToError from '../await-to-error';
-import type { NextApiRequest } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import type { EntityManager, ObjectLiteral } from 'typeorm';
 import type { Nullable } from 'types/nullable';
 import type BaseRepository from 'src/backend/database/provider/base-repository';
@@ -15,6 +15,7 @@ export interface Context {
     profile?: ProfileEntity;
     companyId?: string | null;
     request?: NextApiRequest;
+    response?: NextApiResponse;
     requestUrl: string;
     translation: TranslationFunction;
     manager?: EntityManager;

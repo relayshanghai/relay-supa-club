@@ -69,6 +69,9 @@ export class InfluencerSocialProfileEntity {
                 if (typeof value === 'string') return JSON.parse(value);
                 return value;
             },
+            to(value: object) {
+                return value;
+            },
         },
     })
     topicTags?: object[];
@@ -81,6 +84,9 @@ export class InfluencerSocialProfileEntity {
         transformer: {
             from(value: object) {
                 if (typeof value === 'string') return JSON.parse(value);
+                return value;
+            },
+            to(value: object) {
                 return value;
             },
         },
