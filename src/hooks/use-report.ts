@@ -63,6 +63,22 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     track,
                     pageUrl,
                 });
+
+                /**
+                 * THIS ERROR SHOULDN'T BE HERE BUT IT IS
+                 *
+                 * normally this error will be handled on catch block
+                 * but the response status keeps returning 200
+                 * so the error is being handled here
+                 *
+                 * so far it only happened to custom error: 'usage_exceeded'
+                 */
+                const weirdError = (report as any).error;
+                if (hasCustomError({ message: weirdError }, usageErrors)) {
+                    setUsageExceeded(true);
+                    setErrorMessage(t(weirdError) || '');
+                    return;
+                }
                 setErrorMessage('');
                 return { createdAt, report, influencer, socialProfile };
             } catch (error: any) {
