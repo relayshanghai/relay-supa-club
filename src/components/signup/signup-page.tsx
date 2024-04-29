@@ -17,7 +17,6 @@ import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { truncatedText } from 'src/utils/outreach/helpers';
-import { ReCaptchaProvider } from 'next-recaptcha-v3';
 export interface SignUpValidationErrors {
     firstName: string;
     lastName: string;
@@ -254,17 +253,15 @@ const SignUpPage = ({
                     step.num === currentStep && (
                         <FormWizard title={t(step.title || '')} key={step.num} steps={steps} currentStep={currentStep}>
                             {currentStep === PROFILE_FORM_STEP && (
-                                <ReCaptchaProvider>
-                                    <StepOne
-                                        firstName={firstName}
-                                        lastName={lastName}
-                                        phoneNumber={phoneNumber}
-                                        validationErrors={validationErrors}
-                                        setAndValidate={setAndValidate}
-                                        loading={loading}
-                                        onNext={onNext}
-                                    />
-                                </ReCaptchaProvider>
+                                <StepOne
+                                    firstName={firstName}
+                                    lastName={lastName}
+                                    phoneNumber={phoneNumber}
+                                    validationErrors={validationErrors}
+                                    setAndValidate={setAndValidate}
+                                    loading={loading}
+                                    onNext={onNext}
+                                />
                             )}
 
                             {currentStep === EMAIL_FORM_STEP && (

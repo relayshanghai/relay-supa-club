@@ -41,7 +41,7 @@ export class SendOtpRequest {
 
     @IsString()
     @IsOptional()
-    recaptchaToken!: string;
+    hcaptchaToken!: string;
 }
 
 export class VerifyOtpRequest {

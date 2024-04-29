@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@analytics/storage-utils": "^0.4.2",
+    "@hcaptcha/react-hcaptcha": "^1.10.1",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@opentelemetry/api": "^1.7.0",
@@ -98,7 +99,6 @@
     "mixpanel": "^0.18.0",
     "nanoid": "^4.0.2",
     "next": "^13.5.0",
-    "next-recaptcha-v3": "^1.4.1",
     "node-object-hash": "^3.0.0",
     "npm": "^10.4.0",
     "openai": "^4.28.0",
