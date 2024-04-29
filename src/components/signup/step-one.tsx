@@ -9,7 +9,15 @@ import PhoneNumberInput from '../phone-number-input';
 import { useOtp } from 'src/hooks/use-otp';
 import OtpInput from '../otp-input';
 import Link from 'next/link';
-import { useReCaptcha } from 'next-recaptcha-v3';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
+import awaitToError from 'src/utils/await-to-error';
+
+const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY as string;
+
+interface ExecuteResponse {
+    response: string;
+    key: string;
+}
 
 export const StepOne = ({
     firstName,
@@ -35,16 +43,21 @@ export const StepOne = ({
     const phoneNumberRef = useRef<HTMLInputElement>(null);
     const { loading: otpLoading, sendOtp, verify, counter, isOtpSent, setIsOtpSent, error } = useOtp();
     const [code, setCode] = useState('');
+    const captchaRef = useRef<HCaptcha>(null);
 
     const submitDisabled = invalidFormInput || loading || otpLoading || !isOtpSent || code.length !== 6;
     useEffect(() => {
         if (phoneNumber) setIsOtpSent(false);
     }, [phoneNumber, setIsOtpSent]);
-    const { executeRecaptcha } = useReCaptcha();
     const triggerSendOtp = async () => {
         setCode('');
-        const recaptchaToken = await executeRecaptcha('page_view');
-        await sendOtp(phoneNumber, recaptchaToken);
+        const [err, data] = await awaitToError(
+            captchaRef.current?.execute({
+                async: true,
+            }) as Promise<ExecuteResponse>,
+        );
+        if (err) return;
+        await sendOtp(phoneNumber, data?.response);
     };
     const triggerVerify = async () => {
         const verified = await verify(code);
@@ -52,7 +65,6 @@ export const StepOne = ({
             onNext();
         }
     };
-    const { error: recaptchaError } = useReCaptcha();
 
     return (
         <>
@@ -99,6 +111,9 @@ export const StepOne = ({
                     </Button>
                 )}
             </div>
+            <div className="mt-5 flex w-full gap-2.5">
+                <HCaptcha ref={captchaRef} sitekey={hcaptchaSiteKey} size="invisible" sentry={false} />
+            </div>
             {isOtpSent && (
                 <div className="mt-5 flex gap-2.5">
                     <OtpInput value={code} onChange={setCode} />
@@ -128,7 +143,6 @@ export const StepOne = ({
                 </div>
             )}
             {error && <p className="text-sm text-red-500">{error}</p>}
-            {recaptchaError && <p className="text-sm text-red-500">{t('signup.recaptchaError')}</p>}
             <Button disabled={submitDisabled} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
                 {t('signup.next')}
             </Button>

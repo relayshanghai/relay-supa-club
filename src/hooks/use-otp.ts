@@ -8,9 +8,9 @@ export const useOtp = () => {
     const [isVerified, setIsVerified] = useState(false);
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [counter, setCounter] = useState(0);
-    const sendOtp = async (phoneNumber: string, recaptchaToken?: string) => {
+    const sendOtp = async (phoneNumber: string, hcaptchaToken?: string) => {
         setIsOtpSent(false);
-        const [err] = await awaitToError(apiClient.post('/users/send-otp', { phoneNumber, recaptchaToken }));
+        const [err] = await awaitToError(apiClient.post('/users/send-otp', { phoneNumber, hcaptchaToken }));
         if (err) return;
         setIsOtpSent(true);
         startInterval();
