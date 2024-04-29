@@ -74,7 +74,7 @@ const signup = {
     didntGetTheOtp: "Didn't get it?",
     phoneNumberAlreadyInUse: 'Phone number already in use, please try another.',
     phoneNumberIsInvalid: 'Phone number is not valid, please try another.',
-    recaptchaError: 'Recaptcha is not validated',
+    hcaptchaError: 'hCaptcha is not validated',
     currency: 'Preferred Currency',
     currencyHint: 'For your free trial sign-up, \n you won’t be required to provide any payment method.',
 };

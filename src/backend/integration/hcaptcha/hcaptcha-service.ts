@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { logger } from '../logger';
 import qs from 'querystring';
-export default class RecaptchaService {
-    static service = new RecaptchaService();
-    static getService = () => RecaptchaService.service;
+export default class HcaptchaService {
+    static service = new HcaptchaService();
+    static getService = () => HcaptchaService.service;
     private client = axios.create({
-        baseURL: 'https://www.google.com/recaptcha',
+        baseURL: 'https://api.hcaptcha.com',
     });
-    private secret = process.env.RECAPTCHA_SECRET_KEY;
+    private secret = process.env.HCAPTCHA_SECRET;
     async validate(token: string) {
         const response = await this.client.post(
-            '/api/siteverify',
+            '/siteverify',
             qs.stringify({
                 secret: this.secret,
                 response: token,
@@ -21,7 +21,7 @@ export default class RecaptchaService {
                 },
             },
         );
-        logger.info('recaptcha response', { response: response.data, secret: this.secret, token });
+        logger.info('hcaptcha response', { response: response.data, secret: this.secret, token });
         if (response?.data?.success) {
             return true;
         }
