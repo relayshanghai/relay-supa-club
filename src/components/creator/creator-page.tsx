@@ -139,7 +139,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                     <CreatorSkeleton
                         loading={loading}
                         error={errorMessage?.length > 0}
-                        errorMessage={errorMessage === 'server_busy' ? t('creators.failedToFetchReport') : ''}
+                        errorMessage={errorMessage === 'server_busy' ? t('creators.failedToFetchReport') : errorMessage}
                     />
                 ) : (
                     <>
