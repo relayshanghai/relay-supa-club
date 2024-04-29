@@ -184,6 +184,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
     await trackAndSnap(track, req, res, events, data);
 
+    throw new Error('Failed to find report');
     return res.status(httpCodes.OK).json({
         ...data,
         createdAt,

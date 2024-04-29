@@ -136,7 +136,11 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         <div>
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (
-                    <CreatorSkeleton loading={loading} error={errorMessage?.length > 0} errorMessage={errorMessage} />
+                    <CreatorSkeleton
+                        loading={loading}
+                        error={errorMessage?.length > 0}
+                        errorMessage={errorMessage === 'server_busy' ? t('creators.failedToFetchReport') : ''}
+                    />
                 ) : (
                     <>
                         <AddToCampaignModal
