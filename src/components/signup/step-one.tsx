@@ -143,7 +143,6 @@ export const StepOne = ({
                 </div>
             )}
             {error && <p className="text-sm text-red-500">{error}</p>}
-            {/* {hcaptchaError && <p className="text-sm text-red-500">{t('signup.hcaptchaError')}</p>} */}
             <Button disabled={submitDisabled} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
                 {t('signup.next')}
             </Button>
