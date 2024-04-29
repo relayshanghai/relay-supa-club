@@ -1,5 +1,6 @@
 import type { ClientOptions } from 'openai';
 import OpenAIApi from 'openai';
+import { logger } from 'src/backend/integration/logger';
 import { RelayError } from 'src/errors/relay-error';
 import { serverLogger } from 'src/utils/logger-server';
 
@@ -87,6 +88,7 @@ export const getTopicsAndRelevance = async (topics: RelevantTopic[]): Promise<To
                 !('relevance' in topic) ||
                 typeof topic.relevance !== 'number'
             ) {
+                logger.info('topic cluster response', topicsAndRelevance);
                 throw new Error('Invalid topic clusters response from OpenAI');
             }
         }

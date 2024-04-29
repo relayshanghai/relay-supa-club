@@ -3,7 +3,6 @@ import { ManageSection } from 'src/components/influencer-profile/manage-section'
 import { mockProfile, testSequenceId } from 'src/mocks/test-user';
 import type { InfluencerOutreachData } from 'src/utils/outreach/types';
 import { Provider as JotaiProvider } from 'jotai';
-import i18n from 'i18n';
 import { manageSectionUpdatingAtom } from 'src/components/influencer-profile/atoms';
 
 const influencer: InfluencerOutreachData = {
@@ -53,7 +52,6 @@ const address = {
     phone_number: 'phone_number',
     influencer_social_profile_id: 'influencer_social_profile_id',
 };
-i18n.changeLanguage('en-US');
 const Preview = () => {
     const updating = useAtomValue(manageSectionUpdatingAtom);
     return (

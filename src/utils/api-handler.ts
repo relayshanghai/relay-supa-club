@@ -199,7 +199,7 @@ export const ApiHandlerWithContext =
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
                 const { appUrl } = getHostnameFromRequest(req);
-                RequestContext.setContext({ request: req, requestUrl: appUrl });
+                RequestContext.setContext({ request: req, requestUrl: appUrl, response: res });
                 const {
                     data: { session },
                 } = await req.supabase.auth.getSession();

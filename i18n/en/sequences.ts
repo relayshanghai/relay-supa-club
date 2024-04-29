@@ -186,6 +186,9 @@ const sequences = {
     missingEmailTooltipDescription: 'You must add an email to this influencer in order to start this sequence.',
     warningDuplicateInfluencer: 'Warning: duplicate influencer could cause issues',
     sequenceScheduleFailed: 'Scheduling sequences failed, please try again',
+    reportServerBusy: 'Server is busy, please try again later',
+    retryButton: 'Retry button',
+    clickToRetry: 'Click to retry getting data',
 };
 
 export default sequences;

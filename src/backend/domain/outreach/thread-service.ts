@@ -10,6 +10,12 @@ import type { ReplyRequest } from 'pages/api/v2/threads/[id]/reply-request';
 import { NotFoundError } from 'src/utils/error/http-error';
 import type { GetThreadResponse } from 'pages/api/v2/threads/response';
 import { ThreadStatus } from 'src/backend/database/thread/thread-status';
+import { getRelevantTopicTagsByInfluencer } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { InfluencerSocialProfileRepository } from 'src/backend/database/influencer/influencer-social-profile-repository';
+import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
+import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
+import { logger } from 'src/backend/integration/logger';
 
 export default class ThreadService {
     static service = new ThreadService();
@@ -88,6 +94,41 @@ export default class ThreadService {
         });
         if (!thread) {
             throw new NotFoundError('Thread not found');
+        }
+        const socialProfile = thread.sequenceInfluencer?.influencerSocialProfile as InfluencerSocialProfileEntity;
+        if (!socialProfile.topicsRelevances) {
+            let topicTags = socialProfile.topicTags;
+            const topicRelevance = socialProfile.topicsRelevances;
+            logger.info(`resultnya `, { topicRelevance });
+            if (topicRelevance) {
+                return thread;
+            }
+            logger.info(`resultnya `, { topicTags });
+            if (!topicTags) {
+                const req = RequestContext.getContext().request as NextApiRequest;
+                const res = RequestContext.getContext().response as NextApiResponse;
+                const { username, platform } = socialProfile;
+                const result = await getRelevantTopicTagsByInfluencer(
+                    { query: { q: username, limit: 60, platform: platform as any } },
+                    { req, res },
+                );
+                logger.info(`resultnya `, { result });
+                if (!result.success) return thread;
+                topicTags = result.data;
+            }
+
+            const topicRelevances = await getTopicsAndRelevance(topicTags as any);
+            await InfluencerSocialProfileRepository.getRepository().update(
+                {
+                    id: socialProfile.id,
+                },
+                {
+                    topicTags: topicTags,
+                    topicsRelevances: topicRelevances,
+                },
+            );
+            socialProfile.topicTags = topicTags;
+            socialProfile.topicsRelevances = topicRelevances;
         }
         return thread;
     }

@@ -134,7 +134,9 @@ export default function Profile() {
                     </TabsContent>
                     <TabsContent value="channel">
                         {sequenceInfluencer?.influencerSocialProfile && (
-                            <ProfileChannel profile={sequenceInfluencer?.influencerSocialProfile.data ?? ({} as any)} />
+                            <>
+                                <ProfileChannel influencerProfile={sequenceInfluencer?.influencerSocialProfile} />
+                            </>
                         )}
                     </TabsContent>
                 </Tabs>

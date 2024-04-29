@@ -113,9 +113,9 @@ const sequences = {
     productPriceTooltip: '产品价格',
     productPriceTooltipDescription: `
     以美元为单位输入产品价格。
-    
+
     最好输入整数，以便让模板看起来更加简洁。
-    
+
     这将会直接显示于您的电子邮件模版中，单位格式为 $。`,
     productPricePlaceholder: '99.9',
     influencer: 'KOL',
@@ -170,5 +170,8 @@ const sequences = {
     missingEmailTooltipDescription: '您必须为此KOL添加电子邮件，以便开始此序列。',
     warningDuplicateInfluencer: '警告：重复的KOL可能会导致问题',
     sequenceScheduleFailed: '安排序列邮件失败，请稍后再试',
+    reportServerBusy: '服务器正忙，请稍后再试',
+    retryButton: '重试按钮',
+    clickToRetry: '请单击以重新获取数据',
 };
 export default sequences;
