@@ -82,6 +82,9 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     setUsageExceeded(true);
                     setErrorMessage(t(weirdError) || '');
                     return;
+                } else if (!report.user_profile) {
+                    setErrorMessage('server_busy');
+                    return;
                 }
                 setErrorMessage('');
                 setErrorStatus(null);
