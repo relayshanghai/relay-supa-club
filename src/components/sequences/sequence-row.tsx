@@ -45,6 +45,8 @@ import { useAtom } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import type { KeyedMutator } from 'swr';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
+import { type Nullable } from 'types/nullable';
+import { usageErrors } from 'src/errors/usages';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -75,8 +77,19 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
         : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
 
-const ErrorDisplay: React.FC<{ message: string; onClick: () => void }> = ({ message, onClick }) => {
+const ErrorDisplay: React.FC<{ message: string; status: Nullable<string>; onClick: () => void }> = ({
+    message,
+    status,
+    onClick,
+}) => {
     const { t } = useTranslation();
+    if (status === usageErrors.limitExceeded) {
+        return (
+            <Tooltip content={t('usages.limitExceeded')} detail={t('sequences.limitExceeded')} position="bottom-right">
+                <div className="text-red-500">{t('usages.limitExceeded')}</div>
+            </Tooltip>
+        );
+    }
     if (message === 'server_busy') {
         return (
             <div className="flex items-center gap-2">
@@ -119,7 +132,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile, errorMessage, refreshReport, loading } = useReport({
+    const { report, socialProfile, errorMessage, errorStatus, refreshReport, loading } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
@@ -379,6 +392,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : errorMessage ? (
                                 <ErrorDisplay
                                     message={errorMessage}
+                                    status={errorStatus}
                                     onClick={() => {
                                         refreshReport();
                                     }}

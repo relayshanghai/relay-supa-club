@@ -189,6 +189,8 @@ const sequences = {
     reportServerBusy: 'Server is busy, please try again later',
     retryButton: 'Retry button',
     clickToRetry: 'Click to retry getting data',
+    limitExceeded:
+        'Uh Oh! Looks like your BoostBot credits have run out! Please contact sales at sophia @ boostbot.ai if you want to add more credits to your account this month. Otherwise, your credits will be automatically renewed at the start of your next billing cycle.',
 };
 
 export default sequences;
