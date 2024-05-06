@@ -1,4 +1,4 @@
-import { useThreadReply, useThreadStore } from 'src/hooks/v2/use-thread';
+import { useThread, useThreadReply } from 'src/hooks/v2/use-thread';
 import ThreadHeader from './thread-header';
 import { useMessages } from 'src/hooks/v2/use-message';
 import ThreadMessageList from './thread-message-list/thread-message-list';
@@ -42,10 +42,7 @@ export default function ThreadMessages() {
     const { profile } = useUser();
     const { company } = useCompany();
     const myEmail = profile?.email || '';
-    const { selectedThread, loading } = useThreadStore((state) => ({
-        selectedThread: state.selectedThread,
-        loading: state.loading,
-    }));
+    const { selectedThread, loading } = useThread();
     const { messages, mutate } = useMessages(selectedThread?.threadId as string);
     const endOfThread = useRef<null | HTMLDivElement>(null);
     const scrollToBottom = () => {

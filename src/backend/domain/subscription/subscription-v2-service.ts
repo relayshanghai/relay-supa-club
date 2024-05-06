@@ -60,7 +60,7 @@ export default class SubscriptionV2Service {
         if (setupError) {
             throw new UnprocessableEntityError('entity is unprocessable', setupError);
         }
-        await StripeService.getService().attachPaymentMethod(cusId, request.paymentMethodId);
+        await awaitToError(StripeService.getService().attachPaymentMethod(cusId, request.paymentMethodId));
 
         return setupIntent;
     }

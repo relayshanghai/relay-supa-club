@@ -1,7 +1,7 @@
 import type { ReplyRequest } from 'pages/api/v2/threads/[id]/reply-request';
 import { type FunnelStatusRequest, type GetThreadsRequest } from 'pages/api/v2/threads/request';
 import type { GetThreadResponse, ThreadMessageCountResponse } from 'pages/api/v2/threads/response';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import { ThreadStatus } from 'src/backend/database/thread/thread-status';
 import { useApiClient } from 'src/utils/api-client/request';
@@ -69,6 +69,7 @@ export const useThreadReply = () => {
 export const useThread = () => {
     const {
         threads,
+        loading: threadLoading,
         setLoading: setThreadLoading,
         selectedThread,
         setSelectedThread,
@@ -82,6 +83,16 @@ export const useThread = () => {
         unreplied: 0,
     });
     const [isNextAvailable, setIsNextAvailable] = useState<boolean>(true);
+    const [selectedThreadId, setSelectedThreadId] = useState<string>();
+    useEffect(() => {
+        setSelectedThreadId(selectedThread?.id);
+    }, [selectedThread]);
+    useEffect(() => {
+        if (selectedThreadId && selectedThreadId !== selectedThread?.id) {
+            getAndSelectThread(selectedThreadId);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedThreadId]);
     const getAllThread = async (request: GetThreadsRequest) => {
         if (loading) return;
         if (request.page === 1) setThreads([]);
@@ -118,7 +129,7 @@ export const useThread = () => {
         setSelectedThread: getAndSelectThread,
         getAllThread,
         messageCount,
-        loading,
+        loading: loading || threadLoading,
         error,
         threads,
         isNextAvailable,

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import ProfileManage from './profile-manage/profile-manage';
 import { useManageProfileUpdating } from 'src/hooks/v2/use-sequence-influencer';
 import ProfileChannel, { type ProfileChannelSection } from './profile-channel/profile-channel';
-import { useThreadStore } from 'src/hooks/v2/use-thread';
+import { useThread } from 'src/hooks/v2/use-thread';
 import type { ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import type { AddressEntity } from 'src/backend/database/influencer/address-entity';
 import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
@@ -21,10 +21,7 @@ export type ProfileValue = {
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
 export default function Profile() {
-    const { selectedThread, loading } = useThreadStore((state) => ({
-        selectedThread: state.selectedThread,
-        loading: state.loading,
-    }));
+    const { selectedThread, loading } = useThread();
     const { sequenceInfluencer } = selectedThread as ThreadEntity;
     const Icon =
         sequenceInfluencer?.influencerSocialProfile?.platform == 'youtube'
