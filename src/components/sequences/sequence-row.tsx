@@ -196,14 +196,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 email: email,
                 unique_email: uniqueEmail,
             });
-            if (!uniqueEmail) {
-                toast.error(t('sequences.emailAlreadyExists'));
-                return;
-            }
+            // if (!uniqueEmail) {
+            //     toast.error(t('sequences.emailAlreadyExists'));
+            //     return;
+            // }
             const updatedSequenceInfluencer = await updateSequenceInfluencer({
                 id: sequenceInfluencer.id,
                 email,
-                company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
+                // company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
             });
             setEmail(updatedSequenceInfluencer.email ?? '');
         } catch (error: any) {
@@ -305,23 +305,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
-    const isDuplicateInfluencer = useMemo(() => {
-        return sequenceInfluencers.some((influencer) => {
-            if (!influencer.id || !sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.id === sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.funnel_status !== 'To Contact') {
-                return false;
-            }
-            return (
-                (influencer.email && sequenceInfluencer.email && influencer.email === sequenceInfluencer.email) ||
-                influencer.iqdata_id === sequenceInfluencer.iqdata_id
-            );
-        });
-    }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
@@ -377,8 +360,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {loading ? (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
-                            ) : isDuplicateInfluencer ? (
-                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
