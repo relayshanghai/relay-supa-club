@@ -16,7 +16,7 @@ import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-infl
 import type { FunnelStatusRequest } from 'pages/api/v2/threads/request';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';
 import dayjs from 'dayjs';
-import { useThreadStore } from 'src/hooks/v2/use-thread';
+import { useThread, useThreadStore } from 'src/hooks/v2/use-thread';
 // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
 // import { OutreachNotesInput } from './components/outreach-notes-input';
 // import { NotesListOverlayScreen } from './screens/notes-list-overlay';
@@ -81,8 +81,8 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
     const { t } = useTranslation();
 
     const [influencer, setInfluencer] = useState(passedInfluencer);
-    const { selectedThread, setThreadFunnelStatus } = useThreadStore((state) => ({
-        selectedThread: state.selectedThread,
+    const { selectedThread } = useThread();
+    const { setThreadFunnelStatus } = useThreadStore((state) => ({
         setThreadFunnelStatus: state.setThreadFunnelStatus,
     }));
     useEffect(() => {
