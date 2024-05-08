@@ -16,6 +16,7 @@ import { InfluencerSocialProfileRepository } from 'src/backend/database/influenc
 import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { logger } from 'src/backend/integration/logger';
+import { ThreadContactType } from 'src/backend/database/thread/email-contact-entity';
 
 export default class ThreadService {
     static service = new ThreadService();
@@ -90,11 +91,27 @@ export default class ThreadService {
                 contacts: {
                     emailContact: true,
                 },
+                emails: true,
             },
         });
         if (!thread) {
             throw new NotFoundError('Thread not found');
         }
+
+        const lastEmailFrom = thread.emails?.length ? thread.emails[thread.emails.length - 1].data.from.address : '';
+        const contactType = thread.contacts?.find((contact) => contact.emailContact.address === lastEmailFrom);
+        if (contactType?.type !== ThreadContactType.USER) {
+            await ThreadRepository.getRepository().update(
+                {
+                    id,
+                },
+                {
+                    threadStatus: ThreadStatus.REPLIED,
+                },
+            );
+            thread.threadStatus = ThreadStatus.REPLIED;
+        }
+
         const socialProfile = thread.sequenceInfluencer?.influencerSocialProfile as InfluencerSocialProfileEntity;
         if (!socialProfile.topicsRelevances) {
             let topicTags = socialProfile.topicTags;

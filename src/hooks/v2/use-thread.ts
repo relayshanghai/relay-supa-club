@@ -1,9 +1,11 @@
 import type { ReplyRequest } from 'pages/api/v2/threads/[id]/reply-request';
-import { type FunnelStatusRequest, type GetThreadsRequest } from 'pages/api/v2/threads/request';
+import { ThreadStatusRequest, type FunnelStatusRequest, type GetThreadsRequest } from 'pages/api/v2/threads/request';
 import type { GetThreadResponse, ThreadMessageCountResponse } from 'pages/api/v2/threads/response';
 import { useEffect, useState } from 'react';
+import { ThreadContactType } from 'src/backend/database/thread/email-contact-entity';
 import { type ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import { ThreadStatus } from 'src/backend/database/thread/thread-status';
+import { type FilterRequest } from 'src/components/inbox/thread-list/filter/thread-list-filter';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 
@@ -77,6 +79,13 @@ export const useThread = () => {
         appendThreads,
     } = useThreadStore();
     const { apiClient, loading, error } = useApiClient();
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [filter, setFilters] = useState<FilterRequest>({
+        funnelStatus: [],
+        threadStatus: ThreadStatusRequest.ALL,
+        sequences: [],
+    });
+    const [page, setPage] = useState<number>(1);
     const [messageCount, setMessageCount] = useState<ThreadMessageCountResponse>({
         all: 0,
         unopened: 0,
@@ -85,7 +94,28 @@ export const useThread = () => {
     const [isNextAvailable, setIsNextAvailable] = useState<boolean>(true);
     const [selectedThreadId, setSelectedThreadId] = useState<string>();
     useEffect(() => {
-        setSelectedThreadId(selectedThread?.id);
+        if (selectedThread) {
+            const lastEmailFrom = selectedThread.emails?.length
+                ? selectedThread.emails[selectedThread.emails.length - 1].data.from.address
+                : '';
+            const contactType = selectedThread.contacts?.find(
+                (contact) => contact.emailContact.address === lastEmailFrom,
+            );
+            if (contactType?.type !== ThreadContactType.USER) {
+                selectedThread.threadStatus = ThreadStatus.REPLIED;
+            }
+
+            const t = [...threads];
+            const index = t.findIndex((thread) => thread.id === selectedThread.id);
+            if (index > -1) {
+                t[index] = { ...selectedThread };
+                setThreads(t);
+            }
+
+            setSelectedThread(selectedThread);
+            setSelectedThreadId(selectedThread.id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread]);
     useEffect(() => {
         if (selectedThreadId && selectedThreadId !== selectedThread?.id) {
@@ -133,5 +163,11 @@ export const useThread = () => {
         error,
         threads,
         isNextAvailable,
+        searchTerm,
+        setSearchTerm,
+        filter,
+        setFilters,
+        page,
+        setPage,
     };
 };
