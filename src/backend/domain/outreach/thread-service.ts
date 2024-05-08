@@ -97,7 +97,9 @@ export default class ThreadService {
         if (!thread) {
             throw new NotFoundError('Thread not found');
         }
-
+        if (thread.emails) {
+            thread.emails = [thread.emails[thread.emails.length - 1]];
+        }
         const lastEmailFrom = thread.emails?.length ? thread.emails[thread.emails.length - 1].data.from.address : '';
         const contactType = thread.contacts?.find((contact) => contact.emailContact.address === lastEmailFrom);
         if (contactType?.type !== ThreadContactType.USER) {
