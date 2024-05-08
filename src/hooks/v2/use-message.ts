@@ -1,19 +1,26 @@
+import { type GetThreadEmailsRequest } from 'pages/api/v2/threads/[id]/emails/request';
+import { useState } from 'react';
 import type { Email } from 'src/backend/database/thread/email-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import useSWR from 'swr';
+import { type Paginated } from 'types/pagination';
 
 export const useMessages = (threadId: string) => {
     const { apiClient } = useApiClient();
+    const [params, setParams] = useState({
+        page: 1,
+        size: 10,
+    });
 
     const {
         data,
         error: messagesError,
         isLoading: isMessageLoading,
         mutate,
-    } = useSWR<Email[], any>(
-        threadId,
-        async (threadId) => {
-            const response = await apiClient.get<Email[]>(`/v2/threads/${threadId}/emails`);
+    } = useSWR<Paginated<Email>, any>(
+        [threadId, params],
+        async ({ threadId, params }: { threadId: string; params: GetThreadEmailsRequest }) => {
+            const response = await apiClient.get<Paginated<Email>>(`/v2/threads/${threadId}/emails`, { params });
             return response.data;
         },
         {
@@ -26,10 +33,16 @@ export const useMessages = (threadId: string) => {
                 if (!fresh && cached) {
                     return false;
                 }
-                if (cached && fresh && fresh.length === cached.length && fresh.length > 0 && cached.length > 0) {
-                    return cached[0].id === fresh[0].id;
+                if (
+                    cached &&
+                    fresh &&
+                    fresh.items.length === cached.items.length &&
+                    fresh.items.length > 0 &&
+                    cached.items.length > 0
+                ) {
+                    return cached.items[0].id === fresh.items[0].id;
                 }
-                return (fresh?.length ?? 0) < (cached?.length ?? 0);
+                return (fresh?.items.length ?? 0) < (cached?.items.length ?? 0);
             },
         },
     );
@@ -38,5 +51,6 @@ export const useMessages = (threadId: string) => {
         messagesError,
         isMessageLoading,
         mutate,
+        setParams,
     };
 };

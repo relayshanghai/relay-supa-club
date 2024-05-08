@@ -9,6 +9,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { nanoid } from 'nanoid';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+import { type Paginated } from 'types/pagination';
 
 /**
  * Generate local Message object with isLocal attribute
@@ -92,9 +93,9 @@ export default function ThreadMessages() {
     );
     const { reply, loading: replyLoading } = useThreadReply();
     const handleReply = useCallback(
-        (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
+        async (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
-                async (cache) => {
+                async (cache: Paginated<Email> | undefined): Promise<Paginated<Email>> => {
                     if (attachments && attachments.length > 0) {
                         const htmlAttachments = attachments.map((attachment) => {
                             return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
@@ -116,25 +117,25 @@ export default function ThreadMessages() {
                         from: { name: 'Me', address: myEmail || '' },
                         to: toList,
                         cc: ccList,
-                        subject: messages?.[messages.length - 1]?.subject ?? '',
+                        subject: messages?.items[messages.items.length - 1]?.subject ?? '',
                         attachments: [],
                     });
                     setAttachments([]);
-                    return [localMessage, ...(cache ?? [])];
+                    return { ...cache, items: [localMessage, ...(cache?.items ?? [])] } as Paginated<Email>;
                 },
                 {
                     // Optimistically update the UI
                     // Seems like this is discarded when MutatorCallback ^ resolves
-                    optimisticData: (cache) => {
+                    optimisticData: (cache: Paginated<Email> | undefined): Paginated<Email> => {
                         const localMessage = generateLocalData({
                             body: replyBody,
                             from: { name: 'Me', address: myEmail || '' },
                             to: toList,
                             cc: ccList,
-                            subject: messages?.[messages.length - 1]?.subject ?? '',
+                            subject: messages?.items[messages.items.length - 1]?.subject ?? '',
                             attachments: [],
                         });
-                        return [localMessage, ...(cache ?? [])];
+                        return { ...cache, items: [localMessage, ...(cache?.items ?? [])] } as Paginated<Email>;
                     },
                     revalidate: false,
                     rollbackOnError: true,
@@ -164,12 +165,12 @@ export default function ThreadMessages() {
                     <div className="flex-none bg-zinc-50">
                         <ThreadHeader
                             thread={selectedThread}
-                            subject={messages && messages.length > 0 ? messages[0].subject : ''}
+                            subject={messages && messages.items.length > 0 ? messages.items[0].subject : ''}
                         />
                     </div>
 
                     <div style={{ height: 10 }} className="m-5 flex-auto justify-center overflow-auto bg-zinc-50">
-                        <ThreadMessageList messages={messages || []} myEmail={myEmail} />
+                        <ThreadMessageList messages={messages?.items || []} myEmail={myEmail} />
                         <div ref={endOfThread} />
                     </div>
                     <div className="m-5 bg-white">
