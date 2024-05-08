@@ -11,4 +11,10 @@ class ThreadEmailHandler {
     }
 }
 
+export const config = {
+    api: {
+        responseLimit: false,
+    },
+};
+
 export default createHandler(ThreadEmailHandler);
