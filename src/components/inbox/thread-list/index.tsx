@@ -1,20 +1,24 @@
 'use client';
-import { type UIEventHandler, useCallback, useEffect, useState } from 'react';
+import { type UIEventHandler, useCallback, useEffect } from 'react';
 import ThreadListInputSearch from './thread-list-input-search';
-import { type FilterRequest, ThreadListFilter } from './filter/thread-list-filter';
-import { ThreadStatusRequest } from 'pages/api/v2/threads/request';
+import { ThreadListFilter } from './filter/thread-list-filter';
 import { useThread } from 'src/hooks/v2/use-thread';
 import ThreadListContainer from './thread-list-container';
 import { debounce } from 'lodash';
 export default function ThreadList() {
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [filter, setFilters] = useState<FilterRequest>({
-        funnelStatus: [],
-        threadStatus: ThreadStatusRequest.ALL,
-        sequences: [],
-    });
-    const [page, setPage] = useState<number>(1);
-    const { threads, getAllThread, loading, isNextAvailable, messageCount } = useThread();
+    const {
+        threads,
+        getAllThread,
+        loading,
+        isNextAvailable,
+        messageCount,
+        filter,
+        setFilters,
+        searchTerm,
+        setSearchTerm,
+        page,
+        setPage,
+    } = useThread();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const triggerGetThread = useCallback(
         debounce((searchTerm, filter, page) => {
