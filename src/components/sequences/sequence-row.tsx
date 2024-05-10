@@ -407,12 +407,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
-                            <div className="mr-5 cursor-pointer">
-                                <ReportOutline
-                                    className="stroke-gray-400 stroke-2"
-                                    onClick={() => handleReportIconTab && handleReportIconTab()}
-                                />
-                            </div>
                             <Tooltip
                                 content={sequenceSendTooltipTitle}
                                 detail={sequenceSendTooltipDescription}
@@ -430,6 +424,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
+                            {handleReportIconTab && (
+                                <div className="ml-5 cursor-pointer">
+                                    <ReportOutline
+                                        className="stroke-gray-400 stroke-2"
+                                        onClick={() => handleReportIconTab && handleReportIconTab()}
+                                    />
+                                </div>
+                            )}
                         </td>
                     </>
                 )}

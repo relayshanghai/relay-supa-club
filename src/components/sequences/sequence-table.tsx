@@ -238,10 +238,14 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 handleStartSequence={handleStartSequence}
                                 checked={selection.includes(influencer.id)}
                                 onCheckboxChange={handleCheckboxChange}
-                                handleReportIconTab={() => {
-                                    setCurrentInfluencer(influencer.channel_data);
-                                    setIsInfluencerDetailsModalOpen(true);
-                                }}
+                                handleReportIconTab={
+                                    influencer.channel_data
+                                        ? () => {
+                                              setCurrentInfluencer(influencer.channel_data);
+                                              setIsInfluencerDetailsModalOpen(true);
+                                          }
+                                        : undefined
+                                }
                             />
                         );
                     })}
