@@ -85,7 +85,7 @@ export default class ThreadRepository extends BaseRepository<ThreadEntity> {
             where,
             relations,
             order: {
-                lastReplyDate: 'DESC',
+                lastReplyDate: { direction: 'DESC', nulls: 'LAST' },
             },
         });
         const countUnopened = await this.count({

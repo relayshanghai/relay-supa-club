@@ -15,6 +15,9 @@ export enum ThreadContactType {
     TO = 'to',
     CC = 'cc',
     BCC = 'bcc',
+    USER = 'user',
+    INFLUENCER = 'influencer',
+    PARTICIPANT = 'participant',
 }
 @Entity('email_contacts')
 @Unique('email_contacts_address_key', ['address'])
