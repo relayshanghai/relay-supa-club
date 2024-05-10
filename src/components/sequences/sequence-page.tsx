@@ -377,7 +377,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     );
 
     const [showSlowBanner, setShowSlowBanner] = useState(false);
-
     return (
         <Layout>
             {!profile?.email_engine_account_id && !showSlowBanner && (

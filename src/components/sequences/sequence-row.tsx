@@ -14,7 +14,7 @@ import type {
     TemplateVariable,
 } from 'src/utils/api/db';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline, Retry } from '../icons';
+import { DeleteOutline, SendOutline, Retry, ReportOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -69,6 +69,7 @@ interface SequenceRowProps {
     handleStartSequence: (
         sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
     ) => Promise<SequenceSendPostResponse>;
+    handleReportIconTab?: () => void;
 }
 
 /** use the tracking status if it is delivered */
@@ -124,6 +125,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
     onCheckboxChange,
     checked,
+    handleReportIconTab,
 }) => {
     const { deleteSequenceInfluencers } = useSequenceInfluencers();
     const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
@@ -404,8 +406,13 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 day: 'numeric',
                             })}
                         </td>
-
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
+                            <div className="mr-5 cursor-pointer">
+                                <ReportOutline
+                                    className="stroke-gray-400 stroke-2"
+                                    onClick={() => handleReportIconTab && handleReportIconTab()}
+                                />
+                            </div>
                             <Tooltip
                                 content={sequenceSendTooltipTitle}
                                 detail={sequenceSendTooltipDescription}
