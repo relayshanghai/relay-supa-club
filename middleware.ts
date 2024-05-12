@@ -256,6 +256,8 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('sync-email')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('iqdata-export')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }

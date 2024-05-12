@@ -21,6 +21,9 @@ import { UseTransaction } from 'src/backend/database/provider/transaction-decora
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
+import { UseLogger } from 'src/backend/integration/logger/decorator';
+import { InfluencerSocialProfileRepository } from 'src/backend/database/influencer/influencer-social-profile-repository';
+import ExportIqdataService from '../export-iqdata/export-iqdata-service';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -160,5 +163,48 @@ export default class SequenceService {
             templateVariables as Variable[],
         );
         return sequence;
+    }
+
+    @UseTransaction()
+    @UseLogger()
+    @CompanyIdRequired()
+    async addSequenceInfluencer(sequenceId: string, influencerIds: string[]) {
+        const sequence = await SequenceRepository.getRepository().findOne({ where: { id: sequenceId } });
+        if (!sequence) {
+            throw new NotFoundError('Sequence not found');
+        }
+        const unexistedInfluencerIds =
+            await InfluencerSocialProfileRepository.getRepository().getUnexistedInfluencersOnly(
+                sequenceId,
+                influencerIds,
+            );
+        if (unexistedInfluencerIds.length === 0) {
+            return;
+        }
+        await SequenceInfluencerRepository.getRepository().insert(
+            unexistedInfluencerIds.map((influencer) => ({
+                influencerSocialProfile: influencer,
+                funnelStatus: 'To Contact',
+                iqdataId: ExportIqdataService.getService().extractIqdataId(influencer.referenceId),
+                company: { id: RequestContext.getContext().companyId as string },
+                sequence,
+                sequenceStep: 0,
+                rateAmount: 0,
+                rateCurrency: 'USD',
+                platform: influencer.platform,
+                username: influencer.username,
+                avatarUrl: influencer.avatarUrl,
+                name: influencer.name,
+                email: influencer.email,
+                realFullName: influencer.name,
+                // socialProfileLastFetched: influencer.createdAt,
+                url: influencer.url,
+                tags: (influencer.data as any)?.tags || [],
+                addedBy: RequestContext.getContext().session?.user?.id,
+            })),
+        );
+        await ExportIqdataService.getService().addInfluncerExportBatch(
+            unexistedInfluencerIds.filter((influencer) => !influencer.email),
+        );
     }
 }

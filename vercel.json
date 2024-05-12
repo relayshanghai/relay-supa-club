@@ -9,6 +9,10 @@
     {
       "path": "/api/email-sync",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/iqdata-export",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

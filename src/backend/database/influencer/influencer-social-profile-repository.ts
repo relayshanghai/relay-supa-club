@@ -1,7 +1,7 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
-import type { EntityManager, EntityTarget } from 'typeorm';
+import { In, type EntityManager, type EntityTarget, Raw } from 'typeorm';
 import { InfluencerSocialProfileEntity } from './influencer-social-profile-entity';
 
 @InjectInitializeDatabaseOnAllProps
@@ -29,5 +29,37 @@ export class InfluencerSocialProfileRepository extends BaseRepository<Influencer
         manager?: EntityManager,
     ) {
         super(target, manager);
+    }
+
+    getAllByIds(ids: string[]): Promise<InfluencerSocialProfileEntity[]> {
+        return this.find({
+            where: {
+                id: In(ids),
+            },
+            relations: ['influencer'],
+        });
+    }
+
+    getUnexistedInfluencersOnly(sequenceId: string, ids: string[]) {
+        return this.find({
+            where: {
+                id: Raw(
+                    (columnAlias) => `
+                    ${columnAlias} NOT IN (SELECT influencer_social_profile_id FROM sequence_influencers WHERE sequence_id = :p1)
+                    AND ${columnAlias} IN (${ids.map((_id, index) => `:p${index + 2}`).join(',')})
+                `,
+                    {
+                        p1: sequenceId,
+                        ...ids.reduce(
+                            (acc, id, index) => ({
+                                ...acc,
+                                [`p${index + 2}`]: id,
+                            }),
+                            {},
+                        ),
+                    },
+                ),
+            },
+        });
     }
 }

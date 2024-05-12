@@ -12,6 +12,11 @@ export const UseTransaction = (): MethodDecorator => {
         descriptor.value = async function (...args: any[]) {
             // start a new context and set the manager to the query runner
             const parentContextData = RequestContext.getContext();
+            // when context has already a manager, it means it is already in a transaction
+            if (parentContextData.manager) {
+                const result = await originalMethod.apply(this, args);
+                return result;
+            }
             return RequestContext.startContext(async () => {
                 RequestContext.setContext(parentContextData);
                 await DatabaseProvider.initialize();

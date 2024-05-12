@@ -19,4 +19,9 @@ export default class BoostbotService {
         const result = await this.apiClient.get(`/api/sync-email/${accountId}`);
         return result.data;
     }
+    @UseLogger()
+    async triggerIQDataExport(exportId: string) {
+        const result = await this.apiClient.get(`/api/v2/iqdata-export/${exportId}`);
+        return result.data;
+    }
 }
