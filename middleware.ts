@@ -256,6 +256,8 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('sync-email')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('schedule')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }

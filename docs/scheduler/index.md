@@ -125,3 +125,19 @@ and it will call the run job endpoint.
 - https://github.com/pramsey/pgsql-http
 - https://supabase.com/docs/guides/database/extensions/pg_cron
 - https://supabase.com/blog/postgres-as-a-cron-server
+
+## CRON schedule for sync sequence influencer
+```sql
+select
+  cron.schedule(
+    'invoke-influencer-scheduler',
+    '10 seconds',
+    $$
+    select
+      net.http_get(
+          url:='https://app.boostbot.com/api/v2/sequence-influencers/schedule',
+          headers:='{"Authorization": "Bearer undefined"}'::jsonb,
+      ) as request_id;
+    $$
+  );
+```
