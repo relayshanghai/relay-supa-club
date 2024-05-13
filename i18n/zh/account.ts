@@ -168,6 +168,7 @@ const account = {
         canceledOn: '取消日期',
         cancelsOn: '取消日期',
         paymentFailed: '付款失败',
+        paymentFailedAction: 'You need to subscribe again to continue using BoostBot.',
         paymentDue: '款项应付日期',
         pausedAt: '暂停日期',
         noUpcomingPayments: '暂无需要支付的款项',
