@@ -33,7 +33,7 @@ export const mapIqdataProfileToInfluencer = (
     };
 };
 
-const findMostRecentPostWithTextOrTitle = (posts: CreatorReport['user_profile']['recent_posts']) => {
+export const findMostRecentPostWithTextOrTitle = (posts: CreatorReport['user_profile']['recent_posts']) => {
     const post = posts?.find((p) => p.text || p.title);
 
     return {

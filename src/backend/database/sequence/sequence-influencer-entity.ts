@@ -17,6 +17,13 @@ import { InfluencerSocialProfileEntity } from '../influencer/influencer-social-p
 import { ThreadEntity } from '../thread/thread-entity';
 import { SequenceEmailEntity } from './sequence-email-entity';
 
+export enum SequenceInfluencerScheduleStatus {
+    PENDING = 'pending',
+    PROCESSING = 'processing',
+    COMPLETED = 'completed',
+    FAILED = 'failed',
+}
+
 @Entity('sequence_influencers')
 export class SequenceInfluencerEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -113,4 +120,7 @@ export class SequenceInfluencerEntity {
 
     @OneToMany(() => SequenceEmailEntity, (sequenceEmail) => sequenceEmail.sequenceInfluencer)
     sequenceEmails!: SequenceEmailEntity[];
+
+    @Column({ name: 'schedule_status', type: 'text', nullable: true })
+    scheduleStatus?: SequenceInfluencerScheduleStatus;
 }

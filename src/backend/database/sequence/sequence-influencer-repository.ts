@@ -3,7 +3,7 @@ import BaseRepository from '../provider/base-repository';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { type EntityManager, type EntityTarget, In } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
-
+export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 export default class SequenceInfluencerRepository extends BaseRepository<SequenceInfluencerEntity> {
     static repository = new SequenceInfluencerRepository();
     static getRepository(): SequenceInfluencerRepository {
@@ -47,5 +47,21 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
                 },
             },
         );
+    }
+
+    async getIdsForSyncReport() {
+        const last30Days = new Date();
+        last30Days.setDate(last30Days.getDate() - 30);
+        const influencers: { id: string }[] = await this.query(
+            `select id from sequence_influencers where 
+        schedule_status <> 'processing' AND
+        (
+            (
+                (email IS NULL OR email = '') AND social_profile_last_fetched IS NULL
+            ) OR social_profile_last_fetched <= $1 
+        ) limit ${SEQUENCE_INFLUENCER_SOCIAL_NUMBER}`,
+            [last30Days],
+        );
+        return influencers.map((influencer) => influencer.id);
     }
 }
