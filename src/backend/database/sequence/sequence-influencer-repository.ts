@@ -54,6 +54,7 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
         last30Days.setDate(last30Days.getDate() - 30);
         const influencers: { id: string }[] = await this.query(
             `select id from sequence_influencers where 
+        funnel_status = 'To Contact' AND
         schedule_status <> 'processing' AND
         (
             (
