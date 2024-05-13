@@ -18,7 +18,7 @@ import { DeleteOutline, SendOutline, Retry, ReportOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
-
+import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -139,6 +139,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
     });
+    const Icon = sequenceInfluencer.url?.includes('youtube')
+        ? Youtube
+        : sequenceInfluencer.url?.includes('tiktok')
+        ? Tiktok
+        : Instagram;
 
     useEffect(() => {
         const update = async () => {
@@ -339,11 +344,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <InfluencerAvatarWithFallback
-                            url={sequenceInfluencer.avatar_url || ''}
-                            name={sequenceInfluencer.name}
-                        />
+                        <div className="relative h-12 w-12 flex-shrink-0">
+                            <>
+                                <InfluencerAvatarWithFallback
+                                    url={sequenceInfluencer.avatar_url || ''}
+                                    name={sequenceInfluencer.name}
+                                    className="rounded-full"
+                                    size={48}
+                                />
 
+                                <Icon className="absolute -bottom-1 -right-2 h-6 w-6" />
+                            </>
+                        </div>
                         <div className="flex flex-col overflow-hidden">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
