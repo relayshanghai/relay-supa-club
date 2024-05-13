@@ -4,7 +4,7 @@
       "maxDuration": 300,
       "memory": 3008
     },
-    "api/v2/sequence-influencers/schedule.ts": {
+    "pages/api/v2/sequence-influencers/schedule.ts": {
       "maxDuration": 300,
       "memory": 3008
     }
