@@ -60,7 +60,12 @@ export default class SubscriptionV2Service {
         if (setupError) {
             throw new UnprocessableEntityError('entity is unprocessable', setupError);
         }
-        await StripeService.getService().attachPaymentMethod(cusId, request.paymentMethodId);
+        const [attachPaymentMethodErr] = await awaitToError(
+            StripeService.getService().attachPaymentMethod(cusId, request.paymentMethodId),
+        );
+        if (attachPaymentMethodErr) {
+            throw new UnprocessableEntityError('entity is unprocessable', attachPaymentMethodErr);
+        }
 
         return setupIntent;
     }
@@ -154,7 +159,7 @@ export default class SubscriptionV2Service {
     async syncStripeSubscriptionWithDb(
         companyId: string,
         cusId: string,
-        subscriptionData: Stripe.Subscription,
+        subscriptionData: SubscriptionEntity,
         limits: {
             profilesLimit: string;
             searchesLimit: string;
@@ -173,32 +178,7 @@ export default class SubscriptionV2Service {
                 trialSearchesLimit: limits.trialSearchesLimit,
             },
         );
-        await SubscriptionRepository.getRepository().save({
-            company: {
-                id: companyId,
-            },
-            provider: 'stripe',
-            providerSubscriptionId: subscriptionData.id,
-            paymentMethod:
-                subscriptionData.payment_settings?.payment_method_types?.[0] ||
-                subscriptionData.default_payment_method?.toString() ||
-                'card',
-            quantity: subscriptionData.items.data[0].quantity,
-            price: subscriptionData.items.data[0].price.unit_amount?.valueOf() || 0,
-            total:
-                (subscriptionData.items.data[0].price.unit_amount?.valueOf() || 0) *
-                (subscriptionData?.items?.data?.[0].quantity ?? 0),
-            subscriptionData: subscriptionData,
-            discount: subscriptionData.discount?.coupon?.amount_off?.valueOf() || 0,
-            coupon: subscriptionData.discount?.coupon?.id,
-            activeAt: subscriptionData.current_period_start
-                ? new Date(subscriptionData.current_period_start * 1000)
-                : undefined,
-            pausedAt: subscriptionData.current_period_end
-                ? new Date(subscriptionData.current_period_end * 1000)
-                : undefined,
-            cancelledAt: subscriptionData.cancel_at ? new Date(subscriptionData.cancel_at * 1000) : undefined,
-        });
+        await SubscriptionRepository.getRepository().save(subscriptionData);
         const newSubs = await SubscriptionRepository.getRepository().findOne({
             where: {
                 company: {
@@ -232,13 +212,38 @@ export default class SubscriptionV2Service {
                 throw new NotFoundError('No subscription found');
             }
 
+            let newSubscription = {
+                companyId,
+                provider: 'stripe',
+                providerSubscriptionId: lastSubscription.id,
+                paymentMethod:
+                    lastSubscription.payment_settings?.payment_method_types?.[0] ??
+                    lastSubscription.default_payment_method?.toString() ??
+                    'card',
+                quantity: lastSubscription.items.data[0].quantity as number,
+                price: lastSubscription.items.data[0].price.unit_amount?.valueOf() ?? 0,
+                total:
+                    (lastSubscription.items.data[0].price.unit_amount?.valueOf() ?? 0) *
+                    (lastSubscription?.items?.data?.[0].quantity ?? 0),
+                subscriptionData: lastSubscription,
+                discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() ?? 0,
+                coupon: lastSubscription.discount?.coupon?.id,
+                activeAt: lastSubscription.current_period_start
+                    ? new Date(lastSubscription.current_period_start * 1000)
+                    : undefined,
+                pausedAt: lastSubscription.current_period_end
+                    ? new Date(lastSubscription.current_period_end * 1000)
+                    : undefined,
+                cancelledAt: lastSubscription.cancel_at ? new Date(lastSubscription.cancel_at * 1000) : undefined,
+            } as SubscriptionEntity;
+
             if (lastSubscription.status === 'trialing') {
-                const trialSubscription = {
+                newSubscription = {
                     companyId,
                     provider: 'stripe',
                     providerSubscriptionId: lastSubscription.id,
-                    paymentMethod: null,
-                    quantity: lastSubscription.items.data[0].quantity,
+                    paymentMethod: '',
+                    quantity: lastSubscription.items.data[0].quantity as number,
                     price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
                     total:
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
@@ -250,15 +255,14 @@ export default class SubscriptionV2Service {
                     pausedAt: null,
                     cancelledAt: lastSubscription.trial_end ? new Date(lastSubscription.trial_end * 1000) : undefined,
                     status: SubscriptionStatus.TRIAL,
-                };
-                return trialSubscription;
+                } as SubscriptionEntity;
             } else if (lastSubscription.status === 'canceled') {
-                const trialSubscription = {
+                newSubscription = {
                     companyId,
                     provider: 'stripe',
                     providerSubscriptionId: lastSubscription.id,
-                    paymentMethod: null,
-                    quantity: lastSubscription.items.data[0].quantity,
+                    paymentMethod: '',
+                    quantity: lastSubscription.items.data[0].quantity as number,
                     price: lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0,
                     total:
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
@@ -266,15 +270,14 @@ export default class SubscriptionV2Service {
                     subscriptionData: lastSubscription,
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
-                    activeAt: null,
+                    activeAt: new Date(lastSubscription.current_period_start * 1000),
                     pausedAt: null,
                     cancelledAt: lastSubscription.canceled_at ? new Date(lastSubscription.canceled_at * 1000) : null,
                     status: SubscriptionStatus.CANCELLED,
-                };
-                return trialSubscription;
+                } as SubscriptionEntity;
             }
 
-            const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id as string);
+            const price = await StripeService.getService().getPrice(lastSubscription.items.data[0].price.id);
             const product = await StripeService.getService().getProduct(price.product.toString());
 
             const { trial_profiles, trial_searches, profiles, searches } = product.metadata;
@@ -282,8 +285,7 @@ export default class SubscriptionV2Service {
             if (!profiles || !searches) {
                 throw new NotFoundError('Missing product metadata');
             }
-
-            subscription = await this.syncStripeSubscriptionWithDb(companyId, cusId, lastSubscription, {
+            subscription = await this.syncStripeSubscriptionWithDb(companyId, cusId, newSubscription, {
                 profilesLimit: profiles,
                 searchesLimit: searches,
                 trialProfilesLimit: trial_profiles,

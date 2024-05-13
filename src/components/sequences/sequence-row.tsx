@@ -14,7 +14,7 @@ import type {
     TemplateVariable,
 } from 'src/utils/api/db';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline, Retry } from '../icons';
+import { DeleteOutline, SendOutline, Retry, ReportOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -45,6 +45,8 @@ import { useAtom } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import type { KeyedMutator } from 'swr';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
+import { type Nullable } from 'types/nullable';
+import { usageErrors } from 'src/errors/usages';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -67,6 +69,7 @@ interface SequenceRowProps {
     handleStartSequence: (
         sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
     ) => Promise<SequenceSendPostResponse>;
+    handleReportIconTab?: () => void;
 }
 
 /** use the tracking status if it is delivered */
@@ -75,8 +78,19 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
         : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
 
-const ErrorDisplay: React.FC<{ message: string; onClick: () => void }> = ({ message, onClick }) => {
+const ErrorDisplay: React.FC<{ message: string; status: Nullable<string>; onClick: () => void }> = ({
+    message,
+    status,
+    onClick,
+}) => {
     const { t } = useTranslation();
+    if (status === usageErrors.limitExceeded) {
+        return (
+            <Tooltip content={t('usages.limitExceeded')} detail={t('sequences.limitExceeded')} position="bottom-right">
+                <div className="text-red-500">{t('usages.limitExceeded')}</div>
+            </Tooltip>
+        );
+    }
     if (message === 'server_busy') {
         return (
             <div className="flex items-center gap-2">
@@ -111,6 +125,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
     onCheckboxChange,
     checked,
+    handleReportIconTab,
 }) => {
     const { deleteSequenceInfluencers } = useSequenceInfluencers();
     const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
@@ -119,7 +134,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile, errorMessage, refreshReport, loading } = useReport({
+    const { report, socialProfile, errorMessage, errorStatus, refreshReport, loading } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
@@ -183,14 +198,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 email: email,
                 unique_email: uniqueEmail,
             });
-            if (!uniqueEmail) {
-                toast.error(t('sequences.emailAlreadyExists'));
-                return;
-            }
+            // if (!uniqueEmail) {
+            //     toast.error(t('sequences.emailAlreadyExists'));
+            //     return;
+            // }
             const updatedSequenceInfluencer = await updateSequenceInfluencer({
                 id: sequenceInfluencer.id,
                 email,
-                company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
+                // company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
             });
             setEmail(updatedSequenceInfluencer.email ?? '');
         } catch (error: any) {
@@ -292,23 +307,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
-    const isDuplicateInfluencer = useMemo(() => {
-        return sequenceInfluencers.some((influencer) => {
-            if (!influencer.id || !sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.id === sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.funnel_status !== 'To Contact') {
-                return false;
-            }
-            return (
-                (influencer.email && sequenceInfluencer.email && influencer.email === sequenceInfluencer.email) ||
-                influencer.iqdata_id === sequenceInfluencer.iqdata_id
-            );
-        });
-    }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
@@ -364,8 +362,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {loading ? (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
-                            ) : isDuplicateInfluencer ? (
-                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
@@ -379,6 +375,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             ) : errorMessage ? (
                                 <ErrorDisplay
                                     message={errorMessage}
+                                    status={errorStatus}
                                     onClick={() => {
                                         refreshReport();
                                     }}
@@ -409,7 +406,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 day: 'numeric',
                             })}
                         </td>
-
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={sequenceSendTooltipTitle}
@@ -428,6 +424,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
+                            {handleReportIconTab && (
+                                <div className="ml-5 cursor-pointer">
+                                    <ReportOutline
+                                        className="stroke-gray-400 stroke-2"
+                                        onClick={() => handleReportIconTab && handleReportIconTab()}
+                                    />
+                                </div>
+                            )}
                         </td>
                     </>
                 )}

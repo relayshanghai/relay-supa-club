@@ -12,6 +12,7 @@ import { useCompany } from './use-company';
 import type { eventKeys } from 'src/utils/analytics/events';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import { useRouter } from 'next/router';
+import { type Nullable } from 'types/nullable';
 
 // reports that have `createdAt` older than 59 days are considered stale
 export const reportIsStale = (createdAt: string) => {
@@ -35,12 +36,14 @@ export type UseReport = ({
     influencer?: InfluencerRow;
     socialProfile?: InfluencerSocialProfileRow;
     errorMessage: string;
+    errorStatus: Nullable<string>;
     usageExceeded: boolean;
     refreshReport: () => Promise<CreatorsReportGetResponse | undefined>;
 };
 
 export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
     const [errorMessage, setErrorMessage] = useState('');
+    const [errorStatus, setErrorStatus] = useState<Nullable<string>>(null);
     const [usageExceeded, setUsageExceeded] = useState(false);
     const { t } = useTranslation();
     const { profile } = useUser();
@@ -63,17 +66,41 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     track,
                     pageUrl,
                 });
+
+                /**
+                 * THIS ERROR SHOULDN'T BE HERE BUT IT IS
+                 *
+                 * normally this error will be handled on catch block
+                 * but the response status keeps returning 200
+                 * so the error is being handled here
+                 *
+                 * so far it only happened to custom error: 'usage_exceeded'
+                 */
+                const weirdError = (report as any).error;
+                if (hasCustomError({ message: weirdError }, usageErrors)) {
+                    setErrorStatus(weirdError);
+                    setUsageExceeded(true);
+                    setErrorMessage(t(weirdError) || '');
+                    return;
+                } else if (!report.user_profile) {
+                    setErrorMessage('server_busy');
+                    return;
+                }
                 setErrorMessage('');
+                setErrorStatus(null);
                 return { createdAt, report, influencer, socialProfile };
             } catch (error: any) {
                 clientLogger(error, 'error');
                 const isRetryError = error.message.includes('retry_later');
                 if (isRetryError) {
+                    setErrorStatus('retry_later');
                     setErrorMessage(t('creators.retryLaterMessage') || '');
                 } else if (hasCustomError(error, usageErrors)) {
+                    setErrorStatus(error.message);
                     setUsageExceeded(true);
                     setErrorMessage(t(error.message) || '');
                 } else {
+                    setErrorStatus('server_busy');
                     setErrorMessage('server_busy');
                 }
             }
@@ -94,6 +121,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
         loading: isLoading,
         report,
         reportCreatedAt: createdAt,
+        errorStatus,
         errorMessage,
         usageExceeded,
         influencer,

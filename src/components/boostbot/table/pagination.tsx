@@ -23,7 +23,7 @@ export function DataTablePagination<TData>({ table, count, currentPage }: DataTa
     const isSearchPage = currentPage !== undefined && count !== undefined && setPage !== undefined;
 
     //adjust to control the number of links in the pagination section
-    const maxPages = Math.floor(count ?? 0 / 10);
+    const maxPages = Math.floor(count ? count / 10 : 0);
     const pageNums = getPaginationItems(
         isSearchPage ? currentPage + 1 : table.getState().pagination.pageIndex + 1,
         isSearchPage ? (maxPages > 1000 ? 1000 : maxPages) : table.getPageCount(),
@@ -117,7 +117,7 @@ export function DataTablePagination<TData>({ table, count, currentPage }: DataTa
                             search_id: table.options.meta?.searchId ?? null,
                         });
                     }}
-                    disabled={isSearchPage ? currentPage + 1 === Math.floor(count / 10) : !table.getCanNextPage()}
+                    disabled={isSearchPage ? currentPage + 1 >= maxPages : !table.getCanNextPage()}
                 >
                     {t('manager.next')}
                     <ArrowRightIcon

@@ -88,13 +88,6 @@ describe('<SequencePage />', () => {
             cy.contains('19');
         });
     });
-    it('shows a warning for duplicate influencers', () => {
-        testMount(<SequencePage {...props} />);
-        // the allegra rows are duplicates
-        cy.contains('tr', '@allegraalynn').within(() => {
-            cy.contains('Warning: duplicate influencer could cause issues');
-        });
-    });
     it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         if (!mario) throw new Error('mario not found');

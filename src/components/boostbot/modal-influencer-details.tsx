@@ -43,7 +43,7 @@ type InfluencerDetailsModalProps = {
     selectedRow?: Row<SearchTableInfluencer>;
     setShowSequenceSelector: (open: boolean) => void;
     outReachDisabled: boolean;
-    setSelectedInfluencerIds: Dispatch<SetStateAction<Record<string, boolean>>>;
+    setSelectedInfluencerIds?: Dispatch<SetStateAction<Record<string, boolean>>>;
     url: string;
 };
 
@@ -164,7 +164,7 @@ export const InfluencerDetailsModal = ({
     const audienceEngagementRateIGandTT = decimalToPercent(engagementRateRaw, 0);
 
     const handleAddToSequence = (user_id: string) => {
-        setSelectedInfluencerIds({ [user_id]: true });
+        setSelectedInfluencerIds && setSelectedInfluencerIds({ [user_id]: true });
         setShowSequenceSelector(true);
     };
 
@@ -455,16 +455,17 @@ export const InfluencerDetailsModal = ({
                     </div>
                 </div>
 
-                {/* button */}
-                <div className="mt-8 box-border flex w-full justify-end font-semibold">
-                    <AddToSequenceButton
-                        buttonText={t('boostbot.modal.addToSequence')}
-                        outReachDisabled={outReachDisabled}
-                        handleAddToSequenceButton={() => handleAddToSequence(user_id)}
-                        textClassName="px-12"
-                        url={url}
-                    />
-                </div>
+                {setSelectedInfluencerIds && (
+                    <div className="mt-8 box-border flex w-full justify-end font-semibold">
+                        <AddToSequenceButton
+                            buttonText={t('boostbot.modal.addToSequence')}
+                            outReachDisabled={outReachDisabled}
+                            handleAddToSequenceButton={() => handleAddToSequence(user_id)}
+                            textClassName="px-12"
+                            url={url}
+                        />
+                    </div>
+                )}
             </div>
         </Modal>
     );

@@ -273,23 +273,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
-    const isDuplicateInfluencer = useMemo(() => {
-        return sequenceInfluencers.some((influencer) => {
-            if (!influencer.id || !sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.id === sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.funnel_status !== 'To Contact') {
-                return false;
-            }
-            return (
-                (influencer.email && sequenceInfluencer.email && influencer.email === sequenceInfluencer.email) ||
-                influencer.iqdata_id === sequenceInfluencer.iqdata_id
-            );
-        });
-    }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
@@ -343,9 +326,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'To Contact' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {isDuplicateInfluencer ? (
-                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
-                            ) : !missingSocialProfileInfo ? (
+                            {!missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
                                     onSubmit={async (emailSubmit) => {
