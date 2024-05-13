@@ -19,4 +19,9 @@ export default class BoostbotService {
         const result = await this.apiClient.get(`/api/sync-email/${accountId}`);
         return result.data;
     }
+    @UseLogger()
+    async triggerSequenceInfluencerReport(sequenceInfluencerId: string) {
+        const result = await this.apiClient.get(`/api/v2/sequence-influencers/${sequenceInfluencerId}/schedule`);
+        return result.data;
+    }
 }
