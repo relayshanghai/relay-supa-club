@@ -39,88 +39,92 @@ export default class SequenceInfluencerService {
                 scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
             },
         );
-        const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
-            where: {
-                id: sequenceInfluencerId,
-            },
-            relations: ['influencerSocialProfile'],
-        });
-        if (!sequenceInfluencer) {
-            throw new NotFoundError('Sequence Influencer not found');
-        }
-        const last30Days = new Date();
-        last30Days.setDate(last30Days.getDate() - 30);
-        const similarSequenceInfluencers = await SequenceInfluencerRepository.getRepository().findOne({
-            where: {
-                email: Not(IsNull()),
-                influencerSocialProfile: {
-                    id: sequenceInfluencer?.influencerSocialProfile?.id,
-                },
-                socialProfileLastFetched: MoreThanOrEqual(last30Days),
-            },
-        });
-        if (similarSequenceInfluencers) {
-            await SequenceInfluencerRepository.getRepository().update(
-                {
-                    id: sequenceInfluencer.id,
-                },
-                {
-                    scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
-                    email: similarSequenceInfluencers.email,
-                    tags: similarSequenceInfluencers.tags,
-                    socialProfileLastFetched: similarSequenceInfluencers.socialProfileLastFetched,
-                },
-            );
-            return;
-        }
-        if (!sequenceInfluencer.influencerSocialProfile?.referenceId) {
-            throw new Error('unknown reference id');
-        }
-        const ids = sequenceInfluencer.influencerSocialProfile.referenceId.split(':');
-        const referenceId = ids.length > 1 ? ids[1] : ids[0];
-        const report = await IQDataService.getService().getReportMetaData(sequenceInfluencer.platform, referenceId);
-        let reportData: CreatorReport;
-        if (report) {
-            reportData = await IQDataService.getService().getReport(report.id);
-        } else reportData = await IQDataService.getService().requestNewReport(sequenceInfluencer.platform, referenceId);
-
-        await Promise.all([
-            this.syncSequenceInfluencer(sequenceInfluencer, reportData),
-            awaitToError(
-                this.syncInfluencerProfile(
-                    sequenceInfluencer.influencerSocialProfile as InfluencerSocialProfileEntity,
-                    reportData,
-                ),
-            ),
-        ]);
-        return;
-    }
-    async syncSequenceInfluencer(sequenceInfluencer: SequenceInfluencerEntity, reportData: CreatorReport) {
         try {
-            const tags = reportData.user_profile.relevant_tags?.map((tag) => tag.tag).slice(0, 3) || ([] as string[]);
-            const email = reportData.user_profile.contacts?.filter((value) => value.type === 'email')[0]?.value || null;
-            const toUpdate: DeepPartial<SequenceInfluencerEntity> = {
-                scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
-                socialProfileLastFetched: new Date(),
-            };
-            if (email) toUpdate.email = email;
-            if (tags.length) toUpdate.tags = tags;
-            await SequenceInfluencerRepository.getRepository().update(
-                {
-                    id: sequenceInfluencer.id,
+            const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
+                where: {
+                    id: sequenceInfluencerId,
                 },
-                toUpdate,
-            );
+                relations: ['influencerSocialProfile'],
+            });
+            if (!sequenceInfluencer) {
+                throw new NotFoundError('Sequence Influencer not found');
+            }
+            const last30Days = new Date();
+            last30Days.setDate(last30Days.getDate() - 30);
+            const similarSequenceInfluencers = await SequenceInfluencerRepository.getRepository().findOne({
+                where: {
+                    email: Not(IsNull()),
+                    influencerSocialProfile: {
+                        id: sequenceInfluencer?.influencerSocialProfile?.id,
+                    },
+                    socialProfileLastFetched: MoreThanOrEqual(last30Days),
+                },
+            });
+            if (similarSequenceInfluencers) {
+                await SequenceInfluencerRepository.getRepository().update(
+                    {
+                        id: sequenceInfluencer.id,
+                    },
+                    {
+                        scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
+                        email: similarSequenceInfluencers.email,
+                        tags: similarSequenceInfluencers.tags,
+                        socialProfileLastFetched: similarSequenceInfluencers.socialProfileLastFetched,
+                    },
+                );
+                return;
+            }
+            if (!sequenceInfluencer.influencerSocialProfile?.referenceId) {
+                throw new Error('unknown reference id');
+            }
+            const ids = sequenceInfluencer.influencerSocialProfile.referenceId.split(':');
+            const referenceId = ids.length > 1 ? ids[1] : ids[0];
+            const report = await IQDataService.getService().getReportMetaData(sequenceInfluencer.platform, referenceId);
+            let reportData: CreatorReport;
+            if (report) {
+                reportData = await IQDataService.getService().getReport(report.id);
+            } else
+                reportData = await IQDataService.getService().requestNewReport(
+                    sequenceInfluencer.platform,
+                    referenceId,
+                );
+
+            await Promise.all([
+                this.syncSequenceInfluencer(sequenceInfluencer, reportData),
+                awaitToError(
+                    this.syncInfluencerProfile(
+                        sequenceInfluencer.influencerSocialProfile as InfluencerSocialProfileEntity,
+                        reportData,
+                    ),
+                ),
+            ]);
+            return;
         } catch (e) {
             await SequenceInfluencerRepository.getRepository().update(
                 {
-                    id: sequenceInfluencer.id,
+                    id: sequenceInfluencerId,
                 },
                 {
                     scheduleStatus: SequenceInfluencerScheduleStatus.FAILED,
                 },
             );
         }
+    }
+    async syncSequenceInfluencer(sequenceInfluencer: SequenceInfluencerEntity, reportData: CreatorReport) {
+        const tags = reportData.user_profile.relevant_tags?.map((tag) => tag.tag).slice(0, 3) || ([] as string[]);
+        const email = reportData.user_profile.contacts?.filter((value) => value.type === 'email')[0]?.value || null;
+        const toUpdate: DeepPartial<SequenceInfluencerEntity> = {
+            scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
+            socialProfileLastFetched: new Date(),
+        };
+        if (email) toUpdate.email = email;
+        if (tags.length) toUpdate.tags = tags;
+        await SequenceInfluencerRepository.getRepository().update(
+            {
+                id: sequenceInfluencer.id,
+            },
+            toUpdate,
+        );
     }
     async syncInfluencerProfile(profile: InfluencerSocialProfileEntity, reportData: CreatorReport) {
         const email = reportData.user_profile.contacts.filter((value) => value.type === 'email')[0]?.value || null;
