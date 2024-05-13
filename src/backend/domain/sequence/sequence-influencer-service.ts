@@ -116,9 +116,12 @@ export default class SequenceInfluencerService {
         const toUpdate: DeepPartial<SequenceInfluencerEntity> = {
             scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
             socialProfileLastFetched: new Date(),
+            avatarUrl: reportData.user_profile.picture,
+            url: reportData.user_profile.url,
         };
         if (email) toUpdate.email = email;
         if (tags.length) toUpdate.tags = tags;
+
         await SequenceInfluencerRepository.getRepository().update(
             {
                 id: sequenceInfluencer.id,
