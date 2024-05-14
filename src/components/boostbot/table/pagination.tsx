@@ -117,7 +117,7 @@ export function DataTablePagination<TData>({ table, count, currentPage }: DataTa
                             search_id: table.options.meta?.searchId ?? null,
                         });
                     }}
-                    disabled={isSearchPage ? currentPage + 1 === Math.floor(count / 10) : !table.getCanNextPage()}
+                    disabled={isSearchPage ? currentPage + 1 >= maxPages : !table.getCanNextPage()}
                 >
                     {t('manager.next')}
                     <ArrowRightIcon

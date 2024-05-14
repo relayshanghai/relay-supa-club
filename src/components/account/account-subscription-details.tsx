@@ -22,9 +22,10 @@ import {
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
 import dayjs from 'dayjs';
-import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import { SubscriptionStatus, type SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
 import toast from 'react-hot-toast';
+import { Tooltip } from '../library';
 
 const Tablet = ({
     children,
@@ -45,7 +46,7 @@ const PaymentTablets = ({
     subscription: SubscriptionEntity<Stripe.Subscription>;
     handleCancelSubscription: () => void;
 }) => {
-    const { subscriptionData, activeAt, cancelledAt, pausedAt } = subscription;
+    const { subscriptionData, cancelledAt, pausedAt, status } = subscription;
 
     const { t, i18n } = useTranslation();
 
@@ -70,7 +71,7 @@ const PaymentTablets = ({
         throw new Error('Invalid interval');
     }
 
-    if (cancelledAt && new Date() > new Date(cancelledAt)) {
+    if (status === SubscriptionStatus.CANCELLED) {
         return (
             <section className="flex w-full flex-col items-end gap-2">
                 <Tablet customStyle="bg-gray-100 flex items-center gap-2 text-gray-700 border-gray-200">
@@ -80,7 +81,7 @@ const PaymentTablets = ({
                 <p className="whitespace-nowrap">
                     <span className="font-semibold">{t('account.planSection.canceledOn')}: </span>
                     <span>
-                        {new Date(cancelledAt).toLocaleDateString(i18n.language, {
+                        {new Date(cancelledAt as Date).toLocaleDateString(i18n.language, {
                             month: 'short',
                             day: 'numeric',
                         })}
@@ -89,7 +90,7 @@ const PaymentTablets = ({
                 <p> </p>
             </section>
         );
-    } else if (pausedAt && new Date() > new Date(pausedAt)) {
+    } else if (status === SubscriptionStatus.PASS_DUE) {
         return (
             <section className="flex w-full flex-col items-end gap-2">
                 <section className="flex gap-3">
@@ -97,15 +98,22 @@ const PaymentTablets = ({
                         <PausedCircleOutline className="h-4 w-4 text-yellow-700" />
                         {t('account.subscription.paused')}
                     </Tablet>
-                    <Tablet customStyle="bg-red-100 flex items-center gap-2 text-red-700 border-red-200">
-                        <PaymentFailedOutline className="h-4 w-4 text-red-700" />
-                        {t('account.planSection.paymentFailed')}
-                    </Tablet>
+                    <Tooltip
+                        content={t('account.planSection.paymentFailed')}
+                        detail={t('account.planSection.paymentFailedAction')}
+                        position={'top-left'}
+                        className="w-fit"
+                    >
+                        <Tablet customStyle="bg-red-100 flex items-center gap-2 text-red-700 border-red-200">
+                            <PaymentFailedOutline className="h-4 w-4 text-red-700" />
+                            {t('account.planSection.paymentFailed')}
+                        </Tablet>
+                    </Tooltip>
                 </section>
                 <p className="whitespace-nowrap">
                     <span className="font-semibold">{t('account.planSection.paymentDue')}: </span>
                     <span>
-                        {new Date(pausedAt).toLocaleDateString(i18n.language, {
+                        {new Date(pausedAt as Date).toLocaleDateString(i18n.language, {
                             month: 'short',
                             day: 'numeric',
                         })}
@@ -114,7 +122,7 @@ const PaymentTablets = ({
                 <p> </p>
             </section>
         );
-    } else if (activeAt && new Date() > new Date(activeAt) && subscriptionData.status === 'active') {
+    } else if (status === SubscriptionStatus.ACTIVE) {
         if (cancelledAt && new Date() < new Date(cancelledAt)) {
             return (
                 <section className="flex w-full flex-col items-end gap-2">
@@ -169,7 +177,7 @@ const PaymentTablets = ({
                 )}
             </section>
         );
-    } else if (!activeAt && subscriptionData.status === 'trialing' && subscriptionData.trial_end) {
+    } else if (status === SubscriptionStatus.TRIAL) {
         return (
             <section className="flex w-full flex-col items-end gap-2">
                 <Tablet customStyle="bg-navy-100 flex items-center gap-2 text-navy-700 border-navy-200">
@@ -179,7 +187,31 @@ const PaymentTablets = ({
                 <p className="whitespace-nowrap">
                     <span className="font-semibold">{t('account.planSection.trialEnds')}: </span>
                     <span>
-                        {new Date(subscriptionData.trial_end * 1000).toLocaleDateString(i18n.language, {
+                        {new Date(cancelledAt as Date).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+            </section>
+        );
+    } else if (status === SubscriptionStatus.TRIAL_EXPIRED) {
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <section className="flex gap-3">
+                    <Tablet customStyle="bg-yellow-100 min-w-fit flex items-center gap-2 text-yellow-700 border-yellow-200">
+                        <PausedCircleOutline className="h-4 w-4 text-yellow-700" />
+                        {t('account.subscription.paused')}
+                    </Tablet>
+                    <Tablet customStyle="bg-navy-100 min-w-fit flex items-center gap-2 text-navy-700 border-navy-200">
+                        <ClockCheckedOutline className="h-4 w-4 text-navy-700" />
+                        {t('account.subscription.freeTrial')}
+                    </Tablet>
+                </section>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">{t('account.planSection.trialEnds')}: </span>
+                    <span>
+                        {new Date(cancelledAt as Date).toLocaleDateString(i18n.language, {
                             month: 'short',
                             day: 'numeric',
                         })}
