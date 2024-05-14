@@ -13,10 +13,6 @@
     {
       "path": "/api/email-sync",
       "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/v2/sequence-influencers/schedule",
-      "schedule": "* * * * *"
     }
   ]
 }
