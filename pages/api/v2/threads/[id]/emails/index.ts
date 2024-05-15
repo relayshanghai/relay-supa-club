@@ -13,7 +13,7 @@ class ThreadEmailHandler {
 
 export const config = {
     api: {
-        responseLimit: '16mb',
+        responseLimit: '8mb',
     },
 };
 
