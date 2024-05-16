@@ -13,9 +13,10 @@ export const paramDefaultValues = {
 };
 
 export const useMessages = () => {
-    const { apiClient } = useApiClient();
+    const { apiClient, loading } = useApiClient();
     const [_params, _setParams] = useState(paramDefaultValues);
     const [messages, setMessages] = useState<Email[]>([]);
+    const [messagesFetched, setMessagesFetched] = useState<Record<number, Email[]>>({});
 
     const setParams = (newParams: GetThreadEmailsRequest) => {
         _setParams((prev) => ({
@@ -25,20 +26,7 @@ export const useMessages = () => {
     };
     const { threadId, ...params } = _params;
 
-    useEffect(() => {
-        setParams({
-            page: paramDefaultValues.page,
-            size: paramDefaultValues.size,
-        } as GetThreadEmailsRequest);
-        setMessages([]);
-    }, [threadId]);
-
-    const {
-        data,
-        error: messagesError,
-        isLoading: isMessageLoading,
-        mutate,
-    } = useSWR([threadId, params], async () => {
+    const getMessages = async (threadId: string, params: Partial<typeof paramDefaultValues>) => {
         if (!threadId) {
             return {
                 items: [],
@@ -61,24 +49,64 @@ export const useMessages = () => {
             } as Paginated<Email>;
         }
         return response.data;
-    });
+    };
+
+    useEffect(() => {
+        setParams({
+            page: paramDefaultValues.page,
+            size: paramDefaultValues.size,
+        } as GetThreadEmailsRequest);
+        setMessages([]);
+        setMessagesFetched({});
+    }, [threadId]);
+
+    const {
+        data,
+        error: messagesError,
+        isLoading: isMessageLoading,
+        mutate,
+    } = useSWR([threadId, params], async () => getMessages(threadId, params));
 
     useEffect(() => {
         if (data && params.page <= data.totalPages) {
-            setMessages((prev) => {
-                if (data.page === 1) {
-                    return data.items;
-                }
-                const uniqueItems = data.items.filter((item) => {
-                    return !prev.some((prevItem) => prevItem.uid === item.uid);
-                });
-                return [...prev, ...uniqueItems];
+            setMessagesFetched((prev) => {
+                return {
+                    ...prev,
+                    [data.page]: data.items,
+                };
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
+    useEffect(() => {
+        // will check the order of messagesFetched and setMessages
+        for (let i = 1; i <= (data?.page as number); i++) {
+            if (!messagesFetched[i]) {
+                // get message from server
+                getMessages(threadId, { ...params, page: i }).then((response) => {
+                    setMessagesFetched((prev) => {
+                        return {
+                            ...prev,
+                            [i]: response.items,
+                        };
+                    });
+                });
+            }
+        }
+        setMessages(() => {
+            const messages = Object.values(messagesFetched)
+                .reduce((acc, val) => {
+                    return [...acc, ...val];
+                }, [])
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            return messages;
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messagesFetched]);
+
     return {
+        loading,
         messages,
         messagesError,
         isMessageLoading,

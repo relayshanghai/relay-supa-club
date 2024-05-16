@@ -45,7 +45,7 @@ export default function ThreadMessages() {
     const { company } = useCompany();
     const myEmail = profile?.email || '';
     const { selectedThread, loading } = useThread();
-    const { messages, mutate, setParams, params, metadata } = useMessages();
+    const { messages, mutate, setParams, params, metadata, loading: messagesLoading } = useMessages();
     const endOfThread = useRef<null | HTMLDivElement>(null);
     const messageListDiv = useRef<null | HTMLDivElement>(null);
 
@@ -81,7 +81,7 @@ export default function ThreadMessages() {
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [messages, loading]);
+    }, [messages, messagesLoading]);
     const threadContact = useMemo(() => {
         if (selectedThread) {
             const cc =
