@@ -9,7 +9,7 @@ import { type Paginated } from 'types/pagination';
 export const paramDefaultValues = {
     threadId: '',
     page: 1,
-    size: 8,
+    size: 20,
 };
 
 export const useMessages = () => {
@@ -30,6 +30,7 @@ export const useMessages = () => {
             page: paramDefaultValues.page,
             size: paramDefaultValues.size,
         } as GetThreadEmailsRequest);
+        setMessages([]);
     }, [threadId]);
 
     const {

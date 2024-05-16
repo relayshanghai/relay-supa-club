@@ -46,6 +46,9 @@ export default function ThreadMessages() {
     const myEmail = profile?.email || '';
     const { selectedThread, loading } = useThread();
     const { messages, mutate, setParams, params } = useMessages();
+    const endOfThread = useRef<null | HTMLDivElement>(null);
+    const messageListDiv = useRef<null | HTMLDivElement>(null);
+
     useEffect(() => {
         setParams({
             ...paramDefaultValues,
@@ -53,29 +56,23 @@ export default function ThreadMessages() {
         } as GetThreadEmailsRequest);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread?.threadId, loading]);
-    const endOfThread = useRef<null | HTMLDivElement>(null);
-    const messageListDiv = useRef<null | HTMLDivElement>(null);
     useEffect(() => {
-        if (!messageListDiv.current) return;
-        const scrollHeight = messageListDiv.current?.scrollHeight as number;
-        messageListDiv.current?.scrollTo(0, scrollHeight + 100);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [messageListDiv.current]);
-    useEffect(() => {
-        // endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+        if (params.page === 1) {
+            endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            messageListDiv.current?.scrollTo(0, 50);
+        }
         messageListDiv.current?.addEventListener('scroll', () => {
             // detect if user has scrolled to the bottom of the message list
             const topScroll = Math.ceil(messageListDiv.current?.scrollTop as number);
-            const clientHeight = messageListDiv.current?.clientHeight as number;
-            const scrollHeight = messageListDiv.current?.scrollHeight as number;
-            if (topScroll + clientHeight >= scrollHeight) {
+            if (topScroll == 0) {
                 setParams({
                     page: params.page + 1,
                 } as GetThreadEmailsRequest);
             }
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [messages]);
+    }, [messages, loading]);
     const threadContact = useMemo(() => {
         if (selectedThread) {
             const cc =
