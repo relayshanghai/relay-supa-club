@@ -9,7 +9,7 @@ import { type Paginated } from 'types/pagination';
 export const paramDefaultValues = {
     threadId: '',
     page: 1,
-    size: 20,
+    size: 10,
 };
 
 export const useMessages = () => {
@@ -45,7 +45,7 @@ export const useMessages = () => {
                 page: 1,
                 size: 10,
                 totalPages: 1,
-                totalSize: 0,
+                totalSize: 1,
             } as Paginated<Email>;
         }
         const [err, response] = await awaitToError(
@@ -57,7 +57,7 @@ export const useMessages = () => {
                 page: 1,
                 size: 10,
                 totalPages: 1,
-                totalSize: 0,
+                totalSize: 1,
             } as Paginated<Email>;
         }
         return response.data;
@@ -69,7 +69,10 @@ export const useMessages = () => {
                 if (data.page === 1) {
                     return data.items;
                 }
-                return [...prev, ...data.items];
+                const uniqueItems = data.items.filter((item) => {
+                    return !prev.some((prevItem) => prevItem.uid === item.uid);
+                });
+                return [...prev, ...uniqueItems];
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,5 +85,11 @@ export const useMessages = () => {
         mutate,
         params,
         setParams,
+        metadata: {
+            page: data?.page,
+            size: data?.size,
+            totalPages: data?.totalPages,
+            totalSize: data?.totalSize,
+        },
     };
 };

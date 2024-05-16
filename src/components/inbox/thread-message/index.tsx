@@ -58,9 +58,17 @@ export default function ThreadMessages() {
     }, [selectedThread?.threadId, loading]);
     useEffect(() => {
         if (params.page === 1) {
-            endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+            if ((params.page as number) < 2) {
+                setParams({
+                    page: 2,
+                } as GetThreadEmailsRequest);
+            }
         } else {
-            messageListDiv.current?.scrollTo(0, 50);
+            if (params.page > 2) {
+                messageListDiv.current?.scrollTo(0, 50);
+            } else {
+                endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+            }
         }
         messageListDiv.current?.addEventListener('scroll', () => {
             // detect if user has scrolled to the bottom of the message list
@@ -71,6 +79,7 @@ export default function ThreadMessages() {
                 } as GetThreadEmailsRequest);
             }
         });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messages, loading]);
     const threadContact = useMemo(() => {
