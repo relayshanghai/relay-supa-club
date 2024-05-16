@@ -45,7 +45,7 @@ export default function ThreadMessages() {
     const { company } = useCompany();
     const myEmail = profile?.email || '';
     const { selectedThread, loading } = useThread();
-    const { messages, mutate, setParams, params } = useMessages();
+    const { messages, mutate, setParams, params, metadata } = useMessages();
     const endOfThread = useRef<null | HTMLDivElement>(null);
     const messageListDiv = useRef<null | HTMLDivElement>(null);
 
@@ -58,7 +58,7 @@ export default function ThreadMessages() {
     }, [selectedThread?.threadId, loading]);
     useEffect(() => {
         if (params.page === 1) {
-            if ((params.page as number) < 2) {
+            if ((metadata.totalPages as number) > params.page && (params.page as number) < 2) {
                 setParams({
                     page: 2,
                 } as GetThreadEmailsRequest);
@@ -73,7 +73,7 @@ export default function ThreadMessages() {
         messageListDiv.current?.addEventListener('scroll', () => {
             // detect if user has scrolled to the bottom of the message list
             const topScroll = Math.ceil(messageListDiv.current?.scrollTop as number);
-            if (topScroll == 0) {
+            if (topScroll == 0 && (metadata.totalPages as number) > params.page) {
                 setParams({
                     page: params.page + 1,
                 } as GetThreadEmailsRequest);
