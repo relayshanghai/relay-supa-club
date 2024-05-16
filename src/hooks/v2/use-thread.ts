@@ -103,6 +103,11 @@ export const useThread = () => {
             );
             if (contactType?.type !== ThreadContactType.USER) {
                 selectedThread.threadStatus = ThreadStatus.REPLIED;
+                setMessageCount((prev) => ({
+                    ...prev,
+                    unopened: prev.unopened - 1,
+                    all: prev.all - 1,
+                }));
             }
 
             const t = [...threads];
@@ -111,7 +116,6 @@ export const useThread = () => {
                 t[index] = { ...selectedThread };
                 setThreads(t);
             }
-
             setSelectedThread(selectedThread);
             setSelectedThreadId(selectedThread.id);
         }

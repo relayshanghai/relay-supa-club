@@ -8,6 +8,7 @@ import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence
 import BoostbotService from 'src/backend/integration/boostbot/boostbot-service';
 import { delay } from 'src/backend/integration/distributed-queue/distributed-queue';
 import IQDataService from 'src/backend/integration/iqdata/iqdata-service';
+import { logger } from 'src/backend/integration/logger';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-influencer';
 import awaitToError from 'src/utils/await-to-error';
@@ -100,6 +101,12 @@ export default class SequenceInfluencerService {
             ]);
             return;
         } catch (e) {
+            const err = e as Error;
+            logger.error('sync error', {
+                error: err,
+                message: err.message,
+                stack: err.stack,
+            });
             await SequenceInfluencerRepository.getRepository().update(
                 {
                     id: sequenceInfluencerId,
@@ -116,9 +123,12 @@ export default class SequenceInfluencerService {
         const toUpdate: DeepPartial<SequenceInfluencerEntity> = {
             scheduleStatus: SequenceInfluencerScheduleStatus.COMPLETED,
             socialProfileLastFetched: new Date(),
+            avatarUrl: reportData.user_profile.picture,
+            url: reportData.user_profile.url,
         };
         if (email) toUpdate.email = email;
         if (tags.length) toUpdate.tags = tags;
+
         await SequenceInfluencerRepository.getRepository().update(
             {
                 id: sequenceInfluencer.id,

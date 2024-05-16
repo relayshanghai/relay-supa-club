@@ -12,7 +12,7 @@
   "crons": [
     {
       "path": "/api/email-sync",
-      "schedule": "*/15 * * * *"
+      "schedule": "* * * * *"
     },
     {
       "path": "/api/v2/sequence-influencers/schedule",

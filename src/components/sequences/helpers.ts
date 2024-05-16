@@ -110,9 +110,6 @@ export const wasFetchedWithinMinutes = (
 };
 
 export const isMissingSocialProfileInfo = (sequenceInfluencer: SequenceInfluencerManagerPage) =>
-    !sequenceInfluencer.recent_post_title ||
-    !sequenceInfluencer.recent_post_url ||
-    !sequenceInfluencer.avatar_url ||
     !sequenceInfluencer.social_profile_last_fetched ||
     !sequenceInfluencer.influencer_social_profile_id ||
     !sequenceInfluencer.tags;

@@ -53,14 +53,15 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
         const last30Days = new Date();
         last30Days.setDate(last30Days.getDate() - 30);
         const influencers: { id: string }[] = await this.query(
-            `select id from sequence_influencers where 
-        schedule_status <> 'processing' AND
+            `select distinct(iqdata_id), id from sequence_influencers where 
+        funnel_status = 'To Contact' AND
+        schedule_status = 'pending' AND
+        influencer_social_profile_id IS NOT NULL AND
         (
             (
                 (email IS NULL OR email = '') AND social_profile_last_fetched IS NULL
-            ) OR social_profile_last_fetched <= $1 
+            )
         ) limit ${SEQUENCE_INFLUENCER_SOCIAL_NUMBER}`,
-            [last30Days],
         );
         return influencers.map((influencer) => influencer.id);
     }

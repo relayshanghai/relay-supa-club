@@ -17,6 +17,7 @@ import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevanc
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { logger } from 'src/backend/integration/logger';
 import { ThreadContactType } from 'src/backend/database/thread/email-contact-entity';
+import type { GetThreadEmailsRequest } from 'pages/api/v2/threads/[id]/emails/request';
 
 export default class ThreadService {
     static service = new ThreadService();
@@ -154,24 +155,10 @@ export default class ThreadService {
 
     @UseLogger()
     @CompanyIdRequired()
-    async getThreadEmail(id: string) {
+    async getThreadEmail(id: string, request: GetThreadEmailsRequest) {
         const companyId = RequestContext.getContext().companyId as string;
-        const data = await EmailRepository.getRepository().find({
-            where: {
-                thread: {
-                    threadId: id,
-                    sequenceInfluencer: {
-                        company: {
-                            id: companyId,
-                        },
-                    },
-                },
-            },
-            order: {
-                createdAt: 'DESC',
-            },
-        });
-        return data.map((email) => email.data);
+        const data = await EmailRepository.getRepository().getAllPerThread(id, companyId, request);
+        return data;
     }
 
     @UseLogger()
