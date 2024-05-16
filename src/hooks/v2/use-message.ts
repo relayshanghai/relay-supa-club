@@ -1,77 +1,85 @@
 import { type GetThreadEmailsRequest } from 'pages/api/v2/threads/[id]/emails/request';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Email } from 'src/backend/database/thread/email-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import useSWR from 'swr';
 import { type Paginated } from 'types/pagination';
 
-export const useMessages = (threadId: string) => {
+export const paramDefaultValues = {
+    threadId: '',
+    page: 1,
+    size: 8,
+};
+
+export const useMessages = () => {
     const { apiClient } = useApiClient();
-    const [params, setParams] = useState({
-        page: 1,
-        size: 10,
-    });
+    const [_params, _setParams] = useState(paramDefaultValues);
+    const [messages, setMessages] = useState<Email[]>([]);
+
+    const setParams = (newParams: GetThreadEmailsRequest) => {
+        _setParams((prev) => ({
+            ...prev,
+            ...newParams,
+        }));
+    };
+    const { threadId, ...params } = _params;
+
+    useEffect(() => {
+        setParams({
+            page: paramDefaultValues.page,
+            size: paramDefaultValues.size,
+        } as GetThreadEmailsRequest);
+    }, [threadId]);
 
     const {
         data,
         error: messagesError,
         isLoading: isMessageLoading,
         mutate,
-    } = useSWR<Paginated<Email>, any>(
-        [threadId, params],
-        async ({
-            threadId,
-            params = {
+    } = useSWR([threadId, params], async () => {
+        if (!threadId) {
+            return {
+                items: [],
                 page: 1,
                 size: 10,
-            },
-        }: {
-            threadId: string;
-            params: GetThreadEmailsRequest;
-        }) => {
-            const [err, response] = await awaitToError(
-                apiClient.get<Paginated<Email>>(`/v2/threads/${threadId}/emails`, { params }),
-            );
-            if (err || !threadId) {
-                return {
-                    items: [],
-                    page: 1,
-                    size: 10,
-                    totalPages: 1,
-                    totalSize: 0,
-                } as Paginated<Email>;
-            }
-            return response.data;
-        },
-        {
-            revalidateOnFocus: true,
-            refreshInterval: 15000,
-            compare: (cached, fresh) => {
-                if (fresh === undefined && cached === undefined) {
-                    return true;
+                totalPages: 1,
+                totalSize: 0,
+            } as Paginated<Email>;
+        }
+        const [err, response] = await awaitToError(
+            apiClient.get<Paginated<Email>>(`/v2/threads/${threadId}/emails`, { params }),
+        );
+        if (err) {
+            return {
+                items: [],
+                page: 1,
+                size: 10,
+                totalPages: 1,
+                totalSize: 0,
+            } as Paginated<Email>;
+        }
+        return response.data;
+    });
+
+    useEffect(() => {
+        if (data && params.page <= data.totalPages) {
+            setMessages((prev) => {
+                if (data.page === 1) {
+                    return data.items;
                 }
-                if (!fresh && cached) {
-                    return false;
-                }
-                if (
-                    cached &&
-                    fresh &&
-                    fresh.items.length === cached.items.length &&
-                    fresh.items.length > 0 &&
-                    cached.items.length > 0
-                ) {
-                    return cached.items[0].id === fresh.items[0].id;
-                }
-                return (fresh?.items.length ?? 0) < (cached?.items.length ?? 0);
-            },
-        },
-    );
+                return [...prev, ...data.items];
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
+
     return {
-        messages: data,
+        messages,
         messagesError,
         isMessageLoading,
         mutate,
+        params,
         setParams,
     };
 };
