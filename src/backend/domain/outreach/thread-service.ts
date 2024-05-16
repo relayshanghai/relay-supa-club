@@ -47,6 +47,20 @@ export default class ThreadService {
                     },
                 },
             );
+            if (!responses.length) {
+                return {
+                    items: [],
+                    messageCount: {
+                        all: 0,
+                        unopened: 0,
+                        unreplied: 0,
+                    },
+                    page: 1,
+                    size: 30,
+                    totalPages: 1,
+                    totalSize: 1,
+                };
+            }
             responses.forEach((email) => {
                 if (!threadIds.includes(email.threadId)) {
                     threadIds.push(email.threadId);
