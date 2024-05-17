@@ -49,6 +49,8 @@ const inbox = {
         loading: '正在开始下载...',
         success: '下载已开始',
         error: '下载附件时出错',
+        toBigTitle: '这个附件太大！',
+        toBigDescription: '请向发件人索取下载链接。BoostBot雷宝可以处理最大20MB的附件。',
     },
     save: '保存',
     edit: '修改',

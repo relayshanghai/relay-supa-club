@@ -48,3 +48,8 @@ export class GetThreadsRequest extends PaginationParam {
     })
     funnelStatus?: FunnelStatusRequest[];
 }
+
+export class ReadThreadRequest {
+    @IsArray()
+    ids!: string[];
+}

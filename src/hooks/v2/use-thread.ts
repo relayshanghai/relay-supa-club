@@ -1,8 +1,7 @@
 import type { ReplyRequest } from 'pages/api/v2/threads/[id]/reply-request';
 import { ThreadStatusRequest, type FunnelStatusRequest, type GetThreadsRequest } from 'pages/api/v2/threads/request';
 import type { GetThreadResponse, ThreadMessageCountResponse } from 'pages/api/v2/threads/response';
-import { useEffect, useState } from 'react';
-import { ThreadContactType } from 'src/backend/database/thread/email-contact-entity';
+import { useCallback, useEffect, useState } from 'react';
 import { type ThreadEntity } from 'src/backend/database/thread/thread-entity';
 import { ThreadStatus } from 'src/backend/database/thread/thread-status';
 import { type FilterRequest } from 'src/components/inbox/thread-list/filter/thread-list-filter';
@@ -93,32 +92,29 @@ export const useThread = () => {
     });
     const [isNextAvailable, setIsNextAvailable] = useState<boolean>(true);
     const [selectedThreadId, setSelectedThreadId] = useState<string>();
+    const readThreadIds = useCallback(
+        async (ids: string[]) => {
+            const [, response] = await awaitToError(apiClient.patch('/v2/threads/read', { ids }));
+            if (response) {
+                const updatedThreads = threads.map((thread) => {
+                    if (ids.includes(thread.id)) {
+                        thread.threadStatus = ThreadStatus.REPLIED;
+                    }
+                    return thread;
+                });
+                setThreads(updatedThreads);
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectedThreadId],
+    );
     useEffect(() => {
-        if (selectedThread) {
-            const lastEmailFrom = selectedThread.emails?.length
-                ? selectedThread.emails[selectedThread.emails.length - 1].data.from.address
-                : '';
-            const contactType = selectedThread.contacts?.find(
-                (contact) => contact.emailContact.address === lastEmailFrom,
-            );
-            if (contactType?.type !== ThreadContactType.USER) {
-                selectedThread.threadStatus = ThreadStatus.REPLIED;
-                setMessageCount((prev) => ({
-                    ...prev,
-                    unopened: prev.unopened - 1,
-                    all: prev.all - 1,
-                }));
+        (async () => {
+            if (selectedThread?.threadId) {
+                await awaitToError(readThreadIds([selectedThread?.id]));
             }
-
-            const t = [...threads];
-            const index = t.findIndex((thread) => thread.id === selectedThread.id);
-            if (index > -1) {
-                t[index] = { ...selectedThread };
-                setThreads(t);
-            }
-            setSelectedThread(selectedThread);
-            setSelectedThreadId(selectedThread.id);
-        }
+        })();
+        setSelectedThreadId(selectedThread?.id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread]);
     useEffect(() => {

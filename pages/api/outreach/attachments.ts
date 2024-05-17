@@ -25,7 +25,7 @@ const getHandler: ActionHandler = async (req, res: NextApiResponse) => {
 
 export const config = {
     api: {
-        responseLimit: false,
+        responseLimit: '20mb',
     },
 };
 
