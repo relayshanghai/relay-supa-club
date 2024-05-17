@@ -193,7 +193,7 @@ export default class ThreadService {
     @CompanyIdRequired()
     async readThreadIds(request: ReadThreadRequest) {
         await ThreadRepository.getRepository().update(
-            { id: In(request.ids) },
+            { id: In(request.ids), threadStatus: ThreadStatus.UNOPENED },
             {
                 threadStatus: ThreadStatus.REPLIED,
             },
