@@ -49,6 +49,8 @@ const inbox = {
         loading: 'Starting download...',
         success: 'Download started',
         error: 'Error when downloading attachment',
+        toBigTitle: 'This attachment is too big!',
+        toBigDescription: 'Please ask the sender for a link instead. BoostBot handles up to 20MB attachments.',
     },
     save: 'Save',
     edit: 'Edit',

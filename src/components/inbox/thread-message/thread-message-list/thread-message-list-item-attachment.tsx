@@ -28,8 +28,16 @@ export const getAttachmentStyle = (filename: string) => {
 export default function ThreadMessageListItemAttachment({ attachment }: { attachment: EmailAttachment }) {
     const { t } = useTranslation();
 
+    const encodedToMb = (size: number) => {
+        const bytes = (size * 3) / 4;
+        const kb = Math.ceil(bytes / 1024);
+        const mb = kb / 1024;
+        return { kb, mb };
+    };
+
     const handleDownloadAttachment = useCallback(async () => {
         if (!attachment.id) return;
+        if (encodedToMb(attachment.encodedSize).mb > 20) return;
         const baseUrl = '/api/outreach/attachments';
         const downloadParams = new URLSearchParams({
             id: attachment.id,
@@ -65,13 +73,37 @@ export default function ThreadMessageListItemAttachment({ attachment }: { attach
         });
     }, [attachment, t]);
 
+    const getContentAttachment = (attachment: EmailAttachment) => {
+        const sizeMb = encodedToMb(attachment.encodedSize);
+        if (sizeMb.mb > 20) {
+            return t('inbox.attachments.toBigTitle');
+        } else {
+            return attachment.filename;
+        }
+    };
+
+    const getDetailAttachment = (attachment: EmailAttachment) => {
+        const sizeMb = encodedToMb(attachment.encodedSize);
+        if (sizeMb.mb > 20) {
+            return t('inbox.attachments.toBigDescription');
+        } else {
+            return undefined;
+        }
+    };
+
     return (
-        <Tooltip position="right" content={attachment.filename}>
+        <Tooltip
+            position="inset-right"
+            contentSize="small"
+            content={getContentAttachment(attachment)}
+            detail={getDetailAttachment(attachment)}
+        >
             <button
                 type="button"
                 className={`flex cursor-pointer gap-2 rounded font-semibold ${getAttachmentStyle(
                     attachment.filename,
                 )} px-2 py-1 text-xs`}
+                disabled={encodedToMb(attachment.encodedSize).mb > 20}
                 onClick={handleDownloadAttachment}
             >
                 <Download className="h-4 w-4" />
