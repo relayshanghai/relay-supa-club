@@ -1,6 +1,6 @@
 import { useThread, useThreadReply } from 'src/hooks/v2/use-thread';
 import ThreadHeader from './thread-header';
-import { useMessages } from 'src/hooks/v2/use-message';
+import { paramDefaultValues, useMessages } from 'src/hooks/v2/use-message';
 import ThreadMessageList from './thread-message-list/thread-message-list';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ThreadReply from './thread-message-reply/thread-reply';
@@ -9,6 +9,8 @@ import { serverLogger } from 'src/utils/logger-server';
 import { nanoid } from 'nanoid';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+import { type Paginated } from 'types/pagination';
+import { type GetThreadEmailsRequest } from 'pages/api/v2/threads/[id]/emails/request';
 
 /**
  * Generate local Message object with isLocal attribute
@@ -43,12 +45,43 @@ export default function ThreadMessages() {
     const { company } = useCompany();
     const myEmail = profile?.email || '';
     const { selectedThread, loading } = useThread();
-    const { messages, mutate } = useMessages(selectedThread?.threadId as string);
+    const { messages, mutate, setParams, params, metadata, loading: messagesLoading } = useMessages();
     const endOfThread = useRef<null | HTMLDivElement>(null);
-    const scrollToBottom = () => {
-        endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-    useEffect(scrollToBottom, [messages]);
+    const messageListDiv = useRef<null | HTMLDivElement>(null);
+
+    useEffect(() => {
+        setParams({
+            ...paramDefaultValues,
+            threadId: selectedThread?.threadId || '',
+        } as GetThreadEmailsRequest);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedThread?.threadId, loading]);
+    useEffect(() => {
+        if (params.page === 1) {
+            if ((metadata.totalPages as number) > params.page && (params.page as number) < 2) {
+                setParams({
+                    page: 2,
+                } as GetThreadEmailsRequest);
+            }
+        } else {
+            if (params.page > 2) {
+                messageListDiv.current?.scrollTo(0, 50);
+            } else {
+                endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        messageListDiv.current?.addEventListener('scroll', () => {
+            // detect if user has scrolled to the bottom of the message list
+            const topScroll = Math.ceil(messageListDiv.current?.scrollTop as number);
+            if (topScroll == 0 && (metadata.totalPages as number) > params.page) {
+                setParams({
+                    page: params.page + 1,
+                } as GetThreadEmailsRequest);
+            }
+        });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messages, messagesLoading]);
     const threadContact = useMemo(() => {
         if (selectedThread) {
             const cc =
@@ -92,9 +125,9 @@ export default function ThreadMessages() {
     );
     const { reply, loading: replyLoading } = useThreadReply();
     const handleReply = useCallback(
-        (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
+        async (replyBody: string, toList: EmailContact[], ccList: EmailContact[]) => {
             mutate(
-                async (cache) => {
+                async (cache: Paginated<Email> | undefined): Promise<Paginated<Email>> => {
                     if (attachments && attachments.length > 0) {
                         const htmlAttachments = attachments.map((attachment) => {
                             return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
@@ -116,25 +149,25 @@ export default function ThreadMessages() {
                         from: { name: 'Me', address: myEmail || '' },
                         to: toList,
                         cc: ccList,
-                        subject: messages?.[messages.length - 1]?.subject ?? '',
+                        subject: messages[messages.length - 1]?.subject ?? '',
                         attachments: [],
                     });
                     setAttachments([]);
-                    return [localMessage, ...(cache ?? [])];
+                    return { ...cache, items: [localMessage, ...(cache?.items ?? [])] } as Paginated<Email>;
                 },
                 {
                     // Optimistically update the UI
                     // Seems like this is discarded when MutatorCallback ^ resolves
-                    optimisticData: (cache) => {
+                    optimisticData: (cache: Paginated<Email> | undefined): Paginated<Email> => {
                         const localMessage = generateLocalData({
                             body: replyBody,
                             from: { name: 'Me', address: myEmail || '' },
                             to: toList,
                             cc: ccList,
-                            subject: messages?.[messages.length - 1]?.subject ?? '',
+                            subject: messages[messages.length - 1]?.subject ?? '',
                             attachments: [],
                         });
-                        return [localMessage, ...(cache ?? [])];
+                        return { ...cache, items: [localMessage, ...(cache?.items ?? [])] } as Paginated<Email>;
                     },
                     revalidate: false,
                     rollbackOnError: true,
@@ -168,7 +201,11 @@ export default function ThreadMessages() {
                         />
                     </div>
 
-                    <div style={{ height: 10 }} className="m-5 flex-auto justify-center overflow-auto bg-zinc-50">
+                    <div
+                        style={{ height: 10 }}
+                        className="m-5 flex-auto justify-center overflow-auto bg-zinc-50"
+                        ref={messageListDiv}
+                    >
                         <ThreadMessageList messages={messages || []} myEmail={myEmail} />
                         <div ref={endOfThread} />
                     </div>

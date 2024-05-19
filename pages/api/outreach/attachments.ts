@@ -23,12 +23,6 @@ const getHandler: ActionHandler = async (req, res: NextApiResponse) => {
     return res.status(200).end(attachment);
 };
 
-export const config = {
-    api: {
-        responseLimit: false,
-    },
-};
-
 export default ApiHandler({
     getHandler,
 });

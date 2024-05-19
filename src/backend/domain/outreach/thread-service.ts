@@ -1,6 +1,6 @@
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { CompanyIdRequired } from '../decorators/company-id';
-import type { GetThreadsRequest } from 'pages/api/v2/threads/request';
+import type { GetThreadsRequest, ReadThreadRequest } from 'pages/api/v2/threads/request';
 import ThreadRepository from 'src/backend/database/thread/thread-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import EmailEngineService from 'src/backend/integration/email-engine/email-engine';
@@ -16,7 +16,8 @@ import { InfluencerSocialProfileRepository } from 'src/backend/database/influenc
 import { getTopicsAndRelevance } from 'src/utils/api/boostbot/get-topic-relevance';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { logger } from 'src/backend/integration/logger';
-import { ThreadContactType } from 'src/backend/database/thread/email-contact-entity';
+import type { GetThreadEmailsRequest } from 'pages/api/v2/threads/[id]/emails/request';
+import { In } from 'typeorm';
 
 export default class ThreadService {
     static service = new ThreadService();
@@ -91,29 +92,11 @@ export default class ThreadService {
                 contacts: {
                     emailContact: true,
                 },
-                emails: true,
             },
         });
         if (!thread) {
             throw new NotFoundError('Thread not found');
         }
-        if (thread.emails) {
-            thread.emails = [thread.emails[thread.emails.length - 1]];
-        }
-        const lastEmailFrom = thread.emails?.length ? thread.emails[thread.emails.length - 1].data.from.address : '';
-        const contactType = thread.contacts?.find((contact) => contact.emailContact.address === lastEmailFrom);
-        if (contactType?.type !== ThreadContactType.USER) {
-            await ThreadRepository.getRepository().update(
-                {
-                    id,
-                },
-                {
-                    threadStatus: ThreadStatus.REPLIED,
-                },
-            );
-            thread.threadStatus = ThreadStatus.REPLIED;
-        }
-
         const socialProfile = thread.sequenceInfluencer?.influencerSocialProfile as InfluencerSocialProfileEntity;
         if (!socialProfile.topicsRelevances) {
             let topicTags = socialProfile.topicTags;
@@ -154,24 +137,10 @@ export default class ThreadService {
 
     @UseLogger()
     @CompanyIdRequired()
-    async getThreadEmail(id: string) {
+    async getThreadEmail(id: string, request: GetThreadEmailsRequest) {
         const companyId = RequestContext.getContext().companyId as string;
-        const data = await EmailRepository.getRepository().find({
-            where: {
-                thread: {
-                    threadId: id,
-                    sequenceInfluencer: {
-                        company: {
-                            id: companyId,
-                        },
-                    },
-                },
-            },
-            order: {
-                createdAt: 'DESC',
-            },
-        });
-        return data.map((email) => email.data);
+        const data = await EmailRepository.getRepository().getAllPerThread(id, companyId, request);
+        return data;
     }
 
     @UseLogger()
@@ -200,6 +169,17 @@ export default class ThreadService {
             {
                 threadId,
             },
+            {
+                threadStatus: ThreadStatus.REPLIED,
+            },
+        );
+    }
+
+    @UseLogger()
+    @CompanyIdRequired()
+    async readThreadIds(request: ReadThreadRequest) {
+        await ThreadRepository.getRepository().update(
+            { id: In(request.ids), threadStatus: ThreadStatus.UNOPENED },
             {
                 threadStatus: ThreadStatus.REPLIED,
             },
