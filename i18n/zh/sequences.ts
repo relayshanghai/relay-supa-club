@@ -171,9 +171,11 @@ const sequences = {
     warningDuplicateInfluencer: '警告：重复的KOL可能会导致问题',
     sequenceScheduleFailed: '安排序列邮件失败，请稍后再试',
     reportServerBusy: '服务器正忙，请稍后再试',
+    reportDoesnotExists: '哎呀！无法获取该邮件地址。请手动输入邮件地址以继续进行建联。',
     retryButton: '重试按钮',
     clickToRetry: '请单击以重新获取数据',
     limitExceeded:
         '哎呀！看起来您的雷宝BoostBot额度已经用完了！如果本月您还希望为您的帐户添加更多使用额度，请与销售团队的雪菲通过微信：xfsp1989取得联系。或者，您的使用额度将在下一个计费周期开始时自动续订。',
+    account_removed: '此影响者已被所有者移除。',
 };
 export default sequences;

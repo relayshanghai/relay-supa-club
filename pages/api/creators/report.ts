@@ -167,6 +167,9 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
         if (error.message.includes('retry_later')) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'retry_later' });
         }
+        if (error.message.includes('is removed')) {
+            return res.status(httpCodes.NOT_FOUND).json({ message: 'account_removed' });
+        }
         throw serverLogger(error);
     }
 
