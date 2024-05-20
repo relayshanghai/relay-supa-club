@@ -107,6 +107,7 @@ export const useThread = () => {
                     setThreads(updatedThreads);
                 }
             }
+            return response;
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [selectedThreadId],
