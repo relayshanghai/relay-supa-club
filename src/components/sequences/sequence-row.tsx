@@ -104,7 +104,7 @@ const ErrorDisplay: React.FC<{ message: string; status: Nullable<string>; onClic
             </div>
         );
     }
-    return <div className="text-red-500">{message}</div>;
+    return <div className="text-red-500">{t(`sequences.${message}`) || message}</div>;
 };
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
@@ -265,7 +265,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             });
             toast.error(error?.message ?? '');
         }
-
         setSendingEmail(false);
     };
     const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
@@ -393,7 +392,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     }}
                                 />
                             ) : (
-                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                                <TableInlineInput
+                                    value={email}
+                                    onSubmit={async (emailSubmit) => {
+                                        const trimmed = emailSubmit.trim().toLowerCase();
+                                        await handleEmailUpdate(trimmed);
+                                    }}
+                                    onSubmittingChange={setSubmittingChangeEmail}
+                                    textPromptForMissingValue={t('sequences.addEmail')}
+                                />
                             )}
                         </td>
 

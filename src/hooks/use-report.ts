@@ -83,7 +83,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     setErrorMessage(t(weirdError) || '');
                     return;
                 } else if (!report.user_profile) {
-                    setErrorMessage('server_busy');
+                    setErrorMessage('report_does_not_exists');
                     return;
                 }
                 setErrorMessage('');
@@ -99,6 +99,9 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     setErrorStatus(error.message);
                     setUsageExceeded(true);
                     setErrorMessage(t(error.message) || '');
+                } else if (error.message.includes('account_removed')) {
+                    setErrorStatus('account_removed');
+                    setErrorMessage('account_removed');
                 } else {
                     setErrorStatus('server_busy');
                     setErrorMessage('server_busy');
