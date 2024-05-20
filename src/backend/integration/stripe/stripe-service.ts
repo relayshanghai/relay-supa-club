@@ -110,6 +110,7 @@ export default class StripeService {
             items,
             proration_behavior: 'always_invoice',
             expand: ['latest_invoice.payment_intent'],
+            off_session: true,
         });
     }
 
