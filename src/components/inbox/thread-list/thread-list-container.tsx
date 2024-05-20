@@ -8,8 +8,8 @@ export default function ThreadListContainer({
     threads: _threads,
     loading,
 }: {
-    threads: ThreadEntity[];
-    loading: boolean;
+    readonly threads: ThreadEntity[];
+    readonly loading: boolean;
 }) {
     const { selectedThread, setSelectedThread } = useThread();
     const [selectedThreadId, setSelectedThreadId] = useState<string | undefined>();
@@ -17,6 +17,7 @@ export default function ThreadListContainer({
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
     useEffect(() => {
+        console.log(_threads);
         setThreads(_threads);
     }, [_threads]);
 

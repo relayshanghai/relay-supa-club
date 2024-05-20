@@ -173,3 +173,7 @@ body,
 .boostbot-gradient {
     @apply bg-gradient-to-br from-[#EE46BC] via-[#7839EE] to-[#43CBFF];
 }
+
+nextjs-portal {
+    display: none;
+}
