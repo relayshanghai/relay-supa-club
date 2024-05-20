@@ -4,10 +4,22 @@ import { formatDate } from 'src/utils/datetime';
 import ThreadListItem, { ThreadListItemSkeleton } from './thread-list-item';
 import { useThread } from 'src/hooks/v2/use-thread';
 
-export default function ThreadListContainer({ threads, loading }: { threads: ThreadEntity[]; loading: boolean }) {
+export default function ThreadListContainer({
+    threads: _threads,
+    loading,
+}: {
+    threads: ThreadEntity[];
+    loading: boolean;
+}) {
     const { selectedThread, setSelectedThread } = useThread();
     const [selectedThreadId, setSelectedThreadId] = useState<string | undefined>();
+    const [threads, setThreads] = useState<ThreadEntity[]>([]);
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
+
+    useEffect(() => {
+        setThreads(_threads);
+    }, [_threads]);
+
     const threadsGroupedByUpdatedAt = useMemo(
         () =>
             threads?.reduce((acc, thread) => {
