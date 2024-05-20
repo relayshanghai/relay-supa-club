@@ -8,8 +8,8 @@ export default function ThreadListContainer({
     threads: _threads,
     loading,
 }: {
-    threads: ThreadEntity[];
-    loading: boolean;
+    readonly threads: ThreadEntity[];
+    readonly loading: boolean;
 }) {
     const { selectedThread, setSelectedThread } = useThread();
     const [selectedThreadId, setSelectedThreadId] = useState<string | undefined>();
