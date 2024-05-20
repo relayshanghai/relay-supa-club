@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import { useUsages } from 'src/hooks/use-usages';
-import { unixEpochToISOString } from 'src/utils/utils';
 import { Button } from 'shadcn/components/ui/button';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -162,7 +161,7 @@ const PaymentTablets = ({
                 <p className="whitespace-nowrap">
                     <span className="font-semibold">{t('account.planSection.renewsOn')}: </span>
                     <span>
-                        {new Date(subscriptionData.current_period_end * 1000).toLocaleDateString(i18n.language, {
+                        {new Date(pausedAt as Date).toLocaleDateString(i18n.language, {
                             month: 'short',
                             day: 'numeric',
                         })}
@@ -244,8 +243,8 @@ export const SubscriptionDetails = () => {
 
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
-    const periodStart = unixEpochToISOString(subscription?.subscriptionData?.current_period_start);
-    const periodEnd = unixEpochToISOString(subscription?.subscriptionData?.current_period_end);
+    const periodStart = subscription?.activeAt;
+    const periodEnd = subscription?.pausedAt;
 
     const { usages, refreshUsages } = useUsages(
         true,
@@ -259,8 +258,7 @@ export const SubscriptionDetails = () => {
         refreshUsages();
     }, [company, refreshCompany, refreshUsages]);
 
-    const isAboutToCanceled = () =>
-        dayjs().isBefore(subscription?.cancelledAt) && subscription?.subscriptionData.cancel_at_period_end;
+    const isAboutToCanceled = () => (dayjs().isBefore(subscription?.cancelledAt) ? subscription?.pausedAt : null);
 
     const onResumeSubscription = () => {
         resumeSubscription()
@@ -284,7 +282,7 @@ export const SubscriptionDetails = () => {
                         <CancelSubscriptionModal
                             visible={showCancelModal}
                             onClose={() => setShowCancelModal(false)}
-                            periodEnd={periodEnd}
+                            periodEnd={periodEnd as Date}
                         />
                         {company && subscription ? (
                             <>

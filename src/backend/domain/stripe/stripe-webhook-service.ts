@@ -124,7 +124,6 @@ export class StripeWebhookService {
         }
         const { companyId } = RequestContext.getContext();
         if (!companyId) throw new Error('Company not found');
-        if (!subscription) throw new Error('Subscription not found');
         await SubscriptionV2Service.getService().storeSubscription({
             companyId,
             cusId: data?.object.customer as string,
