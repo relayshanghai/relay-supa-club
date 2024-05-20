@@ -17,7 +17,6 @@ export default function ThreadListContainer({
     const today = formatDate(new Date().toISOString(), '[date] [monthShort] [fullYear]');
 
     useEffect(() => {
-        console.log(_threads);
         setThreads(_threads);
     }, [_threads]);
 

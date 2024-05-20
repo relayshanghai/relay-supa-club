@@ -7,8 +7,7 @@ import { ThreadStatus } from 'src/backend/database/thread/thread-status';
 import { type FilterRequest } from 'src/components/inbox/thread-list/filter/thread-list-filter';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
-
-import { create } from 'zustand';
+import { create } from 'src/utils/zustand';
 
 export interface ThreadStore {
     threads: ThreadEntity[];
@@ -94,15 +93,19 @@ export const useThread = () => {
     const [selectedThreadId, setSelectedThreadId] = useState<string>();
     const readThreadIds = useCallback(
         async (ids: string[]) => {
-            const [, response] = await awaitToError(apiClient.patch('/v2/threads/read', { ids }));
-            if (response) {
-                const updatedThreads = threads.map((thread) => {
-                    if (ids.includes(thread.id)) {
-                        thread.threadStatus = ThreadStatus.REPLIED;
-                    }
-                    return thread;
-                });
-                setThreads(updatedThreads);
+            const [err, response] = await awaitToError(apiClient.patch('/v2/threads/read', { ids }));
+            if (!err || response) {
+                // set selected thread as read
+                const mustUpdateToReadIndex = threads.findIndex((thread) => ids.includes(thread.id));
+                if (mustUpdateToReadIndex > -1) {
+                    const updatedThreads = threads.map((thread) => {
+                        if (ids.includes(thread.id)) {
+                            thread.threadStatus = ThreadStatus.REPLIED;
+                        }
+                        return thread;
+                    });
+                    setThreads(updatedThreads);
+                }
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
