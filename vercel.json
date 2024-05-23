@@ -14,8 +14,8 @@
   },
   "crons": [
     {
-      "path": "/api/sync-email-old",
-      "schedule": "*/5 * * * *"
+      "path": "/api/sync-email",
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/v2/sequence-influencers/schedule",
