@@ -83,7 +83,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     setErrorMessage(t(weirdError) || '');
                     return;
                 } else if (!report.user_profile) {
-                    setErrorMessage('report_does_not_exists');
+                    setErrorMessage('retry_later');
                     return;
                 }
                 setErrorMessage('');
