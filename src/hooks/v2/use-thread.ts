@@ -113,11 +113,6 @@ export const useThread = () => {
         [selectedThreadId],
     );
     useEffect(() => {
-        (async () => {
-            if (selectedThread?.threadId) {
-                await awaitToError(readThreadIds([selectedThread?.id]));
-            }
-        })();
         setSelectedThreadId(selectedThread?.id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread]);
@@ -153,6 +148,7 @@ export const useThread = () => {
     const getAndSelectThread = async (threadId: string) => {
         setThreadLoading(true);
         const [, response] = await awaitToError(apiClient.get<ThreadEntity>(`/v2/threads/${threadId}`));
+        await awaitToError(readThreadIds([response.data.id]));
         setThreadLoading(false);
         if (response) {
             setSelectedThread(response.data);
