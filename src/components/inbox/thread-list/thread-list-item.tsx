@@ -24,6 +24,7 @@ const getPlatformIcon = (platform?: CreatorPlatform) => {
 const getUnreadMarker = (status?: ThreadStatus) => {
     switch (status) {
         case 'unopened':
+        case 'replied':
             return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />;
         case 'unreplied':
             return <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-blue-500" />;
@@ -64,7 +65,7 @@ export default function ThreadListItem({
 }) {
     // Get components conditionally
     const Icon = getPlatformIcon(thread.sequenceInfluencer?.platform as CreatorPlatform);
-    const UnreadMarker = getUnreadMarker(selected ? ThreadStatus.REPLIED : thread.threadStatus);
+    const UnreadMarker = getUnreadMarker(selected ? ThreadStatus.OPENED : thread.threadStatus);
 
     return (
         <Card
