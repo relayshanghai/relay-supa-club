@@ -100,7 +100,7 @@ export const useThread = () => {
                 if (mustUpdateToReadIndex > -1) {
                     const updatedThreads = threads.map((thread) => {
                         if (ids.includes(thread.id)) {
-                            thread.threadStatus = ThreadStatus.REPLIED;
+                            thread.threadStatus = ThreadStatus.OPENED;
                         }
                         return thread;
                     });
@@ -114,6 +114,12 @@ export const useThread = () => {
     );
     useEffect(() => {
         setSelectedThreadId(selectedThread?.id);
+        const mustUpdateToReadIndex = threads.findIndex((thread) => selectedThread?.id === thread.id);
+        if (mustUpdateToReadIndex > -1) {
+            const t = [...threads];
+            t[mustUpdateToReadIndex].threadStatus = ThreadStatus.OPENED;
+            setThreads(t);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread]);
     useEffect(() => {
