@@ -23,7 +23,7 @@ const sequences = {
         'This will start sending sequence emails to all selected influencers. It may take a few minutes to finish completely.',
     outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
     outreachPlanUpgradeTooltipDescription:
-        'This feature is only available for users currently on an Outreach plan. If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
+        'Only available to users of the expansion plan This feature is only available to paid users who are currently using the expansion plan. If you want to use our email process management, smart email templates, KOL management follow-up, and customized platform email functions, please contact our sales manager Xue Fei through WeChat, or add WeChat: xfsp1989 to consult the expansion plan.',
     openRateTooltipDescription:
         'The percentage of emails sent that get opened. Due to some email clients disabling external tracking, this number may not be 100% accurate',
     replyRateTooltip: 'Reply rate',
