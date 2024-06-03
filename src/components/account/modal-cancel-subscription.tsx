@@ -14,7 +14,7 @@ export const CancelSubscriptionModal = ({
 }: {
     visible: boolean;
     onClose: () => void;
-    periodEnd?: string;
+    periodEnd?: Date;
 }) => {
     const { t, i18n } = useTranslation();
     const { cancelSubscription, refreshSubscription } = useSubscription();

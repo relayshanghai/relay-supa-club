@@ -100,7 +100,7 @@ export const useThread = () => {
                 if (mustUpdateToReadIndex > -1) {
                     const updatedThreads = threads.map((thread) => {
                         if (ids.includes(thread.id)) {
-                            thread.threadStatus = ThreadStatus.REPLIED;
+                            thread.threadStatus = ThreadStatus.OPENED;
                         }
                         return thread;
                     });
@@ -113,12 +113,13 @@ export const useThread = () => {
         [selectedThreadId],
     );
     useEffect(() => {
-        (async () => {
-            if (selectedThread?.threadId) {
-                await awaitToError(readThreadIds([selectedThread?.id]));
-            }
-        })();
         setSelectedThreadId(selectedThread?.id);
+        const mustUpdateToReadIndex = threads.findIndex((thread) => selectedThread?.id === thread.id);
+        if (mustUpdateToReadIndex > -1) {
+            const t = [...threads];
+            t[mustUpdateToReadIndex].threadStatus = ThreadStatus.OPENED;
+            setThreads(t);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedThread]);
     useEffect(() => {
@@ -153,6 +154,7 @@ export const useThread = () => {
     const getAndSelectThread = async (threadId: string) => {
         setThreadLoading(true);
         const [, response] = await awaitToError(apiClient.get<ThreadEntity>(`/v2/threads/${threadId}`));
+        await awaitToError(readThreadIds([response.data.id]));
         setThreadLoading(false);
         if (response) {
             setSelectedThread(response.data);

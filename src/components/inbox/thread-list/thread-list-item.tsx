@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'shadcn/components/ui/avatar
 import { Card, CardContent } from 'shadcn/components/ui/card';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import type { ThreadEntity } from 'src/backend/database/thread/thread-entity';
-import type { ThreadStatus } from 'src/backend/database/thread/thread-status';
+import { ThreadStatus } from 'src/backend/database/thread/thread-status';
 import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
 import { truncatedText } from 'src/utils/outreach/helpers';
@@ -64,7 +64,7 @@ export default function ThreadListItem({
 }) {
     // Get components conditionally
     const Icon = getPlatformIcon(thread.sequenceInfluencer?.platform as CreatorPlatform);
-    const UnreadMarker = getUnreadMarker(thread.threadStatus as ThreadStatus);
+    const UnreadMarker = getUnreadMarker(selected ? ThreadStatus.OPENED : thread.threadStatus);
 
     return (
         <Card

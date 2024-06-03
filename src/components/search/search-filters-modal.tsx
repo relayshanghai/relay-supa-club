@@ -339,7 +339,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
-                                <option value="ANY">{t('filters.anyOption')}</option>
                                 <option value="MALE">{t('filters.gender.maleOption')}</option>
                                 <option value="FEMALE">{t('filters.gender.femaleOption')}</option>
                             </select>
@@ -428,7 +427,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
-                                <option value="any">{t('creators.filter.any')}</option>
                                 {Array.from(Array(10)).map((_, i) => {
                                     const option = i + 1; // >1-10%
                                     return (
@@ -523,7 +521,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
-                                <option value="any">{t('filters.anyOption')}</option>
                                 <option value="male">{t('filters.gender.maleOption')}</option>
                                 <option value="female">{t('filters.gender.femaleOption')}</option>
                             </select>

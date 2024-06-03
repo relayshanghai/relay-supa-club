@@ -15,7 +15,6 @@ import type {
     SequenceInfluencerManagerPageWithChannelData,
 } from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
-import { isMissingSocialProfileInfo } from './helpers';
 import type { KeyedMutator } from 'swr';
 import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
 import type { SearchTableInfluencer } from 'types';
@@ -157,9 +156,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             }
             setCheckAll(true);
             setSelection(
-                filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers)
-                    .filter((influencer) => influencer.email && !isMissingSocialProfileInfo(influencer))
-                    .map((influencer) => influencer.id),
+                filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers).map(
+                    (influencer) => influencer.id,
+                ),
             );
         },
         [checkAll, sequenceInfluencers, setSelection],

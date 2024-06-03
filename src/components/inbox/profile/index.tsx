@@ -84,6 +84,7 @@ export default function Profile() {
                                             sequenceInfluencer?.influencerSocialProfile?.username,
                                         )}
                                         className="text-lg font-medium text-primary-500"
+                                        target="_blank"
                                     >
                                         <span className="text-pink-500">@</span>
                                         {truncatedText(sequenceInfluencer?.influencerSocialProfile?.username ?? '', 10)}
