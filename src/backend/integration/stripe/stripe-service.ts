@@ -1,6 +1,7 @@
 import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import Stripe from 'stripe';
+import type { StripePriceWithProductMetadata } from 'types';
 import type { Nullable } from 'types/nullable';
 
 export type ChangeSubscriptionRequestType = {
@@ -179,6 +180,21 @@ export default class StripeService {
 
     async getPrice(priceId: string) {
         return await StripeService.client.prices.retrieve(priceId);
+    }
+
+    async getPriceByProduct(productId: string): Promise<Stripe.ApiList<StripePriceWithProductMetadata>> {
+        const response = (await StripeService.client.prices.list({
+            active: true,
+            expand: ['data.product'],
+            product: productId,
+        })) as unknown as Stripe.ApiList<StripePriceWithProductMetadata>;
+
+        if (response.has_more) {
+            const nextPage = await this.getPriceByProduct(productId);
+            response.data.push(...nextPage.data);
+        }
+
+        return response;
     }
 
     async getProduct(productId: string) {

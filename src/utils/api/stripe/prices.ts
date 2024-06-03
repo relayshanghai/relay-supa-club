@@ -14,7 +14,13 @@ import {
 } from './constants';
 import { stripeClient } from './stripe-client';
 
-/** Stripe prices come in cents,  divide by 1 hundred */
+/**
+ * Formats the given Stripe price by dividing it by 100 and rounding it to the nearest whole number.
+ *
+ * @param price - The Stripe price to format.
+ * @returns The formatted price as a string.
+ * @deprecated Use the `formatStripePrice` function from `src/utils/utils.ts` instead.
+ */
 export const formatStripePrice = (price: number) => (price / 100).toFixed(0);
 
 export const getNewStripePlanPrices = async () => {

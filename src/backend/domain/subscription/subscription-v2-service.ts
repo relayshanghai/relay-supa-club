@@ -19,6 +19,22 @@ import { type CompanyEntity } from 'src/backend/database/company/company-entity'
 import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
 import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
 import type { Nullable } from 'types/nullable';
+import PriceRepository from 'src/backend/database/price/price-repository';
+import { type NewRelayPlan } from 'types';
+import { SubscriptionBillingPeriod, type SubscriptionType } from 'src/backend/database/price/price-entity';
+import { formatStripePrice } from 'src/utils/utils';
+import {
+    STRIPE_PRODUCT_ID_DISCOVERY,
+    STRIPE_PRODUCT_ID_OUTREACH,
+    STRIPE_PRICE_MONTHLY_DISCOVERY,
+    STRIPE_PRICE_MONTHLY_OUTREACH,
+    STRIPE_PRICE_MONTHLY_DISCOVERY_USD,
+    STRIPE_PRICE_MONTHLY_OUTREACH_USD,
+    STRIPE_PRICE_ANNUALLY_DISCOVERY,
+    STRIPE_PRICE_ANNUALLY_DISCOVERY_USD,
+    STRIPE_PRICE_ANNUALLY_OUTREACH,
+    STRIPE_PRICE_ANNUALLY_OUTREACH_USD,
+} from 'src/utils/api/stripe/constants';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -535,5 +551,72 @@ export default class SubscriptionV2Service {
         return {
             providerSubscriptionId: stripeSubscription.id,
         };
+    }
+
+    async getPrices() {
+        const products = {
+            discovery: STRIPE_PRODUCT_ID_DISCOVERY,
+            outreach: STRIPE_PRODUCT_ID_OUTREACH,
+        };
+        const prices = {
+            discovery: [] as NewRelayPlan[],
+            outreach: [] as NewRelayPlan[],
+        };
+        const availablePrices = [
+            STRIPE_PRICE_MONTHLY_DISCOVERY,
+            STRIPE_PRICE_MONTHLY_DISCOVERY_USD,
+            STRIPE_PRICE_ANNUALLY_DISCOVERY,
+            STRIPE_PRICE_ANNUALLY_DISCOVERY_USD,
+            STRIPE_PRICE_MONTHLY_OUTREACH,
+            STRIPE_PRICE_MONTHLY_OUTREACH_USD,
+            STRIPE_PRICE_ANNUALLY_OUTREACH,
+            STRIPE_PRICE_ANNUALLY_OUTREACH_USD,
+        ];
+        for (const product in products) {
+            const productPrices = await StripeService.getService().getPriceByProduct(
+                products[product as keyof typeof products],
+            );
+            for (const price of productPrices.data) {
+                if (!availablePrices.includes(price.id)) {
+                    continue;
+                }
+                await PriceRepository.getRepository().upsert(
+                    {
+                        subscriptionType: product as SubscriptionType,
+                        currency: price.currency,
+                        billingPeriod:
+                            price.recurring?.interval === 'year'
+                                ? SubscriptionBillingPeriod.ANNUALLY
+                                : SubscriptionBillingPeriod.MONTHLY,
+                        price: formatStripePrice(price.unit_amount as number),
+                        profiles: price.product.metadata.profiles ? +price.product.metadata.profiles : 0,
+                        searches: price.product.metadata.searches ? +price.product.metadata.searches : 0,
+                        priceId: price.id,
+                    },
+                    {
+                        conflictPaths: { priceId: true },
+                    },
+                );
+            }
+            prices[product as keyof typeof products] = productPrices.data
+                .filter((f) => availablePrices.includes(f.id))
+                .map((price) => {
+                    return {
+                        currency: price.currency,
+                        prices: {
+                            monthly: formatStripePrice(price.unit_amount as number),
+                            annually: formatStripePrice((price.unit_amount as number) * 12),
+                        },
+                        profiles: price.product.metadata.profiles + '',
+                        searches: price.product.metadata.searches + '',
+                        priceIds: {
+                            monthly: price.id,
+                            annually: price.id,
+                        },
+                    };
+                });
+        }
+
+        return prices;
     }
 }
