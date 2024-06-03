@@ -52,11 +52,13 @@ export type NewRelayPlan = {
     currency: string;
     prices: {
         monthly: string;
+        annually: string;
     };
     profiles: string;
     searches: string;
     priceIds: {
         monthly: string;
+        annually: string;
     };
 };
 export interface RelayPlanStripeProduct extends Stripe.Product {
