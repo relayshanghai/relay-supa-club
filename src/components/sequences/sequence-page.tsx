@@ -38,7 +38,7 @@ import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-st
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
-import { calculateReplyRate } from './helpers';
+import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -272,9 +272,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             if (selection.length === 0) {
                 return;
             }
+            batchSendInfluencers = batchSendInfluencers.filter(
+                (influencer) => influencer.email && !isMissingSocialProfileInfo(influencer),
+            );
 
             // remove them from selection, and optimistically update to "In Sequence"
-            setSelection([]);
+            setSelection(() => selection.filter((id) => !batchSendInfluencers.some((i) => i.id === id)));
             refreshSequenceInfluencers(
                 sequenceInfluencers.map((influencer) => {
                     if (batchSendInfluencers.some((i) => i.id === influencer.id)) {
@@ -330,7 +333,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [
             handleStartSequence,
             refreshSequenceInfluencers,
-            selection.length,
+            selection,
             sequence?.id,
             sequence?.name,
             sequenceInfluencers,
@@ -365,11 +368,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const submittingChangeEmail = useAtomValue(submittingChangeEmailAtom);
 
-    const sendDisabled =
-        submittingChangeEmail ||
-        isMissingSequenceSendEmail ||
-        selectedInfluencers.some((i) => !i?.email) ||
-        selectedInfluencers.some((i) => !i?.influencer_social_profile_id);
+    const sendDisabled = submittingChangeEmail || isMissingSequenceSendEmail;
 
     const replyRate = useMemo(
         () => calculateReplyRate(sequenceInfluencers, sequenceEmails),
