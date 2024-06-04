@@ -8,7 +8,7 @@ import {
 } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SubscriptionPeriod, SubscriptionTier } from 'types';
+import type { NewRelayPlan, SubscriptionPeriod, SubscriptionTier } from 'types';
 import { useLocalStorage } from './use-localstorage';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
@@ -36,7 +36,7 @@ export type Price = {
     };
 };
 export type Prices = {
-    [key in ActiveSubscriptionTier]: Price;
+    [key in ActiveSubscriptionTier]: NewRelayPlan;
 };
 
 export const PRICE_IDS = {
@@ -63,15 +63,17 @@ export const priceDetails: PriceDetails = {
 };
 
 export const useLocalStorageSelectedPrice = () =>
-    useLocalStorage<Price>('selectedPrice', {
+    useLocalStorage<NewRelayPlan>('selectedPrice', {
         currency: 'usd',
         prices: {
             monthly: '0',
+            annually: '0',
         },
         profiles: '',
         searches: '',
         priceIds: {
             monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+            annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
         },
     });
 export const usePrices = (currency: string) => {
