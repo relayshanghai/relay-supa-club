@@ -23,9 +23,15 @@ type SearchFiltersModalProps = {
     setFilters: Dispatch<SetStateAction<Filters>>;
 };
 const platformIcons = {
-    youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube', label: 'Youtube' },
+    youtube: { icon: '/assets/imgs/icons/yt.svg', id: 'youtube', label: 'YouTube' },
     instagram: { icon: '/assets/imgs/icons/instagram.svg', id: 'instagram', label: 'Instagram' },
-    tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok', label: 'Tiktok' },
+    tiktok: { icon: '/assets/imgs/icons/tiktok.svg', id: 'tiktok', label: 'TikTok' },
+};
+
+const platformLabels = {
+    youtube: 'YouTube',
+    instagram: 'Instagram',
+    tiktok: 'TikTok',
 };
 
 export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: SearchFiltersModalProps) => {
@@ -239,7 +245,7 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
                                         </div>
                                         <div className="flex flex-col ">
                                             <div className="mb-0.5 pl-2 text-left text-sm font-semibold text-gray-600 sm:text-sm">
-                                                {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                                {platformLabels[platform]}
                                             </div>
                                             <div className="pl-2 text-xs font-normal text-tertiary-400">
                                                 {t(`boostbot.filters.platformSub.${platform}`)}
