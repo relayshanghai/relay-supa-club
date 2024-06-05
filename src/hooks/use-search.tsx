@@ -21,7 +21,6 @@ import { featRecommended } from 'src/constants/feature-flags';
 
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
-import { useLocalStorage } from './use-localstorage';
 
 export const defaultAudienceLocations: LocationWeighted[] = [
     {
@@ -53,45 +52,40 @@ export const defaultAudienceGender = {
     weight: 0.01, // 0.01 = 0.1%
 };
 
-interface SearchContextGetter {
-    tags: CreatorSearchTag[];
-    text: string;
-    keywords: string;
-    hashtags: string[];
-    username: string;
-    influencerLocation: LocationWeighted[];
-    views: NullStringTuple;
-    audience: NullStringTuple;
-    gender?: string;
-    engagement?: number;
-    lastPost?: string;
-    contactInfo?: string;
-    audienceLocation: LocationWeighted[];
-    audienceAge: AudienceAgeRangeWeighted | undefined;
-    audienceGender: AudienceGenderWeighted | undefined;
-    platform: CreatorPlatform;
-    onlyRecommended: boolean;
-    activeSearch: boolean;
-}
-
-export interface ISearchContext extends SearchContextGetter {
+export interface ISearchContext {
     loading: boolean;
     setLoading: (loading: boolean) => void;
+    tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
+    text: string;
     setText: (text: string) => void;
+    keywords: string;
     setKeywords: (keywords: string) => void;
+    hashtags: string[];
     setHashtags: (hashtags: string[]) => void;
+    username: string;
     setUsername: (username: string) => void;
+    influencerLocation: LocationWeighted[];
     setInfluencerLocation: (location: LocationWeighted[]) => void;
+    views: NullStringTuple;
     setViews: Dispatch<SetStateAction<NullStringTuple>>;
+    audience: NullStringTuple;
     setAudience: Dispatch<SetStateAction<NullStringTuple>>;
+    gender?: string;
     setGender: (gender?: string) => void;
+    engagement?: number;
     setEngagement: (engagement?: number) => void;
+    lastPost?: string;
     setLastPost: (lastPost?: string) => void;
+    contactInfo?: string;
     setContactInfo: (contactInfo?: string) => void;
+    audienceLocation: LocationWeighted[];
     setAudienceLocation: (location: LocationWeighted[]) => void;
+    audienceAge: AudienceAgeRangeWeighted | undefined;
     setAudienceAge: (location: AudienceAgeRangeWeighted) => void;
+    audienceGender: AudienceGenderWeighted | undefined;
     setAudienceGender: (location: AudienceGenderWeighted) => void;
+    platform: CreatorPlatform;
     setPlatform: (platform: CreatorPlatform) => void;
     resultsPerPageLimit: number;
     setResultsPerPageLimit: (limit: number) => void;
@@ -99,8 +93,10 @@ export interface ISearchContext extends SearchContextGetter {
     setUsageExceeded: (exceeded: boolean) => void;
     page: number;
     setPage: (page: number) => void;
+    onlyRecommended: boolean;
     setOnlyRecommended: (onlyRecommended: boolean) => void;
     recommendedInfluencers: string[];
+    activeSearch: boolean;
     setActiveSearch: (activeSearch: boolean) => void;
     searchParams: FetchCreatorsFilteredParams | undefined;
     setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
@@ -161,30 +157,6 @@ export const SearchContext = createContext<ISearchContext>({
 
 export const useSearch = () => useContext(SearchContext);
 
-export const SEARCH_RESULT_FILTER = 'boostbot_search_result_filter';
-const searchResultFilterInitial = {
-    tags: [],
-    text: '',
-    keywords: '',
-    hashtags: [],
-    username: '',
-    influencerLocation: [],
-    views: [null, null],
-    audience: [null, null],
-    gender: undefined,
-    engagement: undefined,
-    lastPost: undefined,
-    contactInfo: undefined,
-    audienceLocation: defaultAudienceLocations,
-    audienceAge: undefined,
-    audienceGender: defaultAudienceGender,
-    platform: 'youtube',
-    onlyRecommended: true,
-    activeSearch: false,
-} as SearchContextGetter;
-export const useLocalStorageSearchResult = () =>
-    useLocalStorage<SearchContextGetter>(SEARCH_RESULT_FILTER, searchResultFilterInitial);
-
 export type SearchInfluencerResult = {
     total: number;
     influencers: ClassicSearchInfluencer[];
@@ -208,13 +180,11 @@ export const useSearchResults = (page: number) => {
     );
 
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
-    const [, setSearchResult] = useLocalStorageSearchResult();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
         profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
         async ([path, searchParams, page]) => {
             try {
-                setSearchResult(searchParams as SearchContextGetter);
                 if (!profile?.id) {
                     throw new Error('No profile');
                 }
@@ -294,6 +264,7 @@ export const useSearchResults = (page: number) => {
         setOnLoad,
     };
 };
+
 export const SearchProvider = ({ children }: PropsWithChildren) => {
     // this 'loading' triggers when any page is loading
     const [loading, setLoading] = useState(true);
@@ -301,48 +272,26 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [usageExceeded, setUsageExceeded] = useState(false);
     const [page, setPage] = useState(0);
     const [searchParams, setSearchParams] = useState<FetchCreatorsFilteredParams>();
-    const [searchResult] = useLocalStorageSearchResult();
 
     // search options
-    const [tags, setTopicTags] = useState<CreatorSearchTag[]>(searchResult.tags);
-    const [text, setText] = useState<string>(searchResult.text);
-    const [keywords, setKeywords] = useState<string>(searchResult.keywords);
-    const [hashtags, setHashtags] = useState<string[]>(searchResult.hashtags);
-    const [username, setUsername] = useState<string>(searchResult.username);
-    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>(searchResult.influencerLocation);
-    const [views, setViews] = useState<NullStringTuple>(searchResult.views);
-    const [audience, setAudience] = useState<NullStringTuple>(searchResult.audience);
-    const [gender, setGender] = useState<string | undefined>(searchResult.gender);
-    const [engagement, setEngagement] = useState<number | undefined>(searchResult.engagement);
-    const [lastPost, setLastPost] = useState<string | undefined>(searchResult.lastPost);
-    const [contactInfo, setContactInfo] = useState<string | undefined>(searchResult.contactInfo);
-    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>(searchResult.audienceLocation);
-    const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>(searchResult.audienceAge);
-    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted>(searchResult.audienceGender);
-    const [platform, setPlatform] = useState<CreatorPlatform>(searchResult.platform);
-    const [onlyRecommended, setOnlyRecommended] = useState(searchResult.onlyRecommended);
-    const [activeSearch, setActiveSearch] = useState(searchResult.activeSearch);
-
-    useEffect(() => {
-        if (searchResult.tags?.length) setTopicTags(searchResult.tags);
-        if (searchResult.text) setText(searchResult.text);
-        if (searchResult.keywords) setKeywords(searchResult.keywords);
-        if (searchResult.hashtags?.length) setHashtags(searchResult.hashtags);
-        if (searchResult.username) setUsername(searchResult.username);
-        if (searchResult.influencerLocation?.length) setInfluencerLocation(searchResult.influencerLocation);
-        if (searchResult.views) setViews(searchResult.views);
-        if (searchResult.audience) setAudience(searchResult.audience);
-        if (searchResult.gender) setGender(searchResult.gender);
-        if (searchResult.engagement) setEngagement(searchResult.engagement);
-        if (searchResult.lastPost) setLastPost(searchResult.lastPost);
-        if (searchResult.contactInfo) setContactInfo(searchResult.contactInfo);
-        if (searchResult.audienceLocation?.length) setAudienceLocation(searchResult.audienceLocation);
-        if (searchResult.audienceAge) setAudienceAge(searchResult.audienceAge);
-        if (searchResult.audienceGender) setAudienceGender(searchResult.audienceGender);
-        if (searchResult.platform) setPlatform(searchResult.platform);
-        if (searchResult.onlyRecommended) setOnlyRecommended(searchResult.onlyRecommended);
-        if (searchResult.activeSearch) setActiveSearch(searchResult.activeSearch);
-    }, [searchResult]);
+    const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
+    const [text, setText] = useState<string>('');
+    const [keywords, setKeywords] = useState<string>('');
+    const [hashtags, setHashtags] = useState<string[]>([]);
+    const [username, setUsername] = useState<string>('');
+    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
+    const [views, setViews] = useState<NullStringTuple>([null, null]);
+    const [audience, setAudience] = useState<NullStringTuple>([null, null]);
+    const [gender, setGender] = useState<string>();
+    const [engagement, setEngagement] = useState<number>();
+    const [lastPost, setLastPost] = useState<string>();
+    const [contactInfo, setContactInfo] = useState<string>();
+    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>(defaultAudienceLocations);
+    const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>();
+    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted>(defaultAudienceGender);
+    const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+    const [onlyRecommended, setOnlyRecommended] = useState(true);
+    const [activeSearch, setActiveSearch] = useState(false);
 
     const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
         nextFetch<RecommendedInfluencersGetResponse>(path),
