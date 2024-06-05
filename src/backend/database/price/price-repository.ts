@@ -6,7 +6,7 @@ import type { EntityManager, EntityTarget } from 'typeorm';
 
 @InjectInitializeDatabaseOnAllProps
 export default class PriceRepository extends BaseRepository<PriceEntity> {
-    static repository = new PriceRepository();
+    static readonly repository = new PriceRepository();
     static getRepository(): PriceRepository {
         // when request context is not available, use the default repository, otherwise use the manager from the request context
         // to cover transactional operations
@@ -14,7 +14,7 @@ export default class PriceRepository extends BaseRepository<PriceEntity> {
         if (manager) {
             const contextRepository = RequestContext.getRepository<PriceRepository>(PriceRepository.name);
             if (contextRepository) {
-                return contextRepository as PriceRepository;
+                return contextRepository;
             }
             const repository = new PriceRepository(PriceEntity, manager);
             RequestContext.registerRepository(PriceRepository.name, repository);

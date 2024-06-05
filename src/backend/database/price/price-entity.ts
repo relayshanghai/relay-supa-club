@@ -25,8 +25,11 @@ export class PriceEntity {
     @Column({ name: 'billing_period', type: 'varchar' })
     billingPeriod!: SubscriptionBillingPeriod;
 
-    @Column({ name: 'price', type: 'varchar' })
-    price!: string;
+    @Column({ name: 'price', type: 'decimal' })
+    price!: number;
+
+    @Column({ name: 'original_price', type: 'decimal' })
+    originalPrice!: number;
 
     @Column({ name: 'profiles', type: 'int' })
     profiles!: number;
@@ -43,3 +46,5 @@ export class PriceEntity {
     @Column({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Nullable<Date>;
 }
+
+export type RelayPrice = { [key in SubscriptionBillingPeriod]: PriceEntity[] };
