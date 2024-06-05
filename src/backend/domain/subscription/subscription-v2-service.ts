@@ -551,11 +551,11 @@ export default class SubscriptionV2Service {
                 },
             });
             prices[key as keyof typeof prices] = pricesData.reduce((acc: RelayPrice, item: PriceEntity) => {
-                const key = item.billingPeriod;
-                if (!acc[key]) {
-                    acc[key] = [];
+                const k = item.billingPeriod;
+                if (!acc[k]) {
+                    acc[k] = [];
                 }
-                acc[key].push(item);
+                acc[k].push(item);
                 return acc;
             }, {} as RelayPrice);
         }
