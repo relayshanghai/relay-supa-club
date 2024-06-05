@@ -324,19 +324,19 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [activeSearch, setActiveSearch] = useState(searchResult.activeSearch);
 
     useEffect(() => {
-        if (searchResult.tags.length) setTopicTags(searchResult.tags);
+        if (searchResult.tags?.length) setTopicTags(searchResult.tags);
         if (searchResult.text) setText(searchResult.text);
         if (searchResult.keywords) setKeywords(searchResult.keywords);
-        if (searchResult.hashtags.length) setHashtags(searchResult.hashtags);
+        if (searchResult.hashtags?.length) setHashtags(searchResult.hashtags);
         if (searchResult.username) setUsername(searchResult.username);
-        if (searchResult.influencerLocation.length) setInfluencerLocation(searchResult.influencerLocation);
+        if (searchResult.influencerLocation?.length) setInfluencerLocation(searchResult.influencerLocation);
         if (searchResult.views) setViews(searchResult.views);
         if (searchResult.audience) setAudience(searchResult.audience);
         if (searchResult.gender) setGender(searchResult.gender);
         if (searchResult.engagement) setEngagement(searchResult.engagement);
         if (searchResult.lastPost) setLastPost(searchResult.lastPost);
         if (searchResult.contactInfo) setContactInfo(searchResult.contactInfo);
-        if (searchResult.audienceLocation.length) setAudienceLocation(searchResult.audienceLocation);
+        if (searchResult.audienceLocation?.length) setAudienceLocation(searchResult.audienceLocation);
         if (searchResult.audienceAge) setAudienceAge(searchResult.audienceAge);
         if (searchResult.audienceGender) setAudienceGender(searchResult.audienceGender);
         if (searchResult.platform) setPlatform(searchResult.platform);
