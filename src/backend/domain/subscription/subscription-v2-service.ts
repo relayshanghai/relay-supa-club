@@ -20,7 +20,8 @@ import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } fro
 import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
 import type { Nullable } from 'types/nullable';
 import PriceRepository from 'src/backend/database/price/price-repository';
-import { type PriceEntity, type RelayPrice, type SubscriptionType } from 'src/backend/database/price/price-entity';
+import { type PriceEntity, type SubscriptionType } from 'src/backend/database/price/price-entity';
+import type { NewRelayPlan } from 'types';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -541,8 +542,12 @@ export default class SubscriptionV2Service {
 
     async getPrices() {
         const prices = {
-            discovery: {} as RelayPrice,
-            outreach: {} as RelayPrice,
+            discovery: [] as NewRelayPlan[],
+            outreach: [] as NewRelayPlan[],
+        };
+        const billingPeriod = {
+            monthly: '',
+            annually: '',
         };
         for (const key in prices) {
             const pricesData = await PriceRepository.getRepository().find({
@@ -550,14 +555,27 @@ export default class SubscriptionV2Service {
                     subscriptionType: key as SubscriptionType,
                 },
             });
-            prices[key as keyof typeof prices] = pricesData.reduce((acc: RelayPrice, item: PriceEntity) => {
-                const k = item.billingPeriod;
-                if (!acc[k]) {
-                    acc[k] = [];
+
+            prices[key as keyof typeof prices] = pricesData.reduce((acc: NewRelayPlan[], item: PriceEntity) => {
+                let existing = acc.find((i: NewRelayPlan) => i.currency === item.currency);
+
+                if (!existing) {
+                    existing = {
+                        currency: item.currency,
+                        prices: billingPeriod,
+                        profiles: item.profiles.toString(),
+                        searches: item.searches.toString(),
+                        priceIds: billingPeriod,
+                    };
+                    acc.push(existing);
                 }
-                acc[k].push(item);
+
+                const b = item.billingPeriod.toLowerCase() as keyof typeof billingPeriod;
+                existing.prices[b] = item.price + '';
+                existing.priceIds[b] = item.priceId;
+
                 return acc;
-            }, {} as RelayPrice);
+            }, []);
         }
 
         return prices;
