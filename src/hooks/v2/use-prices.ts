@@ -8,11 +8,11 @@ import {
 } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { NewRelayPlan, SubscriptionPeriod, SubscriptionTier } from 'types';
-import { useLocalStorage } from './use-localstorage';
+import type { RelayPlanWithAnnual, SubscriptionPeriod, SubscriptionTier } from 'types';
+import { useLocalStorage } from '../use-localstorage';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
-export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly' | 'annually'>;
 
 export type PriceDetails = {
     [key in ActiveSubscriptionTier]: {
@@ -36,7 +36,7 @@ export type Price = {
     };
 };
 export type Prices = {
-    [key in ActiveSubscriptionTier]: NewRelayPlan;
+    [key in ActiveSubscriptionTier]: RelayPlanWithAnnual;
 };
 
 export const PRICE_IDS = {
@@ -63,27 +63,31 @@ export const priceDetails: PriceDetails = {
 };
 
 export const useLocalStorageSelectedPrice = () =>
-    useLocalStorage<NewRelayPlan>('selectedPrice', {
+    useLocalStorage<RelayPlanWithAnnual>('selectedPrice', {
         currency: 'usd',
         prices: {
+            monthly: '0',
+            annually: '0',
+        },
+        originalPrices: {
             monthly: '0',
             annually: '0',
         },
         profiles: '',
         searches: '',
         priceIds: {
-            monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
-            annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+            monthly: '',
+            annually: '',
         },
     });
-export const usePrices = (currency: string) => {
+export const usePricesV2 = (currency: string) => {
     const [prices, setPrices] = useState<Prices>();
     const [loading, setLoading] = useState(false);
     const refreshPrices = useCallback(async () => {
         if (loading) return;
         setLoading(true);
         try {
-            const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
+            const data = await nextFetch<NewSubscriptionPricesGetResponse>('/v2/subscriptions/prices');
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
             // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
             const prices = {

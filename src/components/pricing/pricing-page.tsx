@@ -10,6 +10,9 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 import Link from 'next/link';
 import { LanguageToggle } from '../common/language-toggle';
+import { ToggleGroup, ToggleGroupItem } from 'shadcn/components/ui/toggle-group';
+import { usePricesV2 } from 'src/hooks/v2/use-prices';
+import { useCompany } from 'src/hooks/use-company';
 
 const ImageBackground = () => {
     return (
@@ -30,7 +33,9 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { t } = useTranslation();
     const router = useRouter();
     const { trackEvent } = useRudderstack();
-    const [period] = useState<ActiveSubscriptionPeriod>('monthly');
+    const { company } = useCompany();
+    const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
+    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('monthly');
 
     const options: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
 
@@ -75,7 +80,20 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             {t('pricing.relayClubCanHelp')}
                         </h4>
                     </div>
-
+                    <div className="container m-auto flex w-full max-w-screen-xl flex-wrap justify-center">
+                        {(!priceLoading || prices) && (
+                            <ToggleGroup
+                                type="single"
+                                value={period}
+                                onValueChange={(val: ActiveSubscriptionPeriod) => {
+                                    if (val) setPeriod(val);
+                                }}
+                            >
+                                <ToggleGroupItem value={'monthly'}>{t('pricing.monthly')}</ToggleGroupItem>
+                                <ToggleGroupItem value={'annually'}>{t('pricing.annually')}</ToggleGroupItem>
+                            </ToggleGroup>
+                        )}
+                    </div>
                     <div
                         className={`container m-auto flex ${
                             landingPage ? 'min-h-[20rem] 2xl:min-h-[30rem]' : 'min-h-[32rem]'
@@ -85,7 +103,6 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             <PriceCard key={option} period={period} priceTier={option} landingPage={landingPage} />
                         ))}
                     </div>
-
                     {landingPage && (
                         <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-xl">
                             {t('pricing.startFreeTrial')}

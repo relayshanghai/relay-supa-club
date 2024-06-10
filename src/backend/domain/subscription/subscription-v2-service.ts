@@ -21,7 +21,7 @@ import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/reque
 import type { Nullable } from 'types/nullable';
 import PriceRepository from 'src/backend/database/price/price-repository';
 import { type PriceEntity, type SubscriptionType } from 'src/backend/database/price/price-entity';
-import type { NewRelayPlan } from 'types';
+import type { RelayPlanWithAnnual } from 'types';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -542,8 +542,8 @@ export default class SubscriptionV2Service {
 
     async getPrices() {
         const prices = {
-            discovery: [] as NewRelayPlan[],
-            outreach: [] as NewRelayPlan[],
+            discovery: [] as RelayPlanWithAnnual[],
+            outreach: [] as RelayPlanWithAnnual[],
         };
         const billingPeriod = {
             monthly: '',
@@ -556,13 +556,14 @@ export default class SubscriptionV2Service {
                 },
             });
 
-            prices[key as keyof typeof prices] = pricesData.reduce((acc: NewRelayPlan[], item: PriceEntity) => {
-                let existing = acc.find((i: NewRelayPlan) => i.currency === item.currency);
+            prices[key as keyof typeof prices] = pricesData.reduce((acc: RelayPlanWithAnnual[], item: PriceEntity) => {
+                let existing = acc.find((i: RelayPlanWithAnnual) => i.currency === item.currency);
 
                 if (!existing) {
                     existing = {
                         currency: item.currency,
-                        prices: billingPeriod,
+                        prices: { annually: '', monthly: '' },
+                        originalPrices: { annually: '', monthly: '' },
                         profiles: item.profiles.toString(),
                         searches: item.searches.toString(),
                         priceIds: billingPeriod,
@@ -572,6 +573,7 @@ export default class SubscriptionV2Service {
 
                 const b = item.billingPeriod.toLowerCase() as keyof typeof billingPeriod;
                 existing.prices[b] = item.price + '';
+                existing.originalPrices[b] = item.originalPrice ? item.originalPrice + '' : null;
                 existing.priceIds[b] = item.priceId;
 
                 return acc;
