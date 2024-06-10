@@ -288,6 +288,17 @@ export default class StripeService {
         await this.deleteInvoices(invoices.map((invoice) => invoice.id));
     }
 
+    getSubscriptionInterval(interval: string) {
+        switch (interval) {
+            case 'month':
+                return 'monthly';
+            case 'year':
+                return 'annually';
+            default:
+                return 'monthly';
+        }
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

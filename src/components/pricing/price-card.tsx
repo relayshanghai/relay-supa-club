@@ -24,19 +24,8 @@ const isCurrentPlan = (
     product?: Stripe.Product,
 ) => {
     const tierName = tier === 'discovery' ? 'Discovery' : 'Outreach';
-    const subscriptionInterval = subscription?.subscriptionData.plan.interval;
-    const subscriptionIntervalCount = subscription?.subscriptionData.plan.interval_count;
-    let interval = null;
-    if (subscriptionInterval === 'month') {
-        if (subscriptionIntervalCount === 3) {
-            interval = 'quarterly';
-        } else {
-            interval = 'monthly';
-        }
-    } else if (subscriptionInterval === 'year') {
-        interval = 'annually';
-    }
-    return product?.name === tierName && interval === period && subscription?.status === 'ACTIVE';
+    const subscriptionInterval = subscription?.interval;
+    return product?.name === tierName && subscriptionInterval === period && subscription?.status === 'ACTIVE';
 };
 
 const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
@@ -115,7 +104,7 @@ export const PriceCard = ({
 
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
+        createSubscription({ priceId: price.priceIds[period], quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
                     clientSecret: res?.clientSecret,
@@ -137,7 +126,7 @@ export const PriceCard = ({
     };
 
     const triggerUpgradeSubscription = () => {
-        changeSubscription({ priceId: prices[priceTier].priceIds.monthly, quantity: 1 })
+        changeSubscription({ priceId: price.priceIds[period], quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();

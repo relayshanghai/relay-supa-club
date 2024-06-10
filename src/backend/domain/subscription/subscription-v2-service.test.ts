@@ -185,6 +185,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                 quantity: 1,
                                 plan: {
                                     id: 'plan_1',
+                                    interval: 'month',
                                 },
                             },
                         ],
@@ -261,6 +262,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                         },
                                         plan: {
                                             id: 'plan_1',
+                                            interval: 'month',
                                         },
                                     },
                                 ],
@@ -272,6 +274,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             current_period_end: 1712811791,
                             current_period_start: 1710133391,
                         },
+                        interval: 'monthly',
                         discount: 200,
                         coupon: 'mock-coupon-id',
                         activeAt: new Date(1710133391 * 1000),
@@ -653,6 +656,10 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                     id: 'price_1',
                                     unit_amount: 100,
                                 },
+                                plan: {
+                                    id: 'plan_1',
+                                    interval: 'month',
+                                },
                                 quantity: 1,
                             },
                         ],
@@ -706,20 +713,17 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             items: {
                                 data: [
                                     {
-                                        price: {
-                                            id: 'price_1',
-                                            unit_amount: 100,
-                                        },
+                                        price: { id: 'price_1', unit_amount: 100 },
+                                        plan: { id: 'plan_1', interval: 'month' },
                                         quantity: 1,
                                     },
                                 ],
                             },
                             current_period_start: 1710133391,
                             current_period_end: 1712811791,
-                            latest_invoice: {
-                                payment_intent: {},
-                            },
+                            latest_invoice: { payment_intent: {} },
                         },
+                        interval: 'monthly',
                         activeAt: new Date(1710133391 * 1000),
                         pausedAt: new Date(1712811791 * 1000),
                     },
@@ -796,54 +800,54 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     },
                 ];
                 const expectedPrices = {
-                    discovery: [
-                        {
+                    discovery: {
+                        cny: {
                             currency: 'cny',
                             prices: { annually: '9536.00', monthly: '935.00' },
                             originalPrices: { annually: '11220.00', monthly: null },
                             profiles: '200',
                             searches: '900',
                             priceIds: {
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
-                                annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
+                                annually: 'price_1PNV3qF5PN4woVWoY0u5MOi8',
+                                monthly: 'price_1PNV3SF5PN4woVWo02EnOZiX',
                             },
                         },
-                        {
+                        usd: {
                             currency: 'usd',
                             prices: { annually: '1316.00', monthly: '129.00' },
                             originalPrices: { annually: '1548.00', monthly: null },
                             profiles: '200',
                             searches: '900',
                             priceIds: {
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
                                 annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
+                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
                             },
                         },
-                    ],
-                    outreach: [
-                        {
+                    },
+                    outreach: {
+                        cny: {
                             currency: 'cny',
                             prices: { annually: '9536.00', monthly: '935.00' },
                             originalPrices: { annually: '11220.00', monthly: null },
                             profiles: '200',
                             searches: '900',
                             priceIds: {
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
-                                annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
+                                annually: 'price_1PNV3qF5PN4woVWoY0u5MOi8',
+                                monthly: 'price_1PNV3SF5PN4woVWo02EnOZiX',
                             },
                         },
-                        {
+                        usd: {
                             currency: 'usd',
                             prices: { annually: '1316.00', monthly: '129.00' },
                             originalPrices: { annually: '1548.00', monthly: null },
                             profiles: '200',
                             searches: '900',
                             priceIds: {
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
                                 annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
+                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
                             },
                         },
-                    ],
+                    },
                 };
 
                 const findPriceMock = vi.spyOn(PriceRepository.getRepository(), 'find');

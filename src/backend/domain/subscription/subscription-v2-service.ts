@@ -229,6 +229,9 @@ export default class SubscriptionV2Service {
                     (lastSubscription.items.data[0].price.unit_amount?.valueOf() ?? 0) *
                     (lastSubscription?.items?.data?.[0].quantity ?? 0),
                 subscriptionData: lastSubscription,
+                interval: StripeService.getService().getSubscriptionInterval(
+                    lastSubscription.items.data[0].plan.interval,
+                ),
                 discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() ?? 0,
                 coupon: lastSubscription.discount?.coupon?.id,
                 activeAt: lastSubscription.current_period_start
@@ -252,6 +255,9 @@ export default class SubscriptionV2Service {
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                         (lastSubscription?.items?.data?.[0].quantity ?? 0),
                     subscriptionData: lastSubscription,
+                    interval: StripeService.getService().getSubscriptionInterval(
+                        lastSubscription.items.data[0].plan.interval,
+                    ),
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: null,
@@ -271,6 +277,9 @@ export default class SubscriptionV2Service {
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                         (lastSubscription?.items?.data?.[0].quantity ?? 0),
                     subscriptionData: lastSubscription,
+                    interval: StripeService.getService().getSubscriptionInterval(
+                        lastSubscription.items.data[0].plan.interval,
+                    ),
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: new Date(lastSubscription.current_period_start * 1000),
@@ -364,6 +373,7 @@ export default class SubscriptionV2Service {
                     (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                     (subscription?.items?.data?.[0].quantity ?? 0),
                 subscriptionData: subscription,
+                interval: StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval),
                 discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
                 coupon: subscription.discount?.coupon?.id,
                 activeAt: new Date(subscription.current_period_start * 1000),
@@ -517,6 +527,9 @@ export default class SubscriptionV2Service {
                     (stripeSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                     (stripeSubscription.items.data[0].quantity ?? 0),
                 subscriptionData: stripeSubscription,
+                interval: StripeService.getService().getSubscriptionInterval(
+                    stripeSubscription.items.data[0].plan.interval,
+                ),
                 activeAt: new Date(stripeSubscription.current_period_start * 1000),
                 pausedAt: new Date(stripeSubscription.current_period_end * 1000),
             },
@@ -545,10 +558,6 @@ export default class SubscriptionV2Service {
             discovery: [] as RelayPlanWithAnnual[],
             outreach: [] as RelayPlanWithAnnual[],
         };
-        const billingPeriod = {
-            monthly: '',
-            annually: '',
-        };
         for (const key in prices) {
             const pricesData = await PriceRepository.getRepository().find({
                 where: {
@@ -556,28 +565,24 @@ export default class SubscriptionV2Service {
                 },
             });
 
-            prices[key as keyof typeof prices] = pricesData.reduce((acc: RelayPlanWithAnnual[], item: PriceEntity) => {
-                let existing = acc.find((i: RelayPlanWithAnnual) => i.currency === item.currency);
-
-                if (!existing) {
-                    existing = {
-                        currency: item.currency,
-                        prices: { annually: '', monthly: '' },
-                        originalPrices: { annually: '', monthly: '' },
-                        profiles: item.profiles.toString(),
-                        searches: item.searches.toString(),
-                        priceIds: billingPeriod,
+            const grouped = pricesData.reduce((acc: any, item: PriceEntity) => {
+                const { currency, profiles, searches, billingPeriod, price, originalPrice, priceId } = item;
+                if (!acc[currency]) {
+                    acc[currency] = {
+                        currency,
+                        prices: { annually: null, monthly: null },
+                        originalPrices: { annually: null, monthly: null },
+                        profiles: profiles.toString(),
+                        searches: searches.toString(),
+                        priceIds: { annually: null, monthly: null },
                     };
-                    acc.push(existing);
                 }
-
-                const b = item.billingPeriod.toLowerCase() as keyof typeof billingPeriod;
-                existing.prices[b] = item.price + '';
-                existing.originalPrices[b] = item.originalPrice ? item.originalPrice + '' : null;
-                existing.priceIds[b] = item.priceId;
-
+                acc[currency].prices[billingPeriod.toLowerCase()] = price;
+                acc[currency].originalPrices[billingPeriod.toLowerCase()] = originalPrice;
+                acc[currency].priceIds[billingPeriod.toLowerCase()] = priceId;
                 return acc;
-            }, []);
+            }, {});
+            prices[key as keyof typeof prices] = grouped;
         }
 
         return prices;

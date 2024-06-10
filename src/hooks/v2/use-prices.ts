@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useCallback, useEffect, useState } from 'react';
 import {
     STRIPE_PRICE_MONTHLY_DISCOVERY,
@@ -37,6 +36,14 @@ export type Price = {
 };
 export type Prices = {
     [key in ActiveSubscriptionTier]: RelayPlanWithAnnual;
+};
+export type AnnualPricesGetResponse = {
+    discovery: {
+        [key: string]: RelayPlanWithAnnual;
+    };
+    outreach: {
+        [key: string]: RelayPlanWithAnnual;
+    };
 };
 
 export const PRICE_IDS = {
@@ -87,12 +94,12 @@ export const usePricesV2 = (currency: string) => {
         if (loading) return;
         setLoading(true);
         try {
-            const data = await nextFetch<NewSubscriptionPricesGetResponse>('/v2/subscriptions/prices');
+            const data = await nextFetch<AnnualPricesGetResponse>('/v2/subscriptions/prices');
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
             // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
             const prices = {
-                discovery: data.discovery.find((plan) => plan.currency === currency),
-                outreach: data.outreach.find((plan) => plan.currency === currency),
+                discovery: data.discovery[currency],
+                outreach: data.outreach[currency],
                 addPayment: {
                     currency: currency,
                     prices: { monthly: '0' },
@@ -106,11 +113,11 @@ export const usePricesV2 = (currency: string) => {
             clientLogger(error, 'error');
         }
         setLoading(false);
-    }, []);
+    }, [currency]);
 
     useEffect(() => {
         refreshPrices();
-    }, [refreshPrices]);
+    }, [refreshPrices, currency]);
 
     return { prices, loading };
 };
