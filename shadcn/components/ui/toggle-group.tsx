@@ -25,7 +25,7 @@ const ToggleGroup = React.forwardRef<
 
 ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
 const toggleGroupItemClasses =
-    'flex items-center justify-center bg-white text-base px-2 py-1 rounded-full focus:bg-violet-600 focus:text-white focus:z-10';
+    'flex items-center justify-center bg-white text-base px-2 py-1 rounded-full focus:bg-violet-600 focus:text-white focus:z-10 data-[state=on]:bg-violet-600 data-[state=on]:text-white';
 const ToggleGroupItem = React.forwardRef<
     React.ElementRef<typeof ToggleGroupPrimitive.Item>,
     React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>
