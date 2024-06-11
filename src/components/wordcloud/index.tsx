@@ -85,7 +85,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const term = tags.length > 0 ? tags[0].tag : 'influencer';
+        const term = tags?.length > 0 ? tags[0].tag : 'influencer';
         const setWordArray = async () => {
             try {
                 const body = {

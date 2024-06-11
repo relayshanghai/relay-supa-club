@@ -27,8 +27,8 @@ export class UsageEntity {
     createdAt!: Date;
 
     @Column({ name: 'type' })
-    lastName!: string;
+    type!: string;
 
     @Column({ name: 'item_id' })
-    firstName!: string;
+    itemId!: string;
 }

@@ -4,6 +4,8 @@ import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { type EntityManager, type EntityTarget, In } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
+// start schedule release date, older data will not be fetched
+export const SCHEDULE_FETCH_START_DATE = new Date('2024-04-01T00:00:00.000Z');
 export default class SequenceInfluencerRepository extends BaseRepository<SequenceInfluencerEntity> {
     static repository = new SequenceInfluencerRepository();
     static getRepository(): SequenceInfluencerRepository {
@@ -53,15 +55,16 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
         const last30Days = new Date();
         last30Days.setDate(last30Days.getDate() - 30);
         const influencers: { id: string }[] = await this.query(
-            `select distinct(iqdata_id), id from sequence_influencers where 
+            `select distinct(iqdata_id), id from sequence_influencers where
+        created_at > $1 AND 
         funnel_status = 'To Contact' AND
         schedule_status = 'pending' AND
-        influencer_social_profile_id IS NOT NULL AND
         (
             (
                 (email IS NULL OR email = '') AND social_profile_last_fetched IS NULL
             )
         ) limit ${SEQUENCE_INFLUENCER_SOCIAL_NUMBER}`,
+            [SCHEDULE_FETCH_START_DATE],
         );
         return influencers.map((influencer) => influencer.id);
     }

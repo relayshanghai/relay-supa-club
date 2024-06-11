@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, AfterLoad } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, AfterLoad, type Relation } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { type Nullable } from 'types/nullable';
 
@@ -21,7 +21,7 @@ export class SubscriptionEntity<T = any> {
 
     @ManyToOne(() => CompanyEntity)
     @JoinColumn({ name: 'company_id' })
-    company!: CompanyEntity;
+    company!: Relation<CompanyEntity>;
 
     @Column({ default: 'stripe' })
     provider!: string;
