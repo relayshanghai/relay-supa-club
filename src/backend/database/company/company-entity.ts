@@ -1,9 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+    OneToOne,
+    type Relation,
+} from 'typeorm';
 import { ProfileEntity } from '../profile/profile-entity';
 import { ProductEntity } from '../product/product-entity';
 import { OutreachEmailTemplateEntity } from '../sequence-email-template/sequence-email-template-entity';
 import { SequenceEntity } from '../sequence/sequence-entity';
 import { SequenceInfluencerEntity } from '../sequence/sequence-influencer-entity';
+import { SubscriptionEntity } from '../subcription/subscription-entity';
 
 @Entity('companies')
 export class CompanyEntity {
@@ -89,4 +99,7 @@ export class CompanyEntity {
 
     @Column({ name: 'currency', nullable: true })
     currency?: string;
+
+    @OneToOne(() => SubscriptionEntity, (subscription) => subscription.company, { cascade: true })
+    subscription?: Relation<SubscriptionEntity>;
 }

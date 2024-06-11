@@ -1,6 +1,6 @@
 import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
-import type { EntityManager, EntityTarget } from 'typeorm';
+import { Between, type EntityManager, type EntityTarget } from 'typeorm';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { UsageEntity } from './entity';
 
@@ -28,5 +28,14 @@ export class UsageRepository extends BaseRepository<UsageEntity> {
 
     async deleteUsagesByProfile(userId: string) {
         return this.delete({ profile: { id: userId } });
+    }
+
+    async getCountByCompany(companyId: string, startDate: Date, endDate: Date) {
+        return this.count({
+            where: {
+                company: { id: companyId },
+                createdAt: Between(startDate, endDate),
+            },
+        });
     }
 }

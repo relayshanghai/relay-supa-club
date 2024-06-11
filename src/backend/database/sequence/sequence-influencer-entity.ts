@@ -22,6 +22,7 @@ export enum SequenceInfluencerScheduleStatus {
     PROCESSING = 'processing',
     COMPLETED = 'completed',
     FAILED = 'failed',
+    INSUFICIENT_BALANCE = 'insuficient_balance',
 }
 
 @Entity('sequence_influencers')

@@ -1,17 +1,21 @@
+import { type CompanyEntity } from 'src/backend/database/company/company-entity';
+import { InfluencerRepository } from 'src/backend/database/influencer/influencer-repository';
 import { type InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { InfluencerSocialProfileRepository } from 'src/backend/database/influencer/influencer-social-profile-repository';
+import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import {
     type SequenceInfluencerEntity,
     SequenceInfluencerScheduleStatus,
 } from 'src/backend/database/sequence/sequence-influencer-entity';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
+import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
+import { UsageRepository } from 'src/backend/database/usages/repository';
 import BoostbotService from 'src/backend/integration/boostbot/boostbot-service';
 import { delay } from 'src/backend/integration/distributed-queue/distributed-queue';
 import IQDataService from 'src/backend/integration/iqdata/iqdata-service';
 import { logger } from 'src/backend/integration/logger';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-influencer';
-import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import { type DeepPartial, IsNull, MoreThanOrEqual, Not } from 'typeorm';
 import { type CreatorReport } from 'types';
@@ -30,38 +34,87 @@ export default class SequenceInfluencerService {
             await delay(1000);
         }
     }
+
+    async checkUsage(company: CompanyEntity) {
+        if (!company.subscription) {
+            throw new Error('Subscription not found');
+        }
+        if (![SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(company.subscription?.status)) {
+            throw new Error('Subscription not active');
+        }
+
+        //change this to a balance check
+        const today = new Date();
+        const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startMonth, endMonth);
+        const limit = parseInt(company.profilesLimit || company.trialProfilesLimit) || 0;
+        if (usages >= limit) {
+            throw new Error('Profile limit reached');
+        }
+    }
+
+    async storeUsage(company: CompanyEntity, sequenceInfluencer: SequenceInfluencerEntity) {
+        const profile = await ProfileRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: company.id,
+                },
+            },
+        });
+        if (!profile) return;
+        await UsageRepository.getRepository().save({
+            company: {
+                id: company.id,
+            },
+            type: 'profile',
+            profile: {
+                id: profile.id,
+            },
+            itemId: sequenceInfluencer.iqdataId,
+        });
+    }
     @UseLogger()
     async startSyncReport(sequenceInfluencerId: string) {
-        await SequenceInfluencerRepository.getRepository().update(
-            {
-                id: sequenceInfluencerId,
-            },
-            {
-                scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
-            },
-        );
         try {
             const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
                 where: {
                     id: sequenceInfluencerId,
                 },
-                relations: ['influencerSocialProfile'],
+                relations: ['company', 'influencerSocialProfile', 'company.subscription'],
             });
             if (!sequenceInfluencer) {
                 throw new NotFoundError('Sequence Influencer not found');
             }
+            await this.checkUsage(sequenceInfluencer.company);
+            await SequenceInfluencerRepository.getRepository().update(
+                {
+                    id: sequenceInfluencerId,
+                },
+                {
+                    scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
+                },
+            );
             const last30Days = new Date();
             last30Days.setDate(last30Days.getDate() - 30);
             const similarSequenceInfluencers = await SequenceInfluencerRepository.getRepository().findOne({
                 where: {
                     email: Not(IsNull()),
-                    influencerSocialProfile: {
-                        id: sequenceInfluencer?.influencerSocialProfile?.id,
-                    },
+                    iqdataId: sequenceInfluencer.iqdataId,
                     socialProfileLastFetched: MoreThanOrEqual(last30Days),
                 },
             });
             if (similarSequenceInfluencers) {
+                const socialProfile = await InfluencerSocialProfileRepository.getRepository().findOne({
+                    where: [
+                        {
+                            referenceId: `iqdata:${similarSequenceInfluencers.iqdataId}`,
+                        },
+                        {
+                            referenceId: similarSequenceInfluencers.iqdataId,
+                        },
+                    ],
+                });
                 await SequenceInfluencerRepository.getRepository().update(
                     {
                         id: sequenceInfluencer.id,
@@ -71,34 +124,34 @@ export default class SequenceInfluencerService {
                         email: similarSequenceInfluencers.email,
                         tags: similarSequenceInfluencers.tags,
                         socialProfileLastFetched: similarSequenceInfluencers.socialProfileLastFetched,
+                        influencerSocialProfile: socialProfile || sequenceInfluencer.influencerSocialProfile,
                     },
                 );
+                await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
                 return;
             }
-            if (!sequenceInfluencer.influencerSocialProfile?.referenceId) {
+            if (!sequenceInfluencer.iqdataId) {
                 throw new Error('unknown reference id');
             }
-            const ids = sequenceInfluencer.influencerSocialProfile.referenceId.split(':');
+
+            const ids = sequenceInfluencer.iqdataId.split(':');
             const referenceId = ids.length > 1 ? ids[1] : ids[0];
             const report = await IQDataService.getService().getReportMetaData(sequenceInfluencer.platform, referenceId);
             let reportData: CreatorReport;
-            if (report) {
-                reportData = await IQDataService.getService().getReport(report.id);
-            } else
+            if (report) reportData = await IQDataService.getService().getReport(report.id);
+            else
                 reportData = await IQDataService.getService().requestNewReport(
                     sequenceInfluencer.platform,
                     referenceId,
                 );
+            const socialInfluencer = await this.syncInfluencerProfile(reportData, sequenceInfluencer.platform);
+            if (socialInfluencer) {
+                sequenceInfluencer.influencerSocialProfile = socialInfluencer;
+            }
+            sequenceInfluencer.influencerSocialProfile = socialInfluencer;
+            await this.syncSequenceInfluencer(sequenceInfluencer, reportData);
+            await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
 
-            await Promise.all([
-                this.syncSequenceInfluencer(sequenceInfluencer, reportData),
-                awaitToError(
-                    this.syncInfluencerProfile(
-                        sequenceInfluencer.influencerSocialProfile as InfluencerSocialProfileEntity,
-                        reportData,
-                    ),
-                ),
-            ]);
             return;
         } catch (e) {
             const err = e as Error;
@@ -112,9 +165,12 @@ export default class SequenceInfluencerService {
                     id: sequenceInfluencerId,
                 },
                 {
-                    scheduleStatus: SequenceInfluencerScheduleStatus.FAILED,
+                    scheduleStatus: err.message.includes('limit')
+                        ? SequenceInfluencerScheduleStatus.INSUFICIENT_BALANCE
+                        : SequenceInfluencerScheduleStatus.FAILED,
                 },
             );
+            throw e;
         }
     }
     async syncSequenceInfluencer(sequenceInfluencer: SequenceInfluencerEntity, reportData: CreatorReport) {
@@ -125,6 +181,7 @@ export default class SequenceInfluencerService {
             socialProfileLastFetched: new Date(),
             avatarUrl: reportData.user_profile.picture,
             url: reportData.user_profile.url,
+            influencerSocialProfile: sequenceInfluencer.influencerSocialProfile,
         };
         if (email) toUpdate.email = email;
         if (tags.length) toUpdate.tags = tags;
@@ -136,7 +193,7 @@ export default class SequenceInfluencerService {
             toUpdate,
         );
     }
-    async syncInfluencerProfile(profile: InfluencerSocialProfileEntity, reportData: CreatorReport) {
+    async syncInfluencerProfile(reportData: CreatorReport, platform: string) {
         const email = reportData.user_profile.contacts.filter((value) => value.type === 'email')[0]?.value || null;
         const toUpdate: DeepPartial<InfluencerSocialProfileEntity> = {
             name:
@@ -145,13 +202,17 @@ export default class SequenceInfluencerService {
                 reportData.user_profile.handle ||
                 reportData.user_profile.custom_name ||
                 '',
+            platform: platform,
+
             avatarUrl: reportData.user_profile.picture,
+            url: reportData.user_profile.url,
             recentPostTitle:
                 reportData.user_profile.recent_posts?.find((post) => post.text || post.title)?.title ||
                 reportData.user_profile.recent_posts?.find((post) => post.text || post.title)?.text ||
                 '',
             recentPostUrl: reportData.user_profile.recent_posts?.find((post) => post.link)?.link || '',
             topicTags: reportData.user_profile.relevant_tags,
+            data: reportData.user_profile,
         };
         const post = findMostRecentPostWithTextOrTitle(reportData.user_profile.recent_posts);
         if (post.postTitle) {
@@ -159,12 +220,39 @@ export default class SequenceInfluencerService {
             toUpdate.recentPostUrl = post.postLink;
         }
         if (email) toUpdate.email = email;
+        let socialProfile = await InfluencerSocialProfileRepository.getRepository().findOne({
+            where: [
+                {
+                    referenceId: `iqdata:${reportData.user_profile.user_id}`,
+                },
+                {
+                    referenceId: reportData.user_profile.user_id,
+                },
+            ],
+        });
+        if (socialProfile) {
+            await InfluencerSocialProfileRepository.getRepository().update(
+                {
+                    id: socialProfile.id,
+                },
+                toUpdate,
+            );
+        } else {
+            const insertedInfluencer = await InfluencerRepository.getRepository().save({
+                name: toUpdate.name,
+                email: toUpdate.email,
+                avatarUrl: toUpdate.avatarUrl,
+                url: toUpdate.url,
+                platform: toUpdate.platform,
+            });
+            socialProfile = await InfluencerSocialProfileRepository.getRepository().save({
+                ...toUpdate,
+                referenceId: `iqdata:${reportData.user_profile.user_id}`,
+                influencer: insertedInfluencer,
+                username: reportData.user_profile.username || reportData.user_profile.user_id || '',
+            });
+        }
 
-        await InfluencerSocialProfileRepository.getRepository().update(
-            {
-                id: profile.id,
-            },
-            toUpdate,
-        );
+        return socialProfile;
     }
 }
