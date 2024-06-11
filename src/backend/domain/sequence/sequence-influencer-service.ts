@@ -76,25 +76,25 @@ export default class SequenceInfluencerService {
     }
     @UseLogger()
     async startSyncReport(sequenceInfluencerId: string) {
-        const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
-            where: {
-                id: sequenceInfluencerId,
-            },
-            relations: ['company', 'influencerSocialProfile', 'company.subscription'],
-        });
-        if (!sequenceInfluencer) {
-            throw new NotFoundError('Sequence Influencer not found');
-        }
-        await this.checkUsage(sequenceInfluencer.company);
-        await SequenceInfluencerRepository.getRepository().update(
-            {
-                id: sequenceInfluencerId,
-            },
-            {
-                scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
-            },
-        );
         try {
+            const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
+                where: {
+                    id: sequenceInfluencerId,
+                },
+                relations: ['company', 'influencerSocialProfile', 'company.subscription'],
+            });
+            if (!sequenceInfluencer) {
+                throw new NotFoundError('Sequence Influencer not found');
+            }
+            await this.checkUsage(sequenceInfluencer.company);
+            await SequenceInfluencerRepository.getRepository().update(
+                {
+                    id: sequenceInfluencerId,
+                },
+                {
+                    scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
+                },
+            );
             const last30Days = new Date();
             last30Days.setDate(last30Days.getDate() - 30);
             const similarSequenceInfluencers = await SequenceInfluencerRepository.getRepository().findOne({

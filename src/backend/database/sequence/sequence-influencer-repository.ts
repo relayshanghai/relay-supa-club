@@ -63,7 +63,12 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             (
                 (email IS NULL OR email = '') AND social_profile_last_fetched IS NULL
             )
-        ) limit ${SEQUENCE_INFLUENCER_SOCIAL_NUMBER}`,
+        ) and 
+        -- only active and trial subscription
+        company_id in (
+            select company_id from subscriptions where active_at is not null and( paused_at > current_timestamp or cancelled_at > current_timestamp)
+        )
+        limit ${SEQUENCE_INFLUENCER_SOCIAL_NUMBER}`,
             [SCHEDULE_FETCH_START_DATE],
         );
         return influencers.map((influencer) => influencer.id);
