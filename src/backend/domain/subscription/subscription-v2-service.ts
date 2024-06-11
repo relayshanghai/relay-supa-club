@@ -19,6 +19,8 @@ import { type CompanyEntity } from 'src/backend/database/company/company-entity'
 import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
 import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
 import type { Nullable } from 'types/nullable';
+import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
+import { SequenceInfluencerScheduleStatus } from 'src/backend/database/sequence/sequence-influencer-entity';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -392,6 +394,15 @@ export default class SubscriptionV2Service {
             await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
+        await SequenceInfluencerRepository.getRepository().update(
+            {
+                company: { id: companyId },
+                scheduleStatus: SequenceInfluencerScheduleStatus.INSUFICIENT_BALANCE,
+            },
+            {
+                scheduleStatus: SequenceInfluencerScheduleStatus.PENDING,
+            },
+        );
     }
 
     @CompanyIdRequired()
@@ -470,15 +481,27 @@ export default class SubscriptionV2Service {
                 cancel_at_period_end: false,
             },
         );
-        await SubscriptionRepository.getRepository().update(
-            {
-                id: subscription.id,
-            },
-            {
-                subscriptionData: updatedSubscription,
-                cancelledAt: null,
-            },
-        );
+
+        await Promise.all([
+            SubscriptionRepository.getRepository().update(
+                {
+                    id: subscription.id,
+                },
+                {
+                    subscriptionData: updatedSubscription,
+                    cancelledAt: null,
+                },
+            ),
+            SequenceInfluencerRepository.getRepository().update(
+                {
+                    company: { id: subscription.company.id },
+                    scheduleStatus: SequenceInfluencerScheduleStatus.INSUFICIENT_BALANCE,
+                },
+                {
+                    scheduleStatus: SequenceInfluencerScheduleStatus.PENDING,
+                },
+            ),
+        ]);
     }
 
     @CompanyIdRequired()

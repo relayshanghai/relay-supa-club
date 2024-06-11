@@ -165,7 +165,9 @@ export default class SequenceInfluencerService {
                     id: sequenceInfluencerId,
                 },
                 {
-                    scheduleStatus: SequenceInfluencerScheduleStatus.FAILED,
+                    scheduleStatus: err.message.includes('limit')
+                        ? SequenceInfluencerScheduleStatus.INSUFICIENT_BALANCE
+                        : SequenceInfluencerScheduleStatus.FAILED,
                 },
             );
             throw e;
