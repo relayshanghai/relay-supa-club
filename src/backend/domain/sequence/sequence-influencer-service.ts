@@ -17,7 +17,7 @@ import { logger } from 'src/backend/integration/logger';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-influencer';
 import { NotFoundError } from 'src/utils/error/http-error';
-import { type DeepPartial, IsNull, MoreThanOrEqual, Not } from 'typeorm';
+import { type DeepPartial, IsNull, MoreThanOrEqual, Not, Between } from 'typeorm';
 import { type CreatorReport } from 'types';
 
 export default class SequenceInfluencerService {
@@ -63,6 +63,23 @@ export default class SequenceInfluencerService {
             },
         });
         if (!profile) return;
+        const today = new Date();
+        const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const exists = await UsageRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: company.id,
+                },
+                type: 'profile',
+                profile: {
+                    id: profile.id,
+                },
+                itemId: sequenceInfluencer.iqdataId,
+                createdAt: Between(startMonth, endMonth),
+            },
+        });
+        if (exists) return;
         await UsageRepository.getRepository().save({
             company: {
                 id: company.id,
