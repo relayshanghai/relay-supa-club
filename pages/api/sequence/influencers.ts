@@ -27,4 +27,10 @@ const postHandler: NextApiHandler = async (
     return res.status(httpCodes.OK).json(influencers);
 };
 
+export const config = {
+    api: {
+        responseLimit: '16mb',
+    },
+};
+
 export default ApiHandler({ postHandler });
