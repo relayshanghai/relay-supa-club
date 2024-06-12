@@ -44,10 +44,9 @@ export default class SequenceInfluencerService {
         }
 
         //change this to a balance check
-        const today = new Date();
-        const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startMonth, endMonth);
+        const endDate = new Date((company.subscription.cancelledAt || company.subscription.pausedAt) as Date);
+        const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
+        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startDate, endDate);
         const limit = parseInt(company.profilesLimit || company.trialProfilesLimit) || 0;
         if (usages >= limit) {
             throw new Error('Profile limit reached');
@@ -63,9 +62,8 @@ export default class SequenceInfluencerService {
             },
         });
         if (!profile) return;
-        const today = new Date();
-        const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const endDate = new Date((company.subscription?.cancelledAt || company.subscription?.pausedAt) as Date);
+        const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
         const exists = await UsageRepository.getRepository().findOne({
             where: {
                 company: {
@@ -76,7 +74,7 @@ export default class SequenceInfluencerService {
                     id: profile.id,
                 },
                 itemId: sequenceInfluencer.iqdataId,
-                createdAt: Between(startMonth, endMonth),
+                createdAt: Between(startDate, endDate),
             },
         });
         if (exists) return;
