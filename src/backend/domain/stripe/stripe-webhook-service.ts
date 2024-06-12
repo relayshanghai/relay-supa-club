@@ -117,6 +117,9 @@ export class StripeWebhookService {
             if (!stripeSubscription) {
                 throw new Error('Stripe subscription not found');
             }
+            subscription.interval = StripeService.getService().getSubscriptionInterval(
+                stripeSubscription.items.data[0].plan.interval,
+            );
             subscription.pausedAt = new Date(stripeSubscription.current_period_end * 1000);
             subscription.cancelledAt = null;
             await SubscriptionRepository.getRepository().save(subscription);
@@ -200,11 +203,15 @@ export class StripeWebhookService {
             throw new Error('Company not found');
         }
         const eventSubscription = data.object;
+        const interval = StripeService.getService().getSubscriptionInterval(
+            eventSubscription.items.data[0].plan.interval,
+        );
         await SubscriptionRepository.getRepository().update(
             {
                 company: company as CompanyEntity,
             },
             {
+                interval,
                 pausedAt: eventSubscription.current_period_end
                     ? new Date(eventSubscription.current_period_end * 1000)
                     : null,
