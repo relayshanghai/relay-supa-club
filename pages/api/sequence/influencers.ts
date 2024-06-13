@@ -29,7 +29,7 @@ const postHandler: NextApiHandler = async (
 
 export const config = {
     api: {
-        responseLimit: '32mb',
+        responseLimit: '4.5mb',
     },
 };
 
