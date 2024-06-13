@@ -66,12 +66,24 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             return [];
         }
         if (filterSteps.length === 0) {
-            return sequenceInfluencers;
+            return sequenceInfluencers.filter(
+                (influencer) =>
+                    influencer.funnel_status === 'To Contact' ||
+                    influencer.funnel_status === 'In Sequence' ||
+                    influencer.funnel_status === 'Ignored',
+            );
         }
-        const filteredInfluencers = sequenceInfluencers.filter((influencer) => {
-            const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
-            return step && step.name && filterSteps.includes(step.name);
-        });
+        const filteredInfluencers = sequenceInfluencers
+            .filter(
+                (influencer) =>
+                    influencer.funnel_status === 'To Contact' ||
+                    influencer.funnel_status === 'In Sequence' ||
+                    influencer.funnel_status === 'Ignored',
+            )
+            .filter((influencer) => {
+                const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+                return step && step.name && filterSteps.includes(step.name);
+            });
         return filteredInfluencers;
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
