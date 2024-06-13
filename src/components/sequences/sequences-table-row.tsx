@@ -6,7 +6,7 @@ import { decimalToPercent } from 'src/utils/formatter';
 import { Brackets } from '../icons';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '../button';
 import { EmailPreviewModal } from './email-preview-modal';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -39,6 +39,18 @@ export const SequencesTableRow = ({
         onCheckboxChange(sequence.id);
     };
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
+
+    const influencer = useMemo(
+        () =>
+            sequenceInfluencers?.filter(
+                (influencer) =>
+                    influencer.funnel_status === 'To Contact' ||
+                    influencer.funnel_status === 'In Sequence' ||
+                    influencer.funnel_status === 'Ignored',
+            ),
+        [sequenceInfluencers],
+    );
+
     return (
         <>
             <EmailPreviewModal
@@ -62,14 +74,14 @@ export const SequencesTableRow = ({
                     onClick={() => {
                         track(OpenSequence, {
                             sequence_id: sequence.id,
-                            total_influencers: sequenceInfluencers?.length || 0,
+                            total_influencers: influencer?.length || 0,
                             $add: { sequence_open_count: 1 },
                         });
                     }}
                 >
                     <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{influencer?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_first_name}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
