@@ -124,6 +124,10 @@ export class StripeWebhookService {
         }
         const { companyId } = RequestContext.getContext();
         if (!companyId) throw new Error('Company not found');
+
+        // if the paid invoice was free trial, we don't need to store the subscription
+        if (data?.object.charge === null && data?.object.payment_intent === null) return;
+
         await SubscriptionV2Service.getService().storeSubscription({
             companyId,
             cusId: data?.object.customer as string,
