@@ -73,12 +73,12 @@ export class SubscriptionEntity<T = any> {
             s = SubscriptionStatus.TRIAL;
         } else if (activeAt === null && currentTime > cancelledAt) {
             s = SubscriptionStatus.TRIAL_EXPIRED;
-        } else if (activeAt !== null && currentTime < pausedAt) {
-            s = SubscriptionStatus.ACTIVE;
         } else if (activeAt !== null && pausedAt !== null && currentTime >= pausedAt && cancelledAt === null) {
             s = SubscriptionStatus.PASS_DUE;
         } else if (activeAt !== null && cancelledAt !== null && currentTime >= cancelledAt) {
             s = SubscriptionStatus.CANCELLED;
+        } else if (activeAt !== null && currentTime < pausedAt) {
+            s = SubscriptionStatus.ACTIVE;
         }
         this.status = s;
     }
