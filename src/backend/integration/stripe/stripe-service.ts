@@ -1,7 +1,6 @@
 import awaitToError from 'src/utils/await-to-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import Stripe from 'stripe';
-import type { StripePriceWithProductMetadata } from 'types';
 import type { Nullable } from 'types/nullable';
 
 export type ChangeSubscriptionRequestType = {
@@ -182,21 +181,6 @@ export default class StripeService {
         return await StripeService.client.prices.retrieve(priceId);
     }
 
-    async getPriceByProduct(productId: string): Promise<Stripe.ApiList<StripePriceWithProductMetadata>> {
-        const response = (await StripeService.client.prices.list({
-            active: true,
-            expand: ['data.product'],
-            product: productId,
-        })) as unknown as Stripe.ApiList<StripePriceWithProductMetadata>;
-
-        if (response.has_more) {
-            const nextPage = await this.getPriceByProduct(productId);
-            response.data.push(...nextPage.data);
-        }
-
-        return response;
-    }
-
     async getProduct(productId: string) {
         return await StripeService.client.products.retrieve(productId);
     }
@@ -286,17 +270,6 @@ export default class StripeService {
         const draftInvoices = await this.getDraftInvoiceBySubscription(subscriptionId);
         const invoices = [...draftInvoices.data];
         await this.deleteInvoices(invoices.map((invoice) => invoice.id));
-    }
-
-    getSubscriptionInterval(interval: string) {
-        switch (interval) {
-            case 'month':
-                return 'monthly';
-            case 'year':
-                return 'annually';
-            default:
-                return 'monthly';
-        }
     }
 
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {

@@ -185,7 +185,6 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/v2/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
     if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
         return allowTrackingCors(req, res);

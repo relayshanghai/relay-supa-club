@@ -9,8 +9,6 @@ import { UnprocessableEntityError } from 'src/utils/error/http-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import { type SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
-import PriceRepository from 'src/backend/database/price/price-repository';
-import type { PriceEntity } from 'src/backend/database/price/price-entity';
 vi.mock('src/backend/database/provider/transaction-decorator', () => ({
     UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
         // do nothing
@@ -185,7 +183,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                 quantity: 1,
                                 plan: {
                                     id: 'plan_1',
-                                    interval: 'month',
                                 },
                             },
                         ],
@@ -262,7 +259,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                         },
                                         plan: {
                                             id: 'plan_1',
-                                            interval: 'month',
                                         },
                                     },
                                 ],
@@ -274,7 +270,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             current_period_end: 1712811791,
                             current_period_start: 1710133391,
                         },
-                        interval: 'monthly',
                         discount: 200,
                         coupon: 'mock-coupon-id',
                         activeAt: new Date(1710133391 * 1000),
@@ -656,10 +651,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                                     id: 'price_1',
                                     unit_amount: 100,
                                 },
-                                plan: {
-                                    id: 'plan_1',
-                                    interval: 'month',
-                                },
                                 quantity: 1,
                             },
                         ],
@@ -713,17 +704,20 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                             items: {
                                 data: [
                                     {
-                                        price: { id: 'price_1', unit_amount: 100 },
-                                        plan: { id: 'plan_1', interval: 'month' },
+                                        price: {
+                                            id: 'price_1',
+                                            unit_amount: 100,
+                                        },
                                         quantity: 1,
                                     },
                                 ],
                             },
                             current_period_start: 1710133391,
                             current_period_end: 1712811791,
-                            latest_invoice: { payment_intent: {} },
+                            latest_invoice: {
+                                payment_intent: {},
+                            },
                         },
-                        interval: 'monthly',
                         activeAt: new Date(1710133391 * 1000),
                         pausedAt: new Date(1712811791 * 1000),
                     },
@@ -740,124 +734,6 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 expect(err).not.toBeNull();
                 expect(err).toBeInstanceOf(NotFoundError);
                 expect(err.message).toBe('No subscription found');
-            });
-        });
-        describe('getPrices', () => {
-            it('should return prices grouped by subscription type and billing period', async () => {
-                // Arrange
-                const pricesData = [
-                    {
-                        id: '4b160650-9aaa-417e-8adc-54733af3e1ff',
-                        subscriptionType: 'discovery',
-                        currency: 'cny',
-                        billingPeriod: 'ANNUALLY',
-                        price: '9536.00',
-                        originalPrice: '11220.00',
-                        profiles: 200,
-                        searches: 900,
-                        priceId: 'price_1PNV3qF5PN4woVWoY0u5MOi8',
-                        createdAt: '2024-06-05T01:07:09.203Z',
-                        updatedAt: '2024-06-05T01:07:09.203Z',
-                    },
-                    {
-                        id: 'd4fc4ba4-30a7-4852-941f-dd0a877f0fab',
-                        subscriptionType: 'discovery',
-                        currency: 'cny',
-                        billingPeriod: 'MONTHLY',
-                        price: '935.00',
-                        originalPrice: null,
-                        profiles: 200,
-                        searches: 900,
-                        priceId: 'price_1PNV3SF5PN4woVWo02EnOZiX',
-                        createdAt: '2024-06-05T01:07:09.207Z',
-                        updatedAt: '2024-06-05T01:07:09.207Z',
-                    },
-                    {
-                        id: '9e1e8649-e0b7-4510-bd0d-9621fb6de325',
-                        subscriptionType: 'discovery',
-                        currency: 'usd',
-                        billingPeriod: 'ANNUALLY',
-                        price: '1316.00',
-                        originalPrice: '1548.00',
-                        profiles: 200,
-                        searches: 900,
-                        priceId: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
-                        createdAt: '2024-06-05T01:07:09.209Z',
-                        updatedAt: '2024-06-05T01:07:09.209Z',
-                    },
-                    {
-                        id: '4d6d7672-4b28-423e-ad22-7006e3f13302',
-                        subscriptionType: 'discovery',
-                        currency: 'usd',
-                        billingPeriod: 'MONTHLY',
-                        price: '129.00',
-                        originalPrice: null,
-                        profiles: 200,
-                        searches: 900,
-                        priceId: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
-                        createdAt: '2024-06-05T01:07:09.212Z',
-                        updatedAt: '2024-06-05T01:07:09.212Z',
-                    },
-                ];
-                const expectedPrices = {
-                    discovery: {
-                        cny: {
-                            currency: 'cny',
-                            prices: { annually: '9536.00', monthly: '935.00' },
-                            originalPrices: { annually: '11220.00', monthly: null },
-                            profiles: '200',
-                            searches: '900',
-                            priceIds: {
-                                annually: 'price_1PNV3qF5PN4woVWoY0u5MOi8',
-                                monthly: 'price_1PNV3SF5PN4woVWo02EnOZiX',
-                            },
-                        },
-                        usd: {
-                            currency: 'usd',
-                            prices: { annually: '1316.00', monthly: '129.00' },
-                            originalPrices: { annually: '1548.00', monthly: null },
-                            profiles: '200',
-                            searches: '900',
-                            priceIds: {
-                                annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
-                            },
-                        },
-                    },
-                    outreach: {
-                        cny: {
-                            currency: 'cny',
-                            prices: { annually: '9536.00', monthly: '935.00' },
-                            originalPrices: { annually: '11220.00', monthly: null },
-                            profiles: '200',
-                            searches: '900',
-                            priceIds: {
-                                annually: 'price_1PNV3qF5PN4woVWoY0u5MOi8',
-                                monthly: 'price_1PNV3SF5PN4woVWo02EnOZiX',
-                            },
-                        },
-                        usd: {
-                            currency: 'usd',
-                            prices: { annually: '1316.00', monthly: '129.00' },
-                            originalPrices: { annually: '1548.00', monthly: null },
-                            profiles: '200',
-                            searches: '900',
-                            priceIds: {
-                                annually: 'price_1PNUz3F5PN4woVWog9Ds2Xi8',
-                                monthly: 'price_1PNUyXF5PN4woVWoC8VMxxqE',
-                            },
-                        },
-                    },
-                };
-
-                const findPriceMock = vi.spyOn(PriceRepository.getRepository(), 'find');
-                findPriceMock.mockResolvedValue(pricesData as unknown as PriceEntity[]);
-
-                // Act
-                const result = await SubscriptionV2Service.getService().getPrices();
-
-                // Assert
-                expect(result).toStrictEqual(expectedPrices);
             });
         });
     });

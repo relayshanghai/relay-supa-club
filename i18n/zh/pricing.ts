@@ -10,8 +10,6 @@ const pricing = {
     perMonth: '/月',
     usdPerMonth: '美金/月',
     rmbPerMonth: '人民币/月',
-    usdPerYear: '美元/年',
-    rmbPerYear: '人民币/年',
     startFreeTrial: '开始免费试用',
     contactNow: '立即联系',
     checkOutOur: '查看我们的',

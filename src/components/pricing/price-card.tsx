@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { useLocalStorageSelectedPrice } from 'src/hooks/use-prices';
+import { useLocalStorageSelectedPrice, usePrices } from 'src/hooks/use-prices';
 import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
@@ -14,8 +14,6 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useLocalStorageSubscribeResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
-import { usePricesV2 } from 'src/hooks/v2/use-prices';
-import PriceCardSkeleton from './price-card-skeleton';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -24,8 +22,19 @@ const isCurrentPlan = (
     product?: Stripe.Product,
 ) => {
     const tierName = tier === 'discovery' ? 'Discovery' : 'Outreach';
-    const subscriptionInterval = subscription?.interval;
-    return product?.name === tierName && subscriptionInterval === period && subscription?.status === 'ACTIVE';
+    const subscriptionInterval = subscription?.subscriptionData.plan.interval;
+    const subscriptionIntervalCount = subscription?.subscriptionData.plan.interval_count;
+    let interval = null;
+    if (subscriptionInterval === 'month') {
+        if (subscriptionIntervalCount === 3) {
+            interval = 'quarterly';
+        } else {
+            interval = 'monthly';
+        }
+    } else if (subscriptionInterval === 'year') {
+        interval = 'annually';
+    }
+    return product?.name === tierName && interval === period && subscription?.status === 'ACTIVE';
 };
 
 const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
@@ -61,7 +70,7 @@ export const PriceCard = ({
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { company } = useCompany();
-    const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
+    const { prices, loading: priceLoading } = usePrices(company?.currency || 'cny');
     const { refreshSubscription } = useSubscriptionLegacy();
     const {
         subscription,
@@ -74,14 +83,42 @@ export const PriceCard = ({
     const [, setStripeSecretResponse] = useLocalStorageSubscribeResponse();
     const [, setSelectedPrice] = useLocalStorageSelectedPrice();
     const router = useRouter();
-
     if (priceLoading || !prices)
         return (
-            <div className="mt-4">
-                <PriceCardSkeleton />
+            <div className="max-w-lg animate-pulse space-y-2.5">
+                <div className="flex w-full items-center">
+                    <div className="h-2.5 w-32 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[480px] items-center">
+                    <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[400px] items-center">
+                    <div className="h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[480px] items-center">
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <div className="flex w-full max-w-[440px] items-center">
+                    <div className="ms-2 h-2.5 w-32 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                </div>
+                <div className="flex w-full max-w-[360px] items-center">
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+                <span className="sr-only">Loading...</span>
             </div>
         );
-
     type PriceKey = keyof typeof prices;
 
     const key: PriceKey = priceTier;
@@ -97,6 +134,7 @@ export const PriceCard = ({
         companySubscriptionStatus === 'canceled' ||
         subscriptionStatus === 'TRIAL' ||
         companySubscriptionStatus === 'trial' ||
+        // TODO: check if paused can happen on existing subscription
         subscriptionStatus === 'PASS_DUE' ||
         companySubscriptionStatus === 'paused';
 
@@ -104,7 +142,7 @@ export const PriceCard = ({
 
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        createSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
                     clientSecret: res?.clientSecret,
@@ -126,7 +164,7 @@ export const PriceCard = ({
     };
 
     const triggerUpgradeSubscription = () => {
-        changeSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        changeSubscription({ priceId: prices[priceTier].priceIds.monthly, quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();
@@ -152,15 +190,6 @@ export const PriceCard = ({
             );
         }
     };
-
-    const periodText = () => {
-        if (period === 'monthly') {
-            return currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth');
-        } else if (period === 'annually') {
-            return currency === 'usd' ? t('pricing.usdPerYear') : t('pricing.rmbPerYear');
-        }
-    };
-
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
@@ -174,12 +203,12 @@ export const PriceCard = ({
                     </p>
                 </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
-                <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
-                    {price.originalPrices[period] ? price.originalPrices[period] + ' ' + periodText() : ''}
-                </h3>
-                <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
                     {price.prices[period]}
-                    <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
+
+                    <span className="ml-1 text-sm font-semibold text-gray-500">
+                        {currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth')}
+                    </span>
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />
 

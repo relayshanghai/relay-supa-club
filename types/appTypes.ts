@@ -13,7 +13,6 @@ import type {
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 import type { audience_age_range, audience_gender } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
-import type { Nullable } from './nullable';
 
 export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = {
@@ -53,31 +52,11 @@ export type NewRelayPlan = {
     currency: string;
     prices: {
         monthly: string;
-        annually: string;
     };
     profiles: string;
     searches: string;
     priceIds: {
         monthly: string;
-        annually: string;
-    };
-};
-
-export type RelayPlanWithAnnual = {
-    currency: string;
-    prices: {
-        monthly: string;
-        annually: string;
-    };
-    originalPrices: {
-        monthly: Nullable<string>;
-        annually: Nullable<string>;
-    };
-    profiles: string;
-    searches: string;
-    priceIds: {
-        monthly: string;
-        annually: string;
     };
 };
 export interface RelayPlanStripeProduct extends Stripe.Product {
