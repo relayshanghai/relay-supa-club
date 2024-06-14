@@ -58,7 +58,12 @@ export class ProfileRepository extends BaseRepository<ProfileEntity> {
     }
 
     async isCompanyOwner(profiles: ProfileEntity[]) {
-        const foundCompanyOwner = profiles.find((profile) => profile.userRole === 'company_owner');
+        const foundCompanyOwner = profiles.find(
+            (profile) =>
+                profile.userRole === 'company_owner' &&
+                // ignoring support email for now
+                !profile.email?.includes('@boostbot.ai'),
+        );
         if (foundCompanyOwner) {
             return foundCompanyOwner;
         }

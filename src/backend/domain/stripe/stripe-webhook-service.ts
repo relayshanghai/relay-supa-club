@@ -20,14 +20,14 @@ const regexExcludeEmailUsername = /\b[\w.+]*(?:test|qa)[\w.+]*@\w+\.\w+\b/;
 
 export class StripeWebhookService {
     public static readonly service: StripeWebhookService = new StripeWebhookService();
-    public static readonly allowedToSend = process.env.STRIPE_WEBHOOK_ALLOWED_TO_SEND_TO_SLACK ?? 'false';
+    public static readonly allowedToSend = process.env.STRIPE_WEBHOOK_ALLOWED_TO_SEND_TO_SLACK === 'true';
 
     static getService(): StripeWebhookService {
         return StripeWebhookService.service;
     }
 
     allowedToSendToSlack(email: string) {
-        if (StripeWebhookService.allowedToSend === 'true') {
+        if (StripeWebhookService.allowedToSend) {
             return !regexExcludeEmailDomain.test(email) && !regexExcludeEmailUsername.test(email);
         }
     }
@@ -189,9 +189,6 @@ export class StripeWebhookService {
     ) {
         const previousAttributes = data.previous_attributes;
         const previousSubscription = { items: previousAttributes?.items } as Stripe.Subscription;
-        if (!previousSubscription) {
-            throw new Error('Previous subscription not found');
-        }
         const company = await CompanyRepository.getRepository().findOne({
             where: {
                 cusId: data?.object.customer as string,
@@ -204,18 +201,26 @@ export class StripeWebhookService {
             throw new Error('Company not found');
         }
         const eventSubscription = data.object;
+        let activeAt = null;
+        let cancelledAt = null;
+        if (eventSubscription.status === 'active') {
+            activeAt = new Date(eventSubscription.current_period_start * 1000);
+            if (eventSubscription.cancel_at !== null) {
+                cancelledAt = new Date(eventSubscription.cancel_at * 1000);
+            }
+        } else if (eventSubscription.status === 'canceled') {
+            cancelledAt = eventSubscription.canceled_at ? new Date(eventSubscription.canceled_at * 1000) : null;
+        }
         await SubscriptionRepository.getRepository().update(
             {
                 company: company as CompanyEntity,
             },
             {
+                activeAt,
+                cancelledAt,
                 pausedAt: eventSubscription.current_period_end
                     ? new Date(eventSubscription.current_period_end * 1000)
                     : null,
-                cancelledAt:
-                    eventSubscription.canceled_at && eventSubscription.canceled_at < dayjs().unix()
-                        ? new Date(eventSubscription.canceled_at * 1000)
-                        : null,
             },
         );
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
