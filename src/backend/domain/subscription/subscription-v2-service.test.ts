@@ -460,6 +460,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
 
                 await SubscriptionV2Service.getService().resumeSubscription();
                 expect(findOneMock).toHaveBeenCalledWith({
+                    relations: ['company'],
                     where: {
                         company: {
                             id: 'company_1',
