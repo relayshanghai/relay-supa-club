@@ -7,20 +7,10 @@ import {
     STRIPE_PRICE_MONTHLY_OUTREACH,
     STRIPE_PRICE_MONTHLY_DISCOVERY_USD,
     STRIPE_PRICE_MONTHLY_OUTREACH_USD,
-    STRIPE_PRICE_ANNUALLY_DISCOVERY,
-    STRIPE_PRICE_ANNUALLY_DISCOVERY_USD,
-    STRIPE_PRICE_ANNUALLY_OUTREACH,
-    STRIPE_PRICE_ANNUALLY_OUTREACH_USD,
 } from './constants';
 import { stripeClient } from './stripe-client';
 
-/**
- * Formats the given Stripe price by dividing it by 100 and rounding it to the nearest whole number.
- *
- * @param price - The Stripe price to format.
- * @returns The formatted price as a string.
- * @deprecated Use the `formatStripePrice` function from `src/utils/utils.ts` instead.
- */
+/** Stripe prices come in cents,  divide by 1 hundred */
 export const formatStripePrice = (price: number) => (price / 100).toFixed(0);
 
 export const getNewStripePlanPrices = async () => {
@@ -39,13 +29,9 @@ export const getNewStripePlanPrices = async () => {
     if (!discovery.data || !outreach.data) throw new Error('no plans found');
     const discoveryMonthlyCny = discovery.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DISCOVERY);
     const discoveryMonthlyUsd = discovery.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DISCOVERY_USD);
-    const discoveryAnnuallyCny = discovery.data.find(({ id }) => id === STRIPE_PRICE_ANNUALLY_DISCOVERY);
-    const discoveryAnnuallyUsd = discovery.data.find(({ id }) => id === STRIPE_PRICE_ANNUALLY_DISCOVERY_USD);
 
     const outreachMonthlyCny = outreach.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_OUTREACH);
     const outreachMonthlyUsd = outreach.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_OUTREACH_USD);
-    const outreachAnnuallyCny = outreach.data.find(({ id }) => id === STRIPE_PRICE_ANNUALLY_OUTREACH);
-    const outreachAnnuallyUsd = outreach.data.find(({ id }) => id === STRIPE_PRICE_ANNUALLY_OUTREACH_USD);
 
     if (
         !discoveryMonthlyCny?.unit_amount ||
@@ -56,14 +42,6 @@ export const getNewStripePlanPrices = async () => {
         !discoveryMonthlyUsd?.currency ||
         !discoveryMonthlyUsd.product?.metadata.profiles ||
         !discoveryMonthlyUsd.product?.metadata.searches ||
-        !discoveryAnnuallyCny?.unit_amount ||
-        !discoveryAnnuallyCny?.currency ||
-        !discoveryAnnuallyCny.product?.metadata.profiles ||
-        !discoveryAnnuallyCny.product?.metadata.searches ||
-        !discoveryAnnuallyUsd?.unit_amount ||
-        !discoveryAnnuallyUsd?.currency ||
-        !discoveryAnnuallyUsd.product?.metadata.profiles ||
-        !discoveryAnnuallyUsd.product?.metadata.searches ||
         !outreachMonthlyCny?.unit_amount ||
         !outreachMonthlyCny?.currency ||
         !outreachMonthlyCny.product?.metadata.profiles ||
@@ -71,15 +49,7 @@ export const getNewStripePlanPrices = async () => {
         !outreachMonthlyUsd?.unit_amount ||
         !outreachMonthlyUsd?.currency ||
         !outreachMonthlyUsd.product?.metadata.profiles ||
-        !outreachMonthlyUsd.product?.metadata.searches ||
-        !outreachAnnuallyCny?.unit_amount ||
-        !outreachAnnuallyCny?.currency ||
-        !outreachAnnuallyCny.product?.metadata.profiles ||
-        !outreachAnnuallyCny.product?.metadata.searches ||
-        !outreachAnnuallyUsd?.unit_amount ||
-        !outreachAnnuallyUsd?.currency ||
-        !outreachAnnuallyUsd.product?.metadata.profiles ||
-        !outreachAnnuallyUsd.product?.metadata.searches
+        !outreachMonthlyUsd.product?.metadata.searches
     ) {
         throw new Error('missing plan information');
     }
@@ -90,26 +60,22 @@ export const getNewStripePlanPrices = async () => {
                 currency: discoveryMonthlyCny.currency,
                 prices: {
                     monthly: formatStripePrice(discoveryMonthlyCny.unit_amount),
-                    annually: formatStripePrice(discoveryAnnuallyCny.unit_amount),
                 },
                 profiles: discoveryMonthlyCny.product.metadata.profiles,
                 searches: discoveryMonthlyCny.product.metadata.searches,
                 priceIds: {
                     monthly: discoveryMonthlyCny.id,
-                    annually: discoveryAnnuallyCny.id,
                 },
             },
             {
                 currency: discoveryMonthlyUsd.currency,
                 prices: {
                     monthly: formatStripePrice(discoveryMonthlyUsd.unit_amount),
-                    annually: formatStripePrice(discoveryAnnuallyUsd.unit_amount),
                 },
                 profiles: discoveryMonthlyUsd.product.metadata.profiles,
                 searches: discoveryMonthlyUsd.product.metadata.searches,
                 priceIds: {
                     monthly: discoveryMonthlyUsd.id,
-                    annually: discoveryAnnuallyUsd.id,
                 },
             },
         ],
@@ -118,26 +84,22 @@ export const getNewStripePlanPrices = async () => {
                 currency: outreachMonthlyCny.currency,
                 prices: {
                     monthly: formatStripePrice(outreachMonthlyCny.unit_amount),
-                    annually: formatStripePrice(outreachAnnuallyCny.unit_amount),
                 },
                 profiles: outreachMonthlyCny.product.metadata.profiles,
                 searches: outreachMonthlyCny.product.metadata.searches,
                 priceIds: {
                     monthly: outreachMonthlyCny.id,
-                    annually: outreachAnnuallyCny.id,
                 },
             },
             {
                 currency: outreachMonthlyUsd.currency,
                 prices: {
                     monthly: formatStripePrice(outreachMonthlyUsd.unit_amount),
-                    annually: formatStripePrice(outreachAnnuallyUsd.unit_amount),
                 },
                 profiles: outreachMonthlyUsd.product.metadata.profiles,
                 searches: outreachMonthlyUsd.product.metadata.searches,
                 priceIds: {
                     monthly: outreachMonthlyUsd.id,
-                    annually: outreachAnnuallyUsd.id,
                 },
             },
         ],

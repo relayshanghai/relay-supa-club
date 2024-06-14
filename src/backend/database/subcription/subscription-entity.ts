@@ -47,9 +47,6 @@ export class SubscriptionEntity<T = any> {
     @Column({ nullable: true })
     coupon?: string;
 
-    @Column({ type: 'varchar' })
-    interval!: string;
-
     @Column({ name: 'subscription_data', type: 'json' })
     subscriptionData!: T;
 
