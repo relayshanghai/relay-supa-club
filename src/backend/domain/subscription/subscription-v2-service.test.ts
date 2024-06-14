@@ -9,6 +9,7 @@ import { UnprocessableEntityError } from 'src/utils/error/http-error';
 import { NotFoundError } from 'src/utils/error/http-error';
 import { type SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
+import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 vi.mock('src/backend/database/provider/transaction-decorator', () => ({
     UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
         // do nothing
@@ -34,6 +35,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const CancelSubscriptionMock = vi.fn();
     const CompanyRepositoryUpdateMock = vi.fn();
     const CompanyRepositoryGetOneMock = vi.fn();
+    const SequenceInfluencerRepositoryUpdateMock = vi.fn();
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
@@ -56,7 +58,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     SubscriptionRepository.getRepository().delete = SubscriptionRepositoryDeleteMock;
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
     CompanyRepository.getRepository().findOne = CompanyRepositoryGetOneMock;
-
+    SequenceInfluencerRepository.getRepository().update = SequenceInfluencerRepositoryUpdateMock;
     describe(`SubscriptionV2Service`, () => {
         beforeEach(() => {
             vi.resetAllMocks();
@@ -73,6 +75,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     },
                 },
             });
+            SequenceInfluencerRepositoryUpdateMock.mockResolvedValue({});
         });
 
         describe(`createSubscription`, () => {
@@ -428,6 +431,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
 
         describe(`resumeSubscription`, () => {
             it(`should update the stripe subscription not to cancel at the end of period`, async () => {
+                SequenceInfluencerRepositoryUpdateMock.mockResolvedValue({});
                 const findOneMock = vi.spyOn(SubscriptionRepository.getRepository(), 'findOne');
                 findOneMock.mockResolvedValue({
                     id: 'sub_1',

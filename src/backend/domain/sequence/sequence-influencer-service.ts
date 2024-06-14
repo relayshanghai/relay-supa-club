@@ -17,7 +17,7 @@ import { logger } from 'src/backend/integration/logger';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-influencer';
 import { NotFoundError } from 'src/utils/error/http-error';
-import { type DeepPartial, IsNull, MoreThanOrEqual, Not } from 'typeorm';
+import { type DeepPartial, IsNull, MoreThanOrEqual, Not, Between } from 'typeorm';
 import { type CreatorReport } from 'types';
 
 export default class SequenceInfluencerService {
@@ -44,10 +44,9 @@ export default class SequenceInfluencerService {
         }
 
         //change this to a balance check
-        const today = new Date();
-        const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startMonth, endMonth);
+        const endDate = new Date((company.subscription.cancelledAt || company.subscription.pausedAt) as Date);
+        const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
+        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startDate, endDate);
         const limit = parseInt(company.profilesLimit || company.trialProfilesLimit) || 0;
         if (usages >= limit) {
             throw new Error('Profile limit reached');
@@ -63,6 +62,22 @@ export default class SequenceInfluencerService {
             },
         });
         if (!profile) return;
+        const endDate = new Date((company.subscription?.cancelledAt || company.subscription?.pausedAt) as Date);
+        const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
+        const exists = await UsageRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: company.id,
+                },
+                type: 'profile',
+                profile: {
+                    id: profile.id,
+                },
+                itemId: sequenceInfluencer.iqdataId,
+                createdAt: Between(startDate, endDate),
+            },
+        });
+        if (exists) return;
         await UsageRepository.getRepository().save({
             company: {
                 id: company.id,
@@ -76,25 +91,25 @@ export default class SequenceInfluencerService {
     }
     @UseLogger()
     async startSyncReport(sequenceInfluencerId: string) {
-        const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
-            where: {
-                id: sequenceInfluencerId,
-            },
-            relations: ['company', 'influencerSocialProfile', 'company.subscription'],
-        });
-        if (!sequenceInfluencer) {
-            throw new NotFoundError('Sequence Influencer not found');
-        }
-        await this.checkUsage(sequenceInfluencer.company);
-        await SequenceInfluencerRepository.getRepository().update(
-            {
-                id: sequenceInfluencerId,
-            },
-            {
-                scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
-            },
-        );
         try {
+            const sequenceInfluencer = await SequenceInfluencerRepository.getRepository().findOne({
+                where: {
+                    id: sequenceInfluencerId,
+                },
+                relations: ['company', 'influencerSocialProfile', 'company.subscription'],
+            });
+            if (!sequenceInfluencer) {
+                throw new NotFoundError('Sequence Influencer not found');
+            }
+            await this.checkUsage(sequenceInfluencer.company);
+            await SequenceInfluencerRepository.getRepository().update(
+                {
+                    id: sequenceInfluencerId,
+                },
+                {
+                    scheduleStatus: SequenceInfluencerScheduleStatus.PROCESSING,
+                },
+            );
             const last30Days = new Date();
             last30Days.setDate(last30Days.getDate() - 30);
             const similarSequenceInfluencers = await SequenceInfluencerRepository.getRepository().findOne({
@@ -165,7 +180,9 @@ export default class SequenceInfluencerService {
                     id: sequenceInfluencerId,
                 },
                 {
-                    scheduleStatus: SequenceInfluencerScheduleStatus.FAILED,
+                    scheduleStatus: err.message.includes('limit')
+                        ? SequenceInfluencerScheduleStatus.INSUFICIENT_BALANCE
+                        : SequenceInfluencerScheduleStatus.FAILED,
                 },
             );
             throw e;
