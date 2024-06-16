@@ -10,6 +10,8 @@ const pricing = {
     perMonth: '/ month',
     usdPerMonth: 'USD / Month',
     rmbPerMonth: 'RMB / Month',
+    usdPerYear: 'USD / Year',
+    rmbPerYear: 'RMB / Year',
     startFreeTrial: 'Start Your Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',

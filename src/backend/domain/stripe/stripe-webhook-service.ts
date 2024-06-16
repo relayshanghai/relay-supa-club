@@ -117,6 +117,9 @@ export class StripeWebhookService {
             if (!stripeSubscription) {
                 throw new Error('Stripe subscription not found');
             }
+            subscription.interval = StripeService.getService().getSubscriptionInterval(
+                stripeSubscription.items.data[0].plan.interval,
+            );
             subscription.pausedAt = new Date(stripeSubscription.current_period_end * 1000);
             subscription.cancelledAt = null;
             await SubscriptionRepository.getRepository().save(subscription);
@@ -203,6 +206,9 @@ export class StripeWebhookService {
         const eventSubscription = data.object;
         let activeAt = null;
         let cancelledAt = null;
+        const interval = StripeService.getService().getSubscriptionInterval(
+            eventSubscription.items.data[0].plan.interval,
+        );
         switch (eventSubscription.status) {
             case 'active':
                 activeAt = new Date(eventSubscription.current_period_start * 1000);
@@ -233,9 +239,10 @@ export class StripeWebhookService {
             case 'trialing':
                 await SubscriptionRepository.getRepository().update(
                     {
-                        company: company as CompanyEntity,
+                        company,
                     },
                     {
+                        interval,
                         activeAt,
                         cancelledAt,
                         pausedAt: eventSubscription.current_period_end

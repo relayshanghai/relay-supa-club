@@ -4,6 +4,7 @@ import type {
     CreatePaymentMethodRequest,
     CreateSubscriptionRequest,
     PostConfirmationRequest,
+    ChangeSubscriptionRequest,
 } from 'pages/api/v2/subscriptions/request';
 import { UseTransaction } from 'src/backend/database/provider/transaction-decorator';
 import { RequestContext } from 'src/utils/request-context/request-context';
@@ -17,10 +18,12 @@ import CompanyRepository from 'src/backend/database/company/company-repository';
 import awaitToError from 'src/utils/await-to-error';
 import { type CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
-import { type ChangeSubscriptionRequest } from 'pages/api/v2/subscriptions/request';
 import type { Nullable } from 'types/nullable';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { SequenceInfluencerScheduleStatus } from 'src/backend/database/sequence/sequence-influencer-entity';
+import PriceRepository from 'src/backend/database/price/price-repository';
+import { type PriceEntity, type SubscriptionType } from 'src/backend/database/price/price-entity';
+import type { RelayPlanWithAnnual } from 'types';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -228,6 +231,9 @@ export default class SubscriptionV2Service {
                     (lastSubscription.items.data[0].price.unit_amount?.valueOf() ?? 0) *
                     (lastSubscription?.items?.data?.[0].quantity ?? 0),
                 subscriptionData: lastSubscription,
+                interval: StripeService.getService().getSubscriptionInterval(
+                    lastSubscription.items.data[0].plan.interval,
+                ),
                 discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() ?? 0,
                 coupon: lastSubscription.discount?.coupon?.id,
                 activeAt: lastSubscription.current_period_start
@@ -251,6 +257,9 @@ export default class SubscriptionV2Service {
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                         (lastSubscription?.items?.data?.[0].quantity ?? 0),
                     subscriptionData: lastSubscription,
+                    interval: StripeService.getService().getSubscriptionInterval(
+                        lastSubscription.items.data[0].plan.interval,
+                    ),
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: null,
@@ -270,6 +279,9 @@ export default class SubscriptionV2Service {
                         (lastSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                         (lastSubscription?.items?.data?.[0].quantity ?? 0),
                     subscriptionData: lastSubscription,
+                    interval: StripeService.getService().getSubscriptionInterval(
+                        lastSubscription.items.data[0].plan.interval,
+                    ),
                     discount: lastSubscription.discount?.coupon?.amount_off?.valueOf() || 0,
                     coupon: lastSubscription.discount?.coupon?.id,
                     activeAt: new Date(lastSubscription.current_period_start * 1000),
@@ -363,6 +375,7 @@ export default class SubscriptionV2Service {
                     (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                     (subscription?.items?.data?.[0].quantity ?? 0),
                 subscriptionData: subscription,
+                interval: StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval),
                 discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
                 coupon: subscription.discount?.coupon?.id,
                 activeAt: new Date(subscription.current_period_start * 1000),
@@ -538,6 +551,9 @@ export default class SubscriptionV2Service {
                     (stripeSubscription.items.data[0].price.unit_amount?.valueOf() || 0) *
                     (stripeSubscription.items.data[0].quantity ?? 0),
                 subscriptionData: stripeSubscription,
+                interval: StripeService.getService().getSubscriptionInterval(
+                    stripeSubscription.items.data[0].plan.interval,
+                ),
                 activeAt: new Date(stripeSubscription.current_period_start * 1000),
                 pausedAt: new Date(stripeSubscription.current_period_end * 1000),
             },
@@ -559,5 +575,40 @@ export default class SubscriptionV2Service {
         return {
             providerSubscriptionId: stripeSubscription.id,
         };
+    }
+
+    async getPrices() {
+        const prices = {
+            discovery: [] as RelayPlanWithAnnual[],
+            outreach: [] as RelayPlanWithAnnual[],
+        };
+        for (const key in prices) {
+            const pricesData = await PriceRepository.getRepository().find({
+                where: {
+                    subscriptionType: key as SubscriptionType,
+                },
+            });
+
+            const grouped = pricesData.reduce((acc: any, item: PriceEntity) => {
+                const { currency, profiles, searches, billingPeriod, price, originalPrice, priceId } = item;
+                if (!acc[currency]) {
+                    acc[currency] = {
+                        currency,
+                        prices: { annually: null, monthly: null },
+                        originalPrices: { annually: null, monthly: null },
+                        profiles: profiles.toString(),
+                        searches: searches.toString(),
+                        priceIds: { annually: null, monthly: null },
+                    };
+                }
+                acc[currency].prices[billingPeriod.toLowerCase()] = price;
+                acc[currency].originalPrices[billingPeriod.toLowerCase()] = originalPrice;
+                acc[currency].priceIds[billingPeriod.toLowerCase()] = priceId;
+                return acc;
+            }, {});
+            prices[key as keyof typeof prices] = grouped;
+        }
+
+        return prices;
     }
 }
