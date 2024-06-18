@@ -125,6 +125,7 @@ export default class SequenceInfluencerService {
                 socialProfileLastFetched: existed?.socialProfileLastFetched,
             } as SequenceInfluencerEntity;
         });
-        await SequenceInfluencerRepository.getRepository().insert(toInsert);
+        const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
+        return entities;
     }
 }

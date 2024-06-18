@@ -12,7 +12,11 @@ export class SequenceInfluencerHandler {
         @Path('id') sequenceId: string,
         @Body(AddMultipleInfluencerRequest) request: AddMultipleInfluencerRequest,
     ) {
-        await SequenceInfluencerService.getService().addInfluencerToSequence(sequenceId, ...request.influencers);
+        const response = await SequenceInfluencerService.getService().addInfluencerToSequence(
+            sequenceId,
+            ...request.influencers,
+        );
+        return response;
     }
 }
 

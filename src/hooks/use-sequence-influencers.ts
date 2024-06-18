@@ -70,7 +70,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
                     } as AddInfluencerRequest,
                 ],
             });
-            return res;
+            return res.data;
         },
         [apiClient, profile?.company_id, profile?.id],
     );
