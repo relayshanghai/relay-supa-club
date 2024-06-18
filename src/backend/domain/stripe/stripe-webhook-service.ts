@@ -203,26 +203,50 @@ export class StripeWebhookService {
         const eventSubscription = data.object;
         let activeAt = null;
         let cancelledAt = null;
-        if (eventSubscription.status === 'active') {
-            activeAt = new Date(eventSubscription.current_period_start * 1000);
-            if (eventSubscription.cancel_at !== null) {
-                cancelledAt = new Date(eventSubscription.cancel_at * 1000);
-            }
-        } else if (eventSubscription.status === 'canceled') {
-            cancelledAt = eventSubscription.canceled_at ? new Date(eventSubscription.canceled_at * 1000) : null;
+        switch (eventSubscription.status) {
+            case 'active':
+                activeAt = new Date(eventSubscription.current_period_start * 1000);
+                if (eventSubscription.cancel_at !== null) {
+                    cancelledAt = new Date(eventSubscription.cancel_at * 1000);
+                }
+                break;
+            case 'canceled':
+                cancelledAt = eventSubscription.canceled_at ? new Date(eventSubscription.canceled_at * 1000) : null;
+                break;
+            case 'past_due':
+            case 'paused':
+                activeAt = new Date(eventSubscription.current_period_start * 1000);
+                cancelledAt = null;
+                break;
+            case 'trialing':
+                cancelledAt = eventSubscription.trial_end ? new Date(eventSubscription.trial_end * 1000) : null;
+                break;
+
+            default:
+                break;
         }
-        await SubscriptionRepository.getRepository().update(
-            {
-                company: company as CompanyEntity,
-            },
-            {
-                activeAt,
-                cancelledAt,
-                pausedAt: eventSubscription.current_period_end
-                    ? new Date(eventSubscription.current_period_end * 1000)
-                    : null,
-            },
-        );
+        switch (eventSubscription.status) {
+            case 'active':
+            case 'canceled':
+            case 'past_due':
+            case 'paused':
+            case 'trialing':
+                await SubscriptionRepository.getRepository().update(
+                    {
+                        company: company as CompanyEntity,
+                    },
+                    {
+                        activeAt,
+                        cancelledAt,
+                        pausedAt: eventSubscription.current_period_end
+                            ? new Date(eventSubscription.current_period_end * 1000)
+                            : null,
+                    },
+                );
+                break;
+            default:
+                break;
+        }
         const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
         const currentPlanId = data?.object.plan.id;
         const previousPlanId = data?.previous_attributes?.plan ? data?.previous_attributes.plan.id : undefined;
