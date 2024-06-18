@@ -466,6 +466,7 @@ export default class SubscriptionV2Service {
     async resumeSubscription() {
         const companyId = RequestContext.getContext().companyId as string;
         const subscription = await SubscriptionRepository.getRepository().findOne({
+            relations: ['company'],
             where: {
                 company: {
                     id: companyId,
