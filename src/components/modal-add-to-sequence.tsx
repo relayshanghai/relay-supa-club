@@ -22,7 +22,6 @@ export const AddToSequenceModal = ({
     setSuppressReportFetch,
     sequence,
     setSequence,
-    setSequenceInfluencer,
     sequences,
 }: {
     show: boolean;
@@ -50,7 +49,6 @@ export const AddToSequenceModal = ({
 
     const handleAddToSequence = useCallback(async () => {
         setSubmitting(true);
-        let newSequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
         const trackingPayload: Omit<SendInfluencersToOutreachPayload, 'currentPage'> & { $add?: any } = {
             sequence_id: sequence?.id || '',
             influencer_ids: null,
@@ -81,7 +79,7 @@ export const AddToSequenceModal = ({
                 throw new Error('Missing creatorProfile username and handle');
             }
 
-            newSequenceInfluencer = await createSequenceInfluencer({
+            await createSequenceInfluencer({
                 name: creatorProfile.fullname ?? creatorProfile.username ?? creatorProfile.handle ?? '',
                 username: creatorProfile.handle ?? creatorProfile.username ?? '',
                 avatar_url: creatorProfile.picture || '',
@@ -90,10 +88,7 @@ export const AddToSequenceModal = ({
                 sequence_id: sequence.id,
                 platform,
             });
-            setSequenceInfluencer(newSequenceInfluencer);
             trackingPayload.influencer_ids = [creatorProfile.user_id];
-            trackingPayload.sequence_influencer_ids = [newSequenceInfluencer.id];
-            trackingPayload.sequence_influencer_id = newSequenceInfluencer.id;
             trackingPayload['$add'] = { total_sequence_influencers: 1 };
             setSuppressReportFetch && setSuppressReportFetch(false); // will start getting the report.
 
@@ -122,7 +117,6 @@ export const AddToSequenceModal = ({
         creatorProfile.handle,
         platform,
         sequence,
-        setSequenceInfluencer,
         setSuppressReportFetch,
         t,
         track,
