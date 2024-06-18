@@ -194,6 +194,7 @@ const sequences = {
     limitExceeded:
         'Uh Oh! Looks like your BoostBot credits have run out! Please contact sales at sophia @ boostbot.ai if you want to add more credits to your account this month. Otherwise, your credits will be automatically renewed at the start of your next billing cycle.',
     account_removed: 'This influencer has been removed by the owner',
+    influencerLimit: `Oops! Sequences can only include up to {{ influencerLimit }} influencers. To contact more influencers, please create a new sequence. Thank you!`,
 };
 
 export default sequences;

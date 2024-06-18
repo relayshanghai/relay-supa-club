@@ -24,7 +24,12 @@ const postHandler: NextApiHandler = async (
     const sequenceIds: string[] = req.body;
     const influencers = await db(getSequenceInfluencers)(sequenceIds);
 
-    return res.status(httpCodes.OK).json(influencers);
+    return res.status(httpCodes.OK).json(
+        influencers.map((i) => ({
+            ...i,
+            channel_data: undefined, // remove channel data from the response
+        })),
+    );
 };
 
 export const config = {

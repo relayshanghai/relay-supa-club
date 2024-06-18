@@ -3,9 +3,12 @@ import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { AddressRepository } from 'src/backend/database/influencer/address-repository';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';
 import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-influencers/[id]/request';
+import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/request';
+import { In } from 'typeorm';
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -82,5 +85,46 @@ export default class SequenceInfluencerService {
             },
             request,
         );
+    }
+
+    @CompanyIdRequired()
+    async addInfluencerToSequence(sequenceId: string, ...request: AddInfluencerRequest[]) {
+        const count = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+            },
+        });
+        const { profile, translation: t } = RequestContext.getContext();
+        if (count + request.length >= 300) {
+            throw new BadRequestError(t('sequences.influencerLimit', { influencerLimit: `300` }));
+        }
+        const existedInfluencers = await SequenceInfluencerRepository.getRepository().find({
+            where: {
+                iqdataId: In(request.map((r) => r.iqdataId)),
+            },
+        });
+        const toInsert = request.map((r) => {
+            const existed = existedInfluencers.find((e) => e.iqdataId === r.iqdataId);
+            return {
+                sequence: { id: sequenceId },
+                addedBy: profile?.id,
+                company: {
+                    id: profile?.company?.id,
+                },
+                avatarUrl: r.avatarUrl,
+                iqdataId: r.iqdataId,
+                funnelStatus: 'To Contact',
+                rateAmount: r.rateAmount,
+                sequenceStep: r.sequenceStep,
+                platform: r.platform,
+                url: r.url,
+                name: r.name,
+                username: r.username,
+                email: existed?.email,
+                tags: existed?.tags,
+                socialProfileLastFetched: existed?.socialProfileLastFetched,
+            } as SequenceInfluencerEntity;
+        });
+        await SequenceInfluencerRepository.getRepository().insert(toInsert);
     }
 }

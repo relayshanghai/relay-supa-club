@@ -3,14 +3,13 @@ import type {
     SequenceInfluencersDeleteRequestBody,
     SequenceInfluencersDeleteResponse,
 } from 'pages/api/sequence/influencers/delete';
+import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/request';
 import { useCallback } from 'react';
 import { useUser } from 'src/hooks/use-user';
+import { useApiClient } from 'src/utils/api-client/request';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
-import {
-    createSequenceInfluencerCall,
-    updateSequenceInfluencerCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
+import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
@@ -18,7 +17,7 @@ import useSWR from 'swr';
 /** If you only want to use `refresh` or `create`, no need to pass sequenceIds. If you don't pass sequenceIds it will not call the fetch */
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
-
+    const { apiClient } = useApiClient();
     const {
         data,
         mutate: refreshSequenceInfluencers,
@@ -39,7 +38,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     );
     const sequenceInfluencers = data && Array.isArray(data) ? data : [];
 
-    const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
     const createSequenceInfluencer = useCallback(
         async (
             influencerSocialProfile: Omit<
@@ -48,7 +46,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
             >,
         ) => {
             if (!profile?.company_id) throw new Error('No profile found');
-
             const insert: SequenceInfluencerInsert = {
                 ...influencerSocialProfile,
                 added_by: profile.id,
@@ -58,10 +55,24 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
                 rate_amount: 0,
                 rate_currency: 'USD',
             };
-            const res = await createSequenceInfluencerDBCall(insert);
+            const res = await apiClient.post(`/v2/sequences/${influencerSocialProfile.sequence_id}/influencers`, {
+                influencers: [
+                    {
+                        avatarUrl: insert.avatar_url,
+                        iqdataId: insert.iqdata_id,
+                        name: insert.name,
+                        platform: insert.platform,
+                        rateAmount: insert.rate_amount,
+                        rateCurrency: insert.rate_currency,
+                        sequenceStep: insert.sequence_step,
+                        url: insert.url,
+                        username: insert.username,
+                    } as AddInfluencerRequest,
+                ],
+            });
             return res;
         },
-        [createSequenceInfluencerDBCall, profile?.company_id, profile?.id],
+        [apiClient, profile?.company_id, profile?.id],
     );
 
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);

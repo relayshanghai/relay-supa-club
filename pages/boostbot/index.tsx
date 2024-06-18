@@ -14,7 +14,7 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
-import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
+import { getFulfilledData, getRejectedData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -200,7 +200,17 @@ const Boostbot = () => {
             });
 
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
+            const sequenceInfluencers = getFulfilledData(
+                sequenceInfluencersResults,
+            ) as unknown as SequenceInfluencerManagerPage[];
+            const rejected = getRejectedData(sequenceInfluencersResults);
+            rejected.map((r: string) => {
+                addMessage({
+                    sender: 'Bot',
+                    text: r,
+                    type: 'text',
+                });
+            });
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
