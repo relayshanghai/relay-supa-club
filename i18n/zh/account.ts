@@ -174,6 +174,8 @@ const account = {
         noUpcomingPayments: '暂无需要支付的款项',
         renewsOn: '续订日期',
         errorGettingSubscription: '获取订阅信息时出错',
+        subscriptionExpired: '订阅已过期',
+        subscriptionExpiredAction: '您的账户订阅已过期。请购买订阅以继续使用雷宝BoostBot！',
     },
     billingInfoSection: {
         title: '账单信息',
