@@ -315,7 +315,7 @@ export const SubscriptionDetails = () => {
 
                                 <section className="flex flex-col gap-6">
                                     <span>
-                                        {usagesSearch}/{usages.profile.limit} {t('account.planSection.reportsCount')}
+                                        {usagesProfiles}/{usages.profile.limit} {t('account.planSection.reportsCount')}
                                     </span>
                                     {subsStatusMustShowPopup.includes(subscription.status) ? (
                                         <Tooltip
@@ -327,35 +327,35 @@ export const SubscriptionDetails = () => {
                                             <Link href={'/upgrade'}>
                                                 <Progress
                                                     className="h-3"
-                                                    value={(usagesSearch / usages.profile.limit) * 100}
-                                                />
-                                            </Link>
-                                        </Tooltip>
-                                    ) : (
-                                        <Progress className="h-3" value={(usagesSearch / usages.profile.limit) * 100} />
-                                    )}
-                                    <span>
-                                        {usagesProfiles}/{usages.search.limit} {t('account.planSection.searchesCount')}
-                                    </span>
-                                    {subsStatusMustShowPopup.includes(subscription.status) ? (
-                                        <Tooltip
-                                            content={t('account.planSection.subscriptionExpired')}
-                                            detail={t('account.planSection.subscriptionExpiredAction')}
-                                            position={'top-left'}
-                                            className=""
-                                        >
-                                            <Link href={'/upgrade'}>
-                                                <Progress
-                                                    className="h-3"
-                                                    value={(usagesProfiles / usages.search.limit) * 100}
+                                                    value={(usagesProfiles / usages.profile.limit) * 100}
                                                 />
                                             </Link>
                                         </Tooltip>
                                     ) : (
                                         <Progress
                                             className="h-3"
-                                            value={(usagesProfiles / usages.search.limit) * 100}
+                                            value={(usagesProfiles / usages.profile.limit) * 100}
                                         />
+                                    )}
+                                    <span>
+                                        {usagesSearch}/{usages.search.limit} {t('account.planSection.searchesCount')}
+                                    </span>
+                                    {subsStatusMustShowPopup.includes(subscription.status) ? (
+                                        <Tooltip
+                                            content={t('account.planSection.subscriptionExpired')}
+                                            detail={t('account.planSection.subscriptionExpiredAction')}
+                                            position={'top-left'}
+                                            className=""
+                                        >
+                                            <Link href={'/upgrade'}>
+                                                <Progress
+                                                    className="h-3"
+                                                    value={(usagesSearch / usages.search.limit) * 100}
+                                                />
+                                            </Link>
+                                        </Tooltip>
+                                    ) : (
+                                        <Progress className="h-3" value={(usagesSearch / usages.search.limit) * 100} />
                                     )}
                                 </section>
                             </>
