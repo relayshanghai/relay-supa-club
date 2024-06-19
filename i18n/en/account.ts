@@ -177,6 +177,9 @@ Thank you for your patience.`,
         noUpcomingPayments: 'No upcoming payments',
         renewsOn: 'Renews on',
         errorGettingSubscription: 'Error getting subscription info',
+        subscriptionExpired: 'Subscription Expired',
+        subscriptionExpiredAction:
+            'Uh oh! Your account subscription has expired. Please purchase a subscription to continue using BoostBot!',
     },
     billingInfoSection: {
         title: 'Billing Info',
