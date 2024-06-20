@@ -1,6 +1,11 @@
 import axios, { type AxiosError } from 'axios';
 import { useState } from 'react';
 
+const publicUrl = process.env.NEXT_PUBLIC_APP_URL;
+export const apiClient = axios.create({
+    baseURL: `${publicUrl}/api`,
+});
+
 export const useApiClient = (baseUrl?: string) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string[] | string>();
