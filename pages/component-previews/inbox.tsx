@@ -254,7 +254,7 @@ const ThreadProvider = ({
                 async (cache) => {
                     if (attachments && attachments.length > 0) {
                         const htmlAttachments = attachments.map((attachment) => {
-                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
+                            return `<a target="__blank" href="${window.origin}/inbox/download/${company?.id}/attachments/${attachment}">${attachment}</a>`;
                         });
                         // attach link of attachments to the html body content of the email
                         replyBody = `${replyBody}
