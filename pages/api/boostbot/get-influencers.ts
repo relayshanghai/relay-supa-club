@@ -8,6 +8,8 @@ import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influ
 import { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
+import BalanceService from 'src/backend/domain/balance/balance-service';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
 
 const GetInfluencersBody = z.object({
     searchPayloads: SearchInfluencersPayloadRequired.array(),
@@ -31,8 +33,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const platformCosts = { instagram: 2, tiktok: 2, youtube: 1 };
     const platform = searchPayloads[0].query.platform;
     const cost = platformCosts[platform];
+    await BalanceService.getService().deductBalanceInProcess(BalanceType.SEARCH, cost);
     const { error: recordError } = await recordSearchUsage(company_id, user_id, cost);
     if (recordError) {
+        await BalanceService.getService().refundBalanceInProcess(BalanceType.SEARCH, cost);
         return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
     }
 

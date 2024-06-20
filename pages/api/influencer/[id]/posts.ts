@@ -13,6 +13,8 @@ import type { ServerContext } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { RelayError } from 'src/errors/relay-error';
+import BalanceService from 'src/backend/domain/balance/balance-service';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
 
 export type InfluencerPostResponse = PostInfo[] | { error: string };
 
@@ -36,9 +38,11 @@ const recordUsage = async (creator: CampaignCreatorDBInsert, context: ServerCont
         throw new RelayError('No company', httpCodes.BAD_REQUEST);
     }
 
+    await BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, 1);
     const { error: recordError } = await recordReportUsage(profile.company_id, user.id, creator.creator_id);
 
     if (recordError) {
+        await BalanceService.getService().refundBalanceInProcess(BalanceType.PROFILE, 1);
         serverLogger(recordError, 'error');
         throw new RelayError(recordError, httpCodes.BAD_REQUEST);
     }

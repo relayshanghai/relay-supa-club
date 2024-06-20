@@ -521,6 +521,8 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
+                                <option value="ANY">{t('filters.anyOption')}</option>
+
                                 <option value="male">{t('filters.gender.maleOption')}</option>
                                 <option value="female">{t('filters.gender.femaleOption')}</option>
                             </select>

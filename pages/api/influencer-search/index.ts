@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import BalanceService from 'src/backend/domain/balance/balance-service';
 import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandler } from 'src/utils/api-handler';
@@ -80,11 +82,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!company_id || !user_id) {
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
-
+    await BalanceService.getService().deductBalanceInProcess(BalanceType.SEARCH);
     if (hasCustomSearchParams(searchParams)) {
         const { error: recordError } = await recordSearchUsage(company_id, user_id);
-
         if (recordError) {
+            await BalanceService.getService().refundBalanceInProcess(BalanceType.SEARCH);
             return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
         }
     }

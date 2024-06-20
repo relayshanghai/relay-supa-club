@@ -21,6 +21,7 @@ import type { HttpError } from './error/http-error';
 import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
 import apm from 'src/utils/apm';
+import BalanceService from 'src/backend/domain/balance/balance-service';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -153,6 +154,9 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             });
         }
 
+        if (rows[0]?.company_id) {
+            await BalanceService.getService().initBalance(rows[0]?.company_id);
+        }
         apm.setUserContext({
             email: session.user.email,
             id: session.user.id,
@@ -184,6 +188,7 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
 /**
  * handle data of request flow to support request context
  * @param params
+ * @deprecated use createHandler instead
  * @returns
  */
 export const ApiHandlerWithContext =
@@ -222,6 +227,10 @@ export const ApiHandlerWithContext =
                         serverLogger('Cannot get profile from session', (scope) => {
                             return scope.setContext('User', context);
                         });
+                    }
+
+                    if (row?.companies?.id) {
+                        await BalanceService.getService().initBalance(row.companies?.id);
                     }
                     apm.setUserContext({
                         email: session.user.email,

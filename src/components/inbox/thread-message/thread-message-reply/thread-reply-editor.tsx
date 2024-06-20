@@ -8,13 +8,15 @@ import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Underline } from '@tiptap/extension-underline';
 import type { AttachmentFile } from 'src/utils/outreach/types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useStorage from 'src/hooks/use-storage';
 import ThreadReplyAttachmentFileItem from './thread-reply-attachment-file-item';
 import { ThreadReplyEditorToolbar } from './thread-reply-editor-toolbar';
 import ThreadReplyAttachmentField from './thread-reply-attachment-field';
 import { Paperclip, Send, Spinner } from 'src/components/icons';
 import { Loading } from 'src/components/icons/Loading';
+import { useTranslation } from 'react-i18next';
+const regex = /^[\w\d\-_\s\.]+$/g;
 
 export default function ThreadReplyEditor({
     description,
@@ -104,14 +106,23 @@ export default function ThreadReplyEditor({
         }
         editor?.view.dispatch(editor?.state.tr);
     }, [placeholder, editor]);
+    const [uploadError, setUploadError] = useState<string>();
 
     const { upload, uploading, remove } = useStorage('attachments');
+    const { t } = useTranslation();
     const onUploadStorage = useCallback(
         async (file: AttachmentFile[]) => {
+            setUploadError(undefined);
+            for (const f of file) {
+                if (!regex.test(f.filename)) {
+                    setUploadError(t('inbox.filenameValidationMessage') as string);
+                    return;
+                }
+            }
             await upload(file);
             handleAttachmentSelect(file.map((f) => f.filename));
         },
-        [upload, handleAttachmentSelect],
+        [upload, handleAttachmentSelect, setUploadError, t],
     );
     const onRemoveStorage = useCallback(
         async (file: string) => {
@@ -163,6 +174,7 @@ export default function ThreadReplyEditor({
                             <span className="sr-only">Loading...</span>
                         </div>
                     )}
+                    {uploadError && <div className="text-red-500">{uploadError}</div>}
                 </div>
                 <button type="submit" className="mx-2 cursor-pointer">
                     {loading ? <Spinner /> : <Send className="h-6 w-6 stroke-gray-400" />}
