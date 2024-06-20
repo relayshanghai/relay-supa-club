@@ -56,6 +56,7 @@ const inbox = {
     edit: 'Edit',
     saveChanges: 'Save changes',
     remove: 'Remove',
+    filenameValidationMessage: 'Filename should contains alphanumeric characters only',
 };
 
 export default inbox;

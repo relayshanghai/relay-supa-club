@@ -56,6 +56,7 @@ const inbox = {
     edit: '修改',
     saveChanges: '保存更改',
     remove: '移除',
+    filenameValidationMessage: '文件名应只包含字母和数字。',
 };
 
 export default inbox;
