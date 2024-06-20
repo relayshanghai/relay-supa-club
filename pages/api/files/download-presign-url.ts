@@ -1,7 +1,16 @@
 import type { NextApiHandler } from 'next';
 import StorageService from 'src/backend/domain/storage/storage';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
-import { getUserAgentType } from 'src/utils/utils';
+
+const getUserAgentType = (userAgent: string) => {
+    if (/axios|node-fetch/i.test(userAgent)) {
+        return 'axios/fetch';
+    } else if (/Mozilla|Chrome|Safari|Firefox|Edge/i.test(userAgent)) {
+        return 'browser';
+    } else {
+        return 'unknown';
+    }
+};
 
 const getHandler: NextApiHandler = async (req, res) => {
     const { path } = req.query;

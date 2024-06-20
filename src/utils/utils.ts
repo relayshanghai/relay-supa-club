@@ -166,13 +166,3 @@ export const languageCodeToHumanReadable = (code: string) => {
         return code;
     }
 };
-
-export const getUserAgentType = (userAgent: string) => {
-    if (/axios|node-fetch/i.test(userAgent)) {
-        return 'axios/fetch';
-    } else if (/Mozilla|Chrome|Safari|Firefox|Edge/i.test(userAgent)) {
-        return 'browser';
-    } else {
-        return 'unknown';
-    }
-};
