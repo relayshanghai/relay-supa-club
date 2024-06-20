@@ -176,5 +176,6 @@ const sequences = {
     limitExceeded:
         '哎呀！看起来您的雷宝BoostBot额度已经用完了！如果本月您还希望为您的帐户添加更多使用额度，请与销售团队的雪菲通过微信：xfsp1989取得联系。或者，您的使用额度将在下一个计费周期开始时自动续订。',
     account_removed: '此影响者已被所有者移除。',
+    influencerLimit: `同一个序列中，最多只能添加{{ influencerLimit }}位红人。要添加更多红人，请创建一个新的序列。谢谢！`,
 };
 export default sequences;

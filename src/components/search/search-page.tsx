@@ -23,8 +23,9 @@ import { useTrackEvent } from './use-track-event';
 import { clientLogger } from 'src/utils/logger-client';
 import { Banner } from '../library/banner';
 import { useCompany } from 'src/hooks/use-company';
-import { getFulfilledData, randomNumber, unixEpochToISOString } from 'src/utils/utils';
+import { getFulfilledData, getRejectedData, randomNumber, unixEpochToISOString } from 'src/utils/utils';
 // import { featRecommended } from 'src/constants/feature-flags';
+import toast from 'react-hot-toast';
 
 import { FaqModal } from '../library';
 import discoveryfaq from 'i18n/en/discovery-faq';
@@ -312,8 +313,13 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             });
 
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
-
+            const sequenceInfluencers = getFulfilledData(
+                sequenceInfluencersResults,
+            ) as unknown as SequenceInfluencerManagerPage[];
+            const rejected = getRejectedData(sequenceInfluencersResults);
+            rejected.map((r: string) => {
+                if (r.startsWith('400')) toast.error(r);
+            });
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
             // An optimistic update to the sequence influencers cache to prevent the user from adding the same influencers to the sequence again
@@ -328,7 +334,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             trackingPayload['$add'] = { total_sequence_influencers: sequenceInfluencers.length };
         } catch (error) {
             clientLogger(error, 'error');
-
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };
         } finally {

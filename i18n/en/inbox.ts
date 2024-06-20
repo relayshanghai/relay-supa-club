@@ -51,6 +51,8 @@ const inbox = {
         error: 'Error when downloading attachment',
         toBigTitle: 'This attachment is too big!',
         toBigDescription: 'Please ask the sender for a link instead. BoostBot handles up to 20MB attachments.',
+        failedToDownload:
+            'Uh oh! Issue with email attachments. Please report this bug to our tech team using the “Report a Bug” button on the right. We’re on it! Uh oh! Issue with email attachments. Please report this bug to our tech team using the “Report a Bug” button on the right. We’re on it!',
     },
     save: 'Save',
     edit: 'Edit',

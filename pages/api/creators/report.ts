@@ -113,6 +113,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             },
         });
     };
+
     const trackFetchNewReport = () => {
         rudderstack.track({
             event: IQDATA_CREATE_NEW_REPORT,
