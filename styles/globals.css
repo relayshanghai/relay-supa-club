@@ -80,6 +80,12 @@ body,
     }
 }
 
+@layer base {
+    ul > li {
+        @apply list-disc list-inside;
+    }
+}
+
 @layer components {
     .border-unset-all {
         @apply border-transparent focus:border-transparent focus:ring-0;
