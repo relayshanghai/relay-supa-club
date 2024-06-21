@@ -2,12 +2,12 @@
 // @ts-check
 
 import { testMount } from 'src/utils/cypress-app-wrapper';
-import type { GuideCardKey } from './index';
-import { GuideCards, GuideComponent } from './index';
+import type { GuideCardKey } from './old-guide';
+import { GuideCards, OldGuideComponent } from './old-guide';
 import guidePage from 'i18n/en/guide';
 import { worker } from 'src/mocks/browser';
 
-describe('GuideComponent', () => {
+describe('OldGuideComponent', () => {
     beforeEach(() => {
         worker.start();
     });
@@ -16,12 +16,12 @@ describe('GuideComponent', () => {
         const cardDetails = guidePage.cards[section];
 
         it('should render', () => {
-            testMount(<GuideComponent showVideo={false} />);
+            testMount(<OldGuideComponent showVideo={false} />);
             cy.contains(guidePage.welcome + ' BoostBot');
             cy.contains(guidePage.welcomeDescription);
         });
         it('should show section title and description', () => {
-            testMount(<GuideComponent showVideo={false} />);
+            testMount(<OldGuideComponent showVideo={false} />);
 
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
