@@ -78,6 +78,9 @@ body,
     body {
         @apply bg-background text-foreground;
     }
+    ul > li {
+        @apply list-inside list-disc;
+    }
 }
 
 @layer components {
