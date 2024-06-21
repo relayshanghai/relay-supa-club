@@ -75,21 +75,17 @@ body,
         @apply border-border;
         @apply scroll-smooth;
     }
-
     body {
         @apply bg-background text-foreground;
     }
-}
-
-@layer base {
-    ul>li {
-        @apply list-disc list-inside;
+    ul > li {
+        @apply list-inside list-disc;
     }
 }
 
 @layer components {
     .border-unset-all {
-        @apply border-transparent focus: border-transparent focus:ring-0;
+        @apply border-transparent focus:border-transparent focus:ring-0;
     }
 
     .btn {
@@ -97,27 +93,27 @@ body,
     }
 
     .btn-primary {
-        @apply bg-primary-500 text-white duration-300 hover: bg-primary-700;
+        @apply bg-primary-500 text-white duration-300 hover:bg-primary-700;
     }
 
     .btn-secondary {
-        @apply bg-gray-200 text-gray-600 duration-300 hover: bg-gray-300;
+        @apply bg-gray-200 text-gray-600 duration-300 hover:bg-gray-300;
     }
 
     .btn-transparent {
-        @apply bg-primary-100 bg-opacity-50 text-primary-500 duration-300 hover: bg-opacity-100;
+        @apply bg-primary-100 bg-opacity-50 text-primary-500 duration-300 hover:bg-opacity-100;
     }
 
     .btn-sm-transparent {
-        @apply cursor-pointer rounded-md bg-primary-100 bg-opacity-60 px-2 py-1 text-xs text-primary-500 duration-300 hover: bg-opacity-100;
+        @apply cursor-pointer rounded-md bg-primary-100 bg-opacity-60 px-2 py-1 text-xs text-primary-500 duration-300 hover:bg-opacity-100;
     }
 
     .btn-with-icon-gray {
-        @apply row-between cursor-pointer rounded-lg bg-white px-4 py-2 duration-300 hover: bg-primary-100;
+        @apply row-between cursor-pointer rounded-lg bg-white px-4 py-2 duration-300 hover:bg-primary-100;
     }
 
     .btn-fileupload {
-        @apply cursor-pointer rounded-md border border-gray-200 bg-gray-100 text-xs duration-300 hover: bg-gray-200;
+        @apply cursor-pointer rounded-md border border-gray-200 bg-gray-100 text-xs duration-300 hover:bg-gray-200;
     }
 
     .column-center {
@@ -149,31 +145,31 @@ body,
     }
 
     .input-field {
-        @apply h-9 w-full rounded-md border border-gray-200 bg-white px-2 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within: border-primary-500;
+        @apply h-9 w-full rounded-md border border-gray-200 bg-white px-2 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within:border-primary-500;
     }
 
     .select-field {
-        @apply block h-9 w-full rounded-md bg-white text-sm text-gray-600 placeholder-gray-300 outline-none focus-within: border-primary-500;
+        @apply block h-9 w-full rounded-md bg-white text-sm text-gray-600 placeholder-gray-300 outline-none focus-within:border-primary-500;
     }
 
     .textarea-field {
-        @apply w-full resize-none rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within: border-primary-500;
+        @apply w-full resize-none rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within:border-primary-500;
     }
 
     .checkbox {
-        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 text-primary-500 duration-300 checked: border-transparent checked:bg-primary-500 hover:bg-primary-200 hover:checked:bg-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-0;
+        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 text-primary-500 duration-300 checked:border-transparent checked:bg-primary-500 hover:bg-primary-200 hover:checked:bg-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-0;
     }
 
     .checkbox-add-success {
-        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 bg-gray-400 text-gray-500 duration-300 checked: border-transparent checked:bg-gray-500 hover:checked:bg-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-0;
+        @apply mr-6 h-4 w-4 cursor-pointer appearance-none rounded-md border border-gray-300 bg-gray-400 text-gray-500 duration-300 checked:border-transparent checked:bg-gray-500 hover:checked:bg-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-0;
     }
 
     .file-uploader {
-        @apply block w-full cursor-pointer text-sm text-gray-500 duration-300 file: mr-4 file:rounded-xl file:border-0 file:bg-primary-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100;
+        @apply block w-full cursor-pointer text-sm text-gray-500 duration-300 file:mr-4 file:rounded-xl file:border-0 file:bg-primary-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100;
     }
 
     .radio-button {
-        @apply h-4 w-4 cursor-pointer appearance-none rounded-md border border-primary-400 duration-300 checked: border-transparent checked:bg-primary-500 focus:outline-none;
+        @apply h-4 w-4 cursor-pointer appearance-none rounded-md border border-primary-400 duration-300 checked:border-transparent checked:bg-primary-500 focus:outline-none;
     }
 }
 
