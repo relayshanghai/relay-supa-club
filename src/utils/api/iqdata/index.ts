@@ -106,7 +106,7 @@ export const fetchIqDataTopics = async (term: string, platform: CreatorPlatform,
     await IQDataApiFetch.service.request(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`, { context });
 
 export const fetchIqDataGeos = async (term: string, context?: ServerContext) =>
-    await IQDataApiFetch.service.request(`geos/?q=${term}&types=country&limit=5`, { context });
+    await IQDataApiFetch.service.request(`geos/?q=${term}&limit=5`, { context });
 
 export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams, context?: ServerContext) => {
     const { platform, body } = prepareFetchCreatorsFiltered(params);

@@ -205,7 +205,7 @@ interface Paging {
     skip?: number;
 }
 
-export interface Countries {
+export interface Locations {
     id: number;
     name: string;
     code: string;
