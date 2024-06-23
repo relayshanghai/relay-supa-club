@@ -12,6 +12,7 @@ import type Stripe from 'stripe';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import PriceRepository from 'src/backend/database/price/price-repository';
 import type { PriceEntity } from 'src/backend/database/price/price-entity';
+import BalanceRepository from 'src/backend/database/balance/balance-repository';
 vi.mock('src/backend/database/provider/transaction-decorator', () => ({
     UseTransaction: (): MethodDecorator => (_target, _key, _descriptor: PropertyDescriptor) => {
         // do nothing
@@ -38,6 +39,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const CompanyRepositoryUpdateMock = vi.fn();
     const CompanyRepositoryGetOneMock = vi.fn();
     const SequenceInfluencerRepositoryUpdateMock = vi.fn();
+    const BalanceRepositoryResetBalance = vi.fn().mockResolvedValueOnce({});
+    BalanceRepository.prototype.resetBalance = BalanceRepositoryResetBalance;
+
     SubscriptionRepository.prototype.findOne = SubscriptionRepositoryFindOneMock;
     StripeService.client.subscriptions.create = StripeCreateSubscriptionMock;
     StripeService.getService().getPaymentIntent = StripeGetPaymentIntentMock;
