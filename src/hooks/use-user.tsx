@@ -229,7 +229,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             const email = session?.user?.email;
             await trackEvent('Logout', { email });
             // destroy the session first
-            await supabaseClient.auth.signOut();
+            await awaitToError(supabaseClient.auth.signOut());
+            await awaitToError(apiClient.delete('/logout'));
 
             // reset all analytics
             try {

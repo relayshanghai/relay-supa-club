@@ -9,6 +9,8 @@ import { getCookieParameter, getCookieParserParameter } from './api-cookie-decor
 import { getPathParametersMeta } from './api-path-decorator';
 import { getHeaderParameter } from './api-header-decorator';
 import { getIpAddressParameter } from './api-request-ip-decorator';
+import { getResponse } from './api-res-decorator';
+import { getRequest } from './api-req-decorator';
 
 const getClassValue = async (targetClass: new () => any, request: any) => {
     const data = plainToInstance(targetClass, request);
@@ -39,6 +41,14 @@ const handleApiDescriptor: MethodDecorator = (target, propertyKey, descriptor: P
                 cookie = req.cookies;
             }
             args[cookieParameter.parameterIndex] = cookie;
+        }
+        const responsePipe = getResponse(target, propertyKey);
+        if (responsePipe) {
+            args[responsePipe.parameterIndex] = res;
+        }
+        const requestPipe = getRequest(target, propertyKey);
+        if (requestPipe) {
+            args[requestPipe.parameterIndex] = req;
         }
         const cookieParserParameter = getCookieParserParameter(target, propertyKey);
         if (cookieParserParameter !== undefined) {

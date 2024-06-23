@@ -190,6 +190,7 @@ export async function middleware(req: NextRequest) {
         return allowTrackingCors(req, res);
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient({ req, res });
+    console.log(req.nextUrl.pathname);
 
     if ((await isSessionClean(supabase)) === false) {
         const redirectUrl = req.nextUrl.clone();
@@ -198,15 +199,28 @@ export async function middleware(req: NextRequest) {
             return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
         }
 
+        if (redirectUrl.pathname === '/logout') {
+            redirectUrl.pathname = '/login';
+            redirectUrl.search = '';
+            return NextResponse.redirect(redirectUrl);
+        }
         redirectUrl.pathname = '/logout';
+        redirectUrl.search = '';
         return NextResponse.redirect(redirectUrl);
     }
 
     const { data: authData } = await supabase.auth.getSession();
 
-    if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
+    if (authData.session && BANNED_USERS.length && BANNED_USERS.includes(authData.session.user.id)) {
+        await supabase.auth.signOut();
         const redirect = req.nextUrl.clone();
+        if (redirect.pathname === '/logout') {
+            redirect.pathname = '/login';
+            redirect.search = '';
+            return NextResponse.redirect(redirect);
+        }
         redirect.pathname = '/logout';
+        redirect.search = '';
         return NextResponse.redirect(redirect);
     }
 
@@ -294,7 +308,6 @@ export const config = {
          * API routes
          * - api/invites/accept*
          * - api/signup
-         * - api/logout
          * - api/subscriptions/webhook
          * - api/webhooks
          * - api/logs/vercel
@@ -307,6 +320,6 @@ export const config = {
          * - api/jobs/run
          * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|inbox/download/*|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logout|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/profiles/exists|api/jobs/run|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|inbox/download/*|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/profiles/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };
