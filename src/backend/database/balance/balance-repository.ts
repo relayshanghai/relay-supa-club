@@ -5,6 +5,7 @@ import { BalanceEntity, type BalanceType } from './balance-entity';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import type { EntityManager, EntityTarget } from 'typeorm';
 import { type Nullable } from 'types/nullable';
+import { UseLogger } from 'src/backend/integration/logger/decorator';
 
 @InjectInitializeDatabaseOnAllProps
 export default class BalanceRepository extends BaseRepository<BalanceEntity> {
@@ -28,13 +29,13 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
     constructor(target: EntityTarget<BalanceEntity> = BalanceEntity, manager?: EntityManager) {
         super(target, manager);
     }
-
+    @UseLogger()
     async deduct(companyId: string, type: BalanceType, amount: number) {
-        return this.manager.transaction(async (manager) => {
-            const balance = await manager.query(`select amount from balance where company_id = $1 and type = $2`, [
-                companyId,
-                type,
-            ]);
+        await this.manager.transaction(async (manager) => {
+            const balance = await manager.query(
+                `select amount from balances where company_id = $1 and balance_type = $2`,
+                [companyId, type],
+            );
             if (!balance || balance?.length === 0) {
                 throw new NotFoundError('Balance not found');
             }
@@ -43,8 +44,8 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
             }
             await this.query(
                 `
-                UPDATE balance SET amount = amount - $1
-                WHERE company_id = $2 AND type = $3`,
+                UPDATE balances SET amount = amount - $1
+                WHERE company_id = $2 AND balance_type = $3`,
                 [amount, companyId, type],
             );
         });
@@ -53,10 +54,10 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
         await this.manager.transaction(async (manager) => {
             await manager.query(
                 `
-            UPDATE balance SET 
+            UPDATE balances SET 
                 amount = $1,
                 next_renew_at = $2 
-            WHERE company_id = $3 AND type = $4`,
+            WHERE company_id = $3 AND balance_type = $4`,
                 [amount, nextRenewAt, companyId, type],
             );
         });

@@ -6,6 +6,8 @@ import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
 import type { RelayDatabase, UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
+import BalanceService from 'src/backend/domain/balance/balance-service';
+import type { BalanceType } from 'src/backend/database/balance/balance-entity';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     let subscription = null;
@@ -110,12 +112,12 @@ const recordUsage = async ({
             return { error: null };
         }
     }
-
     if (usagesError) serverLogger(usagesError);
 
     if (usagesError || (usagesData?.length && usagesData.length >= limit)) {
         return { error: usageErrors.limitExceeded };
     }
+    BalanceService.getService().deductBalanceInProcess(type as BalanceType, count || 1);
 
     const usage: UsagesDBInsert = {
         company_id,
@@ -127,6 +129,7 @@ const recordUsage = async ({
     const usageToRecord = Array(count).fill(usage);
     const { error: insertError } = await supabase.from('usages').insert(usageToRecord);
     if (insertError) {
+        BalanceService.getService().refundBalanceInProcess(type as BalanceType, count || 1);
         serverLogger(insertError);
         return { error: usageErrors.errorRecordingUsage };
     }
