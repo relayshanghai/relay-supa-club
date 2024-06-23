@@ -19,11 +19,21 @@ import { clientLogger } from 'src/utils/logger-client';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
+const locationForInstagramAudience = ['macau', 'hongkong', 'hong kong'];
 
-const filterCountry = (items: any[]) => {
-    return items.filter((item: any) => {
-        return item.type?.[0] === 'country';
-    });
+const filterLocation = (items: any[], platform: 'youtube' | 'instagram' | 'tiktok') => {
+    return items
+        .filter((item: any) => {
+            return item.type?.[0] === 'country';
+        })
+        .filter((item: any) => {
+            // filter only if the location is in the list of locations that are not allowed for instagram audience
+            const regex = new RegExp(`\\b(?:${locationForInstagramAudience.join('|')})\\b`, 'i');
+            if ((regex.test(item.title) || regex.test(item.name)) && platform !== 'instagram') {
+                return false;
+            }
+            return true;
+        });
 };
 
 export type UpperAgeOption = '17' | '24' | '34' | '44' | '64';
@@ -208,7 +218,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                             placeholder={t('filters.location.placeholder')}
                             locations={audienceLocation}
                             platform={platform}
-                            filter={filterCountry}
+                            filter={(item) => filterLocation(item, platform)}
                             onSetLocations={(topics) => {
                                 setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
                                 trackFilter({
@@ -396,7 +406,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                             placeholder={t('filters.location.placeholder')}
                             locations={influencerLocation}
                             platform={platform}
-                            filter={filterCountry}
+                            filter={(item) => filterLocation(item, platform)}
                             onSetLocations={(topics) => {
                                 setInfluencerLocation(topics);
                                 trackFilter({
@@ -521,6 +531,8 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
+                                <option value="ANY">{t('filters.anyOption')}</option>
+
                                 <option value="male">{t('filters.gender.maleOption')}</option>
                                 <option value="female">{t('filters.gender.femaleOption')}</option>
                             </select>

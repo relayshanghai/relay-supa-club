@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { AttachmentFile } from 'src/utils/outreach/types';
-
 export const useStorage = (directory: string) => {
     const [uploading, setUploadingStatus] = useState(false);
     const upload = async (file: AttachmentFile[]) => {
@@ -13,11 +12,11 @@ export const useStorage = (directory: string) => {
                 );
                 const data = new FormData();
 
-                data.append('file', file.content);
                 await apiFetch(content.url, undefined, {
                     method: 'PUT',
                     body: data,
                 });
+                data.append('file', file.content);
             }),
         ).finally(() => setUploadingStatus(false));
     };

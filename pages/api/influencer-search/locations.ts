@@ -3,7 +3,15 @@ import { ApiHandler } from 'src/utils/api-handler';
 
 import { fetchIqDataGeosWithContext as fetchIqDataGeos } from 'src/utils/api/iqdata';
 import { IQDATA_LIST_GEOLOCATIONS, rudderstack } from 'src/utils/rudderstack';
-import { chinaFilter } from 'src/utils/utils';
+
+const chinaTextAddition = (id: number) => {
+    const chinaCityId = {
+        1867188: '中国澳门',
+        913110: '中国香港',
+    };
+    const found = chinaCityId[id as keyof typeof chinaCityId];
+    return found ? '| ' + found : '';
+};
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     const { term } = req.body;
@@ -21,21 +29,26 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const results = await fetchIqDataGeos({ req, res })(term);
 
-    // Filter out Taiwan and Hong Kong in the location results from iqData and replace with China (Taiwan) and China (Hong Kong)
-    const filteredResults = results?.map((result: { title: string; name: string }) => {
-        if (
-            result.title.toLowerCase().includes('taiwan') ||
-            result.title.toLowerCase().includes('hongkong' || 'hong kong') ||
-            result.name.toLowerCase().includes('taiwan') ||
-            result.name.toLowerCase().includes('hongkong' || 'hong kong')
-        ) {
-            return {
-                ...result,
-                title: chinaFilter(result.title),
-            };
-        }
-        return result;
-    });
+    // filter china city for macau and hong kong
+    const filteredResults = results
+        ?.map((result: { title: string; name: string; id: number }) => {
+            const locationsToReplace = ['macau', 'hongkong', 'hong kong'];
+            const regex = new RegExp(`\\b(?:${locationsToReplace.join('|')})\\b`, 'i');
+            if (regex.test(result.title) || regex.test(result.name)) {
+                return {
+                    ...result,
+                    title: `${result.title} ${chinaTextAddition(result.id)}`,
+                    type: ['country'],
+                };
+            }
+            return result;
+        })
+        .filter((result: { type: string[] }) => {
+            if (result.type.includes('country')) {
+                return true;
+            }
+            return false;
+        });
 
     return res.status(200).json(filteredResults);
 }
