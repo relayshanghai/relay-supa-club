@@ -435,7 +435,7 @@ export const sequence_steps = pgTable('sequence_steps', {
     sequence_id: uuid('sequence_id')
         .notNull()
         .references(() => sequences.id),
-    outreach_email_templates: uuid('outreach_email_templates').references(() => outreach_email_templates.id),
+    outreach_email_template_id: uuid('outreach_email_template_id').references(() => outreach_email_templates.id),
     step_number: smallint('step_number').default(0).notNull(),
 });
 
