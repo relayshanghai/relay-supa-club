@@ -2,7 +2,7 @@ import type { DBInstance } from '../database';
 import { db } from '../database';
 import { createThread, createEmail } from './db';
 import { parseContacts } from './parse-contacts';
-import type { From } from 'types/email-engine/account-account-message-get';
+import type { AccountAccountMessageGet, From } from 'types/email-engine/account-account-message-get';
 import { getMessage } from '../api/email-engine';
 import { stringifyContacts } from './stringify-contacts';
 import { getInfluencerFromMessage } from './get-influencer-from-message';
@@ -46,6 +46,20 @@ const transformEmail = (email: typeof emails.$inferSelect): TransformedEmail => 
         sender: parseContacts(email.sender)[0],
         recipients: parseContacts(email.recipients),
     };
+};
+
+const getReplyId = async (data: AccountAccountMessageGet) => {
+    const messageType = await getMessageType({ message: data });
+    switch (messageType.type) {
+        case 'Reply':
+            return data.id;
+
+        case 'New':
+            return data.id;
+
+        default:
+            return null;
+    }
 };
 
 /**
@@ -93,7 +107,7 @@ export const syncEmail: SyncEmailFn = async (params) => {
         }
 
         // determine the valid repliable id for this thread
-        const repliedMessageId = messageType.type === 'Reply' ? emailMessage.id : null;
+        const repliedMessageId = await getReplyId(emailMessage);
 
         const thread = await createThread(tx)({
             threadId: emailMessage.threadId,
