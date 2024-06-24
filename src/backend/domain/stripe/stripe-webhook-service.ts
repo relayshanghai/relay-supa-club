@@ -206,9 +206,6 @@ export class StripeWebhookService {
         switch (eventSubscription.status) {
             case 'active':
                 activeAt = new Date(eventSubscription.current_period_start * 1000);
-                if (eventSubscription.cancel_at !== null) {
-                    cancelledAt = new Date(eventSubscription.cancel_at * 1000);
-                }
                 break;
             case 'canceled':
                 cancelledAt = eventSubscription.canceled_at ? new Date(eventSubscription.canceled_at * 1000) : null;
@@ -216,7 +213,6 @@ export class StripeWebhookService {
             case 'past_due':
             case 'paused':
                 activeAt = new Date(eventSubscription.current_period_start * 1000);
-                cancelledAt = null;
                 break;
             case 'trialing':
                 cancelledAt = eventSubscription.trial_end ? new Date(eventSubscription.trial_end * 1000) : null;
@@ -233,7 +229,7 @@ export class StripeWebhookService {
             case 'trialing':
                 await SubscriptionRepository.getRepository().update(
                     {
-                        company: company as CompanyEntity,
+                        company,
                     },
                     {
                         activeAt,
