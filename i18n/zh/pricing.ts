@@ -71,6 +71,10 @@ const pricing = {
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
     backToAccount: '回到账号',
+    haveAlipayError: '您正在使用支付宝作为您的付款方式，请更新您的付款方式。',
+    deprecatedPaymentTitle: '不再支持的付款方式',
+    deprecatedPaymentDescription: '我们不再支持{{method}}作为付款方式。',
+    deprecatedLabel: '已弃用',
 };
 
 export default pricing;
