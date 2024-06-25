@@ -33,7 +33,6 @@ export const createThread: DBQuery<CreateThreadFn> = (drizzlePostgresInstance) =
             created_at: params.createdAt,
             updated_at: now(),
             last_reply_date: params.createdAt,
-            last_reply_id: params.lastReplyId ? params.lastReplyId : null,
         })
         .onConflictDoUpdate({
             target: threads.thread_id,
