@@ -20,6 +20,7 @@ import { SubscriptionEntity } from '../subcription/subscription-entity';
 import { UsageEntity } from '../usages/entity';
 import { BillingEventEntity } from '../billing-event/billing-event-entity';
 import { PriceEntity } from '../price/price-entity';
+import { BalanceEntity } from '../balance/balance-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -56,6 +57,7 @@ export const datasourceOptions = (): DataSourceOptions => {
             UsageEntity,
             BillingEventEntity,
             PriceEntity,
+            BalanceEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

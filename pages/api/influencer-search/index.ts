@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import {
@@ -80,10 +80,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!company_id || !user_id) {
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
-
     if (hasCustomSearchParams(searchParams)) {
         const { error: recordError } = await recordSearchUsage(company_id, user_id);
-
         if (recordError) {
             return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
         }
@@ -154,6 +152,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json(structuredResults);
 };
 
-export default ApiHandler({
+export default ApiHandlerWithContext({
     postHandler,
 });

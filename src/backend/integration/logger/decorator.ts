@@ -7,7 +7,9 @@ export const UseLogger = (): MethodDecorator => {
         const originalMethod = descriptor.value;
         descriptor.value = async function (...args: any[]) {
             const profile = RequestContext.getContext().profile;
-            setLogContext('profile', profile);
+            if (profile) {
+                setLogContext('profile', profile);
+            }
             const logMeta = {
                 method: propertyKey,
                 args,

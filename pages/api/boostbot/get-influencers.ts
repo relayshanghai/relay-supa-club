@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { limiter } from 'src/utils/limiter';
 import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import { SearchInfluencersPayloadRequired } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
@@ -53,4 +53,4 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json(uniqueInfluencers);
 };
 
-export default ApiHandler({ postHandler });
+export default ApiHandlerWithContext({ postHandler });

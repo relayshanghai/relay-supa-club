@@ -24,6 +24,8 @@ import { SequenceInfluencerScheduleStatus } from 'src/backend/database/sequence/
 import PriceRepository from 'src/backend/database/price/price-repository';
 import { type PriceEntity, type SubscriptionType } from 'src/backend/database/price/price-entity';
 import type { RelayPlanWithAnnual } from 'types';
+import BalanceRepository from 'src/backend/database/balance/balance-repository';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 
 export default class SubscriptionV2Service {
@@ -353,53 +355,67 @@ export default class SubscriptionV2Service {
     }) {
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
-
         const company = await CompanyRepository.getRepository().findOne({
             where: {
                 id: companyId,
             },
         });
-
-        await SubscriptionRepository.getRepository().upsert(
-            {
-                company: company as CompanyEntity,
-                provider: 'stripe',
-                providerSubscriptionId: subscription.id,
-                paymentMethod:
-                    subscription.payment_settings?.payment_method_types?.[0] ||
-                    subscription.default_payment_method?.toString() ||
-                    'card',
-                quantity: subscription.items.data[0].quantity,
-                price: subscription.items.data[0].price.unit_amount?.valueOf() || 0,
-                total:
-                    (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
-                    (subscription?.items?.data?.[0].quantity ?? 0),
-                subscriptionData: subscription,
-                interval: StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval),
-                discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
-                coupon: subscription.discount?.coupon?.id,
-                activeAt: new Date(subscription.current_period_start * 1000),
-                pausedAt: new Date(subscription.current_period_end * 1000),
-                cancelledAt: null,
-            },
-            {
-                conflictPaths: ['company'],
-            },
-        );
-
-        await CompanyRepository.getRepository().update(
-            {
-                id: companyId,
-            },
-            {
-                subscriptionStatus: subscription.status as string,
-                profilesLimit: productMetadata.profiles,
-                searchesLimit: productMetadata.searches,
-                trialProfilesLimit: productMetadata.trial_profiles,
-                trialSearchesLimit: productMetadata.trial_searches,
-                subscriptionPlan: productMetadata.name,
-            },
-        );
+        const interval = StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval);
+        const nextMonth = new Date();
+        nextMonth.setMonth(new Date().getMonth() + 1);
+        await Promise.all([
+            SubscriptionRepository.getRepository().upsert(
+                {
+                    company: company as CompanyEntity,
+                    provider: 'stripe',
+                    providerSubscriptionId: subscription.id,
+                    paymentMethod:
+                        subscription.payment_settings?.payment_method_types?.[0] ||
+                        subscription.default_payment_method?.toString() ||
+                        'card',
+                    quantity: subscription.items.data[0].quantity,
+                    price: subscription.items.data[0].price.unit_amount?.valueOf() || 0,
+                    total:
+                        (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                        (subscription?.items?.data?.[0].quantity ?? 0),
+                    subscriptionData: subscription,
+                    interval,
+                    discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
+                    coupon: subscription.discount?.coupon?.id,
+                    activeAt: new Date(subscription.current_period_start * 1000),
+                    pausedAt: new Date(subscription.current_period_end * 1000),
+                    cancelledAt: null,
+                },
+                {
+                    conflictPaths: ['company'],
+                },
+            ),
+            CompanyRepository.getRepository().update(
+                {
+                    id: companyId,
+                },
+                {
+                    subscriptionStatus: subscription.status as string,
+                    profilesLimit: productMetadata.profiles,
+                    searchesLimit: productMetadata.searches,
+                    trialProfilesLimit: productMetadata.trial_profiles,
+                    trialSearchesLimit: productMetadata.trial_searches,
+                    subscriptionPlan: productMetadata.name,
+                },
+            ),
+            BalanceRepository.getRepository().resetBalance(
+                companyId,
+                BalanceType.PROFILE,
+                parseInt(productMetadata.profiles),
+                interval === 'annually' ? nextMonth : null,
+            ),
+            BalanceRepository.getRepository().resetBalance(
+                companyId,
+                BalanceType.SEARCH,
+                parseInt(productMetadata.searches),
+                interval === 'annually' ? nextMonth : null,
+            ),
+        ]);
 
         const [, trialSubscription] = await awaitToError(StripeService.getService().getTrialSubscription(cusId));
         if (trialSubscription) {

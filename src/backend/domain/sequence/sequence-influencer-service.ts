@@ -19,6 +19,9 @@ import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-
 import { NotFoundError } from 'src/utils/error/http-error';
 import { type DeepPartial, IsNull, MoreThanOrEqual, Not, Between } from 'typeorm';
 import { type CreatorReport } from 'types';
+import BalanceService from '../balance/balance-service';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 export default class SequenceInfluencerService {
     public static readonly service: SequenceInfluencerService = new SequenceInfluencerService();
@@ -42,15 +45,7 @@ export default class SequenceInfluencerService {
         if (![SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(company.subscription?.status)) {
             throw new Error('Subscription not active');
         }
-
-        //change this to a balance check
-        const endDate = new Date((company.subscription.cancelledAt || company.subscription.pausedAt) as Date);
-        const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
-        const usages = await UsageRepository.getRepository().getCountByCompany(company.id, startDate, endDate);
-        const limit = parseInt(company.profilesLimit || company.trialProfilesLimit) || 0;
-        if (usages >= limit) {
-            throw new Error('Profile limit reached');
-        }
+        await BalanceService.getService().checkBalance(BalanceType.PROFILE, 1, company.id);
     }
 
     async storeUsage(company: CompanyEntity, sequenceInfluencer: SequenceInfluencerEntity) {
@@ -78,16 +73,19 @@ export default class SequenceInfluencerService {
             },
         });
         if (exists) return;
-        await UsageRepository.getRepository().save({
-            company: {
-                id: company.id,
-            },
-            type: 'profile',
-            profile: {
-                id: profile.id,
-            },
-            itemId: sequenceInfluencer.iqdataId,
-        });
+        await Promise.all([
+            BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE),
+            UsageRepository.getRepository().save({
+                company: {
+                    id: company.id,
+                },
+                type: 'profile',
+                profile: {
+                    id: profile.id,
+                },
+                itemId: sequenceInfluencer.iqdataId,
+            }),
+        ]);
     }
     @UseLogger()
     async startSyncReport(sequenceInfluencerId: string) {
@@ -101,6 +99,9 @@ export default class SequenceInfluencerService {
             if (!sequenceInfluencer) {
                 throw new NotFoundError('Sequence Influencer not found');
             }
+            RequestContext.setContext({
+                companyId: sequenceInfluencer.company.id,
+            });
             await this.checkUsage(sequenceInfluencer.company);
             await SequenceInfluencerRepository.getRepository().update(
                 {
