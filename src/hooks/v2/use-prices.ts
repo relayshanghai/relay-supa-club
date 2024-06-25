@@ -1,10 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from 'react';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
-} from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_ONE_OFF_ADD_PAYMENT } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { RelayPlanWithAnnual, SubscriptionPeriod, SubscriptionTier } from 'types';
@@ -44,13 +40,6 @@ export type AnnualPricesGetResponse = {
     outreach: {
         [key: string]: RelayPlanWithAnnual;
     };
-};
-
-export const PRICE_IDS = {
-    monthly: {
-        discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
-        outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
 };
 
 export const priceDetails: PriceDetails = {
