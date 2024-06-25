@@ -156,13 +156,13 @@ export const PriceCard = ({
             }, 2000);
             return;
         } else if (!paymentMethods?.length) {
-            toast.error('No payment method found. Please add a payment method.');
+            toast.error(t('pricing.noPaymentMethodFound'));
             setTimeout(() => {
                 router.push('/account#subscription-details');
             }, 2000);
             return;
         } else if (!defaultPaymentMethod) {
-            toast.error('No default payment method found. Please select a default payment method.');
+            toast.error(t('pricing.noDefaultPaymentMethodFound'));
             setTimeout(() => {
                 router.push('/account#subscription-details');
             }, 2000);
