@@ -72,9 +72,6 @@ export default class StripeService {
     async createSubscription(cusId: string, priceId: string, quantity = 1, coupon: Nullable<string> = undefined) {
         const c = coupon ?? undefined;
         const paymentMethodsTypes: Stripe.SubscriptionCreateParams.PaymentSettings.PaymentMethodType[] = ['card'];
-        // do not add alipay when the currency is usd
-        const price = await this.getPrice(priceId);
-        if (price?.currency === 'cny') paymentMethodsTypes.push('alipay' as any);
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
             items: [

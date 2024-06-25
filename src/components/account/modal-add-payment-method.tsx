@@ -20,7 +20,7 @@ export const AddPaymentMethodModal = ({ open, setOpen }: { open: boolean; setOpe
             },
         },
         locale: i18n.language?.includes('en') ? 'en' : 'zh',
-        payment_method_types: ['card', 'alipay'],
+        payment_method_types: ['card'],
     };
     const { t } = useTranslation();
 
