@@ -1,7 +1,7 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
-import { PriceEntity } from './price-entity';
+import { PriceEntity, SubscriptionBillingPeriod, type SubscriptionType } from './price-entity';
 import type { EntityManager, EntityTarget } from 'typeorm';
 
 @InjectInitializeDatabaseOnAllProps
@@ -24,5 +24,13 @@ export default class PriceRepository extends BaseRepository<PriceEntity> {
     }
     constructor(target: EntityTarget<PriceEntity> = PriceEntity, manager?: EntityManager) {
         super(target, manager);
+    }
+    getPriceByType(type: SubscriptionType) {
+        return this.find({
+            where: {
+                subscriptionType: type,
+                billingPeriod: SubscriptionBillingPeriod.MONTHLY,
+            },
+        });
     }
 }

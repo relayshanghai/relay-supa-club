@@ -1,11 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useCallback, useEffect, useState } from 'react';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
-} from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_ONE_OFF_ADD_PAYMENT } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { NewRelayPlan, SubscriptionPeriod, SubscriptionTier } from 'types';
@@ -39,13 +35,6 @@ export type Prices = {
     [key in ActiveSubscriptionTier]: NewRelayPlan;
 };
 
-export const PRICE_IDS = {
-    monthly: {
-        discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
-        outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
-};
-
 export const priceDetails: PriceDetails = {
     discovery: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 900, subtitle: 'boostBotSearchAndNormalSearch' },
@@ -76,6 +65,11 @@ export const useLocalStorageSelectedPrice = () =>
             annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
         },
     });
+
+/**
+ *
+ * @deprecated use usePricesV2 instead
+ */
 export const usePrices = (currency: string) => {
     const [prices, setPrices] = useState<Prices>();
     const [loading, setLoading] = useState(false);

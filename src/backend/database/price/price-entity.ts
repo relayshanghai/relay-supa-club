@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 import { type Nullable } from 'types/nullable';
 
 export enum SubscriptionType {
-    DISCOVERY = 'DISCOVERY',
-    OUTREACH = 'OUTREACH',
+    DISCOVERY = 'discovery',
+    OUTREACH = 'outreach',
 }
 export enum SubscriptionBillingPeriod {
     MONTHLY = 'MONTHLY',

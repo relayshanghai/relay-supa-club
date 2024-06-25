@@ -1,13 +1,6 @@
 import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata, NewRelayPlan } from 'types';
-import {
-    STRIPE_PRODUCT_ID_DISCOVERY,
-    STRIPE_PRODUCT_ID_OUTREACH,
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_MONTHLY_DISCOVERY_USD,
-    STRIPE_PRICE_MONTHLY_OUTREACH_USD,
-} from './constants';
+import { STRIPE_PRODUCT_ID_DISCOVERY, STRIPE_PRODUCT_ID_OUTREACH } from './constants';
 import { stripeClient } from './stripe-client';
 
 /**
@@ -33,11 +26,11 @@ export const getNewStripePlanPrices = async () => {
     })) as Stripe.ApiList<StripePriceWithProductMetadata>;
 
     if (!discovery.data || !outreach.data) throw new Error('no plans found');
-    const discoveryMonthlyCny = discovery.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DISCOVERY);
-    const discoveryMonthlyUsd = discovery.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DISCOVERY_USD);
+    const discoveryMonthlyCny = discovery.data.find(({ id }) => id === '');
+    const discoveryMonthlyUsd = discovery.data.find(({ id }) => id === '');
 
-    const outreachMonthlyCny = outreach.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_OUTREACH);
-    const outreachMonthlyUsd = outreach.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_OUTREACH_USD);
+    const outreachMonthlyCny = outreach.data.find(({ id }) => id === '');
+    const outreachMonthlyUsd = outreach.data.find(({ id }) => id === '');
 
     if (
         !discoveryMonthlyCny?.unit_amount ||
