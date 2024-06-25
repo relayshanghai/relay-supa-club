@@ -73,7 +73,7 @@ const pricing = {
     backToAccount: 'Back to account',
     haveAlipayError: 'You are using Alipay as your payment method, please update your payment method.',
     deprecatedPaymentTitle: 'Deprecated Payment Method',
-    deprecatedPaymentDescription: 'We no longer support {{method}} as a payment method.',
+    deprecatedPaymentDescription: 'We are no longer support {{method}} as a payment method.',
     deprecatedLabel: 'Deprecated',
 };
 
