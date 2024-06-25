@@ -75,6 +75,8 @@ const pricing = {
     deprecatedPaymentTitle: '不再支持的付款方式',
     deprecatedPaymentDescription: '我们不再支持{{method}}作为付款方式。',
     deprecatedLabel: '已弃用',
+    noPaymentMethodFound: '未找到付款方式。请添加一种付款方式。',
+    noDefaultPaymentMethodFound: '未找到默认付款方式。请选择一种默认付款方式。',
 };
 
 export default pricing;

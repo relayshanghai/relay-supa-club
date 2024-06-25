@@ -41,12 +41,20 @@ const disableButton = (
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
+
     if (!product?.name || !subscription?.status) {
         return true;
     }
+
+    // cannot downgrade from outreach to discovery
+    if (tier.toUpperCase() === 'DISCOVERY' && product.name === 'Outreach') {
+        return true;
+    }
+
     if (isCurrentPlan(tier, period, subscription, product)) {
         return true;
     }
+
     return false;
 };
 
@@ -143,6 +151,18 @@ export const PriceCard = ({
         if (hasAlipayOnPaymentMethods || defaultPaymentMethodIsAlipay) {
             // show error if alipay is not supported anymore
             toast.error(t('pricing.haveAlipayError'));
+            setTimeout(() => {
+                router.push('/account#subscription-details');
+            }, 2000);
+            return;
+        } else if (!paymentMethods?.length) {
+            toast.error(t('pricing.noPaymentMethodFound'));
+            setTimeout(() => {
+                router.push('/account#subscription-details');
+            }, 2000);
+            return;
+        } else if (!defaultPaymentMethod) {
+            toast.error(t('pricing.noDefaultPaymentMethodFound'));
             setTimeout(() => {
                 router.push('/account#subscription-details');
             }, 2000);
