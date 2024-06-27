@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
+import {
+    useLocalStoragePaymentPeriod,
+    type ActiveSubscriptionPeriod,
+    type ActiveSubscriptionTier,
+} from 'src/hooks/use-prices';
 import { PriceCard } from './price-card';
 import { Button } from '../button';
 import { useRouter } from 'next/router';
@@ -37,7 +41,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { company } = useCompany();
     const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
     const { subscription } = useSubscription();
-    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('monthly');
+    const [paymentPeriod, setPaymentPeriod] = useLocalStoragePaymentPeriod();
 
     const options: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
 
@@ -47,8 +51,19 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     };
 
     useEffect(() => {
-        setPeriod(subscription?.interval as ActiveSubscriptionPeriod);
-    }, [subscription?.interval]);
+        if (landingPage) {
+            setPaymentPeriod({
+                ...paymentPeriod,
+                period: 'monthly',
+            });
+            return;
+        }
+        setPaymentPeriod({
+            ...paymentPeriod,
+            period: subscription?.interval as ActiveSubscriptionPeriod,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [subscription?.interval, landingPage]);
 
     return (
         <>
@@ -90,9 +105,13 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                         {(!priceLoading || prices) && (
                             <ToggleGroup
                                 type="single"
-                                value={period}
+                                value={paymentPeriod.period}
                                 onValueChange={(val: ActiveSubscriptionPeriod) => {
-                                    if (val) setPeriod(val);
+                                    if (val)
+                                        setPaymentPeriod({
+                                            ...paymentPeriod,
+                                            period: val,
+                                        });
                                 }}
                             >
                                 <ToggleGroupItem value={'monthly'}>{t('pricing.monthly')}</ToggleGroupItem>
@@ -106,7 +125,12 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                         } w-full max-w-screen-xl flex-wrap justify-center`}
                     >
                         {options.map((option) => (
-                            <PriceCard key={option} period={period} priceTier={option} landingPage={landingPage} />
+                            <PriceCard
+                                key={option}
+                                period={paymentPeriod.period}
+                                priceTier={option}
+                                landingPage={landingPage}
+                            />
                         ))}
                     </div>
                     {landingPage && (

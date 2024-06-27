@@ -75,6 +75,10 @@ export const useLocalStorageSelectedPrice = () =>
             monthly: '',
             annually: '',
         },
+        forExistingUser: {
+            monthly: '',
+            annually: '',
+        },
     });
 export const usePricesV2 = (currency: string) => {
     const [prices, setPrices] = useState<Prices>();

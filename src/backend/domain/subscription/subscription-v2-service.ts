@@ -27,6 +27,8 @@ import type { RelayPlanWithAnnual } from 'types';
 import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
+// will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
+const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
 
 export default class SubscriptionV2Service {
     static service: SubscriptionV2Service;
@@ -594,6 +596,15 @@ export default class SubscriptionV2Service {
     }
 
     async getPrices() {
+        const companyId = RequestContext.getContext().companyId as string;
+        // check if company is loyal or we can say they are using old prices
+        let loyalCompany = false;
+        if (companyId) {
+            const existingCompany = await CompanyRepository.getRepository().getCompanyById(companyId);
+            if (existingCompany.createdAt.getTime() < parseInt(PRICE_UPDATE_DATE + '000')) {
+                loyalCompany = true;
+            }
+        }
         const prices = {
             discovery: [] as RelayPlanWithAnnual[],
             outreach: [] as RelayPlanWithAnnual[],
@@ -606,7 +617,8 @@ export default class SubscriptionV2Service {
             });
 
             const grouped = pricesData.reduce((acc: any, item: PriceEntity) => {
-                const { currency, profiles, searches, billingPeriod, price, originalPrice, priceId } = item;
+                const { currency, profiles, searches, billingPeriod, price, originalPrice, priceId, forExistingUser } =
+                    item;
                 if (!acc[currency]) {
                     acc[currency] = {
                         currency,
@@ -620,6 +632,12 @@ export default class SubscriptionV2Service {
                 acc[currency].prices[billingPeriod.toLowerCase()] = price;
                 acc[currency].originalPrices[billingPeriod.toLowerCase()] = originalPrice;
                 acc[currency].priceIds[billingPeriod.toLowerCase()] = priceId;
+                if (loyalCompany) {
+                    acc[currency].forExistingUser = {
+                        ...acc[currency].forExistingUser ?? {},
+                        [billingPeriod.toLowerCase()]: forExistingUser,
+                    };
+                }
                 return acc;
             }, {});
             prices[key as keyof typeof prices] = grouped;
