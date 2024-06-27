@@ -600,8 +600,8 @@ export default class SubscriptionV2Service {
         // check if company is loyal or we can say they are using old prices
         let loyalCompany = false;
         if (companyId) {
-            const existingCompany = await CompanyRepository.getRepository().getCompanyById(companyId);
-            if (existingCompany.createdAt.getTime() < parseInt(PRICE_UPDATE_DATE + '000')) {
+            const [, existingCompany] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+            if (existingCompany?.createdAt.getTime() < parseInt(PRICE_UPDATE_DATE + '000')) {
                 loyalCompany = true;
             }
         }
