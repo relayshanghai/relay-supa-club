@@ -127,8 +127,6 @@ export const PriceCard = ({
 
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        router.push(`/subscriptions/sub_xxx/payments`);
-        return;
         createSubscription({ priceId: price.priceIds[period], quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
