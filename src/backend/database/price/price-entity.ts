@@ -43,6 +43,9 @@ export class PriceEntity {
     @Column({ name: 'for_existing_user', type: 'decimal' })
     forExistingUser!: number;
 
+    @Column({ name: 'price_id_for_existing_user', type: 'varchar' })
+    priceIdsForExistingUser!: string;
+
     @Column({ name: 'created_at', type: 'timestamp' })
     createdAt!: Nullable<Date>;
 

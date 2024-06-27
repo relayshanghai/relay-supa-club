@@ -617,8 +617,17 @@ export default class SubscriptionV2Service {
             });
 
             const grouped = pricesData.reduce((acc: any, item: PriceEntity) => {
-                const { currency, profiles, searches, billingPeriod, price, originalPrice, priceId, forExistingUser } =
-                    item;
+                const {
+                    currency,
+                    profiles,
+                    searches,
+                    billingPeriod,
+                    price,
+                    originalPrice,
+                    priceId,
+                    forExistingUser,
+                    priceIdsForExistingUser,
+                } = item;
                 if (!acc[currency]) {
                     acc[currency] = {
                         currency,
@@ -633,8 +642,12 @@ export default class SubscriptionV2Service {
                 acc[currency].originalPrices[billingPeriod.toLowerCase()] = originalPrice;
                 acc[currency].priceIds[billingPeriod.toLowerCase()] = priceId;
                 if (loyalCompany) {
+                    acc[currency].priceIdsForExistingUser = {
+                        ...(acc[currency].priceIdsForExistingUser ?? {}),
+                        [billingPeriod.toLowerCase()]: priceIdsForExistingUser,
+                    };
                     acc[currency].forExistingUser = {
-                        ...acc[currency].forExistingUser ?? {},
+                        ...(acc[currency].forExistingUser ?? {}),
                         [billingPeriod.toLowerCase()]: forExistingUser,
                     };
                 }

@@ -124,10 +124,11 @@ export const PriceCard = ({
     const defaultPaymentMethodIsAlipay = paymentMethods?.some(
         (pm) => pm.id === defaultPaymentMethod && pm.type === 'alipay',
     );
+    const priceId = price.priceIdsForExistingUser ? price.priceIdsForExistingUser[period] : price.priceIds[period];
 
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        createSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        createSubscription({ priceId, quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
                     clientSecret: res?.clientSecret,
@@ -169,8 +170,7 @@ export const PriceCard = ({
             }, 2000);
             return;
         }
-        return;
-        changeSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        changeSubscription({ priceId, quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();
