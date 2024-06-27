@@ -26,6 +26,8 @@ import { type PriceEntity, type SubscriptionType } from 'src/backend/database/pr
 import type { RelayPlanWithAnnual } from 'types';
 import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import CompanyPromoRepository from 'src/backend/database/company-promo/company-promo-repository';
+import { CompanyPromos } from 'src/backend/database/company-promo/company-promo-entity';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -344,6 +346,14 @@ export default class SubscriptionV2Service {
             cusId,
             request,
         });
+
+        const [, loyalCompany] = await awaitToError(this.getLoyalCompany(companyId));
+        const [, hasBeforeJulyPromo] = await awaitToError(
+            CompanyPromoRepository.getRepository().getCompanyPromoByCompanyId(companyId, CompanyPromos.BEFORE_JULY),
+        );
+        if (loyalCompany && !hasBeforeJulyPromo) {
+            await CompanyPromoRepository.getRepository().addCompanyPromo(companyId, CompanyPromos.BEFORE_JULY);
+        }
     }
 
     async storeSubscription({
@@ -590,6 +600,14 @@ export default class SubscriptionV2Service {
             },
         );
         await StripeService.getService().removeExistingInvoiceBySubscription(subscription.providerSubscriptionId);
+
+        const [, loyalCompany] = await awaitToError(this.getLoyalCompany(companyId));
+        const [, hasBeforeJulyPromo] = await awaitToError(
+            CompanyPromoRepository.getRepository().getCompanyPromoByCompanyId(companyId, CompanyPromos.BEFORE_JULY),
+        );
+        if (loyalCompany && !hasBeforeJulyPromo) {
+            await CompanyPromoRepository.getRepository().addCompanyPromo(companyId, CompanyPromos.BEFORE_JULY);
+        }
         return {
             providerSubscriptionId: stripeSubscription.id,
         };
@@ -599,11 +617,14 @@ export default class SubscriptionV2Service {
         const companyId = RequestContext.getContext().companyId as string;
         // check if company is loyal or we can say they are using old prices
         let loyalCompany = false;
+        let gotBeforeJulyPromo = false;
         if (companyId) {
-            const [, existingCompany] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
-            if (existingCompany?.createdAt.getTime() < parseInt(PRICE_UPDATE_DATE + '000')) {
-                loyalCompany = true;
-            }
+            [, loyalCompany] = await awaitToError(this.getLoyalCompany(companyId));
+
+            const [, hasBeforeJulyPromo] = await awaitToError(
+                CompanyPromoRepository.getRepository().getCompanyPromoByCompanyId(companyId, CompanyPromos.BEFORE_JULY),
+            );
+            gotBeforeJulyPromo = !!hasBeforeJulyPromo;
         }
         const prices = {
             discovery: [] as RelayPlanWithAnnual[],
@@ -641,7 +662,9 @@ export default class SubscriptionV2Service {
                 acc[currency].prices[billingPeriod.toLowerCase()] = price;
                 acc[currency].originalPrices[billingPeriod.toLowerCase()] = originalPrice;
                 acc[currency].priceIds[billingPeriod.toLowerCase()] = priceId;
-                if (loyalCompany) {
+                // check if company is loyal or we can say they are using old prices
+                // and they never get before july promo
+                if (loyalCompany && !gotBeforeJulyPromo) {
                     acc[currency].priceIdsForExistingUser = {
                         ...(acc[currency].priceIdsForExistingUser ?? {}),
                         [billingPeriod.toLowerCase()]: priceIdsForExistingUser,
@@ -657,5 +680,14 @@ export default class SubscriptionV2Service {
         }
 
         return prices;
+    }
+
+    private async getLoyalCompany(companyId: string) {
+        let loyalCompany = false;
+        const [, existingCompany] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
+        if (existingCompany?.createdAt.getTime() < parseInt(PRICE_UPDATE_DATE + '000')) {
+            loyalCompany = true;
+        }
+        return loyalCompany;
     }
 }
