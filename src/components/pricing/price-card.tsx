@@ -47,7 +47,7 @@ const disableButton = (
     }
 
     // cannot downgrade from outreach to discovery
-    if (tier.toUpperCase() === 'DISCOVERY' && product.name === 'Outreach') {
+    if (tier.toUpperCase() === 'DISCOVERY' && product.name === 'Outreach' && subscription.status === 'ACTIVE') {
         return true;
     }
 
