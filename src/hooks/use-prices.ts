@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { STRIPE_PRICE_ONE_OFF_ADD_PAYMENT } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { NewRelayPlan, SubscriptionPeriod, SubscriptionTier } from 'types';
+import type { NewRelayPlan, RelayPlanWithAnnual, SubscriptionPeriod, SubscriptionTier } from 'types';
 import { useLocalStorage } from './use-localstorage';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
@@ -52,7 +52,7 @@ export const priceDetails: PriceDetails = {
 };
 
 export const useLocalStorageSelectedPrice = () =>
-    useLocalStorage<NewRelayPlan>('selectedPrice', {
+    useLocalStorage<RelayPlanWithAnnual>('selectedPrice', {
         currency: 'usd',
         prices: {
             monthly: '0',
@@ -64,7 +64,13 @@ export const useLocalStorageSelectedPrice = () =>
             monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
             annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
         },
+        originalPrices: {
+            monthly: '0',
+            annually: '0',
+        },
     });
+export const useLocalStoragePaymentPeriod = () =>
+    useLocalStorage<{ period: ActiveSubscriptionPeriod }>('paymentPeriod', { period: 'monthly' });
 
 /**
  *

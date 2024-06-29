@@ -79,6 +79,14 @@ export type RelayPlanWithAnnual = {
         monthly: string;
         annually: string;
     };
+    priceIdsForExistingUser?: {
+        monthly: string;
+        annually: string;
+    };
+    forExistingUser?: {
+        monthly: string;
+        annually: string;
+    };
 };
 export interface RelayPlanStripeProduct extends Stripe.Product {
     metadata: RelayAccountPlanMetadata;

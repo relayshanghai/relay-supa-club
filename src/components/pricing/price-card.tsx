@@ -17,6 +17,7 @@ import type Stripe from 'stripe';
 import { usePricesV2 } from 'src/hooks/v2/use-prices';
 import PriceCardSkeleton from './price-card-skeleton';
 import { useEffect } from 'react';
+import { type RelayPlanWithAnnual } from 'types';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -123,10 +124,11 @@ export const PriceCard = ({
     const defaultPaymentMethodIsAlipay = paymentMethods?.some(
         (pm) => pm.id === defaultPaymentMethod && pm.type === 'alipay',
     );
+    const priceId = price.priceIdsForExistingUser ? price.priceIdsForExistingUser[period] : price.priceIds[period];
 
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        createSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        createSubscription({ priceId, quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
                     clientSecret: res?.clientSecret,
@@ -168,7 +170,7 @@ export const PriceCard = ({
             }, 2000);
             return;
         }
-        changeSubscription({ priceId: price.priceIds[period], quantity: 1 })
+        changeSubscription({ priceId, quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();
@@ -203,6 +205,33 @@ export const PriceCard = ({
         }
     };
 
+    const PriceDetail = ({ price }: { price: RelayPlanWithAnnual }) => {
+        if (price.forExistingUser) {
+            return (
+                <>
+                    <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
+                        {price.prices[period]}
+                    </h3>
+                    <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                        {price.forExistingUser[period]}
+                        <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
+                    </h1>
+                </>
+            );
+        }
+        return (
+            <>
+                <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
+                    {price.originalPrices[period] ? price.originalPrices[period] + ' ' + periodText() : ''}
+                </h3>
+                <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                    {price.prices[period]}
+                    <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
+                </h1>
+            </>
+        );
+    };
+
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
@@ -216,13 +245,7 @@ export const PriceCard = ({
                     </p>
                 </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
-                <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
-                    {price.originalPrices[period] ? price.originalPrices[period] + ' ' + periodText() : ''}
-                </h3>
-                <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
-                    {price.prices[period]}
-                    <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
-                </h1>
+                <PriceDetail price={price} />
                 <PriceDetailsCard priceTier={priceTier} />
 
                 {!landingPage && (
