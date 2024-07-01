@@ -19,6 +19,9 @@ import { OutreachEmailTemplateVariableEntity } from '../sequence-email-template/
 import { SubscriptionEntity } from '../subcription/subscription-entity';
 import { UsageEntity } from '../usages/entity';
 import { BillingEventEntity } from '../billing-event/billing-event-entity';
+import { PriceEntity } from '../price/price-entity';
+import { BalanceEntity } from '../balance/balance-entity';
+import { CompanyPromoEntity } from '../company-promo/company-promo-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -54,6 +57,9 @@ export const datasourceOptions = (): DataSourceOptions => {
             TemplateVariableEntity,
             UsageEntity,
             BillingEventEntity,
+            PriceEntity,
+            BalanceEntity,
+            CompanyPromoEntity,
         ] as any,
         synchronize: false,
         logger: 'simple-console',

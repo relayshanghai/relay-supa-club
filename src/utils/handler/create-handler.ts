@@ -1,3 +1,4 @@
+import 'elastic-apm-node';
 import type { NextApiResponse } from 'next';
 import { createErrorObject } from '../api-handler';
 import type { RelayApiRequest } from '../api-handler';
@@ -16,6 +17,7 @@ import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import apm from 'src/utils/apm';
+import BalanceService from 'src/backend/domain/balance/balance-service';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -62,6 +64,9 @@ export const createHandler = (target: new () => any) => {
                         serverLogger('Cannot get profile from session', (scope) => {
                             return scope.setContext('User', context);
                         });
+                    }
+                    if (row?.company) {
+                        await BalanceService.getService().initBalance(row.company.id);
                     }
                     apm.setUserContext({
                         email: session.user.email,

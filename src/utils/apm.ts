@@ -1,6 +1,8 @@
 import apm from 'elastic-apm-node';
 
-if (!apm.isStarted()) {
+const useVercel = process.env.VERCEL_ENV === 'true';
+
+if (!apm.isStarted() || useVercel) {
     apm.start({
         serviceName: process.env.ELASTIC_APM_SERVICE_NAME,
         serverUrl: process.env.ELASTIC_APM_SERVER_URL,

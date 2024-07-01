@@ -10,6 +10,8 @@ const pricing = {
     perMonth: '/ month',
     usdPerMonth: 'USD / Month',
     rmbPerMonth: 'RMB / Month',
+    usdPerYear: 'USD / Year',
+    rmbPerYear: 'RMB / Year',
     startFreeTrial: 'Start Your Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
@@ -69,6 +71,12 @@ const pricing = {
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',
     backToAccount: 'Back to account',
+    haveAlipayError: 'You are using Alipay as your payment method, please update your payment method.',
+    deprecatedPaymentTitle: 'Deprecated Payment Method',
+    deprecatedPaymentDescription: 'We are no longer support {{method}} as a payment method.',
+    deprecatedLabel: 'Deprecated',
+    noPaymentMethodFound: 'No payment method found. Please add a payment method.',
+    noDefaultPaymentMethodFound: 'No default payment method found. Please select a default payment method.',
 };
 
 export default pricing;

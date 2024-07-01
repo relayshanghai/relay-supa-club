@@ -166,3 +166,11 @@ export const languageCodeToHumanReadable = (code: string) => {
         return code;
     }
 };
+
+/**
+ * Formats the given Stripe price by dividing it by 100 and rounding it to the nearest whole number.
+ *
+ * @param price - The price to be formatted.
+ * @returns The formatted price as a string.
+ */
+export const formatStripePrice = (price: number) => (price / 100).toFixed(0);

@@ -1,18 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import { useCallback, useEffect, useState } from 'react';
-import {
-    STRIPE_PRICE_MONTHLY_DISCOVERY,
-    STRIPE_PRICE_MONTHLY_OUTREACH,
-    STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
-} from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_ONE_OFF_ADD_PAYMENT } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SubscriptionPeriod, SubscriptionTier } from 'types';
+import type { NewRelayPlan, RelayPlanWithAnnual, SubscriptionPeriod, SubscriptionTier } from 'types';
 import { useLocalStorage } from './use-localstorage';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
-export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly' | 'annually'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly'>;
 
 export type PriceDetails = {
     [key in ActiveSubscriptionTier]: {
@@ -36,14 +32,7 @@ export type Price = {
     };
 };
 export type Prices = {
-    [key in ActiveSubscriptionTier]: Price;
-};
-
-export const PRICE_IDS = {
-    monthly: {
-        discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
-        outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
+    [key in ActiveSubscriptionTier]: NewRelayPlan;
 };
 
 export const priceDetails: PriceDetails = {
@@ -63,17 +52,30 @@ export const priceDetails: PriceDetails = {
 };
 
 export const useLocalStorageSelectedPrice = () =>
-    useLocalStorage<Price>('selectedPrice', {
+    useLocalStorage<RelayPlanWithAnnual>('selectedPrice', {
         currency: 'usd',
         prices: {
             monthly: '0',
+            annually: '0',
         },
         profiles: '',
         searches: '',
         priceIds: {
             monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+            annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+        },
+        originalPrices: {
+            monthly: '0',
+            annually: '0',
         },
     });
+export const useLocalStoragePaymentPeriod = () =>
+    useLocalStorage<{ period: ActiveSubscriptionPeriod }>('paymentPeriod', { period: 'monthly' });
+
+/**
+ *
+ * @deprecated use usePricesV2 instead
+ */
 export const usePrices = (currency: string) => {
     const [prices, setPrices] = useState<Prices>();
     const [loading, setLoading] = useState(false);

@@ -20,7 +20,7 @@ import {
     IQDATA_LIST_REPORTS,
     rudderstack,
 } from 'src/utils/rudderstack';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 import awaitToError from 'src/utils/await-to-error';
 
@@ -199,6 +199,6 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     });
 }
 
-export default ApiHandler({
+export default ApiHandlerWithContext({
     getHandler,
 });

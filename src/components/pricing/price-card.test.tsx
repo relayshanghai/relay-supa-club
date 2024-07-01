@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor, cleanup, act } from '@testing-library/react
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PriceCard } from './price-card';
 let createSubscriptionMock = vi.fn();
+const refreshPaymentMethodInfoMock = vi.fn();
 const pushMock = vi.fn();
 describe('PriceCard Component', () => {
     afterEach(() => {
@@ -10,12 +11,13 @@ describe('PriceCard Component', () => {
     });
     beforeEach(() => {
         vi.resetAllMocks();
-        vi.mock('src/hooks/use-prices', () => ({
-            usePrices: () => ({
+        vi.mock('src/hooks/v2/use-prices', () => ({
+            usePricesV2: () => ({
                 prices: {
                     discovery: {
                         currency: 'cny',
                         prices: { monthly: '299' },
+                        originalPrices: { monthly: '399' },
                         profiles: '200',
                         searches: '900',
                         priceIds: { monthly: 'price_monthly_1' },
@@ -23,6 +25,7 @@ describe('PriceCard Component', () => {
                     outreach: {
                         currency: 'cny',
                         prices: { monthly: '799' },
+                        originalPrices: { monthly: '899' },
                         profiles: '600',
                         searches: '1200',
                         priceIds: { monthly: 'price_monthly_2' },
@@ -100,6 +103,7 @@ describe('PriceCard Component', () => {
                     status: 'CANCELLED',
                 },
                 product: { name: 'Outreach' },
+                refreshPaymentMethodInfo: refreshPaymentMethodInfoMock,
             }),
             STRIPE_SUBSCRIBE_RESPONSE: 'boostbot_stripe_secret_response',
             stripeSubscribeResponseInitialValue: {},

@@ -7,4 +7,5 @@ export const createSubscriptionErrors = {
     noPaymentMethod: 'noPaymentMethod',
     alreadySubscribed: 'alreadySubscribed',
     termsNotChecked: 'termsNotChecked',
+    unableToFetchPrice: 'unableToFetchPrice',
 };

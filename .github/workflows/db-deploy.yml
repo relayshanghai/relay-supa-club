@@ -25,6 +25,9 @@ jobs:
             NEXT_PUBLIC_FEAT_RECOMMENDED: true
             NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
             SUPABASE_CONNECTION_URL: postgresql://postgres:postgres@localhost:54322/postgres
+            NEXT_PUBLIC_STRIPE_PRODUCT_ID_VIP: prod_NJ1l6867a0bkhL
+            NEXT_PUBLIC_STRIPE_PRODUCT_DISCOVERY: prod_OSxVPMxAcggFWP
+            NEXT_PUBLIC_STRIPE_PRODUCT_OUTREACH: prod_OSxdtb3ukjSg08
 
         strategy:
             matrix:

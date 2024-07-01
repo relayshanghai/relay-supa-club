@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
-import { useLocalStorageSelectedPrice, usePrices } from 'src/hooks/use-prices';
+import { useLocalStorageSelectedPrice } from 'src/hooks/use-prices';
 import { useSubscription as useSubscriptionLegacy } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
@@ -14,6 +14,10 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useLocalStorageSubscribeResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
 import type Stripe from 'stripe';
+import { usePricesV2 } from 'src/hooks/v2/use-prices';
+import PriceCardSkeleton from './price-card-skeleton';
+import { useEffect } from 'react';
+import { type RelayPlanWithAnnual } from 'types';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -22,19 +26,8 @@ const isCurrentPlan = (
     product?: Stripe.Product,
 ) => {
     const tierName = tier === 'discovery' ? 'Discovery' : 'Outreach';
-    const subscriptionInterval = subscription?.subscriptionData.plan.interval;
-    const subscriptionIntervalCount = subscription?.subscriptionData.plan.interval_count;
-    let interval = null;
-    if (subscriptionInterval === 'month') {
-        if (subscriptionIntervalCount === 3) {
-            interval = 'quarterly';
-        } else {
-            interval = 'monthly';
-        }
-    } else if (subscriptionInterval === 'year') {
-        interval = 'annually';
-    }
-    return product?.name === tierName && interval === period && subscription?.status === 'ACTIVE';
+    const subscriptionInterval = subscription?.interval;
+    return product?.name === tierName && subscriptionInterval === period && subscription?.status === 'ACTIVE';
 };
 
 const allowedCompanyStatus = ['trial', 'canceled', 'awaiting_payment', 'paused'];
@@ -49,12 +42,20 @@ const disableButton = (
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
+
     if (!product?.name || !subscription?.status) {
         return true;
     }
+
+    // cannot downgrade from outreach to discovery
+    if (tier.toUpperCase() === 'DISCOVERY' && product.name === 'Outreach' && subscription.status === 'ACTIVE') {
+        return true;
+    }
+
     if (isCurrentPlan(tier, period, subscription, product)) {
         return true;
     }
+
     return false;
 };
 
@@ -70,7 +71,7 @@ export const PriceCard = ({
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { company } = useCompany();
-    const { prices, loading: priceLoading } = usePrices(company?.currency || 'cny');
+    const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
     const { refreshSubscription } = useSubscriptionLegacy();
     const {
         subscription,
@@ -79,46 +80,26 @@ export const PriceCard = ({
         loading: subscriptionV2Loading,
         changeSubscription,
         refreshSubscription: refreshSubscriptionV2,
+        paymentMethods,
+        defaultPaymentMethod,
+        refreshPaymentMethodInfo,
     } = useSubscription();
     const [, setStripeSecretResponse] = useLocalStorageSubscribeResponse();
     const [, setSelectedPrice] = useLocalStorageSelectedPrice();
     const router = useRouter();
+
+    useEffect(() => {
+        refreshPaymentMethodInfo();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     if (priceLoading || !prices)
         return (
-            <div className="max-w-lg animate-pulse space-y-2.5">
-                <div className="flex w-full items-center">
-                    <div className="h-2.5 w-32 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                </div>
-                <div className="flex w-full max-w-[480px] items-center">
-                    <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                </div>
-                <div className="flex w-full max-w-[400px] items-center">
-                    <div className="h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                </div>
-                <div className="flex w-full max-w-[480px] items-center">
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                </div>
-                <div className="flex w-full max-w-[440px] items-center">
-                    <div className="ms-2 h-2.5 w-32 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-24 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                </div>
-                <div className="flex w-full max-w-[360px] items-center">
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="ms-2 h-2.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div className="ms-2 h-2.5 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                </div>
-                <span className="sr-only">Loading...</span>
+            <div className="mt-4">
+                <PriceCardSkeleton />
             </div>
         );
+
     type PriceKey = keyof typeof prices;
 
     const key: PriceKey = priceTier;
@@ -134,15 +115,20 @@ export const PriceCard = ({
         companySubscriptionStatus === 'canceled' ||
         subscriptionStatus === 'TRIAL' ||
         companySubscriptionStatus === 'trial' ||
-        // TODO: check if paused can happen on existing subscription
         subscriptionStatus === 'PASS_DUE' ||
         companySubscriptionStatus === 'paused';
 
     const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 
+    const hasAlipayOnPaymentMethods = paymentMethods?.some((pm) => pm.type === 'alipay');
+    const defaultPaymentMethodIsAlipay = paymentMethods?.some(
+        (pm) => pm.id === defaultPaymentMethod && pm.type === 'alipay',
+    );
+    const priceId = price.priceIdsForExistingUser ? price.priceIdsForExistingUser[period] : price.priceIds[period];
+
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
-        createSubscription({ priceId: price.priceIds.monthly, quantity: 1 })
+        createSubscription({ priceId, quantity: 1 })
             .then((res) => {
                 setStripeSecretResponse({
                     clientSecret: res?.clientSecret,
@@ -164,7 +150,27 @@ export const PriceCard = ({
     };
 
     const triggerUpgradeSubscription = () => {
-        changeSubscription({ priceId: prices[priceTier].priceIds.monthly, quantity: 1 })
+        if (hasAlipayOnPaymentMethods || defaultPaymentMethodIsAlipay) {
+            // show error if alipay is not supported anymore
+            toast.error(t('pricing.haveAlipayError'));
+            setTimeout(() => {
+                router.push('/account#subscription-details');
+            }, 2000);
+            return;
+        } else if (!paymentMethods?.length) {
+            toast.error(t('pricing.noPaymentMethodFound'));
+            setTimeout(() => {
+                router.push('/account#subscription-details');
+            }, 2000);
+            return;
+        } else if (!defaultPaymentMethod) {
+            toast.error(t('pricing.noDefaultPaymentMethodFound'));
+            setTimeout(() => {
+                router.push('/account#subscription-details');
+            }, 2000);
+            return;
+        }
+        changeSubscription({ priceId, quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();
@@ -190,6 +196,42 @@ export const PriceCard = ({
             );
         }
     };
+
+    const periodText = () => {
+        if (period === 'monthly') {
+            return currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth');
+        } else if (period === 'annually') {
+            return currency === 'usd' ? t('pricing.usdPerYear') : t('pricing.rmbPerYear');
+        }
+    };
+
+    const PriceDetail = ({ price }: { price: RelayPlanWithAnnual }) => {
+        if (price.forExistingUser) {
+            return (
+                <>
+                    <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
+                        {price.prices[period]}
+                    </h3>
+                    <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                        {price.forExistingUser[period]}
+                        <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
+                    </h1>
+                </>
+            );
+        }
+        return (
+            <>
+                <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
+                    {price.originalPrices[period] ? price.originalPrices[period] + ' ' + periodText() : ''}
+                </h3>
+                <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                    {price.prices[period]}
+                    <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
+                </h1>
+            </>
+        );
+    };
+
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
@@ -203,13 +245,7 @@ export const PriceCard = ({
                     </p>
                 </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
-                <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
-                    {price.prices[period]}
-
-                    <span className="ml-1 text-sm font-semibold text-gray-500">
-                        {currency === 'usd' ? t('pricing.usdPerMonth') : t('pricing.rmbPerMonth')}
-                    </span>
-                </h1>
+                <PriceDetail price={price} />
                 <PriceDetailsCard priceTier={priceTier} />
 
                 {!landingPage && (

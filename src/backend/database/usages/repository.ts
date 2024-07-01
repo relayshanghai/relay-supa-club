@@ -38,4 +38,19 @@ export class UsageRepository extends BaseRepository<UsageEntity> {
             },
         });
     }
+    async getCountUsages(companyId: string) {
+        const usages: { type: string; usage: number }[] = await this.query(
+            `
+            SELECT "type", count(*) as usage FROM usages where "company_id" = $1 GROUP BY "type"`,
+            [companyId],
+        );
+        const result = usages.reduce((acc, cur) => {
+            acc[cur.type] = cur.usage;
+            return acc;
+        }, {} as Record<string, number>);
+        return {
+            profile: result.profile || 0,
+            search: result.search || 0,
+        };
+    }
 }

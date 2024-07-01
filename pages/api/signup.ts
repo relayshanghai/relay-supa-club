@@ -150,7 +150,7 @@ const createStripeCustomerAndSubscription = async ({
         throw new Error(createCompanyErrors.unableToMakeStripeCustomer);
     }
 
-    const { trial_days, priceId } = DISCOVERY_PLAN;
+    const { trial_days, priceId } = { priceId: '', trial_days: DISCOVERY_PLAN.trial_days };
 
     const createParams: Stripe.SubscriptionCreateParams = {
         customer: customer.id,
@@ -186,7 +186,12 @@ const createCompanyWithSubscriptionLimits = async ({
     companyWebsite?: string;
     cus_id: string;
 }) => {
-    const { searches, profiles, trial_searches, trial_profiles } = DISCOVERY_PLAN;
+    const { searches, profiles, trial_searches, trial_profiles } = {
+        searches: '',
+        profiles: '',
+        trial_searches: '',
+        trial_profiles: '',
+    };
 
     return await db(createCompany)({
         id: companyId,

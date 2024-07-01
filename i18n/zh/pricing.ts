@@ -10,6 +10,8 @@ const pricing = {
     perMonth: '/月',
     usdPerMonth: '美金/月',
     rmbPerMonth: '人民币/月',
+    usdPerYear: '美元/年',
+    rmbPerYear: '人民币/年',
     startFreeTrial: '开始免费试用',
     contactNow: '立即联系',
     checkOutOur: '查看我们的',
@@ -69,6 +71,12 @@ const pricing = {
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
     backToAccount: '回到账号',
+    haveAlipayError: '您正在使用支付宝作为您的付款方式，请更新您的付款方式。',
+    deprecatedPaymentTitle: '不再支持的付款方式',
+    deprecatedPaymentDescription: '我们不再支持{{method}}作为付款方式。',
+    deprecatedLabel: '已弃用',
+    noPaymentMethodFound: '未找到付款方式。请添加一种付款方式。',
+    noDefaultPaymentMethodFound: '未找到默认付款方式。请选择一种默认付款方式。',
 };
 
 export default pricing;

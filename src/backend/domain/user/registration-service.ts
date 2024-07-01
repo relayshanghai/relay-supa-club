@@ -22,6 +22,8 @@ import SequenceService from '../sequence/sequence-service';
 import type { AccountRole } from 'types';
 import { UsageRepository } from 'src/backend/database/usages/repository';
 import HcaptchaService from 'src/backend/integration/hcaptcha/hcaptcha-service';
+import PriceRepository from 'src/backend/database/price/price-repository';
+import { SubscriptionType } from 'src/backend/database/price/price-entity';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -85,7 +87,20 @@ export default class RegistrationService {
             throw new Error(createCompanyErrors.unableToMakeStripeCustomer);
         }
 
-        const { trial_days, priceId, priceIdUsd } = DISCOVERY_PLAN;
+        const [err, data] = await awaitToError(
+            PriceRepository.getRepository().getPriceByType(SubscriptionType.DISCOVERY),
+        );
+        if (err) {
+            throw new Error(createSubscriptionErrors.unableToFetchPrice);
+        }
+        const usd = data?.find((price) => price.currency === 'usd');
+        const cny = data?.find((price) => price.currency === 'cny');
+
+        const { trial_days, priceId, priceIdUsd } = {
+            trial_days: DISCOVERY_PLAN.trial_days,
+            priceId: cny?.priceId,
+            priceIdUsd: usd?.priceId,
+        };
         const selectedPriceId = param.currency === 'usd' ? priceIdUsd : priceId;
         const subscription = await stripeClient.subscriptions.create({
             customer: customer.id,
@@ -112,7 +127,27 @@ export default class RegistrationService {
             ...request,
             companyId,
         });
-        const { searches, profiles, trial_searches: trialSearches, trial_profiles: trialProfiles } = DISCOVERY_PLAN;
+        const [err, data] = await awaitToError(
+            PriceRepository.getRepository().findOne({
+                where: {
+                    subscriptionType: SubscriptionType.DISCOVERY,
+                },
+            }),
+        );
+        if (err) {
+            throw new Error(createSubscriptionErrors.unableToFetchPrice);
+        }
+        const {
+            searches,
+            profiles,
+            trial_searches: trialSearches,
+            trial_profiles: trialProfiles,
+        } = {
+            searches: data?.searches,
+            profiles: data?.profiles,
+            trial_searches: DISCOVERY_PLAN.trial_searches,
+            trial_profiles: DISCOVERY_PLAN.trial_profiles,
+        };
 
         const company = new CompanyEntity();
         company.id = companyId;
@@ -120,8 +155,8 @@ export default class RegistrationService {
         company.website = request.companyWebsite;
         company.cusId = cusId;
         company.termsAccepted = true;
-        company.profilesLimit = profiles;
-        company.searchesLimit = searches;
+        company.profilesLimit = profiles + '';
+        company.searchesLimit = searches + '';
         company.trialProfilesLimit = trialProfiles;
         company.trialSearchesLimit = trialSearches;
         company.subscriptionStatus = 'trial';
