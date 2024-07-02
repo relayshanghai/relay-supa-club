@@ -38,11 +38,15 @@ export class UsageRepository extends BaseRepository<UsageEntity> {
             },
         });
     }
-    async getCountUsages(companyId: string) {
+    async getCountUsages(companyId: string, startPeriod: Date, endPeriod: Date) {
         const usages: { type: string; usage: number }[] = await this.query(
             `
-            SELECT "type", count(*) as usage FROM usages where "company_id" = $1 GROUP BY "type"`,
-            [companyId],
+            SELECT "type", count(*) as usage FROM usages 
+            where "company_id" = $1 
+            and "created_at" between $2 and $3
+            GROUP BY "type"
+            `,
+            [companyId, startPeriod, endPeriod],
         );
         const result = usages.reduce((acc, cur) => {
             acc[cur.type] = cur.usage;

@@ -27,7 +27,10 @@ export default class BalanceService {
             relations: ['subscription'],
         });
         if (!company) return;
-        const usage = await UsageRepository.getRepository().getCountUsages(companyId);
+        const startDate = new Date(company.subscription?.activeAt as Date);
+        const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
+
+        const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
         const searchLimit = parseInt(company.searchesLimit || company.trialSearchesLimit);
         const profileLimit = parseInt(company.profilesLimit || company.trialProfilesLimit);
 
