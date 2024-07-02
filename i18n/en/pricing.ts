@@ -24,6 +24,7 @@ const pricing = {
     amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
     fullCustomerService: 'Full Customer Service',
     boostBotSearchAndNormalSearch: 'BoostBot AI Search + Traditional Search',
+    unlimitedFollowUpEmail: 'Unlimited follow up emails',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 

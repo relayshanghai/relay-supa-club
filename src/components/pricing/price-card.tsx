@@ -59,6 +59,10 @@ const disableButton = (
     return false;
 };
 
+const currencyFormatWithComma = (num: number) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 export const PriceCard = ({
     period,
     priceTier,
@@ -210,10 +214,10 @@ export const PriceCard = ({
             return (
                 <>
                     <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
-                        {price.prices[period]}
+                        {currencyFormatWithComma(+price.prices[period])}
                     </h3>
                     <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
-                        {price.forExistingUser[period]}
+                        {currencyFormatWithComma(+price.forExistingUser[period])}
                         <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
                     </h1>
                 </>
@@ -222,10 +226,12 @@ export const PriceCard = ({
         return (
             <>
                 <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
-                    {price.originalPrices[period] ? price.originalPrices[period] + ' ' + periodText() : ''}
+                    {price.originalPrices[period]
+                        ? currencyFormatWithComma(parseInt(price.originalPrices[period] ?? '0')) + ' ' + periodText()
+                        : ''}
                 </h3>
                 <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
-                    {price.prices[period]}
+                    {currencyFormatWithComma(+price.prices[period])}
                     <span className="ml-1 text-sm font-semibold text-gray-500">{periodText()}</span>
                 </h1>
             </>
@@ -240,9 +246,6 @@ export const PriceCard = ({
             >
                 <h1 className="relative w-fit text-4xl font-semibold text-gray-800">
                     {t(`pricing.${priceTier}.title`)}
-                    <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">
-                        {t('pricing.beta')}
-                    </p>
                 </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
                 <PriceDetail price={price} />

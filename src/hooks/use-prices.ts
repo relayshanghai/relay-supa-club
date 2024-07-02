@@ -37,15 +37,15 @@ export type Prices = {
 
 export const priceDetails: PriceDetails = {
     discovery: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 900, subtitle: 'boostBotSearchAndNormalSearch' },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 1200, subtitle: 'boostBotSearchAndNormalSearch' },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 600 },
         { title: 'fullCustomerService', icon: 'check' },
     ],
     outreach: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 1200, subtitle: 'boostBotSearchAndNormalSearch' },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 600 },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 2500, subtitle: 'boostBotSearchAndNormalSearch' },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 1000 },
         { title: 'personalEmailAccount', icon: 'check', amount: 1 },
-        { title: 'amount_EmailsPerMonth', icon: 'check', amount: 600 },
+        { title: 'amount_EmailsPerMonth', icon: 'check', amount: 1000, subtitle: 'unlimitedFollowUpEmail' },
         { title: 'fullCustomerService', icon: 'check' },
     ],
     addPayment: [{ title: 'addPayment', icon: 'check' }],
