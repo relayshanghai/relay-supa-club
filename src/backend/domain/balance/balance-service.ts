@@ -27,7 +27,7 @@ export default class BalanceService {
             relations: ['subscription'],
         });
         if (!company) return;
-        const startDate = new Date(company.subscription?.activeAt as Date);
+        const startDate = new Date(company.subscription?.activeAt || (company.createdAt as Date));
         const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
         const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
