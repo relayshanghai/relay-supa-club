@@ -164,7 +164,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
 
     useEffect(() => {
         if (!audienceLocation) {
-            setAudienceLocation(defaultAudienceLocations);
+            setAudienceLocation(defaultAudienceLocations());
         }
     }, [audienceLocation, setAudienceLocation]);
 
@@ -176,7 +176,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
         setEngagement(undefined);
         setLastPost(undefined);
         setContactInfo(undefined);
-        setAudienceLocation(defaultAudienceLocations);
+        setAudienceLocation(defaultAudienceLocations());
         setInfluencerLocation([]);
         setAudienceGender(defaultAudienceGender);
         setAudienceAge(undefined);
