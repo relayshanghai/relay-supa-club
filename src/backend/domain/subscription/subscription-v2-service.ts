@@ -427,7 +427,6 @@ export default class SubscriptionV2Service {
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
         if (activeSubscription) {
-            await StripeService.getService().removeExistingInvoiceBySubscription(request.subscriptionId);
             await StripeService.getService().removeExistingInvoiceBySubscription(activeSubscription.id);
             await StripeService.getService().deleteSubscription(activeSubscription.id);
         }
