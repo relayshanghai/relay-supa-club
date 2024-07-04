@@ -249,6 +249,10 @@ export default class StripeService {
         return StripeService.client.subscriptions.cancel(existingSubscription.id);
     }
 
+    async cancelSubscriptionBySubsId(id: string) {
+        return StripeService.client.subscriptions.cancel(id);
+    }
+
     async getPaymentIntent(paymentIntentId: string) {
         return StripeService.client.paymentIntents.retrieve(paymentIntentId);
     }
@@ -294,6 +298,15 @@ export default class StripeService {
             default:
                 return 'monthly';
         }
+    }
+
+    async getSubscriptionsByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
+        const subscription = await StripeService.client.subscriptions.list({
+            customer: customerId,
+            status,
+            expand: ['data.plan.product'],
+        });
+        return subscription.data;
     }
 
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {

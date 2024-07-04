@@ -355,7 +355,6 @@ export default class SubscriptionV2Service {
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
     }) {
-        const [, activeSubscription] = await awaitToError(StripeService.getService().getActiveSubscription(cusId));
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
         const company = await CompanyRepository.getRepository().findOne({
@@ -426,10 +425,7 @@ export default class SubscriptionV2Service {
             await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
-        if (activeSubscription) {
-            await StripeService.getService().removeExistingInvoiceBySubscription(activeSubscription.id);
-            await StripeService.getService().deleteSubscription(activeSubscription.id);
-        }
+        await awaitToError(this.cancelOtherSubscription(cusId, request.subscriptionId));
         await SequenceInfluencerRepository.getRepository().update(
             {
                 company: { id: companyId },
@@ -668,5 +664,13 @@ export default class SubscriptionV2Service {
             loyalCompany = true;
         }
         return loyalCompany;
+    }
+
+    private async cancelOtherSubscription(cusId: string, subscriptionId: string) {
+        const subs = await StripeService.getService().getSubscriptionsByStatus(cusId);
+        const nonActiveSubs = subs.filter((sub) => sub.id !== subscriptionId);
+        for (const sub of nonActiveSubs) {
+            await awaitToError(StripeService.getService().cancelSubscriptionBySubsId(sub.id));
+        }
     }
 }
