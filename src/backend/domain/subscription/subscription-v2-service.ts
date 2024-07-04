@@ -355,6 +355,7 @@ export default class SubscriptionV2Service {
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
     }) {
+        const [, activeSubscription] = await awaitToError(StripeService.getService().getActiveSubscription(cusId));
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
         const company = await CompanyRepository.getRepository().findOne({
@@ -425,7 +426,6 @@ export default class SubscriptionV2Service {
             await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
-        const [, activeSubscription] = await awaitToError(StripeService.getService().getActiveSubscription(cusId));
         if (activeSubscription) {
             await StripeService.getService().removeExistingInvoiceBySubscription(request.subscriptionId);
             await StripeService.getService().removeExistingInvoiceBySubscription(activeSubscription.id);
