@@ -425,6 +425,12 @@ export default class SubscriptionV2Service {
             await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
+        const [, activeSubscription] = await awaitToError(StripeService.getService().getActiveSubscription(cusId));
+        if (activeSubscription) {
+            await StripeService.getService().removeExistingInvoiceBySubscription(request.subscriptionId);
+            await StripeService.getService().removeExistingInvoiceBySubscription(activeSubscription.id);
+            await StripeService.getService().deleteSubscription(activeSubscription.id);
+        }
         await SequenceInfluencerRepository.getRepository().update(
             {
                 company: { id: companyId },
