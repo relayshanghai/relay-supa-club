@@ -182,7 +182,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
             views: [null, null],
             audience: [null, null],
             audienceGender: defaultAudienceGender,
-            audienceLocation: defaultAudienceLocations,
+            audienceLocation: defaultAudienceLocations(),
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
             // only_recommended: featRecommended() ? onlyRecommended : false,
         });

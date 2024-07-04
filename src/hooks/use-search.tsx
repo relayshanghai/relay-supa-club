@@ -23,30 +23,33 @@ type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { useLocalStorage } from './use-localstorage';
 
-export const defaultAudienceLocations: LocationWeighted[] = [
-    {
-        id: 148838,
-        type: ['country'],
-        name: 'United States',
-        title: 'United States',
-        country: {
+export const defaultAudienceLocations = (): LocationWeighted[] => {
+    return [];
+    return [
+        {
             id: 148838,
-            code: 'US',
+            type: ['country'],
+            name: 'United States',
+            title: 'United States',
+            country: {
+                id: 148838,
+                code: 'US',
+            },
+            weight: 5, // 5 = 5%
         },
-        weight: 5, // 5 = 5%
-    },
-    {
-        id: 1428125,
-        type: ['country'],
-        name: 'Canada',
-        title: 'Canada',
-        country: {
+        {
             id: 1428125,
-            code: 'CA',
+            type: ['country'],
+            name: 'Canada',
+            title: 'Canada',
+            country: {
+                id: 1428125,
+                code: 'CA',
+            },
+            weight: 1, // 1 = 1%
         },
-        weight: 1, // 1 = 1%
-    },
-];
+    ];
+};
 
 export const defaultAudienceGender = {
     code: 'FEMALE',
@@ -175,7 +178,7 @@ const searchResultFilterInitial = {
     engagement: undefined,
     lastPost: undefined,
     contactInfo: undefined,
-    audienceLocation: defaultAudienceLocations,
+    audienceLocation: defaultAudienceLocations(),
     audienceAge: undefined,
     audienceGender: defaultAudienceGender,
     platform: 'youtube',
