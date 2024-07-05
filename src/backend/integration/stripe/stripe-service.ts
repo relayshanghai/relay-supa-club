@@ -249,8 +249,13 @@ export default class StripeService {
         return StripeService.client.subscriptions.cancel(existingSubscription.id);
     }
 
-    async cancelSubscriptionBySubsId(id: string) {
-        return StripeService.client.subscriptions.cancel(id);
+    async cancelSubscriptionBySubsId(id: string, option?: { force: boolean }) {
+        if (option?.force) {
+            return StripeService.client.subscriptions.cancel(id);
+        }
+        return StripeService.getService().updateSubscription(id, {
+            cancel_at_period_end: true,
+        });
     }
 
     async getPaymentIntent(paymentIntentId: string) {
