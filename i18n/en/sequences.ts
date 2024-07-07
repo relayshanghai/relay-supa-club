@@ -164,7 +164,7 @@ const sequences = {
     delete: {
         deleteSequence_name: 'Delete {{name}}?',
         deleteSequenceDescription:
-            'Deleting a sequence will stop all scheduled emails for influencers in this sequence. No further messages will be sent. Influencers who have replied and are already in your Influencer Manager will be preserved, however any influencers currently in "Needs Attention", "In Sequence" or "Ignored" will be deleted. Are you sure you want to delete your sequence?',
+            'Influencers who have replied and are already in your inbox will be still be there, however any influencers currently in "Needs Attention" "In Sequence" or "Ignored" will be deleted.',
         okaySequence: 'Yes. Delete this sequence',
         title: 'Delete influencer from sequence?',
         description:

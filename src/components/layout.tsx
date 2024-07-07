@@ -21,7 +21,6 @@ const pageNameMap: { [key: string]: string } = {
     dashboard: 'discover',
     campaigns: 'campaigns',
     account: 'account',
-    'influencer-manager': 'influencerManager',
     inbox: 'inbox',
     guide: 'guide',
     boostbot: 'boostbot',
