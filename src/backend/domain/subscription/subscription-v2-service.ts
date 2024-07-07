@@ -425,6 +425,7 @@ export default class SubscriptionV2Service {
             await StripeService.getService().removeExistingInvoiceBySubscription(trialSubscription.id);
             await StripeService.getService().deleteSubscription(trialSubscription.id);
         }
+        await awaitToError(this.cancelOtherSubscription(cusId, request.subscriptionId));
         await SequenceInfluencerRepository.getRepository().update(
             {
                 company: { id: companyId },
@@ -663,5 +664,13 @@ export default class SubscriptionV2Service {
             loyalCompany = true;
         }
         return loyalCompany;
+    }
+
+    private async cancelOtherSubscription(cusId: string, subscriptionId: string) {
+        const subs = await StripeService.getService().getSubscriptionsByStatus(cusId);
+        const nonActiveSubs = subs.filter((sub) => sub.id !== subscriptionId);
+        for (const sub of nonActiveSubs) {
+            await awaitToError(StripeService.getService().cancelSubscriptionBySubsId(sub.id));
+        }
     }
 }
