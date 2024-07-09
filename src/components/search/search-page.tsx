@@ -56,6 +56,8 @@ import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-i
 import { filterOutAlreadyAddedInfluencers } from '../boostbot/table/helper';
 import { isBoostbotInfluencer } from 'pages/boostbot';
 import { saveSearchResults } from 'src/utils/save-search-influencers';
+// import { TourProvider } from '../tours/tour-provider';
+import { TourProvider, useTour, type StepType } from '@reactour/tour';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -371,7 +373,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     return (
         <div className="p-6">
             <ClientRoleWarning />
-            <div className="flex justify-between">
+            <div className="flex justify-between" id="search-creator-by-platform">
                 <SelectPlatform />
                 <div className="w-fit">
                     <SearchCreators />
@@ -479,26 +481,44 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
 
 export const SearchPage = () => {
     const { isExpired } = useCompany();
+    const { setIsOpen } = useTour();
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsOpen(true);
+        }, 2000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const { t } = useTranslation();
+
+    const tourSteps: StepType[] = [
+        {
+            selector: '#search-creator-by-platform',
+            content: 'You can try searching for creators by platform here.',
+        },
+    ];
+
     return (
         <Layout>
-            {isExpired && (
-                <Banner
-                    buttonText={t('banner.button') ?? ''}
-                    title={t('banner.expired.title')}
-                    message={t('banner.expired.description')}
-                />
-            )}
-            {IQDATA_MAINTENANCE ? (
-                <MaintenanceMessage />
-            ) : (
-                <div className="flex flex-col">
-                    <SearchProvider>
-                        <SearchPageInner expired={isExpired} />
-                    </SearchProvider>
-                </div>
-            )}
+            <TourProvider steps={tourSteps}>
+                {isExpired && (
+                    <Banner
+                        buttonText={t('banner.button') ?? ''}
+                        title={t('banner.expired.title')}
+                        message={t('banner.expired.description')}
+                    />
+                )}
+                {IQDATA_MAINTENANCE ? (
+                    <MaintenanceMessage />
+                ) : (
+                    <div className="flex flex-col">
+                        <SearchProvider>
+                            <SearchPageInner expired={isExpired} />
+                        </SearchProvider>
+                    </div>
+                )}
+            </TourProvider>
         </Layout>
     );
 };
