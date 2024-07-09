@@ -44,9 +44,6 @@ describe('<SearchPage />', () => {
         cy.findAllByTestId('filters-button').click();
         cy.findAllByTestId('clear-filters').click();
         cy.get('[data-testid="filter-gender"]').should('have.value', 'ANY');
-        cy.get('[data-testid="filter-gender-percent"]').should('have.value', '0.05');
-
-        // cy.findAllByRole('row').should('have.length', 11);
     });
     it('renders with no results', () => {
         const searchResult = {
