@@ -184,3 +184,9 @@ export type SearchResultMetadata = {
         parameters_id: string;
     };
 };
+
+export type ParamType = { [key: string]: number | number[] | string | string[] | undefined };
+export interface PageParams {
+    params?: ParamType;
+    searchParams?: ParamType;
+}
