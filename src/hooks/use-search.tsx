@@ -22,6 +22,8 @@ import { featRecommended } from 'src/constants/feature-flags';
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { useLocalStorage } from './use-localstorage';
+import { useRouter } from 'next/router';
+import { serializeQuery } from 'src/utils/url';
 
 export const defaultAudienceLocations = (): LocationWeighted[] => {
     return [];
@@ -299,12 +301,20 @@ export const useSearchResults = (page: number) => {
 };
 export const SearchProvider = ({ children }: PropsWithChildren) => {
     // this 'loading' triggers when any page is loading
+    const router = useRouter();
+    const { query } = router;
     const [loading, setLoading] = useState(true);
     const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
     const [usageExceeded, setUsageExceeded] = useState(false);
-    const [page, setPage] = useState(0);
     const [searchParams, setSearchParams] = useState<FetchCreatorsFilteredParams>();
+    const [page, setPage] = useState(query.page ? +query.page - 1 : 0);
     const [searchResult] = useLocalStorageSearchResult();
+
+    const newSetPage = (page: number) => {
+        // set query params
+        router.push(serializeQuery({ page: page + 1 }));
+        setPage(page);
+    };
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>(searchResult.tags);
@@ -495,7 +505,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 usageExceeded,
                 setUsageExceeded,
                 page,
-                setPage,
+                setPage: newSetPage,
                 onlyRecommended,
                 setOnlyRecommended,
                 recommendedInfluencers: recommendedInfluencers ?? [],
