@@ -13,6 +13,7 @@ import {
 } from 'src/hooks/v2/use-subscription';
 import { useRouter } from 'next/router';
 import awaitToError from 'src/utils/await-to-error';
+import { Popover, PopoverContent, PopoverTrigger } from 'shadcn/components/ui/popover';
 
 const getCoupon = (coupon: Coupon | string): string | undefined => {
     if (typeof coupon !== 'string') {
@@ -87,6 +88,7 @@ export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: strin
             handleSubmit(promoCode);
         }
     }, []);
+    const [popOverOpened, setPopOverOpened] = useState(false);
     return (
         <div className="mb-3">
             <div className="flex flex-col ">
@@ -100,19 +102,36 @@ export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: strin
                         onChange={(e) => setPromoCode(e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e)}
                         className={`${promoCodeInputCls} h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none  focus:outline-none focus:ring-0 `}
+                        onBlur={() => {
+                            if (promoCode.length > 0) {
+                                setPopOverOpened(true);
+                            }
+                        }}
                     />
-                    <Button
-                        data-testid="apply-coupon-button"
-                        className="h-full"
-                        type="submit"
-                        onClick={() => handleSubmit(promoCode)}
+                    <Popover
+                        open={popOverOpened}
+                        onOpenChange={() => {
+                            setPopOverOpened(false);
+                        }}
                     >
-                        {loading ? (
-                            <Spinner className="h-5 w-5 fill-primary-600 text-white" />
-                        ) : (
-                            t('account.payments.apply')
-                        )}
-                    </Button>
+                        <PopoverTrigger asChild>
+                            <Button
+                                data-testid="apply-coupon-button"
+                                className="h-full"
+                                type="submit"
+                                onClick={() => handleSubmit(promoCode)}
+                            >
+                                {loading ? (
+                                    <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                                ) : (
+                                    t('account.payments.apply')
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent side="bottom">
+                            <div className="p-2 text-xs text-gray-500">{t('pricing.pressApplyCouponButton')}</div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </div>
             <p className={`px-3 py-2 text-xs font-semibold ${promoCodeMessageCls}`}>{promoCodeMessage}</p>
