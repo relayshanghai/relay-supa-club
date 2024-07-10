@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
 import { Spinner } from '../icons';
@@ -88,7 +88,19 @@ export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: strin
             handleSubmit(promoCode);
         }
     }, []);
+
+    const buttonRef = useRef(null);
     const [popOverOpened, setPopOverOpened] = useState(false);
+
+    const handleBlur = () => {
+        // Using setTimeout to ensure the check happens after the focus change
+        setTimeout(() => {
+            if (promoCode.length > 0 && document.activeElement !== buttonRef.current) {
+                setPopOverOpened(true);
+            }
+        }, 0);
+    };
+
     return (
         <div className="mb-3">
             <div className="flex flex-col ">
@@ -102,11 +114,7 @@ export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: strin
                         onChange={(e) => setPromoCode(e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e)}
                         className={`${promoCodeInputCls} h-full w-full rounded border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:appearance-none  focus:outline-none focus:ring-0 `}
-                        onBlur={() => {
-                            if (promoCode.length > 0) {
-                                setPopOverOpened(true);
-                            }
-                        }}
+                        onBlur={handleBlur}
                     />
                     <Popover
                         open={popOverOpened}
@@ -116,6 +124,7 @@ export const PromoCodeSectionV2 = ({ setCouponId }: { setCouponId: (value: strin
                     >
                         <PopoverTrigger asChild>
                             <Button
+                                ref={buttonRef}
                                 data-testid="apply-coupon-button"
                                 className="h-full"
                                 type="submit"
