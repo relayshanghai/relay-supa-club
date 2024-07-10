@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import 'styles/globals.css';
+import 'driver.js/dist/driver.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';

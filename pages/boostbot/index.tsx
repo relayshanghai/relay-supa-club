@@ -31,6 +31,7 @@ import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 import { filterOutAlreadyAddedInfluencers } from 'src/components/boostbot/table/helper';
 import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useDriver } from 'src/hooks/use-driver';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -108,6 +109,33 @@ const Boostbot = () => {
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
             : undefined,
     );
+
+    const { setSteps, stepsReady, startTour, hasBeenGuided } = useDriver('boostbot');
+
+    useEffect(() => {
+        // set tour steps
+        setSteps([
+            {
+                element: '#boostbot-chat-component',
+                popover: {
+                    title: 'Welcome to BoostBot!',
+                    description: 'This is where you can chat with influencers and add them to your sequences.',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+        ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setTimeout(() => {
+            if (hasBeenGuided) return;
+            startTour();
+        }, 1000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stepsReady]);
 
     useEffect(() => {
         refreshUsages();
@@ -299,7 +327,7 @@ const Boostbot = () => {
                 />
             )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
-                <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
+                <div className="w-full flex-shrink-0 basis-1/4 md:w-80" id="boostbot-chat-component">
                     <Chat
                         influencers={influencers}
                         allSequenceInfluencers={allSequenceInfluencers}
