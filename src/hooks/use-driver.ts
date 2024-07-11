@@ -4,11 +4,12 @@ import { useLocalStorage } from './use-localstorage';
 
 type GuideFlagType = {
     hasBeenGuided: boolean;
-    page: string;
+    section: string;
 };
 
-export const useDriver = (page: string) => {
+export const useDriver = (section: string) => {
     const [steps, setSteps] = useState<DriveStep[]>([]);
+    const [, setActiveStep] = useState(0);
     const [val, setVal] = useLocalStorage<GuideFlagType[]>('boostbot-guide-flag', []);
 
     const d = driver({
@@ -21,8 +22,8 @@ export const useDriver = (page: string) => {
         onDestroyed: () => {
             setVal(
                 val.map((d) => {
-                    if (d.page === page) {
-                        return { hasBeenGuided: true, page };
+                    if (d.section === section) {
+                        return { hasBeenGuided: true, section };
                     }
                     return d;
                 }),
@@ -30,15 +31,22 @@ export const useDriver = (page: string) => {
         },
     });
 
-    const hasBeenGuided = val.find((d) => d.page === page)?.hasBeenGuided;
+    const hasBeenGuided = val.find((d) => d.section === section)?.hasBeenGuided;
 
     useEffect(() => {
-        const pages = val.map((d) => d.page);
-        if (!pages.includes(page)) {
-            setVal([...val, { hasBeenGuided: false, page }]);
+        const pages = val.map((d) => d.section);
+        if (!pages.includes(section)) {
+            setVal([...val, { hasBeenGuided: false, section }]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+    }, [section]);
+
+    useEffect(() => {
+        if (steps.length > 0) {
+            setActiveStep(d.getActiveIndex() as number);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [d.getActiveIndex()]);
 
     const stepsReady = steps.length > 0;
 

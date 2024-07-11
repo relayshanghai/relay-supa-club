@@ -110,7 +110,7 @@ const Boostbot = () => {
             : undefined,
     );
 
-    const { setSteps, stepsReady, startTour, hasBeenGuided } = useDriver('boostbot');
+    const { setSteps, stepsReady, startTour, hasBeenGuided } = useDriver('boostbot-page#chat');
 
     useEffect(() => {
         // set tour steps
@@ -275,13 +275,6 @@ const Boostbot = () => {
                     translationValues: { count: influencers.length },
                 });
             }
-
-            // addMessage({
-            //     sender: 'Bot',
-            //     type: 'video',
-            //     videoUrl: '/assets/videos/sequence-guide.mp4',
-            //     eventToTrack: OpenVideoGuideModal.eventName,
-            // });
         } catch (error) {
             clientLogger(error, 'error');
             addMessage({
@@ -358,7 +351,9 @@ const Boostbot = () => {
                 </div>
 
                 {showInitialLogoScreen ? (
-                    <InitialLogoScreen />
+                    <div id="boostbot-initial-logo">
+                        <InitialLogoScreen />
+                    </div>
                 ) : (
                     <div className="flex w-full basis-3/4 flex-col">
                         <div className="flex flex-row items-center justify-between">
