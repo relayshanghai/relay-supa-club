@@ -1,7 +1,7 @@
 import { cls } from 'src/utils/classnames';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
 import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
-import { Youtube, Tiktok, Instagram } from 'src/components/icons';
+import { Youtube, Tiktok, Instagram, BorderedTick, Spinner } from 'src/components/icons';
 import Link from 'next/link';
 import { generateUrlIfTiktok, truncatedText } from 'src/utils/outreach/helpers';
 import { useTranslation } from 'react-i18next';
@@ -122,6 +122,14 @@ const SequenceInfluencerDetailLoading = () => {
     );
 };
 
+const SpinnerAndTick = ({ updating }: { updating: boolean }) => {
+    if (updating) {
+        return <Spinner className="absolute right-4 top-4 z-10 h-6 w-6 fill-white" />;
+    } else {
+        return <BorderedTick className="absolute right-1 top-1 z-10 h-6 w-6 stroke-white" />;
+    }
+};
+
 export default function Profile() {
     const { selectedThread, loading } = useThread();
     const { sequenceInfluencer } = selectedThread as ThreadEntity;
@@ -131,12 +139,13 @@ export default function Profile() {
     return (
         <section className="w-[360px] shrink-0 grow-0 overflow-y-auto">
             <div className="relative">
-                {updating || loading ? (
+                {!loading && <SpinnerAndTick updating={updating} />}
+                {loading ? (
                     <SequenceInfluencerDetailLoading />
                 ) : (
                     <SequenceInfluencerDetail sequenceInfluencer={sequenceInfluencer as SequenceInfluencerEntity} />
                 )}
-                {updating || loading ? (
+                {loading ? (
                     <div className="p-4">
                         <Skeleton className="flex h-96 w-full bg-gray-300" />
                     </div>
