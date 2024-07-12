@@ -1,14 +1,25 @@
 import { driver, type DriveStep } from 'driver.js';
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from './use-localstorage';
+import { create } from 'src/utils/zustand';
 
 type GuideFlagType = {
     hasBeenGuided: boolean;
     section: string;
 };
 
+interface IntroSteps {
+    steps: DriveStep[];
+    setSteps: (steps: DriveStep[]) => void;
+}
+
+export const useIntroStepsStore = create<IntroSteps>((set) => ({
+    steps: [],
+    setSteps: (steps: DriveStep[]) => set({ steps }),
+}));
+
 export const useDriver = (section: string) => {
-    const [steps, setSteps] = useState<DriveStep[]>([]);
+    const { setSteps, steps } = useIntroStepsStore();
     const [, setActiveStep] = useState(0);
     const [val, setVal] = useLocalStorage<GuideFlagType[]>('boostbot-guide-flag', []);
 
