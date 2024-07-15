@@ -11,6 +11,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     address?: Addresses['Update'] | null;
     recent_post_title: string;
     recent_post_url: string;
+    channel_data: any;
 };
 
 export type SequenceInfluencerManagerPageWithChannelData = SequenceInfluencerManagerPage & {
@@ -23,11 +24,17 @@ const postHandler: NextApiHandler = async (
 ) => {
     const sequenceIds: string[] = req.body;
     const influencers = await db(getSequenceInfluencers)(sequenceIds);
-
     return res.status(httpCodes.OK).json(
         influencers.map((i) => ({
             ...i,
-            channel_data: undefined, // remove channel data from the response
+            channel_data: i.channel_data && {
+                ...i.channel_data,
+                user_profiler: i.channel_data.user_profiler && {
+                    ...i.channel_data.user_profiler,
+                    recent_posts: undefined,
+                    top_posts: undefined,
+                },
+            },
         })),
     );
 };
