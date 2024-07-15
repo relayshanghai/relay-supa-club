@@ -11,7 +11,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     address?: Addresses['Update'] | null;
     recent_post_title: string;
     recent_post_url: string;
-    channel_data: any;
+    channel_data?: any;
 };
 
 export type SequenceInfluencerManagerPageWithChannelData = SequenceInfluencerManagerPage & {
