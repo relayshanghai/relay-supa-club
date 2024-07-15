@@ -1,8 +1,9 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
-import { type EntityManager, type EntityTarget, In } from 'typeorm';
+import { type EntityManager, type EntityTarget, type FindOptionsWhere, In, Like } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
+import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 // start schedule release date, older data will not be fetched
 export const SCHEDULE_FETCH_START_DATE = new Date('2024-04-01T00:00:00.000Z');
@@ -72,5 +73,27 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             [SCHEDULE_FETCH_START_DATE],
         );
         return influencers.map((influencer) => influencer.id);
+    }
+
+    async getAllBySequenceId(sequenceId: string, request: GetSequenceInfluencerRequest) {
+        const { page, size } = request;
+        const where: FindOptionsWhere<SequenceInfluencerEntity> = {
+            sequence: { id: sequenceId },
+        };
+        if (request.funnelStatus) {
+            where.funnelStatus = request.funnelStatus;
+        }
+        if (request.search) {
+            where.name = Like(`%${request.search}%`);
+        }
+        if (request.sequenceStep && request.sequenceStep.length > 0) {
+            where.sequenceStep = In(request.sequenceStep);
+        }
+        return this.getPaginated(
+            { page, size },
+            {
+                where,
+            },
+        );
     }
 }

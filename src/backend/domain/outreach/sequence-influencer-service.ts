@@ -7,8 +7,9 @@ import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';
 import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-influencers/[id]/request';
 import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/request';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -127,5 +128,56 @@ export default class SequenceInfluencerService {
         });
         const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
         return entities;
+    }
+    @UseLogger()
+    @CompanyIdRequired()
+    async getAll(sequenceId: string, request: GetSequenceInfluencerRequest) {
+        const influencers = await SequenceInfluencerRepository.getRepository().getAllBySequenceId(sequenceId, request);
+        return influencers;
+    }
+
+    async getRateInfo(sequenceId: string) {
+        const total = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+            },
+        });
+        const sent = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+                funnelStatus: Not('To Contact'),
+            },
+        });
+        const replied = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Replied',
+                },
+            },
+        });
+        const open = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Opened',
+                },
+            },
+        });
+        const bounced = await SequenceInfluencerRepository.getRepository().count({
+            where: {
+                sequence: { id: sequenceId },
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Bounced',
+                },
+            },
+        });
+        return {
+            replied,
+            sent,
+            open,
+            bounced,
+            total,
+        };
     }
 }
