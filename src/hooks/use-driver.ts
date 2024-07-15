@@ -8,20 +8,27 @@ type GuideFlagType = {
     section: string;
 };
 
+type DriverIntros = {
+    // any string as key and DriveStep[] as value
+    [key: string]: DriveStep[];
+};
+
 interface IntroSteps {
-    steps: DriveStep[];
-    setSteps: (steps: DriveStep[]) => void;
+    steps: DriverIntros;
+    setSteps: (steps: DriverIntros) => void;
 }
 
 export const useIntroStepsStore = create<IntroSteps>((set) => ({
-    steps: [],
-    setSteps: (steps: DriveStep[]) => set({ steps }),
+    steps: {},
+    setSteps: (steps: DriverIntros) => set({ steps }),
 }));
 
 export const useDriver = (section: string) => {
-    const { setSteps, steps } = useIntroStepsStore();
+    const { setSteps: _setSteps, steps } = useIntroStepsStore();
     const [, setActiveStep] = useState(0);
     const [val, setVal] = useLocalStorage<GuideFlagType[]>('boostbot-guide-flag', []);
+
+    const sectionSteps = steps[section] || [];
 
     const d = driver({
         showProgress: true, // Shows the progress bar at the bottom
@@ -29,7 +36,7 @@ export const useDriver = (section: string) => {
         nextBtnText: 'Next', // Text on the next button for this step
         prevBtnText: 'Previous', // Text on the previous button for this step
         doneBtnText: 'Done', // Text on the last button for this step
-        steps,
+        steps: sectionSteps,
         onDestroyed: () => {
             setVal(
                 val.map((d) => {
@@ -53,16 +60,16 @@ export const useDriver = (section: string) => {
     }, [section]);
 
     useEffect(() => {
-        if (steps.length > 0) {
+        if (sectionSteps.length > 0) {
             setActiveStep(d.getActiveIndex() as number);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [d.getActiveIndex()]);
 
-    const stepsReady = steps.length > 0;
+    const stepsReady = sectionSteps.length > 0;
 
     const startTour = () => {
-        if (!steps.length || hasBeenGuided) {
+        if (!sectionSteps.length) {
             return;
         }
 
@@ -70,7 +77,17 @@ export const useDriver = (section: string) => {
     };
 
     const addStep = (step: DriveStep) => {
-        setSteps([...steps, step]);
+        _setSteps({
+            ...steps,
+            [section]: [...sectionSteps, step],
+        });
+    };
+
+    const setSteps = (_steps: DriveStep[]) => {
+        _setSteps({
+            ...steps,
+            [section]: _steps,
+        });
     };
 
     return { setSteps, addStep, startTour, stepsReady, hasBeenGuided };

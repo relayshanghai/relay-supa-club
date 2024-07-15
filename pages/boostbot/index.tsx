@@ -110,33 +110,6 @@ const Boostbot = () => {
             : undefined,
     );
 
-    const { setSteps, stepsReady, startTour, hasBeenGuided } = useDriver('boostbot-page#chat');
-
-    useEffect(() => {
-        // set tour steps
-        setSteps([
-            {
-                element: '#boostbot-chat-component',
-                popover: {
-                    title: 'Welcome to BoostBot!',
-                    description: 'This is where you can chat with influencers and add them to your sequences.',
-                    side: 'right',
-                    align: 'start',
-                },
-            },
-        ]);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        setTimeout(() => {
-            if (hasBeenGuided) return;
-            startTour();
-        }, 1000);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stepsReady]);
-
     useEffect(() => {
         refreshUsages();
     }, [influencers, refreshUsages]);
@@ -310,6 +283,93 @@ const Boostbot = () => {
 
     const showInitialLogoScreen = !hasSearched && influencers.length === 0;
 
+    const {
+        setSteps: setChatSteps,
+        stepsReady: chatStepsReady,
+        startTour: chatStartTour,
+        hasBeenGuided: chatHasBeenGuided,
+    } = useDriver('boostbot-page#chat');
+
+    const {
+        setSteps: setInfluencerListSteps,
+        stepsReady: influencerListStepsReady,
+        startTour: influencerListStartTour,
+        hasBeenGuided: influencerListHasBeenGuided,
+    } = useDriver('boostbot-page#influencerList');
+
+    useEffect(() => {
+        // set tour steps
+        setChatSteps([
+            {
+                element: '#boostbot-chat-component',
+                popover: {
+                    title: 'Welcome to BoostBot!',
+                    description:
+                        'Input your description here and BoostBot AI Search uses AI to provide a curated list of great creators. Designed for rapid influencer outreach, it delivers results—including creator email addresses—in under 2 minutes.',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+            {
+                element: '#boostbot-open-filters',
+                popover: {
+                    title: 'Filter your search',
+                    description:
+                        'Default filters target small to medium-sized creators in North America across Instagram, YouTube, and TikTok; adjust filters for other markets and platforms.',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+            {
+                element: '#boostbot-chat-input',
+                popover: {
+                    title: 'Type your search here',
+                    description:
+                        'For now, just type a product you want to promote. For example, "organic skincare" or "sustainable fashion".',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+            {
+                element: '#boostbot-send-message',
+                popover: {
+                    title: 'Press this button',
+                    description: 'This button will makes us find influencers for you',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+        ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (chatHasBeenGuided) return;
+            chatStartTour();
+        }, 1000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatStepsReady]);
+
+    useEffect(() => {
+        setInfluencerListSteps([
+            {
+                element: '#influencers-list',
+                popover: {
+                    title: 'Searching list',
+                    description: 'This is the list of influencers that BoostBot found for you.',
+                    side: 'right',
+                    align: 'start',
+                },
+            },
+        ]);
+        setTimeout(() => {
+            if (influencerListHasBeenGuided) return;
+            influencerListStartTour();
+        }, 1000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showInitialLogoScreen, influencerListStepsReady, chatHasBeenGuided]);
+
     return (
         <Layout>
             {isExpired && (
@@ -355,7 +415,7 @@ const Boostbot = () => {
                         <InitialLogoScreen />
                     </div>
                 ) : (
-                    <div className="flex w-full basis-3/4 flex-col">
+                    <div id="influencers-list" className="flex w-full basis-3/4 flex-col">
                         <div className="flex flex-row items-center justify-between">
                             <div className="ml-4 text-gray-400">
                                 {t('boostbot.table.selectedAmount', {
