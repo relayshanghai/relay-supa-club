@@ -9,18 +9,29 @@ type GuideFlagType = {
     [key: string]: boolean;
 };
 
-interface IntroSteps {
+interface IntroStepsStore {
     guides: Nullable<DriverIntros>;
     setGuides: (guides: DriverIntros) => void;
 }
 
-export const useIntroStepsStore = create<IntroSteps>((set) => ({
+export const useIntroStepsStore = create<IntroStepsStore>((set) => ({
     guides: null,
     setGuides: (guides: DriverIntros) => set({ guides }),
 }));
 
+interface ActiveGuideStore {
+    activeGuide: Nullable<string>;
+    setActiveGuide: (guides: Nullable<string>) => void;
+}
+
+export const useActiveGuide = create<ActiveGuideStore>((set) => ({
+    activeGuide: null,
+    setActiveGuide: (guides: Nullable<string>) => set({ activeGuide: guides }),
+}));
+
 export const useDriverV2 = () => {
     const { setGuides, guides } = useIntroStepsStore();
+    const { setActiveGuide, activeGuide } = useActiveGuide();
     const [driver, setDriver] = useState<Driver | null>(null);
     const [guidesReady, setGuidesReady] = useState(false);
     const [val, setVal] = useLocalStorage<GuideFlagType>('boostbot-guide-flag', {});
@@ -32,6 +43,10 @@ export const useDriverV2 = () => {
             nextBtnText: 'Next', // Text on the next button for this step
             prevBtnText: 'Previous', // Text on the previous button for this step
             doneBtnText: 'Done', // Text on the last button for this step
+            onDestroyed: () => {
+                setVal({ ...val, [activeGuide as string]: true });
+                setActiveGuide(null);
+            },
         });
         setDriver(d);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,13 +59,17 @@ export const useDriverV2 = () => {
     }, [guides]);
 
     const startTour = (section: string) => {
-        if (guides?.[section] && !val[section]) {
+        if (guides?.[section].length && val[section] === undefined) {
             if (driver?.isActive()) driver?.destroy();
-            setVal({ ...val, [section]: true });
+            setActiveGuide(section);
             driver?.setSteps(guides[section]);
             driver?.drive();
         }
     };
 
-    return { setGuides, startTour, guidesReady, guides };
+    const hasBeenSeen = (sections: string[]) => {
+        return sections.every((section) => val[section]);
+    };
+
+    return { setGuides, startTour, guidesReady, guides, hasBeenSeen, guiding: !!activeGuide };
 };

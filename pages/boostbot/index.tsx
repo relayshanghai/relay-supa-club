@@ -282,9 +282,9 @@ const Boostbot = () => {
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
 
-    const showInitialLogoScreen = !hasSearched && influencers.length === 0;
+    const showInitialLogoScreen: boolean = !hasSearched && influencers.length === 0;
 
-    const { setGuides, startTour, guidesReady } = useDriverV2();
+    const { setGuides, startTour, guidesReady, hasBeenSeen, guiding } = useDriverV2();
 
     useEffect(() => {
         setGuides({
@@ -300,6 +300,18 @@ const Boostbot = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady]);
+
+    useEffect(() => {
+        if (
+            !showInitialLogoScreen &&
+            !guiding &&
+            hasBeenSeen(['boostbot#chat']) &&
+            !hasBeenSeen(['boostbot#influencerList'])
+        ) {
+            startTour('boostbot#influencerList');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showInitialLogoScreen, guiding]);
 
     return (
         <Layout>
