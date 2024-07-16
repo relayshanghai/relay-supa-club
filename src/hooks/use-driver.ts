@@ -1,5 +1,5 @@
-import { driver, type DriveStep } from 'driver.js';
-import { useEffect, useState } from 'react';
+import { type Driver, driver as driverJS, type DriveStep } from 'driver.js';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from './use-localstorage';
 import { create } from 'src/utils/zustand';
 
@@ -23,35 +23,42 @@ export const useIntroStepsStore = create<IntroSteps>((set) => ({
     setSteps: (steps: DriverIntros) => set({ steps }),
 }));
 
-export const useDriver = (section: string) => {
+export const useDriver = (_section: string) => {
     const { setSteps: _setSteps, steps } = useIntroStepsStore();
-    const [, setActiveStep] = useState(0);
+    const [driver, setDriver] = useState<Driver | null>(null);
+    const [stepsReady, setStepsReady] = useState(false);
+    const [section, setSection] = useState<string>('');
     const [val, setVal] = useLocalStorage<GuideFlagType[]>('boostbot-guide-flag', []);
-
-    const sectionSteps = steps[section] || [];
-
-    const d = driver({
-        showProgress: true, // Shows the progress bar at the bottom
-        allowClose: true, // Whether clicking on overlay should close or not
-        nextBtnText: 'Next', // Text on the next button for this step
-        prevBtnText: 'Previous', // Text on the previous button for this step
-        doneBtnText: 'Done', // Text on the last button for this step
-        steps: sectionSteps,
-        onDestroyed: () => {
-            setVal(
-                val.map((d) => {
-                    if (d.section === section) {
-                        return { hasBeenGuided: true, section };
-                    }
-                    return d;
-                }),
-            );
-        },
-    });
-
     const hasBeenGuided = val.find((d) => d.section === section)?.hasBeenGuided;
+    const sectionSteps = useMemo(() => steps[section] ?? [], [steps, section]);
 
     useEffect(() => {
+        setSection(_section);
+    }, [_section]);
+
+    useEffect(() => {
+        const d = driverJS({
+            showProgress: true, // Shows the progress bar at the bottom
+            allowClose: true, // Whether clicking on overlay should close or not
+            nextBtnText: 'Next', // Text on the next button for this step
+            prevBtnText: 'Previous', // Text on the previous button for this step
+            doneBtnText: 'Done', // Text on the last button for this step
+            onDestroyed: () => {
+                setVal(
+                    val.map((d) => {
+                        if (d.section === section) {
+                            return { hasBeenGuided: true, section };
+                        }
+                        return d;
+                    }),
+                );
+            },
+        });
+        setDriver(d);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sectionSteps]);
+
+    const initFlag = useCallback(() => {
         const pages = val.map((d) => d.section);
         if (!pages.includes(section)) {
             setVal([...val, { hasBeenGuided: false, section }]);
@@ -59,21 +66,22 @@ export const useDriver = (section: string) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [section]);
 
-    useEffect(() => {
-        if (sectionSteps.length > 0) {
-            setActiveStep(d.getActiveIndex() as number);
+    const initializeSteps = useCallback(() => {
+        if (driver && sectionSteps.length > 0) {
+            driver.setSteps(sectionSteps);
+            setStepsReady(true);
+            initFlag();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [d.getActiveIndex()]);
+    }, [driver, sectionSteps, initFlag]);
 
-    const stepsReady = sectionSteps.length > 0;
+    useEffect(() => {
+        initializeSteps();
+    }, [initializeSteps]);
 
     const startTour = () => {
-        if (!sectionSteps.length) {
-            return;
+        if (stepsReady) {
+            driver?.drive();
         }
-
-        d.drive();
     };
 
     const addStep = (step: DriveStep) => {
