@@ -81,7 +81,7 @@ export const useDriverV2 = () => {
             acc[key] = val[key] ? true : false;
             return acc;
         }, {});
-        setVal(newObj);
+        setVal({ ...val, ...newObj });
         setGuides(guides);
     };
 

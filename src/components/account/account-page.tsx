@@ -10,6 +10,10 @@ import { PaymentMethodDetails } from './account-payment-method-details';
 import { BillingDetails } from './account-billing-details';
 import { PasswordDetails } from './account-password-details';
 import { useEffect, useState } from 'react';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { accountGuide } from 'src/guides/my-account.guide';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
+import { useCompany } from 'src/hooks/use-company';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
     const { t } = useTranslation();
@@ -130,6 +134,24 @@ const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: strin
 export const AccountPage = () => {
     const { t } = useTranslation();
     const clientRoleData = useAtomValue(clientRoleAtom);
+    const { subscription } = useSubscription();
+    const { company } = useCompany();
+
+    const { setGuides, startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            account: accountGuide,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady && subscription && company) {
+            startTour('account');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady]);
 
     return (
         <div className="flex flex-col gap-3 bg-white px-8 lg:px-8">

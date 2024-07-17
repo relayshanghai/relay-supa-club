@@ -85,6 +85,7 @@ export const influencerModalGuideAdditionForOutreach: DriveStep[] = [
         },
     },
 ];
+
 export const influencerListMiniReport: DriveStep[] = [
     {
         element: '#boostbot-creator-mini-report',
