@@ -78,6 +78,7 @@ const pricing = {
     deprecatedLabel: 'Deprecated',
     noPaymentMethodFound: 'No payment method found. Please add a payment method.',
     noDefaultPaymentMethodFound: 'No default payment method found. Please select a default payment method.',
+    pressApplyCouponButton: "Don't forget to press Apply Button",
 };
 
 export default pricing;

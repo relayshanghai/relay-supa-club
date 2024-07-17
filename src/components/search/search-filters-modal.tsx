@@ -38,7 +38,7 @@ const filterLocation = (items: any[], platform: 'youtube' | 'instagram' | 'tikto
 
 export type UpperAgeOption = '17' | '24' | '34' | '44' | '64';
 
-export type LowerAgeOption = '13' | '18' | '25' | '35' | '45' | '65';
+export type LowerAgeOption = '18' | '25' | '35' | '45' | '65';
 
 const lowerAgeOptions: LowerAgeOption[] = ['18', '25', '35', '45', '65'];
 const upperAgeOptions: UpperAgeOption[] = ['17', '24', '34', '44', '64'];
@@ -184,7 +184,11 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
     };
     const isContactInfoEmail = useCallback(() => (contactInfo == 'email' ? true : false), [contactInfo]);
 
-    const getAudienceGenderCode = useCallback(() => audienceGender?.code || 'ANY', [audienceGender]);
+    const getAudienceGenderCode = useCallback(() => {
+        if (!audienceGender?.code) return 'ANY';
+        if (audienceGender === defaultAudienceGender) return 'ANY';
+        return audienceGender?.code;
+    }, [audienceGender]);
 
     const getAudienceGenderWeight = useCallback(() => audienceGender?.weight || '>5%', [audienceGender]);
 
@@ -239,7 +243,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                 className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
-                                    const lowerAge = getLowerAge(e.target.value, t('filters.minOption') + ' (13)');
+                                    const lowerAge = getLowerAge(e.target.value, t('filters.minOption') + ' (18)');
                                     setAudienceAge({
                                         ...audienceAge,
                                         left_number: lowerAge,
@@ -252,7 +256,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
-                                <option value={undefined}>{t('filters.minOption') + ' (13)'}</option>
                                 {lowerAgeOptions.map((lowerAge, index) => {
                                     return (
                                         <option
@@ -330,7 +333,8 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                         <div className="flex gap-4">
                             <select
                                 data-testid="filter-gender"
-                                className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
+                                className={`rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200`}
+                                style={{ width: getAudienceGenderCode() === 'ANY' ? 210 : undefined }}
                                 value={getAudienceGenderCode()}
                                 onChange={(e) => {
                                     const gender = e.target.value === 'ANY' ? null : e.target.value;
@@ -349,34 +353,37 @@ export const SearchFiltersModal = ({ show, setShow, onSearch, searchType }: Sear
                                     });
                                 }}
                             >
+                                <option value="ANY">{t('filters.anyOption')}</option>
                                 <option value="MALE">{t('filters.gender.maleOption')}</option>
                                 <option value="FEMALE">{t('filters.gender.femaleOption')}</option>
                             </select>
-                            <select
-                                data-testid="filter-gender-percent"
-                                className={`rounded-md transition-all ${
-                                    audienceGender ? 'bg-white' : 'bg-slate-300'
-                                } border-gray-200 text-sm font-medium text-gray-400 ring-1 ring-gray-200`}
-                                disabled={audienceGender ? false : true}
-                                value={getAudienceGenderWeight()}
-                                onChange={(e) => {
-                                    if (!audienceGender) return;
-                                    const weight = parseFloat(e.target.value);
-                                    setAudienceGender({
-                                        ...audienceGender,
-                                        weight: weight,
-                                    });
-                                    trackFilter({
-                                        filter_type: 'Audience',
-                                        filter_name: 'Gender - Weight',
-                                        values: weight.toString(),
-                                    });
-                                }}
-                            >
-                                {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
-                                    <option key={value} value={value / 100}>{`>${value}%`}</option>
-                                ))}
-                            </select>
+                            {getAudienceGenderCode() !== 'ANY' && (
+                                <select
+                                    data-testid="filter-gender-percent"
+                                    className={`rounded-md transition-all ${
+                                        audienceGender ? 'bg-white' : 'bg-slate-300'
+                                    } border-gray-200 text-sm font-medium text-gray-400 ring-1 ring-gray-200`}
+                                    disabled={audienceGender ? false : true}
+                                    value={getAudienceGenderWeight()}
+                                    onChange={(e) => {
+                                        if (!audienceGender) return;
+                                        const weight = parseFloat(e.target.value);
+                                        setAudienceGender({
+                                            ...audienceGender,
+                                            weight: weight,
+                                        });
+                                        trackFilter({
+                                            filter_type: 'Audience',
+                                            filter_name: 'Gender - Weight',
+                                            values: weight.toString(),
+                                        });
+                                    }}
+                                >
+                                    {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
+                                        <option key={value} value={value / 100}>{`>${value}%`}</option>
+                                    ))}
+                                </select>
+                            )}
                         </div>
                     </div>
                 </div>

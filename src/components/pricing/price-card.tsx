@@ -120,7 +120,8 @@ export const PriceCard = ({
         subscriptionStatus === 'TRIAL' ||
         companySubscriptionStatus === 'trial' ||
         subscriptionStatus === 'PASS_DUE' ||
-        companySubscriptionStatus === 'paused';
+        companySubscriptionStatus === 'paused' ||
+        subscriptionStatus === 'TRIAL_EXPIRED';
 
     const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 

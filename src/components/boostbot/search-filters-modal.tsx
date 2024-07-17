@@ -200,6 +200,11 @@ export const SearchFiltersModal = ({ isOpen, setIsOpen, filters, setFilters }: S
         setLocalFilters(filters);
     };
 
+    useEffect(() => {
+        if (localFilters['audience_geo'].length >= 2) setShouldShowGeoInput(false);
+        else if (localFilters['audience_geo'].length < 1) setShouldShowGeoInput(true);
+    }, [localFilters, isOpen]);
+
     return (
         <Modal maxWidth="max-w-3xl" visible={isOpen} onClose={cancelModal} title="">
             <div className="mb-6 flex flex-1 space-x-3">

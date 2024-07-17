@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
-import { OldSearch, Team, Guide, ProfilePlus, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
+import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -21,9 +21,6 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/influencer-manager': (_pathRoot: string) => (
-        <ProfilePlus height={20} width={20} className="my-0.5 stroke-inherit" />
-    ),
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
 } as const;
@@ -103,11 +100,6 @@ const NavBarInner = ({
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.inbox')}</p>
-                        </ActiveLink>
-                    )}
-                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/influencer-manager" expandedName={t('navbar.influencerManager')}>
-                            <p className={`whitespace-nowrap text-xs`}>{t('navbar.influencerManager')}</p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (
