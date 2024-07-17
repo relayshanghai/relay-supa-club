@@ -308,7 +308,7 @@ const Boostbot = () => {
             hasBeenSeen(['boostbot#chat']) &&
             !hasBeenSeen(['boostbot#influencerList'])
         ) {
-            startTour('boostbot#influencerList');
+            setTimeout(() => startTour('boostbot#influencerList'), 1000);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showInitialLogoScreen, guiding]);
