@@ -16,4 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 
+// import tailwind styles
+import '../../build/index.css';
+
 export {};
