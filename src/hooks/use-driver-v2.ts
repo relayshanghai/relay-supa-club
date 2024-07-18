@@ -59,7 +59,7 @@ export const useDriverV2 = () => {
     }, [guides]);
 
     const startTour = (section: string) => {
-        if (guides?.[section].length && !val[section]) {
+        if (guides?.[section]?.length && !val[section]) {
             if (driver.isActive()) driver.destroy();
             setActiveGuide(section);
 
