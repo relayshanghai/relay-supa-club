@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import type { EmailContact } from 'src/backend/database/thread/email-entity';
 import ThreadReplyAddressSection from './thread-reply-address-section';
 import ThreadReplyEditor from './thread-reply-editor';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { openThreadReplyGuide } from 'src/guides/inbox.guide';
 
 export default function ThreadReply({
     onReply,
@@ -53,6 +55,23 @@ export default function ThreadReply({
             document.removeEventListener('click', handler, true);
         };
     }, []);
+
+    const { setGuides, startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            'inbox#threadReply': openThreadReplyGuide,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady && replyClicked) {
+            startTour('inbox#threadReply');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, replyClicked]);
+
     return (
         <>
             <div
@@ -64,7 +83,11 @@ export default function ThreadReply({
             >
                 {t('inbox.replyToThread')}
             </div>
-            <div ref={ref} className={`grid grid-cols-1 divide-y ${replyClicked ? 'block' : 'hidden'}`}>
+            <div
+                ref={ref}
+                className={`grid grid-cols-1 divide-y ${replyClicked ? 'block' : 'hidden'}`}
+                id="inbox-thread-reply-box"
+            >
                 <div className="p-2">
                     <ThreadReplyAddressSection
                         defaultTo={defaultContacts.to}
