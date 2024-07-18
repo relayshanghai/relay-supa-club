@@ -90,7 +90,7 @@ describe('<SequencePage />', () => {
         });
     });
     it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
-        cy.stub(useDriverV2()).returns({
+        cy.stub(useDriverV2).returns({
             setGuides: () => null,
             startTour: () => null,
             guidesReady: false,
