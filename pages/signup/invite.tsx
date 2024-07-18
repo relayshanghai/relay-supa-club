@@ -62,7 +62,7 @@ export default function Register() {
                 } else setInviteStatus('inviteValid');
             } catch (error: any) {
                 if (hasCustomError(error, inviteStatusErrors)) {
-                    setInviteStatus(error.message);
+                    setInviteStatus(error.message.split(' - ERR:')[0]);
                 } else {
                     clientLogger(error, 'error');
                 }
