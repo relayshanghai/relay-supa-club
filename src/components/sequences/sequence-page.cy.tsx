@@ -8,6 +8,7 @@ import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { v4 } from 'uuid';
 import { randomString } from '../../../cypress/e2e/helpers';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
 
 describe('<SequencePage />', () => {
     before(() => {
@@ -89,6 +90,12 @@ describe('<SequencePage />', () => {
         });
     });
     it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
+        cy.stub(useDriverV2()).returns({
+            setGuides: () => null,
+            startTour: () => null,
+            guidesReady: false,
+            guiding: false,
+        });
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         if (!mario) throw new Error('mario not found');
         const generateRandomInfluencer = (): SequenceInfluencerManagerPage => {

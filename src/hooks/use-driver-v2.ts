@@ -32,7 +32,6 @@ export const useActiveGuide = create<ActiveGuideStore>((set) => ({
 export const useDriverV2 = () => {
     const { setGuides, guides } = useIntroStepsStore();
     const { setActiveGuide, activeGuide } = useActiveGuide();
-    // const [activeGuide, setActiveGuide] = useState<string | null>();
     const [guidesReady, setGuidesReady] = useState(false);
     const [val, setVal] = useLocalStorage<GuideFlagType>('boostbot-guide-flag', {});
 
