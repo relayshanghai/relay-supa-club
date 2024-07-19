@@ -370,7 +370,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 {currentTab === 'To Contact' && (
                     <>
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-600" id="sequence-creator-email">
                             {loading ? (
                                 <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
                             ) : !missingSocialProfileInfo ? (
@@ -439,6 +439,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
                                     }
                                     className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
+                                    id="sequence-send-button"
                                 >
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>

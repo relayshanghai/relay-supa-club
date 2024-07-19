@@ -48,7 +48,7 @@ export const BillingDetails = () => {
         <section id="billing-details" className="w-full">
             <p className="pb-6 font-semibold">{t('account.billingInfoSection.title')}</p>
             <hr className="pb-5" />
-            <section className="flex w-full justify-end">
+            <section className="flex w-full justify-end" id="account-receiving-info-email">
                 <div className="relative flex flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4">
                     {isAdmin(profile?.user_role) ? (
                         <>

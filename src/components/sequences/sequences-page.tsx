@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -24,6 +24,8 @@ import { Banner } from '../library/banner';
 import { useUser } from 'src/hooks/use-user';
 import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { crmGuide } from 'src/guides/crm.guide';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -65,6 +67,22 @@ export const SequencesPage = () => {
         () => calculateReplyRate(sequenceInfluencers, allSequenceEmails),
         [sequenceInfluencers, allSequenceEmails],
     );
+
+    const { setGuides, startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            crm: crmGuide,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady) {
+            startTour('crm');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady]);
 
     return (
         <Layout>
@@ -152,7 +170,11 @@ export const SequencesPage = () => {
                     >
                         <DeleteOutline className="h-4 w-4 stroke-red-500" />
                     </button>
-                    <Button onClick={handleOpenCreateSequenceModal} className="flex items-center">
+                    <Button
+                        onClick={handleOpenCreateSequenceModal}
+                        className="flex items-center"
+                        id="crm-new-sequence-button"
+                    >
                         <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
                         <p className="self-center">{t('sequences.newSequence')}</p>
                     </Button>

@@ -271,7 +271,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         <Modal maxWidth="max-w-7xl" {...props} title={t('sequences.templateVariablesModalTitle') ?? ''}>
             <h5 className="text-xs text-gray-500">{t('sequences.templateVariablesModalSubtitle')}</h5>
             <div className="flex flex-row justify-between gap-6">
-                <section className="basis-1/2">
+                <section className="basis-1/2" id="email-templates-form">
                     <h4 className="mt-4 font-semibold text-gray-700">{t('sequences.company')}</h4>
                     <div className="flex justify-between gap-6">
                         <VariableInput
@@ -312,12 +312,14 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         variables={variables}
                         placeholder={t('sequences.productLinkPlaceholder')}
                     />
-                    <VariableTextArea
-                        variableKey="productDescription"
-                        setKey={setKey}
-                        variables={variables}
-                        placeholder={t('sequences.productDescriptionPlaceholder')}
-                    />
+                    <div id="email-template-product-description">
+                        <VariableTextArea
+                            variableKey="productDescription"
+                            setKey={setKey}
+                            variables={variables}
+                            placeholder={t('sequences.productDescriptionPlaceholder')}
+                        />
+                    </div>
 
                     <hr className="my-4" />
 
@@ -340,7 +342,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         />
                     </div>
                 </section>
-                <section className="mt-4 basis-1/2">
+                <section className="mt-4 basis-1/2" id="email-templates-preview">
                     <h2 className="text-lg font-semibold text-gray-700">{t('sequences.emailPreview')}</h2>
                     <nav className="flex space-x-2">
                         <button
