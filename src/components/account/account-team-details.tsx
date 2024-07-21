@@ -57,7 +57,7 @@ export const TeamDetails = () => {
         <section id="team-details" className="w-full">
             <p className="pb-6 font-semibold">{t('account.company.members')}</p>
             <hr className="pb-5" />
-            <section className="flex w-full justify-end">
+            <section className="flex w-full justify-end" id="team-details-section">
                 <div className="p-4 text-sm lg:w-3/4">
                     <InviteMembersModal
                         showAddMoreMembers={showAddMoreMembers}

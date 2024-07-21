@@ -41,10 +41,11 @@ export const useDriverV2 = () => {
         nextBtnText: 'Next', // Text on the next button for this step
         prevBtnText: 'Previous', // Text on the previous button for this step
         doneBtnText: 'Done', // Text on the last button for this step
+        smoothScroll: true, // Whether to animate the scroll to the next element
         steps: guides?.[activeGuide as string] ?? [],
         onDestroyStarted: () => {
             if (activeGuide) {
-                setVal({ ...val, [activeGuide]: true });
+                // setVal({ ...val, [activeGuide]: true });
                 setActiveGuide(null);
                 driver.destroy();
             }

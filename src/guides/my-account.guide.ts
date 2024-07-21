@@ -20,7 +20,7 @@ export const accountGuide: DriveStep[] = [
         },
     },
     {
-        element: '#account-receiving-info-email',
+        element: '#billing-details',
         popover: {
             title: 'Invoice Email',
             description: 'An invoice will be sent to this email address',
