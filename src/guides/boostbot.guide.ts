@@ -40,6 +40,16 @@ export const chatGuide: DriveStep[] = [
             align: 'start',
         },
     },
+    {
+        element: '#birdeatsbug-sdk',
+        popover: {
+            title: 'Oh No, I found a bug!',
+            description:
+                'If you are experiencing a problem on BoostBot, click on Report a bug. This sends feedback to our tech team so we can fix it asap!',
+            side: 'left',
+            align: 'start',
+        },
+    },
 ];
 
 export const influencerModalGuideAdditionForDiscovery: DriveStep[] = [
