@@ -1,0 +1,7 @@
+.driver-popover-prev-btn, .driver-popover-next-btn {
+    /* set button color to #7C3AED */
+    background-color: #7C3AED !important;
+    color: white !important;
+    text-shadow: none !important;
+    font-size: inherit !important;
+}
