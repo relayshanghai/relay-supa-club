@@ -402,7 +402,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     }, []);
 
     useEffect(() => {
-        if (guidesReady) {
+        if (guidesReady && currentTabInfluencers.length > 0 && sequenceSteps) {
             startTour('sequence#detail');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
