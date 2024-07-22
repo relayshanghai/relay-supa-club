@@ -25,13 +25,13 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <p>
-                    You can send up to 30 initial emails per day, and we will schedule follow-ups for the creators that
+                    You can send up to 50 initial emails per day, and we will schedule follow-ups for the creators that
                     don’t reply. When the 1st follow-up and 2nd follow-up emails are sending out, you can send up to a
-                    total of 90 emails per day.{' '}
+                    total of 150 emails per day.{' '}
                 </p>
 
                 <p>
-                    This will let you contact a total of 600 creators each month. (See examples of the sending cadence,
+                    This will let you contact a total of 1000 creators each month. (See examples of the sending cadence,
                     and campaign ramp-up on the following slides)
                 </p>
             </>
