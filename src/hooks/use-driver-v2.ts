@@ -40,7 +40,7 @@ export const useDriverV2 = () => {
         allowClose: true, // Whether clicking on overlay should close or not
         nextBtnText: 'Next', // Text on the next button for this step
         prevBtnText: 'Previous', // Text on the previous button for this step
-        doneBtnText: 'Done', // Text on the last button for this step
+        doneBtnText: 'Finish', // Text on the last button for this step
         smoothScroll: true, // Whether to animate the scroll to the next element
         steps: guides?.[activeGuide as string] ?? [],
         onDestroyStarted: () => {
