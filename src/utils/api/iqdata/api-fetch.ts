@@ -8,7 +8,6 @@ import { forensicTrack } from '../forensicTrack';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
 import { serverLogger } from 'src/utils/logger-server';
 import { nanoid } from 'nanoid';
-import apm from 'elastic-apm-node';
 
 /**
  * For fetching IQData API
@@ -20,8 +19,6 @@ export class IqDataApiFetcher {
         payload: ApiPayloadParam<TReq> & { context?: ServerContext },
         options: RequestInit = {},
     ) {
-        const span = apm.startSpan('IQDataApiFetch.request');
-
         const { context, ...strippedPayload } = payload;
         // @note We cast the stripped payload to fit the shape required by the baseApiFetch
         // since we already know that it omitted the context already on the line above
@@ -30,13 +27,6 @@ export class IqDataApiFetcher {
             headers,
         });
 
-        if (span) {
-            const json = await content.response.json();
-            if (json.cost !== undefined) {
-                span.setLabel('cost', json.cost, true);
-            }
-        }
-        span?.end();
         if (context) {
             await rudderstack.identify(context);
             const identity = rudderstack.getIdentity();
