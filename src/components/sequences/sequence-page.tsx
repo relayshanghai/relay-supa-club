@@ -39,6 +39,8 @@ import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -388,6 +390,31 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     );
 
     const [showSlowBanner, setShowSlowBanner] = useState(false);
+
+    const { setGuides, startTour, guidesReady, guiding } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            'sequence#detail': isMissingSequenceSendEmail ? discoveryInfluencerGuide : outreachInfluencerGuide,
+            'emailTemplate#modal': emailTemplateModal,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady && currentTabInfluencers.length > 0 && sequenceSteps) {
+            startTour('sequence#detail');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, currentTabInfluencers, sequenceSteps]);
+
+    useEffect(() => {
+        if (!guiding && showUpdateTemplateVariables) {
+            startTour('emailTemplate#modal');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guiding, showUpdateTemplateVariables]);
+
     return (
         <Layout>
             {!profile?.email_engine_account_id && !showSlowBanner && (
@@ -432,6 +459,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         onClick={handleOpenUpdateTemplateVariables}
                         variant="secondary"
                         className="relative flex border-primary-600 bg-white text-primary-600"
+                        id="sequence-email-template-button"
                     >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>

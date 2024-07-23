@@ -202,7 +202,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
             {/*     // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
              */}
             {/* <NotesListOverlayScreen isOpen={notesOverlayOpen} onClose={() => setNotesOverlayOpen(false)} notes={[]} /> */}
-            <div className="p-4 text-gray-600">
+            <div className="p-4 text-gray-600" id="creator-profile-quick-notes">
                 <h2 className="font-semibold ">{t('profile.collab')}</h2>
                 <hr className="mb-4 mt-1 border-gray-200" />
 

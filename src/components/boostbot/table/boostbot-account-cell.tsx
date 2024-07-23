@@ -60,6 +60,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                             rel="noopener noreferrer"
                             className="group"
                             data-testid="boostbot-social-profile-link"
+                            id="boostbot-social-profile-link"
                             onClick={() => {
                                 track(OpenSocialProfile, {
                                     currentPage: CurrentPageEvent.boostbot,

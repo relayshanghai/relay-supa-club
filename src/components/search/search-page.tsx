@@ -371,7 +371,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     return (
         <div className="p-6">
             <ClientRoleWarning />
-            <div className="flex justify-between">
+            <div className="flex justify-between" id="search-creator-by-platform">
                 <SelectPlatform />
                 <div className="w-fit">
                     <SearchCreators />
@@ -481,6 +481,7 @@ export const SearchPage = () => {
     const { isExpired } = useCompany();
 
     const { t } = useTranslation();
+
     return (
         <Layout>
             {isExpired && (

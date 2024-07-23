@@ -78,7 +78,7 @@ export const PaymentMethodDetails = () => {
     };
 
     return (
-        <section id="subscription-details" className="w-full">
+        <section id="subscription-details" className="account-payment-method-details w-full">
             <AddPaymentMethodModal open={newPaymentModalOpenState} setOpen={setNewPaymentModalOpenState} />
             <p className="pb-6 font-semibold">{t('account.paymentMethodCard.title')}</p>
             <hr className="pb-5" />

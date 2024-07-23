@@ -295,6 +295,7 @@ export const InfluencerDetailsModal = ({
                             track(OpenAnalyzeProfile, { currentPage: CurrentPageEvent.boostbot, platform, user_id })
                         }
                         data-testid="boostbot-modal-open-report-link"
+                        id="boostbot-influencer-detailed-report-link"
                     >
                         {t('boostbot.modal.unlockDetailedReport')}
                     </Link>

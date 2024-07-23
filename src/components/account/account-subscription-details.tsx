@@ -313,7 +313,7 @@ export const SubscriptionDetails = () => {
                                     />
                                 </section>
 
-                                <section className="flex flex-col gap-6">
+                                <section className="flex flex-col gap-6" id="account-search-and-report">
                                     <span>
                                         {usagesProfiles}/{usages.profile.limit} {t('account.planSection.reportsCount')}
                                     </span>
