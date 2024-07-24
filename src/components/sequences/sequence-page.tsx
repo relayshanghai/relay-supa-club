@@ -40,7 +40,7 @@ import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
-import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
+import { emailTemplateModal } from 'src/guides/crm.guide';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -391,22 +391,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showSlowBanner, setShowSlowBanner] = useState(false);
 
-    const { setGuides, startTour, guidesReady, guiding } = useDriverV2();
+    const { setGuides, startTour, guiding } = useDriverV2();
 
     useEffect(() => {
         setGuides({
-            'sequence#detail': isMissingSequenceSendEmail ? discoveryInfluencerGuide : outreachInfluencerGuide,
             'emailTemplate#modal': emailTemplateModal,
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        if (guidesReady && currentTabInfluencers.length > 0 && sequenceSteps) {
-            startTour('sequence#detail');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [guidesReady, currentTabInfluencers, sequenceSteps]);
 
     useEffect(() => {
         if (!guiding && showUpdateTemplateVariables) {
