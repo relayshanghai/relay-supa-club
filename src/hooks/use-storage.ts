@@ -11,12 +11,12 @@ export const useStorage = (directory: string) => {
                     `/api/files/upload-presign-url?filename=${directory}/${file.filename}`,
                 );
                 const data = new FormData();
+                data.append('file', file.content);
 
                 await apiFetch(content.url, undefined, {
                     method: 'PUT',
                     body: data,
                 });
-                data.append('file', file.content);
             }),
         ).finally(() => setUploadingStatus(false));
     };
