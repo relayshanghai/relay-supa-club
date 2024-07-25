@@ -7,7 +7,7 @@ import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';
 import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-influencers/[id]/request';
 import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/request';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export default class SequenceInfluencerService {
@@ -92,6 +92,7 @@ export default class SequenceInfluencerService {
         const count = await SequenceInfluencerRepository.getRepository().count({
             where: {
                 sequence: { id: sequenceId },
+                funnelStatus: Not('Negotiating'),
             },
         });
         const { profile, translation: t } = RequestContext.getContext();
