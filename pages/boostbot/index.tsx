@@ -40,6 +40,8 @@ import {
     influencerModalGuideAdditionForDiscovery,
     influencerModalGuideAdditionForOutreach,
 } from 'src/guides/boostbot.guide';
+import { isInMaintenance } from 'src/utils/maintenance';
+import MaintenanceComponent from 'src/components/maintenance/Component';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -48,6 +50,9 @@ export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influence
 
 const Boostbot = () => {
     const { t } = useTranslation();
+
+    const isMaintenancePage = isInMaintenance('boostbot');
+
     const {
         messages,
         setMessages,
@@ -342,6 +347,14 @@ const Boostbot = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isInfluencerDetailsModalOpen, guiding]);
+
+    if (isMaintenancePage) {
+        return (
+            <Layout>
+                <MaintenanceComponent message={t('maintenance.boostbotPage')} />
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
