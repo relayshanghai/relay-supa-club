@@ -16,7 +16,7 @@ const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void })
     const { t } = useTranslation();
     return (
         <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-            <div className="w-2/3 rounded-md bg-white p-8">
+            <div className="max-h-screen w-2/3 overflow-y-auto rounded-md bg-white p-8">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold">{t('signup.freeTrial.termsAndCondition.title')}</h2>
                     <button
