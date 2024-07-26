@@ -56,6 +56,8 @@ import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-i
 import { filterOutAlreadyAddedInfluencers } from '../boostbot/table/helper';
 import { isBoostbotInfluencer } from 'pages/boostbot';
 import { saveSearchResults } from 'src/utils/save-search-influencers';
+import MaintenanceComponent from '../maintenance/Component';
+import { isInMaintenance } from 'src/utils/maintenance';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -481,6 +483,16 @@ export const SearchPage = () => {
     const { isExpired } = useCompany();
 
     const { t } = useTranslation();
+
+    const isMaintenancePage = isInMaintenance('dashboard');
+
+    if (isMaintenancePage) {
+        return (
+            <Layout>
+                <MaintenanceComponent message={t('maintenance.dashboardPage')} />
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
