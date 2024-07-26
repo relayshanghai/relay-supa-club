@@ -318,7 +318,7 @@ const Boostbot = () => {
     }, []);
 
     useEffect(() => {
-        if (guidesReady) {
+        if (!isMaintenancePage && guidesReady) {
             startTour('boostbot#chat');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -326,6 +326,7 @@ const Boostbot = () => {
 
     useEffect(() => {
         if (
+            !isMaintenancePage &&
             !showInitialLogoScreen &&
             !guiding &&
             hasBeenSeen(['boostbot#chat']) &&
@@ -338,6 +339,7 @@ const Boostbot = () => {
 
     useEffect(() => {
         if (
+            !isMaintenancePage &&
             isInfluencerDetailsModalOpen &&
             !guiding &&
             hasBeenSeen(['boostbot#influencerList']) &&
