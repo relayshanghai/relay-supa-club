@@ -8,8 +8,8 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>1,200 searches (roughly 12,000 creator search results),</li>
-                    <li>600 detailed reports each month*</li>
+                    <li>2,500 searches (roughly 12,000 creator search results),</li>
+                    <li>1,000 detailed reports each month*</li>
                 </ul>
                 <b>
                     *Reports are also consumed when adding a creator to your sequences, because we use that data to get
@@ -83,8 +83,8 @@ const cnQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>每月最多1200次搜索（约12000个KOL的搜索结果）</li>
-                    <li>并解锁600份详细报告*</li>
+                    <li>每月最多2500次搜索（约12000个KOL的搜索结果）</li>
+                    <li>并解锁1000份详细报告*</li>
                 </ul>
                 <b>
                     *将KOL加到序列时也会使用报告，因为我们使用该数据来获取KOL的联系信息。 1 个KOL添加到序列 = 1
