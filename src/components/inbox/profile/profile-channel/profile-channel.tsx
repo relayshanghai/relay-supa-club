@@ -63,7 +63,8 @@ export default function ProfileChannel({ ...props }: Props) {
 
     // convert raw decimal numbers to string percentage
     const followers = numberFormatter(followersRaw, 0);
-    const avgViews = numberFormatter(avgViewsRaw, 0) || numberFormatter(avgReelsPlaysRaw, 0);
+    const avgViews = avgViewsRaw > 0 ? numberFormatter(avgViewsRaw, 0) : numberFormatter(avgReelsPlaysRaw, 0);
+
     const followersGrowth = decimalToPercent(followersGrowthRaw, 0);
     // audience engagement rate for Youtube = (Engagements + Avg Views) / Followers see V2-1063
     const audienceEngagementRateYTInt = Number((engagements + (avgViewsRaw ?? 0)) / followersRaw);
@@ -183,20 +184,24 @@ export default function ProfileChannel({ ...props }: Props) {
                             />
                             <div className="grid grid-cols-2 space-x-3">
                                 <StatCard title={t('boostbot.modal.followers')} stat={followers ?? '-'} />
-                                {avgViewsRaw && (
+                                {avgViewsRaw > 0 ? (
                                     <StatCard
                                         title={t('boostbot.modal.averageViews')}
                                         stat={avgViews ?? '-'}
                                         iconName={evaluateStat({ avgViewsRaw })}
                                         tooltip={'boostBotAvgViews'}
                                     />
+                                ) : (
+                                    <></>
                                 )}
-                                {avgReelsPlaysRaw && (
+                                {avgReelsPlaysRaw > 0 ? (
                                     <StatCard
                                         title={t('boostbot.modal.averageViews')}
                                         stat={avgViews ?? '-'}
                                         iconName={evaluateStat({ avgReelsPlaysRaw })}
                                     />
+                                ) : (
+                                    <></>
                                 )}
                             </div>
                         </div>
