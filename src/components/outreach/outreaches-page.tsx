@@ -1,4 +1,7 @@
 /* eslint-disable complexity */
+
+'use client';
+
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
@@ -14,7 +17,6 @@ import { Layout } from '../layout';
 import { CreateCampaignModal } from './create-campaign-modal';
 import { SequenceStats } from './sequence-stats';
 import SequencesTable from './outreaches-table';
-import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
 import { Banner } from '../library/banner';
@@ -25,12 +27,10 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 export const OutreachesPage = () => {
     const { t } = useTranslation();
     const { sequences, refreshSequences } = useSequences({ filterDeleted: true });
-    const { deleteSequence } = useSequence();
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { sequenceInfluencers } = useSequenceInfluencers(sequences?.map((sequence) => sequence.id) || []);
     const { profile } = useUser();
     const { allSequenceEmails } = useSequenceEmails();
-    const { track } = useRudderstackTrack();
 
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,9 +44,7 @@ export const OutreachesPage = () => {
     const handleDeleteSequence = async () => {
         try {
             setSelection([]);
-            await deleteSequence(selection);
             toast.success(t('outreaches.deleteSuccess'));
-            track(DeleteSequence, { sequence_id: selection[0], total_influencers: allSequenceInfluencersCount });
         } catch (error) {
             toast.error(t('outreaches.deleteFail'));
             clientLogger(error, 'error');
@@ -60,7 +58,7 @@ export const OutreachesPage = () => {
     );
 
     return (
-        <Layout>
+        <>
             {!profile?.email_engine_account_id && (
                 <Banner
                     buttonText={t('banner.button') ?? ''}
@@ -93,7 +91,6 @@ export const OutreachesPage = () => {
                             variant="secondary"
                             onClick={() => {
                                 setShowNeedHelp(true);
-                                track(ClickNeedHelp);
                             }}
                             className="flex items-center"
                             data-testid="template-library-button"
@@ -147,6 +144,6 @@ export const OutreachesPage = () => {
 
                 <SequencesTable sequences={sequences} selection={selection} setSelection={setSelection} />
             </div>
-        </Layout>
+        </>
     );
 };
