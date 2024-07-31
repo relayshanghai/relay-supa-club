@@ -11,5 +11,6 @@ const navbar = {
     influencerManager: 'KOL管理',
     report: '{{influencerName}} 报告',
     support: '联系客服',
+    products: 'Products',
 };
 export default navbar;

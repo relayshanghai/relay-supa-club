@@ -11,6 +11,7 @@ const navbar = {
     influencerManager: 'Manager',
     report: "{{influencerName}}'s Report",
     support: 'Contact Support',
+    products: 'Products',
 };
 
 export default navbar;
