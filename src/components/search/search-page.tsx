@@ -83,7 +83,6 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [_batchId, setBatchId] = useState(() => randomNumber());
     const { results, resultsTotal, noResults, loading: resultsLoading, metadata, setOnLoad } = useSearchResults(page);
-
     const { track: trackEvent } = useTrackEvent();
 
     const { track } = useRudderstackTrack();
