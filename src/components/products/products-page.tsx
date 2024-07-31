@@ -8,6 +8,7 @@ import { Button } from '../button';
 import ProductsTable from './products-table';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { CreateProductModal } from './products-modal';
+import { useProducts } from 'src/hooks/use-products';
 
 export const ProductsPageComponent = () => {
     const { t } = useTranslation();
@@ -15,6 +16,7 @@ export const ProductsPageComponent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
+    const { products } = useProducts();
 
     const handleDeleteProduct = async () => null;
 
@@ -48,7 +50,7 @@ export const ProductsPageComponent = () => {
                     </Button>
                 </div>
 
-                <ProductsTable products={[]} selection={selection} setSelection={setSelection} />
+                <ProductsTable products={products?.items} selection={selection} setSelection={setSelection} />
             </div>
         </>
     );
