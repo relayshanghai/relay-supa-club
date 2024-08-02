@@ -6,7 +6,7 @@ import { type Paginated } from 'types/pagination';
 import { useState } from 'react';
 import { type GetProductRequest } from 'pages/api/products/request';
 
-type CreateProductPayload = {
+export type CreateProductPayload = {
     name: string;
     description: string;
     price: number;

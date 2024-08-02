@@ -1,9 +1,10 @@
-import { type FC } from 'react';
+import { useState, type FC } from 'react';
 import { Cross } from '../icons';
 import { Modal } from '../modal';
 import { Input } from '../input';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
+import { type CreateProductPayload, useProducts } from 'src/hooks/use-products';
 
 export type ModalProductProps = {
     modalOpen: boolean;
@@ -12,6 +13,24 @@ export type ModalProductProps = {
 
 export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
+    const initValue = {
+        name: '',
+        price: 0,
+        description: '',
+        shopUrl: '',
+        currency: 'USD',
+    };
+    const [product, setProduct] = useState<CreateProductPayload>(initValue);
+    const { createProduct, getProducts } = useProducts();
+
+    const handleCreateProduct = async () => {
+        createProduct(product).then(() => {
+            getProducts();
+            setProduct(initValue);
+            setModalOpen(false);
+        });
+    };
+
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
             <div className="relative inline-flex h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50">
@@ -47,8 +66,8 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                 noBottomMargin
                                 label={'Product Name'}
                                 type="text"
-                                value={''}
-                                onChange={() => null}
+                                value={product.name}
+                                onChange={(e) => setProduct({ ...product, name: e.target.value })}
                                 placeholder={'Enter Product Name'}
                                 data-testid="product-name-input"
                             />
@@ -58,8 +77,8 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                 noBottomMargin
                                 label={'Price'}
                                 type="text"
-                                value={''}
-                                onChange={() => null}
+                                value={product.price}
+                                onChange={(e) => setProduct({ ...product, price: +e.target.value })}
                                 placeholder={'Enter price'}
                                 data-testid="product-name-input"
                             />
@@ -71,8 +90,8 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                 noBottomMargin
                                 label={'Product Description'}
                                 type="text"
-                                value={''}
-                                onChange={() => null}
+                                value={product.description}
+                                onChange={(e) => setProduct({ ...product, description: e.target.value })}
                                 placeholder={'Short, clear product description'}
                                 data-testid="product-name-input"
                             />
@@ -84,8 +103,8 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                 noBottomMargin
                                 label={'Shop Link'}
                                 type="text"
-                                value={''}
-                                onChange={() => null}
+                                value={product.shopUrl}
+                                onChange={(e) => setProduct({ ...product, shopUrl: e.target.value })}
                                 placeholder={'The products Amazon, Shopify, or other store link'}
                                 data-testid="product-name-input"
                             />
@@ -111,7 +130,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                             variant="primary"
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
-                            onClick={() => null}
+                            onClick={() => handleCreateProduct()}
                         >
                             {t('outreaches.saveAndContinue')}
                         </Button>
