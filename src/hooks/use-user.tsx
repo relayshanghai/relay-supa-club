@@ -196,7 +196,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent, identify],
+        [supabaseClient, trackEvent, identify, apiClient],
     );
 
     const updateProfile = useCallback(
