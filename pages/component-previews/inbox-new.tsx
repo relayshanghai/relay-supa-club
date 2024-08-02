@@ -28,9 +28,7 @@ export default function Inbox() {
     return (
         <Layout>
             <div className="flex h-full max-h-screen bg-white">
-                <div id="inbox-thread-list">
-                    <ThreadList />
-                </div>
+                <ThreadList />
                 <ThreadMessages />
                 {selectedThread && <Profile />}
             </div>

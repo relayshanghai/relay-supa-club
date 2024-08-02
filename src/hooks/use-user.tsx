@@ -180,6 +180,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     password,
                 });
 
+                // sync subscription metadata
+                await awaitToError(apiClient.get('/v2/subscriptions/sync'));
+
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
                 identify(data?.user?.email || '');
@@ -193,7 +196,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent, identify],
+        [supabaseClient, trackEvent, identify, apiClient],
     );
 
     const updateProfile = useCallback(

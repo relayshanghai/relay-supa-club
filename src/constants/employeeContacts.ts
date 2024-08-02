@@ -1,6 +1,7 @@
 export const SALES_REP_EMAIL = 'amy.hu@relay.club';
 export const RELAY_EXPERT_EMAIL = 'sophia@relay.club';
 
+const additionalEmployeeEmails = process.env.EMPLOYEE_EMAILS ? process.env.EMPLOYEE_EMAILS.split(',') : [];
 export const EMPLOYEE_EMAILS = [
     'sophia@relay.club',
     'jim@relay.club',
@@ -36,15 +37,20 @@ export const EMPLOYEE_EMAILS = [
     'max@relay.club',
     'aloisa@relay.club',
     'echaoeoen@gmail.com',
+    ...additionalEmployeeEmails,
 ];
 
 /** prod accounts listed at https://email.relay.club/admin/accounts */
+const additionalQuickSendEmailAccounts = process.env.QUICK_SEND_EMAIL_ACCOUNTS
+    ? process.env.QUICK_SEND_EMAIL_ACCOUNTS.split(',')
+    : [];
 export const QUICK_SEND_EMAIL_ACCOUNTS = [
     'egtljwhuz89pfkmj', // jacob@boostbot.ai
     '6nitzaf4gajlnt5c', // kirsten@boostbot.ai
     'r4s32poko4nqxv08', // kirsten@boostbot.ai on staging
     '3tsfh97079jmgnni', // anne_ulike@beauty.boostbot.ai
     'm9cxoxn96dk5viwz', // support+cus_obskepogcl3egn@boostbot.ai
+    ...additionalQuickSendEmailAccounts,
 ];
 
 export const PREVIEW_PAGE_ALLOW_EMAIL_LIST = [

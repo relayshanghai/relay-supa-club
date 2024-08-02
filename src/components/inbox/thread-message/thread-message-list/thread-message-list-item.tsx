@@ -28,7 +28,10 @@ export default function ThreadMessageListItem({ message, myEmail }: { message: E
     const gmailQuotedPart = emailDoc.querySelector('.gmail_quote');
 
     const blockQuotedPart = emailDoc.querySelector('blockquote');
-
+    const links = emailDoc.querySelectorAll('a');
+    if (links) {
+        links.forEach((l) => l.setAttribute('target', '_blank'));
+    }
     if (blockQuotedPart) {
         blockQuotedPart.parentNode?.removeChild(blockQuotedPart);
     }

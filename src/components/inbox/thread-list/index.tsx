@@ -48,6 +48,7 @@ export default function ThreadList() {
 
     return (
         <section
+            id="inbox-thread-list"
             className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
             onScroll={onThreadListContainerScroll}
         >
