@@ -4,7 +4,7 @@ import { Input } from 'src/components/input';
 import { Switch } from 'shadcn/components/ui/switch';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
-import { useState, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { type ModalStepProps } from '../create-campaign-modal';
 import {
     DropdownMenu,
@@ -13,11 +13,24 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown, Plus } from 'src/components/icons';
-import { CreateProductModal } from '../product-modal';
+import { useProducts } from 'src/hooks/use-products';
+import { type ProductEntity } from 'src/backend/database/product/product-entity';
+import { type Nullable } from 'types/nullable';
+import { CreateProductModal } from 'src/components/products/products-modal';
 
 export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Nullable<ProductEntity>>(null);
+    const { getProducts, products, setParams, params } = useProducts();
+
+    useEffect(() => {
+        setParams({ size: 100, page: 1 });
+    }, []);
+    useEffect(() => {
+        getProducts();
+    }, [params]);
+
     return (
         <>
             <div className="flex h-full w-full justify-center" data-testid="step2-outreach-form">
@@ -54,20 +67,23 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                 <DropdownMenuTrigger className="flex w-full">
                                                     <section className="flex w-full flex-shrink-0 flex-grow-0 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
                                                         <span className="text-sm font-normal text-gray-400">
-                                                            eg. Mavic Pro 3
+                                                            {selectedProduct ? selectedProduct.name : 'eg. Mavic Pro 3'}
                                                         </span>{' '}
                                                         <ChevronDown className="h-4 w-4 text-black" />
                                                     </section>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className="w-[210px]">
-                                                    <DropdownMenuItem
-                                                        onSelect={() => {
-                                                            // action here
-                                                        }}
-                                                        className="flex w-full"
-                                                    >
-                                                        Product 1
-                                                    </DropdownMenuItem>
+                                                    {products?.items.map((d) => (
+                                                        <DropdownMenuItem
+                                                            key={d.id}
+                                                            onSelect={() => {
+                                                                setSelectedProduct(d);
+                                                            }}
+                                                            className="flex w-full"
+                                                        >
+                                                            {d.name}
+                                                        </DropdownMenuItem>
+                                                    ))}
                                                     <DropdownMenuItem
                                                         onSelect={() => {
                                                             setModalOpen(true);

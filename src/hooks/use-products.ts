@@ -20,7 +20,6 @@ export const useProducts = () => {
         page: 1,
         size: 10,
         name: '',
-        category: '',
     });
     const { data: products, mutate: getProducts } = useSWR([params, '/products'], async ([p]) => {
         const query = new URLSearchParams(p as any).toString();
@@ -49,6 +48,7 @@ export const useProducts = () => {
         loading,
         error,
         products,
+        params,
         getProducts,
         createProduct,
         updateProduct,

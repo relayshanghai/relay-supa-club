@@ -13,7 +13,7 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/admin/clients': (_pathRoot: string) => <Team height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/v2/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -74,7 +74,7 @@ export const SidebarV2 = ({}: {
                         <ActiveLink href="/products" expandedName={t('navbar.products')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.products')}</p>
                         </ActiveLink>
-                        <ActiveLink href={'/sequences'} expandedName={t('navbar.sequences')}>
+                        <ActiveLink href={'/v2/sequences'} expandedName={t('navbar.sequences')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                         <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>

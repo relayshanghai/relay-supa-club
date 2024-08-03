@@ -3,13 +3,20 @@ import { productsIndexColumns } from './constants';
 import { ProductsTableRow } from './products-table-row';
 import { useCallback } from 'react';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
+import { DataTablePagination } from './pagination';
 
 const ProductsTable = ({
     products,
+    currentPage,
+    totalPages,
+    setPage,
     selection,
     setSelection,
 }: {
     products: ProductEntity[] | undefined;
+    currentPage: number;
+    totalPages: number;
+    setPage: (page: number) => void;
     selection: string[];
     setSelection: (selection: string[]) => void;
 }) => {
@@ -67,6 +74,7 @@ const ProductsTable = ({
                     ))}
                 </tbody>
             </table>
+            <DataTablePagination currentPage={currentPage} pages={totalPages} setPageIndex={setPage} />
         </div>
     );
 };

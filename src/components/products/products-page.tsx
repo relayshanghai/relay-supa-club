@@ -16,12 +16,12 @@ export const ProductsPageComponent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { products, getProducts } = useProducts();
+    const { products, getProducts, params } = useProducts();
 
     useEffect(() => {
         getProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [params]);
 
     const handleDeleteProduct = async () => null;
 
@@ -55,7 +55,14 @@ export const ProductsPageComponent = () => {
                     </Button>
                 </div>
 
-                <ProductsTable products={products?.items} selection={selection} setSelection={setSelection} />
+                <ProductsTable
+                    products={products?.items}
+                    selection={selection}
+                    setSelection={setSelection}
+                    currentPage={products?.page ?? 1}
+                    totalPages={products?.totalPages ?? 0}
+                    setPage={() => null}
+                />
             </div>
         </>
     );
