@@ -26,11 +26,13 @@ Sentry.init({
     // sessions when an error occurs.
     replaysOnErrorSampleRate: 1.0,
 
-    integrations: [Sentry.replayIntegration({
-        // Additional SDK configuration goes in here, for example:
-        maskAllText: true,
-        blockAllMedia: true,
-    })],
+    integrations: [
+        Sentry.replayIntegration({
+            // Additional SDK configuration goes in here, for example:
+            maskAllText: true,
+            blockAllMedia: true,
+        }),
+    ],
     enabled: !inDev(), // turn off in development
 
     beforeSend(event) {
