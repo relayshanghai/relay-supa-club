@@ -1,4 +1,3 @@
-import 'elastic-apm-node';
 import type { NextApiResponse } from 'next';
 import { createErrorObject } from '../api-handler';
 import type { RelayApiRequest } from '../api-handler';
@@ -16,7 +15,6 @@ import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
-import apm from 'src/utils/apm';
 import BalanceService from 'src/backend/domain/balance/balance-service';
 
 export const createHandler = (target: new () => any) => {
@@ -68,12 +66,6 @@ export const createHandler = (target: new () => any) => {
                     if (row?.company) {
                         await BalanceService.getService().initBalance(row.company.id);
                     }
-                    apm.setUserContext({
-                        email: session.user.email,
-                        id: session.user.id,
-                        username: row.company?.name || undefined,
-                    });
-                    apm.setCustomContext(row);
                 }
                 const data = await instance[handlerStr].apply(this, [req, res]);
                 return data;
