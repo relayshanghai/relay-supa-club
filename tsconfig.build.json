@@ -1,19 +1,8 @@
 {
   "extends": "./tsconfig.json",
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "pages/_error.js",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js", ".next/types/**/*.ts"],
   // Exclude test files because they are not part of the build
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.cy.tsx",
-    "**/*.cy.ts"
-  ],
+  "exclude": ["node_modules", "**/*.test.ts", "**/*.cy.tsx", "**/*.cy.ts"],
   "compilerOptions": {
     "skipLibCheck": true,
     "noEmit": true,

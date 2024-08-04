@@ -195,7 +195,7 @@ export default class StripeService {
     }
 
     async getProduct(productId: string) {
-        return await StripeService.client.products.retrieve(productId);
+        return StripeService.client.products.retrieve(productId);
     }
 
     async getProductMetadata(subscriptionId: string) {
@@ -221,8 +221,10 @@ export default class StripeService {
         return StripeService.client.subscriptions.update(subscriptionId, params);
     }
 
-    async retrieveSubscription(subscriptionId: string) {
-        return StripeService.client.subscriptions.retrieve(subscriptionId);
+    async retrieveSubscription(subscriptionId: string): Promise<Stripe.Subscription & { plan?: Stripe.Plan }> {
+        return StripeService.client.subscriptions.retrieve(subscriptionId) as unknown as Stripe.Subscription & {
+            plan?: Stripe.Plan;
+        };
     }
 
     async getActiveSubscription(customerId: string) {

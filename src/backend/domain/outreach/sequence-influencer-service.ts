@@ -93,6 +93,7 @@ export default class SequenceInfluencerService {
         const count = await SequenceInfluencerRepository.getRepository().count({
             where: {
                 sequence: { id: sequenceId },
+                funnelStatus: Not('Negotiating'),
             },
         });
         const { profile, translation: t } = RequestContext.getContext();

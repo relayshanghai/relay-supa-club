@@ -26,6 +26,7 @@ import { type PriceEntity, type SubscriptionType } from 'src/backend/database/pr
 import type { RelayPlanWithAnnual } from 'types';
 import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import { formatStripePrice } from 'src/utils/utils';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -350,13 +351,32 @@ export default class SubscriptionV2Service {
         companyId,
         cusId,
         request,
+        resetBalance = true,
     }: {
         companyId: string;
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
+        resetBalance?: boolean;
     }) {
         const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
-        const productMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
+        const plan = subscription.plan;
+        const internalProductMetadata = await PriceRepository.getRepository().findOne({
+            where: [
+                {
+                    priceId: plan?.id,
+                },
+                { priceIdsForExistingUser: plan?.id },
+            ],
+        });
+        const stripeProductMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
+        const productMetadata = {
+            profiles: internalProductMetadata?.profiles + '',
+            searches: internalProductMetadata?.searches + '',
+            trial_profiles: stripeProductMetadata.trial_profiles,
+            trial_searches: stripeProductMetadata.trial_searches,
+            name: stripeProductMetadata.name,
+        };
+
         const company = await CompanyRepository.getRepository().findOne({
             where: {
                 id: companyId,
@@ -365,7 +385,7 @@ export default class SubscriptionV2Service {
         const interval = StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval);
         const nextMonth = new Date();
         nextMonth.setMonth(new Date().getMonth() + 1);
-        await Promise.all([
+        const promises = [
             SubscriptionRepository.getRepository().upsert(
                 {
                     company: company as CompanyEntity,
@@ -376,10 +396,11 @@ export default class SubscriptionV2Service {
                         subscription.default_payment_method?.toString() ||
                         'card',
                     quantity: subscription.items.data[0].quantity,
-                    price: subscription.items.data[0].price.unit_amount?.valueOf() || 0,
-                    total:
+                    price: +formatStripePrice(subscription.items.data[0].price.unit_amount?.valueOf() || 0),
+                    total: +formatStripePrice(
                         (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
-                        (subscription?.items?.data?.[0].quantity ?? 0),
+                            (subscription?.items?.data?.[0].quantity ?? 0),
+                    ),
                     subscriptionData: subscription,
                     interval,
                     discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
@@ -405,19 +426,26 @@ export default class SubscriptionV2Service {
                     subscriptionPlan: productMetadata.name,
                 },
             ),
-            BalanceRepository.getRepository().resetBalance(
-                companyId,
-                BalanceType.PROFILE,
-                parseInt(productMetadata.profiles),
-                interval === 'annually' ? nextMonth : null,
-            ),
-            BalanceRepository.getRepository().resetBalance(
-                companyId,
-                BalanceType.SEARCH,
-                parseInt(productMetadata.searches),
-                interval === 'annually' ? nextMonth : null,
-            ),
-        ]);
+        ];
+        if (resetBalance) {
+            promises.push(
+                BalanceRepository.getRepository().resetBalance(
+                    companyId,
+                    BalanceType.PROFILE,
+                    parseInt(productMetadata.profiles),
+                    interval === 'annually' ? nextMonth : null,
+                ) as Promise<any>,
+            );
+            promises.push(
+                BalanceRepository.getRepository().resetBalance(
+                    companyId,
+                    BalanceType.SEARCH,
+                    parseInt(productMetadata.searches),
+                    interval === 'annually' ? nextMonth : null,
+                ) as Promise<any>,
+            );
+        }
+        await Promise.all(promises);
 
         const [, trialSubscription] = await awaitToError(StripeService.getService().getTrialSubscription(cusId));
         if (trialSubscription) {
@@ -611,6 +639,7 @@ export default class SubscriptionV2Service {
             const pricesData = await PriceRepository.getRepository().find({
                 where: {
                     subscriptionType: key as SubscriptionType,
+                    isActive: true,
                 },
             });
 
@@ -655,6 +684,29 @@ export default class SubscriptionV2Service {
         }
 
         return prices;
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async syncSubscription() {
+        const companyId = RequestContext.getContext().companyId as string;
+        const cusId = RequestContext.getContext().customerId as string;
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        return this.storeSubscription({
+            companyId,
+            cusId,
+            request: { subscriptionId: subscription.providerSubscriptionId },
+            resetBalance: false,
+        });
     }
 
     private async getLoyalCompany(companyId: string) {

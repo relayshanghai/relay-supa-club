@@ -402,11 +402,17 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     }, []);
 
     useEffect(() => {
-        if (guidesReady && currentTabInfluencers.length > 0 && sequenceSteps) {
+        if (
+            currentTabInfluencers.length > 0 &&
+            sequenceSteps &&
+            guidesReady &&
+            currentTabInfluencers.length > 0 &&
+            sequenceSteps
+        ) {
             startTour('sequence#detail');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [guidesReady, currentTabInfluencers, sequenceSteps]);
+    }, [guidesReady, currentTabInfluencers.length, sequenceSteps, currentTabInfluencers.length, sequenceSteps]);
 
     useEffect(() => {
         if (!guiding && showUpdateTemplateVariables) {

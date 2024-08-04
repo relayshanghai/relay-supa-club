@@ -23,6 +23,7 @@ import geolocations from './geolocations';
 import subscription from './subscription';
 import outreaches from './outreaches';
 import products from './products';
+import maintenance from './maintenance';
 
 const translations = {
     translation: {
@@ -51,6 +52,7 @@ const translations = {
         subscription,
         outreaches,
         products,
+        maintenance,
     },
 };
 export default translations;

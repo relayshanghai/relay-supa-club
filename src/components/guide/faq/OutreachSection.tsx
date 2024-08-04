@@ -8,8 +8,8 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>1,200 searches (roughly 12,000 creator search results),</li>
-                    <li>600 detailed reports each month*</li>
+                    <li>2,500 searches (roughly 12,000 creator search results),</li>
+                    <li>1,000 detailed reports each month*</li>
                 </ul>
                 <b>
                     *Reports are also consumed when adding a creator to your sequences, because we use that data to get
@@ -25,13 +25,13 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <p>
-                    You can send up to 30 initial emails per day, and we will schedule follow-ups for the creators that
+                    You can send up to 50 initial emails per day, and we will schedule follow-ups for the creators that
                     don’t reply. When the 1st follow-up and 2nd follow-up emails are sending out, you can send up to a
-                    total of 90 emails per day.{' '}
+                    total of 150 emails per day.{' '}
                 </p>
 
                 <p>
-                    This will let you contact a total of 600 creators each month. (See examples of the sending cadence,
+                    This will let you contact a total of 1000 creators each month. (See examples of the sending cadence,
                     and campaign ramp-up on the following slides)
                 </p>
             </>
@@ -83,8 +83,8 @@ const cnQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>每月最多1200次搜索（约12000个KOL的搜索结果）</li>
-                    <li>并解锁600份详细报告*</li>
+                    <li>每月最多2500次搜索（约12000个KOL的搜索结果）</li>
+                    <li>并解锁1000份详细报告*</li>
                 </ul>
                 <b>
                     *将KOL加到序列时也会使用报告，因为我们使用该数据来获取KOL的联系信息。 1 个KOL添加到序列 = 1
@@ -99,10 +99,10 @@ const cnQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <p>
-                    您每天最多可发送30封的初始电子邮件，我们将为您向没有回复的网红安排发送跟进邮件。当第一封和第二封跟进邮件发出后，您每天可发送的邮件总数为90封。
+                    您每天最多可发送50封的初始电子邮件，我们将为您向没有回复的网红安排发送跟进邮件。当第一封和第二封跟进邮件发出后，您每天可发送的邮件总数为150封。
                 </p>
 
-                <p>这将使您每月能联系总共600名KOL。（请参阅下页展示的邮件发送频次和推广活动增速示例）</p>
+                <p>这将使您每月能联系总共1000名KOL。（请参阅下页展示的邮件发送频次和推广活动增速示例）</p>
             </>
         ),
     },

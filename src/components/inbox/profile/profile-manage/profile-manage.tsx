@@ -199,6 +199,13 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
 
     return (
         <>
+            <div className="p-4 text-gray-600" id="profile">
+                <h2 className="font-semibold ">{t('account.personal.email')}</h2>
+                <hr className="mb-4 mt-1 border-gray-200" />
+                <label className="text-grey-600 text-xs font-semibold">
+                    <Input className="mt-2" value={influencer.email} disabled />
+                </label>
+            </div>
             {/*     // TODO: https://linear.app/boostbot/issue/BB-232/notes-section
              */}
             {/* <NotesListOverlayScreen isOpen={notesOverlayOpen} onClose={() => setNotesOverlayOpen(false)} notes={[]} /> */}

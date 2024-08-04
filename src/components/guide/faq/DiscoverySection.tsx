@@ -8,8 +8,8 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>900 searches (roughly 9000 creator search results), </li>
-                    <li>200 detailed reports each month*</li>
+                    <li>1,200 searches (roughly 9000 creator search results), </li>
+                    <li>600 detailed reports each month*</li>
                 </ul>
                 <b>
                     *Reports are also consumed when adding a creator to your sequences, because we use that data to get
@@ -24,7 +24,7 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <p>
-                    Using the Classic search tool will consume 1 of the 900 search credits to unlock the first page of
+                    Using the Classic search tool will consume 1 of the 1,200 search credits to unlock the first page of
                     results ( max 10).
                 </p>
 
@@ -65,8 +65,8 @@ const cnQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>每月最多900次搜索（约9000个KOL的搜索结果）</li>
-                    <li>并解锁200份详细报告*</li>
+                    <li>每月最多1200次搜索（约9000个KOL的搜索结果）</li>
+                    <li>并解锁600份详细报告*</li>
                 </ul>
                 <b>
                     *将KOL加到序列时也会使用报告，因为我们使用该数据来获取KOL的联系信息。 1 个KOL添加到序列 = 1
@@ -80,7 +80,7 @@ const cnQuestions: FAQAccordionType[] = [
         title: '如何定义为一次搜索额度？',
         children: (
             <>
-                <p>使用传统搜索，900个搜索额度中的1个将被用以解锁首页搜索结果（页面最多可包含10个搜索结果）。</p>
+                <p>使用传统搜索，1200个搜索额度中的1个将被用以解锁首页搜索结果（页面最多可包含10个搜索结果）。</p>
 
                 <p>解锁后续的搜索结果页面，每一页需要使用1个搜索额度。</p>
 

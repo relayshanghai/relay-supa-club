@@ -29,6 +29,8 @@ import { useCompany } from 'src/hooks/use-company';
 import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence-modal';
 import { clientLogger } from 'src/utils/logger-client';
+import { isInMaintenance } from 'src/utils/maintenance';
+import MaintenanceComponent from '../maintenance/Component';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { sequences } = useSequences();
@@ -127,6 +129,12 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         }
         trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
     };
+
+    const isMaintenancePage = isInMaintenance('report');
+
+    if (isMaintenancePage) {
+        return <MaintenanceComponent message={t('maintenance.reportPage')} />;
+    }
 
     if (IQDATA_MAINTENANCE) {
         return <MaintenanceMessage />;

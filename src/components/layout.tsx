@@ -15,6 +15,7 @@ import { useReport } from 'src/hooks/use-report';
 import type { CreatorPlatform } from 'types';
 import { VisitPage } from 'src/utils/analytics/events';
 import { ChatQuestion } from './icons';
+import { isInMaintenance } from 'src/utils/maintenance';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -75,6 +76,8 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
 
+    const isMaintenancePage = isInMaintenance('report');
+
     return (
         <div className="fixed flex h-screen w-screen">
             <Sidebar
@@ -91,7 +94,9 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
                         <p className="flex flex-row items-center gap-2 pl-4">
                             {routerPath.includes('influencer') ? (
                                 <p className="text-sm font-semibold text-gray-600">
-                                    {influencer && t('navbar.report', { influencerName: influencer.name })}
+                                    {influencer &&
+                                        !isMaintenancePage &&
+                                        t('navbar.report', { influencerName: influencer.name })}
                                 </p>
                             ) : (
                                 routerPath.map((path, index) => {
