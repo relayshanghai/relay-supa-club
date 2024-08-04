@@ -27,6 +27,12 @@ const products = {
         price: 'Price',
         name: 'Name',
     },
+    delete: {
+        title: 'Delete products?',
+        description: "This action will deleting the selected products from your list. You can't undo this action.",
+        cancel: 'Cancel',
+        okay: 'Yes, delete them',
+    },
 };
 
 export default products;

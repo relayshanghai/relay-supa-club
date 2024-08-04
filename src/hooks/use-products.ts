@@ -1,10 +1,9 @@
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
-import useSWR from 'swr';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
 import { type Paginated } from 'types/pagination';
-import { useState } from 'react';
 import { type GetProductRequest } from 'pages/api/products/request';
+import { useProductStore } from 'src/store/reducers/product';
 
 export type CreateProductPayload = {
     name: string;
@@ -15,27 +14,29 @@ export type CreateProductPayload = {
 };
 
 export const useProducts = () => {
+    const { setProducts, list: products, setProduct, item: product } = useProductStore();
     const { apiClient, loading, error } = useApiClient();
-    const [params, setParams] = useState<GetProductRequest>({
-        page: 1,
-        size: 10,
-        name: '',
-    });
-    const { data: products, mutate: getProducts } = useSWR([params, '/products'], async ([p]) => {
-        const query = new URLSearchParams(p as any).toString();
+    const getProducts = async (params?: Partial<GetProductRequest>) => {
+        params = {
+            page: 1,
+            size: 2,
+            ...params,
+        };
+        const query = new URLSearchParams(params as any).toString();
         const [err, res] = await awaitToError(
             apiClient.get<Paginated<ProductEntity>>(`/products?${query}`).then((res) => res.data),
         );
         if (err) return;
+        setProducts(res);
         return res;
-    });
+    };
     const createProduct = async (payload: CreateProductPayload) => {
         const [err, res] = await awaitToError(apiClient.post<ProductEntity>('/products', payload));
         if (err) throw err;
         return res.data;
     };
-    const updateProduct = async (id: string) => {
-        const [err, res] = await awaitToError(apiClient.put(`/products/${id}`));
+    const updateProduct = async (id: string, payload: CreateProductPayload) => {
+        const [err, res] = await awaitToError(apiClient.put(`/products/${id}`, payload));
         if (err) throw err;
         return res.data;
     };
@@ -48,11 +49,11 @@ export const useProducts = () => {
         loading,
         error,
         products,
-        params,
         getProducts,
         createProduct,
         updateProduct,
         getProduct,
-        setParams,
+        setProduct,
+        product,
     };
 };

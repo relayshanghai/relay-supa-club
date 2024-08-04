@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import MainLayout from './layouts/main-layout';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 export const metadata: Metadata = {
     title: 'Boostbot',
@@ -15,7 +16,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <MainLayout>{children}</MainLayout>
+                <StoreProvider>
+                    <MainLayout>{children}</MainLayout>
+                </StoreProvider>
             </body>
         </html>
     );

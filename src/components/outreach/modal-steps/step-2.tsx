@@ -22,14 +22,11 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
     const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Nullable<ProductEntity>>(null);
-    const { getProducts, products, setParams, params } = useProducts();
+    const { getProducts, products } = useProducts();
 
     useEffect(() => {
-        setParams({ size: 100, page: 1 });
-    }, []);
-    useEffect(() => {
         getProducts();
-    }, [params]);
+    }, []);
 
     return (
         <>

@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
 import ProductsTable from './products-table';
-import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { CreateProductModal } from './products-modal';
 import { useProducts } from 'src/hooks/use-products';
+import { DeleteOutline } from '../icons';
+import { type ProductEntity } from 'src/backend/database/product/product-entity';
+import { ProductDeleteModal } from './product-delete-modal';
 
 export const ProductsPageComponent = () => {
     const { t } = useTranslation();
@@ -16,18 +18,21 @@ export const ProductsPageComponent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { products, getProducts, params } = useProducts();
+    const { products, getProducts, setProduct } = useProducts();
+    const [productParam, setProductParam] = useState({
+        page: 1,
+    });
 
     useEffect(() => {
-        getProducts();
+        getProducts({ page: productParam.page });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params]);
+    }, [productParam.page]);
 
     const handleDeleteProduct = async () => null;
 
     return (
         <>
-            <DeleteSequenceModal
+            <ProductDeleteModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}
                 handleDelete={handleDeleteProduct}
@@ -45,8 +50,26 @@ export const ProductsPageComponent = () => {
                     </div>
                 </div>
                 <div className="flex w-full justify-end gap-4">
+                    <button
+                        data-testid="delete-sequences-button"
+                        className={`h-fit ${
+                            selection.length < 1 && 'hidden'
+                        } w-fit cursor-pointer rounded-md border border-red-100 p-[10px]`}
+                        onClick={() => setShowDeleteModal(true)}
+                    >
+                        <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                    </button>
                     <Button
-                        onClick={() => setModalOpen(true)}
+                        onClick={() => {
+                            setModalOpen(true);
+                            setProduct({
+                                name: '',
+                                price: 0,
+                                description: '',
+                                shopUrl: '',
+                                currency: '',
+                            } as unknown as ProductEntity);
+                        }}
                         variant="ghost"
                         className="flex items-center !bg-blue-50"
                         data-testid="create-campaign-button"
@@ -61,7 +84,16 @@ export const ProductsPageComponent = () => {
                     setSelection={setSelection}
                     currentPage={products?.page ?? 1}
                     totalPages={products?.totalPages ?? 0}
-                    setPage={() => null}
+                    setPage={(page) => {
+                        setProductParam({
+                            ...productParam,
+                            page,
+                        });
+                    }}
+                    onRowClick={(product) => {
+                        setProduct(product);
+                        setModalOpen(true);
+                    }}
                 />
             </div>
         </>

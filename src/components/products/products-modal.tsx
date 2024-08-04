@@ -1,10 +1,11 @@
-import { useState, type FC } from 'react';
+import { type FC } from 'react';
 import { Cross } from '../icons';
 import { Modal } from '../modal';
 import { Input } from '../input';
 import { Button } from '../button';
 import { useTranslation } from 'react-i18next';
 import { type CreateProductPayload, useProducts } from 'src/hooks/use-products';
+import { type ProductEntity } from 'src/backend/database/product/product-entity';
 
 export type ModalProductProps = {
     modalOpen: boolean;
@@ -13,20 +14,26 @@ export type ModalProductProps = {
 
 export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
-    const initValue = {
+    const initValue: CreateProductPayload = {
         name: '',
         price: 0,
         description: '',
         shopUrl: '',
-        currency: 'USD',
+        currency: '',
     };
-    const [product, setProduct] = useState<CreateProductPayload>(initValue);
-    const { createProduct, getProducts } = useProducts();
+    const { createProduct, updateProduct, getProducts, product, setProduct } = useProducts();
 
     const handleCreateProduct = async () => {
-        createProduct(product).then(() => {
+        const isUpdate = product.id !== undefined;
+        let action = null;
+        if (isUpdate) {
+            action = updateProduct(product.id as string, product as unknown as CreateProductPayload);
+        } else {
+            action = createProduct(product as unknown as CreateProductPayload);
+        }
+        action.then(() => {
             getProducts();
-            setProduct(initValue);
+            setProduct(initValue as unknown as ProductEntity);
             setModalOpen(false);
         });
     };
@@ -78,7 +85,11 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                 label={'Price'}
                                 type="text"
                                 value={product.price}
-                                onChange={(e) => setProduct({ ...product, price: +e.target.value })}
+                                onChange={(e) => {
+                                    // check if the value is a number or an empty string using regex
+                                    if (!/^\d*\.?\d*$/.test(e.target.value)) return;
+                                    setProduct({ ...product, price: e.target.value ? +e.target.value : 0 });
+                                }}
                                 placeholder={'Enter price'}
                                 data-testid="product-name-input"
                             />

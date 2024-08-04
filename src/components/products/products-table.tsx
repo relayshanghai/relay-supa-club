@@ -12,6 +12,7 @@ const ProductsTable = ({
     setPage,
     selection,
     setSelection,
+    onRowClick,
 }: {
     products: ProductEntity[] | undefined;
     currentPage: number;
@@ -19,6 +20,7 @@ const ProductsTable = ({
     setPage: (page: number) => void;
     selection: string[];
     setSelection: (selection: string[]) => void;
+    onRowClick: (product: ProductEntity) => void;
 }) => {
     const { t } = useTranslation();
     const handleCheckboxChange = useCallback(
@@ -70,6 +72,9 @@ const ProductsTable = ({
                             product={product}
                             checked={selection.includes(product.id)}
                             onCheckboxChange={handleCheckboxChange}
+                            onRowClick={() => {
+                                onRowClick(product);
+                            }}
                         />
                     ))}
                 </tbody>
