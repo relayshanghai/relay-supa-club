@@ -19,7 +19,7 @@ export const useProducts = () => {
     const getProducts = async (params?: Partial<GetProductRequest>) => {
         params = {
             page: 1,
-            size: 2,
+            size: 10,
             ...params,
         };
         const query = new URLSearchParams(params as any).toString();
