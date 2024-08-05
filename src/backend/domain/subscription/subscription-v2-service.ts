@@ -370,8 +370,8 @@ export default class SubscriptionV2Service {
         });
         const stripeProductMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
         const productMetadata = {
-            profiles: internalProductMetadata?.profiles + '',
-            searches: internalProductMetadata?.searches + '',
+            profiles: internalProductMetadata ? internalProductMetadata.profiles + '' : stripeProductMetadata.profiles,
+            searches: internalProductMetadata ? internalProductMetadata.searches + '' : stripeProductMetadata.searches,
             trial_profiles: stripeProductMetadata.trial_profiles,
             trial_searches: stripeProductMetadata.trial_searches,
             name: stripeProductMetadata.name,
