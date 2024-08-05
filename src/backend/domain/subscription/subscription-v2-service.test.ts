@@ -249,8 +249,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         providerSubscriptionId: 'new_sub_1',
                         paymentMethod: 'card',
                         quantity: 1,
-                        price: 100,
-                        total: 100,
+                        price: 1,
+                        total: 1,
                         subscriptionData: {
                             id: 'new_sub_1',
                             default_payment_method: 'card',
@@ -299,8 +299,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     },
                     {
                         subscriptionStatus: 'active',
-                        searchesLimit: '100000000',
-                        profilesLimit: '100000000',
+                        profilesLimit: '1000',
+                        searchesLimit: '2500',
                         subscriptionPlan: 'Outreach',
                         trialProfilesLimit: '100000000',
                         trialSearchesLimit: '100000000',
