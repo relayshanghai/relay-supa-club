@@ -73,5 +73,8 @@ const login = {
     noSpacesAllowed: '不许包含空格',
     activateSuccess: '激活成功',
     companyNameRequired: '公司名称是必填字段',
+    emailDomainNotAllowed: '请使用真实的电子邮件地址',
+    requestResetPassword: '重置密码的请求将发送至您账户附带的电子邮件地址',
+    sendResetPasswordEmail: '发送重置密码的电子邮件',
 };
 export default login;

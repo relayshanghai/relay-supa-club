@@ -398,6 +398,7 @@ export interface Database {
           trial_searches_limit: string
           updated_at: string | null
           website: string | null
+          currency: string
         }
         Insert: {
           ai_email_generator_limit?: string
@@ -1080,33 +1081,47 @@ export interface Database {
       }
       products: {
         Row: {
+          company_id: string | null
           created_at: string
           description: string | null
           id: string
+          name: string
           price: number | null
           price_currency: string | null
           shop_url: string | null
           updated_at: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          name?: string
           price?: number | null
           price_currency?: string | null
           shop_url?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_company_fk"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -1534,6 +1549,7 @@ export interface Database {
           created_at: string
           id: string
           name: string | null
+          outreach_email_template_id: string | null
           sequence_id: string
           step_number: number
           template_id: string
@@ -1544,6 +1560,7 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
+          outreach_email_template_id?: string | null
           sequence_id: string
           step_number?: number
           template_id: string
@@ -1554,6 +1571,7 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
+          outreach_email_template_id?: string | null
           sequence_id?: string
           step_number?: number
           template_id?: string
@@ -1561,6 +1579,13 @@ export interface Database {
           wait_time_hours?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "outreach_email_template_sequence_step_fk"
+            columns: ["outreach_email_template_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_email_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_steps_sequence_id_fkey"
             columns: ["sequence_id"]
@@ -1580,6 +1605,7 @@ export interface Database {
           manager_first_name: string | null
           manager_id: string | null
           name: string
+          product_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1591,6 +1617,7 @@ export interface Database {
           manager_first_name?: string | null
           manager_id?: string | null
           name: string
+          product_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1602,9 +1629,17 @@ export interface Database {
           manager_first_name?: string | null
           manager_id?: string | null
           name?: string
+          product_id?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_product_fk"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
@@ -1617,6 +1652,65 @@ export interface Database {
             columns: ["manager_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      subscriptions: {
+        Row: {
+          active_at: string | null
+          cancelled_at: string | null
+          company_id: string
+          coupon: string | null
+          discount: number | null
+          id: string
+          paused_at: string | null
+          payment_method: string
+          price: number
+          provider: string
+          provider_subscription_id: string
+          quantity: number
+          subscription_data: Json
+          total: number
+        }
+        Insert: {
+          active_at?: string | null
+          cancelled_at?: string | null
+          company_id: string
+          coupon?: string | null
+          discount?: number | null
+          id?: string
+          paused_at?: string | null
+          payment_method: string
+          price: number
+          provider?: string
+          provider_subscription_id: string
+          quantity: number
+          subscription_data: Json
+          total: number
+        }
+        Update: {
+          active_at?: string | null
+          cancelled_at?: string | null
+          company_id?: string
+          coupon?: string | null
+          discount?: number | null
+          id?: string
+          paused_at?: string | null
+          payment_method?: string
+          price?: number
+          provider?: string
+          provider_subscription_id?: string
+          quantity?: number
+          subscription_data?: Json
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_company"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           }
         ]

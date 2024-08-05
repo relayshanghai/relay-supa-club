@@ -76,5 +76,8 @@ const login = {
     noSpacesAllowed: 'Must not include spaces',
     activateSuccess: 'Success',
     companyNameRequired: 'Company name is required',
+    emailDomainNotAllowed: 'Please use a real email address',
+    requestResetPassword: 'A request to reset you password will be sent to the email address attached to your account',
+    sendResetPasswordEmail: 'Send reset password email',
 };
 export default login;

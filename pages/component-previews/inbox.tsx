@@ -3,7 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessagesComponent } from 'src/components/inbox/wip/message-component';
 import { ReplyEditor } from 'src/components/inbox/wip/reply-editor';
 import { ThreadHeader } from 'src/components/inbox/wip/thread-header';
-import { ThreadPreview, type Message as BaseMessage } from 'src/components/inbox/wip/thread-preview';
+import {
+    ThreadPreview,
+    type Message as BaseMessage,
+    ThreadPreviewSkeleton,
+} from 'src/components/inbox/wip/thread-preview';
 import type { ThreadContact, Thread as ThreadInfo, EmailContact } from 'src/utils/outreach/types';
 import { useUser } from 'src/hooks/use-user';
 import { Filter, type FilterType } from 'src/components/inbox/wip/filter';
@@ -27,9 +31,9 @@ import type { Attachment } from 'types/email-engine/account-account-message-get'
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
-import Link from 'next/link';
 import { t } from 'i18next';
 import { sortByUpdatedAtDesc } from 'src/components/inbox/helpers';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
 
 const fetcher = async (url: string) => {
     const res = await apiFetch<any>(url);
@@ -41,7 +45,7 @@ type Message = BaseMessage & { isLocal?: true };
 const fileExtensionRegex = /.[^.\\/]*$/;
 
 export const getAttachmentStyle = (filename: string) => {
-    const extension = filename.match(fileExtensionRegex)?.[0].replace('.', '');
+    const extension = filename?.match(fileExtensionRegex)?.[0].replace('.', '');
     switch (extension) {
         case 'pdf':
             return 'bg-red-100 hover:bg-red-50 text-red-400 stroke-red-400';
@@ -249,7 +253,7 @@ const ThreadProvider = ({
                 async (cache) => {
                     if (attachments && attachments.length > 0) {
                         const htmlAttachments = attachments.map((attachment) => {
-                            return `<a target="__blank" href="${window.origin}/api/files/download-presign-url?path=${company?.id}/attachments/${attachment}">${attachment}</a>`;
+                            return `<a target="__blank" href="${window.origin}/inbox/download/${company?.id}/attachments/${attachment}">${attachment}</a>`;
                         });
                         // attach link of attachments to the html body content of the email
                         replyBody = `${replyBody}
@@ -351,7 +355,17 @@ const ThreadProvider = ({
             }, 500);
         }
     }, [messages]);
-    if (!messages && isMessageLoading) return <div className="m-4 flex h-16 animate-pulse rounded-lg bg-gray-400" />;
+    if (!messages && isMessageLoading) {
+        return (
+            <div className="m-4 flex flex-col space-y-4">
+                {Array(4)
+                    .fill(0)
+                    .map((_, index) => (
+                        <Skeleton key={index} className="flex h-12 rounded-lg bg-gray-300" />
+                    ))}
+            </div>
+        );
+    }
     if (messagesError || !Array.isArray(messages)) return <div>Error loading messages</div>;
 
     return (
@@ -455,16 +469,16 @@ const InboxPreview = () => {
                 name: sequence.name,
             };
         });
-    const { t } = useTranslation();
 
-    const [page, setPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const [loading, setLoading] = useState(false);
 
     const [filters, setFilters] = useState<FilterType>({
         threadStatus: [],
         funnelStatus: [],
         sequences: [],
-        page,
+        page: 0,
     });
 
     const getKey = useCallback(
@@ -482,7 +496,6 @@ const InboxPreview = () => {
         ) => {
             // If the previous page data is empty, we've reached the end and should not fetch more
             if (previousPageData && !previousPageData.threads.length) return null;
-
             // This function should return an array with the arguments for the fetcher
             // The `pageIndex` is zero-based and SWR will call this function with incremented `pageIndex`
             return {
@@ -503,25 +516,27 @@ const InboxPreview = () => {
     } = useSWRInfinite(
         getKey,
         async ({ url, params }): Promise<ThreadData> => {
+            setLoading(true);
             const { content } = await apiFetch<GetThreadsApiResponse, GetThreadsApiRequest>(url, {
                 body: params,
             });
             const totals = {
-                unreplied: content.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
-                unopened: content.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
-                replied: content.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
+                unreplied: content?.totals.find((t) => t.thread_status === 'unreplied')?.thread_status_total ?? 0,
+                unopened: content?.totals.find((t) => t.thread_status === 'unopened')?.thread_status_total ?? 0,
+                replied: content?.totals.find((t) => t.thread_status === 'replied')?.thread_status_total ?? 0,
             };
 
+            setLoading(false);
             return { threads: content.data, totals: totals, totalFiltered: content.totalFiltered };
         },
-        { revalidateOnFocus: true },
+        { revalidateFirstPage: false, revalidateOnFocus: true },
     );
 
     const threadsInfo = useMemo(() => {
         return {
-            threads: data && data.flatMap((page) => page.threads),
-            totals: data && data[0].totals,
-            totalFiltered: data && data[0].totalFiltered,
+            threads: (data && data.length > 0 && data.flatMap((page) => page.threads)) || undefined,
+            totals: (data && data.length > 0 && data[0]?.totals) || undefined,
+            totalFiltered: (data && data.length > 0 && data[0].totalFiltered) || undefined,
         };
     }, [data]);
 
@@ -542,9 +557,9 @@ const InboxPreview = () => {
     const totals = useMemo(() => {
         return threadsInfo
             ? {
-                  unopened: threadsInfo.totals?.unopened || 0,
-                  unreplied: threadsInfo.totals?.unreplied || 0,
-                  replied: threadsInfo.totals?.replied || 0,
+                  unopened: threadsInfo?.totals?.unopened || 0,
+                  unreplied: threadsInfo?.totals?.unreplied || 0,
+                  replied: threadsInfo?.totals?.replied || 0,
               }
             : { unopened: 0, unreplied: 0, replied: 0 };
     }, [threadsInfo]);
@@ -588,12 +603,11 @@ const InboxPreview = () => {
     // Callback function to load more items when the last one is observed
     const loadMoreThreads = useCallback(() => {
         // If there are no more items to load, return
-        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered) return;
+        if (threadsInfo?.threads?.length === threadsInfo?.totalFiltered || loading) return;
 
         // Increase the page number
-        setPage((prevPage) => prevPage + 1);
         setSize(size + 1);
-    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered]);
+    }, [size, setSize, threadsInfo?.threads, threadsInfo?.totalFiltered, loading]);
 
     const { address } = useAddress(selectedThread?.sequenceInfluencer);
 
@@ -609,75 +623,25 @@ const InboxPreview = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads, selectedThread]);
 
-    const threadsGroupedByUpdatedAt = threads?.reduce((acc, thread) => {
-        if (!thread.threadInfo.updated_at) {
-            return acc;
-        }
-        const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
-        if (!acc[key]) {
-            acc[key] = [];
-        }
-        acc[key].push(thread);
-        return acc;
-    }, {} as { [key: string]: ThreadInfo[] });
+    const threadsGroupedByUpdatedAt = useMemo(
+        () =>
+            threads?.reduce((acc, thread) => {
+                if (!thread.threadInfo.updated_at) {
+                    return acc;
+                }
+                const key = formatDate(thread.threadInfo.updated_at, '[date] [monthShort]');
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(thread);
+                return acc;
+            }, {} as { [key: string]: ThreadInfo[] }),
+        [threads],
+    );
 
-    const [showNewInboxMessage, setShowNewInboxMessage] = useState(true);
     if (!currentInbox.email) return <>Nothing to see here</>;
     return (
-        <Layout
-            titleFlag={
-                <div
-                    style={{
-                        display: showNewInboxMessage ? 'block' : 'none',
-                    }}
-                    id="alert-additional-content-1"
-                    className="mb-4 rounded-lg border border-blue-300 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-gray-800 dark:text-blue-400"
-                    role="alert"
-                >
-                    <div className="flex items-center">
-                        <svg
-                            className="me-2 h-4 w-4 flex-shrink-0"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                        </svg>
-                        <h3 className="text-lg font-medium">{t('inbox.newInboxMessage.title')}</h3>
-                    </div>
-                    <div className="mb-4 mt-2 text-sm">{t('inbox.newInboxMessage.message')}</div>
-                    <div className="flex">
-                        <Link href="/old-inbox">
-                            <button
-                                type="button"
-                                className="me-2 inline-flex items-center rounded-lg bg-blue-800 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            >
-                                <svg
-                                    className="me-2 h-3 w-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 14"
-                                >
-                                    <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
-                                </svg>
-                                {t('inbox.newInboxMessage.oldInbox')}
-                            </button>
-                        </Link>
-                        <button
-                            onClick={() => setShowNewInboxMessage(false)}
-                            type="button"
-                            className="rounded-lg border border-blue-800 bg-transparent px-3 py-1.5 text-center text-xs font-medium text-blue-800 hover:bg-blue-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-200 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800"
-                            data-dismiss-target="#alert-additional-content-1"
-                            aria-label="Close"
-                        >
-                            {t('inbox.newInboxMessage.dismissMessage')}
-                        </button>
-                    </div>
-                </div>
-            }
-        >
+        <Layout>
             <div className="flex h-full max-h-screen bg-white">
                 <section
                     className="w-[280px] shrink-0 flex-col items-center gap-2 overflow-y-auto"
@@ -693,69 +657,99 @@ const InboxPreview = () => {
                             allSequences={allSequences ?? []}
                             filters={filters}
                             onChangeFilter={(newFilter: FilterType) => {
-                                setPage(0);
+                                setSize(1);
                                 refreshThreads();
                                 threadsGroupedByUpdatedAt && setFilters(newFilter);
                             }}
                         />
                     </section>
-                    {threadsGroupedByUpdatedAt ? (
-                        <div className="flex w-full flex-col">
-                            {Object.keys(threadsGroupedByUpdatedAt)
-                                .sort((a, b) => {
-                                    const dateA = threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
-                                    const dateB = threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
-                                    return sortByUpdatedAtDesc(dateA, dateB);
-                                })
-                                .map((date) => (
-                                    <div key={date}>
-                                        <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
-                                            <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
-                                                {date === today ? 'Today' : date}
-                                            </div>
+                    {(() => {
+                        if (!threadsGroupedByUpdatedAt && (isThreadsLoading || loading)) {
+                            return (
+                                <>
+                                    <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                        <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                            Loading...
                                         </div>
-                                        {threadsGroupedByUpdatedAt[date].map((thread, index) => (
-                                            <div
-                                                key={thread.threadInfo.id}
-                                                ref={
-                                                    index === threadsGroupedByUpdatedAt[date].length - 4
-                                                        ? lastThreadRef
-                                                        : null
-                                                }
-                                            >
-                                                <ThreadPreview
-                                                    sequenceInfluencer={
-                                                        thread.sequenceInfluencer as NonNullable<
-                                                            typeof thread.sequenceInfluencer
-                                                        >
-                                                    }
-                                                    threadInfo={thread}
-                                                    currentInbox={currentInbox}
-                                                    selected={
-                                                        !!selectedThread &&
-                                                        selectedThread.threadInfo.id === thread.threadInfo.id
-                                                    }
-                                                    onClick={() => markThreadAsSelected(thread)}
-                                                />
+                                    </div>
+                                    <ThreadPreviewSkeleton />
+                                </>
+                            );
+                        } else if (threadsGroupedByUpdatedAt) {
+                            return (
+                                <div className="flex w-full flex-col">
+                                    {Object.keys(threadsGroupedByUpdatedAt)
+                                        .sort((a, b) => {
+                                            const dateA =
+                                                threadsGroupedByUpdatedAt[a][0].threadInfo.last_reply_date ||
+                                                threadsGroupedByUpdatedAt[a][0].threadInfo.updated_at;
+                                            const dateB =
+                                                threadsGroupedByUpdatedAt[b][0].threadInfo.last_reply_date ||
+                                                threadsGroupedByUpdatedAt[b][0].threadInfo.updated_at;
+                                            return sortByUpdatedAtDesc(dateA, dateB);
+                                        })
+                                        .map((date) => (
+                                            <div key={date}>
+                                                <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                                    <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                        {date === today ? 'Today' : date}
+                                                    </div>
+                                                </div>
+                                                {threadsGroupedByUpdatedAt[date].map((thread, index) => (
+                                                    <div
+                                                        key={thread.threadInfo.id}
+                                                        ref={
+                                                            index === threadsGroupedByUpdatedAt[date].length - 4
+                                                                ? lastThreadRef
+                                                                : null
+                                                        }
+                                                    >
+                                                        <ThreadPreview
+                                                            sequenceInfluencer={
+                                                                thread.sequenceInfluencer as NonNullable<
+                                                                    typeof thread.sequenceInfluencer
+                                                                >
+                                                            }
+                                                            threadInfo={thread}
+                                                            currentInbox={currentInbox}
+                                                            selected={
+                                                                !!selectedThread &&
+                                                                selectedThread.threadInfo.id === thread.threadInfo.id
+                                                            }
+                                                            onClick={() => markThreadAsSelected(thread)}
+                                                        />
+                                                    </div>
+                                                ))}
                                             </div>
                                         ))}
-                                    </div>
-                                ))}
-                        </div>
-                    ) : isThreadsLoading ? (
-                        <div className="h-16 animate-pulse bg-gray-400" />
-                    ) : (
-                        <ThreadPreview
-                            sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
-                            // @ts-ignore
-                            threadInfo={emptyThread}
-                            _currentInbox={currentInbox}
-                            selected={false}
-                            onClick={() => {
-                                //
-                            }}
-                        />
-                    )}
+                                    {((threadsInfo?.threads?.length ?? 0) < (threadsInfo?.totalFiltered ?? 0) ||
+                                        loading) && (
+                                        <>
+                                            <div className="inline-flex h-5 items-center justify-start gap-2.5 border-b border-gray-50 px-4 py-1">
+                                                <div className="font-['Poppins'] text-[10px] font-medium leading-3 tracking-tight text-gray-400">
+                                                    Loading...
+                                                </div>
+                                            </div>
+                                            <ThreadPreviewSkeleton />
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <ThreadPreview
+                                    sequenceInfluencer={emptyThread.sequenceInfluencer as SequenceInfluencerManagerPage}
+                                    // @ts-ignore
+                                    threadInfo={emptyThread}
+                                    _currentInbox={currentInbox}
+                                    selected={false}
+                                    onClick={() => {
+                                        //
+                                    }}
+                                />
+                            );
+                        }
+                    })()}
                 </section>
                 <section className={`h-full flex-auto flex-col`}>
                     {selectedThread ? (

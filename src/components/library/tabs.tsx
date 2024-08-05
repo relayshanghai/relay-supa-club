@@ -10,7 +10,7 @@ export function Tabs<T = string>({ currentTab, setCurrentTab, tabs }: TabsProps<
 
     return (
         <div>
-            <div className="absolute -bottom-0.5 flex flex-row">
+            <div className="absolute -bottom-0.5 flex flex-row" id="tabs-buttons">
                 {tabs.map((tab, index) => (
                     <button
                         key={index}

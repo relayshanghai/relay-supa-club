@@ -9,7 +9,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
-import type { ProfileDB, CompanyDB } from 'src/utils/api/db/types';
+import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
@@ -21,6 +21,8 @@ import { useMixpanel } from './use-mixpanel';
 import type { SignupPostBody, SignupPostResponse } from 'pages/api/signup';
 import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
+import { appCacheDBKey } from 'src/constants';
+import { useApiClient } from 'src/utils/api-client/request';
 
 export type SignupData = {
     email: string;
@@ -32,7 +34,7 @@ export type SignupData = {
     };
 };
 
-export type ProfileWithCompany = ProfileDB & { company: CompanyDB | null };
+export type ProfileWithCompany = ProfileDB;
 
 export interface IUserContext {
     user: User | null;
@@ -53,8 +55,39 @@ export interface IUserContext {
     signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
 
     paymentMethods: Record<string, PaymentMethod>;
-    refreshPaymentMethods: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
+    refreshCustomerInfo: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
 }
+
+export const userExists = async (email: string) => {
+    const params = new URLSearchParams();
+    params.append('email', email);
+    const url = `profiles/exists?${params.toString()}`;
+    try {
+        const res = await nextFetch<{ message?: string; error?: string }>(url, {
+            method: 'get',
+        });
+        if (res.error) {
+            return {
+                exists: true,
+            };
+        } else {
+            return {
+                exists: false,
+            };
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            return {
+                exists: true,
+                mail: e.message,
+            };
+        }
+    }
+    return {
+        exists: false,
+        error: 'unknown error',
+    };
+};
 
 export const UserContext = createContext<IUserContext>({
     user: null,
@@ -71,7 +104,7 @@ export const UserContext = createContext<IUserContext>({
     getProfileController: { current: null },
     signup: async () => undefined as any,
     paymentMethods: {},
-    refreshPaymentMethods: () => null,
+    refreshCustomerInfo: () => null,
 });
 
 export const useUser = () => {
@@ -90,6 +123,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { trackEvent } = useRudderstack();
     const clientRoleData = useAtomValue(clientRoleAtom);
     const mixpanel = useMixpanel();
+    const { apiClient } = useApiClient();
     const { analytics } = useAnalytics();
     const { identify } = useSmartlook();
 
@@ -100,7 +134,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
-    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR('payment-methods', async () => {
+    const { data: paymentMethods, mutate: refreshCustomerInfo } = useSWR('payment-methods', async () => {
         if (!session?.user?.id) return;
         const [error, data] = await awaitToError(nextFetch<PaymentMethod[]>(`profiles/payment-methods`));
         if (error) {
@@ -191,11 +225,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger('User cannot logout', 'error', true);
                 return;
             }
-
+            const id = session?.user?.id;
             const email = session?.user?.email;
             await trackEvent('Logout', { email });
             // destroy the session first
-            await supabaseClient.auth.signOut();
+            await awaitToError(supabaseClient.auth.signOut());
+            await awaitToError(apiClient.delete('/logout'));
 
             // reset all analytics
             try {
@@ -208,7 +243,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             } catch (error: unknown) {
                 clientLogger(error, 'error', true);
             }
-
+            indexedDB.deleteDatabase(appCacheDBKey(id));
             Sentry.setUser(null);
             if (redirect) {
                 const redirectUrl = email ? `/login?${new URLSearchParams({ email })}` : '/login';
@@ -216,6 +251,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 window.location.href = redirectUrl;
             }
         },
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [refreshProfile, supabaseClient, session?.user?.email, trackEvent, mixpanel, analytics],
     );
 
@@ -249,14 +286,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const signup = useCallback(
         async (body: SignupPostBody) => {
-            const res = await nextFetch<SignupPostResponse>(`signup`, {
-                method: 'POST',
-                body,
-            });
+            const [err, result] = await awaitToError(apiClient.post<SignupPostResponse>(`/users`, body));
+            if (err) {
+                throw new Error(err.message);
+            }
             refreshProfile();
-            return res;
+            return result.data;
         },
-        [refreshProfile],
+        [apiClient, refreshProfile],
     );
 
     return (
@@ -273,7 +310,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 supabaseClient,
                 getProfileController,
                 paymentMethods: paymentMethods || {},
-                refreshPaymentMethods,
+                refreshCustomerInfo,
             }}
         >
             {children}

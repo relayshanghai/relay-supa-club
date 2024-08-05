@@ -14,11 +14,11 @@ import type {
     TemplateVariable,
 } from 'src/utils/api/db';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline } from '../icons';
+import { DeleteOutline, SendOutline, Retry, ReportOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
-
+import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -44,6 +44,9 @@ import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-
 import { useAtom } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
 import type { KeyedMutator } from 'swr';
+import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
+import { type Nullable } from 'types/nullable';
+import { usageErrors } from 'src/errors/usages';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -66,6 +69,7 @@ interface SequenceRowProps {
     handleStartSequence: (
         sequenceInfluencers: SequenceInfluencerManagerPageWithChannelData[],
     ) => Promise<SequenceSendPostResponse>;
+    handleReportIconTab?: () => void;
 }
 
 /** use the tracking status if it is delivered */
@@ -73,6 +77,35 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined): EmailStatus =>
     sequenceEmail?.email_delivery_status === 'Delivered'
         ? sequenceEmail?.email_tracking_status ?? sequenceEmail.email_delivery_status
         : sequenceEmail?.email_delivery_status ?? 'Unscheduled';
+
+const ErrorDisplay: React.FC<{ message: string; status: Nullable<string>; onClick: () => void }> = ({
+    message,
+    status,
+    onClick,
+}) => {
+    const { t } = useTranslation();
+    if (status === usageErrors.limitExceeded) {
+        return (
+            <Tooltip content={t('usages.limitExceeded')} detail={t('sequences.limitExceeded')} position="bottom-right">
+                <div className="text-red-500">{t('usages.limitExceeded')}</div>
+            </Tooltip>
+        );
+    }
+    if (message === 'server_busy') {
+        return (
+            <div className="flex items-center gap-2">
+                <div className="text-red-500">{t('sequences.reportServerBusy')}</div>
+
+                <Tooltip content={t('sequences.retryButton')} detail={t('sequences.clickToRetry')} position="right">
+                    <Button data-testid={`retry-button`} onClick={onClick} className={'!px-1 !py-2'}>
+                        <Retry className="mx-2 h-5 stroke-2 text-white" />
+                    </Button>
+                </Tooltip>
+            </div>
+        );
+    }
+    return <div className="text-red-500">{t(`sequences.${message}`) || message}</div>;
+};
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequence,
@@ -92,6 +125,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
     onCheckboxChange,
     checked,
+    handleReportIconTab,
 }) => {
     const { deleteSequenceInfluencers } = useSequenceInfluencers();
     const wasFetchedWithin1Minute = wasFetchedWithinMinutes(undefined, sequenceInfluencer, 60000);
@@ -100,11 +134,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile, errorMessage } = useReport({
+    const { report, socialProfile, errorMessage, errorStatus, refreshReport, loading } = useReport({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
     });
+    const Icon = sequenceInfluencer.url?.includes('youtube')
+        ? Youtube
+        : sequenceInfluencer.url?.includes('tiktok')
+        ? Tiktok
+        : Instagram;
 
     useEffect(() => {
         const update = async () => {
@@ -164,14 +203,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 email: email,
                 unique_email: uniqueEmail,
             });
-            if (!uniqueEmail) {
-                toast.error(t('sequences.emailAlreadyExists'));
-                return;
-            }
+            // if (!uniqueEmail) {
+            //     toast.error(t('sequences.emailAlreadyExists'));
+            //     return;
+            // }
             const updatedSequenceInfluencer = await updateSequenceInfluencer({
                 id: sequenceInfluencer.id,
                 email,
-                company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
+                // company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
             });
             setEmail(updatedSequenceInfluencer.email ?? '');
         } catch (error: any) {
@@ -226,7 +265,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             });
             toast.error(error?.message ?? '');
         }
-
         setSendingEmail(false);
     };
     const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
@@ -273,23 +311,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         ? t('sequences.invalidSocialProfileTooltipHighlight')
         : undefined;
 
-    const isDuplicateInfluencer = useMemo(() => {
-        return sequenceInfluencers.some((influencer) => {
-            if (!influencer.id || !sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.id === sequenceInfluencer.id) {
-                return false;
-            }
-            if (influencer.funnel_status !== 'To Contact') {
-                return false;
-            }
-            return (
-                (influencer.email && sequenceInfluencer.email && influencer.email === sequenceInfluencer.email) ||
-                influencer.iqdata_id === sequenceInfluencer.iqdata_id
-            );
-        });
-    }, [sequenceInfluencer.email, sequenceInfluencer.id, sequenceInfluencer.iqdata_id, sequenceInfluencers]);
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
@@ -322,16 +343,23 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 <td className="w-[275px] overflow-hidden whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
-                        <InfluencerAvatarWithFallback
-                            url={sequenceInfluencer.avatar_url || ''}
-                            name={sequenceInfluencer.name}
-                        />
+                        <div className="relative h-12 w-12 flex-shrink-0">
+                            <>
+                                <InfluencerAvatarWithFallback
+                                    url={sequenceInfluencer.avatar_url || ''}
+                                    name={sequenceInfluencer.name}
+                                    className="rounded-full"
+                                    size={48}
+                                />
 
+                                <Icon className="absolute -bottom-1 -right-2 h-6 w-6" />
+                            </>
+                        </div>
                         <div className="flex flex-col overflow-hidden">
                             <p className="font-semibold text-primary-600">{sequenceInfluencer.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
-                                href={sequenceInfluencer.url ?? ''}
+                                href={generateUrlIfTiktok(sequenceInfluencer.url, sequenceInfluencer.username ?? '')}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
@@ -342,9 +370,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 </td>
                 {currentTab === 'To Contact' && (
                     <>
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {isDuplicateInfluencer ? (
-                                <div className="text-red-500">{t('sequences.warningDuplicateInfluencer')}</div>
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-600" id="sequence-creator-email">
+                            {loading ? (
+                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
                             ) : !missingSocialProfileInfo ? (
                                 <TableInlineInput
                                     value={email}
@@ -356,14 +384,28 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     textPromptForMissingValue={t('sequences.addEmail')}
                                 />
                             ) : errorMessage ? (
-                                <div className="text-red-500">{errorMessage}</div>
+                                <ErrorDisplay
+                                    message={errorMessage}
+                                    status={errorStatus}
+                                    onClick={() => {
+                                        refreshReport();
+                                    }}
+                                />
                             ) : (
-                                <div className="h-8 animate-pulse rounded-xl bg-gray-300 backdrop-blur-sm" />
+                                <TableInlineInput
+                                    value={email}
+                                    onSubmit={async (emailSubmit) => {
+                                        const trimmed = emailSubmit.trim().toLowerCase();
+                                        await handleEmailUpdate(trimmed);
+                                    }}
+                                    onSubmittingChange={setSubmittingChangeEmail}
+                                    textPromptForMissingValue={t('sequences.addEmail')}
+                                />
                             )}
                         </td>
 
                         <td className="max-w-[200px] overflow-hidden whitespace-nowrap px-6 py-4 text-gray-600">
-                            {!missingSocialProfileInfo ? (
+                            {!missingSocialProfileInfo || !loading ? (
                                 sequenceInfluencer.tags?.map((tag) => (
                                     <span
                                         key={tag}
@@ -383,7 +425,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 day: 'numeric',
                             })}
                         </td>
-
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={sequenceSendTooltipTitle}
@@ -398,10 +439,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
                                     }
                                     className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
+                                    id="sequence-send-button"
                                 >
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
+                            {handleReportIconTab && (
+                                <div className="ml-5 cursor-pointer">
+                                    <ReportOutline
+                                        className="stroke-gray-400 stroke-2"
+                                        onClick={() => handleReportIconTab && handleReportIconTab()}
+                                    />
+                                </div>
+                            )}
                         </td>
                     </>
                 )}

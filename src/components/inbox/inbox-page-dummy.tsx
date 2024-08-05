@@ -13,25 +13,10 @@ import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
 import { dummyData, dummyMessages } from './dummy_data';
 import { type ProfileValue } from '../influencer-profile/screens/profile-screen';
-import {
-    mapProfileToNotes,
-    mapProfileToShippingDetails,
-} from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 import { Banner } from '../library/banner';
-
-const _dummyNote = {
-    author: {
-        id: '1',
-        name: 'Jim',
-        avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=relay-manager-no-name@example.com&size=96',
-    },
-    content: 'This is a sample note content.',
-    id: 'note1',
-    created_at: '2023-09-13T12:00:00Z',
-    updated_at: '2023-09-13T12:30:00Z',
-};
+import { mapProfileToNotes, mapProfileToShippingDetails } from './helpers';
 
 export const InboxPageDummy = () => {
     const inboxMessages = dummyData.messages;
@@ -167,7 +152,7 @@ export const InboxPageDummy = () => {
     return (
         <Layout>
             <Banner
-                buttonText={t('banner.button')}
+                buttonText={t('banner.button') ?? ''}
                 title={t('banner.outreach.title')}
                 message={t('banner.outreach.descriptionInbox')}
             />

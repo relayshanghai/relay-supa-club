@@ -25,7 +25,9 @@ export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     };
 };
 
-export type ProfileDB = ProfilesTable['Row'];
+export type ProfileDB = ProfilesTable['Row'] & {
+    company?: CompanyDB | null;
+};
 export type ProfileDBUpdate = ProfilesTable['Update'];
 export type ProfileDBInsert = ProfilesTable['Insert'];
 

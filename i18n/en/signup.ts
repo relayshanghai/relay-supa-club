@@ -66,5 +66,16 @@ const signup = {
     },
     errorStartingTrial: 'Error starting trial',
     errorCompanyExists: `Company already exists, contact {{ companyOwnerEmail }} for an invitation, or choose a different name.`,
+    verify: 'Verify',
+    invalidOtp: 'Invalid OTP',
+    countdown: 'Can resend in {{ timer }} second(s)',
+    enterVerificationCode: 'Enter verification code',
+    resendOtp: 'Resend',
+    didntGetTheOtp: "Didn't get it?",
+    phoneNumberAlreadyInUse: 'Phone number already in use, please try another.',
+    phoneNumberIsInvalid: 'Phone number is not valid, please try another.',
+    hcaptchaError: 'hCaptcha is not validated',
+    currency: 'Preferred Currency',
+    currencyHint: 'For your free trial sign-up, \n you won’t be required to provide any payment method.',
 };
 export default signup;

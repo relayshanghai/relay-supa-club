@@ -65,5 +65,16 @@ const signup = {
     },
     errorStartingTrial: '开始免费试用时出错',
     errorCompanyExists: `该公司已存在，请与{{ companyOwnerEmail }}联系获取登录权限，或请选择其它公司名。`,
+    verify: '验证',
+    invalidOtp: 'OTP验证码无效',
+    countdown: '{{ timer }}秒后可以重新发送',
+    enterVerificationCode: '输入验证码',
+    resendOtp: '重发',
+    didntGetTheOtp: '没有收到验证码?',
+    phoneNumberAlreadyInUse: '电话号码已被使用，请试试其它号码。',
+    phoneNumberIsInvalid: '无效电话号码，请试试其它号码。',
+    hcaptchaError: '未验证hCaptcha',
+    currency: '首选货币',
+    currencyHint: '在注册免费试用时您无需提供任何付款方式',
 };
 export default signup;

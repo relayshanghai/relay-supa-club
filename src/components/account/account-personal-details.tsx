@@ -6,12 +6,10 @@ import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
-import { Button } from '../button';
-import { Edit } from '../icons';
+import { Button } from 'shadcn/components/ui/button';
 import { Input } from '../input';
-import { useRudderstack, useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
-import { ChangePassword, UpdateProfileInfo } from 'src/utils/analytics/events';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { UpdateProfileInfo } from 'src/utils/analytics/events';
 import { useHostname } from 'src/utils/get-host';
 import { nextFetch } from 'src/utils/fetcher';
 
@@ -27,33 +25,10 @@ export const PersonalDetails = () => {
     });
     const { refreshCompany } = useCompany();
     const { loading: userDataLoading, profile, user, updateProfile, refreshProfile } = useUser();
-    const { trackEvent } = useRudderstack();
     const { track } = useRudderstackTrack();
     const { appUrl } = useHostname();
-
-    const [editMode, setEditMode] = useState(false);
-    const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
-    const handleResetPassword = async () => {
-        setGeneratingResetEmail(true);
-        try {
-            if (!email) {
-                throw new Error('Please enter your email');
-            }
-            await nextFetch('profiles/reset-password', {
-                method: 'POST',
-                body: {
-                    name: `${profile?.first_name} ${profile?.last_name}`,
-                    email,
-                    redirectUrl: appUrl,
-                },
-            });
-            toast.success(t('login.resetPasswordEmailSent'));
-            track(ChangePassword);
-        } catch (error: any) {
-            toast.error(error.message || t('login.oopsSomethingWentWrong'));
-        }
-        setGeneratingResetEmail(false);
-    };
+    const [personalDetailsSubmitButtonDisabled, setPersonalDetailsSubmitButtonDisabled] = useState(true);
+    const [emailSubmitButtonDisabled, setEmailSubmitButtonDisabled] = useState(true);
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -76,7 +51,6 @@ export const PersonalDetails = () => {
             refreshProfile();
             refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
-            setEditMode(false);
             if (firstName !== profile?.first_name) {
                 track(UpdateProfileInfo, {
                     info_type: 'Profile',
@@ -126,96 +100,115 @@ export const PersonalDetails = () => {
     };
 
     return (
-        <div
-            className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
-                userDataLoading ? 'opacity-50' : ''
-            } shadow-lg shadow-gray-200`}
-        >
-            <h2 className="text-lg font-bold">{t('account.personal.title')}</h2>
-            {editMode ? (
-                <div className={`w-full lg:w-1/2 `}>
-                    <Input
-                        label={t('account.personal.firstName')}
-                        type="first_name"
-                        placeholder={t('account.personal.firstNamePlaceholder') || ''}
-                        value={firstName}
-                        required
-                        onChange={(e) => setUserFieldValues('firstName', e.target.value)}
-                    />
-                    <Input
-                        label={t('account.personal.lastName')}
-                        type="last_name"
-                        placeholder={t('account.personal.lastNamePlaceholder') || ''}
-                        value={lastName}
-                        required
-                        onChange={(e) => setUserFieldValues('lastName', e.target.value)}
-                    />
-
-                    {editMode && (
+        <section id="personal-details" className="w-full">
+            <p className="pb-6 font-semibold">{t('account.personal.title')}</p>
+            <hr className="pb-5" />
+            <section className="flex w-full justify-end">
+                <div className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:w-3/4`}>
+                    <div className={`w-full`}>
+                        <section className="flex gap-6">
+                            <Input
+                                label={t('account.personal.firstName')}
+                                type="first_name"
+                                placeholder={t('account.personal.firstNamePlaceholder') || ''}
+                                value={firstName}
+                                required
+                                onChange={(e) => {
+                                    setUserFieldValues('firstName', e.target.value);
+                                    if (
+                                        (e.target.value === profile?.first_name && lastName === profile.last_name) ||
+                                        e.target.value === ''
+                                    ) {
+                                        setPersonalDetailsSubmitButtonDisabled(true);
+                                        return;
+                                    }
+                                    setPersonalDetailsSubmitButtonDisabled(false);
+                                }}
+                            />
+                            <Input
+                                label={t('account.personal.lastName')}
+                                type="last_name"
+                                placeholder={t('account.personal.lastNamePlaceholder') || ''}
+                                value={lastName}
+                                required
+                                onChange={(e) => {
+                                    setUserFieldValues('lastName', e.target.value);
+                                    if (
+                                        (e.target.value === profile?.last_name && firstName === profile.first_name) ||
+                                        e.target.value === ''
+                                    ) {
+                                        setPersonalDetailsSubmitButtonDisabled(true);
+                                        return;
+                                    }
+                                    setPersonalDetailsSubmitButtonDisabled(false);
+                                }}
+                            />
+                        </section>
                         <div className="mb-6 flex w-full flex-row justify-end space-x-4">
-                            <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
+                            {(firstName !== profile?.first_name || lastName !== profile.last_name) && (
+                                <Button
+                                    className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setUserFieldValues('firstName', profile?.first_name || '');
+                                        setUserFieldValues('lastName', profile?.last_name || '');
+                                        setEmailSubmitButtonDisabled(true);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
+                            <Button
+                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500"
+                                disabled={userDataLoading || personalDetailsSubmitButtonDisabled}
+                                onClick={handleUpdateProfile}
+                            >
                                 {t('account.update')}
                             </Button>
-                            <Button onClick={() => setEditMode(false)} variant="secondary">
-                                {t('account.cancel')}
+                        </div>
+
+                        <hr className="pb-5" />
+                        <Input
+                            label={t('account.personal.email')}
+                            type="email"
+                            placeholder={t('account.personal.emailPlaceholder') || ''}
+                            value={email}
+                            required
+                            onChange={(e) => {
+                                setUserFieldValues('email', e.target.value);
+                                if (e.target.value === profile?.email || e.target.value === '') {
+                                    setEmailSubmitButtonDisabled(true);
+                                    return;
+                                }
+                                setEmailSubmitButtonDisabled(false);
+                            }}
+                        />
+
+                        <div className="flex w-full flex-row justify-end space-x-4">
+                            {email !== profile?.email && (
+                                <Button
+                                    className="border-primary-500 bg-white font-semibold text-primary-500 hover:bg-primary-500"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setUserFieldValues('email', profile?.email || '');
+                                        setEmailSubmitButtonDisabled(true);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
+                            <Button
+                                className="bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:hover:cursor-not-allowed  disabled:hover:border-gray-500 disabled:hover:bg-gray-100 disabled:hover:text-gray-500"
+                                onClick={handleUpdateEmail}
+                                disabled={emailSubmitButtonDisabled}
+                            >
+                                {t('account.personal.updateEmail')}
                             </Button>
                         </div>
-                    )}
-
-                    <Input
-                        label={t('account.personal.email')}
-                        type="email"
-                        placeholder={t('account.personal.emailPlaceholder') || ''}
-                        value={email}
-                        required
-                        onChange={(e) => setUserFieldValues('email', e.target.value)}
-                    />
-
-                    <div className="flex w-full flex-row justify-end space-x-4">
-                        <Button onClick={handleUpdateEmail}>{t('account.personal.updateEmail')}</Button>
-                        <Button onClick={() => setEditMode(false)} variant="secondary">
-                            {t('account.cancel')}
-                        </Button>
                     </div>
+                    <hr />
                 </div>
-            ) : (
-                <div className={`w-full space-y-6`}>
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.firstName')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.first_name}</div>
-                    </div>
-
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.lastName')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.last_name}</div>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="ml-2 text-sm font-semibold">{profile?.email}</div>
-                    </div>
-                </div>
-            )}
-            {!editMode && (
-                <Button variant="secondary" onClick={handleResetPassword} disabled={generatingResetEmail}>
-                    {t('login.changePassword')}
-                </Button>
-            )}
-
-            {!editMode && (
-                <Button
-                    className={`absolute right-4 top-4 px-3 py-1 disabled:bg-white ${
-                        userDataLoading ? 'opacity-75' : ''
-                    }`}
-                    disabled={userDataLoading}
-                    onClick={() => {
-                        setEditMode(true);
-                        trackEvent(ACCOUNT_PERSONAL_DETAILS('click on Edit'));
-                    }}
-                    variant="secondary"
-                >
-                    <Edit className="h-4 w-4 text-primary-500" />
-                </Button>
-            )}
-        </div>
+            </section>
+        </section>
     );
 };

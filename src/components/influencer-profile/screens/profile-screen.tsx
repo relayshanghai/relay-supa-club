@@ -13,7 +13,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { ManageSection } from '../manage-section';
 import type { Address } from 'src/backend/database/addresses';
 import { useAtom } from 'jotai';
-import { truncatedText } from 'src/utils/outreach/helpers';
+import { generateUrlIfTiktok, truncatedText } from 'src/utils/outreach/helpers';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { useTranslation } from 'react-i18next';
 import { manageSectionUpdatingAtom } from '../atoms';
@@ -58,7 +58,7 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdateInflue
                         size={100}
                         className="rounded-full"
                     />
-                    <Icon className="absolute bottom-0 right-1 h-6 w-6" />
+                    <Icon className="absolute -bottom-1 -right-1 h-8 w-8" />
                 </section>
                 <div className="z-10 flex flex-col justify-between gap-2">
                     <h1 className="whitespace-nowrap text-2xl font-semibold text-white">
@@ -66,7 +66,10 @@ export const ProfileScreen = ({ profile, influencerData, address, onUpdateInflue
                     </h1>
                     <div className="flex flex-col">
                         {profile.url ? (
-                            <Link href={profile.url} className="text-lg font-medium text-primary-500">
+                            <Link
+                                href={generateUrlIfTiktok(profile.url, profile.username)}
+                                className="text-lg font-medium text-primary-500"
+                            >
                                 <span className="text-pink-500">@</span>
                                 {truncatedText(profile.username ?? '', 10)}
                             </Link>

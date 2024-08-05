@@ -51,7 +51,10 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         marketingManagerName,
         productName,
         productDescription,
-        productLink,
+        productLink: {
+            ...productLink,
+            value: productLink.value.replace('https://', '').replace('http://', ''),
+        },
         productPrice,
         // influencerNiche,
     };
@@ -183,7 +186,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
     };
     const [submitting, setSubmitting] = useState(false);
     const { emailTemplates, refreshEmailTemplates } = useEmailTemplates(
-        props.sequenceSteps.map((step) => step.template_id),
+        props.sequenceSteps.map((step) => step.template_id).filter((templateId) => templateId !== 'AAABjaKO4zEAAAAE'),
     );
     useEffect(() => {
         if (props.visible) {
@@ -207,26 +210,41 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         [previewPage, emailTemplates, sequenceId, sequenceName, track],
     );
 
+    const templateVariableCustomInputHandler = (variable: TemplateVariableInsert) => {
+        if (variable.name === 'productLink') {
+            const hadProtocol = variable.value.includes('http://') || variable.value.includes('https://');
+            if (!hadProtocol) {
+                return { ...variable, value: `https://${variable.value}` };
+            }
+        }
+        return variable;
+    };
+
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
             const updatedValues =
                 templateVariables?.map((originalValue) => {
                     const key = originalValue.key as DefaultTemplateVariableKey;
-                    if (variables[key] && variables[key]?.value !== originalValue.value) {
-                        return variables[key].value;
+                    if (
+                        variables[key] &&
+                        templateVariableCustomInputHandler(variables[key]).value !== originalValue.value
+                    ) {
+                        return templateVariableCustomInputHandler(variables[key]).value;
                     }
                 }) ?? [];
             const updates: Promise<any>[] = Object.values(variables).map((variable) => {
                 const existingRecord = templateVariables?.find((v) => v.key === variable.key);
                 if (existingRecord) {
-                    if (existingRecord.value === variable.value) {
+                    if (templateVariableCustomInputHandler(existingRecord).value === variable.value) {
                         return Promise.resolve();
                     }
-                    return updateTemplateVariable({ ...existingRecord, value: variable.value });
+                    return updateTemplateVariable(
+                        templateVariableCustomInputHandler({ ...existingRecord, value: variable.value }),
+                    );
                 }
 
-                return insertTemplateVariable([variable]);
+                return insertTemplateVariable([templateVariableCustomInputHandler(variable)]);
             });
 
             await Promise.all(updates).catch((error) => {
@@ -253,7 +271,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
         <Modal maxWidth="max-w-7xl" {...props} title={t('sequences.templateVariablesModalTitle') ?? ''}>
             <h5 className="text-xs text-gray-500">{t('sequences.templateVariablesModalSubtitle')}</h5>
             <div className="flex flex-row justify-between gap-6">
-                <section className="basis-1/2">
+                <section className="basis-1/2" id="email-templates-form">
                     <h4 className="mt-4 font-semibold text-gray-700">{t('sequences.company')}</h4>
                     <div className="flex justify-between gap-6">
                         <VariableInput
@@ -294,12 +312,14 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         variables={variables}
                         placeholder={t('sequences.productLinkPlaceholder')}
                     />
-                    <VariableTextArea
-                        variableKey="productDescription"
-                        setKey={setKey}
-                        variables={variables}
-                        placeholder={t('sequences.productDescriptionPlaceholder')}
-                    />
+                    <div id="email-template-product-description">
+                        <VariableTextArea
+                            variableKey="productDescription"
+                            setKey={setKey}
+                            variables={variables}
+                            placeholder={t('sequences.productDescriptionPlaceholder')}
+                        />
+                    </div>
 
                     <hr className="my-4" />
 
@@ -322,7 +342,7 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                         />
                     </div>
                 </section>
-                <section className="mt-4 basis-1/2">
+                <section className="mt-4 basis-1/2" id="email-templates-preview">
                     <h2 className="text-lg font-semibold text-gray-700">{t('sequences.emailPreview')}</h2>
                     <nav className="flex space-x-2">
                         <button
@@ -357,17 +377,6 @@ export const TemplateVariablesModal = ({ sequenceName, sequenceId, ...props }: T
                             } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                         >
                             {t('sequences.steps.2nd Follow-up')}
-                        </button>
-                        <button
-                            onClick={() => {
-                                handleSetPreviewPage(3);
-                            }}
-                            type="button"
-                            className={`${
-                                previewPage === 3 ? activeTabStyles : ''
-                            } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
-                        >
-                            {t('sequences.steps.3rd Follow-up')}
                         </button>
                     </nav>
 

@@ -1,5 +1,6 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import type { ForwardedRef, HTMLInputTypeAttribute, InputHTMLAttributes } from 'react';
+import { Input as ShadcnInput } from 'shadcn/components/ui/input';
 import { forwardRef, useState } from 'react';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'placeholder'> {
@@ -21,17 +22,21 @@ function InputWithRef(
 
     return (
         <label className="flex w-full flex-col text-sm text-gray-800">
-            <div className="text-sm font-semibold text-gray-500">
+            <div className="text-sm font-medium text-gray-700">
                 {label}
                 {rest.required ? <span className="ml-1 text-xs text-primary-500">*</span> : null}
             </div>
             <div className={`${isRelative ? 'relative' : ''}`}>
-                <input
+                <ShadcnInput
                     ref={ref}
                     placeholder={placeholder || ''}
                     className={`my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 ${
                         error ? 'focus:border-red-500' : 'focus:border-primary-500'
-                    } focus:outline-none ${error ? 'focus:ring-red-500' : 'focus:ring-primary-500'} sm:text-xs ${
+                    } focus:outline-none ${
+                        error
+                            ? 'focus:ring-red-500 focus-visible:ring-red-500'
+                            : 'focus:ring-primary-500 focus-visible:ring-primary-500'
+                    } ${
                         rest.disabled
                             ? 'cursor-not-allowed bg-gray-100 text-gray-500 ring-gray-500'
                             : 'text-gray-900 ring-gray-900'

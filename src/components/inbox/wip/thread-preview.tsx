@@ -8,6 +8,7 @@ import { truncatedText } from 'src/utils/outreach/helpers';
 import type { EmailContact, Thread as ThreadInfo } from 'src/utils/outreach/types';
 import type { CreatorPlatform } from 'types';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
+import { Skeleton } from 'shadcn/components/ui/skeleton';
 
 export type Message = {
     id: string;
@@ -58,6 +59,27 @@ const getUnreadMarker = (status?: THREAD_STATUS) => {
     }
 };
 
+export const ThreadPreviewSkeleton = () => {
+    return (
+        <Card className="flex cursor-pointer rounded-none border-x-0 border-y-[1px] border-y-gray-100 shadow-none transition-all">
+            <CardContent className="w-full p-4">
+                <div className="flex h-full items-center gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full bg-gray-300" />
+                    <span className="flex h-full flex-col justify-between">
+                        <Skeleton className="h-4 w-24 bg-gray-300" />
+                        <Skeleton className="h-4 w-24 bg-gray-300" />
+                    </span>
+                </div>
+            </CardContent>
+            <div className="mr-2 mt-3">
+                <div className="relative rounded-sm p-1">
+                    <Skeleton className="h-5 w-5 bg-gray-300" />
+                </div>
+            </div>
+        </Card>
+    );
+};
+
 export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClick }: ThreadPreviewProps) => {
     // Get components conditionally
     const Icon = getPlatformIcon(sequenceInfluencer?.platform as CreatorPlatform);
@@ -79,7 +101,7 @@ export const ThreadPreview = ({ sequenceInfluencer, threadInfo, selected, onClic
                                 {sequenceInfluencer?.name ? sequenceInfluencer?.name[0] : 'I'}
                             </AvatarFallback>
                         </Avatar>
-                        <Icon className="absolute -right-2 -top-1 h-5 w-5" />
+                        <Icon className="absolute -bottom-1 -right-2 h-5 w-5" />
                     </section>
                     <span>
                         <p className={`text-sm font-medium ${selected && 'text-primary-600'}`}>

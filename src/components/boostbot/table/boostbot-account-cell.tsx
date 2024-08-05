@@ -8,6 +8,7 @@ import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
 import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
+import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 
 export type BoostbotAccountCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -37,10 +38,10 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                         <InfluencerAvatarWithFallback
                             url={picture}
                             name={handle ?? username}
-                            size={60}
+                            size={48}
                             className="rounded-full"
                         />
-                        <Icon className="absolute -right-2 bottom-1 h-5 w-5" />
+                        <Icon className="absolute -bottom-1 -right-2 h-6 w-6" />
                     </>
                 )}
             </div>
@@ -54,11 +55,12 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
                     <>
                         <div className="text-sm font-semibold text-gray-700">{fullname}</div>
                         <Link
-                            href={url}
+                            href={generateUrlIfTiktok(url, handle ?? username)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group"
                             data-testid="boostbot-social-profile-link"
+                            id="boostbot-social-profile-link"
                             onClick={() => {
                                 track(OpenSocialProfile, {
                                     currentPage: CurrentPageEvent.boostbot,

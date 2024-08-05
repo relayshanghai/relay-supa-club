@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { useSubscription } from 'src/hooks/use-subscription';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
 import { Button } from '../button';
 import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import awaitToError from 'src/utils/await-to-error';
 
 export const CancelSubscriptionModal = ({
     visible,
@@ -13,28 +14,28 @@ export const CancelSubscriptionModal = ({
 }: {
     visible: boolean;
     onClose: () => void;
-    periodEnd?: string;
+    periodEnd?: Date;
 }) => {
     const { t, i18n } = useTranslation();
-    const { cancelSubscription } = useSubscription();
+    const { cancelSubscription, refreshSubscription } = useSubscription();
     const { trackEvent } = useRudderstack();
 
     const [submitting, setSubmitting] = useState(false);
     const handleCancel = async () => {
         setSubmitting(true);
         const id = toast.loading(t('account.cancelModal.cancelling'));
-        try {
-            const result = await cancelSubscription();
-            if (result?.status) toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
-            // @note previous name: Cancel Subscription Modal, canceled subscription
-            trackEvent('Cancel Subscription');
-        } catch (e) {
+        const [err] = await awaitToError(cancelSubscription());
+        if (err) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,
             });
-        } finally {
-            setSubmitting(false);
+        } else {
+            toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
+            trackEvent('Cancel Subscription');
         }
+        onClose();
+        refreshSubscription();
+        setSubmitting(false);
     };
 
     const handleClose = () => {
@@ -42,6 +43,7 @@ export const CancelSubscriptionModal = ({
             onClose();
         }
     };
+
     return (
         <Modal visible={visible} onClose={handleClose}>
             <div className="flex flex-col space-y-4 pt-4">

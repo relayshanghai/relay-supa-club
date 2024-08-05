@@ -5,7 +5,6 @@ import type {
     SubscriptionDiscountRenewPostBody,
     SubscriptionDiscountRenewPostResponse,
 } from 'pages/api/subscriptions/discount-renew';
-import type { PaymentMethodGetQueries, PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
 import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
@@ -17,11 +16,7 @@ export const useSubscription = () => {
         company?.id ? [company.id, 'subscriptions'] : null,
         async ([id, path]) => await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, { id }),
     );
-    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
-        company?.id ? [company.id, 'subscriptions/payment-method'] : null,
-        async ([id, path]) =>
-            await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, { id }),
-    );
+
     const upgradeSubscription = useCallback(
         async (priceId: string) => {
             const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/upgrade', {
@@ -35,6 +30,7 @@ export const useSubscription = () => {
         },
         [mutate],
     );
+
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
             if (!company?.id) throw new Error('No company found');
@@ -84,8 +80,6 @@ export const useSubscription = () => {
 
     return {
         subscription,
-        paymentMethods,
-        refreshPaymentMethods,
         refreshSubscription: mutate,
         createSubscription,
         createDiscountRenew,

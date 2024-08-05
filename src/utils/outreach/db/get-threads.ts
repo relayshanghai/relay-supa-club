@@ -3,11 +3,12 @@ import {
     sequence_influencers,
     sequences,
     template_variables,
+    thread_contacts,
     threads,
 } from 'drizzle/schema';
 import type { DBQuery } from '../../database';
 import { db } from '../../database';
-import { and, eq, isNull, sql, desc, isNotNull, inArray, ne } from 'drizzle-orm';
+import { and, eq, isNull, sql, isNotNull, inArray, ne, desc } from 'drizzle-orm';
 import type { ThreadsFilter } from 'src/utils/endpoints/get-threads';
 
 const THREADS_PER_PAGE = 10;
@@ -31,6 +32,14 @@ export const getThreads: DBQuery<GetThreadsFn> =
             isNotNull(threads.last_reply_id),
             isNotNull(threads.sequence_influencer_id),
             ne(sequence_influencers.funnel_status, 'In Sequence'),
+            inArray(
+                threads.thread_id,
+                db()
+                    .select({
+                        id: thread_contacts.thread_id,
+                    })
+                    .from(thread_contacts),
+            ),
         ];
 
         const page = filters?.page || 0;
@@ -70,7 +79,7 @@ export const getThreads: DBQuery<GetThreadsFn> =
                 sql`${template_variables.sequence_id} = ${sequences.id} AND ${template_variables.key} = 'productName'`,
             )
             .where(and(...queryFilters))
-            .orderBy(desc(threads.last_reply_date))
+            .orderBy(desc(threads.last_reply_date), desc(threads.updated_at))
             .limit(THREADS_PER_PAGE)
             .offset(page * THREADS_PER_PAGE);
 

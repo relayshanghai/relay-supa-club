@@ -1,11 +1,11 @@
 @import './reset.css';
 @import './bird-eats-bug.css';
+@import './driverjs.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @import './fonts.css';
 
-html,
 body,
 #__next {
     @apply bg-gray-50;
@@ -74,9 +74,13 @@ body,
 @layer base {
     * {
         @apply border-border;
+        @apply scroll-smooth;
     }
     body {
         @apply bg-background text-foreground;
+    }
+    ul > li {
+        @apply list-inside list-disc;
     }
 }
 

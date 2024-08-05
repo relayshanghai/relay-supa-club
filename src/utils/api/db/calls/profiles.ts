@@ -53,3 +53,11 @@ export const deleteUserById = (db: RelayDatabase) => async (profileId: string) =
         serverLogger(error);
     }
 };
+
+export const getProfileByEmail = (db: RelayDatabase) => async (email: string) => {
+    const { data, error } = await db.from('profiles').select('id').eq('email', email);
+    if (error) {
+        serverLogger(error);
+    }
+    return data;
+};

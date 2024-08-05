@@ -415,10 +415,14 @@ export const products = pgTable('products', {
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
     updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+    name: text('name'),
     shop_url: text('shop_url'),
     description: text('description'),
     price: doublePrecision('price'),
     price_currency: text('price_currency'),
+    company_id: uuid('company_id')
+        .notNull()
+        .references(() => companies.id),
 });
 
 export const sequence_steps = pgTable('sequence_steps', {
@@ -431,6 +435,7 @@ export const sequence_steps = pgTable('sequence_steps', {
     sequence_id: uuid('sequence_id')
         .notNull()
         .references(() => sequences.id),
+    outreach_email_templates: uuid('outreach_email_templates').references(() => outreach_email_templates.id),
     step_number: smallint('step_number').default(0).notNull(),
 });
 
@@ -536,6 +541,7 @@ export const sequences = pgTable(
         id: uuid('id').defaultRandom().primaryKey().notNull(),
         manager_first_name: text('manager_first_name'),
         manager_id: uuid('manager_id').references(() => profiles.id, { onDelete: 'cascade' }),
+        product_id: uuid('product_id').references(() => products.id),
         deleted: boolean('deleted').default(false).notNull(),
     },
     (table) => {

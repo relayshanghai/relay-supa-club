@@ -1,7 +1,7 @@
 import { limiter } from 'src/utils/limiter';
 import type { CreatorPlatform } from 'types';
 import type { ServerContext } from '..';
-import { apiFetch } from '../api-fetch';
+import { IqDataApiFetcher } from '../api-fetch';
 import { RelayError } from 'src/errors/relay-error';
 
 export type GetRelevantTopicTagsParams = {
@@ -42,7 +42,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
 
     payload.query.q = `#${payload.query.q}`;
 
-    const response = await apiFetch<
+    const response = await IqDataApiFetcher.service.request<
         GetRelevantTopicTagsResponse,
         GetRelevantTopicTagsPayload & { context?: ServerContext }
     >('/dict/relevant-tags', { ...payload, context });
@@ -66,7 +66,7 @@ export const getRelevantTopicTagsByInfluencer = async (
 
     payload.query.q = `@${payload.query.q}`;
 
-    const response = await apiFetch<
+    const response = await IqDataApiFetcher.service.request<
         GetRelevantTopicTagsResponse,
         GetRelevantTopicTagsPayload & { context?: ServerContext }
     >('/dict/relevant-tags', { ...payload, context });

@@ -1,3 +1,4 @@
+import { FunnelStatusRequest } from 'pages/api/v2/threads/request';
 import { Approved, Completed, Confirmed, Negotiating, Posted, Received, Rejected, Shipped } from '../icons';
 import { type MultipleDropdownObject } from '../library';
 
@@ -14,35 +15,35 @@ export const TABLE_COLUMNS = [
 ];
 
 export const COLLAB_OPTIONS: MultipleDropdownObject = {
-    Negotiating: {
+    [FunnelStatusRequest.Negotiating]: {
         style: 'bg-yellow-100 text-yellow-500',
         icon: <Negotiating className="h-4 w-4 stroke-yellow-500" />,
     },
-    Confirmed: {
+    [FunnelStatusRequest.Confirmed]: {
         style: 'bg-blue-100 text-blue-500',
         icon: <Confirmed className="h-4 w-4 stroke-blue-400" />,
     },
-    Shipped: {
+    [FunnelStatusRequest.Shipped]: {
         style: 'bg-orange-100 text-orange-500',
         icon: <Shipped className="h-4 w-4 stroke-orange-500" />,
     },
-    Received: {
+    [FunnelStatusRequest.Received]: {
         style: 'bg-fuchsia-100 text-fuchsia-500',
         icon: <Received className="h-4 w-4 stroke-fuchsia-500" />,
     },
-    'Content Approval': {
+    [FunnelStatusRequest.ContentApproval]: {
         style: 'bg-cyan-100 text-cyan-500',
         icon: <Approved className="h-4 w-4 stroke-cyan-500" />,
     },
-    Posted: {
+    [FunnelStatusRequest.Posted]: {
         style: 'bg-primary-100 text-primary-500',
         icon: <Posted className="h-4 w-4 stroke-primary-500" />,
     },
-    Completed: {
+    [FunnelStatusRequest.Completed]: {
         style: 'bg-green-100 text-green-500',
         icon: <Completed className="h-4 w-4 stroke-green-500" />,
     },
-    Rejected: {
+    [FunnelStatusRequest.Rejected]: {
         style: 'bg-red-100 text-red-500',
         icon: <Rejected className="h-4 w-4 stroke-red-500" />,
     },

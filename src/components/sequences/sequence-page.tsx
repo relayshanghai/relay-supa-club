@@ -38,7 +38,9 @@ import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-st
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useAtomValue } from 'jotai';
 import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
-import { calculateReplyRate } from './helpers';
+import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -66,12 +68,24 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             return [];
         }
         if (filterSteps.length === 0) {
-            return sequenceInfluencers;
+            return sequenceInfluencers.filter(
+                (influencer) =>
+                    influencer.funnel_status === 'To Contact' ||
+                    influencer.funnel_status === 'In Sequence' ||
+                    influencer.funnel_status === 'Ignored',
+            );
         }
-        const filteredInfluencers = sequenceInfluencers.filter((influencer) => {
-            const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
-            return step && step.name && filterSteps.includes(step.name);
-        });
+        const filteredInfluencers = sequenceInfluencers
+            .filter(
+                (influencer) =>
+                    influencer.funnel_status === 'To Contact' ||
+                    influencer.funnel_status === 'In Sequence' ||
+                    influencer.funnel_status === 'Ignored',
+            )
+            .filter((influencer) => {
+                const step = sequenceSteps?.find((step) => step.step_number === influencer.sequence_step);
+                return step && step.name && filterSteps.includes(step.name);
+            });
         return filteredInfluencers;
     }, [filterSteps, sequenceInfluencers, sequenceSteps]);
 
@@ -272,9 +286,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             if (selection.length === 0) {
                 return;
             }
+            batchSendInfluencers = batchSendInfluencers.filter(
+                (influencer) => influencer.email && !isMissingSocialProfileInfo(influencer),
+            );
 
             // remove them from selection, and optimistically update to "In Sequence"
-            setSelection([]);
+            setSelection(() => selection.filter((id) => !batchSendInfluencers.some((i) => i.id === id)));
             refreshSequenceInfluencers(
                 sequenceInfluencers.map((influencer) => {
                     if (batchSendInfluencers.some((i) => i.id === influencer.id)) {
@@ -330,7 +347,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [
             handleStartSequence,
             refreshSequenceInfluencers,
-            selection.length,
+            selection,
             sequence?.id,
             sequence?.name,
             sequenceInfluencers,
@@ -365,26 +382,56 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const submittingChangeEmail = useAtomValue(submittingChangeEmailAtom);
 
-    const sendDisabled =
-        submittingChangeEmail ||
-        isMissingSequenceSendEmail ||
-        selectedInfluencers.some((i) => !i?.email) ||
-        selectedInfluencers.some((i) => !i?.influencer_social_profile_id);
+    const sendDisabled = submittingChangeEmail || isMissingSequenceSendEmail;
 
     const replyRate = useMemo(
         () => calculateReplyRate(sequenceInfluencers, sequenceEmails),
         [sequenceInfluencers, sequenceEmails],
     );
 
+    const [showSlowBanner, setShowSlowBanner] = useState(false);
+
+    const { setGuides, startTour, guidesReady, guiding } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            'sequence#detail': isMissingSequenceSendEmail ? discoveryInfluencerGuide : outreachInfluencerGuide,
+            'emailTemplate#modal': emailTemplateModal,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady && currentTabInfluencers.length > 0 && sequenceSteps) {
+            startTour('sequence#detail');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, currentTabInfluencers, sequenceSteps]);
+
+    useEffect(() => {
+        if (!guiding && showUpdateTemplateVariables) {
+            startTour('emailTemplate#modal');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guiding, showUpdateTemplateVariables]);
+
     return (
         <Layout>
-            {!profile?.email_engine_account_id && (
+            {!profile?.email_engine_account_id && !showSlowBanner && (
                 <Banner
-                    buttonText={t('banner.button')}
+                    buttonText={t('banner.button') ?? ''}
                     title={t('banner.outreach.title')}
                     message={t('banner.outreach.descriptionSequences')}
                 />
             )}
+            <Banner
+                title={t('banner.sequencePageSlow.title')}
+                show={showSlowBanner}
+                setShow={setShowSlowBanner}
+                message={t('banner.sequencePageSlow.description')}
+                orientation="vertical"
+                dismissable
+            />
             <FaqModal
                 title={t('faq.sequencesTitle')}
                 visible={showNeedHelp}
@@ -412,6 +459,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         onClick={handleOpenUpdateTemplateVariables}
                         variant="secondary"
                         className="relative flex border-primary-600 bg-white text-primary-600"
+                        id="sequence-email-template-button"
                     >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
@@ -479,7 +527,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </section>
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
-                    <div className="sticky left-0 flex w-full flex-row items-center justify-between">
+                    <div className="left-0 flex w-full flex-row items-center justify-between">
                         <SelectMultipleDropdown
                             text={t('sequences.steps.filter')}
                             options={emailSteps}

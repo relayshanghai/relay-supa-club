@@ -134,58 +134,62 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
 
     return (
         <div>
-            <AddToCampaignModal
-                show={showCampaignListModal}
-                setShow={setShowCampaignListModal}
-                platform={platform}
-                selectedCreator={report?.user_profile}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-                track={(campaign: string) => {
-                    report &&
-                        track(AnalyzeAddToCampaign, {
-                            creator: report.user_profile,
-                            campaign: campaign,
-                        });
-                }}
-            />
-            <AddToSequenceModal
-                show={showSequenceListModal}
-                setShow={setShowSequenceListModal}
-                creatorProfile={report?.user_profile || {}}
-                platform={platform}
-                sequence={sequence}
-                sequences={sequences || []}
-                setSequence={setSequence}
-                setSequenceInfluencer={handleSetSequenceInfluencer}
-            />
-            <InfluencerAlreadyAddedSequenceModal
-                visible={showAlreadyAddedSequenceModal}
-                onClose={() => {
-                    setShowAlreadyAddedSequenceModal(false);
-                }}
-                alreadyAddedSequence={
-                    alreadyAddedSequence?.sequenceName ||
-                    sequences?.find((sequence) => sequence.id === selectedSequence)?.name ||
-                    ''
-                }
-            />
-            <InfluencerAlreadyAddedModal
-                show={showAlreadyAddedModal}
-                setCampaignListModal={setShowCampaignListModal}
-                setShow={setShowAlreadyAddedModal}
-                selectedCreatorUserId={report?.user_profile.user_id}
-                campaigns={campaigns}
-                allCampaignCreators={allCampaignCreators}
-            />
-            <Head>
-                <title>{report?.user_profile.fullname || BOOSTBOT_DOMAIN}</title>
-            </Head>
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (
-                    <CreatorSkeleton loading={loading} error={errorMessage?.length > 0} errorMessage={errorMessage} />
+                    <CreatorSkeleton
+                        loading={loading}
+                        error={errorMessage?.length > 0}
+                        errorMessage={errorMessage === 'server_busy' ? t('creators.failedToFetchReport') : errorMessage}
+                    />
                 ) : (
                     <>
+                        <AddToCampaignModal
+                            show={showCampaignListModal}
+                            setShow={setShowCampaignListModal}
+                            platform={platform}
+                            selectedCreator={report?.user_profile}
+                            campaigns={campaigns}
+                            allCampaignCreators={allCampaignCreators}
+                            track={(campaign: string) => {
+                                report &&
+                                    track(AnalyzeAddToCampaign, {
+                                        creator: report.user_profile,
+                                        campaign: campaign,
+                                    });
+                            }}
+                        />
+                        <AddToSequenceModal
+                            show={showSequenceListModal}
+                            setShow={setShowSequenceListModal}
+                            creatorProfile={report?.user_profile || {}}
+                            platform={platform}
+                            sequence={sequence}
+                            sequences={sequences || []}
+                            setSequence={setSequence}
+                            setSequenceInfluencer={handleSetSequenceInfluencer}
+                        />
+                        <InfluencerAlreadyAddedSequenceModal
+                            visible={showAlreadyAddedSequenceModal}
+                            onClose={() => {
+                                setShowAlreadyAddedSequenceModal(false);
+                            }}
+                            alreadyAddedSequence={
+                                alreadyAddedSequence?.sequenceName ||
+                                sequences?.find((sequence) => sequence.id === selectedSequence)?.name ||
+                                ''
+                            }
+                        />
+                        <InfluencerAlreadyAddedModal
+                            show={showAlreadyAddedModal}
+                            setCampaignListModal={setShowCampaignListModal}
+                            setShow={setShowAlreadyAddedModal}
+                            selectedCreatorUserId={report?.user_profile?.user_id}
+                            campaigns={campaigns}
+                            allCampaignCreators={allCampaignCreators}
+                        />
+                        <Head>
+                            <title>{report?.user_profile?.fullname || BOOSTBOT_DOMAIN}</title>
+                        </Head>
                         <TitleSection
                             user_profile={report.user_profile}
                             platform={platform}

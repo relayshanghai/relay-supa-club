@@ -32,6 +32,7 @@ export const columns: ColumnDef<SearchTableInfluencer>[] = [
                     >
                         <input
                             type="checkbox"
+                            id="boostbot-influencer-table-checkbox"
                             checked={false}
                             className={`${table.options.meta?.isLoading ? 'checkbox' : 'checkbox-add-success'} mr-0`}
                             disabled={true}
@@ -44,6 +45,7 @@ export const columns: ColumnDef<SearchTableInfluencer>[] = [
                     type="checkbox"
                     disabled={table.options.meta?.isLoading}
                     className="checkbox mr-0"
+                    id="boostbot-influencer-table-checkbox"
                     checked={row.getIsSelected()}
                     aria-label={table.options.meta?.t('boostbot.table.selectInfluencer')}
                     onChange={(e) => row.toggleSelected(!!e.target.checked)}

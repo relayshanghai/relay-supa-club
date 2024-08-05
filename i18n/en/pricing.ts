@@ -10,6 +10,8 @@ const pricing = {
     perMonth: '/ month',
     usdPerMonth: 'USD / Month',
     rmbPerMonth: 'RMB / Month',
+    usdPerYear: 'USD / Year',
+    rmbPerYear: 'RMB / Year',
     startFreeTrial: 'Start Your Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
@@ -22,10 +24,14 @@ const pricing = {
     amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
     fullCustomerService: 'Full Customer Service',
     boostBotSearchAndNormalSearch: 'BoostBot AI Search + Traditional Search',
+    unlimitedFollowUpEmail: 'Unlimited follow up emails',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 
     upgrade: 'Upgrade',
+    upgradeSuccess: 'Upgrade Success',
+    upgradeFailed: 'Upgrade Failed, please submit a bug report',
+    upgradeFailedAlreadySubscribed: 'You are already subscribed to this plan',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
@@ -66,6 +72,13 @@ const pricing = {
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',
     backToAccount: 'Back to account',
+    haveAlipayError: 'You are using Alipay as your payment method, please update your payment method.',
+    deprecatedPaymentTitle: 'Deprecated Payment Method',
+    deprecatedPaymentDescription: 'We are no longer support {{method}} as a payment method.',
+    deprecatedLabel: 'Deprecated',
+    noPaymentMethodFound: 'No payment method found. Please add a payment method.',
+    noDefaultPaymentMethodFound: 'No default payment method found. Please select a default payment method.',
+    pressApplyCouponButton: "Don't forget to press Apply Button",
 };
 
 export default pricing;

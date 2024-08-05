@@ -9,6 +9,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { GoToInbox } from 'src/utils/analytics/events/outreach/go-to-inbox';
 import { useUser } from 'src/hooks/use-user';
 import { InfluencerAvatarWithFallback } from 'src/components/library/influencer-avatar-with-fallback';
+import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 
 export type InfluencerRowProps = {
     index: number;
@@ -74,7 +75,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                         {url && (
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
-                                href={url}
+                                href={generateUrlIfTiktok(url, username)}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >

@@ -1,3 +1,4 @@
+import 'elastic-apm-node';
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
@@ -19,6 +20,8 @@ import awaitToError from './await-to-error';
 import type { HttpError } from './error/http-error';
 import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
+import apm from 'src/utils/apm';
+import BalanceService from 'src/backend/domain/balance/balance-service';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -151,6 +154,14 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             });
         }
 
+        if (rows[0]?.company_id) {
+            await BalanceService.getService().initBalance(rows[0]?.company_id);
+        }
+        apm.setUserContext({
+            email: session.user.email,
+            id: session.user.id,
+        });
+        apm.setCustomContext(rows[0]);
         req.profile = rows[0];
     }
 
@@ -161,10 +172,8 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
             error: 'Method not allowed',
         });
     }
-
-    try {
-        return await handler(req, res);
-    } catch (error) {
+    const [error, resp] = await awaitToError(handler(req, res) as any);
+    if (error) {
         const tag = nanoid(6);
         const e = createErrorObject(error, tag);
 
@@ -174,10 +183,12 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
 
         return res.status(e.httpCode).json({ error: e.message });
     }
+    return res.status(httpCodes.OK).json(resp);
 };
 /**
  * handle data of request flow to support request context
  * @param params
+ * @deprecated use createHandler instead
  * @returns
  */
 export const ApiHandlerWithContext =
@@ -193,7 +204,7 @@ export const ApiHandlerWithContext =
         const [error, resp] = await awaitToError<HttpError>(
             RequestContext.startContext(async () => {
                 const { appUrl } = getHostnameFromRequest(req);
-                RequestContext.setContext({ request: req, requestUrl: appUrl });
+                RequestContext.setContext({ request: req, requestUrl: appUrl, response: res });
                 const {
                     data: { session },
                 } = await req.supabase.auth.getSession();
@@ -217,6 +228,16 @@ export const ApiHandlerWithContext =
                             return scope.setContext('User', context);
                         });
                     }
+
+                    if (row?.companies?.id) {
+                        await BalanceService.getService().initBalance(row.companies?.id);
+                    }
+                    apm.setUserContext({
+                        email: session.user.email,
+                        id: session.user.id,
+                        username: row.companies?.name || undefined,
+                    });
+                    apm.setCustomContext(row);
                 } else if (params.requireAuth) {
                     throw new UnauthorizedError('Unauthorized');
                 }

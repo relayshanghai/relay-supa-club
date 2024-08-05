@@ -46,6 +46,6 @@ describe('<PromoCodeSection />', () => {
         testMount(<PromoCodeSection selectedPrice={selectedPrice} setCouponId={setCouponId} priceTier={priceTier} />);
         cy.get('input').type('PH2023');
         cy.contains('button', 'Apply').click();
-        cy.get('p').should('contain', 'Off For next 3 months');
+        cy.get('p').should('contain', 'Off for next 3 month(s)');
     });
 });

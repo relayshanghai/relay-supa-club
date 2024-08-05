@@ -156,11 +156,11 @@ export const SearchOptions = ({
                                 topics={tags}
                                 platform={platform}
                                 onChangeTopics={() => {
-                                    if (hashtags.length !== 0) {
+                                    if (hashtags?.length !== 0) {
                                         setHashtags([]);
                                         trackHashtags({ hashtags: [] });
                                     }
-                                    if (keywords.length !== 0) {
+                                    if (keywords?.length !== 0) {
                                         setKeywords('');
                                         trackKeyword({ keyword: '' });
                                     }

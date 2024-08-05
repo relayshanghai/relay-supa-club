@@ -45,6 +45,7 @@ declare global {
             loginTeammate: typeof loginTeammate;
             switchToEnglish: typeof switchToEnglish;
             mount: typeof mount;
+            setLocalStorage: typeof setLocalStorage;
         }
     }
 }
@@ -117,5 +118,11 @@ function switchToEnglish() {
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
 
 Cypress.Commands.add('mount', mount);
+
+function setLocalStorage(key: string, value: any) {
+    window.localStorage.setItem(key, value);
+}
+
+Cypress.Commands.add('setLocalStorage', setLocalStorage);
 
 export {};

@@ -19,9 +19,8 @@ const sequences = {
     totalInfluencersTooltipDescription:
         '这是您添加到邮件进程管理器的所有KOL数量，包括需要急需回复、联络中和未回复的KOL。',
     outreachPlanUpgradeTooltip: '仅限拓展方案用户使用',
-    outreachPlanUpgradeTooltipDescription: `此功能仅适用于当前使用拓展方案的付费用户。
-
-    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至amy@boostbot.ai咨询拓展方案。`,
+    outreachPlanUpgradeTooltipDescription: `仅限拓展方案用户使用
+    此功能仅适用于当前使用拓展方案的付费用户。如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台    内电子邮箱功能，请通过微信联系我们的销售经理雪菲,或加微信：xfsp1989咨询拓展方案。`,
     openRateTooltip: '邮件打开率',
     openRateTooltipDescription:
         '已发送的邮件中被打开查看邮件占比。由于某些电子邮件客户端禁用外部跟踪，这个数字可能不是百分之百的准确。',
@@ -113,9 +112,9 @@ const sequences = {
     productPriceTooltip: '产品价格',
     productPriceTooltipDescription: `
     以美元为单位输入产品价格。
-    
+
     最好输入整数，以便让模板看起来更加简洁。
-    
+
     这将会直接显示于您的电子邮件模版中，单位格式为 $。`,
     productPricePlaceholder: '99.9',
     influencer: 'KOL',
@@ -170,5 +169,13 @@ const sequences = {
     missingEmailTooltipDescription: '您必须为此KOL添加电子邮件，以便开始此序列。',
     warningDuplicateInfluencer: '警告：重复的KOL可能会导致问题',
     sequenceScheduleFailed: '安排序列邮件失败，请稍后再试',
+    reportServerBusy: '服务器正忙，请稍后再试',
+    reportDoesnotExists: '哎呀！无法获取该邮件地址。请手动输入邮件地址以继续进行建联。',
+    retryButton: '重试按钮',
+    clickToRetry: '请单击以重新获取数据',
+    limitExceeded:
+        '哎呀！看起来您的雷宝BoostBot额度已经用完了！如果本月您还希望为您的帐户添加更多使用额度，请与销售团队的雪菲通过微信：xfsp1989取得联系。或者，您的使用额度将在下一个计费周期开始时自动续订。',
+    account_removed: '此影响者已被所有者移除。',
+    influencerLimit: `同一个序列中，最多只能添加{{ influencerLimit }}位红人。要添加更多红人，请创建一个新的序列。谢谢！`,
 };
 export default sequences;

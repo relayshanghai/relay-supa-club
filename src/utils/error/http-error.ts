@@ -33,8 +33,20 @@ export class NotFoundError extends HttpError {
     }
 }
 
+export class PreconditionError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.PRECONDITION_FAILED, originError);
+    }
+}
+
 export class ConflictError extends HttpError {
     constructor(message: string, originError?: Error) {
         super(message, httpCodes.CONFLICT, originError);
+    }
+}
+
+export class UnprocessableEntityError extends HttpError {
+    constructor(message: string, originError?: Error) {
+        super(message, httpCodes.UNPROCESSABLE_ENTITY, originError);
     }
 }

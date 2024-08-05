@@ -7,10 +7,14 @@ import { EMPLOYEE_EMAILS, PREVIEW_PAGE_ALLOW_EMAIL_LIST } from 'src/constants/em
 import httpCodes from 'src/constants/httpCodes';
 import type { RelayDatabase } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { kv } from '@vercel/kv';
 
 const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai'];
 
 const BANNED_USERS: string[] = [];
+
+type SubscriptionStatus = 'active' | 'trial' | 'trialing' | 'canceled' | 'paused' | 'awaiting_payment_method';
 
 /**
  *
@@ -27,7 +31,7 @@ const getCompanySubscriptionStatus = async (supabase: RelayDatabase, userId: str
             .eq('id', profile.company_id)
             .single();
         return {
-            subscriptionStatus: company?.subscription_status,
+            subscriptionStatus: company?.subscription_status as SubscriptionStatus,
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
@@ -71,6 +75,7 @@ const checkOnboardingStatus = async (
     } else if (
         subscriptionStatus === 'active' ||
         subscriptionStatus === 'trial' ||
+        subscriptionStatus === 'trialing' ||
         subscriptionStatus === 'canceled' ||
         subscriptionStatus === 'paused'
     ) {
@@ -165,6 +170,12 @@ const isSessionClean = async (supabase: SupabaseClient) => {
     return false;
 };
 
+const ratelimit = new Ratelimit({
+    redis: kv,
+    // 10 requests from the same IP in 24 hours
+    limiter: Ratelimit.slidingWindow(10, '24 h'),
+});
+
 /**
  * https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
  * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
@@ -173,8 +184,8 @@ const isSessionClean = async (supabase: SupabaseClient) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
-
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
+    if (req.nextUrl.pathname === '/api/v2/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/email-engine/webhook') return allowEmailWebhookCors(req, res);
     if (req.nextUrl.pathname === '/api/track' || req.nextUrl.pathname === '/api/track/identify')
         return allowTrackingCors(req, res);
@@ -226,12 +237,30 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
+        if (req.nextUrl.pathname.includes('signup')) {
+            const ip = req.ip ?? '127.0.0.1';
+            const { success } = await ratelimit.limit(ip);
+            if (!success) {
+                return NextResponse.json({ error: 'rate limit exceeded' }, { status: httpCodes.RATE_LIMIT_EXCEEDED });
+            } else {
+                return res;
+            }
+        }
         // download-presign-url is a public endpoint
-        if (req.nextUrl.pathname.includes('download-presign-url')) {
+        else if (req.nextUrl.pathname.includes('download-presign-url')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('logout')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('users')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('stripe-webhook')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('sync-email')) {
+            return res;
+        } else if (req.nextUrl.pathname.includes('schedule')) {
             return res;
         }
-        return res;
-        // return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }
 
     const redirectUrl = req.nextUrl.clone();
@@ -261,10 +290,12 @@ export const config = {
          * - signup/invite*
          * - logout
          * - pricing
+         * - inbox/download
          *
          * API routes
          * - api/invites/accept*
          * - api/signup
+         * - api/logout
          * - api/subscriptions/webhook
          * - api/webhooks
          * - api/logs/vercel
@@ -272,10 +303,11 @@ export const config = {
          * - api/ping
          * - api/slack/create
          * - api/subscriptions/webhook
-         * - api/company/exists
+         * - api/company/exists|api/profiles/exists
+         * - api/profiles/exists|api/profiles/exists
          * - api/jobs/run
          * - api/profiles/reset-password
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|api/invites/accept*|api/signup|api/subscriptions/webhook|api/webhooks|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/jobs/run|api/profiles/reset-password).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/reset-password|signup/invite*|logout*|pricing|inbox/download/*|api/invites/accept*|api/subscriptions/webhook|api/webhooks|api/logout|api/logs/vercel|api/brevo/webhook|api/ping|api/slack/create|api/subscriptions/webhook|api/company/exists|api/profiles/exists|api/jobs/run|api/profiles/reset-password).*)',
     ],
 };

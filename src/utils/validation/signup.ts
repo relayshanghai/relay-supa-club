@@ -71,7 +71,8 @@ export type SignupInputTypes =
     | 'confirmPassword'
     | 'phoneNumber'
     | 'companyName'
-    | 'companyWebsite';
+    | 'companyWebsite'
+    | 'currency';
 
 export const validateSignupInput = (type: SignupInputTypes, value: string, password: string) => {
     switch (type) {

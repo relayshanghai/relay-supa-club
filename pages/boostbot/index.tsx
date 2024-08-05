@@ -14,7 +14,7 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
-import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
+import { getFulfilledData, getRejectedData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -31,6 +31,15 @@ import { useAtomValue } from 'jotai';
 import { boostbotSearchIdAtom } from 'src/atoms/boostbot';
 import { filterOutAlreadyAddedInfluencers } from 'src/components/boostbot/table/helper';
 import { useAllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import {
+    chatGuide,
+    influencerListGuide,
+    influencerListMiniReport,
+    influencerModalGuide,
+    influencerModalGuideAdditionForDiscovery,
+    influencerModalGuideAdditionForOutreach,
+} from 'src/guides/boostbot.guide';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -96,7 +105,7 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
-    const { isExpired } = useCompany();
+    const { isExpired, company } = useCompany();
 
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
@@ -200,7 +209,17 @@ const Boostbot = () => {
             });
 
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults) as SequenceInfluencerManagerPage[];
+            const sequenceInfluencers = getFulfilledData(
+                sequenceInfluencersResults,
+            ) as unknown as SequenceInfluencerManagerPage[];
+            const rejected = getRejectedData(sequenceInfluencersResults);
+            rejected.map((r: string) => {
+                addMessage({
+                    sender: 'Bot',
+                    text: r,
+                    type: 'text',
+                });
+            });
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
@@ -237,13 +256,6 @@ const Boostbot = () => {
                     translationValues: { count: influencers.length },
                 });
             }
-
-            // addMessage({
-            //     sender: 'Bot',
-            //     type: 'video',
-            //     videoUrl: '/assets/videos/sequence-guide.mp4',
-            //     eventToTrack: OpenVideoGuideModal.eventName,
-            // });
         } catch (error) {
             clientLogger(error, 'error');
             addMessage({
@@ -277,19 +289,71 @@ const Boostbot = () => {
 
     const outReachDisabled = isOutreachLoading || areChatActionsDisabled || isOutreachButtonDisabled;
 
-    const showInitialLogoScreen = !hasSearched && influencers.length === 0;
+    const showInitialLogoScreen: boolean = !hasSearched && influencers.length === 0;
+
+    const { setGuides, startTour, guidesReady, hasBeenSeen, guiding } = useDriverV2();
+
+    const influencerListByPlan = () => {
+        if (company?.subscription_plan === 'Discovery') {
+            return influencerModalGuideAdditionForDiscovery;
+        } else if (company?.subscription_plan === 'Outreach') {
+            return influencerModalGuideAdditionForOutreach;
+        } else {
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        setGuides({
+            'boostbot#chat': chatGuide,
+            'boostbot#influencerList': [...influencerListGuide, ...influencerListByPlan(), ...influencerListMiniReport],
+            'boostbot#creatorReportModal': influencerModalGuide,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady) {
+            startTour('boostbot#chat');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady]);
+
+    useEffect(() => {
+        if (
+            !showInitialLogoScreen &&
+            !guiding &&
+            hasBeenSeen(['boostbot#chat']) &&
+            !hasBeenSeen(['boostbot#influencerList'])
+        ) {
+            setTimeout(() => startTour('boostbot#influencerList'), 1000);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showInitialLogoScreen, guiding]);
+
+    useEffect(() => {
+        if (
+            isInfluencerDetailsModalOpen &&
+            !guiding &&
+            hasBeenSeen(['boostbot#influencerList']) &&
+            !hasBeenSeen(['boostbot#creatorReportModal'])
+        ) {
+            setTimeout(() => startTour('boostbot#creatorReportModal'), 1000);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isInfluencerDetailsModalOpen, guiding]);
 
     return (
         <Layout>
             {isExpired && (
                 <Banner
-                    buttonText={t('banner.button')}
+                    buttonText={t('banner.button') ?? ''}
                     title={t('banner.expired.title')}
                     message={t('banner.expired.description')}
                 />
             )}
             <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
-                <div className="w-full flex-shrink-0 basis-1/4 md:w-80">
+                <div className="w-full flex-shrink-0 basis-1/4 md:w-80" id="boostbot-chat-component">
                     <Chat
                         influencers={influencers}
                         allSequenceInfluencers={allSequenceInfluencers}
@@ -320,16 +384,18 @@ const Boostbot = () => {
                 </div>
 
                 {showInitialLogoScreen ? (
-                    <InitialLogoScreen />
+                    <div id="boostbot-initial-logo">
+                        <InitialLogoScreen />
+                    </div>
                 ) : (
-                    <div className="flex w-full basis-3/4 flex-col">
+                    <div id="influencers-list" className="flex w-full basis-3/4 flex-col">
                         <div className="flex flex-row items-center justify-between">
                             <div className="ml-4 text-gray-400">
                                 {t('boostbot.table.selectedAmount', {
                                     selectedCount,
                                 })}
                             </div>
-                            <div className="w-fit pb-3">
+                            <div className="w-fit pb-3" id="boostbot-add-to-sequence-button">
                                 <AddToSequenceButton
                                     buttonText={t('boostbot.chat.outreachSelected')}
                                     outReachDisabled={outReachDisabled}

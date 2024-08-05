@@ -23,7 +23,7 @@ const sequences = {
         'This will start sending sequence emails to all selected influencers. It may take a few minutes to finish completely.',
     outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
     outreachPlanUpgradeTooltipDescription:
-        'This feature is only available for users currently on an Outreach plan. If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
+        'Only available to users of the expansion plan This feature is only available to paid users who are currently using the expansion plan. If you want to use our email process management, smart email templates, KOL management follow-up, and customized platform email functions, please contact our sales manager Xue Fei through WeChat, or add WeChat: xfsp1989 to consult the expansion plan.',
     openRateTooltipDescription:
         'The percentage of emails sent that get opened. Due to some email clients disabling external tracking, this number may not be 100% accurate',
     replyRateTooltip: 'Reply rate',
@@ -164,7 +164,7 @@ const sequences = {
     delete: {
         deleteSequence_name: 'Delete {{name}}?',
         deleteSequenceDescription:
-            'Deleting a sequence will stop all scheduled emails for influencers in this sequence. No further messages will be sent. Influencers who have replied and are already in your Influencer Manager will be preserved, however any influencers currently in "Needs Attention", "In Sequence" or "Ignored" will be deleted. Are you sure you want to delete your sequence?',
+            'Influencers who have replied and are already in your inbox will be still be there, however any influencers currently in "Needs Attention" "In Sequence" or "Ignored" will be deleted.',
         okaySequence: 'Yes. Delete this sequence',
         title: 'Delete influencer from sequence?',
         description:
@@ -186,6 +186,15 @@ const sequences = {
     missingEmailTooltipDescription: 'You must add an email to this influencer in order to start this sequence.',
     warningDuplicateInfluencer: 'Warning: duplicate influencer could cause issues',
     sequenceScheduleFailed: 'Scheduling sequences failed, please try again',
+    reportServerBusy: 'Server is busy, please try again later',
+    reportDoesnotExists:
+        'Uh oh! Our database doesn’t have this email. Please input the email to proceed with outreach!',
+    retryButton: 'Retry button',
+    clickToRetry: 'Click to retry getting data',
+    limitExceeded:
+        'Uh Oh! Looks like your BoostBot credits have run out! Please contact sales at sophia @ boostbot.ai if you want to add more credits to your account this month. Otherwise, your credits will be automatically renewed at the start of your next billing cycle.',
+    account_removed: 'This influencer has been removed by the owner',
+    influencerLimit: `Oops! Sequences can only include up to {{ influencerLimit }} influencers. To contact more influencers, please create a new sequence. Thank you!`,
 };
 
 export default sequences;

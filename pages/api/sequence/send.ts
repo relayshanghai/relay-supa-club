@@ -99,7 +99,7 @@ const postHandler: ActionHandler = async (req, res) => {
     };
 
     if (sequenceInfluencers.length === 0) {
-        throw new Error('No influencers found');
+        return res.status(httpCodes.OK).json(results);
     }
     // optimistic updates
     await db(upsertSequenceInfluencersFunnelStatusCall)(
@@ -206,6 +206,14 @@ const postHandler: ActionHandler = async (req, res) => {
     }
 
     return res.status(httpCodes.OK).json(results);
+};
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '20mb', // Set desired value here
+        },
+    },
 };
 
 export default ApiHandler({ postHandler });

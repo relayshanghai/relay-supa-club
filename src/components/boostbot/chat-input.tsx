@@ -54,6 +54,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
 
             <textarea
+                id="boostbot-chat-input"
                 ref={textareaRef}
                 rows={2}
                 className="h-10 flex-grow resize-none rounded-[6px] border-none p-3 text-xs font-medium ring-1 ring-tertiary-200 placeholder:text-gray-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300 2xl:pb-2.5 2xl:pt-2.5 2xl:text-sm"
@@ -65,6 +66,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
             <button
                 data-testid="boostbot-send-message"
+                id="boostbot-send-message"
                 className="flex h-10 w-10 items-center justify-center rounded-lg bg-boostbotbackground text-white transition-all hover:bg-primary-700 disabled:bg-primary-400"
                 onClick={handleSendMessage}
                 disabled={isLoading || isDisabled}

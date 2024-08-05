@@ -20,6 +20,20 @@ import { DISCOVERY_PLAN } from 'src/utils/api/stripe/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { deleteUserById } from 'src/utils/api/db/calls/profiles';
+import { kv } from '@vercel/kv';
+
+const revertRateLimit = async (req: NextApiRequest) => {
+    const ip = req.headers['x-forwarded-host'] || '127.0.0.1';
+    const pattern = `*:${ip}:*`;
+
+    const key = (await kv.scan(0, { match: pattern }))[1][0];
+
+    const value = await kv.get(key.toString());
+    if (value) {
+        const revertedValue = parseInt(value.toString()) - 1;
+        await kv.set(key.toString(), revertedValue.toString());
+    }
+};
 
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
@@ -33,6 +47,8 @@ const SignupPostBody = z.object({
     companyName: z.string(),
     companyWebsite: z.string().optional(),
     category: z.string().optional(),
+    rewardfulReferal: z.string().optional(),
+    currency: z.string().optional(),
 });
 
 export type SignupPostBody = z.input<typeof SignupPostBody>;
@@ -134,7 +150,7 @@ const createStripeCustomerAndSubscription = async ({
         throw new Error(createCompanyErrors.unableToMakeStripeCustomer);
     }
 
-    const { trial_days, priceId } = DISCOVERY_PLAN;
+    const { trial_days, priceId } = { priceId: '', trial_days: DISCOVERY_PLAN.trial_days };
 
     const createParams: Stripe.SubscriptionCreateParams = {
         customer: customer.id,
@@ -170,7 +186,12 @@ const createCompanyWithSubscriptionLimits = async ({
     companyWebsite?: string;
     cus_id: string;
 }) => {
-    const { searches, profiles, trial_searches, trial_profiles } = DISCOVERY_PLAN;
+    const { searches, profiles, trial_searches, trial_profiles } = {
+        searches: '',
+        profiles: '',
+        trial_searches: '',
+        trial_profiles: '',
+    };
 
     return await db(createCompany)({
         id: companyId,
@@ -296,10 +317,20 @@ const rollback = async ({ companyId, cus_id, userId }: { companyId: string; cus_
     }
 };
 
+const blockedEmailDomains = process.env.BLOCKED_EMAIL_DOMAINS?.split(',') || ['example'];
+
+const validateEmail = (email: string) => {
+    blockedEmailDomains.forEach((domain) => {
+        if (email.includes(domain)) {
+            throw new Error(`This email domain is blocked`);
+        }
+    });
+};
+
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, password, firstName, lastName, phoneNumber, companyName, companyWebsite, category } =
         validateAndParseData(req);
-
+    validateEmail(email);
     await validateCompanyName({ companyName });
 
     const companyId = v4();
@@ -334,10 +365,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         await createServiceAccount(company);
 
         const response: SignupPostResponse = company;
-
         return res.status(httpCodes.OK).json(response);
     } catch (error) {
         await rollback({ companyId, cus_id, userId });
+        revertRateLimit(req);
         throw error;
     }
 };

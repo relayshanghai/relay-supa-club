@@ -20,7 +20,7 @@ const mockUserContext: IUserContext = {
     logout: () => null,
     updateProfile: () => null,
     paymentMethods: {},
-    refreshPaymentMethods: () => null,
+    refreshCustomerInfo: () => null,
     refreshProfile: () => null,
     supabaseClient: null,
     getProfileController: { current: null },

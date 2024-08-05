@@ -13,6 +13,7 @@ import type {
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 import type { audience_age_range, audience_gender } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
+import type { Nullable } from './nullable';
 
 export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = {
@@ -31,7 +32,7 @@ export type AudienceGenderWeighted = z.input<typeof audience_gender> | undefined
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
-export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach';
+export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP' | 'discovery' | 'outreach' | 'addPayment';
 export type RelayPlan = {
     currency: string;
     prices: {
@@ -52,11 +53,39 @@ export type NewRelayPlan = {
     currency: string;
     prices: {
         monthly: string;
+        annually: string;
     };
     profiles: string;
     searches: string;
     priceIds: {
         monthly: string;
+        annually: string;
+    };
+};
+
+export type RelayPlanWithAnnual = {
+    currency: string;
+    prices: {
+        monthly: string;
+        annually: string;
+    };
+    originalPrices: {
+        monthly: Nullable<string>;
+        annually: Nullable<string>;
+    };
+    profiles: string;
+    searches: string;
+    priceIds: {
+        monthly: string;
+        annually: string;
+    };
+    priceIdsForExistingUser?: {
+        monthly: string;
+        annually: string;
+    };
+    forExistingUser?: {
+        monthly: string;
+        annually: string;
     };
 };
 export interface RelayPlanStripeProduct extends Stripe.Product {
@@ -116,7 +145,7 @@ export type InfluencerOutreachStatus =
     | 'rejected'
     | 'ignored';
 
-export type SequenceEmailStep = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
+export type SequenceEmailStep = 'Outreach' | '1st Follow-up' | '2nd Follow-up';
 
 /**
  * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.
@@ -155,3 +184,9 @@ export type SearchResultMetadata = {
         parameters_id: string;
     };
 };
+
+export type ParamType = { [key: string]: number | number[] | string | string[] | undefined };
+export interface PageParams {
+    params?: ParamType;
+    searchParams?: ParamType;
+}

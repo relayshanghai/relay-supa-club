@@ -1,4 +1,6 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import 'styles/globals.css';
+import 'driver.js/dist/driver.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
@@ -16,7 +18,11 @@ import chatwootConfig from 'chatwoot.config';
 import { AnalyticsProvider, useDeviceId } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
+// Use your Rewardful API Key
+const API_KEY = process.env.NEXT_PUBLIC_REWARDFUL_API_KEY;
 
+// If not setting NEXT_PUBLIC_APP_REWARDFUL_SCRIPT_URL, just use https://r.wdfl.co/rw.js
+const SCRIPT_URL = process.env.NEXT_PUBLIC_APP_REWARDFUL_SCRIPT_URL || 'https://r.wdfl.co/rw.js';
 function MyApp({
     Component,
     pageProps,
@@ -46,6 +52,10 @@ function MyApp({
                     id: GOOGLE_ANALYTICS_ID,
                 })}`}
             />
+            <Script src={SCRIPT_URL} data-rewardful={API_KEY} />
+            <Script id="rewardful-queue" strategy="beforeInteractive">
+                {`(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`}
+            </Script>
 
             <Script strategy="lazyOnload" id="google-tag-script">
                 {`

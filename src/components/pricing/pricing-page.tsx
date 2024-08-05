@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
+import {
+    useLocalStoragePaymentPeriod,
+    type ActiveSubscriptionPeriod,
+    type ActiveSubscriptionTier,
+} from 'src/hooks/use-prices';
 import { PriceCard } from './price-card';
 import { Button } from '../button';
 import { useRouter } from 'next/router';
@@ -10,6 +14,10 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 import Link from 'next/link';
 import { LanguageToggle } from '../common/language-toggle';
+import { ToggleGroup, ToggleGroupItem } from 'shadcn/components/ui/toggle-group';
+import { usePricesV2 } from 'src/hooks/v2/use-prices';
+import { useCompany } from 'src/hooks/use-company';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
 
 const ImageBackground = () => {
     return (
@@ -30,7 +38,10 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { t } = useTranslation();
     const router = useRouter();
     const { trackEvent } = useRudderstack();
-    const [period] = useState<ActiveSubscriptionPeriod>('monthly');
+    const { company } = useCompany();
+    const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
+    const { subscription } = useSubscription();
+    const [paymentPeriod, setPaymentPeriod] = useLocalStoragePaymentPeriod();
 
     const options: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
 
@@ -38,6 +49,21 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
         trackEvent(LANDING_PAGE('clicked on start free trial'));
         router.push('/signup');
     };
+
+    useEffect(() => {
+        if (landingPage) {
+            setPaymentPeriod({
+                ...paymentPeriod,
+                period: 'monthly',
+            });
+            return;
+        }
+        setPaymentPeriod({
+            ...paymentPeriod,
+            period: subscription?.interval as ActiveSubscriptionPeriod,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [subscription?.interval, landingPage]);
 
     return (
         <>
@@ -75,17 +101,38 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             {t('pricing.relayClubCanHelp')}
                         </h4>
                     </div>
-
+                    <div className="container m-auto flex w-full max-w-screen-xl flex-wrap justify-center">
+                        {(!priceLoading || prices) && (
+                            <ToggleGroup
+                                type="single"
+                                value={paymentPeriod.period}
+                                onValueChange={(val: ActiveSubscriptionPeriod) => {
+                                    if (val)
+                                        setPaymentPeriod({
+                                            ...paymentPeriod,
+                                            period: val,
+                                        });
+                                }}
+                            >
+                                <ToggleGroupItem value={'monthly'}>{t('pricing.monthly')}</ToggleGroupItem>
+                                <ToggleGroupItem value={'annually'}>{t('pricing.annually')}</ToggleGroupItem>
+                            </ToggleGroup>
+                        )}
+                    </div>
                     <div
                         className={`container m-auto flex ${
                             landingPage ? 'min-h-[20rem] 2xl:min-h-[30rem]' : 'min-h-[32rem]'
                         } w-full max-w-screen-xl flex-wrap justify-center`}
                     >
                         {options.map((option) => (
-                            <PriceCard key={option} period={period} priceTier={option} landingPage={landingPage} />
+                            <PriceCard
+                                key={option}
+                                period={paymentPeriod.period}
+                                priceTier={option}
+                                landingPage={landingPage}
+                            />
                         ))}
                     </div>
-
                     {landingPage && (
                         <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-xl">
                             {t('pricing.startFreeTrial')}

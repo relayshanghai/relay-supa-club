@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { STRIPE_PRICE_MONTHLY_DISCOVERY, STRIPE_PRICE_MONTHLY_OUTREACH } from 'src/utils/api/stripe/constants';
+import { useCallback, useEffect, useState } from 'react';
+import { STRIPE_PRICE_ONE_OFF_ADD_PAYMENT } from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SubscriptionPeriod, SubscriptionTier } from 'types';
+import type { NewRelayPlan, RelayPlanWithAnnual, SubscriptionPeriod, SubscriptionTier } from 'types';
+import { useLocalStorage } from './use-localstorage';
 
 export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP' | 'diy' | 'diyMax' | 'free'>;
-export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly' | 'annually'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'quarterly'>;
 
 export type PriceDetails = {
     [key in ActiveSubscriptionTier]: {
@@ -19,88 +20,93 @@ export type PriceDetails = {
         currency?: string;
     }[];
 };
-
-export type Prices = {
-    [key in ActiveSubscriptionTier]: {
-        currency: string;
-        prices: {
-            [key in ActiveSubscriptionPeriod]: string;
-        };
-        profiles: string;
-        searches: string;
-        priceIds: {
-            [key in ActiveSubscriptionPeriod]: string;
-        };
+export type Price = {
+    currency: string;
+    prices: {
+        [key in ActiveSubscriptionPeriod]: string;
+    };
+    profiles: string;
+    searches: string;
+    priceIds: {
+        [key in ActiveSubscriptionPeriod]: string;
     };
 };
-
-export const PRICE_IDS = {
-    monthly: {
-        discovery: STRIPE_PRICE_MONTHLY_DISCOVERY,
-        outreach: STRIPE_PRICE_MONTHLY_OUTREACH,
-    },
+export type Prices = {
+    [key in ActiveSubscriptionTier]: NewRelayPlan;
 };
 
 export const priceDetails: PriceDetails = {
     discovery: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 900, subtitle: 'boostBotSearchAndNormalSearch' },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 1200, subtitle: 'boostBotSearchAndNormalSearch' },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 600 },
         { title: 'fullCustomerService', icon: 'check' },
     ],
     outreach: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 1200, subtitle: 'boostBotSearchAndNormalSearch' },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 600 },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 2500, subtitle: 'boostBotSearchAndNormalSearch' },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 1000 },
         { title: 'personalEmailAccount', icon: 'check', amount: 1 },
-        { title: 'amount_EmailsPerMonth', icon: 'check', amount: 600 },
+        { title: 'amount_EmailsPerMonth', icon: 'check', amount: 1000, subtitle: 'unlimitedFollowUpEmail' },
         { title: 'fullCustomerService', icon: 'check' },
     ],
+    addPayment: [{ title: 'addPayment', icon: 'check' }],
 };
 
-export const usePrices = () => {
-    const { i18n } = useTranslation();
-    const en = i18n.language?.toLowerCase().includes('en');
+export const useLocalStorageSelectedPrice = () =>
+    useLocalStorage<RelayPlanWithAnnual>('selectedPrice', {
+        currency: 'usd',
+        prices: {
+            monthly: '0',
+            annually: '0',
+        },
+        profiles: '',
+        searches: '',
+        priceIds: {
+            monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+            annually: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT,
+        },
+        originalPrices: {
+            monthly: '0',
+            annually: '0',
+        },
+    });
+export const useLocalStoragePaymentPeriod = () =>
+    useLocalStorage<{ period: ActiveSubscriptionPeriod }>('paymentPeriod', { period: 'monthly' });
 
-    const defaultPrices = useMemo(
-        () => ({
-            discovery: {
-                currency: en ? 'usd' : 'cny',
-                prices: { monthly: en ? '41' : '299' },
-                profiles: '',
-                searches: '',
-                priceIds: { monthly: STRIPE_PRICE_MONTHLY_DISCOVERY },
-            },
-            outreach: {
-                currency: en ? 'usd' : 'cny',
-                prices: { monthly: en ? '110' : '799' },
-                profiles: '',
-                searches: '',
-                priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
-            },
-        }),
-        [en],
-    );
-
-    const [prices, setPrices] = useState<Prices>(defaultPrices);
-
+/**
+ *
+ * @deprecated use usePricesV2 instead
+ */
+export const usePrices = (currency: string) => {
+    const [prices, setPrices] = useState<Prices>();
+    const [loading, setLoading] = useState(false);
     const refreshPrices = useCallback(async () => {
+        if (loading) return;
+        setLoading(true);
         try {
             const data = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/prices');
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
             // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
             const prices = {
-                discovery: data.discovery.find((plan) => plan.currency === 'cny') || defaultPrices.discovery,
-                outreach: data.outreach.find((plan) => plan.currency === 'cny') || defaultPrices.outreach,
-            };
-
+                discovery: data.discovery.find((plan) => plan.currency === currency),
+                outreach: data.outreach.find((plan) => plan.currency === currency),
+                addPayment: {
+                    currency: currency,
+                    prices: { monthly: '0' },
+                    profiles: '',
+                    searches: '',
+                    priceIds: { monthly: STRIPE_PRICE_ONE_OFF_ADD_PAYMENT },
+                },
+            } as Prices;
             setPrices(prices);
         } catch (error) {
             clientLogger(error, 'error');
         }
-    }, [defaultPrices]);
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
         refreshPrices();
     }, [refreshPrices]);
 
-    return { prices };
+    return { prices, loading };
 };

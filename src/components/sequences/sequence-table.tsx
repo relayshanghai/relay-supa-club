@@ -15,8 +15,9 @@ import type {
     SequenceInfluencerManagerPageWithChannelData,
 } from 'pages/api/sequence/influencers';
 import { DataTablePagination as Pagination } from './pagination';
-import { isMissingSocialProfileInfo } from './helpers';
 import type { KeyedMutator } from 'swr';
+import { InfluencerDetailsModal } from '../boostbot/modal-influencer-details';
+import type { SearchTableInfluencer } from 'types';
 
 interface SequenceTableProps {
     sequence?: Sequence;
@@ -155,17 +156,34 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             }
             setCheckAll(true);
             setSelection(
-                filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers)
-                    .filter((influencer) => influencer.email && !isMissingSocialProfileInfo(influencer))
-                    .map((influencer) => influencer.id),
+                filterByPage(currentPage, numberOfInfluencersPerPage, sequenceInfluencers).map(
+                    (influencer) => influencer.id,
+                ),
             );
         },
         [checkAll, sequenceInfluencers, setSelection],
     );
 
     const columns = sequenceColumns(currentTab);
+    const [isInfluencerDetailsModalOpen, setIsInfluencerDetailsModalOpen] = useState(false);
+    const [currentInfluencer, setCurrentInfluencer] = useState<SearchTableInfluencer>();
     return (
         <div>
+            {currentInfluencer && (
+                <InfluencerDetailsModal
+                    selectedRow={
+                        {
+                            original: currentInfluencer,
+                            index: 0,
+                        } as any
+                    }
+                    isOpen={isInfluencerDetailsModalOpen}
+                    setIsOpen={setIsInfluencerDetailsModalOpen}
+                    setShowSequenceSelector={() => false}
+                    outReachDisabled={false}
+                    url="search"
+                />
+            )}
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr className="border-b-2 border-gray-200">
@@ -219,6 +237,10 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 handleStartSequence={handleStartSequence}
                                 checked={selection.includes(influencer.id)}
                                 onCheckboxChange={handleCheckboxChange}
+                                handleReportIconTab={() => {
+                                    setCurrentInfluencer(influencer.channel_data);
+                                    setIsInfluencerDetailsModalOpen(true);
+                                }}
                             />
                         );
                     })}

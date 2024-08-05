@@ -1,8 +1,25 @@
 {
   "functions": {
+    "pages/api/**/*": {
+      "maxDuration": 300
+    },
     "pages/api/jobs/run.ts": {
       "maxDuration": 300,
       "memory": 3008
+    },
+    "pages/api/v2/sequence-influencers/schedule.ts": {
+      "maxDuration": 300,
+      "memory": 3008
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/sync-email",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/v2/sequence-influencers/schedule",
+      "schedule": "* * * * *"
+    }
+  ]
 }

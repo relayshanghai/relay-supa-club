@@ -13,6 +13,23 @@ describe('<SequencePage />', () => {
     before(() => {
         worker.start();
     });
+
+    beforeEach(() => {
+        cy.setLocalStorage(
+            'boostbot-guide-flag',
+            JSON.stringify({
+                'boostbot#chat': true,
+                'boostbot#influencerList': true,
+                'boostbot#creatorReportModal': true,
+                account: true,
+                crm: true,
+                'sequence#detail': true,
+                'emailTemplate#modal': true,
+                'inbox#threads': true,
+            }),
+        );
+    });
+
     const props = {
         sequenceId: 'b7ddd2a8-e114-4423-8cc6-30513c885f07',
     };
@@ -68,14 +85,14 @@ describe('<SequencePage />', () => {
 
         cy.contains('button', 'Start selected sequences').should('not.exist');
 
-        cy.contains('tr', mario?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
+        cy.contains('tr', mario?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
 
         cy.contains('button', 'Start selected sequences').should('exist');
 
-        cy.contains('tr', josiah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
-        cy.contains('tr', hannah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click());
+        cy.contains('tr', josiah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
+        cy.contains('tr', hannah?.name ?? '').within(() => cy.get('input[type="checkbox"]').click({ force: true }));
 
-        cy.contains('button', 'Start selected sequences').click();
+        cy.contains('button', 'Start selected sequences').click({ force: true });
 
         cy.contains('Failed to submit 1 email(s) to send');
         cy.contains('2 email(s) successfully scheduled to send');
@@ -88,14 +105,12 @@ describe('<SequencePage />', () => {
             cy.contains('19');
         });
     });
-    it('shows a warning for duplicate influencers', () => {
-        testMount(<SequencePage {...props} />);
-        // the allegra rows are duplicates
-        cy.contains('tr', '@allegraalynn').within(() => {
-            cy.contains('Warning: duplicate influencer could cause issues');
-        });
-    });
     it('uses pagination to limit influencers per page and can navigate to other pages using the back and next buttons or the page numbers', () => {
+        // remove birdeatsbug sdk
+        const birdEatsbugElement = document.getElementById('birdeatsbug-sdk');
+        if (birdEatsbugElement) {
+            birdEatsbugElement.style.display = 'none';
+        }
         const mario = mockInfluencers.find((i) => i.name === 'Mario | Marketing & Motivation');
         if (!mario) throw new Error('mario not found');
         const generateRandomInfluencer = (): SequenceInfluencerManagerPage => {

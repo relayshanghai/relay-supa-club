@@ -55,7 +55,11 @@ export default class OutreachTemplateRepository {
                     outreach_template_variables.id,
                 ),
             )
-            .where(eq(outreach_email_template_variables_relation.outreach_email_template_id, id));
+            .innerJoin(
+                outreach_email_templates,
+                eq(outreach_email_templates.id, outreach_email_template_variables_relation.outreach_email_template_id),
+            )
+            .where(eq(outreach_email_templates.id, id));
         return data;
     }
     async get(companyId: string, id: string) {

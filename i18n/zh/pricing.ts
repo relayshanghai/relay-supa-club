@@ -10,6 +10,8 @@ const pricing = {
     perMonth: '/月',
     usdPerMonth: '美金/月',
     rmbPerMonth: '人民币/月',
+    usdPerYear: '美元/年',
+    rmbPerYear: '人民币/年',
     startFreeTrial: '开始免费试用',
     contactNow: '立即联系',
     checkOutOur: '查看我们的',
@@ -22,10 +24,14 @@ const pricing = {
     amount_AIGeneratedEmailTemplates: '{{amount}}个AI生成的电子邮件模板',
     fullCustomerService: '完整的客户服务',
     boostBotSearchAndNormalSearch: 'BoostBot AI搜索 + 传统搜索',
+    unlimitedFollowUpEmail: '无限次跟进邮件',
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
 
     upgrade: '立即升级',
+    upgradeSuccess: '升级成功',
+    upgradeFailed: '升级失败，请提交错误报告',
+    upgradeFailedAlreadySubscribed: '您已订阅此套餐',
     buyNow: '立即购买',
     contactUs: '联系我们',
     popular: '热门',
@@ -66,6 +72,13 @@ const pricing = {
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
     backToAccount: '回到账号',
+    haveAlipayError: '您正在使用支付宝作为您的付款方式，请更新您的付款方式。',
+    deprecatedPaymentTitle: '不再支持的付款方式',
+    deprecatedPaymentDescription: '我们不再支持{{method}}作为付款方式。',
+    deprecatedLabel: '已弃用',
+    noPaymentMethodFound: '未找到付款方式。请添加一种付款方式。',
+    noDefaultPaymentMethodFound: '未找到默认付款方式。请选择一种默认付款方式。',
+    pressApplyCouponButton: '别忘了按应用按钮',
 };
 
 export default pricing;

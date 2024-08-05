@@ -1,8 +1,8 @@
 const account = {
     account: 'Account',
-    update: 'Update',
+    update: 'Update personal fnfo',
     personal: {
-        title: 'Personal details',
+        title: 'Personal Info',
         firstName: 'First name',
         firstNamePLaceholder: 'Enter your first name',
         lastName: 'Last name',
@@ -52,18 +52,23 @@ const account = {
         trialExpired: 'Trial expired',
         youHaveNoActiveSubscriptionPleasePurchaseBelow: 'You have no active subscription. Please purchase one below.',
         beforePurchasingYouNeedPaymentMethod: 'Before purchasing a subscription, you need to add a payment method.',
-        addPaymentMethod: 'Add payment method',
+        addPaymentMethod: {
+            title: 'Add payment method',
+            success: 'Payment method added',
+            error: 'Unable to add payment method',
+        },
         availablePlans: 'Available plans',
         planName: 'Name',
         active: 'Active',
         canceled: 'Canceled',
         paused: 'Paused',
         trial: 'Trial',
-        upgradeSubscription: 'Upgrade subscription',
+        upgradeSubscription: 'Upgrade or modify your plan',
         cancelSubscription: 'Cancel subscription',
-        monthly: 'monthly',
-        quarterly: 'quarterly',
-        annually: 'annually',
+        resumeSubscription: 'Don’t cancel my subscription!',
+        monthly: 'Monthly',
+        quarterly: 'Quarterly',
+        annually: 'Annually',
         modal: {
             plan_planName: '{{planName}} plan',
             youAreAboutToSubscribeFor: 'You are about to subscribe for',
@@ -87,6 +92,8 @@ const account = {
         upgrade: 'Upgrade',
         upgradeSuccess: 'Upgrade success',
         upgradeSubscriptionError: 'Unable to upgrade subscription',
+        resumeSubscriptionSuccess: 'Subscription successfully resumed!',
+        resumeSubscriptionError: 'Unable to resume subscription',
     },
     invite: {
         title: 'Invite Members',
@@ -121,13 +128,19 @@ const account = {
         enterPromoCode: 'Enter a Promo Code',
         invalidPromoCode: 'Invalid Promo Code',
         promoCodeAdded: 'Promo Code added',
-        validDuration: ' For next {{validMonths}} months',
+        validDuration: ' for next {{validMonths}} month(s)',
         offEn: 'Off',
         offCn: '',
     },
     plans: {
+        discoveryTrial: 'Discovery Trial',
         discovery: 'Discovery',
         outreach: 'Outreach',
+    },
+    planDescriptions: {
+        discoveryTrial: 'AI powered search and analysis',
+        discovery: 'AI powered search and analysis',
+        outreach: 'Fully automated discovery and email campaigns',
     },
     enableAlipay: 'Enable Alipay Agreement',
     processingMessage: `We are currently processing your payment.
@@ -136,6 +149,44 @@ Thank you for your patience.`,
     generalPaymentError: 'Something went wrong in the process, please try again or use another payment method.',
     authorizationPaymentError:
         'Your Alipay payment authorization failed, please try again or use another payment method.',
+    paymentCompanySubscription: 'Profile, Company and Subscriptions',
+    sidebar: {
+        plan: 'Plan',
+        billing: 'Billing',
+        profile: 'Profile',
+        company: 'Company',
+        team: 'Team',
+    },
+    paymentMethodCard: {
+        title: 'Payment Methods',
+        addPaymentMethod: 'Add new payment method',
+    },
+    paymentMethodModal: {
+        title: 'Add Payment Method',
+    },
+    planSection: {
+        reportsCount: 'Reports',
+        searchesCount: 'Searches',
+        trialEnds: 'Trial Ends',
+        canceledOn: 'Canceled on',
+        cancelsOn: 'Cancels on',
+        paymentFailed: 'Payment Failed',
+        paymentFailedAction: 'You need to subscribe again to continue using BoostBot.',
+        paymentDue: 'Payment Due',
+        pausedAt: 'Paused at',
+        noUpcomingPayments: 'No upcoming payments',
+        renewsOn: 'Renews on',
+        errorGettingSubscription: 'Error getting subscription info',
+        subscriptionExpired: 'Subscription Expired',
+        subscriptionExpiredAction:
+            'Uh oh! Your account subscription has expired. Please purchase a subscription to continue using BoostBot!',
+    },
+    billingInfoSection: {
+        title: 'Billing Info',
+    },
+    companyInfoSection: {
+        title: 'Company Info',
+    },
 };
 
 export default account;

@@ -29,7 +29,7 @@ export const mockCompany: CompanyDB = {
     size: 'small',
     terms_accepted: true,
     subscription_plan: 'Discovery',
-};
+} as CompanyDB;
 
 /** ID matches william in the seed */
 export const mockProfile: ProfileWithCompany = {

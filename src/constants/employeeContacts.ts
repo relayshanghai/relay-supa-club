@@ -35,6 +35,7 @@ export const EMPLOYEE_EMAILS = [
     'brendan@relay.club',
     'max@relay.club',
     'aloisa@relay.club',
+    'echaoeoen@gmail.com',
 ];
 
 /** prod accounts listed at https://email.relay.club/admin/accounts */

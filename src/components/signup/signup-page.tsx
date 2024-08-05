@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { validateSignupInput } from 'src/utils/validation/signup';
@@ -16,7 +16,7 @@ import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
 import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
-
+import { truncatedText } from 'src/utils/outreach/helpers';
 export interface SignUpValidationErrors {
     firstName: string;
     lastName: string;
@@ -26,6 +26,7 @@ export interface SignUpValidationErrors {
     phoneNumber?: string;
     companyName: string;
     companyWebsite?: string;
+    currency?: string;
 }
 
 const signupErrors = {
@@ -60,7 +61,8 @@ const SignUpPage = ({
     setCurrentStep: (step: number) => void;
     selectedPriceId: string;
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const en = i18n.language?.includes('en');
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { login, logout, signup } = useUser();
@@ -73,7 +75,11 @@ const SignUpPage = ({
     const [phoneNumber, setPhoneNumber, removePhoneNumber] = usePersistentState('phoneNumber', '');
     const [companyName, setCompanyName, removeCompanyName] = usePersistentState('companyName', '');
     const [companyWebsite, setCompanyWebsite, removeCompanyWebsite] = usePersistentState('companyWebsite', '');
-
+    const [currency, setCurrency] = useState(!en ? 'cny' : 'usd');
+    useEffect(() => {
+        setCurrency(!en ? 'cny' : 'usd');
+    }, [en]);
+    const [rewardfulReferral, setRewardfulReferral] = useState<string>();
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
             switch (type) {
@@ -100,6 +106,9 @@ const SignUpPage = ({
                     break;
                 case 'companyWebsite':
                     setCompanyWebsite(value);
+                    break;
+                case 'currency':
+                    setCurrency(value);
                     break;
                 default:
                     break;
@@ -146,6 +155,7 @@ const SignUpPage = ({
         phoneNumber: '',
         companyName: '',
         companyWebsite: '',
+        currency: '',
     });
     const [loading, setLoading] = useState(false);
 
@@ -158,6 +168,8 @@ const SignUpPage = ({
         phoneNumber,
         companyName,
         companyWebsite,
+        rewardfulReferral,
+        currency,
     };
 
     //TODO: phone validation need to be updated
@@ -176,9 +188,9 @@ const SignUpPage = ({
             try {
                 setLoading(true);
 
-                const signupCompanyRes = await signup(data);
-                if (!signupCompanyRes?.cus_id) {
-                    throw new Error('no cus_id, error creating company');
+                const signupCompanyRes: any = await signup(data);
+                if (!signupCompanyRes?.cusId) {
+                    throw new Error('no cusId, error creating company');
                 } else {
                     await login(email, password);
                     return 'success';
@@ -186,11 +198,14 @@ const SignUpPage = ({
             } catch (e: any) {
                 clientLogger(e, 'error');
                 if (e?.message.includes('User already registered')) {
-                    toast.error(t('login.userAlreadyRegistered'));
+                    toast.error(t('login.emailDomainNotAllowed', { domain: email.split('@')[1] }));
+                }
+                if (e?.message.includes('This email domain is blocked')) {
+                    toast.error(t('login.emailDomainNotAllowed', { domain: email.split('@')[1] }));
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else {
-                    toast.error(`${t('login.oopsSomethingWentWrong')} ${e?.message}`);
+                    toast.error(`${t('login.oopsSomethingWentWrong')} ${truncatedText(e?.message, 40)}`);
                 }
             } finally {
                 setLoading(false);
@@ -201,7 +216,7 @@ const SignUpPage = ({
 
     const onNext = async () => {
         if (currentStep === PROFILE_FORM_STEP) {
-            await logout(false);
+            logout(false);
         }
         if (currentStep === COMPANY_FORM_STEP) {
             const result = await handleSignup(formData);
@@ -213,7 +228,7 @@ const SignUpPage = ({
             setCurrentStep(currentStep + 1);
         }
 
-        await track(CompleteSignupStep, {
+        track(CompleteSignupStep, {
             current_step: currentStep,
             firstName,
             lastName,
@@ -223,7 +238,14 @@ const SignUpPage = ({
             companyWebsite,
         });
     };
-
+    useEffect(() => {
+        (window as any).rewardful('ready', function () {
+            setRewardfulReferral((window as any).Rewardful.referral);
+        });
+        return () => {
+            (window as any).rewardful('destroy');
+        };
+    }, []);
     return (
         <div>
             {steps.map(
@@ -258,6 +280,7 @@ const SignUpPage = ({
                                 <StepThree
                                     companyName={companyName}
                                     companyWebsite={companyWebsite}
+                                    currency={currency}
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
                                     loading={loading}
