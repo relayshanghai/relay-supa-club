@@ -99,7 +99,7 @@ export const OutreachesPage = () => {
                                 setShowVariableModal(true);
                             }}
                             className="flex items-center"
-                            data-testid="template-library-button"
+                            data-testid="template-variable-button"
                         >
                             {t('outreaches.addTemplateVariables')}
                         </Button>
