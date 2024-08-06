@@ -21,13 +21,13 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
         shopUrl: '',
         currency: '',
     };
-    const { createProduct, updateProduct, getProducts, product, setProduct } = useProducts();
+    const { createProduct, updateProduct, getProducts, product, setProduct, loading } = useProducts();
 
     const handleCreateProduct = async () => {
         const isUpdate = product.id !== undefined;
         let action = null;
         if (isUpdate) {
-            action = updateProduct(product.id as string, product as unknown as CreateProductPayload);
+            action = updateProduct(product.id, product as unknown as CreateProductPayload);
         } else {
             action = createProduct(product as unknown as CreateProductPayload);
         }
@@ -142,6 +142,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
                             onClick={() => handleCreateProduct()}
+                            disabled={loading}
                         >
                             {t('outreaches.saveAndContinue')}
                         </Button>
