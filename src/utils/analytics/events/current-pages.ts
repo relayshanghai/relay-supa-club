@@ -4,6 +4,7 @@ export enum CurrentPageEvent {
     boostbot = 'boostbot',
     dashboard = 'dashboard',
     sequences = 'sequences',
+    outreach = 'outreach',
     inbox = 'inbox',
     'influencer-manager' = 'influencer-manager',
     guide = 'guide',
