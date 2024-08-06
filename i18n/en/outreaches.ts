@@ -33,6 +33,7 @@ const outreaches = {
     setupSequence: 'Set up your new sequence',
     autoStart: 'Auto-Start',
     product: 'Product',
+    addTemplateVariables: 'Add Template Variables',
     templateVariables: 'Template Variables',
     skipForNow: 'Skip for now',
     saveAndFinish: 'Save values and finish',

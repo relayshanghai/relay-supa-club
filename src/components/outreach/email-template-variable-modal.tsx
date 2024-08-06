@@ -1,5 +1,5 @@
-import { type FC } from 'react';
-import { Cross, Rocket, Gift, Atoms } from '../icons';
+import { useState, type FC } from 'react';
+import { Cross, Rocket, Gift, Atoms, User } from '../icons';
 import { Modal } from '../modal';
 import { Input } from '../input';
 import { Button } from '../button';
@@ -12,6 +12,8 @@ import {
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown } from 'src/components/icons';
 import Megaphone from '../icons/Megaphone';
+import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
+import { clientLogger } from 'src/utils/logger-client';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -26,11 +28,26 @@ const categories = [
     { name: 'Brand', icon: DropdownIcon(<Megaphone />) },
     { name: 'Product', icon: DropdownIcon(<Rocket />) },
     { name: 'Collab', icon: DropdownIcon(<Gift />) },
+    { name: 'Influencers', icon: DropdownIcon(<User />) },
     { name: 'Wildcards', icon: DropdownIcon(<Atoms />) },
 ];
 
 export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
+    const { createTemplateVariable, loading } = useOutreachTemplateVariable();
+    const [inputValues, setInputValues] = useState({
+        category: 'Brand',
+        name: '',
+    });
+    const saveTemplateVariable = () => {
+        createTemplateVariable(inputValues)
+            .then(() => {
+                setInputValues({ category: 'Brand', name: '' });
+            })
+            .catch((error) => {
+                clientLogger(error);
+            });
+    };
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
             <div className="relative inline-flex h-auto w-[523px] flex-col items-start justify-start rounded-lg bg-white">
@@ -61,7 +78,9 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="mt-1 flex w-full">
                                     <section className="flex h-9 w-full flex-shrink-0 flex-grow-0 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
-                                        <span className="text-sm font-normal text-gray-400">Brand</span>{' '}
+                                        <span className="text-sm font-normal text-gray-400">
+                                            {inputValues.category}
+                                        </span>{' '}
                                         <ChevronDown className="h-4 w-4 text-black" />
                                     </section>
                                 </DropdownMenuTrigger>
@@ -70,7 +89,7 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                                         <DropdownMenuItem
                                             key={category.name}
                                             onSelect={() => {
-                                                // action here
+                                                setInputValues({ ...inputValues, category: category.name });
                                             }}
                                             className="flex w-full"
                                         >
@@ -85,8 +104,10 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                             <Input
                                 label={'Variable Name'}
                                 type="text"
-                                value={''}
-                                onChange={() => null}
+                                value={inputValues.name}
+                                onChange={(e) => {
+                                    setInputValues({ ...inputValues, name: e.target.value });
+                                }}
                                 placeholder={'Enter Variable Name'}
                                 data-testid="variable-name-input"
                             />
@@ -110,9 +131,12 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                         <Button
                             type="button"
                             variant="primary"
-                            className="inline-flex items-center border-none !bg-pink-500 !p-2"
+                            className={`inline-flex items-center border-none !${
+                                loading ? 'bg-pink-300' : 'bg-pink-500'
+                            } !p-2`}
                             data-testid="next-button"
-                            onClick={() => null}
+                            onClick={() => saveTemplateVariable()}
+                            disabled={loading}
                         >
                             {t('outreaches.saveAndContinue')}
                         </Button>

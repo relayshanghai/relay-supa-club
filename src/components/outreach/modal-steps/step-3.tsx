@@ -48,15 +48,15 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                         <Tabs defaultValue={Step.OUTREACH} className="">
                             <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
-                                    <SendOutline className="h-4 w-4 -rotate-45" strokeWidth={2} />
+                                    <SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />
                                     {t('outreaches.steps.Outreach')}
                                 </TabsTrigger>
                                 <TabsTrigger className="flex gap-5" value={Step.FIRST_FOLLOW_UP}>
-                                    <ClockCheckedOutline className="h-4 w-4 self-center stroke-black" />
+                                    <ClockCheckedOutline className="h-4 w-4 self-center stroke-gray-400" />
                                     {t('outreaches.steps.firstFollowUp')}
                                 </TabsTrigger>
                                 <TabsTrigger className="flex gap-5" value={Step.SECOND_FOLLOW_UP}>
-                                    <Bell className="h-4 w-4 self-center" />
+                                    <Bell className="h-4 w-4 self-center stroke-gray-400" />
                                     {t('outreaches.steps.secondFollowUp')}
                                 </TabsTrigger>
                             </TabsList>

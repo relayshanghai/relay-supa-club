@@ -33,6 +33,7 @@ const outreaches = {
     setupSequence: '设置您新的邮件进程管理序列',
     autoStart: '自动开启',
     product: '产品',
+    addTemplateVariables: '添加模板变量',
     templateVariables: '模板变量',
     skipForNow: '暂时跳过',
     saveAndFinish: '保存设定并完成',

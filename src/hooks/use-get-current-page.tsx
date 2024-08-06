@@ -20,8 +20,8 @@ export const useGetCurrentPage = () => {
         return CurrentPageEvent.sequences;
     }
 
-    if (/^\/outreach\/?/.test(pathname)) {
-        return CurrentPageEvent.outreach;
+    if (/^\/\v2\/sequences\/?/.test(pathname)) {
+        return CurrentPageEvent.sequencesV2;
     }
 
     if (/^\/inbox\/?/.test(pathname)) {
