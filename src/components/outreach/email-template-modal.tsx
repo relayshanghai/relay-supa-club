@@ -8,6 +8,7 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
+    DialogOverlay,
     DialogTitle,
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
@@ -738,6 +739,7 @@ const EditEmailTemplateMOdalBody = ({
 const EmailTemplateMOdal: FC<EmailTemplateMOdalProps> = ({ modalOpen, setModalOpen }) => {
     return (
         <Dialog open={modalOpen} onOpenChange={(open) => setModalOpen(open)}>
+            <DialogOverlay className="!bg-background/20 !bg-black !bg-opacity-60 !backdrop-blur-[2px]" />
             <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
                 <DialogHeader>
                     <DialogTitle className="flex flex-col gap-1 bg-primary-800 px-6 py-4 pt-6">
