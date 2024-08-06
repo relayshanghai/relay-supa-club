@@ -20,7 +20,7 @@ import { useUser } from 'src/hooks/use-user';
 import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { CreateVariableModal } from './email-template-variable-modal';
-import CustomTemplateModal from 'pages/component-previews/custom-template-modal';
+import EmailTemplateMOdal from './email-template-modal';
 
 export const OutreachesPage = () => {
     const { t } = useTranslation();
@@ -76,7 +76,7 @@ export const OutreachesPage = () => {
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
             />
             <CreateVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
-            <CustomTemplateModal
+            <EmailTemplateMOdal
                 modalOpen={showTemplateLibraryModal}
                 setModalOpen={(open) => setShowTemplateLibraryModal(open)}
             />

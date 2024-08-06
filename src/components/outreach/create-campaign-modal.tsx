@@ -27,39 +27,37 @@ export const CreateCampaignModal = ({
 
     return (
         <Modal visible={showCreateCampaignModal} onClose={() => null} padding={0} maxWidth="!w-[960px]">
-            <div className="rounded-lg">
-                <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start bg-violet-50 shadow">
-                    <div
-                        className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer"
-                        onClick={() => setShowCreateCampaignModal(false)}
-                    >
-                        <Cross className="flex h-6 w-6 fill-white stroke-white" />
-                    </div>
-                    <ModalHeader step={step.toString() as '1' | '2' | '3'} />
-                    {/* body start */}
-                    {step === 1 && (
-                        <CampaignModalStepOne
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {step === 2 && (
-                        <CampaignModalStepTwo
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {step === 3 && (
-                        <CampaignModalStepThree
-                            onNextStep={onNextStep}
-                            onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShowCreateCampaignModal(v)}
-                        />
-                    )}
-                    {/* body end */}
+            <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start rounded-lg bg-violet-50 shadow">
+                <div
+                    className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer"
+                    onClick={() => setShowCreateCampaignModal(false)}
+                >
+                    <Cross className="flex h-6 w-6 fill-white stroke-white" />
                 </div>
+                <ModalHeader step={step.toString() as '1' | '2' | '3'} />
+                {/* body start */}
+                {step === 1 && (
+                    <CampaignModalStepOne
+                        onNextStep={onNextStep}
+                        onPrevStep={onPrevStep}
+                        setModalOpen={(v) => setShowCreateCampaignModal(v)}
+                    />
+                )}
+                {step === 2 && (
+                    <CampaignModalStepTwo
+                        onNextStep={onNextStep}
+                        onPrevStep={onPrevStep}
+                        setModalOpen={(v) => setShowCreateCampaignModal(v)}
+                    />
+                )}
+                {step === 3 && (
+                    <CampaignModalStepThree
+                        onNextStep={onNextStep}
+                        onPrevStep={onPrevStep}
+                        setModalOpen={(v) => setShowCreateCampaignModal(v)}
+                    />
+                )}
+                {/* body end */}
             </div>
         </Modal>
     );
