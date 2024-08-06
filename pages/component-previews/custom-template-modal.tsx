@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, type SetStateAction, type Dispatch } from 'react';
+import { useState, useCallback, useEffect, type SetStateAction, type Dispatch, type FC } from 'react';
 import Fuse from 'fuse.js';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
@@ -56,6 +56,11 @@ const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 type VariableGroup = (typeof VARIABLE_GROUPS)[number];
+
+type CustomTemplateModalProps = {
+    modalOpen: boolean;
+    setModalOpen: (visible: boolean) => void;
+};
 
 const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     switch (status) {
@@ -171,9 +176,6 @@ const CustomTemplateDetails = ({
 }) => {
     const { t } = useTranslation();
     const [templateDetails, setTemplateDetails] = useState<GetTemplateResponse>(template);
-    useEffect(() => {
-        console.log(templateDetails);
-    }, [templateDetails]);
     const [step, setStep] = useState(0);
 
     const progressStep = [
@@ -732,28 +734,21 @@ const EditCustomTemplateModalBody = ({
     );
 };
 
-const CustomTemplateModal = () => {
+const CustomTemplateModal: FC<CustomTemplateModalProps> = ({ modalOpen, setModalOpen }) => {
     return (
-        <>
-            <Dialog>
-                <DialogTrigger>
-                    <Button>Template Library</Button>
-                </DialogTrigger>
-                <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex flex-col gap-1 px-6 py-4 pt-6">
-                            <p className="text-xl text-gray-700">Email Template Library</p>
-                            <p className="text-sm font-normal text-gray-500">
-                                Create, view and update your templates here
-                            </p>
-                        </DialogTitle>
-                        <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
-                            <CustomTemplateModalBody />
-                        </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-        </>
+        <Dialog open={modalOpen} onOpenChange={(open) => setModalOpen(open)}>
+            <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
+                <DialogHeader>
+                    <DialogTitle className="flex flex-col gap-1 px-6 py-4 pt-6">
+                        <p className="text-xl text-gray-700">Email Template Library</p>
+                        <p className="text-sm font-normal text-gray-500">Create, view and update your templates here</p>
+                    </DialogTitle>
+                    <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
+                        <CustomTemplateModalBody />
+                    </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        </Dialog>
     );
 };
 

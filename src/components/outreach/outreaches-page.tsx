@@ -20,6 +20,7 @@ import { useUser } from 'src/hooks/use-user';
 import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { CreateVariableModal } from './email-template-variable-modal';
+import CustomTemplateModal from 'pages/component-previews/custom-template-modal';
 
 export const OutreachesPage = () => {
     const { t } = useTranslation();
@@ -32,6 +33,7 @@ export const OutreachesPage = () => {
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showVariableModal, setShowVariableModal] = useState(false);
+    const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
 
     const handleOpenCreateSequenceModal = () => {
@@ -74,6 +76,10 @@ export const OutreachesPage = () => {
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
             />
             <CreateVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
+            <CustomTemplateModal
+                modalOpen={showTemplateLibraryModal}
+                setModalOpen={(open) => setShowTemplateLibraryModal(open)}
+            />
             <div className=" mx-6 flex flex-col space-y-4 py-6">
                 <div className="flex w-full justify-between">
                     <div className="mb-6 md:w-1/2">
@@ -87,7 +93,7 @@ export const OutreachesPage = () => {
                     <div className="flex h-[42px] flex-row gap-2">
                         <Button
                             variant="secondary"
-                            onClick={() => null}
+                            onClick={() => setShowTemplateLibraryModal(true)}
                             className="flex items-center"
                             data-testid="template-library-button"
                         >
