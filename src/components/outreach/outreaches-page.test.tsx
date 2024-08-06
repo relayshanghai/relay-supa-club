@@ -2,6 +2,7 @@ import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { OutreachesPage } from './outreaches-page';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 const { pushMock, reactUseStateMock, reactUseMemoMock } = vi.hoisted(() => {
     return {
@@ -78,7 +79,11 @@ describe('OutreachesPage Component', () => {
 
     test('should render the page', () => {
         reactUseStateMock.mockReturnValue([false, () => null]);
-        const { getByTestId } = render(<OutreachesPage />);
+        const { getByTestId } = render(
+            <StoreProvider>
+                <OutreachesPage />
+            </StoreProvider>,
+        );
         const outreachText = getByTestId('outreach-text');
         const templateLibraryButton = getByTestId('template-library-button');
         const createCampaignButton = getByTestId('create-campaign-button');
@@ -89,7 +94,11 @@ describe('OutreachesPage Component', () => {
 
     test('should open the create campaign modal', () => {
         reactUseStateMock.mockReturnValue([false, vi.fn()]);
-        const { getByTestId } = render(<OutreachesPage />);
+        const { getByTestId } = render(
+            <StoreProvider>
+                <OutreachesPage />
+            </StoreProvider>,
+        );
         const createCampaignButton = getByTestId('create-campaign-button');
         createCampaignButton.click();
         expect(reactUseStateMock).toHaveBeenCalledWith(true);
