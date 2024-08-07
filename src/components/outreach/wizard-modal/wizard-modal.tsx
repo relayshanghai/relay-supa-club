@@ -4,11 +4,37 @@ import { Cross } from 'src/components/icons';
 import { ModalHeader } from './wizard-modal-header';
 import { type WizardModalProps } from '../types';
 
-export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps }) => {
-    const [step, setStep] = useState<number>(1);
+export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsDisabled }) => {
+    const getUnDisabledNextStep = (s: number) => {
+        if (stepsDisabled?.includes(s + 1)) {
+            return getUnDisabledNextStep(s + 1);
+        }
+        return s + 1;
+    };
 
-    const onNextStep = () => setStep(step + 1);
-    const onPrevStep = () => setStep(step - 1);
+    const getUndisabledPrevStep = (s: number) => {
+        if (stepsDisabled?.includes(s - 1)) {
+            return getUndisabledPrevStep(s - 1);
+        }
+        return s - 1;
+    };
+
+    const [step, setStep] = useState<number>(stepsDisabled?.includes(1) ? getUnDisabledNextStep(1) : 1);
+
+    const onNextStep = () => {
+        // check if next step is disabled
+        if (stepsDisabled?.includes(step + 1)) {
+            return setStep(getUnDisabledNextStep(step));
+        }
+        setStep(step + 1);
+    };
+    const onPrevStep = () => {
+        // check if prev step is disabled
+        if (stepsDisabled?.includes(step - 1)) {
+            return setStep(getUndisabledPrevStep(step));
+        }
+        setStep(step - 1);
+    };
 
     return (
         <Modal visible={show} onClose={() => null} padding={0} maxWidth="!w-[960px]">

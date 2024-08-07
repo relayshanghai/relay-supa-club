@@ -10,6 +10,8 @@ const outreaches = {
     starterOrBlank: 'Starter or blank slate',
     nameYourTemplate: 'Name your template',
     nameAndBriefDescription: 'Name and brief description',
+    setTemplateContent: 'Set template content',
+    subjectAndEmailBody: 'Subject and email body',
     setTemplateVariables: 'Set template variables',
     canDoNowOrLater: 'Can do now or later',
     templates: 'Templates',

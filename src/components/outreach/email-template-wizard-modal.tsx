@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { CampaignModalStepOne } from './email-template-modal-steps/step-1';
-import { CampaignModalStepTwo } from './email-template-modal-steps/step-2';
 import { CampaignModalStepThree } from './email-template-modal-steps/step-3';
 import { WizardModal } from './wizard-modal/wizard-modal';
 import { type WizardStep } from './types';
@@ -20,15 +19,15 @@ export const EmailTemplateWizardModal = ({
             description: t('outreaches.starterOrBlank'),
         },
         {
-            component: CampaignModalStepTwo,
-            title: t('outreaches.nameYourTemplate'),
-            description: t('outreaches.nameAndBriefDescription'),
+            component: CampaignModalStepOne,
+            title: t('outreaches.setTemplateContent'),
+            description: t('outreaches.subjectAndEmailBody'),
         },
         {
             component: CampaignModalStepThree,
-            title: t('outreaches.setTemplateVariables'),
-            description: t('outreaches.canDoNowOrLater'),
+            title: t('outreaches.nameYourTemplate'),
+            description: t('outreaches.nameAndBriefDescription'),
         },
     ];
-    return <WizardModal show={modalOpen} setShow={setModalOpen} steps={steps} />;
+    return <WizardModal show={modalOpen} setShow={setModalOpen} steps={steps} stepsDisabled={[1]} />;
 };

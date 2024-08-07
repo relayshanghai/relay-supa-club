@@ -16,4 +16,5 @@ export type WizardModalProps = {
     show: boolean;
     setShow: (show: boolean) => void;
     steps: WizardStep[];
+    stepsDisabled?: number[];
 };
