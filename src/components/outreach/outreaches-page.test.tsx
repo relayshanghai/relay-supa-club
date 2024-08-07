@@ -69,6 +69,14 @@ vi.mock('src/components/outreach/create-campaign-modal', () => ({
     }) => <>{children}</>,
 }));
 
+vi.mock('src/backend/database/sequence-email-template/sequence-email-template-entity', () => ({
+    Step: {
+        OUTREACH: 'OUTREACH',
+        FIRST_FOLLOW_UP: 'FIRST_FOLLOW_UP',
+        SECOND_FOLLOW_UP: 'SECOND_FOLLOW_UP',
+    },
+}));
+
 describe('OutreachesPage Component', () => {
     afterEach(() => {
         cleanup();
