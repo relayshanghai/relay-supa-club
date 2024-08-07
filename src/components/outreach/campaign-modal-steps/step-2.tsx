@@ -5,7 +5,7 @@ import { Switch } from 'shadcn/components/ui/switch';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState, type FC } from 'react';
-import { type ModalStepProps } from '../create-campaign-modal';
+import { type ModalStepProps } from '../types';
 import {
     DropdownMenu,
     DropdownMenuContent,

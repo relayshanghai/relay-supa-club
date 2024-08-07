@@ -11,7 +11,7 @@ import { SequenceAccordion } from './components/sequence-accordion';
 import { SequenceStepDuration } from './components/sequence-step-duration';
 import { SequenceStepItem } from './components/sequence-step-item';
 import { useTranslation } from 'react-i18next';
-import { type ModalStepProps } from '../create-campaign-modal';
+import { type ModalStepProps } from '../types';
 import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
 
 export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {

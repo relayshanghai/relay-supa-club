@@ -20,7 +20,7 @@ import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { CreateVariableModal } from './email-template-variable-modal';
 import { EmailTemplateModal } from './email-template-modal';
-import { CreateCampaignModal } from './create-campaign-modal';
+import { CampaignWizardModal } from './campaign-wizard-modal';
 
 export const OutreachesPage = () => {
     const { t } = useTranslation();
@@ -70,8 +70,7 @@ export const OutreachesPage = () => {
                 setShow={setShowDeleteModal}
                 handleDelete={handleDeleteSequence}
             />
-            <CreateCampaignModal
-                title={t('outreaches.sequenceModal') as string}
+            <CampaignWizardModal
                 showCreateCampaignModal={showCreateCampaignModal}
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
             />

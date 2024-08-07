@@ -3,12 +3,12 @@ import { type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
-import { type ModalStepProps } from '../create-campaign-modal';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
 import { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
 import SequenceEmailVariable from './components/sequence-email-variables';
+import { type ModalStepProps } from '../types';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();

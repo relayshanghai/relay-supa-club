@@ -53,6 +53,7 @@ import { useAtomValue } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
 import { TiptapInput } from 'src/components/tiptap/input';
 import { Modal } from '../modal';
+import { EmailTemplateWizardModal } from './email-template-wizard-modal';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
@@ -482,25 +483,34 @@ const NameTemplateBody = ({
 };
 
 const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; templates: GetAllTemplateResponse[] }) => {
+    const [showTemplateWizard, setShowTemplateWizard] = useState<boolean>(false);
     return (
-        <section className="divide-y-2 p-8">
-            {templates.length > 0 && (
-                <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
-                    {templates.map((template) => (
-                        <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
-                    ))}
+        <>
+            <EmailTemplateWizardModal
+                modalOpen={showTemplateWizard}
+                setModalOpen={(open) => setShowTemplateWizard(open)}
+            />
+            <section className="divide-y-2 p-8">
+                {templates.length > 0 && (
+                    <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
+                        {templates.map((template) => (
+                            <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
+                        ))}
+                    </div>
+                )}
+                <div>
+                    <section className="pb-3 pt-6">
+                        <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
+                        <p className="font-normal text-gray-500 placeholder-gray-500">
+                            If you already have a template in mind
+                        </p>
+                    </section>
+                    <div className="hover:cursor-pointer" onClick={() => setShowTemplateWizard(true)}>
+                        <NewTemplateCard />
+                    </div>
                 </div>
-            )}
-            <div>
-                <section className="pb-3 pt-6">
-                    <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
-                    <p className="font-normal text-gray-500 placeholder-gray-500">
-                        If you already have a template in mind
-                    </p>
-                </section>
-                <NewTemplateCard />
-            </div>
-        </section>
+            </section>
+        </>
     );
 };
 
