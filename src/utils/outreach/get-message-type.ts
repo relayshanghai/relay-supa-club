@@ -15,8 +15,8 @@ type GetMessageTypeFn = (params: {
  */
 export const getMessageType: GetMessageTypeFn = async (params) => {
     const emailMessage = params.message;
-    const startsWithReplyPrefix = emailMessage.subject.toLowerCase().startsWith('re: ');
-    const startsWithForwardPrefix = emailMessage.subject.toLowerCase().startsWith('fwd: ');
+    const startsWithReplyPrefix = emailMessage.subject?.toLowerCase().startsWith('re: ');
+    const startsWithForwardPrefix = emailMessage.subject?.toLowerCase().startsWith('fwd: ');
 
     // The following conditions that use messageSpecialUse are most likely gmail emails
 
