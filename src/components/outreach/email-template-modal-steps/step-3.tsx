@@ -3,14 +3,15 @@ import { type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
-import { type ModalStepProps } from '../campaign-wizard-modal';
+import { type ModalStepProps } from '../types';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
 import { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
 import SequenceEmailVariable from './components/sequence-email-variables';
+import { EmailTemplateEditor } from './components/email-template-editor';
 
-export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
+export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
 
     return (
@@ -45,31 +46,29 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
                     <div className="w-full">
-                        <Tabs defaultValue={Step.OUTREACH} className="">
-                            <TabsList className="grid w-full grid-cols-3">
-                                <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
-                                    <SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />
-                                    {t('outreaches.steps.Outreach')}
-                                </TabsTrigger>
-                                <TabsTrigger className="flex gap-5" value={Step.FIRST_FOLLOW_UP}>
-                                    <ClockCheckedOutline className="h-4 w-4 self-center stroke-gray-400" />
-                                    {t('outreaches.steps.firstFollowUp')}
-                                </TabsTrigger>
-                                <TabsTrigger className="flex gap-5" value={Step.SECOND_FOLLOW_UP}>
-                                    <Bell className="h-4 w-4 self-center stroke-gray-400" />
-                                    {t('outreaches.steps.secondFollowUp')}
-                                </TabsTrigger>
-                            </TabsList>
-                            <TabsContent value={Step.OUTREACH}>
-                                <SequenceEmailVariable step={Step.OUTREACH} />
-                            </TabsContent>
-                            <TabsContent value={Step.FIRST_FOLLOW_UP}>
-                                <SequenceEmailVariable step={Step.FIRST_FOLLOW_UP} />
-                            </TabsContent>
-                            <TabsContent value={Step.SECOND_FOLLOW_UP}>
-                                <SequenceEmailVariable step={Step.SECOND_FOLLOW_UP} />
-                            </TabsContent>
-                        </Tabs>
+                        <section className="flex w-full justify-between gap-6 py-2">
+                            <section className="flex grow flex-col gap-2">
+                                <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
+
+                                <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
+                                    Outreach
+                                </label>
+                            </section>
+                            <section className="flex grow flex-col gap-2">
+                                <p className="text-xl font-semibold text-gray-600">Subject Line</p>
+                                <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
+                                    Test Subject
+                                </label>
+                            </section>
+                        </section>
+                        <EmailTemplateEditor
+                            content=""
+                            onNextClick={() => null}
+                            onStatusChange={() => null}
+                            setTemplateDetails={() => null}
+                            status={'OUTREACH'}
+                            subject=""
+                        />
                     </div>
                     <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
                         <Button

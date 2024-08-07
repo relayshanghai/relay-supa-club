@@ -11,10 +11,10 @@ import { SequenceAccordion } from './components/sequence-accordion';
 import { SequenceStepDuration } from './components/sequence-step-duration';
 import { SequenceStepItem } from './components/sequence-step-item';
 import { useTranslation } from 'react-i18next';
-import { type ModalStepProps } from '../campaign-wizard-modal';
 import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
+import { type ModalStepProps } from '../types';
 
-export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
+export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const {
         sequenceEmailTemplates: outreachEmailTemplates,
         refreshSequenceEmailTemplates: refreshOutreachEmailTemplates,

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { CampaignModalStepOne } from './email-template-modal-steps/step-1';
-import { CampaignModalStepThree } from './email-template-modal-steps/step-3';
+import { EmailTemplateModalStepOne } from './email-template-modal-steps/step-1';
+import { EmailTemplateModalStepThree } from './email-template-modal-steps/step-3';
 import { WizardModal } from './wizard-modal/wizard-modal';
 import { type WizardStep } from './types';
 
@@ -14,17 +14,17 @@ export const EmailTemplateWizardModal = ({
     const { t } = useTranslation();
     const steps: WizardStep[] = [
         {
-            component: CampaignModalStepOne,
+            component: EmailTemplateModalStepOne,
             title: t('outreaches.chooseStartingPoint'),
             description: t('outreaches.starterOrBlank'),
         },
         {
-            component: CampaignModalStepOne,
+            component: EmailTemplateModalStepThree,
             title: t('outreaches.setTemplateContent'),
             description: t('outreaches.subjectAndEmailBody'),
         },
         {
-            component: CampaignModalStepThree,
+            component: EmailTemplateModalStepThree,
             title: t('outreaches.nameYourTemplate'),
             description: t('outreaches.nameAndBriefDescription'),
         },

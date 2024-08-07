@@ -5,7 +5,7 @@ import { Switch } from 'shadcn/components/ui/switch';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState, type FC } from 'react';
-import { type ModalStepProps } from '../campaign-wizard-modal';
+import { type ModalStepProps } from '../types';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,7 +18,7 @@ import { type ProductEntity } from 'src/backend/database/product/product-entity'
 import { type Nullable } from 'types/nullable';
 import { CreateProductModal } from 'src/components/products/products-modal';
 
-export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
+export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Nullable<ProductEntity>>(null);
