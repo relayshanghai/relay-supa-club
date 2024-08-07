@@ -11,7 +11,6 @@ import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';
 import { DeleteOutline } from '../icons';
-import { CreateCampaignModal } from './create-campaign-modal';
 import { SequenceStats } from './sequence-stats';
 import SequencesTable from './outreaches-table';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
@@ -20,7 +19,8 @@ import { useUser } from 'src/hooks/use-user';
 import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { CreateVariableModal } from './email-template-variable-modal';
-import EmailTemplateMOdal from './email-template-modal';
+import { EmailTemplateModal } from './email-template-modal';
+import { CreateCampaignModal } from './create-campaign-modal';
 
 export const OutreachesPage = () => {
     const { t } = useTranslation();
@@ -76,7 +76,7 @@ export const OutreachesPage = () => {
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
             />
             <CreateVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
-            <EmailTemplateMOdal
+            <EmailTemplateModal
                 modalOpen={showTemplateLibraryModal}
                 setModalOpen={(open) => setShowTemplateLibraryModal(open)}
             />

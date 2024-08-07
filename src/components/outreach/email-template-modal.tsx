@@ -8,7 +8,6 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogOverlay,
     DialogTitle,
     DialogTrigger,
 } from 'shadcn/components/ui/dialog';
@@ -34,6 +33,7 @@ import {
     RingingBell,
     Rocket,
     ChevronDown,
+    Cross,
 } from 'src/components/icons';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import ProgressHeader from 'src/components/ProgressHeader';
@@ -52,14 +52,14 @@ import { type Editor } from '@tiptap/react';
 import { useAtomValue } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
 import { TiptapInput } from 'src/components/tiptap/input';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { Modal } from '../modal';
 
 const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 type VariableGroup = (typeof VARIABLE_GROUPS)[number];
 
-type EmailTemplateMOdalProps = {
+type EmailTemplateModalProps = {
     modalOpen: boolean;
     setModalOpen: (visible: boolean) => void;
 };
@@ -244,7 +244,7 @@ const CustomTemplateDetails = ({
                             </DialogTitle>
                             <DialogDescription className="h-full w-full bg-primary-50 p-6">
                                 {step <= 1 ? (
-                                    <EditEmailTemplateMOdalBody
+                                    <EditEmailTemplateModalBody
                                         onNextClick={handleNextClick}
                                         templateDetails={templateDetails}
                                         setTemplateDetails={setTemplateDetails}
@@ -483,12 +483,14 @@ const NameTemplateBody = ({
 
 const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; templates: GetAllTemplateResponse[] }) => {
     return (
-        <section className="divide-y-2">
-            <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
-                {templates.map((template) => (
-                    <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
-                ))}
-            </div>
+        <section className="divide-y-2 p-8">
+            {templates.length > 0 && (
+                <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
+                    {templates.map((template) => (
+                        <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
+                    ))}
+                </div>
+            )}
             <div>
                 <section className="pb-3 pt-6">
                     <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
@@ -502,7 +504,7 @@ const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; tem
     );
 };
 
-const EmailTemplateMOdalBody = () => {
+const EmailTemplateModalBody = () => {
     const { t } = useTranslation();
     const { data } = useSWR(['pah'], async () => {
         const res = await apiFetch<GetAllTemplateResponse[]>('/api/outreach/email-templates');
@@ -643,7 +645,7 @@ export const addVariable = (editor: Editor | null, text: string) => {
     editor?.commands.insertContent(`<variable-component text="${text}" />`);
 };
 
-const EditEmailTemplateMOdalBody = ({
+const EditEmailTemplateModalBody = ({
     onNextClick,
     templateDetails,
     setTemplateDetails,
@@ -736,31 +738,33 @@ const EditEmailTemplateMOdalBody = ({
     );
 };
 
-const EmailTemplateMOdal: FC<EmailTemplateMOdalProps> = ({ modalOpen, setModalOpen }) => {
+export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, setModalOpen }) => {
     return (
-        <Dialog open={modalOpen} onOpenChange={(open) => setModalOpen(open)}>
-            <DialogOverlay className="!bg-background/20 !bg-black !bg-opacity-60 !backdrop-blur-[2px]" />
-            <DialogContent className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]">
-                <DialogHeader>
-                    <DialogTitle className="flex flex-col gap-1 bg-primary-800 px-6 py-4 pt-6">
-                        <p className="text-xl text-white">Email Template Library</p>
-                        <p className="text-sm font-normal text-white">Create, view and update your templates here</p>
-                    </DialogTitle>
-                    <DialogClose asChild>
-                        <button
-                            className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute right-[11px] top-[7px] z-[100] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
-                            aria-label="Close"
-                        >
-                            <Cross2Icon className="h-4 w-4 stroke-white" />
-                        </button>
-                    </DialogClose>
-                    <DialogDescription className="h-full w-full bg-primary-50 p-6 pt-0">
-                        <EmailTemplateMOdalBody />
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+        <Modal visible={modalOpen} onClose={(open) => setModalOpen(open)} padding={0} maxWidth="!w-[960px]">
+            <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start rounded-lg bg-violet-50 shadow">
+                <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setModalOpen(false)}>
+                    <Cross className="flex h-6 w-6 fill-white stroke-white" />
+                </div>
+
+                <div
+                    className="inline-flex items-start justify-between self-stretch rounded-t-lg bg-gradient-to-tr from-violet-900 to-violet-700 pl-8 pr-3 pt-4"
+                    data-testid="modal-header"
+                >
+                    <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start">
+                        <div className="inline-flex w-[896px] items-start justify-between pb-3 pt-2">
+                            <div className="relative flex h-[68px] shrink grow basis-0 flex-col items-start justify-between">
+                                <p className="text-xl text-white">Email Template Library</p>
+                                <p className="text-sm font-normal text-white">
+                                    Create, view and update your templates here
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* body start */}
+                <EmailTemplateModalBody />
+                {/* body end */}
+            </div>
+        </Modal>
     );
 };
-
-export default EmailTemplateMOdal;

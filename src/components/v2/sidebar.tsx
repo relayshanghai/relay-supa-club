@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState, type MutableRefObject, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from '../icons';
 import { Title } from '../title';
 import { useTranslation } from 'react-i18next';
@@ -45,14 +45,7 @@ const ActiveLink = ({ href, children, expandedName }: { href: string; children: 
     );
 };
 
-export const SidebarV2 = ({}: {
-    accountMenuOpen: boolean;
-    accountMenuButtonRef: MutableRefObject<null>;
-    accountMenuRef: MutableRefObject<null>;
-    setAccountMenuOpen: (menu: boolean) => void;
-    loggedIn: boolean | null;
-    profileFirstName?: string;
-}) => {
+export const SidebarV2 = () => {
     const { t } = useTranslation();
     return (
         // mask is the dark overlay that appears when the sidebar is open
