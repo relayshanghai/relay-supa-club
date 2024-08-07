@@ -499,7 +499,7 @@ const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; tem
                     </div>
                 )}
                 <div>
-                    <section className="pb-3 pt-6">
+                    <section className="pb-3">
                         <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
                         <p className="font-normal text-gray-500 placeholder-gray-500">
                             If you already have a template in mind

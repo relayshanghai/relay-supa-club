@@ -10,17 +10,24 @@ import { Toolbar } from '../inbox/wip/toolbar';
 import VariableNode from './variable-node';
 import { useSetAtom } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
+import { cn } from 'src/utils/classnames';
+
+type TiptapOptions = {
+    formClassName?: string;
+};
 
 export const Tiptap = ({
     description,
     onChange,
     onSubmit,
     placeholder,
+    options,
 }: {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
     placeholder?: string;
+    options?: TiptapOptions;
 }) => {
     const setCurrentEditor = useSetAtom(currentEditorAtom);
     const editor = useEditor({
@@ -91,13 +98,13 @@ export const Tiptap = ({
                 onSubmit();
                 editor?.commands.clearContent();
             }}
-            className="flex h-full min-h-[500px] flex-col justify-stretch"
+            className={cn('flex h-full min-h-[300px] flex-col justify-stretch', options?.formClassName)}
         >
             <div className="flex">
                 <Toolbar editor={editor} />
             </div>
             <EditorContent
-                className="h-full min-h-[500px] overflow-y-auto"
+                className={cn('h-full min-h-[300px] overflow-y-auto', options?.formClassName)}
                 spellCheck="false"
                 placeholder={placeholder}
                 editor={editor}

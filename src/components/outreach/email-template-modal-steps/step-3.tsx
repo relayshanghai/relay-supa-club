@@ -5,10 +5,6 @@ import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from '../types';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'shadcn/components/ui/tabs';
-import { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
-import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
-import SequenceEmailVariable from './components/sequence-email-variables';
 import { EmailTemplateEditor } from './components/email-template-editor';
 
 export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
@@ -46,25 +42,8 @@ export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, 
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
                     <div className="w-full">
-                        <section className="flex w-full justify-between gap-6 py-2">
-                            <section className="flex grow flex-col gap-2">
-                                <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
-
-                                <label className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500">
-                                    Outreach
-                                </label>
-                            </section>
-                            <section className="flex grow flex-col gap-2">
-                                <p className="text-xl font-semibold text-gray-600">Subject Line</p>
-                                <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
-                                    Test Subject
-                                </label>
-                            </section>
-                        </section>
                         <EmailTemplateEditor
                             content=""
-                            onNextClick={() => null}
-                            onStatusChange={() => null}
                             setTemplateDetails={() => null}
                             status={'OUTREACH'}
                             subject=""
