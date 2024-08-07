@@ -3,12 +3,12 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { type OutreachEmailTemplateVariableEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-variable-entity';
 import { type Nullable } from 'types/nullable';
 
-interface ProductState {
+interface TemplateVariableProps {
     list: OutreachEmailTemplateVariableEntity[];
     item: Nullable<OutreachEmailTemplateVariableEntity>;
 }
 
-const initialState: ProductState = {
+const initialState: TemplateVariableProps = {
     list: [],
     item: null,
 };

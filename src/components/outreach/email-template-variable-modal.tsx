@@ -1,5 +1,5 @@
 import { useState, type FC } from 'react';
-import { Cross, Rocket, Gift, Atoms, User } from '../icons';
+import { Cross } from '../icons';
 import { Modal } from '../modal';
 import { Input } from '../input';
 import { Button } from '../button';
@@ -11,39 +11,26 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown } from 'src/components/icons';
-import Megaphone from '../icons/Megaphone';
 import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 import { clientLogger } from 'src/utils/logger-client';
+import { variableCategories } from './utils';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
     setModalOpen: (visible: boolean) => void;
 };
 
-const DropdownIcon = (icon: JSX.Element) => {
-    return <div className="mr-2 h-6 w-6">{icon}</div>;
-};
-
-const categories = [
-    { name: 'Brand', icon: DropdownIcon(<Megaphone />) },
-    { name: 'Product', icon: DropdownIcon(<Rocket />) },
-    { name: 'Collab', icon: DropdownIcon(<Gift />) },
-    { name: 'Influencers', icon: DropdownIcon(<User />) },
-    { name: 'Wildcards', icon: DropdownIcon(<Atoms />) },
-];
-
 export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
-    const { createTemplateVariable, loading } = useOutreachTemplateVariable();
+    const { createTemplateVariable, loading, getTemplateVariables } = useOutreachTemplateVariable();
     const [inputValues, setInputValues] = useState({
         category: 'Brand',
         name: '',
     });
     const saveTemplateVariable = () => {
         createTemplateVariable(inputValues)
-            .then(() => {
-                setInputValues({ category: 'Brand', name: '' });
-            })
+            .then(() => getTemplateVariables())
+            .then(() => setInputValues({ category: 'Brand', name: '' }))
             .catch((error) => {
                 clientLogger(error);
             });
@@ -85,7 +72,7 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                                     </section>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-[210px]">
-                                    {categories.map((category) => (
+                                    {variableCategories.map((category) => (
                                         <DropdownMenuItem
                                             key={category.name}
                                             onSelect={() => {

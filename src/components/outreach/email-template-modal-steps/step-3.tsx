@@ -1,14 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from '../types';
-import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
+import { OutreachEmailVariableAccordion } from './components/sequence-variables-accordion';
 import { EmailTemplateEditor } from './components/email-template-editor';
+import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 
 export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
+    const { getTemplateVariables, templateVariables } = useOutreachTemplateVariable();
+
+    useEffect(() => {
+        getTemplateVariables();
+    }, []);
+
+    const categories = templateVariables.reduce((acc, variable) => {
+        if (!acc.includes(variable.category)) {
+            acc.push(variable.category);
+        }
+        return acc;
+    }, [] as string[]);
 
     return (
         <div
@@ -22,22 +35,14 @@ export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, 
                             {t('outreaches.templateVariables')}
                         </div>
                     </div>
-                    <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
-                        <SequenceVariableAccordion
-                            title={'Product'}
-                            items={[
-                                {
-                                    id: '1',
-                                    name: 'Product Name',
-                                    category: 'product',
-                                },
-                                {
-                                    id: '2',
-                                    name: 'Manager First English Name',
-                                    category: 'product',
-                                },
-                            ]}
-                        />
+                    <Accordion type="multiple" className="w-full">
+                        {categories.map((category) => (
+                            <OutreachEmailVariableAccordion
+                                key={category}
+                                title={category}
+                                items={templateVariables.filter((d) => d.category === category)}
+                            />
+                        ))}
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">

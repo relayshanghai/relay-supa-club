@@ -143,3 +143,4 @@ export { default as Retry } from './Retry';
 export { default as Bell } from './Bell';
 export { default as Gift } from './Gift';
 export { default as Atoms } from './Atoms';
+export { default as Megaphone } from './Megaphone';
