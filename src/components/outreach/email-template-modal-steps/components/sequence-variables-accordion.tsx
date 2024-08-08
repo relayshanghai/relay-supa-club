@@ -41,7 +41,7 @@ export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionPr
                             <div className="flex h-8 flex-col items-start justify-start gap-1 self-stretch">
                                 <div className="inline-flex items-start justify-start gap-1 self-stretch">
                                     <div
-                                        className="ml-2"
+                                        className="ml-2 hover:cursor-pointer"
                                         onClick={() => {
                                             onClick && onClick(d.name);
                                         }}

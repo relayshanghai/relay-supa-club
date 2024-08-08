@@ -1,4 +1,4 @@
-import { useState, type SetStateAction, type Dispatch } from 'react';
+import { type SetStateAction, type Dispatch } from 'react';
 import { Card, CardDescription } from 'shadcn/components/ui/card';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import { Tiptap } from 'src/components/tiptap';
@@ -11,6 +11,7 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown } from 'src/components/icons';
+import { useTranslation } from 'react-i18next';
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 
@@ -27,7 +28,23 @@ export const EmailTemplateEditor = ({
     onStatusChange: (status: OutreachStatus) => void;
     setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
 }) => {
-    const [subjectInput, setSubjectInput] = useState('');
+    const { t } = useTranslation();
+
+    const getOutreachStepsTranslationKeys = (s: OutreachStatus) => {
+        switch (s) {
+            case 'OUTREACH':
+                return 'Outreach';
+            case 'FIRST_FOLLOW_UP':
+                return '1st Follow-up';
+            case 'SECOND_FOLLOW_UP':
+                return '2nd Follow-up';
+            case 'THIRD_FOLLOW_UP':
+                return '3rd Follow-up';
+            default:
+                break;
+        }
+    };
+
     return (
         <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">
             <CardDescription className="flex h-full flex-col gap-4">
@@ -37,20 +54,20 @@ export const EmailTemplateEditor = ({
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-600 shadow">
-                                    Status
+                                    {t(`outreaches.steps.${getOutreachStepsTranslationKeys(status)}`)}
                                     <ChevronDown className="h-4 w-4 stroke-gray-400" />
                                 </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start">
-                                {OUTREACH_STATUSES.map((status, index) => (
+                                {OUTREACH_STATUSES.map((s, index) => (
                                     <DropdownMenuItem
                                         className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} grow text-gray-700`}
-                                        key={'dropdownitem-' + status}
+                                        key={'dropdownitem-' + s}
                                         onSelect={() => {
-                                            onStatusChange(status);
+                                            onStatusChange(s);
                                         }}
                                     >
-                                        {status}
+                                        {t(`outreaches.steps.${getOutreachStepsTranslationKeys(s)}`)}
                                     </DropdownMenuItem>
                                 ))}
                             </DropdownMenuContent>
@@ -59,14 +76,13 @@ export const EmailTemplateEditor = ({
                     <section className="flex grow-0 flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
                         <TiptapInput
-                            onChange={(subject: string) => {
-                                setSubjectInput(`${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}`);
+                            onChange={(s: string) => {
                                 setTemplateDetails((prev) => {
-                                    return { ...prev, subject: `${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}` };
+                                    return { ...prev, subject: s };
                                 });
                             }}
-                            placeholder={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subject}`}
-                            description={`${status !== 'OUTREACH' ? 'Re: ' : ''}${subjectInput}`}
+                            placeholder={`Email Subject`}
+                            description={subject}
                             onSubmit={() => {
                                 //
                             }}
@@ -81,7 +97,7 @@ export const EmailTemplateEditor = ({
                 <section className="h-full min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
                     <Tiptap
                         description={content}
-                        placeholder="email body"
+                        placeholder="Write your email template here"
                         onChange={(description) => {
                             setTemplateDetails((prev) => {
                                 return { ...prev, template: description };

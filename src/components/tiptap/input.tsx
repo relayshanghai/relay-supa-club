@@ -6,6 +6,7 @@ import { currentEditorAtom } from 'src/atoms/current-editor';
 import StarterKit from '@tiptap/starter-kit';
 import VariableNode from './variable-node';
 import { cn } from 'src/utils/classnames';
+import Placeholder from '@tiptap/extension-placeholder';
 
 type EditorOptions = {
     className?: string;
@@ -28,7 +29,12 @@ export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, place
             StarterKit.configure({
                 hardBreak: false,
             }),
-
+            Placeholder.configure({
+                showOnlyWhenEditable: false,
+                emptyNodeClass:
+                    'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
+                emptyEditorClass: '',
+            }),
             Paragraph.configure({
                 HTMLAttributes: {
                     class: 'whitespace-nowrap grow-0 overflow-x-auto no-scrollbar max-w-[400px] text-clip',
@@ -53,6 +59,16 @@ export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, place
     useEffect(() => {
         setCurrentEditor(editor);
     }, [editor, setCurrentEditor]);
+
+    useEffect(() => {
+        const placeholderExtension = editor?.extensionManager.extensions.find(
+            (extension) => extension.name === 'placeholder',
+        );
+        if (placeholderExtension) {
+            placeholderExtension.options['placeholder'] = placeholder;
+        }
+        editor?.view.dispatch(editor?.state.tr);
+    }, [placeholder, editor]);
 
     return (
         <EditorContent
