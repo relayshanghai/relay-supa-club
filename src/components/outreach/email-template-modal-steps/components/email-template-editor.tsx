@@ -1,4 +1,3 @@
-import { type SetStateAction, type Dispatch } from 'react';
 import { Card, CardDescription } from 'shadcn/components/ui/card';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import { Tiptap } from 'src/components/tiptap';
@@ -16,17 +15,11 @@ import { useTranslation } from 'react-i18next';
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 
 export const EmailTemplateEditor = ({
-    subject,
-    status,
-    content,
-    onStatusChange,
+    templateDetails,
     setTemplateDetails,
 }: {
-    subject: string;
-    status: OutreachStatus;
-    content: string;
-    onStatusChange: (status: OutreachStatus) => void;
-    setTemplateDetails: Dispatch<SetStateAction<GetTemplateResponse>>;
+    templateDetails: GetTemplateResponse;
+    setTemplateDetails: (template: GetTemplateResponse) => void;
 }) => {
     const { t } = useTranslation();
 
@@ -54,7 +47,7 @@ export const EmailTemplateEditor = ({
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-600 shadow">
-                                    {t(`outreaches.steps.${getOutreachStepsTranslationKeys(status)}`)}
+                                    {t(`outreaches.steps.${getOutreachStepsTranslationKeys(templateDetails.step)}`)}
                                     <ChevronDown className="h-4 w-4 stroke-gray-400" />
                                 </div>
                             </DropdownMenuTrigger>
@@ -64,7 +57,7 @@ export const EmailTemplateEditor = ({
                                         className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} grow text-gray-700`}
                                         key={'dropdownitem-' + s}
                                         onSelect={() => {
-                                            onStatusChange(s);
+                                            setTemplateDetails({ ...templateDetails, step: s });
                                         }}
                                     >
                                         {t(`outreaches.steps.${getOutreachStepsTranslationKeys(s)}`)}
@@ -77,12 +70,10 @@ export const EmailTemplateEditor = ({
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
                         <TiptapInput
                             onChange={(s: string) => {
-                                setTemplateDetails((prev) => {
-                                    return { ...prev, subject: s };
-                                });
+                                setTemplateDetails({ ...templateDetails, subject: s });
                             }}
                             placeholder={`Email Subject`}
-                            description={subject}
+                            description={templateDetails.subject}
                             onSubmit={() => {
                                 //
                             }}
@@ -96,12 +87,10 @@ export const EmailTemplateEditor = ({
                 </section>
                 <section className="h-full min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
                     <Tiptap
-                        description={content}
+                        description={templateDetails.template}
                         placeholder="Write your email template here"
                         onChange={(description) => {
-                            setTemplateDetails((prev) => {
-                                return { ...prev, template: description };
-                            });
+                            setTemplateDetails({ ...templateDetails, template: description });
                         }}
                         onSubmit={() => {
                             //

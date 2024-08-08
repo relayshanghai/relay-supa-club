@@ -1,53 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type FC, useEffect } from 'react';
+import { type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
-import {
-    type OutreachEmailTemplateEntity,
-    Step,
-} from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
-import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
-import { SequenceAccordion } from './components/sequence-accordion';
-import { SequenceStepDuration } from './components/sequence-step-duration';
-import { SequenceStepItem } from './components/sequence-step-item';
 import { useTranslation } from 'react-i18next';
-import { SendOutline, ClockCheckedOutline, Bell } from 'src/components/icons';
 import { type ModalStepProps } from '../types';
+import { OutreachEmailVariableAccordion } from './components/email-template-variables-accordion';
+import { EmailTemplateEditor } from './components/email-template-editor';
+import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
+import { type Editor } from '@tiptap/react';
+import { useAtomValue } from 'jotai';
+import { currentEditorAtom } from 'src/atoms/current-editor';
+import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
+
+export const addVariable = (editor: Editor | null, text: string) => {
+    editor?.commands.insertContent(`<variable-component text="${text}" />`);
+};
 
 export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
-    const {
-        sequenceEmailTemplates: outreachEmailTemplates,
-        refreshSequenceEmailTemplates: refreshOutreachEmailTemplates,
-    } = useSequenceEmailTemplates({
-        step: Step.OUTREACH,
-    });
-    const {
-        sequenceEmailTemplates: firstFollowUpEmailTemplates,
-        refreshSequenceEmailTemplates: refreshFirstFollowUpEmailTemplates,
-    } = useSequenceEmailTemplates({
-        step: Step.FIRST_FOLLOW_UP,
-    });
-    const {
-        sequenceEmailTemplates: secondFollowUpEmailTemplates,
-        refreshSequenceEmailTemplates: refreshSecondFollowUpEmailTemplates,
-    } = useSequenceEmailTemplates({
-        step: Step.SECOND_FOLLOW_UP,
-    });
-    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
     const { t } = useTranslation();
-
-    useEffect(() => {
-        refreshOutreachEmailTemplates();
-        refreshFirstFollowUpEmailTemplates();
-        refreshSecondFollowUpEmailTemplates();
-    }, []);
-
-    const onDelete = (id: string) => {
-        const index = stagedSequenceEmailTemplates.findIndex((d) => d.id === id);
-        const s = stagedSequenceEmailTemplates;
-        s[index] = null as any;
-        setStagedSequenceEmailTemplate(s);
-    };
+    const editor = useAtomValue(currentEditorAtom);
+    const { templateVariables } = useOutreachTemplateVariable();
+    const { emailTemplate, setEmailTemplate } = useOutreachTemplate();
+    const categories = templateVariables.reduce((acc, variable) => {
+        if (!acc.includes(variable.category)) {
+            acc.push(variable.category);
+        }
+        return acc;
+    }, [] as string[]);
 
     return (
         <div
@@ -55,64 +34,30 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
             data-testid="step1-outreach-form"
         >
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg bg-white shadow">
-                <div className="inline-flex w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
-                    <div className="inline-flex items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
+                <div className="inline-flex flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
+                    <div className="inline-flex w-[318px] items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
                         <div className="font-['Poppins'] text-base font-semibold tracking-tight text-gray-700">
-                            {t('outreaches.templates')}
+                            {t('outreaches.templateVariables')}
                         </div>
                     </div>
-                    <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
-                        <SequenceAccordion
-                            title={t('outreaches.steps.Outreach')}
-                            items={outreachEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
-                            step={Step.OUTREACH}
-                            icon={<SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />}
-                        />
-                        <SequenceAccordion
-                            title={t('outreaches.steps.firstFollowUp')}
-                            items={firstFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
-                            step={Step.FIRST_FOLLOW_UP}
-                            icon={<ClockCheckedOutline className="h-4 w-4 self-center stroke-black" />}
-                        />
-                        <SequenceAccordion
-                            title={t('outreaches.steps.secondFollowUp')}
-                            items={secondFollowUpEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
-                            step={Step.SECOND_FOLLOW_UP}
-                            icon={<Bell className="h-4 w-4 self-center" />}
-                        />
+                    <Accordion type="multiple" className="w-full">
+                        {categories.map((category) => (
+                            <OutreachEmailVariableAccordion
+                                key={category}
+                                title={category}
+                                items={templateVariables.filter((d) => d.category === category)}
+                                onClick={(name) => addVariable(editor, name)}
+                            />
+                        ))}
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
-                    {stagedSequenceEmailTemplates.map((d, i) => {
-                        if (!d) {
-                            return <></>;
-                        }
-                        return (
-                            <div
-                                className="flex w-fit flex-col items-center"
-                                key={d.id}
-                                data-testid={`test-id-${d.id}`}
-                            >
-                                <SequenceStepItem
-                                    title={d.name}
-                                    description={d.description as string}
-                                    onDelete={() => onDelete(d.id)}
-                                />
-                                {i !== stagedSequenceEmailTemplates.length - 1 && (
-                                    <SequenceStepDuration duration={24} />
-                                )}
-                            </div>
-                        );
-                    })}
-                    {stagedSequenceEmailTemplates.length === 3 && (
-                        <>
-                            <SequenceStepDuration duration={24} />{' '}
-                            <span className="font-['Poppins'] text-xs font-semibold leading-tight tracking-tight text-gray-600">
-                                {t('outreaches.influencerIgnored')}
-                            </span>
-                        </>
-                    )}
-
+                    <div className="w-full">
+                        <EmailTemplateEditor
+                            setTemplateDetails={(t) => setEmailTemplate(t)}
+                            templateDetails={emailTemplate}
+                        />
+                    </div>
                     <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
                         <Button
                             type="button"
@@ -130,7 +75,7 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
                             data-testid="next-button"
                             onClick={() => onNextStep()}
                         >
-                            <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>
+                            <span className="ml-1">{t('outreaches.continueAsNewTemplate')}</span>
                         </Button>
                     </div>
                 </div>

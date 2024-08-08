@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
@@ -21,11 +21,13 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { CreateVariableModal } from './email-template-variable-modal';
 import { EmailTemplateModal } from './email-template-modal';
 import { CampaignWizardModal } from './campaign-wizard-modal';
+import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 
 export const OutreachesPage = () => {
     const { t } = useTranslation();
     const { sequences, refreshSequences } = useSequences({ filterDeleted: true });
     const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
+    const { getTemplateVariables } = useOutreachTemplateVariable();
     const { sequenceInfluencers } = useSequenceInfluencers(sequences?.map((sequence) => sequence.id) || []);
     const { profile } = useUser();
     const { allSequenceEmails } = useSequenceEmails();
@@ -35,6 +37,11 @@ export const OutreachesPage = () => {
     const [showVariableModal, setShowVariableModal] = useState(false);
     const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
+
+    useEffect(() => {
+        getTemplateVariables();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateCampaignModal(true);
