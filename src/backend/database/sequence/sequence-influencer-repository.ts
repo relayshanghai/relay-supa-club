@@ -4,6 +4,8 @@ import { SequenceInfluencerEntity } from './sequence-influencer-entity';
 import { type EntityManager, type EntityTarget, type FindOptionsWhere, In, Like } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
+import { type SequenceEntity } from './sequence-entity';
+import SequenceEmailRepository from './sequence-email-repository';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 // start schedule release date, older data will not be fetched
 export const SCHEDULE_FETCH_START_DATE = new Date('2024-04-01T00:00:00.000Z');
@@ -95,5 +97,52 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
                 where,
             },
         );
+    }
+    async getRateInfo(companyId: string, sequenceId?: string) {
+        const whereSequence: FindOptionsWhere<SequenceEntity> = {
+            company: { id: companyId },
+        };
+        if (sequenceId) {
+            whereSequence.id = sequenceId;
+        }
+        const total = await this.count({
+            where: whereSequence,
+        });
+        const sent = await SequenceEmailRepository.getRepository().count({
+            where: {
+                sequence: whereSequence,
+            },
+        });
+        const replied = await SequenceEmailRepository.getRepository().count({
+            where: {
+                sequence: whereSequence,
+                emailDeliveryStatus: 'Replied',
+            },
+        });
+        const open = await SequenceEmailRepository.getRepository().count({
+            where: [
+                {
+                    sequence: whereSequence,
+                    emailTrackingStatus: 'Opened',
+                },
+                {
+                    sequence: whereSequence,
+                    emailTrackingStatus: 'Link Clicked',
+                },
+            ],
+        });
+        const bounced = await SequenceEmailRepository.getRepository().count({
+            where: {
+                sequence: whereSequence,
+                emailDeliveryStatus: 'Bounced',
+            },
+        });
+        return {
+            replied,
+            sent,
+            open,
+            bounced,
+            total,
+        };
     }
 }

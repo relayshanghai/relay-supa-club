@@ -1,4 +1,4 @@
-import type { EntityManager, EntityTarget, FindManyOptions, ObjectLiteral } from 'typeorm';
+import type { EntityManager, EntityTarget, FindManyOptions, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseProvider } from './database-provider';
 import type { Paginated, PaginationParam } from 'types/pagination';
@@ -17,6 +17,24 @@ export default class BaseRepository<E extends ObjectLiteral> extends Repository<
             take: size,
             ...options,
         });
+        const totalPages = Math.ceil(totalItems / size);
+        const totalSize = totalItems;
+
+        return {
+            items,
+            page,
+            size,
+            totalPages,
+            totalSize,
+        };
+    }
+    async getPaginatedQb({ page, size }: PaginationParam, qb: SelectQueryBuilder<E>) {
+        page = parseInt(page.toString()) || 1;
+        size = parseInt(size.toString()) || 10;
+        const [items, totalItems] = await qb
+            .skip((page - 1) * size)
+            .take(size)
+            .getManyAndCount();
         const totalPages = Math.ceil(totalItems / size);
         const totalSize = totalItems;
 
