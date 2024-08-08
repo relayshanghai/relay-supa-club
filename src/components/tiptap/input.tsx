@@ -1,21 +1,27 @@
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
-import { useEffect } from 'react';
+import { type FC, useEffect } from 'react';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { useSetAtom } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
 import StarterKit from '@tiptap/starter-kit';
 import VariableNode from './variable-node';
+import { cn } from 'src/utils/classnames';
 
-export const TiptapInput = ({
-    description,
-    onChange,
-    placeholder,
-}: {
+type EditorOptions = {
+    className?: string;
+};
+
+type TiptapInputProps = {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
     placeholder?: string;
-}) => {
+    options?: {
+        editor?: EditorOptions;
+    };
+};
+
+export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, placeholder, options }) => {
     const setCurrentEditor = useSetAtom(currentEditorAtom);
     const editor = useEditor({
         extensions: [
@@ -52,7 +58,10 @@ export const TiptapInput = ({
         <EditorContent
             editor={editor}
             placeholder={placeholder}
-            className="w-[400px] grow-0 overflow-x-auto text-clip whitespace-nowrap rounded-md border-2 shadow"
+            className={cn(
+                'w-[400px] grow-0 overflow-x-auto text-clip whitespace-nowrap rounded-md border-2 shadow',
+                options?.editor?.className,
+            )}
         />
     );
 };

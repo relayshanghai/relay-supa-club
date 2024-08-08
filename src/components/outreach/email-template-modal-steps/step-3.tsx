@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +7,31 @@ import { type ModalStepProps } from '../types';
 import { OutreachEmailVariableAccordion } from './components/sequence-variables-accordion';
 import { EmailTemplateEditor } from './components/email-template-editor';
 import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
+import { type GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
+import { type OUTREACH_STATUSES } from 'src/utils/outreach/constants';
+import { type Editor } from '@tiptap/react';
+import { useAtomValue } from 'jotai';
+import { currentEditorAtom } from 'src/atoms/current-editor';
+
+type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
+
+export const addVariable = (editor: Editor | null, text: string) => {
+    editor?.commands.insertContent(`<variable-component text="${text}" />`);
+};
 
 export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
+    const editor = useAtomValue(currentEditorAtom);
     const { getTemplateVariables, templateVariables } = useOutreachTemplateVariable();
+    const [status, setStatus] = useState('OUTREACH' as OutreachStatus);
+    const [templateDetails, setTemplateDetails] = useState<GetTemplateResponse>({
+        id: '',
+        subject: '',
+        name: '',
+        template: '',
+        variables: [],
+        step: 'OUTREACH',
+    });
 
     useEffect(() => {
         getTemplateVariables();
@@ -41,6 +62,7 @@ export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, 
                                 key={category}
                                 title={category}
                                 items={templateVariables.filter((d) => d.category === category)}
+                                onClick={(name) => addVariable(editor, name)}
                             />
                         ))}
                     </Accordion>
@@ -48,10 +70,11 @@ export const EmailTemplateModalStepThree: FC<ModalStepProps> = ({ setModalOpen, 
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
                     <div className="w-full">
                         <EmailTemplateEditor
-                            content=""
-                            setTemplateDetails={() => null}
-                            status={'OUTREACH'}
-                            subject=""
+                            content={templateDetails.template}
+                            setTemplateDetails={setTemplateDetails}
+                            onStatusChange={(status) => setStatus(status)}
+                            status={status}
+                            subject={templateDetails.subject}
                         />
                     </div>
                     <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
