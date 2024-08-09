@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, test, expect, vi } from 'vitest';
-import { CampaignModalStepOne } from './step-1';
+import { EmailTemplateModalStepOne } from './step-1';
 
 vi.mock('src/hooks/v2/use-sequences-template', () => ({
     useSequenceEmailTemplates: () => ({
@@ -40,7 +40,7 @@ vi.mock('src/backend/database/sequence-email-template/sequence-email-template-en
 describe('CampaignModalStepOne', () => {
     test('component rendered', () => {
         const { getByTestId } = render(
-            <CampaignModalStepOne onNextStep={() => null} onPrevStep={() => null} setModalOpen={() => null} />,
+            <EmailTemplateModalStepOne onNextStep={() => null} onPrevStep={() => null} setModalOpen={() => null} />,
         );
         const step1OutreachForm = getByTestId('step1-outreach-form');
         expect(step1OutreachForm).toBeDefined();
@@ -48,7 +48,7 @@ describe('CampaignModalStepOne', () => {
 
     test('staged data rendered', () => {
         const { getAllByTestId } = render(
-            <CampaignModalStepOne onNextStep={() => null} onPrevStep={() => null} setModalOpen={() => null} />,
+            <EmailTemplateModalStepOne onNextStep={() => null} onPrevStep={() => null} setModalOpen={() => null} />,
         );
         const data1 = getAllByTestId('test-id-1');
         const data2 = getAllByTestId('test-id-2');
