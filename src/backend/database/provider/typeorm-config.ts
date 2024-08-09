@@ -60,10 +60,11 @@ export const datasourceOptions = (): DataSourceOptions => {
             PriceEntity,
             BalanceEntity,
             CompanyPromoEntity,
-        ] as any,
+        ],
         synchronize: false,
-        logger: 'simple-console',
+        logger: 'advanced-console',
         subscribers: [],
         poolSize: 1,
+        logging: true,
     };
 };

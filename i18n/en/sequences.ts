@@ -1,4 +1,5 @@
 const sequences = {
+    campaign: 'Outreach Campaign',
     sequences: 'Sequences',
     subtitle:
         'Sets of email templates that we will customize, schedule, and send to influencers to maximize your outreach conversion.',

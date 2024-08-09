@@ -136,49 +136,4 @@ export default class SequenceInfluencerService {
         const influencers = await SequenceInfluencerRepository.getRepository().getAllBySequenceId(sequenceId, request);
         return influencers;
     }
-
-    async getRateInfo(sequenceId: string) {
-        const total = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-            },
-        });
-        const sent = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                funnelStatus: Not('To Contact'),
-            },
-        });
-        const replied = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Replied',
-                },
-            },
-        });
-        const open = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Opened',
-                },
-            },
-        });
-        const bounced = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Bounced',
-                },
-            },
-        });
-        return {
-            replied,
-            sent,
-            open,
-            bounced,
-            total,
-        };
-    }
 }
