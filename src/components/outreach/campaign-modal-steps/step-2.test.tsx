@@ -1,7 +1,24 @@
 import { render } from '@testing-library/react';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { CampaignModalStepTwo } from './step-2';
 import StoreProvider from 'src/store/Providers/StoreProvider';
+
+vi.mock('pages/api/outreach/email-templates/request', () => ({
+    OutreachStepRequest: {
+        OUTREACH: 'OUTREACH',
+        FIRST_FOLLOW_UP: 'FIRST_FOLLOW_UP',
+        SECOND_FOLLOW_UP: 'SECOND_FOLLOW_UP',
+        THIRD_FOLLOW_UP: 'THIRD_FOLLOW_UP',
+    },
+    TemplateRequest: {
+        name: '',
+        description: '',
+        subject: '',
+        template: '',
+        step: '',
+        variableIds: [],
+    },
+}));
 
 describe('CampaignModalStepTwo', () => {
     test('component rendered', () => {
