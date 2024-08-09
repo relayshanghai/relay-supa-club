@@ -23,7 +23,7 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ setModalOpen }) 
             description: emailTemplate?.description as string,
             template: emailTemplate?.template,
             subject: emailTemplate?.subject,
-            variableIds: emailTemplate?.variables.map((variable) => variable.id),
+            variableIds: emailTemplate?.variableIds,
             step: emailTemplate?.step as OutreachStepRequest,
         }).then(() => setModalOpen(false));
     };

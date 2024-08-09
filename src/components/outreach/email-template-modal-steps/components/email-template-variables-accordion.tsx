@@ -11,7 +11,7 @@ import { CreateVariableModal } from '../../email-template-variable-modal';
 type OutreachEmailVariableAccordionProps = {
     title: string;
     items: OutreachEmailTemplateVariableEntity[];
-    onClick?: (name: string) => void;
+    onClick?: (item: OutreachEmailTemplateVariableEntity) => void;
 };
 
 export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionProps> = ({ title, items, onClick }) => {
@@ -43,7 +43,7 @@ export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionPr
                                     <div
                                         className="ml-2 hover:cursor-pointer"
                                         onClick={() => {
-                                            onClick && onClick(d.name);
+                                            onClick && onClick(d);
                                         }}
                                     >
                                         <span className="font-['Poppins'] text-sm font-semibold leading-tight tracking-tight text-gray-700">

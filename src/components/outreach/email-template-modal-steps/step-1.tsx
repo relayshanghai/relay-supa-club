@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { Button } from 'src/components/button';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ export const addVariable = (editor: Editor | null, text: string) => {
 export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
     const editor = useAtomValue(currentEditorAtom);
-    const { templateVariables } = useOutreachTemplateVariable();
+    const { templateVariables, getTemplateVariables } = useOutreachTemplateVariable();
     const { emailTemplate, setEmailTemplate } = useOutreachTemplate();
     const categories = templateVariables.reduce((acc, variable) => {
         if (!acc.includes(variable.category)) {
@@ -27,6 +27,12 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
         }
         return acc;
     }, [] as string[]);
+
+    useEffect(() => {
+        if (templateVariables.length === 0) {
+            getTemplateVariables();
+        }
+    }, [templateVariables.length]);
 
     return (
         <div
@@ -46,7 +52,13 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
                                 key={category}
                                 title={category}
                                 items={templateVariables.filter((d) => d.category === category)}
-                                onClick={(name) => addVariable(editor, name)}
+                                onClick={(item) => {
+                                    setEmailTemplate({
+                                        ...emailTemplate,
+                                        variableIds: [...emailTemplate.variableIds, item.id],
+                                    });
+                                    addVariable(editor, item.name);
+                                }}
                             />
                         ))}
                     </Accordion>

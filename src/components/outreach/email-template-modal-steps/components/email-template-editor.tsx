@@ -1,7 +1,6 @@
 import { Card, CardDescription } from 'shadcn/components/ui/card';
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import { Tiptap } from 'src/components/tiptap';
-import type { GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import { TiptapInput } from 'src/components/tiptap/input';
 import {
     DropdownMenu,
@@ -11,6 +10,7 @@ import {
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown } from 'src/components/icons';
 import { useTranslation } from 'react-i18next';
+import type { TemplateRequest } from 'pages/api/outreach/email-templates/request';
 
 type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 
@@ -18,8 +18,8 @@ export const EmailTemplateEditor = ({
     templateDetails,
     setTemplateDetails,
 }: {
-    templateDetails: GetTemplateResponse;
-    setTemplateDetails: (template: GetTemplateResponse) => void;
+    templateDetails: TemplateRequest;
+    setTemplateDetails: (template: TemplateRequest) => void;
 }) => {
     const { t } = useTranslation();
 
