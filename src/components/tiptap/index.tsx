@@ -21,16 +21,19 @@ export const Tiptap = ({
     onChange,
     onSubmit,
     placeholder,
+    disabled,
     options,
 }: {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
     placeholder?: string;
+    disabled?: boolean;
     options?: TiptapOptions;
 }) => {
     const setCurrentEditor = useSetAtom(currentEditorAtom);
     const editor = useEditor({
+        editable: !disabled,
         extensions: [
             StarterKit.configure({
                 hardBreak: false,
@@ -100,10 +103,13 @@ export const Tiptap = ({
             }}
             className={cn('flex h-full min-h-[300px] flex-col justify-stretch', options?.formClassName)}
         >
-            <div className="flex">
-                <Toolbar editor={editor} />
-            </div>
+            {!disabled && (
+                <div className="flex">
+                    <Toolbar editor={editor} />
+                </div>
+            )}
             <EditorContent
+                disabled={disabled}
                 className={cn('h-full min-h-[300px] overflow-y-auto', options?.formClassName)}
                 spellCheck="false"
                 placeholder={placeholder}

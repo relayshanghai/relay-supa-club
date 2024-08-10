@@ -16,15 +16,17 @@ type TiptapInputProps = {
     description: string;
     onChange: (description: string) => void;
     onSubmit: () => void;
+    disabled?: boolean;
     placeholder?: string;
     options?: {
         editor?: EditorOptions;
     };
 };
 
-export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, placeholder, options }) => {
+export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, placeholder, options, disabled }) => {
     const setCurrentEditor = useSetAtom(currentEditorAtom);
     const editor = useEditor({
+        editable: !disabled,
         extensions: [
             StarterKit.configure({
                 hardBreak: false,
@@ -72,6 +74,7 @@ export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, place
 
     return (
         <EditorContent
+            disabled={disabled}
             editor={editor}
             placeholder={placeholder}
             className={cn(

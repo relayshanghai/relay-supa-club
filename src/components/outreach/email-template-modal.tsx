@@ -198,6 +198,7 @@ const CustomTemplateDetails = ({
     const handleNextClick = useCallback(() => {
         setStep(step + 1);
     }, [step]);
+
     return (
         <Card className="w-full gap-2 border-none shadow-none">
             <CardDescription className="flex flex-col gap-2">
@@ -211,77 +212,41 @@ const CustomTemplateDetails = ({
                     </section>
                     <section className="flex grow flex-col gap-2">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
-                        <label className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500">
-                            {template?.subject}
-                        </label>
+                        <TiptapInput
+                            onChange={() => null}
+                            placeholder={`Email Subject`}
+                            description={template?.subject}
+                            onSubmit={() => null}
+                            disabled
+                            options={{
+                                editor: {
+                                    className: '!w-[300px]',
+                                },
+                            }}
+                        />
                     </section>
                 </section>
                 <section className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
-                    {template?.template}
+                    <Tiptap
+                        description={template?.template}
+                        placeholder="Write your email template here"
+                        onChange={() => null}
+                        onSubmit={() => null}
+                        disabled
+                        options={{
+                            formClassName: 'h-[350px]',
+                        }}
+                    />
                 </section>
             </CardDescription>
             <CardFooter className="mt-4 w-full justify-between px-0 pb-0">
                 <Button variant="outline">
                     <DeleteOutline className="h-4 w-4 stroke-red-500" />
                 </Button>
-                <Dialog
-                    onOpenChange={(open) => {
-                        open ? setStep(1) : setStep(0);
-                    }}
-                >
-                    <DialogTrigger>
-                        <Button type="button" className="flex gap-4">
-                            <Edit className="h-4 w-4 stroke-white" />
-                            Modify Template
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent
-                        className="min-h-[90vh] min-w-[500px] p-0 md:min-w-[800px] xl:min-w-[1240px]"
-                        onPointerDownOutside={(e) => e.preventDefault()}
-                    >
-                        <DialogHeader>
-                            <DialogTitle className="flex w-full flex-col gap-1 py-2">
-                                <ProgressHeader labels={progressStep} selectedIndex={step} />
-                            </DialogTitle>
-                            <DialogDescription className="h-full w-full bg-primary-50 p-6">
-                                {step <= 1 ? (
-                                    <EditEmailTemplateModalBody
-                                        onNextClick={handleNextClick}
-                                        templateDetails={templateDetails}
-                                        setTemplateDetails={setTemplateDetails}
-                                    />
-                                ) : (
-                                    <NameTemplateBody
-                                        templateDetails={templateDetails}
-                                        setTemplateDetails={setTemplateDetails}
-                                        onSubmit={async () => {
-                                            setTemplate(templateDetails);
-                                            await apiFetch(
-                                                `/api/outreach/email-templates/{id}`,
-                                                {
-                                                    path: { id: templateDetails.id },
-                                                    body: {
-                                                        name: templateDetails.name,
-                                                        description: templateDetails.description,
-                                                        subject: templateDetails.subject,
-                                                        template: templateDetails.template,
-                                                        step: status,
-                                                        variableIds: templateDetails.variables.map(
-                                                            (variable) => variable.id,
-                                                        ),
-                                                    },
-                                                },
-                                                {
-                                                    method: 'PUT',
-                                                },
-                                            );
-                                        }}
-                                    />
-                                )}
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
+                <Button type="button" className="flex gap-4">
+                    <Edit className="h-4 w-4 stroke-white" />
+                    Modify Template
+                </Button>
             </CardFooter>
         </Card>
     );
@@ -492,14 +457,14 @@ const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; tem
             />
             <section className="divide-y-2 p-8">
                 {templates.length > 0 && (
-                    <div className="my-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
+                    <div className="mb-6 grid max-h-[350px] grid-cols-1 gap-6 overflow-y-auto lg:grid-cols-2">
                         {templates.map((template) => (
                             <CustomTemplateCard key={template.id} templateId={template.id} status={status} />
                         ))}
                     </div>
                 )}
                 <div>
-                    <section className="pb-3">
+                    <section className="mt-4 pb-3">
                         <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
                         <p className="font-normal text-gray-500 placeholder-gray-500">
                             If you already have a template in mind
@@ -516,7 +481,7 @@ const TemplateTabContent = ({ status, templates }: { status: OutreachStatus; tem
 
 const EmailTemplateModalBody = () => {
     const { t } = useTranslation();
-    const { data } = useSWR(['pah'], async () => {
+    const { data } = useSWR(['email-templates'], async () => {
         const res = await apiFetch<GetAllTemplateResponse[]>('/api/outreach/email-templates');
         return res.content;
     });
