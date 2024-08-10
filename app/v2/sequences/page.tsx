@@ -1,6 +1,6 @@
 'use client'
 import { useTranslation } from "react-i18next";
-import SummaryCard from "./components/summary-card/summary-card";
+import SummaryCard from "./components/sequence-summary/summary-card";
 import { useSequences } from "src/hooks/v2/use-sequences";
 import { useEffect } from "react";
 import SequenceTable from "./components/sequence-table/sequence-table";
