@@ -56,7 +56,12 @@ export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsD
                             key={i}
                             onNextStep={onNextStep}
                             onPrevStep={onPrevStep}
-                            setModalOpen={(v) => setShow(v)}
+                            setModalOpen={(v) => {
+                                setShow(v);
+                                if (!v) {
+                                    setStep(getUnDisabledNextStep(1));
+                                }
+                            }}
                         />
                     ) : null;
                 })}

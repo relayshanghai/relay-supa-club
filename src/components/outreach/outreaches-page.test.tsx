@@ -77,6 +77,23 @@ vi.mock('src/backend/database/sequence-email-template/sequence-email-template-en
     },
 }));
 
+vi.mock('pages/api/outreach/email-templates/request', () => ({
+    OutreachStepRequest: {
+        OUTREACH: 'OUTREACH',
+        FIRST_FOLLOW_UP: 'FIRST_FOLLOW_UP',
+        SECOND_FOLLOW_UP: 'SECOND_FOLLOW_UP',
+        THIRD_FOLLOW_UP: 'THIRD_FOLLOW_UP',
+    },
+    TemplateRequest: {
+        name: '',
+        description: '',
+        subject: '',
+        template: '',
+        step: '',
+        variableIds: [],
+    },
+}));
+
 describe('OutreachesPage Component', () => {
     afterEach(() => {
         cleanup();

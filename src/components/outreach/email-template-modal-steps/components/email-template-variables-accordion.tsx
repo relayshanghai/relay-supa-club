@@ -11,9 +11,10 @@ import { CreateVariableModal } from '../../email-template-variable-modal';
 type OutreachEmailVariableAccordionProps = {
     title: string;
     items: OutreachEmailTemplateVariableEntity[];
+    onClick?: (item: OutreachEmailTemplateVariableEntity) => void;
 };
 
-export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionProps> = ({ title, items }) => {
+export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionProps> = ({ title, items, onClick }) => {
     const { t } = useTranslation();
     const [showVariableModal, setShowVariableModal] = useState(false);
     const Icon = () =>
@@ -39,7 +40,12 @@ export const OutreachEmailVariableAccordion: FC<OutreachEmailVariableAccordionPr
                         <div className="inline-flex h-fit w-[280px] flex-col items-start justify-start gap-0">
                             <div className="flex h-8 flex-col items-start justify-start gap-1 self-stretch">
                                 <div className="inline-flex items-start justify-start gap-1 self-stretch">
-                                    <div className="ml-2">
+                                    <div
+                                        className="ml-2 hover:cursor-pointer"
+                                        onClick={() => {
+                                            onClick && onClick(d);
+                                        }}
+                                    >
                                         <span className="font-['Poppins'] text-sm font-semibold leading-tight tracking-tight text-gray-700">
                                             {'{'}{' '}
                                         </span>
