@@ -109,7 +109,6 @@ export const Tiptap = ({
                 </div>
             )}
             <EditorContent
-                disabled={disabled}
                 className={cn('h-full min-h-[300px] overflow-y-auto', options?.formClassName)}
                 spellCheck="false"
                 placeholder={placeholder}

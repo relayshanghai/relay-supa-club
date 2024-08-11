@@ -74,7 +74,6 @@ export const TiptapInput: FC<TiptapInputProps> = ({ description, onChange, place
 
     return (
         <EditorContent
-            disabled={disabled}
             editor={editor}
             placeholder={placeholder}
             className={cn(
