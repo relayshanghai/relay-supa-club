@@ -13,10 +13,10 @@ import {
 import { useProducts } from 'src/hooks/use-products';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
 import { type Nullable } from 'types/nullable';
-import { CreateProductModal } from 'src/components/products/products-modal';
 import { ChevronDown, Plus } from 'app/components/icons';
 import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
+import { CreateProductModal } from 'app/products/products-modal';
 
 export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
