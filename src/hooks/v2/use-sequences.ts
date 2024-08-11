@@ -7,6 +7,7 @@ import awaitToError from 'src/utils/await-to-error';
 import { type RateInfo } from 'types/v2/rate-info';
 import { create } from 'zustand';
 import { usePaginationParam } from './use-pagination-param';
+import { type GetSequenceDetailResponse } from 'pages/api/v2/sequences/[id]/response';
 
 interface SequenceStore {
     sequences: SequenceEntity[];
@@ -90,3 +91,22 @@ export const useDropdownSequence = () => {
         error,
     };
 };
+
+export const useSequenceDetail = (id: string) => {
+    const [sequence, setSequences] = useState<GetSequenceDetailResponse>();
+    const {
+        loading,
+        apiClient
+    } = useApiClient()
+    const getSequence = async () => {
+        const [, response] = await awaitToError(apiClient.get<GetSequenceDetailResponse>(`/v2/sequences/${id}`));
+        if (response) {
+            setSequences(response.data);
+        }
+    }
+    return {
+        getSequence,
+        loading,
+        sequence
+    }
+}

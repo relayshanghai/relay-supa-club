@@ -4,10 +4,12 @@ import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id
 import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-influencers/[id]/request';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
+import { usePaginationParam } from './use-pagination-param';
+import { useCallback, useEffect, useState } from 'react';
 
 export const manageProfileUpdating = atom(false);
 export const useManageProfileUpdating = () => useAtom(manageProfileUpdating);
-export const useSequenceInfluencer = () => {
+export const useSequenceInfluencerUpdate = () => {
     const [updating, setUpdating] = useManageProfileUpdating();
     const { apiClient, error } = useApiClient();
     const updateSequenceInfluencer = async (
@@ -42,3 +44,20 @@ export const useSequenceInfluencerAddress = () => {
     };
     return { updating, setUpdating, updateSequenceInfluencerAddress, error };
 };
+
+export const useSequenceInfluencer = () => {
+    const {
+        page, size, setPage, setSize
+    } = usePaginationParam()
+
+    const [status, setStatus] = useState<string>()
+    const [search, setSearch] = useState('')
+    const getSequencecInfluencer = useCallback(() => {
+        // todo
+    }, [])
+    useEffect(() => {
+        getSequencecInfluencer();
+    }, [page,size, status, search])
+
+    
+}

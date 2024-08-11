@@ -6,6 +6,8 @@ import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[seq
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
 import { type SequenceEntity } from './sequence-entity';
 import SequenceEmailRepository from './sequence-email-repository';
+import { type RateInfo } from 'types/v2/rate-info';
+import { FunnelStatusRequest } from 'pages/api/v2/threads/request';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 // start schedule release date, older data will not be fetched
 export const SCHEDULE_FETCH_START_DATE = new Date('2024-04-01T00:00:00.000Z');
@@ -82,8 +84,14 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
         const where: FindOptionsWhere<SequenceInfluencerEntity> = {
             sequence: { id: sequenceId },
         };
-        if (request.funnelStatus) {
-            where.funnelStatus = request.funnelStatus;
+        if (request.status) {
+            if(request.status === 'To Contact' || request.status === 'Ignored')
+                where.funnelStatus = request.status;
+            else if(request.status === 'Replied' || request.status === 'Bounced'){
+                where.sequenceEmails = {
+                    emailDeliveryStatus: request.status
+                }
+            } 
         }
         if (request.search) {
             where.name = Like(`%${request.search}%`);
@@ -98,7 +106,7 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             },
         );
     }
-    async getRateInfo(companyId: string, sequenceId?: string) {
+    async getRateInfo(companyId: string, sequenceId?: string): Promise<RateInfo> {
         const whereSequence: FindOptionsWhere<SequenceEntity> = {
             company: { id: companyId },
         };
@@ -106,7 +114,7 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             whereSequence.id = sequenceId;
         }
         const total = await this.count({
-            where: whereSequence,
+            where: {sequence: whereSequence},
         });
         const sent = await SequenceEmailRepository.getRepository().count({
             where: {

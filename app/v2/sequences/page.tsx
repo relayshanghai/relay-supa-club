@@ -4,6 +4,7 @@ import SummaryCard from "./components/summary-card/summary-card";
 import { useSequences } from "src/hooks/v2/use-sequences";
 import { useEffect } from "react";
 import SequenceTable from "./components/sequence-table/sequence-table";
+import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, TeamOutline } from "src/components/icons";
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
@@ -39,10 +40,10 @@ export default function SequencePageV2() {
           </div>
         </div>
         <div className="self-stretch justify-start items-start gap-6 inline-flex">
-          <SummaryCard loading={loading} tracking={total.toFixed() } title={t('sequences.totalInfluencers')} />
-          <SummaryCard loading={loading} tracking={openRate.toFixed(2) + '%'} title={t('sequences.openRate')} />
-          <SummaryCard loading={loading} tracking={replyRate.toFixed(2) + '%'} title={t('sequences.replyRate')} />
-          <SummaryCard loading={loading} tracking={bouncedRate.toFixed(2) + '%'} title={t('sequences.bounceRate')} />
+          <SummaryCard icon={<TeamOutline />} loading={loading} tracking={total.toFixed() } title={t('sequences.totalInfluencers')} />
+          <SummaryCard icon={<EmailOpenOutline />} loading={loading} tracking={openRate.toFixed(2) + '%'} title={t('sequences.openRate')} />
+          <SummaryCard icon={<MessageDotsCircleOutline />} loading={loading} tracking={replyRate.toFixed(2) + '%'} title={t('sequences.replyRate')} />
+          <SummaryCard icon={<MessageXCircleOutline />} loading={loading} tracking={bouncedRate.toFixed(2) + '%'} title={t('sequences.bounceRate')} />
         </div>
       </div>
       <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start flex">

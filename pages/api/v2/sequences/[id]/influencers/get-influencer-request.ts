@@ -8,7 +8,7 @@ export class GetSequenceInfluencerRequest extends PaginationParam {
 
     @IsString()
     @IsOptional()
-    funnelStatus?: string;
+    status?: string;
 
     @IsNumberString()
     @IsOptional()

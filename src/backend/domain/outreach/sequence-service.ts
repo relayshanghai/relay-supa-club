@@ -33,12 +33,15 @@ export default class SequenceService {
     @UseLogger()
     async getById(id: string) {
         const companyId = RequestContext.getContext().companyId as string;
-        const sequence = await SequenceRepository.getRepository().findOne({
+        const sequence = await SequenceRepository.getRepository().findOneOrFail({
             where: {
                 id,
-            },
+            },  
             relations: {
                 product: true,
+                steps: {
+                    outreachEmailTemplate: true
+                }
             },
         });
         const rateInfo = await SequenceInfluencerRepository.getRepository().getRateInfo(companyId, id);
