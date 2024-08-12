@@ -55,12 +55,15 @@ export const useSequences = () => {
 };
 
 export const useSequence = () => {
-    const { sequence, setSequence, selectedTemplate, setSelectedTemplate } = useSequencesStore();
+    const { sequence, setSequence, selectedTemplate, setSelectedTemplate, sequenceVariables, setSequenceVariables } =
+        useSequencesStore();
     return {
         sequence,
         setSequence,
         selectedTemplate,
         setSelectedTemplate,
+        sequenceVariables,
+        setSequenceVariables,
     };
 };
 

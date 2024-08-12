@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Accordion } from 'shadcn/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
 import { SequenceVariableAccordion } from './components/sequence-variables-accordion';
@@ -9,18 +9,34 @@ import SequenceEmailVariable from './components/sequence-email-variables';
 import { type ModalStepProps } from 'app/v2/sequences/types';
 import { Bell, ClockCheckedOutline, SendOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
+import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
 import { useSequence } from 'src/hooks/v2/use-sequences';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
-    const { selectedTemplate } = useSequence();
+    const { getSequenceEmailTemplate } = useSequenceEmailTemplates({});
+    const { stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
+    const { sequenceVariables, setSequenceVariables } = useSequence();
 
-    const categories = selectedTemplate?.variables?.reduce((acc, variable) => {
+    const categories = sequenceVariables.reduce((acc, variable) => {
         if (!acc.includes(variable.category)) {
             acc.push(variable.category);
         }
         return acc;
     }, [] as string[]);
+
+    useEffect(() => {
+        stagedSequenceEmailTemplates.forEach((template) => {
+            getSequenceEmailTemplate(template.id).then((d) => {
+                // check if the variable already exists
+                const exists = sequenceVariables?.find((v) => v.name === d.name);
+                if (!exists) {
+                    const variables = d?.variables?.map((v) => ({ ...v, value: '' }));
+                    setSequenceVariables([...sequenceVariables, ...(variables ?? [])]);
+                }
+            });
+        });
+    }, []);
 
     return (
         <div
@@ -39,7 +55,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                             <SequenceVariableAccordion
                                 key={d}
                                 title={d}
-                                items={selectedTemplate?.variables?.filter((v) => v.category === d) ?? []}
+                                items={sequenceVariables.filter((v) => v.category === d) ?? []}
                             />
                         ))}
                     </Accordion>

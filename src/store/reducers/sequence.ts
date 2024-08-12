@@ -15,16 +15,18 @@ interface SequenceStore {
     sequences: SequenceEntity[];
     sequence: Nullable<SequenceEntity>;
     selectedTemplate: Nullable<TemplateWithVariableValueType>;
+    sequenceVariables: VariableWithValue[];
 }
 
 const initialState: SequenceStore = {
     sequences: [],
     sequence: null,
     selectedTemplate: null,
+    sequenceVariables: [],
 };
 
 const pageSlice = createSlice({
-    name: 'template-variable',
+    name: 'sequence',
     initialState,
     reducers: {
         setSequences: (state, action: PayloadAction<SequenceEntity[]>) => {
@@ -36,10 +38,13 @@ const pageSlice = createSlice({
         setSelectedTemplate: (state, action: PayloadAction<Nullable<TemplateWithVariableValueType>>) => {
             state.selectedTemplate = action.payload;
         },
+        setSequenceVariables: (state, action: PayloadAction<VariableWithValue[]>) => {
+            state.sequenceVariables = action.payload;
+        },
     },
 });
 
-const { setSequences, setSequence, setSelectedTemplate } = pageSlice.actions;
+const { setSequences, setSequence, setSelectedTemplate, setSequenceVariables } = pageSlice.actions;
 
 export const useSequencesStore = () => {
     const dispatch = useAppDispatch();
@@ -50,6 +55,7 @@ export const useSequencesStore = () => {
         setSequence: (item: Nullable<SequenceEntity>) => dispatch(setSequence(item)),
         resetSequences: () => dispatch(setSequences([])),
         setSelectedTemplate: (item: Nullable<TemplateWithVariableValueType>) => dispatch(setSelectedTemplate(item)),
+        setSequenceVariables: (item: VariableWithValue[]) => dispatch(setSequenceVariables(item)),
     };
 };
 

@@ -13,7 +13,7 @@ type SequenceStepItemProps = {
 const SequenceEmailVariable: FC<SequenceStepItemProps> = ({ step }) => {
     const { getSequenceEmailTemplate } = useSequenceEmailTemplates({});
     const { stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
-    const { setSelectedTemplate, selectedTemplate } = useSequence();
+    const { setSelectedTemplate, selectedTemplate, sequenceVariables } = useSequence();
     const [configurableTemplate, setConfigurableTemplate] = useState({
         subject: '',
         template: '',
@@ -26,10 +26,8 @@ const SequenceEmailVariable: FC<SequenceStepItemProps> = ({ step }) => {
         }
         getSequenceEmailTemplate(template?.id)
             .then((template) => {
-                const variables = template?.variables?.map((v) => ({ ...v, value: '' }));
                 setSelectedTemplate({
                     ...template,
-                    variables,
                 } as TemplateWithVariableValueType);
             })
             .catch(() => {
@@ -44,14 +42,14 @@ const SequenceEmailVariable: FC<SequenceStepItemProps> = ({ step }) => {
         setConfigurableTemplate({
             subject: substituteVariable(
                 convertTiptapVariable(selectedTemplate?.subject ?? ''),
-                selectedTemplate?.variables ?? [],
+                sequenceVariables ?? [],
             ),
             template: substituteVariable(
                 convertTiptapVariable(selectedTemplate?.template ?? ''),
-                selectedTemplate?.variables ?? [],
+                sequenceVariables ?? [],
             ),
         });
-    }, [selectedTemplate?.subject, selectedTemplate?.template, selectedTemplate?.variables]);
+    }, [selectedTemplate?.subject, selectedTemplate?.template, sequenceVariables]);
 
     return (
         <>

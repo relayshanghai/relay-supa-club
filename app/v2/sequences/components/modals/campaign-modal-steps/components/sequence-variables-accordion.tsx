@@ -4,7 +4,7 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/compon
 import { SendOutline } from 'src/components/icons';
 import Bell from 'src/components/icons/Bell';
 import { useSequence } from 'src/hooks/v2/use-sequences';
-import { type VariableWithValue, type TemplateWithVariableValueType } from 'src/store/reducers/sequence';
+import { type VariableWithValue } from 'src/store/reducers/sequence';
 
 type SequenceVariableAccordionProps = {
     title: string;
@@ -12,19 +12,16 @@ type SequenceVariableAccordionProps = {
 };
 
 export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ title, items }) => {
-    const { setSelectedTemplate, selectedTemplate } = useSequence();
+    const { sequenceVariables, setSequenceVariables } = useSequence();
 
     const onVariableChange = (id: string, value: string) => {
-        const variables = selectedTemplate?.variables.map((v) => {
+        const variables = sequenceVariables.map((v) => {
             if (v.id === id) {
                 return { ...v, value };
             }
             return v;
         });
-        setSelectedTemplate({
-            ...selectedTemplate,
-            variables: variables ?? [],
-        } as TemplateWithVariableValueType);
+        setSequenceVariables(variables);
     };
 
     return (
