@@ -3,16 +3,30 @@ import { type FC } from 'react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
 import { SendOutline } from 'src/components/icons';
 import Bell from 'src/components/icons/Bell';
-import { useTranslation } from 'react-i18next';
-import { type OutreachEmailTemplateVariableEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-variable-entity';
+import { useSequence } from 'src/hooks/v2/use-sequences';
+import { type VariableWithValue, type TemplateWithVariableValueType } from 'src/store/reducers/sequence';
 
 type SequenceVariableAccordionProps = {
     title: string;
-    items: OutreachEmailTemplateVariableEntity[];
+    items: VariableWithValue[];
 };
 
 export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ title, items }) => {
-    const {} = useTranslation();
+    const { setSelectedTemplate, selectedTemplate } = useSequence();
+
+    const onVariableChange = (id: string, value: string) => {
+        const variables = selectedTemplate?.variables.map((v) => {
+            if (v.id === id) {
+                return { ...v, value };
+            }
+            return v;
+        });
+        setSelectedTemplate({
+            ...selectedTemplate,
+            variables: variables ?? [],
+        } as TemplateWithVariableValueType);
+    };
+
     return (
         <AccordionItem value={title.replace(/[\s-]/g, '').toLowerCase()}>
             <AccordionTrigger className="ml-6 shrink grow basis-0 font-['Poppins'] text-base font-semibold tracking-tight text-violet-600 hover:no-underline">
@@ -50,7 +64,9 @@ export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ 
                             <input
                                 type="text"
                                 className="flex w-full shrink grow basis-0 items-center justify-start gap-2 rounded-md border border-gray-200 bg-white font-['Poppins'] text-sm font-medium tracking-tight text-gray-400 shadow"
-                                placeholder=""
+                                placeholder={`Variable value for ${d.name}`}
+                                value={d.value}
+                                onChange={(e) => onVariableChange(d.id, e.target.value)}
                             />
                         </div>
                     </div>

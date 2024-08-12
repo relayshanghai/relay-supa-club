@@ -52,6 +52,7 @@ export const useSequenceEmailTemplates = ({ step }: SequenceEmailTemplateHook) =
     const { data: sequenceEmailTemplates, mutate: refreshSequenceEmailTemplates } = useSWR(
         ['/outreach/email-templates', step],
         async () => {
+            if (!step) return [];
             const [err, res] = await awaitToError(
                 apiClient
                     .get<OutreachEmailTemplateEntity[]>(`/outreach/email-templates?step=${step}`)

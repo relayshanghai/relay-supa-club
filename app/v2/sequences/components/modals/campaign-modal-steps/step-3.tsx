@@ -9,9 +9,18 @@ import SequenceEmailVariable from './components/sequence-email-variables';
 import { type ModalStepProps } from 'app/v2/sequences/types';
 import { Bell, ClockCheckedOutline, SendOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
+import { useSequence } from 'src/hooks/v2/use-sequences';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const { t } = useTranslation();
+    const { selectedTemplate } = useSequence();
+
+    const categories = selectedTemplate?.variables?.reduce((acc, variable) => {
+        if (!acc.includes(variable.category)) {
+            acc.push(variable.category);
+        }
+        return acc;
+    }, [] as string[]);
 
     return (
         <div
@@ -26,21 +35,13 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                         </div>
                     </div>
                     <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
-                        <SequenceVariableAccordion
-                            title={'Product'}
-                            items={[
-                                {
-                                    id: '1',
-                                    name: 'Product Name',
-                                    category: 'product',
-                                },
-                                {
-                                    id: '2',
-                                    name: 'Manager First English Name',
-                                    category: 'product',
-                                },
-                            ]}
-                        />
+                        {categories?.map((d) => (
+                            <SequenceVariableAccordion
+                                key={d}
+                                title={d}
+                                items={selectedTemplate?.variables?.filter((v) => v.category === d) ?? []}
+                            />
+                        ))}
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">

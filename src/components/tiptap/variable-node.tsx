@@ -1,5 +1,5 @@
-import { Node } from '@tiptap/core';
-import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
+import React from 'react';
+import { Node, NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 
 import { mergeAttributes } from '@tiptap/core';
 
@@ -31,7 +31,6 @@ export default Node.create({
         return ReactNodeViewRenderer(Component);
     },
 });
-import React from 'react';
 
 const Component = (props: {
     node: {

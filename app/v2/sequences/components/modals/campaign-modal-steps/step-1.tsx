@@ -13,6 +13,9 @@ import { useTranslation } from 'react-i18next';
 import { type ModalStepProps } from 'app/v2/sequences/types';
 import { Bell, ClockCheckedOutline, SendOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
+import { useSequence } from 'src/hooks/v2/use-sequences';
+import { type SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
+import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 
 export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const {
@@ -34,6 +37,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         step: Step.SECOND_FOLLOW_UP,
     });
     const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
+    const { setSequence, sequence } = useSequence();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -47,6 +51,18 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         const s = stagedSequenceEmailTemplates;
         s[index] = null as any;
         setStagedSequenceEmailTemplate(s);
+    };
+
+    const onNextStepHandler = () => {
+        const sequenceEmailTemplates = stagedSequenceEmailTemplates.filter((d) => d !== null);
+        setSequence({
+            ...sequence,
+            steps: sequenceEmailTemplates.map((d) => ({
+                stepNumber: d.step,
+                outreachEmailTemplate: { id: d.id },
+            })) as unknown as SequenceStepEntity[],
+        } as SequenceEntity);
+        onNextStep();
     };
 
     return (
@@ -128,7 +144,9 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             variant="primary"
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
-                            onClick={() => onNextStep()}
+                            onClick={() => {
+                                onNextStepHandler();
+                            }}
                         >
                             <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>
                         </Button>

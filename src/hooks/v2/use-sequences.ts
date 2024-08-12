@@ -5,20 +5,8 @@ import type { SequenceEntity } from 'src/backend/database/sequence/sequence-enti
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import { type RateInfo } from 'types/v2/rate-info';
-import { create } from 'zustand';
 import { usePaginationParam } from './use-pagination-param';
-
-interface SequenceStore {
-    sequences: SequenceEntity[];
-    setSequences: (sequences: SequenceEntity[]) => void;
-    resetSequences: () => void;
-}
-
-const useSequencesStore = create<SequenceStore>((set) => ({
-    sequences: [] as SequenceEntity[],
-    setSequences: (sequences: SequenceEntity[]) => set({ sequences: sequences }),
-    resetSequences: () => set({ sequences: [] }),
-}));
+import { useSequencesStore } from 'src/store/reducers/sequence';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
@@ -63,6 +51,16 @@ export const useSequences = () => {
         page,
         totalPages,
         setTotalPages,
+    };
+};
+
+export const useSequence = () => {
+    const { sequence, setSequence, selectedTemplate, setSelectedTemplate } = useSequencesStore();
+    return {
+        sequence,
+        setSequence,
+        selectedTemplate,
+        setSelectedTemplate,
     };
 };
 

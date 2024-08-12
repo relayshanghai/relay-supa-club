@@ -10,7 +10,7 @@ import { type Editor } from '@tiptap/react';
 import { useAtomValue } from 'jotai';
 import { currentEditorAtom } from 'src/atoms/current-editor';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
-import { ModalStepProps } from 'app/v2/sequences/types';
+import { type ModalStepProps } from 'app/v2/sequences/types';
 
 export const addVariable = (editor: Editor | null, text: string) => {
     editor?.commands.insertContent(`<variable-component text="${text}" />`);

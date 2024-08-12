@@ -2,8 +2,6 @@
 
 import { useTranslation } from 'react-i18next';
 import { Card, CardDescription, CardFooter } from 'shadcn/components/ui/card';
-import { TiptapInput } from 'src/components/tiptap/input';
-import { Tiptap } from 'src/components/tiptap';
 import { Button } from 'shadcn/components/ui/button';
 import { DeleteOutline, Edit } from 'app/components/icons';
 import { getOutreachStepsTranslationKeys } from '../../common/outreach-step';
@@ -14,6 +12,7 @@ import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { useEffect, useState } from 'react';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
+import { convertTiptapVariable } from '../utils';
 
 export const EmailTemplatePreview = ({
     modalOpen,
@@ -33,6 +32,7 @@ export const EmailTemplatePreview = ({
         if (emailTemplate && modalOpen) {
             getTemplate(emailTemplate.id).then((data) => setTemplate(data));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [emailTemplate?.id, modalOpen]);
 
     const deleteHandler = () => {
@@ -76,16 +76,10 @@ export const EmailTemplatePreview = ({
                                             {loading ? (
                                                 <Skeleton className="h-10 w-full" />
                                             ) : (
-                                                <TiptapInput
-                                                    onChange={() => null}
-                                                    placeholder={`Email Subject`}
-                                                    description={template?.subject as string}
-                                                    onSubmit={() => null}
-                                                    disabled
-                                                    options={{
-                                                        editor: {
-                                                            className: '!w-full',
-                                                        },
+                                                <label
+                                                    className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: convertTiptapVariable(template?.subject ?? ''),
                                                     }}
                                                 />
                                             )}
@@ -94,20 +88,12 @@ export const EmailTemplatePreview = ({
                                     {loading ? (
                                         <Skeleton className="h-[200px] min-w-[400px]" />
                                     ) : (
-                                        <section className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
-                                            {template?.template && (
-                                                <Tiptap
-                                                    description={template?.template as string}
-                                                    placeholder="Write your email template here"
-                                                    onChange={() => null}
-                                                    onSubmit={() => null}
-                                                    disabled
-                                                    options={{
-                                                        formClassName: 'h-[350px]',
-                                                    }}
-                                                />
-                                            )}
-                                        </section>
+                                        <section
+                                            className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500"
+                                            dangerouslySetInnerHTML={{
+                                                __html: convertTiptapVariable(template?.template ?? ''),
+                                            }}
+                                        />
                                     )}
                                 </CardDescription>
                                 {!loading && (

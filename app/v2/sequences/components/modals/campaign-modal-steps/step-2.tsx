@@ -11,18 +11,18 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { useProducts } from 'src/hooks/use-products';
-import { type ProductEntity } from 'src/backend/database/product/product-entity';
-import { type Nullable } from 'types/nullable';
 import { ChevronDown, Plus } from 'app/components/icons';
 import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
 import { CreateProductModal } from 'app/products/products-modal';
+import { useSequence } from 'src/hooks/v2/use-sequences';
+import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 
 export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevStep }) => {
     const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<Nullable<ProductEntity>>(null);
     const { getProducts, products } = useProducts();
+    const { sequence, setSequence } = useSequence();
 
     useEffect(() => {
         getProducts();
@@ -48,8 +48,13 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                             <Input
                                                 label={t('outreaches.sequenceName')}
                                                 type="text"
-                                                value={''}
-                                                onChange={() => null}
+                                                value={sequence?.name}
+                                                onChange={(e) =>
+                                                    setSequence({
+                                                        ...sequence,
+                                                        name: e.target.value ?? '',
+                                                    } as SequenceEntity)
+                                                }
                                                 placeholder={'eg. Mavic Pro 3 Black Friday Camping Niche'}
                                                 data-testid="sequence-name-input"
                                             />
@@ -64,7 +69,9 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                 <DropdownMenuTrigger className="flex w-full">
                                                     <section className="flex w-full flex-shrink-0 flex-grow-0 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
                                                         <span className="text-sm font-normal text-gray-400">
-                                                            {selectedProduct ? selectedProduct.name : 'eg. Mavic Pro 3'}
+                                                            {sequence?.product
+                                                                ? sequence.product.name
+                                                                : 'eg. Mavic Pro 3'}
                                                         </span>{' '}
                                                         <ChevronDown className="h-4 w-4 text-black" />
                                                     </section>
@@ -74,7 +81,10 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                         <DropdownMenuItem
                                                             key={d.id}
                                                             onSelect={() => {
-                                                                setSelectedProduct(d);
+                                                                setSequence({
+                                                                    ...sequence,
+                                                                    product: d,
+                                                                } as SequenceEntity);
                                                             }}
                                                             className="flex w-full"
                                                         >
@@ -103,7 +113,15 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                 <div className="relative h-3 w-3" />
                                             </div>
                                             <div className="inline-flex h-10 items-center justify-start gap-1 self-stretch">
-                                                <Switch />
+                                                <Switch
+                                                    checked={sequence?.autoStart ?? false}
+                                                    onCheckedChange={(checked) =>
+                                                        setSequence({
+                                                            ...sequence,
+                                                            autoStart: checked,
+                                                        } as SequenceEntity)
+                                                    }
+                                                />
                                             </div>
                                         </div>
                                     </div>
