@@ -17,7 +17,7 @@ export default function SequenceTable({
 }: SequenceTableProps) {
     const { t } = useTranslation()
     return <div className={`relative overflow-x-auto shadow-md sm:rounded-lg w-full  ${loading && 'animate-pulse'}`}>
-    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 w-full">
+    <table className="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 w-full">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" className="px-6 py-3">

@@ -5,14 +5,13 @@ import { useSequences } from "src/hooks/v2/use-sequences";
 import { useEffect } from "react";
 import SequenceTable from "./components/sequence-table/sequence-table";
 import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, TeamOutline } from "src/components/icons";
+import { calculateSequenceInfo } from "app/utils/rate-info";
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
-    const { getAllSequences, loading, rateInfo, sequences, page, size, totalPages, setPage } = useSequences();
-    const total = rateInfo.total;
-    const bouncedRate = (rateInfo.bounced / rateInfo.sent || 0) * 100;
-    const openRate = (rateInfo.open / rateInfo.sent || 0) * 100;
-    const replyRate = (rateInfo.replied / (rateInfo.open) || 0) * 100;
+    const { getAllSequences, loading, info, sequences, page, size, totalPages, setPage } = useSequences();
+    const total = info.total;
+    const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info)
 
     useEffect(() => {
         if (sequences.length === 0) {

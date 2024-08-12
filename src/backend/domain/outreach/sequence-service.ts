@@ -15,8 +15,8 @@ export default class SequenceService {
     async getAllSequences(paginationParam: PaginationParam) {
         const companyId = RequestContext.getContext().companyId as string;
         const sequences = await SequenceRepository.getRepository().getAllPaginated(companyId, paginationParam);
-        const rateInfo = await SequenceInfluencerRepository.getRepository().getRateInfo(companyId);
-        return { ...sequences, rateInfo };
+        const info = await SequenceInfluencerRepository.getRepository().getSequenceInfo(companyId);
+        return { ...sequences, info };
     }
     @CompanyIdRequired()
     @UseLogger()
@@ -36,15 +36,15 @@ export default class SequenceService {
         const sequence = await SequenceRepository.getRepository().findOneOrFail({
             where: {
                 id,
-            },  
+            },
             relations: {
                 product: true,
                 steps: {
-                    outreachEmailTemplate: true
-                }
+                    outreachEmailTemplate: true,
+                },
             },
         });
-        const rateInfo = await SequenceInfluencerRepository.getRepository().getRateInfo(companyId, id);
-        return { ...sequence, rateInfo };
+        const info = await SequenceInfluencerRepository.getRepository().getSequenceInfo(companyId, id);
+        return { ...sequence, info };
     }
 }
