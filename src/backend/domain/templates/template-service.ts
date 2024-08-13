@@ -61,7 +61,7 @@ export default class TemplateService {
                 },
             }),
         );
-        if (err) throw new NotFoundError('template not found');
+        if (err) throw new NotFoundError('not found');
         await this.checkVariableExists(template.variableIds);
         await EmailEngineService.getService().updateTemplate(existed.email_engine_template_id, {
             html: template.template,
@@ -112,7 +112,7 @@ export default class TemplateService {
                 relations: { variables: true },
             }),
         );
-        if (err) throw new NotFoundError('template not found');
+        if (err) throw new NotFoundError('not found');
         return {
             name: data.name,
             description: data.description as string,
