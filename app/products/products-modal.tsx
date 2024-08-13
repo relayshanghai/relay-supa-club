@@ -144,7 +144,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                             onClick={() => handleCreateProduct()}
                             disabled={loading}
                         >
-                            {t('outreaches.saveAndContinue')}
+                            {loading ? 'Saving...' : t('outreaches.saveAndContinue')}
                         </Button>
                     </div>
                 </div>
