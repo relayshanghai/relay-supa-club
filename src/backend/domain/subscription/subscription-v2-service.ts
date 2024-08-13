@@ -20,13 +20,13 @@ import { type CompanyEntity } from 'src/backend/database/company/company-entity'
 import { type UpdateSubscriptionRequest as UpdateSubscriptionCouponRequest } from 'pages/api/v2/subscriptions/[subscriptionId]/request';
 import type { Nullable } from 'types/nullable';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
-import { SequenceInfluencerScheduleStatus } from 'src/backend/database/sequence/sequence-influencer-entity';
 import PriceRepository from 'src/backend/database/price/price-repository';
 import { type PriceEntity, type SubscriptionType } from 'src/backend/database/price/price-entity';
 import type { RelayPlanWithAnnual } from 'types';
 import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import { formatStripePrice } from 'src/utils/utils';
+import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';

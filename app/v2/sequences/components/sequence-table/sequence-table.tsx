@@ -17,7 +17,14 @@ export interface SequenceTableProps {
     size: number;
     onPageChange: (page: number) => void;
 }
-export default function SequenceTable({ items, page, loading, totalPages, size, onPageChange }: SequenceTableProps) {
+export default function SequenceTable({
+    items,
+    page,
+    loading,
+    totalPages,
+    size,
+    onPageChange,
+}: Readonly<SequenceTableProps>) {
     const { t } = useTranslation();
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
     const { setEditMode, setSequence } = useSequence();
@@ -64,9 +71,9 @@ export default function SequenceTable({ items, page, loading, totalPages, size, 
                                     <Link href={`/v2/sequences/${sequence.id}`}>{sequence.name}</Link>
                                 </th>
                                 <td className="px-6 py-4">
-                                    {sequence.manager?.firstName || sequence.managerFirstName || '-'}
+                                    {sequence.manager?.firstName ?? sequence.managerFirstName ?? '-'}
                                 </td>
-                                <td className="px-6 py-4">{sequence.product?.name || '-'}</td>
+                                <td className="px-6 py-4">{sequence.product?.name ?? '-'}</td>
                                 <td className="px-6 py-4">{sequence.createdAt.toString()}</td>
                                 <td className="px-6 py-4">{sequence.numOfInfluencers}</td>
                                 <td className="px-6 py-4">

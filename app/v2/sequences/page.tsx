@@ -1,6 +1,5 @@
 'use client';
 import { useTranslation } from 'react-i18next';
-import SummaryCard from './components/summary-card/summary-card';
 import { useSequences } from 'src/hooks/v2/use-sequences';
 import { useEffect, useState } from 'react';
 import SequenceTable from './components/sequence-table/sequence-table';
@@ -8,18 +7,18 @@ import { Button } from 'app/components/buttons';
 import { CreateVariableModal } from './components/modals/email-template-variable-modal';
 import { EmailTemplateModal } from './components/modals/email-template-modal';
 import { CampaignWizardModal } from './components/modals/campaign-wizard-modal';
+import { calculateSequenceInfo } from 'app/utils/rate-info';
+import SummaryCard from './components/sequence-summary/summary-card';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
-    const { getAllSequences, loading, rateInfo, sequences, page, size, totalPages, setPage } = useSequences();
+    const { getAllSequences, loading, info, sequences, page, size, totalPages, setPage } = useSequences();
 
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
     const [showVariableModal, setShowVariableModal] = useState(false);
     const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
-    const total = rateInfo.total;
-    const bouncedRate = (rateInfo.bounced / rateInfo.sent || 0) * 100;
-    const openRate = (rateInfo.open / rateInfo.sent || 0) * 100;
-    const replyRate = (rateInfo.replied / rateInfo.open || 0) * 100;
+    const total = info.total;
+    const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
 
     useEffect(() => {
         if (sequences.length === 0) {

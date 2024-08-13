@@ -4,21 +4,24 @@ import { useEffect, useState } from 'react';
 import type { SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
-import { type RateInfo } from 'types/v2/rate-info';
+import { type SequenceInfo } from 'types/v2/rate-info';
 import { usePaginationParam } from './use-pagination-param';
 import { useSequencesStore } from 'src/store/reducers/sequence';
 import type { GetSequenceRequest, SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
+import type { GetSequenceDetailResponse } from 'pages/api/v2/sequences/[id]/response';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
     const { sequences, setSequences } = useSequencesStore();
     const [totalPages, setTotalPages] = useState(0);
-    const [rateInfo, setRateInfo] = useState<RateInfo>({
+    const [info, setSequenceInfo] = useState<SequenceInfo>({
         bounced: 0,
         open: 0,
         replied: 0,
         sent: 0,
         total: 0,
+        ignored: 0,
+        unscheduled: 0,
     });
     const { loading, error, apiClient } = useApiClient();
     const getAllSequences = async () => {
@@ -27,7 +30,7 @@ export const useSequences = () => {
         );
         if (response) {
             setSequences(response.data.items);
-            setRateInfo(response.data.rateInfo);
+            setSequenceInfo(response.data.info);
             setTotalPages(response.data.totalPages);
         }
     };
@@ -42,7 +45,7 @@ export const useSequences = () => {
     }, [page, size]);
     return {
         sequences,
-        rateInfo,
+        info,
         getAllSequences,
         loading,
         error,
@@ -134,5 +137,40 @@ export const useDropdownSequence = () => {
         getAllSequences,
         loading,
         error,
+    };
+};
+
+export const useSequenceDetail = (id: string) => {
+    const [sequence, setSequences] = useState<SequenceEntity>();
+    const [info, setSequenceInfo] = useState<SequenceInfo>({
+        bounced: 0,
+        open: 0,
+        replied: 0,
+        sent: 0,
+        total: 0,
+        ignored: 0,
+        unscheduled: 0,
+    });
+    const { loading, apiClient } = useApiClient();
+    const getSequence = async () => {
+        const [, response] = await awaitToError(apiClient.get<GetSequenceDetailResponse>(`/v2/sequences/${id}`));
+        if (response) {
+            setSequences(response.data);
+            setSequenceInfo(response.data.info);
+        }
+    };
+
+    useEffect(() => {
+        if (!sequence) {
+            getSequence();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return {
+        getSequence,
+        loading,
+        sequence,
+        info,
     };
 };

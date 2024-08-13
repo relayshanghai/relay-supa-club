@@ -95,7 +95,8 @@ export default class SequenceRepository extends BaseRepository<SequenceEntity> {
                 'sequences_numOfInfluencers',
             )
             .leftJoinAndSelect('sequences.product', 'product')
-            .where('sequences.company_id = :companyId', { companyId });
+            .where('sequences.company_id = :companyId', { companyId })
+            .andWhere('sequences.deleted = false');
         return this.getPaginatedQb(param, qb);
     }
 }
