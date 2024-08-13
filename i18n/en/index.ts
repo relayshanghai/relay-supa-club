@@ -22,6 +22,7 @@ import banner from './banner';
 import geolocations from './geolocations';
 import subscription from './subscription';
 import outreaches from './outreaches';
+import products from './products';
 import maintenance from './maintenance';
 
 const translations = {
@@ -50,6 +51,7 @@ const translations = {
         geolocations,
         subscription,
         outreaches,
+        products,
         maintenance,
     },
 };

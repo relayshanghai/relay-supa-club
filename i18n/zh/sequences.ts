@@ -6,6 +6,9 @@ const sequences = {
     autoStart: '开启自动处理',
     inSequence: '序列中',
     ignored: '被忽略',
+    unscheduled: '未安排',
+    scheduledAndSent: '已安排且已发送',
+    replied: '已回复',
     totalInfluencers: 'KOL总数',
     influencerDeleted: 'KOL已成功从序列中删除',
     influencerDeleteFailed: 'KOL从序列中删除失败',
@@ -177,5 +180,33 @@ const sequences = {
         '哎呀！看起来您的雷宝BoostBot额度已经用完了！如果本月您还希望为您的帐户添加更多使用额度，请与销售团队的雪菲通过微信：xfsp1989取得联系。或者，您的使用额度将在下一个计费周期开始时自动续订。',
     account_removed: '此影响者已被所有者移除。',
     influencerLimit: `同一个序列中，最多只能添加{{ influencerLimit }}位红人。要添加更多红人，请创建一个新的序列。谢谢！`,
+    table: {
+        unscheduled: {
+            name: '名称',
+            viewCard: '查看卡片',
+            influencerEmail: '影响者邮箱',
+            influencerNiches: '影响者领域',
+            dateAdded: '添加日期',
+            action: '操作',
+        },
+        scheduled: {
+            name: '名称',
+            viewCard: '查看卡片',
+            currentSequenceEmail: '当前序列邮件',
+            currentStatus: '当前状态',
+        },
+        replied: {
+            name: '名称',
+            sequenceEmailRepliedTo: '回复的序列邮件',
+            firstRepliedAt: '首次回复时间',
+            viewInbox: '查看收件箱',
+        },
+        ignored: {
+            name: '名称',
+            firstEmailSentAt: '序列邮件被忽略',
+            lastEmailSentAt: '首次忽略时间',
+            action: '操作',
+        },
+    },
 };
 export default sequences;

@@ -4,6 +4,8 @@ import { ILike, type EntityManager, type EntityTarget } from 'typeorm';
 import { SequenceEntity } from './sequence-entity';
 import type { ProfileEntity } from '../profile/profile-entity';
 import { type GetSequenceRequest } from 'pages/api/v2/outreach/sequences/request';
+import type { PaginationParam } from 'types/pagination';
+import { DatabaseProvider } from '../provider/database-provider';
 
 type GetSequenceWhereClause = {
     company: {
@@ -17,7 +19,7 @@ export type SequenceEntityWithInfluencerCount = SequenceEntity & {
 };
 
 export default class SequenceRepository extends BaseRepository<SequenceEntity> {
-    static repository = new SequenceRepository();
+    static repository = new SequenceRepository(SequenceEntity);
     static getRepository(): SequenceRepository {
         // when request context is not available, use the default repository, otherwise use the manager from the request context
         // to cover transactional operations
@@ -32,6 +34,9 @@ export default class SequenceRepository extends BaseRepository<SequenceEntity> {
             return repository;
         }
         return SequenceRepository.repository;
+    }
+    constructor(target: EntityTarget<SequenceEntity> = SequenceEntity, manager?: EntityManager) {
+        super(target, manager);
     }
     async moveManager(originalProfile: ProfileEntity, newProfile: ProfileEntity) {
         return this.update(
@@ -80,7 +85,18 @@ export default class SequenceRepository extends BaseRepository<SequenceEntity> {
         return { sequences: sequencesWithInfluencerCount, totalCount };
     }
 
-    constructor(target: EntityTarget<SequenceEntity> = SequenceEntity, manager?: EntityManager) {
-        super(target, manager);
+    async getAllPaginated(companyId: string, param: PaginationParam) {
+        await DatabaseProvider.initialize();
+        const qb = await this.createQueryBuilder('sequences')
+            .addSelect(
+                `
+            (select count(*) from sequence_influencers where sequence_id = sequences.id)
+        `,
+                'sequences_numOfInfluencers',
+            )
+            .leftJoinAndSelect('sequences.product', 'product')
+            .where('sequences.company_id = :companyId', { companyId })
+            .andWhere('sequences.deleted = false');
+        return this.getPaginatedQb(param, qb);
     }
 }

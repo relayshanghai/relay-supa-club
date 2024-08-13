@@ -10,6 +10,8 @@ import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influence
 import { In, Not } from 'typeorm';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
+import type { Paginated } from 'types/pagination';
+import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -132,53 +134,35 @@ export default class SequenceInfluencerService {
     }
     @UseLogger()
     @CompanyIdRequired()
-    async getAll(sequenceId: string, request: GetSequenceInfluencerRequest) {
+    async getAll(
+        sequenceId: string,
+        request: GetSequenceInfluencerRequest,
+    ): Promise<Paginated<Partial<SequenceInfluencerEntity>>> {
         const influencers = await SequenceInfluencerRepository.getRepository().getAllBySequenceId(sequenceId, request);
-        return influencers;
-    }
-
-    async getRateInfo(sequenceId: string) {
-        const total = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-            },
-        });
-        const sent = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                funnelStatus: Not('To Contact'),
-            },
-        });
-        const replied = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Replied',
-                },
-            },
-        });
-        const open = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Opened',
-                },
-            },
-        });
-        const bounced = await SequenceInfluencerRepository.getRepository().count({
-            where: {
-                sequence: { id: sequenceId },
-                sequenceEmails: {
-                    emailDeliveryStatus: 'Bounced',
-                },
-            },
-        });
         return {
-            replied,
-            sent,
-            open,
-            bounced,
-            total,
+            ...influencers,
+            items: influencers.items.map((influencer) => ({
+                ...influencer,
+                influencerSocialProfile:
+                    influencer.influencerSocialProfile &&
+                    ({
+                        ...influencer.influencerSocialProfile,
+                        data: undefined,
+                    } as InfluencerSocialProfileEntity),
+            })),
         };
+    }
+    @CompanyIdRequired()
+    @UseLogger()
+    async updateEmail(sequenceId: string, sequenceInfluencerId: string, email: string) {
+        await SequenceInfluencerRepository.getRepository().update(
+            {
+                id: sequenceInfluencerId,
+                sequence: { id: sequenceId },
+            },
+            {
+                email,
+            },
+        );
     }
 }

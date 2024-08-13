@@ -11,10 +11,11 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     type?: HTMLInputTypeAttribute;
     isRelative?: boolean; // <- toggle relative positioning
     loading?: boolean;
+    noBottomMargin?: boolean;
 }
 
 function InputWithRef(
-    { label, error, note, placeholder, type = 'text', isRelative = true, ...rest }: InputProps,
+    { label, error, note, placeholder, type = 'text', isRelative = true, noBottomMargin = false, ...rest }: InputProps,
     ref: ForwardedRef<HTMLInputElement>,
 ) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -62,6 +63,8 @@ function InputWithRef(
                     <p className="mb-4 text-xs text-red-500">{error}</p>
                 ) : note ? (
                     <p className="text-xs text-gray-400">{note}</p>
+                ) : noBottomMargin ? (
+                    <></>
                 ) : (
                     <p className="text-xs">&nbsp;</p>
                 )}

@@ -1,15 +1,13 @@
-import type {
-    GetTemplateRequest,
-    OutreachStepRequest,
-    TemplateRequest,
-} from 'pages/api/outreach/email-templates/request';
+import type { GetTemplateRequest, TemplateRequest } from 'pages/api/outreach/email-templates/request';
 import type { GetAllTemplateResponse, GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
-import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
 import EmailEngineService from 'src/backend/integration/email-engine/email-engine';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
 import { NotFoundError } from 'src/utils/error/http-error';
+import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
+import type { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import awaitToError from 'src/utils/await-to-error';
 
 export default class TemplateService {
     static readonly service: TemplateService = new TemplateService();
@@ -37,15 +35,17 @@ export default class TemplateService {
             name: template.step,
             subject: template.subject,
         });
-        const created = await OutreachTemplateRepository.getRepository().create({
-            company_id: companyId,
+        const created = await OutreachEmailTemplateRepository.getRepository().save({
+            company: { id: companyId },
+            name: template.name,
             description: template.description,
-            email_engine_template_id: emailEngineId,
-            step: template.step,
+            step: template.step as unknown as Step,
             subject: template.subject,
             template: template.template,
-            name: template.name,
-            variableIds: template.variableIds,
+            email_engine_template_id: emailEngineId,
+            variables: template.variableIds.map((id) => ({
+                id,
+            })),
         });
         return created;
     }
@@ -53,41 +53,66 @@ export default class TemplateService {
     @CompanyIdRequired()
     async update(id: string, template: TemplateRequest) {
         const companyId = RequestContext.getContext().companyId as string;
-        const existed = await OutreachTemplateRepository.getRepository().get(companyId, id);
+        const [err, existed] = await awaitToError(
+            OutreachEmailTemplateRepository.getRepository().findOneOrFail({
+                where: {
+                    company: { id: companyId },
+                    id,
+                },
+            }),
+        );
+        if (err) throw new NotFoundError('not found');
         await this.checkVariableExists(template.variableIds);
         await EmailEngineService.getService().updateTemplate(existed.email_engine_template_id, {
             html: template.template,
             name: template.step,
             subject: template.subject,
         });
-        await OutreachTemplateRepository.getRepository().update(id, {
+        await OutreachEmailTemplateRepository.getRepository().save({
+            ...existed,
             name: template.name,
             description: template.description,
-            company_id: companyId,
+            company: { id: companyId },
             email_engine_template_id: existed.email_engine_template_id,
-            step: template.step,
+            step: template.step as unknown as Step,
             subject: template.subject,
             template: template.template,
-            variableIds: template.variableIds.map((id) => id),
+            variables: template.variableIds.map((id) => ({
+                id,
+            })),
         });
     }
 
     @CompanyIdRequired()
     async getAll(param: GetTemplateRequest): Promise<GetAllTemplateResponse[]> {
         const companyId = RequestContext.getContext().companyId as string;
-        const data = await OutreachTemplateRepository.getRepository().getAll(companyId, param.step);
+        const data = await OutreachEmailTemplateRepository.getRepository().find({
+            where: {
+                company: { id: companyId },
+                step: param.step as unknown as Step,
+            },
+        });
         return data.map((template) => ({
             name: template.name as string,
             description: template.description as string,
             id: template.id,
-            step: template.step as OutreachStepRequest,
+            step: template.step,
         }));
     }
 
     @CompanyIdRequired()
     async getOne(id: string): Promise<GetTemplateResponse> {
         const companyId = RequestContext.getContext().companyId as string;
-        const data = await OutreachTemplateRepository.getRepository().get(companyId, id);
+        const [err, data] = await awaitToError(
+            OutreachEmailTemplateRepository.getRepository().findOneOrFail({
+                where: {
+                    company: { id: companyId },
+                    id,
+                },
+                relations: { variables: true },
+            }),
+        );
+        if (err) throw new NotFoundError('not found');
         return {
             name: data.name,
             description: data.description as string,
@@ -95,17 +120,18 @@ export default class TemplateService {
             step: data.step.toString(),
             subject: data.subject as string,
             template: data.template as string,
-            variables: data.variables.map((variable) => ({
-                category: variable.outreach_template_variables.category,
-                id: variable.outreach_template_variables.id,
-                name: variable.outreach_template_variables.name,
-            })),
+            variables: data.variables
+                ? data.variables.map((variable) => ({
+                      id: variable.id,
+                      name: variable.name,
+                      category: variable.category,
+                  }))
+                : [],
         };
     }
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
-        const companyId = RequestContext.getContext().companyId as string;
-        await OutreachTemplateRepository.getRepository().get(companyId, id);
-        await OutreachTemplateRepository.getRepository().delete(companyId, id);
+        await this.getOne(id);
+        await OutreachEmailTemplateRepository.getRepository().delete({ id });
     }
 }

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Tiptap } from './tiptap';
+import { Tiptap } from './tiptap-email';
 import type { EmailContact } from 'src/utils/outreach/types';
 import type { KeyboardEvent } from 'react';
 import { Tooltip } from 'src/components/library';
