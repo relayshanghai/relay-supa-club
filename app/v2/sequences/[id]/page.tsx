@@ -18,7 +18,7 @@ export interface SequenceDetailPageProps {
     }
 }
 
-export default function SequenceDetailPage( { params: { id } }: SequenceDetailPageProps) {
+export default function SequenceDetailPage( { params: { id } }: Readonly<SequenceDetailPageProps>) {
     const {
         loading,
         sequence,
@@ -32,15 +32,11 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
         replyRate
     } = calculateSequenceInfo(info)
     const {
-        page, size,
-        setPage, setSize,
-        loading: loadingInfluencers,
+        page,
+        setPage,
+        size,
         data,
-        search,
-        setSearch,
-        status,
         setStatus,
-        error
     } = useSequenceInfluencer(id)
     useEffect(() => {
         if(activeTab === 'unscheduled') {
@@ -52,6 +48,7 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
         } else if(activeTab === 'ignored') {
             setStatus('ignored')
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab])
     return <div className="px-8 pt-8 pb-4 flex-col justify-start items-start gap-8 inline-flex w-full">
         <div className="h-[45px] justify-start items-start gap-6 inline-flex w-full">
@@ -60,7 +57,7 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
                 <div className="text-gray-600 text-3xl font-semibold font-['Poppins'] tracking-tight">{sequence?.name}</div>
                 </div>
                 <div className="justify-start items-start flex">
-                {/* 
+                {/*
                     to do auto schedule toogle
                     <div className="justify-start items-start flex">
                     <div className="justify-start items-center gap-4 flex">
@@ -132,7 +129,7 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
             </div>
         </div>
         {
-            activeTab === 'unscheduled' && 
+            activeTab === 'unscheduled' &&
                 <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start flex">
                 <SequenceInfluencerTableUnscheduled
                     sequenceId={id}

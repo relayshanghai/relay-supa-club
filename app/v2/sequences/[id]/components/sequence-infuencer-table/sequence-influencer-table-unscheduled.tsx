@@ -1,9 +1,7 @@
 import TablePagination from "app/components/table-pagination/table-pagination";
 import { useTranslation } from "react-i18next";
 import { type SequenceInfluencerEntity } from "src/backend/database/sequence/sequence-influencer-entity";
-import { AvatarWithFallback } from "../avatar/avatar-with-fallback";
 import SequenceInfluencerTableName from "./sequence-influencer-table-name";
-import { TableInlineInput } from "src/components/library";
 import SequenceInfluencerTableEmail from "./sequence-influencer-table-email";
 import { SequenceInfluencerScheduleStatus } from "types/v2/sequence-influencer";
 import dateFormat from "src/utils/dateFormat";
@@ -47,7 +45,7 @@ export default function SequenceInfluencerTableUnscheduled({
         <tbody>
             {
             items.map((influencer, index) => (
-                <tr key={influencer.id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"> 
+                <tr key={influencer.id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {
                             // to do add checkbox
@@ -56,16 +54,14 @@ export default function SequenceInfluencerTableUnscheduled({
                     <td className="px-6 py-4">
                         <SequenceInfluencerTableName influencer={influencer} />
                     </td>
-                    <td className="px-6 py-4">
-                    </td>
+                    <td className="px-6 py-4" />
                     <td className="px-6 py-4">
                         {
-                            (influencer.email || influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING) && 
+                            (influencer.email || influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING) &&
                             <SequenceInfluencerTableEmail sequenceId={sequenceId} index={index} influencer={influencer} />
                         }
                     </td>
-                    <td className="px-6 py-4">
-                    </td>
+                    <td className="px-6 py-4" />
                     <td className="px-6 py-4">
                         {
                             //@ts-ignore TODO: remove this insane hacky library and use standard browser API
@@ -78,7 +74,7 @@ export default function SequenceInfluencerTableUnscheduled({
                 </tr>
             ))
             }
-        
+
             </tbody>
         </table>
         <TablePagination page={page} size={size} totalPages={totalPages} onPageChange={onPageChange}/>
