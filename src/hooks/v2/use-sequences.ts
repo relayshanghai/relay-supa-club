@@ -7,6 +7,7 @@ import awaitToError from 'src/utils/await-to-error';
 import { type RateInfo } from 'types/v2/rate-info';
 import { usePaginationParam } from './use-pagination-param';
 import { useSequencesStore } from 'src/store/reducers/sequence';
+import type { GetSequenceRequest, SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
@@ -57,6 +58,33 @@ export const useSequences = () => {
 export const useSequence = () => {
     const { sequence, setSequence, selectedTemplate, setSelectedTemplate, sequenceVariables, setSequenceVariables } =
         useSequencesStore();
+    const { apiClient, loading, error } = useApiClient();
+    const getSequences = async (params?: Partial<GetSequenceRequest>) => {
+        params = {
+            page: 1,
+            size: 10,
+            ...params,
+        };
+        const query = new URLSearchParams(params as any).toString();
+        const [err, res] = await awaitToError(apiClient.get(`/v2/outreach/sequences?${query}`).then((res) => res.data));
+        if (err) return;
+        return res;
+    };
+    const createSequences = async (payload: SequenceRequest) => {
+        const [err, res] = await awaitToError(apiClient.post<SequenceEntity>('/v2/outreach/sequences', payload));
+        if (err) throw err;
+        return res.data;
+    };
+    const updateSequences = async (id: string, payload: SequenceRequest) => {
+        const [err, res] = await awaitToError(apiClient.put(`/v2/outreach/sequences/${id}`, payload));
+        if (err) throw err;
+        return res.data;
+    };
+    const getSequence = async (id: string) => {
+        const [err, res] = await awaitToError(apiClient.get(`/v2/outreach/sequences/${id}`));
+        if (err) throw err;
+        return res.data;
+    };
     return {
         sequence,
         setSequence,
@@ -64,6 +92,12 @@ export const useSequence = () => {
         setSelectedTemplate,
         sequenceVariables,
         setSequenceVariables,
+        getSequences,
+        createSequences,
+        updateSequences,
+        getSequence,
+        loading,
+        error,
     };
 };
 

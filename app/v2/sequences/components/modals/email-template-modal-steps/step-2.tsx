@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from 'shadcn/components/ui/input';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { type OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
-import { ModalStepProps } from 'app/v2/sequences/types';
+import { type ModalStepProps } from 'app/v2/sequences/types';
 
 export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setModalOpen }) => {
     const { t } = useTranslation();

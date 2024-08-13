@@ -12,11 +12,11 @@ import { Button } from 'app/components/buttons';
 import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
 import { useSequence } from 'src/hooks/v2/use-sequences';
 
-export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
+export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPrevStep }) => {
     const { t } = useTranslation();
     const { getSequenceEmailTemplate } = useSequenceEmailTemplates({});
-    const { stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
-    const { sequenceVariables, setSequenceVariables } = useSequence();
+    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
+    const { sequenceVariables, setSequenceVariables, createSequences, sequence, setSequence } = useSequence();
 
     const categories = sequenceVariables.reduce((acc, variable) => {
         if (!acc.includes(variable.category)) {
@@ -27,6 +27,9 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
 
     useEffect(() => {
         stagedSequenceEmailTemplates.forEach((template) => {
+            if (sequenceVariables.length !== 0) {
+                return;
+            }
             getSequenceEmailTemplate(template.id).then((d) => {
                 // check if the variable already exists
                 const exists = sequenceVariables?.find((v) => v.name === d.name);
@@ -37,6 +40,26 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
             });
         });
     }, []);
+
+    const onSave = async () => {
+        return createSequences({
+            name: sequence?.name as string,
+            autoStart: sequence?.autoStart,
+            productId: sequence?.product?.id,
+            sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
+                id: template.id,
+            })),
+            variables: sequenceVariables.map((v) => ({
+                name: v.name,
+                value: v.value ?? '',
+            })),
+        }).then(() => {
+            setModalOpen(false);
+            setStagedSequenceEmailTemplate([]);
+            setSequence(null);
+            setSequenceVariables([]);
+        });
+    };
 
     return (
         <div
@@ -93,19 +116,32 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onNex
                             type="button"
                             variant="neutral"
                             className="inline-flex !p-2 text-sm !text-gray-400"
-                            onClick={() => setModalOpen(false)}
+                            onClick={() => {
+                                onPrevStep();
+                            }}
                             data-testid="back-button"
                         >
-                            {t('outreaches.skipForNow')}
+                            {t('outreaches.back')}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="neutral"
+                            className="inline-flex !p-2 text-sm !text-gray-400"
+                            onClick={() => {
+                                setModalOpen(false);
+                            }}
+                            data-testid="cancel-button"
+                        >
+                            {t('outreaches.cancel')}
                         </Button>
                         <Button
                             type="button"
                             variant="primary"
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
-                            onClick={() => onNextStep()}
+                            onClick={() => onSave()}
                         >
-                            <span className="ml-1">{t('outreaches.saveAndFinish')}</span>
+                            <span className="ml-1">{t('outreaches.saveAndContinue')}</span>
                         </Button>
                     </div>
                 </div>
