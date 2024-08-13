@@ -39,7 +39,13 @@ export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsD
     return (
         <Modal visible={show} onClose={() => null} padding={0} maxWidth="!w-[960px]">
             <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start rounded-lg bg-violet-50 shadow">
-                <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setShow(false)}>
+                <div
+                    className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer"
+                    onClick={() => {
+                        setShow(false);
+                        setStep(getUnDisabledNextStep(0));
+                    }}
+                >
                     <Cross className="flex h-6 w-6 fill-white stroke-white" />
                 </div>
                 <ModalHeader
