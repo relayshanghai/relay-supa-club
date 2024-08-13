@@ -10,13 +10,24 @@ import { type ModalStepProps } from 'app/v2/sequences/types';
 import { Bell, ClockCheckedOutline, SendOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
 import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
-import { useSequence } from 'src/hooks/v2/use-sequences';
+import { useSequence, useSequences } from 'src/hooks/v2/use-sequences';
+import { type VariableWithValue } from 'src/store/reducers/sequence';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPrevStep }) => {
     const { t } = useTranslation();
-    const { getSequenceEmailTemplate } = useSequenceEmailTemplates({});
+    const { getSequenceEmailTemplate, loading } = useSequenceEmailTemplates({});
     const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
-    const { sequenceVariables, setSequenceVariables, createSequences, sequence, setSequence } = useSequence();
+    const {
+        sequenceVariables,
+        setSequenceVariables,
+        createSequences,
+        updateSequences,
+        sequence,
+        setSequence,
+        isEdit,
+        loading: sequenceLoading,
+    } = useSequence();
+    const { getAllSequences } = useSequences();
 
     const categories = sequenceVariables.reduce((acc, variable) => {
         if (!acc.includes(variable.category)) {
@@ -30,34 +41,70 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
             if (sequenceVariables.length !== 0) {
                 return;
             }
-            getSequenceEmailTemplate(template.id).then((d) => {
-                // check if the variable already exists
-                const exists = sequenceVariables?.find((v) => v.name === d.name);
-                if (!exists) {
-                    const variables = d?.variables?.map((v) => ({ ...v, value: '' }));
-                    setSequenceVariables([...sequenceVariables, ...(variables ?? [])]);
-                }
-            });
+            getSequenceEmailTemplate(template.id)
+                .then((d) => {
+                    // check if the variable already exists
+                    const exists = sequenceVariables?.find((v) => v.name === d.name);
+                    if (!exists) {
+                        const variables = d?.variables?.map((v) => ({ ...v, value: '' }));
+                        const data = [...sequenceVariables, ...(variables ?? [])];
+                        setSequenceVariables(data);
+                        return data;
+                    }
+                })
+                .then((data) => {
+                    if (isEdit) {
+                        setSequenceVariables(
+                            sequence?.templateVariables.map(
+                                (d) =>
+                                    ({
+                                        ...data?.find((v) => v.name === d.name),
+                                        id: d.id,
+                                        name: d.name,
+                                        value: d.value,
+                                    } as unknown as VariableWithValue),
+                            ) ?? [],
+                        );
+                    }
+                });
         });
-    }, []);
+    }, [isEdit]);
 
     const onSave = async () => {
-        return createSequences({
-            name: sequence?.name as string,
-            autoStart: sequence?.autoStart,
-            productId: sequence?.product?.id,
-            sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
-                id: template.id,
-            })),
-            variables: sequenceVariables.map((v) => ({
-                name: v.name,
-                value: v.value ?? '',
-            })),
-        }).then(() => {
+        let p;
+        if (isEdit) {
+            p = updateSequences(sequence?.id as string, {
+                name: sequence?.name as string,
+                autoStart: sequence?.autoStart,
+                productId: sequence?.product?.id,
+                sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
+                    id: template.id,
+                })),
+                variables: sequenceVariables.map((v) => ({
+                    name: v.name,
+                    value: v.value ?? '',
+                })),
+            });
+        } else {
+            p = createSequences({
+                name: sequence?.name as string,
+                autoStart: sequence?.autoStart,
+                productId: sequence?.product?.id,
+                sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
+                    id: template.id,
+                })),
+                variables: sequenceVariables.map((v) => ({
+                    name: v.name,
+                    value: v.value ?? '',
+                })),
+            });
+        }
+        p.then(() => {
             setModalOpen(false);
             setStagedSequenceEmailTemplate([]);
             setSequence(null);
             setSequenceVariables([]);
+            getAllSequences();
         });
     };
 
@@ -84,33 +131,36 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
-                    <div className="w-full">
-                        <Tabs defaultValue={Step.OUTREACH} className="">
-                            <TabsList className="grid w-full grid-cols-3">
-                                <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
-                                    <SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />
-                                    {t('outreaches.steps.Outreach')}
-                                </TabsTrigger>
-                                <TabsTrigger className="flex gap-5" value={Step.FIRST_FOLLOW_UP}>
-                                    <ClockCheckedOutline className="h-4 w-4 self-center stroke-gray-400" />
-                                    {t('outreaches.steps.firstFollowUp')}
-                                </TabsTrigger>
-                                <TabsTrigger className="flex gap-5" value={Step.SECOND_FOLLOW_UP}>
-                                    <Bell className="h-4 w-4 self-center stroke-gray-400" />
-                                    {t('outreaches.steps.secondFollowUp')}
-                                </TabsTrigger>
-                            </TabsList>
-                            <TabsContent value={Step.OUTREACH}>
-                                <SequenceEmailVariable step={Step.OUTREACH} />
-                            </TabsContent>
-                            <TabsContent value={Step.FIRST_FOLLOW_UP}>
-                                <SequenceEmailVariable step={Step.FIRST_FOLLOW_UP} />
-                            </TabsContent>
-                            <TabsContent value={Step.SECOND_FOLLOW_UP}>
-                                <SequenceEmailVariable step={Step.SECOND_FOLLOW_UP} />
-                            </TabsContent>
-                        </Tabs>
-                    </div>
+                    {loading && <>Loading...</>}
+                    {!loading && (
+                        <div className="w-full">
+                            <Tabs defaultValue={Step.OUTREACH} className="">
+                                <TabsList className="grid w-full grid-cols-3">
+                                    <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
+                                        <SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />
+                                        {t('outreaches.steps.Outreach')}
+                                    </TabsTrigger>
+                                    <TabsTrigger className="flex gap-5" value={Step.FIRST_FOLLOW_UP}>
+                                        <ClockCheckedOutline className="h-4 w-4 self-center stroke-gray-400" />
+                                        {t('outreaches.steps.firstFollowUp')}
+                                    </TabsTrigger>
+                                    <TabsTrigger className="flex gap-5" value={Step.SECOND_FOLLOW_UP}>
+                                        <Bell className="h-4 w-4 self-center stroke-gray-400" />
+                                        {t('outreaches.steps.secondFollowUp')}
+                                    </TabsTrigger>
+                                </TabsList>
+                                <TabsContent value={Step.OUTREACH}>
+                                    <SequenceEmailVariable step={Step.OUTREACH} />
+                                </TabsContent>
+                                <TabsContent value={Step.FIRST_FOLLOW_UP}>
+                                    <SequenceEmailVariable step={Step.FIRST_FOLLOW_UP} />
+                                </TabsContent>
+                                <TabsContent value={Step.SECOND_FOLLOW_UP}>
+                                    <SequenceEmailVariable step={Step.SECOND_FOLLOW_UP} />
+                                </TabsContent>
+                            </Tabs>
+                        </div>
+                    )}
                     <div className="absolute bottom-4 right-4 flex justify-center space-x-2">
                         <Button
                             type="button"
@@ -140,8 +190,11 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
                             onClick={() => onSave()}
+                            disabled={sequenceLoading}
                         >
-                            <span className="ml-1">{t('outreaches.saveAndContinue')}</span>
+                            <span className="ml-1">
+                                {sequenceLoading ? 'Saving...' : t('outreaches.saveAndContinue')}
+                            </span>
                         </Button>
                     </div>
                 </div>

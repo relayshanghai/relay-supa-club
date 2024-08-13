@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
+import { type OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 
 export type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 

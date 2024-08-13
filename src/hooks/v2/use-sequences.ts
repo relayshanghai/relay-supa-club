@@ -11,8 +11,8 @@ import type { GetSequenceRequest, SequenceRequest } from 'pages/api/v2/outreach/
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
+    const { sequences, setSequences } = useSequencesStore();
     const [totalPages, setTotalPages] = useState(0);
-    const [sequences, setSequences] = useState<SequenceEntity[]>([]);
     const [rateInfo, setRateInfo] = useState<RateInfo>({
         bounced: 0,
         open: 0,
@@ -56,8 +56,16 @@ export const useSequences = () => {
 };
 
 export const useSequence = () => {
-    const { sequence, setSequence, selectedTemplate, setSelectedTemplate, sequenceVariables, setSequenceVariables } =
-        useSequencesStore();
+    const {
+        sequence,
+        setSequence,
+        selectedTemplate,
+        setSelectedTemplate,
+        sequenceVariables,
+        setSequenceVariables,
+        setEditMode,
+        editMode: isEdit,
+    } = useSequencesStore();
     const { apiClient, loading, error } = useApiClient();
     const getSequences = async (params?: Partial<GetSequenceRequest>) => {
         params = {
@@ -81,8 +89,9 @@ export const useSequence = () => {
         return res.data;
     };
     const getSequence = async (id: string) => {
-        const [err, res] = await awaitToError(apiClient.get(`/v2/outreach/sequences/${id}`));
+        const [err, res] = await awaitToError(apiClient.get<SequenceEntity>(`/v2/sequences/${id}`));
         if (err) throw err;
+        setSequence(res.data);
         return res.data;
     };
     return {
@@ -96,6 +105,8 @@ export const useSequence = () => {
         createSequences,
         updateSequences,
         getSequence,
+        setEditMode,
+        isEdit,
         loading,
         error,
     };

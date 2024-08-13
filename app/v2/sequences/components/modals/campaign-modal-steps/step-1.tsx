@@ -37,7 +37,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         step: Step.SECOND_FOLLOW_UP,
     });
     const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
-    const { setSequence, sequence } = useSequence();
+    const { setSequence, sequence, isEdit, getSequence, loading } = useSequence();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -45,6 +45,24 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         refreshFirstFollowUpEmailTemplates();
         refreshSecondFollowUpEmailTemplates();
     }, []);
+
+    useEffect(() => {
+        if (isEdit && sequence?.id) {
+            getSequence(sequence?.id).then((d) => {
+                setStagedSequenceEmailTemplate(
+                    d.steps.map(
+                        (s) =>
+                            ({
+                                id: s.outreachEmailTemplate?.id,
+                                name: s.outreachEmailTemplate?.name,
+                                description: s.outreachEmailTemplate?.description,
+                                step: s.outreachEmailTemplate?.step,
+                            } as unknown as OutreachEmailTemplateEntity),
+                    ),
+                );
+            });
+        }
+    }, [isEdit]);
 
     const onDelete = (id: string) => {
         const index = stagedSequenceEmailTemplates.findIndex((d) => d.id === id);
@@ -99,6 +117,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                     </Accordion>
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
+                    {loading && <>Loading...</>}
                     {stagedSequenceEmailTemplates.map((d, i) => {
                         if (!d) {
                             return <></>;

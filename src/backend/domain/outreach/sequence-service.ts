@@ -39,6 +39,10 @@ export default class SequenceService {
             },
             relations: {
                 product: true,
+                templateVariables: true,
+                steps: {
+                    outreachEmailTemplate: true,
+                },
             },
         });
         const rateInfo = await SequenceInfluencerRepository.getRepository().getRateInfo(companyId, id);

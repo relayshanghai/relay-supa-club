@@ -16,6 +16,7 @@ interface SequenceStore {
     sequence: Nullable<SequenceEntity>;
     selectedTemplate: Nullable<TemplateWithVariableValueType>;
     sequenceVariables: VariableWithValue[];
+    editMode: boolean;
 }
 
 const initialState: SequenceStore = {
@@ -23,6 +24,7 @@ const initialState: SequenceStore = {
     sequence: null,
     selectedTemplate: null,
     sequenceVariables: [],
+    editMode: false,
 };
 
 const pageSlice = createSlice({
@@ -41,10 +43,13 @@ const pageSlice = createSlice({
         setSequenceVariables: (state, action: PayloadAction<VariableWithValue[]>) => {
             state.sequenceVariables = action.payload;
         },
+        setEditMode: (state, action: PayloadAction<boolean>) => {
+            state.editMode = action.payload;
+        },
     },
 });
 
-const { setSequences, setSequence, setSelectedTemplate, setSequenceVariables } = pageSlice.actions;
+const { setSequences, setSequence, setSelectedTemplate, setSequenceVariables, setEditMode } = pageSlice.actions;
 
 export const useSequencesStore = () => {
     const dispatch = useAppDispatch();
@@ -56,6 +61,7 @@ export const useSequencesStore = () => {
         resetSequences: () => dispatch(setSequences([])),
         setSelectedTemplate: (item: Nullable<TemplateWithVariableValueType>) => dispatch(setSelectedTemplate(item)),
         setSequenceVariables: (item: VariableWithValue[]) => dispatch(setSequenceVariables(item)),
+        setEditMode: (item: boolean) => dispatch(setEditMode(item)),
     };
 };
 

@@ -2,7 +2,7 @@ import { type FC, useState } from 'react';
 import { Modal } from 'src/components/modal';
 import { Cross } from 'src/components/icons';
 import { ModalHeader } from './wizard-modal-header';
-import { WizardModalProps } from 'app/v2/sequences/types';
+import { type WizardModalProps } from 'app/v2/sequences/types';
 
 export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsDisabled }) => {
     const getUnDisabledNextStep = (s: number) => {
@@ -59,7 +59,7 @@ export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsD
                             setModalOpen={(v) => {
                                 setShow(v);
                                 if (!v) {
-                                    setStep(getUnDisabledNextStep(1));
+                                    setStep(getUnDisabledNextStep(0));
                                 }
                             }}
                         />
