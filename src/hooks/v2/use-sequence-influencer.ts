@@ -5,8 +5,12 @@ import type { UpdateSequenceInfluencerRequest } from 'pages/api/v2/sequence-infl
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import { usePaginationParam } from './use-pagination-param';
-import { useCallback, useEffect, useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
+import query from 'query-string'
+import { type Paginated } from 'types/pagination';
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import { useSequenceInfluencerStore } from 'src/store/reducers/sequence-influencer';
 export const manageProfileUpdating = atom(false);
 export const useManageProfileUpdating = () => useAtom(manageProfileUpdating);
 export const useSequenceInfluencerUpdate = () => {
@@ -45,19 +49,63 @@ export const useSequenceInfluencerAddress = () => {
     return { updating, setUpdating, updateSequenceInfluencerAddress, error };
 };
 
-export const useSequenceInfluencer = () => {
+export const useSequenceInfluencer = (sequenceId: string) => {
     const {
         page, size, setPage, setSize
     } = usePaginationParam()
-
+    const {
+        apiClient,
+        loading, 
+        error
+    } = useApiClient()
     const [status, setStatus] = useState<string>()
     const [search, setSearch] = useState('')
-    const getSequencecInfluencer = useCallback(() => {
-        // todo
-    }, [])
+    const q = query.stringify({
+        page,
+        size,
+        status,
+        search
+    })
+    const {
+        list,
+        setSequenceInfluencers,
+    } = useSequenceInfluencerStore()
+    const {
+        data: sequenceInfluencer,
+    } = useSWR(`/v2/sequences/${sequenceId}/influencers?${q}`, async (path: string) => {
+        const response = await apiClient.get<Paginated<SequenceInfluencerEntity>>(path)
+        return response.data
+    })
     useEffect(() => {
-        getSequencecInfluencer();
-    }, [page,size, status, search])
-
+        sequenceInfluencer && setSequenceInfluencers(sequenceInfluencer)
+    }, [sequenceInfluencer])
     
+    return {
+        data: list,
+        setStatus,
+        status,
+        search,
+        setSearch,
+        loading, 
+        error,
+        setPage,
+        page,
+        setSize,
+        size,
+    }
+}
+
+export const useSequenceInfluencerEmail = (sequenceId: string, sequenceInfluencerId: string) => {
+    const {
+        apiClient,
+        loading
+    } = useApiClient()
+    const updateEmail = async (email: string) => {
+        const [err] = await awaitToError(apiClient.patch(`/v2/sequences/${sequenceId}/influencers/${sequenceInfluencerId}`, { email }));
+        return err ? false : true;
+    }
+    return {
+        updateEmail,
+        loading
+    }
 }

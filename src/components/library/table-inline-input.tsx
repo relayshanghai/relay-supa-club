@@ -6,7 +6,7 @@ import { clientLogger } from 'src/utils/logger-client';
 export interface TableInlineInputProps {
     value: string | null;
     textPromptForMissingValue: string;
-    onSubmit: (value: string) => Promise<void>;
+    onSubmit: (value: string) => Promise<void> | void;
     type?: InputHTMLAttributes<HTMLInputElement>['type'];
     onSubmittingChange?: (submitting: boolean) => void;
 }

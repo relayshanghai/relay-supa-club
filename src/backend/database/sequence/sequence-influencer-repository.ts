@@ -101,6 +101,10 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             { page, size },
             {
                 where,
+                relations: {
+                    sequenceEmails: true,
+                    influencerSocialProfile: true,
+                },
             },
         );
     }

@@ -199,6 +199,34 @@ const sequences = {
         'Uh Oh! Looks like your BoostBot credits have run out! Please contact sales at sophia @ boostbot.ai if you want to add more credits to your account this month. Otherwise, your credits will be automatically renewed at the start of your next billing cycle.',
     account_removed: 'This influencer has been removed by the owner',
     influencerLimit: `Oops! Sequences can only include up to {{ influencerLimit }} influencers. To contact more influencers, please create a new sequence. Thank you!`,
+    table: {
+        unscheduled: {
+            name: 'Name',
+            viewCard: 'View Card',
+            influencerEmail: 'Influencer Email',
+            influencerNiches: 'Influencer Niches',
+            dateAdded: 'Date Added',
+            action: 'Action'
+        },
+        scheduled: {
+            name: 'Name',
+            viewCard: 'View Card',
+            currentSequenceEmail: 'Current Sequence Email',
+            currentStatus: 'Current Status',
+        },
+        replied: {
+            name: 'Name',
+            sequenceEmailRepliedTo: 'Sequence email replied to',
+            firstRepliedAt: 'First replied at',
+            viewInbox: 'View Inbox',
+        },
+        ignored: {
+            name: 'Name',
+            firstEmailSentAt: 'Sequence email ignored',
+            lastEmailSentAt: 'First ignored at',
+            action: 'Action',
+        },
+    }
 };
 
 export default sequences;

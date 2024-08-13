@@ -17,7 +17,7 @@ export default function SequenceTabHeader({
     unscheduled
 }: SequenceTabHeaderProps){
     const { t } = useTranslation();
-    const [tabActive, setTabActive] = useState('Unscheduled'); 
+    const [tabActive, setTabActive] = useState('unscheduled'); 
     useEffect(() => {
         tabChanged(tabActive);
     }, [tabActive])

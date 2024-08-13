@@ -16,14 +16,7 @@ import { AddressEntity } from '../influencer/address-entity';
 import { InfluencerSocialProfileEntity } from '../influencer/influencer-social-profile-entity';
 import { ThreadEntity } from '../thread/thread-entity';
 import { SequenceEmailEntity } from './sequence-email-entity';
-
-export enum SequenceInfluencerScheduleStatus {
-    PENDING = 'pending',
-    PROCESSING = 'processing',
-    COMPLETED = 'completed',
-    FAILED = 'failed',
-    INSUFICIENT_BALANCE = 'insuficient_balance',
-}
+import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 
 @Entity('sequence_influencers')
 export class SequenceInfluencerEntity {

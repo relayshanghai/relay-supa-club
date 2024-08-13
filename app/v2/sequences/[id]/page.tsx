@@ -8,7 +8,9 @@ import SummaryCard from "../components/sequence-summary/summary-card"
 import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, Send, TeamOutline, Trashcan } from "src/components/icons"
 import { calculateSequenceInfo } from "app/utils/rate-info"
 import SequenceTabHeader from "./components/sequence-tab-header/sequence-tab-header"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import SequenceInfluencerTableUnscheduled from "./components/sequence-infuencer-table/sequence-influencer-table-unscheduled"
+import { useSequenceInfluencer } from "src/hooks/v2/use-sequence-influencer"
 
 export interface SequenceDetailPageProps {
     params: {
@@ -18,7 +20,6 @@ export interface SequenceDetailPageProps {
 
 export default function SequenceDetailPage( { params: { id } }: SequenceDetailPageProps) {
     const {
-        getSequence,
         loading,
         sequence,
         info
@@ -30,6 +31,28 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
         openRate,
         replyRate
     } = calculateSequenceInfo(info)
+    const {
+        page, size,
+        setPage, setSize,
+        loading: loadingInfluencers,
+        data,
+        search,
+        setSearch,
+        status,
+        setStatus,
+        error
+    } = useSequenceInfluencer(id)
+    useEffect(() => {
+        if(activeTab === 'unscheduled') {
+            setStatus('Unscheduled')
+        } else if(activeTab === 'scheduledAndSent') {
+            setStatus('Scheduled')
+        } else if(activeTab === 'replied') {
+            setStatus('Replied')
+        } else if(activeTab === 'ignored') {
+            setStatus('ignored')
+        }
+    }, [activeTab])
     return <div className="px-8 pt-8 pb-4 flex-col justify-start items-start gap-8 inline-flex w-full">
         <div className="h-[45px] justify-start items-start gap-6 inline-flex w-full">
             <div className="grow shrink basis-0 h-[45px] justify-start items-center gap-6 flex">
@@ -107,6 +130,19 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
                 </button>
                 </div>
             </div>
-            </div>
+        </div>
+        {
+            activeTab === 'unscheduled' && 
+                <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start flex">
+                <SequenceInfluencerTableUnscheduled
+                    sequenceId={id}
+                    items={data?.items || []}
+                    page={page}
+                    size={size}
+                    totalPages={data?.totalPages || 1}
+                    onPageChange={setPage}
+                />
+                </div>
+        }
     </div>
 }
