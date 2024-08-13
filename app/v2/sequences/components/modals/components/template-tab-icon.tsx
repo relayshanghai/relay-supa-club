@@ -1,5 +1,5 @@
 import { Compass, RingingBell, ClockAnticlockwise } from 'app/components/icons';
-import { OutreachStatus } from 'app/v2/sequences/types';
+import type { OutreachStatus } from 'app/v2/sequences/types';
 
 export const OutreachTabIcon = ({ status }: { status: OutreachStatus }) => {
     switch (status) {

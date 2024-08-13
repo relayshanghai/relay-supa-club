@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import { ModalWithButtons } from '../modals';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 type ConfirmModalProps = {
     show: boolean;
@@ -23,7 +22,6 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
     cancelButtonText,
     okButtonText,
 }) => {
-    const { t } = useTranslation();
     return (
         <ModalWithButtons
             title={title ?? 'Are you sure want to delete this item?'}

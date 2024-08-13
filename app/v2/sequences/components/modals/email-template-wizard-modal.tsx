@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { EmailTemplateModalStepOne } from './email-template-modal-steps/step-1';
 import { EmailTemplateModalStepTwo } from './email-template-modal-steps/step-2';
 import { WizardModal } from './wizard-modal/wizard-modal';
-import { WizardStep } from '../../types';
+import type { WizardStep } from '../../types';
 
 export const EmailTemplateWizardModal = ({
     modalOpen,

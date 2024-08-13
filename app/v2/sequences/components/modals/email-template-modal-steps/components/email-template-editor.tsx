@@ -13,8 +13,6 @@ import { useTranslation } from 'react-i18next';
 import type { GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import { getOutreachStepsTranslationKeys } from 'app/v2/sequences/common/outreach-step';
 
-type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
-
 export const EmailTemplateEditor = ({
     templateDetails,
     setTemplateDetails,

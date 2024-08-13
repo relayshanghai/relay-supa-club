@@ -9,11 +9,6 @@ import { OutreachTabIcon } from './components/template-tab-icon';
 import { TemplateTabContent } from './components/template-tab-content';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { getOutreachStepsTranslationKeys } from '../../common/outreach-step';
-// import { EmailTemplateWizardModal } from './email-template-wizard-modal';
-
-const VARIABLE_GROUPS = ['brand', 'product', 'collab', 'influencer', 'wildcards'];
-
-type OutreachStatus = (typeof OUTREACH_STATUSES)[number];
 
 type EmailTemplateModalProps = {
     modalOpen: boolean;
@@ -27,6 +22,7 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
         if (modalOpen) {
             getTemplates();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [modalOpen]);
     const groupedTemplateData = emailTemplates?.reduce((acc: { [key: string]: GetTemplateResponse[] }, template) => {
         const key = template.step;

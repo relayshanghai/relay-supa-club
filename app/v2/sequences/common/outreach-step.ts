@@ -1,4 +1,4 @@
-import { OutreachStatus } from '../types';
+import type { OutreachStatus } from '../types';
 
 export const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     switch (status) {
