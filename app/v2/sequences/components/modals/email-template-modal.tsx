@@ -69,7 +69,7 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
                         ))}
                     </TabsList>
                     {OUTREACH_STATUSES.map((status) => (
-                        <TabsContent key={`content-${status}`} value={status}>
+                        <TabsContent key={`content-${status}`} value={status} className='!mt-0'>
                             <TemplateTabContent templates={groupedTemplateData?.[status] || []} />
                         </TabsContent>
                     ))}

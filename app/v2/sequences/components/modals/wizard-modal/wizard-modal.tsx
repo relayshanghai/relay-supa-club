@@ -5,14 +5,14 @@ import { ModalHeader } from './wizard-modal-header';
 import { type WizardModalProps } from 'app/v2/sequences/types';
 
 export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsDisabled }) => {
-    const getUnDisabledNextStep = (s: number) => {
+    const getUnDisabledNextStep = (s: number): number => {
         if (stepsDisabled?.includes(s + 1)) {
             return getUnDisabledNextStep(s + 1);
         }
         return s + 1;
     };
 
-    const getUndisabledPrevStep = (s: number) => {
+    const getUndisabledPrevStep = (s: number): number => {
         if (stepsDisabled?.includes(s - 1)) {
             return getUndisabledPrevStep(s - 1);
         }

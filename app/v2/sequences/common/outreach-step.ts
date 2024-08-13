@@ -1,4 +1,6 @@
+import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import type { OutreachStatus } from '../types';
+import { type StagedSequenceEmailTemplateType } from 'src/store/reducers/sequence-template';
 
 export const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
     switch (status) {
@@ -13,4 +15,17 @@ export const getOutreachStepsTranslationKeys = (status: OutreachStatus) => {
         default:
             break;
     }
+};
+
+export const sortStepsByKeys = (stagedSequenceEmailTemplates: StagedSequenceEmailTemplateType) => {
+    const desiredOrder = OUTREACH_STATUSES;
+    const sortedStagedSequenceEmailTemplates: any = {};
+
+    desiredOrder.forEach((key) => {
+        if (stagedSequenceEmailTemplates.hasOwnProperty(key)) {
+            sortedStagedSequenceEmailTemplates[key] = (stagedSequenceEmailTemplates as any)[key];
+        }
+    });
+
+    return sortedStagedSequenceEmailTemplates as StagedSequenceEmailTemplateType;
 };

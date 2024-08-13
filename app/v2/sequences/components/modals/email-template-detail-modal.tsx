@@ -1,14 +1,14 @@
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
     type OutreachEmailTemplateEntity,
     type Step,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { useTranslation } from 'react-i18next';
-import { useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
 import { Modal } from 'app/components/modals';
 import { CheckIcon, Cross } from 'app/components/icons';
-import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
+import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
+import { getOutreachStepsTranslationKeys } from '../../common/outreach-step';
+import { convertTiptapVariable } from '../utils';
 
 export const EmailTemplateDetailModal = ({
     showEmailTemplateDetailModal,
@@ -20,23 +20,12 @@ export const EmailTemplateDetailModal = ({
     data: OutreachEmailTemplateEntity & { step: Step };
 }) => {
     const { t } = useTranslation();
-    const { setStagedSequenceEmailTemplate, stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
+    const { setStagedSequenceEmailTemplate, stagedSequenceEmailTemplates } = useSequenceEmailTemplateStore();
 
     const addToSequence = () => {
-        stagedSequenceEmailTemplates.forEach((old, i) => {
-            if (!old) {
-                stagedSequenceEmailTemplates[i] = { ...data, step: data.step };
-            }
-        });
-        const foundSequenceStep = stagedSequenceEmailTemplates.find((s) => s.step === data.step);
-        if (foundSequenceStep) {
-            const s = stagedSequenceEmailTemplates;
-            const index = s.findIndex((e) => e.step === data.step);
-            s[index] = { ...data, step: data.step };
-            setStagedSequenceEmailTemplate(s);
-            return;
-        }
-        setStagedSequenceEmailTemplate([...stagedSequenceEmailTemplates, { ...data, step: data.step }]);
+        const d = { ...stagedSequenceEmailTemplates };
+        d[data.step] = data;
+        setStagedSequenceEmailTemplate(d);
     };
 
     return (
@@ -59,47 +48,45 @@ export const EmailTemplateDetailModal = ({
                         <Cross className="flex h-6 w-6 fill-gray-500 stroke-white" />
                     </div>
                     {/* body start */}
-                    <div className="flex w-full gap-6">
+                    <div className="mb-4 flex w-full gap-6">
                         <div className="w-[200px]">
-                            <Input
-                                label="Sequence Name"
-                                type="text"
-                                value={data?.step}
-                                onChange={() => null}
+                            <div
+                                className="min-w-[100px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-semibold  text-gray-500"
                                 data-testid="sequence-name-input"
-                            />
+                            >
+                                {data?.step && t(`sequences.steps.${getOutreachStepsTranslationKeys(data?.step)}`)}
+                            </div>
                         </div>
                         <div className="w-[300px]">
-                            <Input
-                                label="Subject Line"
-                                type="text"
-                                value={data?.name ?? ''}
-                                onChange={() => null}
+                            <div
+                                className="min-w-[300px] overflow-x-scroll rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500"
                                 data-testid="subject-line-input"
+                                dangerouslySetInnerHTML={{
+                                    __html: convertTiptapVariable(data?.subject ?? ''),
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="flex w-full gap-6">
-                        <textarea
-                            className="min-h-[200px] w-full rounded-md"
-                            name="template"
-                            id="template"
+                    <div className="flex w-full">
+                        <section
+                            className="h-[200px] w-full cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500"
                             data-testid="template-input"
-                        >
-                            {data?.template}
-                        </textarea>
+                            dangerouslySetInnerHTML={{
+                                __html: convertTiptapVariable(data?.template ?? ''),
+                            }}
+                        />
                     </div>
                     <div className="mt-4 flex w-full justify-between ">
-                        <Button
+                        {/* <Button
                             type="button"
                             variant="secondary"
                             className="!border-red-500 !p-2"
                             data-testid="delete-button"
                         >
                             <TrashIcon className="h-4 w-4 stroke-red-600" />
-                        </Button>
+                        </Button> */}
                         <div className="flex justify-center space-x-2">
-                            <Button
+                            {/* <Button
                                 type="button"
                                 variant="secondary"
                                 className="inline-flex !border-violet-600 !p-2"
@@ -107,7 +94,7 @@ export const EmailTemplateDetailModal = ({
                             >
                                 <PencilSquareIcon className="mr-1 h-4 w-4 stroke-violet-600" />{' '}
                                 <span>{t('outreaches.modifyTemplate')}</span>
-                            </Button>
+                            </Button> */}
                             <Button
                                 type="button"
                                 variant="primary"

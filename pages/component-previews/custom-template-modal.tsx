@@ -10,6 +10,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from 'shadcn/components/ui/dialog';
 import {
     DropdownMenu,
@@ -37,7 +38,6 @@ import {
 import { OUTREACH_STATUSES } from 'src/utils/outreach/constants';
 import ProgressHeader from 'src/components/ProgressHeader';
 import { SearchBar } from 'src/components/SearchBar';
-import { DialogClose } from 'shadcn/components/ui/dialog';
 import { Tiptap } from 'src/components/tiptap';
 import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
@@ -146,7 +146,7 @@ const CustomTemplateCard = ({
                                     selected ? 'text-primary-400' : 'text-gray-400'
                                 } overflow-hidden overflow-ellipsis text-start font-normal`}
                             >
-                                {truncatedText(template?.description || '', 30)}
+                                {truncatedText(template?.description ?? '', 30)}
                             </CardDescription>
                         </section>
                     </CardHeader>
@@ -600,9 +600,7 @@ const VariableGroup = ({
                                                         index % 2 !== 0 && 'bg-gray-50'
                                                     } flex items-center gap-2`}
                                                     key={'dropdownitem-' + group}
-                                                    onSelect={() => {
-                                                        // onStatusChange(status);
-                                                    }}
+                                                    onSelect={() => null}
                                                 >
                                                     <VariableGroupIcon status={group} />
                                                     {group}

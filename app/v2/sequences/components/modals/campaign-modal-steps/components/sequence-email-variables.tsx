@@ -2,9 +2,10 @@
 import { type FC, useEffect, useState } from 'react';
 import { type Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { useSequence } from 'src/hooks/v2/use-sequences';
-import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
+import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { type TemplateWithVariableValueType } from 'src/store/reducers/sequence';
 import { convertTiptapVariable, substituteVariable } from '../../../utils';
+import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 
 type SequenceStepItemProps = {
     step: Step;
@@ -12,13 +13,13 @@ type SequenceStepItemProps = {
 
 const SequenceEmailVariable: FC<SequenceStepItemProps> = ({ step }) => {
     const { getSequenceEmailTemplate } = useSequenceEmailTemplates({});
-    const { stagedSequenceEmailTemplates } = useStagedSequenceEmailTemplateStore();
+    const { stagedSequenceEmailTemplates } = useSequenceEmailTemplateStore();
     const { setSelectedTemplate, selectedTemplate, sequenceVariables } = useSequence();
     const [configurableTemplate, setConfigurableTemplate] = useState({
         subject: '',
         template: '',
     });
-    const template = stagedSequenceEmailTemplates.find((template) => template.step === step);
+    const template: any = stagedSequenceEmailTemplates[step];
 
     useEffect(() => {
         if (!template) {

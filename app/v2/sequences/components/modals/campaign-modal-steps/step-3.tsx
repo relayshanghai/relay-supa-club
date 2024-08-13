@@ -9,14 +9,15 @@ import SequenceEmailVariable from './components/sequence-email-variables';
 import { type ModalStepProps } from 'app/v2/sequences/types';
 import { Bell, ClockCheckedOutline, SendOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
-import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
+import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { useSequence, useSequences } from 'src/hooks/v2/use-sequences';
 import { type VariableWithValue } from 'src/store/reducers/sequence';
+import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPrevStep }) => {
     const { t } = useTranslation();
     const { getSequenceEmailTemplate, loading } = useSequenceEmailTemplates({});
-    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
+    const { stagedSequenceEmailTemplates, resetStagedSequenceEmailTemplate } = useSequenceEmailTemplateStore();
     const {
         sequenceVariables,
         setSequenceVariables,
@@ -37,37 +38,30 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
     }, [] as string[]);
 
     useEffect(() => {
-        stagedSequenceEmailTemplates.forEach((template) => {
-            if (sequenceVariables.length !== 0) {
-                return;
-            }
-            getSequenceEmailTemplate(template.id)
-                .then((d) => {
-                    // check if the variable already exists
-                    const exists = sequenceVariables?.find((v) => v.name === d.name);
-                    if (!exists) {
-                        const variables = d?.variables?.map((v) => ({ ...v, value: '' }));
-                        const data = [...sequenceVariables, ...(variables ?? [])];
-                        setSequenceVariables(data);
-                        return data;
+        (async () => {
+            const data = await Promise.all(
+                Object.values(stagedSequenceEmailTemplates).map(async (template) => {
+                    if (!template?.id) {
+                        return;
                     }
-                })
-                .then((data) => {
-                    if (isEdit) {
-                        setSequenceVariables(
-                            sequence?.templateVariables.map(
-                                (d) =>
-                                    ({
-                                        ...data?.find((v) => v.name === d.name),
-                                        id: d.id,
-                                        name: d.name,
-                                        value: d.value,
-                                    } as unknown as VariableWithValue),
-                            ) ?? [],
-                        );
+                    const data = await getSequenceEmailTemplate(template?.id);
+                    return data.variables;
+                }),
+            );
+            let seqVariables = data.flat() as VariableWithValue[];
+            seqVariables = seqVariables
+                .filter((d) => d)
+                .filter((d, i, arr) => arr.findIndex((t) => t.name === d.name) === i);
+            if (isEdit) {
+                sequence?.templateVariables.forEach((variable) => {
+                    const index = seqVariables.findIndex((v) => v.name === variable.name);
+                    if (index !== -1) {
+                        seqVariables[index].value = variable.value;
                     }
                 });
-        });
+            }
+            if (seqVariables.length) setSequenceVariables(seqVariables);
+        })();
     }, [isEdit]);
 
     const onSave = async () => {
@@ -77,9 +71,11 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                 name: sequence?.name as string,
                 autoStart: sequence?.autoStart,
                 productId: sequence?.product?.id,
-                sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
-                    id: template.id,
-                })),
+                sequenceTemplates: Object.values(stagedSequenceEmailTemplates)
+                    .filter((d) => d)
+                    .map((template) => ({
+                        id: template?.id as string,
+                    })),
                 variables: sequenceVariables.map((v) => ({
                     name: v.name,
                     value: v.value ?? '',
@@ -90,9 +86,11 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                 name: sequence?.name as string,
                 autoStart: sequence?.autoStart,
                 productId: sequence?.product?.id,
-                sequenceTemplates: stagedSequenceEmailTemplates.map((template) => ({
-                    id: template.id,
-                })),
+                sequenceTemplates: Object.values(stagedSequenceEmailTemplates)
+                    .filter((d) => d)
+                    .map((template) => ({
+                        id: template?.id as string,
+                    })),
                 variables: sequenceVariables.map((v) => ({
                     name: v.name,
                     value: v.value ?? '',
@@ -101,7 +99,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
         }
         p.then(() => {
             setModalOpen(false);
-            setStagedSequenceEmailTemplate([]);
+            resetStagedSequenceEmailTemplate();
             setSequence(null);
             setSequenceVariables([]);
             getAllSequences();

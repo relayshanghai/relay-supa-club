@@ -31,6 +31,7 @@ export type MESSAGE_TYPES = 'Sent' | 'Reply' | 'New' | 'Trash' | 'Draft' | 'Warm
 export type EMAIL_CONTACT_TYPE = 'from' | 'to' | 'cc' | 'bcc';
 
 export const OUTREACH_STATUSES = enumToArray(Step, [Step.THIRD_FOLLOW_UP]);
+export const DB_OUTREACH_STATUSES = ['OUTREACH', 'FIRST_FOLLOW_UP', 'SECOND_FOLLOW_UP', 'THIRD_FOLLOW_UP'] as const;
 
 /**
  * The type of contact in the thread

@@ -3,6 +3,14 @@ import { describe, test, expect, vi } from 'vitest';
 import { CampaignModalStepTwo } from './step-2';
 import StoreProvider from 'src/store/Providers/StoreProvider';
 
+vi.mock('src/backend/database/sequence-email-template/sequence-email-template-entity', () => ({
+    Step: {
+        OUTREACH: 'OUTREACH',
+        FIRST_FOLLOW_UP: 'FIRST_FOLLOW_UP',
+        SECOND_FOLLOW_UP: 'SECOND_FOLLOW_UP',
+    },
+}));
+
 vi.mock('pages/api/outreach/email-templates/request', () => ({
     OutreachStepRequest: {
         OUTREACH: 'OUTREACH',

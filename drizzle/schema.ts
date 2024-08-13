@@ -17,7 +17,7 @@ import {
     json,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
-import { FUNNEL_STATUS_VALUES, OUTREACH_STATUSES } from '../src/utils/outreach/constants';
+import { DB_OUTREACH_STATUSES, FUNNEL_STATUS_VALUES } from '../src/utils/outreach/constants';
 import { CREATOR_PLATFORM_OPTIONS } from '../types';
 
 export const key_status = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired']);
@@ -720,7 +720,7 @@ export const outreach_email_templates = pgTable('outreach_email_templates', {
     name: text('name').notNull(),
     description: text('description'),
     step: text('step', {
-        enum: OUTREACH_STATUSES,
+        enum: DB_OUTREACH_STATUSES,
     }).notNull(),
     template: text('template'),
     subject: text('subject'),

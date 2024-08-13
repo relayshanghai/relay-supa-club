@@ -5,7 +5,7 @@ import {
     type OutreachEmailTemplateEntity,
     Step,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
-import { useSequenceEmailTemplates, useStagedSequenceEmailTemplateStore } from 'src/hooks/v2/use-sequences-template';
+import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { SequenceAccordion } from './components/sequence-accordion';
 import { SequenceStepDuration } from './components/sequence-step-duration';
 import { SequenceStepItem } from './components/sequence-step-item';
@@ -16,6 +16,8 @@ import { Button } from 'app/components/buttons';
 import { useSequence } from 'src/hooks/v2/use-sequences';
 import { type SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
+import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
+import { sortStepsByKeys } from 'app/v2/sequences/common/outreach-step';
 
 export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextStep }) => {
     const {
@@ -36,7 +38,8 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
     } = useSequenceEmailTemplates({
         step: Step.SECOND_FOLLOW_UP,
     });
-    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate } = useStagedSequenceEmailTemplateStore();
+    const { stagedSequenceEmailTemplates, setStagedSequenceEmailTemplate, resetStagedSequenceEmailTemplate } =
+        useSequenceEmailTemplateStore();
     const { setSequence, sequence, isEdit, getSequence, loading } = useSequence();
     const { t } = useTranslation();
 
@@ -44,58 +47,59 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         refreshOutreachEmailTemplates();
         refreshFirstFollowUpEmailTemplates();
         refreshSecondFollowUpEmailTemplates();
+        resetStagedSequenceEmailTemplate();
     }, []);
 
     useEffect(() => {
-        if (isEdit && sequence?.id) {
-            getSequence(sequence?.id).then((d) => {
-                setStagedSequenceEmailTemplate(
-                    d.steps.map(
-                        (s) =>
-                            ({
-                                id: s.outreachEmailTemplate?.id,
-                                name: s.outreachEmailTemplate?.name,
-                                description: s.outreachEmailTemplate?.description,
-                                step: s.outreachEmailTemplate?.step,
-                            } as unknown as OutreachEmailTemplateEntity),
-                    ),
-                );
-            });
-        }
+        (async () => {
+            const sequenceEmailTemplates = Object.values(stagedSequenceEmailTemplates).map((d) => d?.id);
+            if (sequence?.id && (isEdit || !sequenceEmailTemplates.every((d) => d))) {
+                const seq = await getSequence(sequence?.id);
+                let sequenceEmailTemplate = {};
+                seq.steps.forEach((step) => {
+                    sequenceEmailTemplate = {
+                        ...sequenceEmailTemplate,
+                        [step.outreachEmailTemplate?.step as Step]: step.outreachEmailTemplate,
+                    };
+                });
+                setStagedSequenceEmailTemplate(sortStepsByKeys(sequenceEmailTemplate as any));
+            }
+        })();
     }, [isEdit]);
 
-    const onDelete = (id: string) => {
-        const index = stagedSequenceEmailTemplates.findIndex((d) => d.id === id);
-        const s = stagedSequenceEmailTemplates;
-        s[index] = null as any;
+    const onDelete = (step: Step) => {
+        const s = { ...stagedSequenceEmailTemplates };
+        s[step] = null;
         setStagedSequenceEmailTemplate(s);
     };
 
     const onNextStepHandler = () => {
-        const sequenceEmailTemplates = stagedSequenceEmailTemplates.filter((d) => d !== null);
+        const sequenceEmailTemplates = Object.values(stagedSequenceEmailTemplates);
         setSequence({
             ...sequence,
             steps: sequenceEmailTemplates.map((d) => ({
-                stepNumber: d.step,
-                outreachEmailTemplate: { id: d.id },
+                stepNumber: d?.step,
+                outreachEmailTemplate: { id: d?.id },
             })) as unknown as SequenceStepEntity[],
         } as SequenceEntity);
         onNextStep();
     };
+
+    console.log('ASKDJFHASKJDFHKASJDF', stagedSequenceEmailTemplates);
 
     return (
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
             data-testid="step1-outreach-form"
         >
-            <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg bg-white shadow">
-                <div className="inline-flex w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
+            <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-hidden rounded-lg bg-white shadow">
+                <div className="inline-flex max-h-[545px] w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
                     <div className="inline-flex items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
                         <div className="font-['Poppins'] text-base font-semibold tracking-tight text-gray-700">
                             {t('outreaches.templates')}
                         </div>
                     </div>
-                    <Accordion type="multiple" className="w-full" defaultValue={['outreach']}>
+                    <Accordion type="multiple" className="w-full overflow-y-scroll" defaultValue={['outreach']}>
                         <SequenceAccordion
                             title={t('outreaches.steps.Outreach')}
                             items={outreachEmailTemplates ?? ([] as OutreachEmailTemplateEntity[])}
@@ -118,7 +122,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                 </div>
                 <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
                     {loading && <>Loading...</>}
-                    {stagedSequenceEmailTemplates.map((d, i) => {
+                    {Object.values(stagedSequenceEmailTemplates).map((d) => {
                         if (!d) {
                             return <></>;
                         }
@@ -131,15 +135,13 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                                 <SequenceStepItem
                                     title={d.name}
                                     description={d.description as string}
-                                    onDelete={() => onDelete(d.id)}
+                                    onDelete={() => onDelete(d.step)}
                                 />
-                                {i !== stagedSequenceEmailTemplates.length - 1 && (
-                                    <SequenceStepDuration duration={24} />
-                                )}
+                                {d.step !== Step.SECOND_FOLLOW_UP && <SequenceStepDuration duration={24} />}
                             </div>
                         );
                     })}
-                    {stagedSequenceEmailTemplates.length === 3 && (
+                    {stagedSequenceEmailTemplates[Step.SECOND_FOLLOW_UP] && (
                         <>
                             <SequenceStepDuration duration={24} />{' '}
                             <span className="font-['Poppins'] text-xs font-semibold leading-tight tracking-tight text-gray-600">
