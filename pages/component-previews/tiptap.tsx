@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tiptap } from 'src/components/inbox/wip/tiptap';
+import { Tiptap } from 'src/components/inbox/wip/tiptap-email';
 
 const PreviewTiptap = () => {
     const [description, setDescription] = useState('');
