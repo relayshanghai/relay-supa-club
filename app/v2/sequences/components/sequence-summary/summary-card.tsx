@@ -1,4 +1,4 @@
-'use-client'
+'use-client';
 export interface SummaryCardProps {
     tracking: string;
     title: React.ReactNode;
@@ -7,35 +7,34 @@ export interface SummaryCardProps {
     loading?: boolean;
 }
 
-export default function SummaryCard({
-    tracking,
-    title,
-    loading,
-    icon,
-    badge
-}: SummaryCardProps) {
-    return <div className={`w-[312px] h-[113px] p-5 bg-[#fefefe] rounded-xl border border-gray-200 justify-start items-start gap-4 inline-flex ${loading && 'animate-pulse'}`}>
-    {
-      icon && <div className="p-3 bg-violet-100 rounded-3xl justify-start items-start gap-2.5 flex">
-        <div className="w-6 h-6 relative" >
-          {icon}
+export default function SummaryCard({ tracking, title, loading, icon, badge }: SummaryCardProps) {
+    return (
+        <div
+            className={`inline-flex h-[113px] w-[312px] items-start justify-start gap-4 rounded-xl border border-gray-200 bg-[#fefefe] p-5 ${
+                loading && 'animate-pulse'
+            }`}
+        >
+            {icon && (
+                <div className="flex items-start justify-start gap-2.5 rounded-3xl bg-violet-100 p-3">
+                    <div className="relative h-6 w-6">{icon}</div>
+                </div>
+            )}
+            <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                <div className="inline-flex items-start justify-start gap-0.5 self-stretch">
+                    <div className="font-['Poppins'] text-base font-medium tracking-tight text-gray-700">{title}</div>
+                    <div className="relative h-3 w-3" />
+                </div>
+                <div className="inline-flex items-start justify-start gap-1 self-stretch">
+                    <div className="font-['Poppins'] text-3xl font-medium tracking-tight text-violet-600">
+                        {tracking}
+                    </div>
+                    {badge && (
+                        <div className="flex items-start justify-start gap-1 rounded bg-green-50 px-2 py-1">
+                            <div className="relative h-3.5 w-3.5" />
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-      </div>
-    }
-    <div className="grow shrink basis-0 flex-col justify-start items-start gap-1 inline-flex">
-      <div className="self-stretch justify-start items-start gap-0.5 inline-flex">
-        <div className="text-gray-700 text-base font-medium font-['Poppins'] tracking-tight">{title}</div>
-        <div className="w-3 h-3 relative" />
-      </div>
-      <div className="self-stretch justify-start items-start gap-1 inline-flex">
-        <div className="text-violet-600 text-3xl font-medium font-['Poppins'] tracking-tight">{tracking}</div>
-        {
-          badge &&
-          <div className="px-2 py-1 bg-green-50 rounded justify-start items-start gap-1 flex">
-            <div className="w-3.5 h-3.5 relative" />
-          </div>
-        }
-      </div>
-    </div>
-  </div>
+    );
 }

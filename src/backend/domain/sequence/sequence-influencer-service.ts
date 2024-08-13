@@ -3,10 +3,7 @@ import { InfluencerRepository } from 'src/backend/database/influencer/influencer
 import { type InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { InfluencerSocialProfileRepository } from 'src/backend/database/influencer/influencer-social-profile-repository';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
-import {
-    type SequenceInfluencerEntity,
-    SequenceInfluencerScheduleStatus,
-} from 'src/backend/database/sequence/sequence-influencer-entity';
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 import { UsageRepository } from 'src/backend/database/usages/repository';
@@ -22,6 +19,7 @@ import { type CreatorReport } from 'types';
 import BalanceService from '../balance/balance-service';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import { RequestContext } from 'src/utils/request-context/request-context';
+import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 
 export default class SequenceInfluencerService {
     public static readonly service: SequenceInfluencerService = new SequenceInfluencerService();

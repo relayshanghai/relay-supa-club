@@ -48,7 +48,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
                                     {profileFirstName[0]}
                                     {accountMenuOpen && (
                                         <div
-                                            className="border-gray absolute z-[100] top-[30px] right-[30%] flex w-fit origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
+                                            className="border-gray absolute right-[30%] top-[30px] z-[100] flex w-fit origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                                             ref={accountMenuRef}
                                         >
                                             <Link

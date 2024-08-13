@@ -88,7 +88,7 @@ export const TemplateTabContent = ({ templates }: { templates: GetTemplateRespon
                 }}
             />
 
-            <section className="max-h-[510px] overflow-y-auto divide-y-2 p-8">
+            <section className="max-h-[510px] divide-y-2 overflow-y-auto p-8">
                 <div className="mb-6 grid max-h-[350px] grid-cols-1 gap-6 lg:grid-cols-2">
                     {loading ? (
                         <>

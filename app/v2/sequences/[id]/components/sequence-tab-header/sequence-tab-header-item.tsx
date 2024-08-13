@@ -11,24 +11,37 @@ export default function SequenceTabHeaderItem({
     active,
     badge,
     badgeClassName,
-    onClick
+    onClick,
 }: SequenceTabHeaderItemProps) {
-    return <div className="rounded-md flex-col justify-center items-start inline-flex cursor-pointer" onClick={onClick}>
-    <div className="px-4 py-2 justify-start items-center gap-2 inline-flex">
-        <div className="justify-center items-center gap-2 flex">
-            <div className={`${active && 'text-violet-600'} text-sm font-medium font-['Poppins'] leading-tight tracking-tight`}>{title}</div>
-            {
-                badge &&
-                <div className="justify-start items-start flex">
-                    <div className={`px-[3px] py-px  ${badgeClassName} rounded-[999px] justify-start items-center gap-px flex`}>
-                        <div className="px-[2.50px] justify-start items-center gap-[7px] flex">
-                        <div className={`text-[10px] font-medium font-['Inter'] leading-none tracking-tight`}>{badge}</div>
-                        </div>
+    return (
+        <div className="inline-flex cursor-pointer flex-col items-start justify-center rounded-md" onClick={onClick}>
+            <div className="inline-flex items-center justify-start gap-2 px-4 py-2">
+                <div className="flex items-center justify-center gap-2">
+                    <div
+                        className={`${
+                            active && 'text-violet-600'
+                        } font-['Poppins'] text-sm font-medium leading-tight tracking-tight`}
+                    >
+                        {title}
                     </div>
+                    {badge && (
+                        <div className="flex items-start justify-start">
+                            <div
+                                className={`px-[3px] py-px  ${badgeClassName} flex items-center justify-start gap-px rounded-[999px]`}
+                            >
+                                <div className="flex items-center justify-start gap-[7px] px-[2.50px]">
+                                    <div
+                                        className={`font-['Inter'] text-[10px] font-medium leading-none tracking-tight`}
+                                    >
+                                        {badge}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            }
+            </div>
+            {active && <div className="h-0.5 self-stretch bg-violet-600" />}
         </div>
-    </div>
-    {active && <div className="self-stretch h-0.5 bg-violet-600" /> }
-</div>
+    );
 }
