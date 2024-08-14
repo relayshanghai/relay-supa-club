@@ -18,6 +18,7 @@ import SequenceTabHeader from './components/sequence-tab-header/sequence-tab-hea
 import { useEffect, useState } from 'react';
 import SequenceInfluencerTableUnscheduled from './components/sequence-infuencer-table/sequence-influencer-table-unscheduled';
 import { useSequenceInfluencer } from 'src/hooks/v2/use-sequence-influencer';
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -30,7 +31,8 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
     const [activeTab, setActiveTab] = useState('unscheduled');
     const { t } = useTranslation();
     const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
-    const { page, setPage, size, data, setStatus } = useSequenceInfluencer(id);
+    const { page, setPage, size, data, setStatus, selectedInfluencers, setSelectedInfluencers } =
+        useSequenceInfluencer(id);
     useEffect(() => {
         if (activeTab === 'unscheduled') {
             setStatus('Unscheduled');
@@ -43,6 +45,11 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
+
+    const handleSelectedInfluencers = (influencer: SequenceInfluencerEntity[]) => {
+        setSelectedInfluencers(influencer);
+    };
+
     return (
         <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
             <div className="inline-flex h-[45px] w-full items-start justify-start gap-6">
@@ -70,9 +77,9 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                 <div className="flex items-start justify-end gap-6">
                     <button className="flex items-center justify-start gap-2 rounded-md bg-[#eef5ff] px-5 py-2">
                         <ToolsIcon fill="none" />
-                        <button className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#2970ff]">
+                        <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#2970ff]">
                             {t('campaigns.show.editCampaign')}
-                        </button>
+                        </div>
                     </button>
                     <button className="flex items-center justify-start gap-2 rounded-md border border-violet-600 bg-[#fefefe] px-5 py-2">
                         <LightningIcon fill="none" />
@@ -164,6 +171,8 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                         size={size}
                         totalPages={data?.totalPages || 1}
                         onPageChange={setPage}
+                        setSelectedInfluencers={(d) => handleSelectedInfluencers(d)}
+                        selectedInfluencers={selectedInfluencers}
                     />
                 </div>
             )}

@@ -6,6 +6,7 @@ import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/seq
 interface SequenceInfluencerState {
     list: Paginated<SequenceInfluencerEntity>;
     item: Partial<SequenceInfluencerEntity>;
+    selectedList: SequenceInfluencerEntity[];
 }
 
 const initialState: SequenceInfluencerState = {
@@ -17,6 +18,7 @@ const initialState: SequenceInfluencerState = {
         totalSize: 0,
     },
     item: {},
+    selectedList: [],
 };
 
 const pageSlice = createSlice({
@@ -35,10 +37,14 @@ const pageSlice = createSlice({
         setSequenceInfluencer: (state, action: PayloadAction<SequenceInfluencerEntity>) => {
             state.item = action.payload;
         },
+        setSelectedInfluencers: (state, action: PayloadAction<SequenceInfluencerEntity[]>) => {
+            state.selectedList = action.payload;
+        },
     },
 });
 
-const { setSequenceInfluencers, setSequenceInfluencer, setSequenceInfluencerByIndex } = pageSlice.actions;
+const { setSequenceInfluencers, setSequenceInfluencer, setSequenceInfluencerByIndex, setSelectedInfluencers } =
+    pageSlice.actions;
 
 export const useSequenceInfluencerStore = () => {
     const dispatch = useAppDispatch();
@@ -50,6 +56,8 @@ export const useSequenceInfluencerStore = () => {
         setSequenceInfluencerByIndex: (index: number, influencer: SequenceInfluencerEntity) =>
             dispatch(setSequenceInfluencerByIndex({ index, influencer })),
         setSequenceInfluencer: (influencer: SequenceInfluencerEntity) => dispatch(setSequenceInfluencer(influencer)),
+        setSelectedInfluencers: (influencers: SequenceInfluencerEntity[]) =>
+            dispatch(setSelectedInfluencers(influencers)),
     };
 };
 
