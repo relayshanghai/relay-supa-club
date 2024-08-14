@@ -235,7 +235,10 @@ export default class SequenceService {
         );
         const influencersDetails = data
             .filter((d) => d.status === 'fulfilled')
-            .map((d: PromiseFulfilledResult<SequenceInfluencerEntity>) => d.value as SequenceInfluencerEntity);
+            .map(
+                (d: PromiseFulfilledResult<SequenceInfluencerEntity> | PromiseRejectedResult) =>
+                    (d as PromiseFulfilledResult<SequenceInfluencerEntity>).value as SequenceInfluencerEntity,
+            );
 
         const jobPayloads: SequenceStepSendArgs[] = [];
         for (const influencer of influencersDetails) {

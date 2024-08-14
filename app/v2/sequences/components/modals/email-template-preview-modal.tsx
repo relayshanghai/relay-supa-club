@@ -79,7 +79,9 @@ export const EmailTemplatePreview = ({
                                                 <label
                                                     className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500"
                                                     dangerouslySetInnerHTML={{
-                                                        __html: convertTiptapVariableToComponent(template?.subject ?? ''),
+                                                        __html: convertTiptapVariableToComponent(
+                                                            template?.subject ?? '',
+                                                        ),
                                                     }}
                                                 />
                                             )}
