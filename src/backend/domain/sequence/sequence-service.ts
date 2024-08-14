@@ -26,6 +26,7 @@ import JobRepository from 'src/backend/database/job/job-repository';
 import { JobEntity, JobQueueType } from 'src/backend/database/job/job-entity';
 import { v4 } from 'uuid';
 import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
+import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -176,11 +177,7 @@ export default class SequenceService {
         if (!emailEngineAccountId) {
             throw new BadRequestError('Cannot get email account');
         }
-        const {
-            templateVariables,
-            steps: sequenceSteps,
-            ...sequence
-        } = await SequenceRepository.getRepository().findOneOrFail({
+        const { templateVariables, steps: sequenceSteps } = await SequenceRepository.getRepository().findOneOrFail({
             where: { id: sequenceId },
             relations: {
                 steps: true,
@@ -234,7 +231,9 @@ export default class SequenceService {
                     return influencer;
                 }),
         );
-        const influencersDetails = data.filter((d) => d.status === 'fulfilled').map((d) => d.value);
+        const influencersDetails = data
+            .filter((d) => d.status === 'fulfilled')
+            .map((d: PromiseFulfilledResult<SequenceInfluencerEntity>) => d.value as SequenceInfluencerEntity);
 
         const jobPayloads: SequenceStepSendArgs[] = [];
         for (const influencer of influencersDetails) {
@@ -284,12 +283,12 @@ export default class SequenceService {
                     address: influencer.address ?? null,
                     influencer_social_profile_id: influencer.influencerSocialProfile?.id ?? null,
                     iqdata_id: influencer.iqdataId,
-                    avatar_url: influencer.avatarUrl,
-                    name: influencer.name,
+                    avatar_url: influencer.avatarUrl ?? null,
+                    name: influencer.name ?? null,
                     platform: influencer.platform as any,
                     social_profile_last_fetched: influencer.socialProfileLastFetched?.toISOString() ?? null,
-                    url: influencer.url,
-                    username: influencer.username,
+                    url: influencer.url ?? null,
+                    username: influencer.username ?? null,
                     affiliate_link: influencer.affiliateLink ?? null,
                     commission_rate: null,
                     recent_post_title: influencer.influencerSocialProfile?.recentPostTitle ?? '',
@@ -325,12 +324,6 @@ export default class SequenceService {
             ),
         );
 
-        return {
-            influencersDetails,
-            sequence,
-            templateVariables,
-            steps,
-            result,
-        };
+        return { ...result };
     }
 }

@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import SequenceInfluencerTableUnscheduled from './components/sequence-infuencer-table/sequence-influencer-table-unscheduled';
 import { useSequenceInfluencer } from 'src/hooks/v2/use-sequence-influencer';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import toast from 'react-hot-toast';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -53,10 +54,10 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
     const handleScheduleEmails = () => {
         scheduleEmails(selectedInfluencers)
             .then((res) => {
-                console.log(res);
+                toast(`${res?.data.length} emails scheduled!`);
             })
-            .catch((err) => {
-                console.log(err);
+            .catch(() => {
+                toast('Failed to schedule emails');
             });
     };
 
