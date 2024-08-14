@@ -13,7 +13,7 @@ export const variableCategories = [
     { name: 'Wildcards', icon: DropdownIcon(<Atoms />) },
 ];
 
-export const convertTiptapVariable = (content: string) => {
+export const convertTiptapVariableToComponent = (content: string) => {
     /**
      * Convert the variable-component to {variable} for the tiptap editor
      * this wase based on the tiptap editor implementation

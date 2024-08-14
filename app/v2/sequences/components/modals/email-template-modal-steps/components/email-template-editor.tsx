@@ -63,7 +63,7 @@ export const EmailTemplateEditor = ({
                             }}
                             options={{
                                 editor: {
-                                    className: '!w-[300px]',
+                                    className: '!w-[300px] overflow-y-auto',
                                 },
                             }}
                         />

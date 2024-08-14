@@ -63,7 +63,7 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
                         ))}
                     </Accordion>
                 </div>
-                <div className="relative flex h-full w-full flex-col items-center px-9 py-6">
+                <div className="relative flex h-full w-full flex-col items-center overflow-y-scroll px-9 py-6">
                     <div className="w-full">
                         <EmailTemplateEditor
                             setTemplateDetails={(t) => setEmailTemplate(t)}

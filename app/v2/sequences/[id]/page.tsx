@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import SequenceInfluencerTableUnscheduled from './components/sequence-infuencer-table/sequence-influencer-table-unscheduled';
 import { useSequenceInfluencer } from 'src/hooks/v2/use-sequence-influencer';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import toast from 'react-hot-toast';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -27,7 +28,7 @@ export interface SequenceDetailPageProps {
 }
 
 export default function SequenceDetailPage({ params: { id } }: Readonly<SequenceDetailPageProps>) {
-    const { loading, sequence, info } = useSequenceDetail(id);
+    const { loading, sequence, info, scheduleEmails } = useSequenceDetail(id);
     const [activeTab, setActiveTab] = useState('unscheduled');
     const { t } = useTranslation();
     const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
@@ -48,6 +49,16 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
 
     const handleSelectedInfluencers = (influencer: SequenceInfluencerEntity[]) => {
         setSelectedInfluencers(influencer);
+    };
+
+    const handleScheduleEmails = () => {
+        scheduleEmails(selectedInfluencers)
+            .then((res) => {
+                toast(`${res?.data.length} emails scheduled!`);
+            })
+            .catch(() => {
+                toast('Failed to schedule emails');
+            });
     };
 
     return (
@@ -153,7 +164,11 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                         <button className="flex items-center justify-center gap-1 rounded-md border border-red-500 bg-[rgb(254,254,254)] p-2.5">
                             <Trashcan className="relatives h-5 w-5" fill="red" />
                         </button>
-                        <button className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe]">
+                        <button
+                            className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe] disabled:cursor-not-allowed disabled:bg-[#f43d86] disabled:opacity-50"
+                            onClick={() => handleScheduleEmails()}
+                            disabled={selectedInfluencers.length === 0}
+                        >
                             <Send className="relative h-5 w-5" fill="white" />
                             <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">
                                 Schedule outreach emails

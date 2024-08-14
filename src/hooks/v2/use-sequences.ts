@@ -9,6 +9,7 @@ import { usePaginationParam } from './use-pagination-param';
 import { useSequencesStore } from 'src/store/reducers/sequence';
 import type { GetSequenceRequest, SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 import type { GetSequenceDetailResponse } from 'pages/api/v2/sequences/[id]/response';
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
@@ -160,6 +161,17 @@ export const useSequenceDetail = (id: string) => {
         }
     };
 
+    const scheduleEmails = async (influencers: SequenceInfluencerEntity[]) => {
+        const [, response] = await awaitToError(
+            apiClient.post(`/v2/sequences/${id}/schedule`, {
+                sequenceInfluencersIds: influencers.map((influencer) => influencer.id),
+            }),
+        );
+        if (response) {
+            return response;
+        }
+    };
+
     useEffect(() => {
         if (!sequence) {
             getSequence();
@@ -167,10 +179,5 @@ export const useSequenceDetail = (id: string) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return {
-        getSequence,
-        loading,
-        sequence,
-        info,
-    };
+    return { scheduleEmails, getSequence, loading, sequence, info };
 };
