@@ -8,7 +8,7 @@ import type {
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
 import SequenceRepository from 'src/backend/database/sequence/sequence-repository';
@@ -21,6 +21,11 @@ import { UseTransaction } from 'src/backend/database/provider/transaction-decora
 import type { ProfileEntity } from 'src/backend/database/profile/profile-entity';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
+import type { SendRequest } from 'pages/api/v2/sequences/[id]/schedule/request';
+import JobRepository from 'src/backend/database/job/job-repository';
+import { JobEntity, JobQueueType } from 'src/backend/database/job/job-entity';
+import { v4 } from 'uuid';
+import type { SequenceStepSendArgs } from 'src/utils/scheduler/jobs/sequence-step-send';
 
 export default class SequenceService {
     public static readonly service: SequenceService = new SequenceService();
@@ -160,5 +165,172 @@ export default class SequenceService {
             templateVariables as Variable[],
         );
         return sequence;
+    }
+
+    @UseTransaction()
+    @CompanyIdRequired()
+    async send(sequenceId: string, body: SendRequest) {
+        const profile = RequestContext.getContext().profile;
+        const emailEngineAccountId = profile?.emailEngineAccountId;
+        const sequenceInfluencers = body.sequenceInfluencersIds;
+        if (!emailEngineAccountId) {
+            throw new BadRequestError('Cannot get email account');
+        }
+        const {
+            templateVariables,
+            steps: sequenceSteps,
+            ...sequence
+        } = await SequenceRepository.getRepository().findOneOrFail({
+            where: { id: sequenceId },
+            relations: {
+                steps: true,
+                templateVariables: true,
+            },
+        });
+        if (templateVariables.length === 0) {
+            throw new BadRequestError('No template variables found');
+        }
+        const steps = sequenceSteps.sort((a, b) => a.stepNumber - b.stepNumber);
+        if (steps.length === 0) {
+            throw new BadRequestError('No sequence steps found');
+        }
+        const firstStep = sequenceSteps.find((step) => step.stepNumber === 0);
+        if (!firstStep) {
+            throw new BadRequestError('No first step found');
+        }
+
+        const data = await Promise.allSettled(
+            sequenceInfluencers
+                .map(async (d) => {
+                    const influencer = await SequenceInfluencerRepository.getRepository().findOneOrFail({
+                        where: { id: d },
+                        relations: { influencerSocialProfile: true, company: true, sequence: true, address: true },
+                    });
+                    const result = await SequenceInfluencerRepository.getRepository().save({
+                        ...influencer,
+                        funnelStatus: 'In Sequence',
+                        name: influencer.name ?? '',
+                        username: influencer.username ?? '',
+                        avatarUrl: influencer.avatarUrl ?? '',
+                        url: influencer.url ?? '',
+                        platform: influencer.platform ?? '',
+                    });
+                    return result;
+                })
+                .map(async (d) => {
+                    const influencer = await d;
+                    if (!influencer.influencerSocialProfile?.id) {
+                        throw new BadRequestError('No influencer social profile id');
+                    }
+                    if (!influencer.email) {
+                        throw new BadRequestError('No email address');
+                    }
+                    if (!influencer.name && !influencer.username) {
+                        throw new BadRequestError('No influencer name or handle');
+                    }
+                    if (!influencer.influencerSocialProfile.recentPostUrl) {
+                        throw new BadRequestError('No recent post URL');
+                    }
+                    return influencer;
+                }),
+        );
+        const influencersDetails = data.filter((d) => d.status === 'fulfilled').map((d) => d.value);
+
+        const jobPayloads: SequenceStepSendArgs[] = [];
+        for (const influencer of influencersDetails) {
+            // still use old payload
+            const payload: SequenceStepSendArgs = {
+                emailEngineAccountId,
+                sequenceStep: {
+                    id: firstStep.id,
+                    name: firstStep.name as any,
+                    wait_time_hours: firstStep.waitTimeHours,
+                    outreach_email_template_id: firstStep.outreachEmailTemplate?.email_engine_template_id as string,
+                    sequence_id: firstStep.sequence?.id,
+                    step_number: firstStep.stepNumber,
+                    template_id: firstStep.outreachEmailTemplate?.id as string,
+                    created_at: new Date(firstStep.createdAt).toISOString(),
+                    updated_at: new Date(firstStep.updatedAt).toISOString(),
+                },
+                sequenceSteps: sequenceSteps.map((d) => ({
+                    id: d.id,
+                    name: d.name as any,
+                    wait_time_hours: d.waitTimeHours,
+                    outreach_email_template_id: d.outreachEmailTemplate?.email_engine_template_id as string,
+                    sequence_id: d.sequence?.id,
+                    step_number: d.stepNumber,
+                    template_id: d.outreachEmailTemplate?.id as string,
+                    created_at: d.createdAt.toISOString(),
+                    updated_at: d.updatedAt.toISOString(),
+                })),
+                sequenceInfluencer: {
+                    id: influencer.id,
+                    created_at: influencer.createdAt.toISOString(),
+                    updated_at: influencer.createdAt.toISOString(),
+                    added_by: influencer.addedBy,
+                    email: influencer.influencerSocialProfile?.email ?? null,
+                    sequence_step: influencer.sequenceStep,
+                    funnel_status: influencer.funnelStatus as any,
+                    tags: influencer.tags,
+                    next_step: influencer.nextStep ?? null,
+                    scheduled_post_date: influencer.scheduledPostDate?.toISOString() ?? null,
+                    video_details: influencer.videoDetails ?? null,
+                    rate_amount: influencer.rateAmount ?? null,
+                    rate_currency: influencer.rateCurrency ?? null,
+                    real_full_name: influencer.realFullName ?? null,
+                    company_id: influencer.company.id,
+                    sequence_id: influencer.sequence.id,
+                    address_id: influencer.address?.id ?? null,
+                    address: influencer.address ?? null,
+                    influencer_social_profile_id: influencer.influencerSocialProfile?.id ?? null,
+                    iqdata_id: influencer.iqdataId,
+                    avatar_url: influencer.avatarUrl,
+                    name: influencer.name,
+                    platform: influencer.platform as any,
+                    social_profile_last_fetched: influencer.socialProfileLastFetched?.toISOString() ?? null,
+                    url: influencer.url,
+                    username: influencer.username,
+                    affiliate_link: influencer.affiliateLink ?? null,
+                    commission_rate: null,
+                    recent_post_title: influencer.influencerSocialProfile?.recentPostTitle ?? '',
+                    recent_post_url: influencer.influencerSocialProfile?.recentPostUrl ?? '',
+                    manager_first_name: influencer.sequence.managerFirstName,
+                },
+                templateVariables: templateVariables.map((d) => ({
+                    id: d.id,
+                    name: d.name,
+                    value: d.value,
+                    sequence_id: d.sequence?.id,
+                    created_at: new Date(d.createdAt).toISOString(),
+                    updated_at: new Date(d.updatedAt).toISOString(),
+                    required: d.required,
+                    key: d.key,
+                })),
+                jobId: v4(),
+            };
+            jobPayloads.push(payload);
+        }
+        const result = await Promise.all(
+            jobPayloads.map((payload) =>
+                JobRepository.getRepository().save(
+                    new JobEntity({
+                        id: payload.jobId,
+                        name: JobQueueType.SEQUENCE_STEP_SEND,
+                        queue: JobQueueType.SEQUENCE_STEP_SEND,
+                        runAt: new Date(),
+                        payload,
+                        owner: profile,
+                    }),
+                ),
+            ),
+        );
+
+        return {
+            influencersDetails,
+            sequence,
+            templateVariables,
+            steps,
+            result,
+        };
     }
 }
