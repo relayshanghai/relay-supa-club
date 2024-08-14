@@ -1,70 +1,39 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import { ChevronDown, LanguageToggleIcon } from '../icons';
 import { useTranslation } from 'react-i18next';
-import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
-import { mapLangCode } from '../chatwoot/chatwoot-provider';
-import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY } from '../../constants';
-import i18n from 'i18n'; // importing this initializes i18n using i19n.init()
-import { useCookies } from 'react-cookie';
+import { enUS } from '../../constants';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
-export const useLocalization = () => {
-    const [l, setCookie] = useCookies(['language']);
-
-    useEffect(() => {
-        i18n.on('languageChanged', (l) => {
-            localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
-            setBirdEatsBugLanguage(l);
-            window.$chatwoot?.setLocale(mapLangCode(l));
-            setCookie('language', l);
-        });
-        const urlParams = new URLSearchParams(window.location.search);
-        const setLang = urlParams.get('set_lang');
-        // if language is specified in the URL, use that, otherwise use the localStorage stored language
-        if (typeof setLang === 'string') {
-            if (setLang.includes('en')) {
-                i18n.changeLanguage(enUS);
-            } else if (setLang.includes('zh')) {
-                i18n.changeLanguage(zhCN);
-            }
-        } else {
-            i18n.changeLanguage(l.language || enUS);
-        }
-        return () => i18n.on('languageChanged', () => null);
-    }, []);
-};
+import { Languages } from 'src/hooks/use-localization';
 
 export interface Language {
     lang: string;
     label: string;
 }
 
-export const Languages = [
-    {
-        lang: enUS,
-        label: 'English',
-    },
-    {
-        lang: zhCN,
-        label: '中文',
-    },
-];
+type LanguageToggleV2Props = {
+    language: string;
+    setLanguage?: (language: string) => void;
+};
 
-export const LanguageToggleV2 = () => {
+export const LanguageToggleV2: FC<LanguageToggleV2Props> = ({ language, setLanguage }) => {
     const { i18n } = useTranslation();
+
     const [selectedLanguage, setSelectedLanguage] = useState<Language>(
         i18n.language === enUS ? Languages[0] : Languages[1],
     );
     useEffect(() => {
-        setSelectedLanguage(i18n.language === enUS ? Languages[0] : Languages[1]);
-    }, [i18n.language]);
+        setSelectedLanguage(language === enUS ? Languages[0] : Languages[1]);
+        i18n.changeLanguage(language);
+    }, [language]);
     const toggleLanguage = (value: Language) => {
         setSelectedLanguage(value);
+        setLanguage?.(value.lang);
         i18n.changeLanguage(value.lang);
     };
     return (
