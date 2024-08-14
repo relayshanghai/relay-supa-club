@@ -5,6 +5,7 @@ import SequenceInfluencerTableName from './sequence-influencer-table-name';
 import SequenceInfluencerTableEmail from './sequence-influencer-table-email';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 import dateFormat from 'src/utils/dateFormat';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface SequenceInfluencerTableUnscheduledProps {
     items: SequenceInfluencerEntity[];
@@ -14,6 +15,8 @@ export interface SequenceInfluencerTableUnscheduledProps {
     size: number;
     onPageChange: (page: number) => void;
     sequenceId: string;
+    setSelectedInfluencers?: (influencers: SequenceInfluencerEntity[]) => void;
+    selectedInfluencers?: SequenceInfluencerEntity[];
 }
 export default function SequenceInfluencerTableUnscheduled({
     items,
@@ -23,17 +26,70 @@ export default function SequenceInfluencerTableUnscheduled({
     size,
     onPageChange,
     sequenceId,
+    setSelectedInfluencers,
+    selectedInfluencers = [],
 }: SequenceInfluencerTableUnscheduledProps) {
     const { t } = useTranslation();
+    const [selectAll, setSelectAll] = useState(false);
+
+    const influencerOnTheList = useCallback(() => {
+        if (selectedInfluencers.length === 0) return false;
+        return items.every((influencer) => selectedInfluencers.some((i) => i.id === influencer.id));
+    }, [selectedInfluencers, items]);
+
+    useEffect(() => {
+        if (influencerOnTheList()) {
+            setSelectAll(true);
+        } else {
+            setSelectAll(false);
+        }
+    }, [page, influencerOnTheList]);
+
+    const selectAllHandler = () => {
+        setSelectAll(!selectAll);
+        if (!selectedInfluencers) return;
+        if (selectAll) {
+            setSelectedInfluencers &&
+                setSelectedInfluencers(
+                    selectedInfluencers.filter((i) => !items.some((influencer) => influencer.id === i.id)),
+                );
+        } else {
+            setSelectedInfluencers &&
+                setSelectedInfluencers([...selectedInfluencers, ...items.filter((i) => !isSelected(i.id))]);
+        }
+    };
+
+    const isSelected = (id: string) => {
+        if (!selectedInfluencers) return false;
+        return selectedInfluencers.some((influencer) => influencer.id === id);
+    };
+
+    const handleSelectedInfluencers = (influencer: SequenceInfluencerEntity[]) => {
+        influencer.forEach((influencer) => {
+            if (!isSelected(influencer.id)) {
+                setSelectedInfluencers && setSelectedInfluencers([...selectedInfluencers, influencer]);
+                if (influencerOnTheList()) setSelectAll(true);
+            } else {
+                setSelectedInfluencers &&
+                    setSelectedInfluencers(selectedInfluencers.filter((i) => i.id !== influencer.id));
+                setSelectAll(false);
+            }
+        });
+    };
+
     return (
         <div className={`relative w-full overflow-x-auto shadow-md sm:rounded-lg  ${loading && 'animate-pulse'}`}>
             <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
                 <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" className="px-6 py-3">
-                            {
-                                // to do add checkbox
-                            }
+                            <input
+                                data-testid="sequence-influencers-select-all"
+                                className="display-none appearance-none rounded border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                                type="checkbox"
+                                checked={selectAll}
+                                onChange={() => selectAllHandler()}
+                            />
                         </th>
                         <th scope="col" className="px-6 py-3">
                             {t(`sequences.table.unscheduled.name`)}
@@ -65,9 +121,13 @@ export default function SequenceInfluencerTableUnscheduled({
                                 scope="row"
                                 className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
                             >
-                                {
-                                    // to do add checkbox
-                                }
+                                <input
+                                    data-testid="influencer-checkbox"
+                                    className="select-none appearance-none rounded-sm border-gray-300 checked:text-primary-500 focus:ring-2 focus:ring-primary-500"
+                                    checked={isSelected(influencer.id)}
+                                    onChange={() => handleSelectedInfluencers([influencer])}
+                                    type="checkbox"
+                                />
                             </th>
                             <td className="px-6 py-4">
                                 <SequenceInfluencerTableName influencer={influencer} />

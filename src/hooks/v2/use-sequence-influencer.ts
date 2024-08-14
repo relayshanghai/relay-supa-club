@@ -60,7 +60,12 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         status,
         search,
     });
-    const { list, setSequenceInfluencers } = useSequenceInfluencerStore();
+    const {
+        list,
+        setSequenceInfluencers,
+        setSelectedInfluencers,
+        selectedList: selectedInfluencers,
+    } = useSequenceInfluencerStore();
     const { data: sequenceInfluencer } = useSWR(
         `/v2/sequences/${sequenceId}/influencers?${q}`,
         async (path: string) => {
@@ -85,6 +90,8 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         page,
         setSize,
         size,
+        setSelectedInfluencers,
+        selectedInfluencers,
     };
 };
 
