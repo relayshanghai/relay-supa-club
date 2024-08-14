@@ -180,7 +180,9 @@ export default class SequenceService {
         const { templateVariables, steps: sequenceSteps } = await SequenceRepository.getRepository().findOneOrFail({
             where: { id: sequenceId },
             relations: {
-                steps: true,
+                steps: {
+                    outreachEmailTemplate: true,
+                },
                 templateVariables: true,
             },
         });
@@ -247,7 +249,7 @@ export default class SequenceService {
                     outreach_email_template_id: firstStep.outreachEmailTemplate?.email_engine_template_id as string,
                     sequence_id: firstStep.sequence?.id,
                     step_number: firstStep.stepNumber,
-                    template_id: firstStep.outreachEmailTemplate?.id as string,
+                    template_id: firstStep.outreachEmailTemplate?.email_engine_template_id as string,
                     created_at: new Date(firstStep.createdAt).toISOString(),
                     updated_at: new Date(firstStep.updatedAt).toISOString(),
                 },
@@ -267,7 +269,7 @@ export default class SequenceService {
                     created_at: influencer.createdAt.toISOString(),
                     updated_at: influencer.createdAt.toISOString(),
                     added_by: influencer.addedBy,
-                    email: influencer.influencerSocialProfile?.email ?? null,
+                    email: influencer.email ?? null,
                     sequence_step: influencer.sequenceStep,
                     funnel_status: influencer.funnelStatus as any,
                     tags: influencer.tags,
@@ -316,7 +318,8 @@ export default class SequenceService {
                         id: payload.jobId,
                         name: JobQueueType.SEQUENCE_STEP_SEND,
                         queue: JobQueueType.SEQUENCE_STEP_SEND,
-                        runAt: new Date(),
+                        // to make sure it runs on old scheduler
+                        runAt: new Date(new Date().getTime() - 7 * 60 * 60 * 1000),
                         payload,
                         owner: profile,
                     }),

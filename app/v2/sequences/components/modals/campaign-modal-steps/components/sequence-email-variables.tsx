@@ -4,7 +4,7 @@ import { type Step } from 'src/backend/database/sequence-email-template/sequence
 import { useSequence } from 'src/hooks/v2/use-sequences';
 import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { type TemplateWithVariableValueType } from 'src/store/reducers/sequence';
-import { convertTiptapVariable, substituteVariable } from '../../../utils';
+import { convertTiptapVariableToComponent, substituteVariable } from '../../../utils';
 import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 
 type SequenceStepItemProps = {
@@ -42,11 +42,11 @@ const SequenceEmailVariable: FC<SequenceStepItemProps> = ({ step }) => {
         }
         setConfigurableTemplate({
             subject: substituteVariable(
-                convertTiptapVariable(selectedTemplate?.subject ?? ''),
+                convertTiptapVariableToComponent(selectedTemplate?.subject ?? ''),
                 sequenceVariables ?? [],
             ),
             template: substituteVariable(
-                convertTiptapVariable(selectedTemplate?.template ?? ''),
+                convertTiptapVariableToComponent(selectedTemplate?.template ?? ''),
                 sequenceVariables ?? [],
             ),
         });

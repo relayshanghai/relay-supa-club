@@ -8,7 +8,7 @@ import { CheckIcon, Cross } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
 import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 import { getOutreachStepsTranslationKeys } from '../../common/outreach-step';
-import { convertTiptapVariable } from '../utils';
+import { convertTiptapVariableToComponent } from '../utils';
 
 export const EmailTemplateDetailModal = ({
     showEmailTemplateDetailModal,
@@ -62,7 +62,7 @@ export const EmailTemplateDetailModal = ({
                                 className="min-w-[300px] overflow-x-scroll rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500"
                                 data-testid="subject-line-input"
                                 dangerouslySetInnerHTML={{
-                                    __html: convertTiptapVariable(data?.subject ?? ''),
+                                    __html: convertTiptapVariableToComponent(data?.subject ?? ''),
                                 }}
                             />
                         </div>
@@ -72,7 +72,7 @@ export const EmailTemplateDetailModal = ({
                             className="h-[200px] w-full cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500"
                             data-testid="template-input"
                             dangerouslySetInnerHTML={{
-                                __html: convertTiptapVariable(data?.template ?? ''),
+                                __html: convertTiptapVariableToComponent(data?.template ?? ''),
                             }}
                         />
                     </div>

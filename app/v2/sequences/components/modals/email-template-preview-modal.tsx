@@ -12,7 +12,7 @@ import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { useEffect, useState } from 'react';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
-import { convertTiptapVariable } from '../utils';
+import { convertTiptapVariableToComponent } from '../utils';
 
 export const EmailTemplatePreview = ({
     modalOpen,
@@ -79,7 +79,7 @@ export const EmailTemplatePreview = ({
                                                 <label
                                                     className="min-w-[300px] rounded-lg border-2 border-gray-200 px-[10px] py-[6px] font-normal text-gray-500"
                                                     dangerouslySetInnerHTML={{
-                                                        __html: convertTiptapVariable(template?.subject ?? ''),
+                                                        __html: convertTiptapVariableToComponent(template?.subject ?? ''),
                                                     }}
                                                 />
                                             )}
@@ -91,7 +91,7 @@ export const EmailTemplatePreview = ({
                                         <section
                                             className="h-[200px] min-w-[400px] cursor-default overflow-y-auto rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500"
                                             dangerouslySetInnerHTML={{
-                                                __html: convertTiptapVariable(template?.template ?? ''),
+                                                __html: convertTiptapVariableToComponent(template?.template ?? ''),
                                             }}
                                         />
                                     )}
