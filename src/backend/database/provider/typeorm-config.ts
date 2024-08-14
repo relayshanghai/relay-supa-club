@@ -65,6 +65,6 @@ export const datasourceOptions = (): DataSourceOptions => {
         logger: 'advanced-console',
         subscribers: [],
         poolSize: 1,
-        logging: true,
+        logging: false,
     };
 };

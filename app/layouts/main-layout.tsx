@@ -9,7 +9,12 @@ import { LanguageToggleV2 } from 'src/components/v2/language-toggle';
 import { SidebarV2 } from 'src/components/v2/sidebar';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
-const MainLayout: FC<PropsWithChildren> = ({ children }) => {
+type MainLayoutProps = PropsWithChildren & {
+    language?: string;
+    setLanguage?: (language: string) => void;
+};
+
+const MainLayout: FC<MainLayoutProps> = ({ children, language, setLanguage }) => {
     const { t } = useTranslation();
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const [loggedIn] = useState(true);
@@ -33,7 +38,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
                             {t('navbar.support')}
                             <ChatQuestion height={20} width={20} className="my-0.5 ml-1 stroke-inherit" />
                         </button>
-                        <LanguageToggleV2 />
+                        <LanguageToggleV2 language={language ?? 'en-US'} setLanguage={setLanguage} />
 
                         {loggedIn && profileFirstName && (
                             <div className="flex flex-row items-center justify-center">
