@@ -36,7 +36,6 @@ export default function SequenceInfluencerTableEmail({
     }
 
     return <TableInlineInput
-
         onSubmit={onSubmit}
         value={value}
         textPromptForMissingValue={t('sequences.addEmail')}

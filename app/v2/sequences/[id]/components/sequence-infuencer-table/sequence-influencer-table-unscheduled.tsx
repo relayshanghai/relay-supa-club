@@ -65,6 +65,13 @@ export default function SequenceInfluencerTableUnscheduled({
                         }
                     </td>
                     <td className="px-6 py-4">
+                        {
+                            influencer.tags.map(tag => (
+                                <div key={tag} className="h-7 m-1 px-2 py-1 bg-[#fefefe] rounded-md border border-[#ed46bb] justify-end items-center gap-2.5 inline-flex">
+                                    <div className="text-center text-violet-600 text-xs font-medium font-['Poppins'] leading-tight tracking-tight">{tag}</div>
+                                </div>
+                            ))
+                        }
                     </td>
                     <td className="px-6 py-4">
                         {
