@@ -1,9 +1,7 @@
 import TablePagination from "app/components/table-pagination/table-pagination";
 import { useTranslation } from "react-i18next";
 import { type SequenceInfluencerEntity } from "src/backend/database/sequence/sequence-influencer-entity";
-import { AvatarWithFallback } from "../avatar/avatar-with-fallback";
 import SequenceInfluencerTableName from "./sequence-influencer-table-name";
-import { TableInlineInput } from "src/components/library";
 import SequenceInfluencerTableEmail from "./sequence-influencer-table-email";
 import { SequenceInfluencerScheduleStatus } from "types/v2/sequence-influencer";
 import dateFormat from "src/utils/dateFormat";

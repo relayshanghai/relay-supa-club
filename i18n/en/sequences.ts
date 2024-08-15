@@ -206,13 +206,15 @@ const sequences = {
             influencerEmail: 'Influencer Email',
             influencerNiches: 'Influencer Niches',
             dateAdded: 'Date Added',
-            action: 'Action'
+            action: 'Action',
         },
         scheduled: {
             name: 'Name',
             viewCard: 'View Card',
             currentSequenceEmail: 'Current Sequence Email',
             currentStatus: 'Current Status',
+            nextSequenceEmail: 'Next Sequence Email',
+            nextSequenceEmailSendTime: 'Next Sequence Email Send Time',
         },
         replied: {
             name: 'Name',
@@ -226,7 +228,7 @@ const sequences = {
             lastEmailSentAt: 'First ignored at',
             action: 'Action',
         },
-    }
+    },
 };
 
 export default sequences;

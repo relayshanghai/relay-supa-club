@@ -1,4 +1,6 @@
 'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useTranslation } from "react-i18next";
 import SummaryCard from "./components/sequence-summary/summary-card";
 import { useSequences } from "src/hooks/v2/use-sequences";

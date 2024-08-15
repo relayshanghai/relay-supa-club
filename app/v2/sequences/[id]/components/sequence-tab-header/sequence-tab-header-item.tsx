@@ -1,9 +1,12 @@
+import { Spinner } from "src/components/icons";
+
 export interface SequenceTabHeaderItemProps {
     active?: boolean;
     title: string;
     badgeClassName?: string;
     badge?: string;
     onClick: () => void;
+    loading?: boolean;
 }
 
 export default function SequenceTabHeaderItem({
@@ -11,7 +14,8 @@ export default function SequenceTabHeaderItem({
     active,
     badge,
     badgeClassName,
-    onClick
+    onClick,
+    loading
 }: SequenceTabHeaderItemProps) {
     return <div className="rounded-md flex-col justify-center items-start inline-flex cursor-pointer" onClick={onClick}>
     <div className="px-4 py-2 justify-start items-center gap-2 inline-flex">
@@ -26,6 +30,10 @@ export default function SequenceTabHeaderItem({
                         </div>
                     </div>
                 </div>
+            }
+            {
+                active && loading && 
+                <Spinner className="h-5 w-5 fill-primary-600 text-white"/>
             }
         </div>
     </div>

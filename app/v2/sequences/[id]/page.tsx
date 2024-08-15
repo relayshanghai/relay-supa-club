@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import LightningIcon from "app/components/icons/lightning"
 import ToolsIcon from "app/components/icons/tools"
@@ -11,6 +12,9 @@ import SequenceTabHeader from "./components/sequence-tab-header/sequence-tab-hea
 import { useEffect, useState } from "react"
 import SequenceInfluencerTableUnscheduled from "./components/sequence-infuencer-table/sequence-influencer-table-unscheduled"
 import { useSequenceInfluencer } from "src/hooks/v2/use-sequence-influencer"
+import SequenceInfluencerTableScheduled from "./components/sequence-infuencer-table/sequence-influencer-table-scheduled"
+import SequenceInfluencerTableIgnored from "./components/sequence-infuencer-table/sequence-influencer-table-ignored"
+import SequenceInfluencerTableReplied from "./components/sequence-infuencer-table/sequence-influencer-table-replied"
 
 export interface SequenceDetailPageProps {
     params: {
@@ -33,24 +37,20 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
     } = calculateSequenceInfo(info)
     const {
         page, size,
-        setPage, setSize,
+        setPage, 
         loading: loadingInfluencers,
         data,
-        search,
-        setSearch,
-        status,
         setStatus,
-        error
     } = useSequenceInfluencer(id)
     useEffect(() => {
         if(activeTab === 'unscheduled') {
-            setStatus('Unscheduled')
+            setStatus('To Contact')
         } else if(activeTab === 'scheduledAndSent') {
-            setStatus('Scheduled')
+            setStatus('In Sequence')
         } else if(activeTab === 'replied') {
             setStatus('Replied')
         } else if(activeTab === 'ignored') {
-            setStatus('ignored')
+            setStatus('Ignored')
         }
     }, [activeTab])
     return <div className="px-8 pt-8 pb-4 flex-col justify-start items-start gap-8 inline-flex w-full">
@@ -115,9 +115,10 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
             </div>
             <div className="self-stretch justify-between items-end inline-flex w-full">
                 <SequenceTabHeader
+                    loading={loadingInfluencers}
                     ignored={info.ignored}
                     replied={info.replied}
-                    scheduledAndSent={info.sent}
+                    scheduledAndSent={info.inSequence}
                     unscheduled={info.unscheduled}
                     tabChanged={setActiveTab} />
                 <div className="justify-start items-start gap-8 flex">
@@ -131,18 +132,54 @@ export default function SequenceDetailPage( { params: { id } }: SequenceDetailPa
                 </div>
             </div>
         </div>
+        
+        <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start flex">
         {
             activeTab === 'unscheduled' && 
-                <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start flex">
-                <SequenceInfluencerTableUnscheduled
-                    sequenceId={id}
-                    items={data?.items || []}
-                    page={page}
-                    size={size}
-                    totalPages={data?.totalPages || 1}
-                    onPageChange={setPage}
-                />
-                </div>
+            <SequenceInfluencerTableUnscheduled
+                sequenceId={id}
+                items={data?.items || []}
+                page={page}
+                size={size}
+                totalPages={data?.totalPages || 1}
+                onPageChange={setPage}
+            />
         }
+        {
+            activeTab === 'scheduledAndSent' && 
+            <SequenceInfluencerTableScheduled
+                sequenceId={id}
+                items={data?.items || []}
+                page={page}
+                size={size}
+                totalPages={data?.totalPages || 1}
+                onPageChange={setPage}
+            />
+        }
+        {
+            activeTab === 'ignored' && 
+            <SequenceInfluencerTableIgnored
+                sequenceId={id}
+                items={data?.items || []}
+                page={page}
+                size={size}
+                totalPages={data?.totalPages || 1}
+                onPageChange={setPage}
+            />
+        }
+        {
+            activeTab === 'replied' && 
+            <SequenceInfluencerTableReplied
+                sequenceId={id}
+                items={data?.items || []}
+                page={page}
+                size={size}
+                totalPages={data?.totalPages || 1}
+                onPageChange={setPage}
+            />
+        }
+        </div>
+            
+        
     </div>
 }

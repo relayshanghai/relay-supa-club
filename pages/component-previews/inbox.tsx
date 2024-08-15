@@ -28,7 +28,6 @@ import { Layout } from 'src/components/layout';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useAddress } from 'src/hooks/use-address';
 import type { Attachment } from 'types/email-engine/account-account-message-get';
-import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import type { SequenceInfluencersPutRequestBody } from 'pages/api/sequence-influencers';
 import { t } from 'i18next';

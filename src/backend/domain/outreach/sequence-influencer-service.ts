@@ -10,8 +10,8 @@ import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influence
 import { In, Not } from 'typeorm';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
-import { Paginated } from 'types/pagination';
-import { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
+import type { Paginated } from 'types/pagination';
+import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -134,17 +134,22 @@ export default class SequenceInfluencerService {
     }
     @UseLogger()
     @CompanyIdRequired()
-    async getAll(sequenceId: string, request: GetSequenceInfluencerRequest): Promise<Paginated<Partial<SequenceInfluencerEntity>>> {
+    async getAll(
+        sequenceId: string,
+        request: GetSequenceInfluencerRequest,
+    ): Promise<Paginated<Partial<SequenceInfluencerEntity>>> {
         const influencers = await SequenceInfluencerRepository.getRepository().getAllBySequenceId(sequenceId, request);
         return {
             ...influencers,
             items: influencers.items.map((influencer) => ({
                 ...influencer,
-                influencerSocialProfile: influencer.influencerSocialProfile && {
-                    ...influencer.influencerSocialProfile,
-                    data: undefined,
-                } as InfluencerSocialProfileEntity
-            }))
+                influencerSocialProfile:
+                    influencer.influencerSocialProfile &&
+                    ({
+                        ...influencer.influencerSocialProfile,
+                        data: undefined,
+                    } as InfluencerSocialProfileEntity),
+            })),
         };
     }
     @CompanyIdRequired()

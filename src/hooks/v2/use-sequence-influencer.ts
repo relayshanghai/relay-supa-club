@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import type { AxiosRequestConfig } from 'axios';
 import { atom, useAtom } from 'jotai';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';
@@ -7,7 +9,7 @@ import awaitToError from 'src/utils/await-to-error';
 import { usePaginationParam } from './use-pagination-param';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import query from 'query-string'
+import query from 'query-string';
 import { type Paginated } from 'types/pagination';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import { useSequenceInfluencerStore } from 'src/store/reducers/sequence-influencer';
@@ -50,62 +52,53 @@ export const useSequenceInfluencerAddress = () => {
 };
 
 export const useSequenceInfluencer = (sequenceId: string) => {
-    const {
-        page, size, setPage, setSize
-    } = usePaginationParam()
-    const {
-        apiClient,
-        loading, 
-        error
-    } = useApiClient()
-    const [status, setStatus] = useState<string>()
-    const [search, setSearch] = useState('')
+    const { page, size, setPage, setSize } = usePaginationParam();
+    const { apiClient, loading, error } = useApiClient();
+    const [status, setStatus] = useState<string>();
+    const [search, setSearch] = useState('');
     const q = query.stringify({
         page,
         size,
         status,
-        search
-    })
-    const {
-        list,
-        setSequenceInfluencers,
-    } = useSequenceInfluencerStore()
-    const {
-        data: sequenceInfluencer,
-    } = useSWR(`/v2/sequences/${sequenceId}/influencers?${q}`, async (path: string) => {
-        const response = await apiClient.get<Paginated<SequenceInfluencerEntity>>(path)
-        return response.data
-    })
+        search,
+    });
+    const { list, setSequenceInfluencers } = useSequenceInfluencerStore();
+    const { data: sequenceInfluencer } = useSWR(
+        `/v2/sequences/${sequenceId}/influencers?${q}`,
+        async (path: string) => {
+            const response = await apiClient.get<Paginated<SequenceInfluencerEntity>>(path);
+            return response.data;
+        },
+    );
     useEffect(() => {
-        sequenceInfluencer && setSequenceInfluencers(sequenceInfluencer)
-    }, [sequenceInfluencer])
-    
+        sequenceInfluencer && setSequenceInfluencers(sequenceInfluencer);
+    }, [sequenceInfluencer]);
+
     return {
         data: list,
         setStatus,
         status,
         search,
         setSearch,
-        loading, 
+        loading,
         error,
         setPage,
         page,
         setSize,
         size,
-    }
-}
+    };
+};
 
 export const useSequenceInfluencerEmail = (sequenceId: string, sequenceInfluencerId: string) => {
-    const {
-        apiClient,
-        loading
-    } = useApiClient()
+    const { apiClient, loading } = useApiClient();
     const updateEmail = async (email: string) => {
-        const [err] = await awaitToError(apiClient.patch(`/v2/sequences/${sequenceId}/influencers/${sequenceInfluencerId}`, { email }));
+        const [err] = await awaitToError(
+            apiClient.patch(`/v2/sequences/${sequenceId}/influencers/${sequenceInfluencerId}`, { email }),
+        );
         return err ? false : true;
-    }
+    };
     return {
         updateEmail,
-        loading
-    }
-}
+        loading,
+    };
+};

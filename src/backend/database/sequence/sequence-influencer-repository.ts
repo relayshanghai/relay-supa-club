@@ -84,7 +84,8 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             sequence: { id: sequenceId },
         };
         if (request.status) {
-            if (request.status === 'To Contact' || request.status === 'Ignored') where.funnelStatus = request.status;
+            if (request.status === 'To Contact' || request.status === 'Ignored' || request.status === 'In Sequence')
+                where.funnelStatus = request.status;
             else if (request.status === 'Replied' || request.status === 'Bounced') {
                 where.sequenceEmails = {
                     emailDeliveryStatus: request.status,
@@ -102,7 +103,9 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             {
                 where,
                 relations: {
-                    sequenceEmails: true,
+                    sequenceEmails: {
+                        sequenceStep: true,
+                    },
                     influencerSocialProfile: true,
                 },
             },
@@ -159,8 +162,15 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
                 funnelStatus: 'To Contact',
             },
         });
+        const inSequence = await this.count({
+            where: {
+                sequence: whereSequence,
+                funnelStatus: 'In Sequence',
+            },
+        });
         return {
             replied,
+            inSequence,
             sent,
             open,
             bounced,

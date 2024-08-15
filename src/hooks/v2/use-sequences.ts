@@ -33,6 +33,7 @@ export const useSequences = () => {
         total: 0,
         ignored: 0,
         unscheduled: 0,
+        inSequence: 0,
     });
     const { loading, error, apiClient } = useApiClient();
     const getAllSequences = async () => {
@@ -104,6 +105,7 @@ export const useSequenceDetail = (id: string) => {
         total: 0,
         ignored: 0,
         unscheduled: 0,
+        inSequence: 0,
     });
     const { loading, apiClient } = useApiClient();
     const getSequence = async () => {

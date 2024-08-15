@@ -22,7 +22,7 @@ export default function SequenceInfluencerTableEmail({
         setSequenceInfluencerByIndex
     } = useSequenceInfluencerStore();
     const {
-        loading, updateEmail
+        updateEmail
     } = useSequenceInfluencerEmail(sequenceId, influencer.id)
     const onSubmit = async (val: string) => {
         setValue(val);

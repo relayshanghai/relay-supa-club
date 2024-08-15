@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { type Paginated } from 'types/pagination';
-import { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 interface SequenceInfluencerState {
     list: Paginated<SequenceInfluencerEntity>;
@@ -26,7 +26,10 @@ const pageSlice = createSlice({
         setSequenceInfluencers: (state, action: PayloadAction<Paginated<SequenceInfluencerEntity>>) => {
             state.list = action.payload;
         },
-        setSequenceInfluencerByIndex(state, action: PayloadAction<{ index: number; influencer: SequenceInfluencerEntity }>) {
+        setSequenceInfluencerByIndex(
+            state,
+            action: PayloadAction<{ index: number; influencer: SequenceInfluencerEntity }>,
+        ) {
             state.list.items[action.payload.index] = action.payload.influencer;
         },
         setSequenceInfluencer: (state, action: PayloadAction<SequenceInfluencerEntity>) => {
@@ -42,8 +45,10 @@ export const useSequenceInfluencerStore = () => {
     const states = useAppSelector((state) => state.sequenceInfluencer);
     return {
         ...states,
-        setSequenceInfluencers: (influencer: Paginated<SequenceInfluencerEntity>) => dispatch(setSequenceInfluencers(influencer)),
-        setSequenceInfluencerByIndex: (index: number, influencer: SequenceInfluencerEntity) => dispatch(setSequenceInfluencerByIndex({ index, influencer })),
+        setSequenceInfluencers: (influencer: Paginated<SequenceInfluencerEntity>) =>
+            dispatch(setSequenceInfluencers(influencer)),
+        setSequenceInfluencerByIndex: (index: number, influencer: SequenceInfluencerEntity) =>
+            dispatch(setSequenceInfluencerByIndex({ index, influencer })),
         setSequenceInfluencer: (influencer: SequenceInfluencerEntity) => dispatch(setSequenceInfluencer(influencer)),
     };
 };

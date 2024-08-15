@@ -1,9 +1,8 @@
 import SequenceInfluencerService from 'src/backend/domain/outreach/sequence-influencer-service';
 import { Body } from 'src/utils/handler/decorators/api-body-decorator';
-import { GET, POST, Status, PATCH} from 'src/utils/handler/decorators/api-decorator';
+import { Status, PATCH } from 'src/utils/handler/decorators/api-decorator';
 import { Path } from 'src/utils/handler/decorators/api-path-decorator';
 import { createHandler } from 'src/utils/handler/create-handler';
-import { Query } from 'src/utils/handler/decorators/api-query-decorator';
 import { PatchSequenceInfluencerRequest } from './request';
 
 export class SequenceInfluencerHandler {
