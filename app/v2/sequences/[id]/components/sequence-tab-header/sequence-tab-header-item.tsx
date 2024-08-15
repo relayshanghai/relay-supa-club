@@ -18,7 +18,7 @@ export default function SequenceTabHeaderItem({
     loading,
 }: SequenceTabHeaderItemProps) {
     return (
-        <div className="inline-flex cursor-pointer flex-col items-start justify-center rounded-md" onClick={onClick}>
+        <div className="inline-flex cursor-pointer flex-row items-center justify-center rounded-md" onClick={onClick}>
             <div className="inline-flex items-center justify-start gap-2 px-4 py-2">
                 <div className="flex items-center justify-center gap-2">
                     <div
@@ -45,7 +45,9 @@ export default function SequenceTabHeaderItem({
                     )}
                 </div>
             </div>
-            {active && loading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
+            <div className="h-full flex">
+                {active && loading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
+            </div>
         </div>
     );
 }
