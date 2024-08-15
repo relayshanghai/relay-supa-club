@@ -25,6 +25,7 @@ import { type SequenceEntity } from 'src/backend/database/sequence/sequence-enti
 import { CreateVariableModal } from '../components/modals/email-template-variable-modal';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 import { Banner } from 'app/components/banner';
+import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -52,6 +53,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
         deleteInfluencers,
         refreshSequenceInfluencer,
     } = useSequenceInfluencer(id);
+    const { setDefaultPage } = useNewCRMPage();
     useEffect(() => {
         if (activeTab === 'unscheduled') {
             setStatus('Unscheduled');
@@ -111,10 +113,12 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                 show={openConfirmModal}
             />
             <Banner
+                show={true}
                 buttonText={t('outreaches.banner.button') ?? ''}
                 buttonLink={`/sequences/${id}`}
                 title={t('outreaches.banner.title')}
                 message={t('outreaches.banner.description')}
+                onButtonClicked={() => setDefaultPage(`/sequences`)}
             />
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
                 <div className="inline-flex h-[45px] w-full items-start justify-start gap-6">

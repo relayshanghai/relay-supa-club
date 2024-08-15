@@ -10,6 +10,7 @@ import { CampaignWizardModal } from './components/modals/campaign-wizard-modal';
 import { calculateSequenceInfo } from 'app/utils/rate-info';
 import SummaryCard from './components/sequence-summary/summary-card';
 import { Banner } from 'app/components/banner';
+import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
@@ -20,6 +21,7 @@ export default function SequencePageV2() {
     const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
     const total = info.total;
     const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
+    const { setDefaultPage } = useNewCRMPage();
 
     useEffect(() => {
         if (sequences.length === 0) {
@@ -40,10 +42,12 @@ export default function SequencePageV2() {
                 setModalOpen={(open) => setShowTemplateLibraryModal(open)}
             />
             <Banner
+                show={true}
                 buttonText={t('outreaches.banner.button') ?? ''}
                 buttonLink="/sequences"
                 title={t('outreaches.banner.title')}
                 message={t('outreaches.banner.description')}
+                onButtonClicked={() => setDefaultPage(`/sequences`)}
             />
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
                 <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-8 self-stretch">

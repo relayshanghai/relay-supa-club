@@ -60,9 +60,14 @@ const outreaches = {
         shopLinkDescription: '产品的亚马逊、Shopify或其他商店链接',
     },
     banner: {
-        button: '返回旧版视图',
+        button: '切换到旧版视图',
         title: '您正在查看一个新设计！',
         description: '我们在CRM上有了新设计和新功能。',
+    },
+    oldBanner: {
+        button: '切换到新版视图',
+        title: '您正在查看一个旧设计！',
+        description: '我们在CRM上有了新设计和新功能，但您现在仍在使用旧版。',
     },
 };
 export default outreaches;

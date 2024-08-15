@@ -61,9 +61,14 @@ const outreaches = {
         shopLinkDescription: 'The products Amazon, Shopify, or other store link',
     },
     banner: {
-        button: 'Back to Old View',
+        button: 'Switch to Old View',
         title: 'You are looking a new design!',
         description: 'We have a new design and new features on CRM',
+    },
+    oldBanner: {
+        button: 'Switch to New View',
+        title: 'You are looking an old design',
+        description: "We have a new design and new features on CRM, but now you're still on the old one",
     },
 };
 

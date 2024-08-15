@@ -30,6 +30,7 @@ import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
 import { Banner } from '../library/banner';
+import { Banner as BannerV2 } from 'app/components/banner';
 import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
 import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
@@ -41,6 +42,7 @@ import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating
 import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
+import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -391,6 +393,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showSlowBanner, setShowSlowBanner] = useState(false);
 
+    const { setDefaultPage } = useNewCRMPage();
+
     const { setGuides, startTour, guidesReady, guiding } = useDriverV2();
 
     useEffect(() => {
@@ -457,6 +461,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 onClose={() => setShowUpdateTemplateVariables(false)}
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
+            />
+            <BannerV2
+                show={true}
+                buttonText={t('outreaches.oldBanner.button') ?? ''}
+                buttonLink={`/v2/sequences/${sequenceId}`}
+                title={t('outreaches.oldBanner.title')}
+                message={t('outreaches.oldBanner.description')}
+                onButtonClicked={() => setDefaultPage(`/v2/sequences`)}
             />
             <div className="flex flex-col p-6 ">
                 <div className="mb-6 flex w-full gap-6">
