@@ -70,7 +70,7 @@ export default function SequenceInfluencerTableReplied({
                                 <td className="px-6 py-4">
                                     {replied && replied.updatedAt ? replied.updatedAt.toString() : '-'}
                                 </td>
-                                <td className="px-6 py-4"></td>
+                                <td className="px-6 py-4" />
                             </tr>
                         );
                     })}

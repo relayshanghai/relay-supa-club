@@ -64,7 +64,7 @@ export default function SequenceInfluencerTableIgnored({
                                         ? sequenceEmailSorted[sequenceEmailSorted.length - 1]?.emailSendAt?.toString()
                                         : '-'}
                                 </td>
-                                <td className="px-6 py-4"></td>
+                                <td className="px-6 py-4" />
                             </tr>
                         );
                     })}

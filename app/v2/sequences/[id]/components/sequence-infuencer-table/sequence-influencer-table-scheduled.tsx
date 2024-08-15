@@ -25,7 +25,6 @@ export default function SequenceInfluencerTableScheduled({
     totalPages,
     size,
     onPageChange,
-    sequenceId,
 }: SequenceInfluencerTableScheduledProps) {
     const { t } = useTranslation();
 
@@ -65,7 +64,7 @@ export default function SequenceInfluencerTableScheduled({
                                 <td className="px-6 py-4">
                                     <SequenceInfluencerTableName influencer={influencer} />
                                 </td>
-                                <td className="px-6 py-4"></td>
+                                <td className="px-6 py-4" />
                                 <td className="px-6 py-4">
                                     {currentStep && (
                                         <div className="inline-flex h-[60px] items-center justify-start gap-2 px-4 py-2">
