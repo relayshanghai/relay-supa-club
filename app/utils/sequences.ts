@@ -1,19 +1,21 @@
-import type { SequenceInfluencerEntity } from "src/backend/database/sequence/sequence-influencer-entity";
+import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 
 export function getCurrentSequenceStepInfo(sequenceInfluencer: SequenceInfluencerEntity) {
-    if (!sequenceInfluencer.sequenceEmails || sequenceInfluencer.sequenceEmails.length === 0 ){
+    if (!sequenceInfluencer.sequenceEmails || sequenceInfluencer.sequenceEmails.length === 0) {
         return {
-            sequenceEmailSorted: []
+            sequenceEmailSorted: [],
         };
     }
-    const sequenceEmailSorted = sequenceInfluencer.sequenceEmails?.slice().sort((a, b) => a.sequenceStep.stepNumber - b.sequenceStep.stepNumber);
+    const sequenceEmailSorted = sequenceInfluencer.sequenceEmails
+        ?.slice()
+        .sort((a, b) => a.sequenceStep.stepNumber - b.sequenceStep.stepNumber);
     let currentStep, nextStep;
     for (let i = 0; i < sequenceInfluencer.sequenceEmails.length; i++) {
         const email = sequenceInfluencer.sequenceEmails[i];
-        if(email.sequenceStep?.stepNumber === sequenceInfluencer.sequenceStep) {
+        if (email.sequenceStep?.stepNumber === sequenceInfluencer.sequenceStep) {
             currentStep = email;
         }
-        if(email.sequenceStep?.stepNumber === sequenceInfluencer.sequenceStep + 1) {
+        if (email.sequenceStep?.stepNumber === sequenceInfluencer.sequenceStep + 1) {
             nextStep = email;
         }
         if (currentStep && nextStep) break;
@@ -21,6 +23,6 @@ export function getCurrentSequenceStepInfo(sequenceInfluencer: SequenceInfluence
     return {
         currentStep,
         nextStep,
-        sequenceEmailSorted
-    }
+        sequenceEmailSorted,
+    };
 }

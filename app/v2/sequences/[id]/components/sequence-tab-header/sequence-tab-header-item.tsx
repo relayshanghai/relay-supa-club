@@ -45,7 +45,7 @@ export default function SequenceTabHeaderItem({
                     )}
                 </div>
             </div>
-            <div className="h-full flex">
+            <div className="flex h-full">
                 {active && loading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
             </div>
         </div>
