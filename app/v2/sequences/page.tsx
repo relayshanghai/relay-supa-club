@@ -9,6 +9,7 @@ import { EmailTemplateModal } from './components/modals/email-template-modal';
 import { CampaignWizardModal } from './components/modals/campaign-wizard-modal';
 import { calculateSequenceInfo } from 'app/utils/rate-info';
 import SummaryCard from './components/sequence-summary/summary-card';
+import { Banner } from 'app/components/banner';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
@@ -37,6 +38,12 @@ export default function SequencePageV2() {
             <EmailTemplateModal
                 modalOpen={showTemplateLibraryModal}
                 setModalOpen={(open) => setShowTemplateLibraryModal(open)}
+            />
+            <Banner
+                buttonText={t('outreaches.banner.button') ?? ''}
+                buttonLink="/sequences"
+                title={t('outreaches.banner.title')}
+                message={t('outreaches.banner.description')}
             />
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
                 <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-8 self-stretch">

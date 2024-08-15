@@ -24,6 +24,7 @@ import { CampaignWizardModal } from '../components/modals/campaign-wizard-modal'
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
 import { CreateVariableModal } from '../components/modals/email-template-variable-modal';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
+import { Banner } from 'app/components/banner';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -108,6 +109,12 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                 deleteHandler={() => handleDeleteInfluencer()}
                 setShow={(show) => setOpenConfirmModal(show)}
                 show={openConfirmModal}
+            />
+            <Banner
+                buttonText={t('outreaches.banner.button') ?? ''}
+                buttonLink={`/sequences/${id}`}
+                title={t('outreaches.banner.title')}
+                message={t('outreaches.banner.description')}
             />
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
                 <div className="inline-flex h-[45px] w-full items-start justify-start gap-6">

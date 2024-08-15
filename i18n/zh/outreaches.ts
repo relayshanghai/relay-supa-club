@@ -59,5 +59,10 @@ const outreaches = {
         shopLink: '商店链接',
         shopLinkDescription: '产品的亚马逊、Shopify或其他商店链接',
     },
+    banner: {
+        button: '返回旧版视图',
+        title: '您正在查看一个新设计！',
+        description: '我们在CRM上有了新设计和新功能。',
+    },
 };
 export default outreaches;
