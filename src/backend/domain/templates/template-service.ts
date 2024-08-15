@@ -120,6 +120,7 @@ export default class TemplateService {
             step: data.step.toString(),
             subject: data.subject as string,
             template: data.template as string,
+            emailEngineTemplateId: data.email_engine_template_id,
             variables: data.variables
                 ? data.variables.map((variable) => ({
                       id: variable.id,
@@ -131,7 +132,8 @@ export default class TemplateService {
     }
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
-        await this.getOne(id);
+        const template = await this.getOne(id);
         await OutreachEmailTemplateRepository.getRepository().delete({ id });
+        await EmailEngineService.getService().deleteTemplate(template.emailEngineTemplateId as string);
     }
 }

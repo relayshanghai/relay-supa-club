@@ -100,6 +100,10 @@ export default class EmailEngineService {
         });
     }
 
+    async deleteTemplate(id: string): Promise<void> {
+        await this.apiClient.delete(`/templates/template/${id}`);
+    }
+
     async getAccounts(page = 0) {
         const [err, result] = await awaitToError<AxiosError, AxiosResponse<EmailEnginePaginatedAccount>>(
             this.apiClient.get<EmailEnginePaginatedAccount>(`/accounts?page=${page}&pageSize=250`),
