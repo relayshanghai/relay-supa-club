@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { type FC, useEffect, useState } from 'react';
-import { ChevronDown, LanguageToggleIcon } from '../icons';
+import { ChevronDown, LanguageToggleIcon } from '../../../src/components/icons';
 import { useTranslation } from 'react-i18next';
-import { enUS } from '../../constants';
+import { enUS } from '../../../src/constants';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,7 +21,7 @@ type LanguageToggleV2Props = {
     setLanguage?: (language: string) => void;
 };
 
-export const LanguageToggleV2: FC<LanguageToggleV2Props> = ({ language, setLanguage }) => {
+export const Default: FC<LanguageToggleV2Props> = ({ language, setLanguage }) => {
     const { i18n } = useTranslation();
 
     const [selectedLanguage, setSelectedLanguage] = useState<Language>(

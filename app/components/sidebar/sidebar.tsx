@@ -1,9 +1,18 @@
 import Link from 'next/link';
 import { useState, type ReactNode } from 'react';
-import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from '../icons';
-import { Title } from '../title';
+import {
+    OldSearch,
+    Team,
+    Guide,
+    BarGraph,
+    ThunderSearch,
+    FourSquare,
+    ThunderMail,
+    Inbox,
+} from '../../../src/components/icons';
+import { Title } from '../../../src/components/title';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '../library';
+import { Tooltip } from '../../../src/components/library';
 import { usePathname } from 'next/navigation';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
@@ -45,7 +54,7 @@ const ActiveLink = ({ href, children, expandedName }: { href: string; children: 
     );
 };
 
-export const SidebarV2 = () => {
+export const Default = () => {
     const { t } = useTranslation();
     return (
         // mask is the dark overlay that appears when the sidebar is open

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import '../styles/globals.css';
 import MainLayout from './layouts/main-layout';
 import StoreProvider from 'src/store/Providers/StoreProvider';
-import { languageCookie, setLanguageCookie } from 'src/components/v2/language-cookie';
+import { languageCookie, setLanguageCookie } from 'app/components/language-toggle/language-cookie';
 
 export const metadata: Metadata = {
     title: 'Boostbot',
