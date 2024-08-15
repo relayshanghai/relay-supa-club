@@ -63,6 +63,8 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                     };
                 });
                 setStagedSequenceEmailTemplate(sortStepsByKeys(sequenceEmailTemplate as any));
+            } else if (!isEdit) {
+                resetStagedSequenceEmailTemplate();
             }
         })();
     }, [isEdit]);

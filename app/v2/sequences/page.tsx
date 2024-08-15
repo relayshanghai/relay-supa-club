@@ -1,6 +1,6 @@
 'use client';
 import { useTranslation } from 'react-i18next';
-import { useSequences } from 'src/hooks/v2/use-sequences';
+import { useSequence, useSequences } from 'src/hooks/v2/use-sequences';
 import { useEffect, useState } from 'react';
 import SequenceTable from './components/sequence-table/sequence-table';
 import { Button } from 'app/components/buttons';
@@ -22,6 +22,7 @@ export default function SequencePageV2() {
     const total = info.total;
     const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
     const { setDefaultPage } = useNewCRMPage();
+    const { setEditMode } = useSequence();
 
     useEffect(() => {
         if (sequences.length === 0) {
@@ -112,7 +113,10 @@ export default function SequencePageV2() {
                     </div>
                     <div className="flex w-full items-start justify-end gap-4">
                         <Button
-                            onClick={() => setShowCreateCampaignModal(true)}
+                            onClick={() => {
+                                setEditMode(false);
+                                setShowCreateCampaignModal(true);
+                            }}
                             variant="ghost"
                             className="flex items-center !bg-blue-50"
                             data-testid="create-campaign-button"
