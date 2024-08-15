@@ -10,6 +10,7 @@ import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email
 describe('src/backend/domain/templates/template-service.ts', () => {
     describe('TemplateService', () => {
         const emailEngineCreateTemplateMock = vi.fn();
+        const emailEngineDeleteTemplateMock = vi.fn();
         const outreachTemplateRepositoryCreateMock = vi.fn();
         const emailEngineUpdateTemplateMock = vi.fn();
         const outreachTemplateRepositoryUpdateMock = vi.fn();
@@ -194,6 +195,8 @@ describe('src/backend/domain/templates/template-service.ts', () => {
         });
         describe('.delete()', () => {
             beforeEach(() => {
+                EmailEngineService.prototype.deleteTemplate = emailEngineDeleteTemplateMock;
+                emailEngineDeleteTemplateMock.mockResolvedValue({});
                 OutreachEmailTemplateRepository.prototype.delete = outreachTemplateRepositoryDeleteMock;
                 outreachTemplateRepositoryUpdateMock.mockResolvedValue({});
                 OutreachEmailTemplateRepository.prototype.findOneOrFail = outreachTemplateRepositoryGetMock;
@@ -267,6 +270,7 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     subject: 'some-subject',
                     template: '<p>some html</p>',
                     description: 'some description',
+                    emailEngineTemplateId: 'some-email-template-id',
                     name: 'some name',
                     variables: [],
                 });
