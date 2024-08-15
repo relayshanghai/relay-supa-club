@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState } from 'react';
 import SequenceTabHeaderItem from './sequence-tab-header-item';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +10,7 @@ export interface SequenceTabHeaderProps {
     replied: number;
     ignored: number;
     unscheduled: number;
+    loading?: boolean;
 }
 export default function SequenceTabHeader({
     tabChanged,
@@ -15,7 +18,8 @@ export default function SequenceTabHeader({
     replied,
     scheduledAndSent,
     unscheduled,
-}: Readonly<SequenceTabHeaderProps>) {
+    loading,
+}: SequenceTabHeaderProps) {
     const { t } = useTranslation();
     const [tabActive, setTabActive] = useState('unscheduled');
     useEffect(() => {
@@ -25,6 +29,7 @@ export default function SequenceTabHeader({
     return (
         <div className="flex items-end justify-start gap-2.5">
             <SequenceTabHeaderItem
+                loading={loading}
                 badgeClassName="bg-orange-100 text-orange-500"
                 badge={(unscheduled && unscheduled.toString()) || undefined}
                 title={t('sequences.unscheduled')}
@@ -32,6 +37,7 @@ export default function SequenceTabHeader({
                 onClick={() => setTabActive('unscheduled')}
             />
             <SequenceTabHeaderItem
+                loading={loading}
                 badgeClassName="bg-violet-100 text-violet-500"
                 badge={(scheduledAndSent && scheduledAndSent.toString()) || undefined}
                 title={t('sequences.scheduledAndSent')}
@@ -39,6 +45,7 @@ export default function SequenceTabHeader({
                 onClick={() => setTabActive('scheduledAndSent')}
             />
             <SequenceTabHeaderItem
+                loading={loading}
                 badgeClassName="bg-green-100 text-green-500"
                 badge={(replied && replied.toString()) || undefined}
                 title={t('sequences.replied')}
@@ -46,6 +53,7 @@ export default function SequenceTabHeader({
                 onClick={() => setTabActive('replied')}
             />
             <SequenceTabHeaderItem
+                loading={loading}
                 badgeClassName="bg-grey-100 text-grey-500"
                 badge={(ignored && ignored.toString()) || undefined}
                 title={t('sequences.ignored')}

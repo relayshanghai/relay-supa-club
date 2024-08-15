@@ -118,7 +118,7 @@ export default function SequenceInfluencerTableUnscheduled({
                             key={influencer.id}
                             className="border-b odd:bg-white even:bg-gray-50 dark:border-gray-700 odd:dark:bg-gray-900 even:dark:bg-gray-800"
                         >
-                            <th
+                            <td
                                 scope="row"
                                 className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
                             >
@@ -129,7 +129,7 @@ export default function SequenceInfluencerTableUnscheduled({
                                     onChange={() => handleSelectedInfluencers([influencer])}
                                     type="checkbox"
                                 />
-                            </th>
+                            </td>
                             <td className="px-6 py-4">
                                 <SequenceInfluencerTableName influencer={influencer} />
                             </td>
@@ -144,7 +144,18 @@ export default function SequenceInfluencerTableUnscheduled({
                                     />
                                 )}
                             </td>
-                            <td className="px-6 py-4" />
+                            <td className="px-6 py-4">
+                                {influencer.tags.map((tag) => (
+                                    <div
+                                        key={tag}
+                                        className="m-1 inline-flex h-7 items-center justify-end gap-2.5 rounded-md border border-[#ed46bb] bg-[#fefefe] px-2 py-1"
+                                    >
+                                        <div className="text-center font-['Poppins'] text-xs font-medium leading-tight tracking-tight text-violet-600">
+                                            {tag}
+                                        </div>
+                                    </div>
+                                ))}
+                            </td>
                             <td className="px-6 py-4">
                                 {
                                     //@ts-ignore TODO: remove this insane hacky library and use standard browser API

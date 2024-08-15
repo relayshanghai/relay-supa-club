@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import type { AxiosRequestConfig } from 'axios';
 import { atom, useAtom } from 'jotai';
 import type { UpdateAddressRequest } from 'pages/api/v2/sequence-influencers/[id]/addresses/request';

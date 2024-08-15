@@ -194,6 +194,8 @@ const sequences = {
             viewCard: '查看卡片',
             currentSequenceEmail: '当前序列邮件',
             currentStatus: '当前状态',
+            nextSequenceEmail: '下一个序列邮件',
+            nextSequenceEmailSendTime: '下一个序列邮件发送时间',
         },
         replied: {
             name: '名称',

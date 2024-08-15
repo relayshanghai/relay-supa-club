@@ -26,6 +26,9 @@ import { CreateVariableModal } from '../components/modals/email-template-variabl
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 import { Banner } from 'app/components/banner';
 import { useNewCRMPage } from 'src/hooks/use-new-pages';
+import SequenceInfluencerTableScheduled from './components/sequence-infuencer-table/sequence-influencer-table-scheduled';
+import SequenceInfluencerTableIgnored from './components/sequence-infuencer-table/sequence-influencer-table-ignored';
+import SequenceInfluencerTableReplied from './components/sequence-infuencer-table/sequence-influencer-table-replied';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -44,25 +47,26 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
     const { bouncedRate, openRate, replyRate } = calculateSequenceInfo(info);
     const {
         page,
-        setPage,
         size,
+        setPage,
+        loading: loadingInfluencers,
         data,
         setStatus,
         selectedInfluencers,
         setSelectedInfluencers,
-        deleteInfluencers,
         refreshSequenceInfluencer,
+        deleteInfluencers,
     } = useSequenceInfluencer(id);
     const { setDefaultPage } = useNewCRMPage();
     useEffect(() => {
         if (activeTab === 'unscheduled') {
-            setStatus('Unscheduled');
+            setStatus('To Contact');
         } else if (activeTab === 'scheduledAndSent') {
-            setStatus('Scheduled');
+            setStatus('In Sequence');
         } else if (activeTab === 'replied') {
             setStatus('Replied');
         } else if (activeTab === 'ignored') {
-            setStatus('ignored');
+            setStatus('Ignored');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
@@ -259,6 +263,69 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                             selectedInfluencers={selectedInfluencers}
                         />
                     </div>
+                )}
+            </div>
+            <div className="inline-flex w-full items-end justify-between self-stretch">
+                <SequenceTabHeader
+                    loading={loadingInfluencers}
+                    ignored={info.ignored}
+                    replied={info.replied}
+                    scheduledAndSent={info.inSequence}
+                    unscheduled={info.unscheduled}
+                    tabChanged={setActiveTab}
+                />
+                <div className="flex items-start justify-start gap-8">
+                    <button className="flex items-center justify-center gap-1 rounded-md border border-red-500 bg-[rgb(254,254,254)] p-2.5">
+                        <Trashcan className="relatives h-5 w-5" fill="red" />
+                    </button>
+                    <button className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe]">
+                        <Send className="relative h-5 w-5" fill="white" />
+                        <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">
+                            Schedule outreach emails
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div className="flex shrink grow basis-0 flex-col items-start justify-start self-stretch">
+                {activeTab === 'unscheduled' && (
+                    <SequenceInfluencerTableUnscheduled
+                        sequenceId={id}
+                        items={data?.items || []}
+                        page={page}
+                        size={size}
+                        totalPages={data?.totalPages || 1}
+                        onPageChange={setPage}
+                    />
+                )}
+                {activeTab === 'scheduledAndSent' && (
+                    <SequenceInfluencerTableScheduled
+                        sequenceId={id}
+                        items={data?.items || []}
+                        page={page}
+                        size={size}
+                        totalPages={data?.totalPages || 1}
+                        onPageChange={setPage}
+                    />
+                )}
+                {activeTab === 'ignored' && (
+                    <SequenceInfluencerTableIgnored
+                        sequenceId={id}
+                        items={data?.items || []}
+                        page={page}
+                        size={size}
+                        totalPages={data?.totalPages || 1}
+                        onPageChange={setPage}
+                    />
+                )}
+                {activeTab === 'replied' && (
+                    <SequenceInfluencerTableReplied
+                        sequenceId={id}
+                        items={data?.items || []}
+                        page={page}
+                        size={size}
+                        totalPages={data?.totalPages || 1}
+                        onPageChange={setPage}
+                    />
                 )}
             </div>
         </>

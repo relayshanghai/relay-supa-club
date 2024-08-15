@@ -1,9 +1,12 @@
+import { Spinner } from 'src/components/icons';
+
 export interface SequenceTabHeaderItemProps {
     active?: boolean;
     title: string;
     badgeClassName?: string;
     badge?: string;
     onClick: () => void;
+    loading?: boolean;
 }
 
 export default function SequenceTabHeaderItem({
@@ -12,6 +15,7 @@ export default function SequenceTabHeaderItem({
     badge,
     badgeClassName,
     onClick,
+    loading,
 }: SequenceTabHeaderItemProps) {
     return (
         <div className="inline-flex cursor-pointer flex-col items-start justify-center rounded-md" onClick={onClick}>
@@ -41,7 +45,7 @@ export default function SequenceTabHeaderItem({
                     )}
                 </div>
             </div>
-            {active && <div className="h-0.5 self-stretch bg-violet-600" />}
+            {active && loading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
         </div>
     );
 }
