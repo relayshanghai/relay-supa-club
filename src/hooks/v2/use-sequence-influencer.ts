@@ -11,6 +11,7 @@ import query from 'query-string';
 import { type Paginated } from 'types/pagination';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import { useSequenceInfluencerStore } from 'src/store/reducers/sequence-influencer';
+import { type SequenceInfluencersDeleteRequestBody } from 'pages/api/sequence/influencers/delete';
 export const manageProfileUpdating = atom(false);
 export const useManageProfileUpdating = () => useAtom(manageProfileUpdating);
 export const useSequenceInfluencerUpdate = () => {
@@ -66,7 +67,7 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         setSelectedInfluencers,
         selectedList: selectedInfluencers,
     } = useSequenceInfluencerStore();
-    const { data: sequenceInfluencer } = useSWR(
+    const { data: sequenceInfluencer, mutate: refreshSequenceInfluencer } = useSWR(
         `/v2/sequences/${sequenceId}/influencers?${q}`,
         async (path: string) => {
             const response = await apiClient.get<Paginated<SequenceInfluencerEntity>>(path);
@@ -77,6 +78,16 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         sequenceInfluencer && setSequenceInfluencers(sequenceInfluencer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sequenceInfluencer]);
+
+    const deleteInfluencers = async () => {
+        if (selectedInfluencers.length < 1) return;
+        const body: SequenceInfluencersDeleteRequestBody = { ids: selectedInfluencers.map((d) => d.id) };
+        const [err, res] = await awaitToError(apiClient.post('/sequence/influencers/delete', body));
+        if (err) {
+            throw err;
+        }
+        return res;
+    };
 
     return {
         data: list,
@@ -92,6 +103,8 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         size,
         setSelectedInfluencers,
         selectedInfluencers,
+        deleteInfluencers,
+        refreshSequenceInfluencer,
     };
 };
 

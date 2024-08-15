@@ -12,6 +12,9 @@ import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/seq
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
 import type { Paginated } from 'types/pagination';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
+import { type DeleteInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/delete/request';
+import SequenceEmailRepository from 'src/backend/database/sequence/sequence-email-repository';
+import JobRepository from 'src/backend/database/job/job-repository';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -131,6 +134,21 @@ export default class SequenceInfluencerService {
         });
         const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
         return entities;
+    }
+    @CompanyIdRequired()
+    async deleteInfluencerFromSequence(sequenceId: string, request: DeleteInfluencerRequest) {
+        const sequenceEmails = await SequenceEmailRepository.getRepository().find({
+            where: { id: In(request.influencerIds) },
+        });
+        await Promise.all(sequenceEmails.map((d) => JobRepository.getRepository().delete({ id: d.job?.id })));
+        await Promise.all(
+            request.influencerIds.map((id) =>
+                SequenceInfluencerRepository.getRepository().delete({
+                    sequence: { id: sequenceId },
+                    id,
+                }),
+            ),
+        );
     }
     @UseLogger()
     @CompanyIdRequired()

@@ -106,9 +106,10 @@ export default function SequenceInfluencerTableUnscheduled({
                         <th scope="col" className="px-6 py-3">
                             {t(`sequences.table.unscheduled.dateAdded`)}
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        {/* WIP */}
+                        {/* <th scope="col" className="px-6 py-3">
                             {t(`sequences.table.unscheduled.action`)}
-                        </th>
+                        </th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -150,7 +151,8 @@ export default function SequenceInfluencerTableUnscheduled({
                                     dateFormat(influencer.createdAt)
                                 }
                             </td>
-                            <td className="px-6 py-4">{/* to do action edit */}</td>
+                            {/* WIP */}
+                            {/* <td className="px-6 py-4">to do action edit</td> */}
                         </tr>
                     ))}
                 </tbody>
