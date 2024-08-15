@@ -213,6 +213,8 @@ const sequences = {
             viewCard: 'View Card',
             currentSequenceEmail: 'Current Sequence Email',
             currentStatus: 'Current Status',
+            nextSequenceEmail: 'Next Sequence Email',
+            nextSequenceEmailSendTime: 'Next Sequence Email Send Time',
         },
         replied: {
             name: 'Name',

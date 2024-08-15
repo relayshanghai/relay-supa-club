@@ -6,4 +6,5 @@ export interface SequenceInfo {
     total: number;
     unscheduled: number;
     ignored: number;
+    inSequence: number;
 }

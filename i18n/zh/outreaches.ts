@@ -62,12 +62,12 @@ const outreaches = {
     banner: {
         button: '切换到旧版视图',
         title: '您正在查看一个新设计！',
-        description: '我们在CRM上有了新设计和新功能。',
+        description: '您现在将看到新的改进版CRM功能。',
     },
     oldBanner: {
         button: '切换到新版视图',
         title: '您正在查看一个旧设计！',
-        description: '我们在CRM上有了新设计和新功能，但您现在仍在使用旧版。',
+        description: '我们有新的改进版CRM功能——点击试用吧。',
     },
 };
 export default outreaches;

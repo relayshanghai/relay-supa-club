@@ -62,13 +62,13 @@ const outreaches = {
     },
     banner: {
         button: 'Switch to Old View',
-        title: 'You are looking a new design!',
-        description: 'We have a new design and new features on CRM',
+        title: 'You are looking at a new design!',
+        description: 'You will now see new and improved CRM features',
     },
     oldBanner: {
         button: 'Switch to New View',
-        title: 'You are looking an old design',
-        description: "We have a new design and new features on CRM, but now you're still on the old one",
+        title: 'You are looking at an old design!',
+        description: 'We have new and improved CRM features - click to try it out',
     },
 };
 
