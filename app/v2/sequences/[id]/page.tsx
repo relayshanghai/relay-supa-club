@@ -29,6 +29,8 @@ import { useNewCRMPage } from 'src/hooks/use-new-pages';
 import SequenceInfluencerTableScheduled from './components/sequence-infuencer-table/sequence-influencer-table-scheduled';
 import SequenceInfluencerTableIgnored from './components/sequence-infuencer-table/sequence-influencer-table-ignored';
 import SequenceInfluencerTableReplied from './components/sequence-infuencer-table/sequence-influencer-table-replied';
+import ReportModal from './components/report-modal/report-modal';
+import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -58,6 +60,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
         deleteInfluencers,
     } = useSequenceInfluencer(id);
     const { setDefaultPage } = useNewCRMPage();
+    const [selectedSocialProfile, setSelectedSocialProfile] = useState<InfluencerSocialProfileEntity>();
     useEffect(() => {
         if (activeTab === 'unscheduled') {
             setStatus('To Contact');
@@ -68,6 +71,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
         } else if (activeTab === 'ignored') {
             setStatus('Ignored');
         }
+        setPage(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
@@ -103,9 +107,10 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                 toast.error('Failed to deleting influencers');
             });
     };
-
+    const [openReport, setOpenReport] = useState(false);
     return (
         <>
+            { selectedSocialProfile && <ReportModal influencerSocialProfiles={selectedSocialProfile} open={openReport}/> }
             <CampaignWizardModal
                 showCreateCampaignModal={showCreateCampaignModal}
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
@@ -236,6 +241,10 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                             onPageChange={setPage}
                             setSelectedInfluencers={(d) => handleSelectedInfluencers(d)}
                             selectedInfluencers={selectedInfluencers}
+                            handleReportClick={(influencer) => {
+                                setSelectedSocialProfile(influencer.influencerSocialProfile);
+                                setOpenReport(true);
+                            }}
                         />
                     )}
                     {activeTab === 'scheduledAndSent' && (
@@ -246,6 +255,10 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                             size={size}
                             totalPages={data?.totalPages || 1}
                             onPageChange={setPage}
+                            handleReportClick={(influencer) => {
+                                setSelectedSocialProfile(influencer.influencerSocialProfile);
+                                setOpenReport(true);
+                            }}
                         />
                     )}
                     {activeTab === 'ignored' && (

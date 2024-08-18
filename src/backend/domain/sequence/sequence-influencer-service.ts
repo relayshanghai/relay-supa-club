@@ -46,7 +46,7 @@ export default class SequenceInfluencerService {
         await BalanceService.getService().checkBalance(BalanceType.PROFILE, 1, company.id);
     }
 
-    async storeUsage(company: CompanyEntity, sequenceInfluencer: SequenceInfluencerEntity) {
+    async storeUsage(company: CompanyEntity, iqDataId: string) {
         const profile = await ProfileRepository.getRepository().findOne({
             where: {
                 company: {
@@ -66,7 +66,7 @@ export default class SequenceInfluencerService {
                 profile: {
                     id: profile.id,
                 },
-                itemId: sequenceInfluencer.iqdataId,
+                itemId: iqDataId,
                 createdAt: Between(startDate, endDate),
             },
         });
@@ -81,7 +81,7 @@ export default class SequenceInfluencerService {
                 profile: {
                     id: profile.id,
                 },
-                itemId: sequenceInfluencer.iqdataId,
+                itemId: iqDataId,
             }),
         ]);
     }
@@ -141,7 +141,7 @@ export default class SequenceInfluencerService {
                         influencerSocialProfile: socialProfile || sequenceInfluencer.influencerSocialProfile,
                     },
                 );
-                await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
+                await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer.iqdataId);
                 return;
             }
             if (!sequenceInfluencer.iqdataId) {
@@ -164,7 +164,7 @@ export default class SequenceInfluencerService {
             }
             sequenceInfluencer.influencerSocialProfile = socialInfluencer;
             await this.syncSequenceInfluencer(sequenceInfluencer, reportData);
-            await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
+            await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer.iqdataId);
 
             return;
         } catch (e) {

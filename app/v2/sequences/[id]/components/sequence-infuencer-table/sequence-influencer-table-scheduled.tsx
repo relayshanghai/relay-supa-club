@@ -7,6 +7,7 @@ import { SendPlane } from 'src/components/icons/SendPlane';
 import UserBang from 'src/components/icons/UserBang';
 import RewindTime from 'src/components/icons/RewindTime';
 import { RingingBell } from 'src/components/icons';
+import { ReportOutline } from 'app/components/icons';
 
 export interface SequenceInfluencerTableScheduledProps {
     items: SequenceInfluencerEntity[];
@@ -16,6 +17,7 @@ export interface SequenceInfluencerTableScheduledProps {
     size: number;
     onPageChange: (page: number) => void;
     sequenceId: string;
+    handleReportClick: (influencer: SequenceInfluencerEntity) => void;
 }
 export const stepIcon = [<SendPlane key={0} />, <UserBang key={1} />, <RewindTime key={2} />, <RingingBell key={3} />];
 export default function SequenceInfluencerTableScheduled({
@@ -25,6 +27,7 @@ export default function SequenceInfluencerTableScheduled({
     totalPages,
     size,
     onPageChange,
+    handleReportClick
 }: SequenceInfluencerTableScheduledProps) {
     const { t } = useTranslation();
 
@@ -64,7 +67,16 @@ export default function SequenceInfluencerTableScheduled({
                                 <td className="px-6 py-4">
                                     <SequenceInfluencerTableName influencer={influencer} />
                                 </td>
-                                <td className="px-6 py-4" />
+                                <td className="px-6 py-4" >
+                                    {influencer.influencerSocialProfile && (
+                                        <div className="ml-5 cursor-pointer">
+                                            <ReportOutline
+                                                className="stroke-gray-400 stroke-2"
+                                                onClick={() => handleReportClick && handleReportClick(influencer)}
+                                            />
+                                        </div>
+                                    )}
+                                </td>
                                 <td className="px-6 py-4">
                                     {currentStep && (
                                         <div className="inline-flex h-[60px] items-center justify-start gap-2 px-4 py-2">
