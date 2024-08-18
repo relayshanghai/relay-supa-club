@@ -46,7 +46,7 @@ export default class SequenceInfluencerService {
         await BalanceService.getService().checkBalance(BalanceType.PROFILE, 1, company.id);
     }
 
-    async storeUsage(company: CompanyEntity, sequenceInfluencer: SequenceInfluencerEntity) {
+    async storeUsage(company: CompanyEntity, iqDataId: string) {
         const profile = await ProfileRepository.getRepository().findOne({
             where: {
                 company: {
@@ -66,7 +66,7 @@ export default class SequenceInfluencerService {
                 profile: {
                     id: profile.id,
                 },
-                itemId: sequenceInfluencer.iqdataId,
+                itemId: iqDataId,
                 createdAt: Between(startDate, endDate),
             },
         });
@@ -81,7 +81,7 @@ export default class SequenceInfluencerService {
                 profile: {
                     id: profile.id,
                 },
-                itemId: sequenceInfluencer.iqdataId,
+                itemId: iqDataId,
             }),
         ]);
     }
@@ -141,8 +141,8 @@ export default class SequenceInfluencerService {
                         influencerSocialProfile: socialProfile || sequenceInfluencer.influencerSocialProfile,
                     },
                 );
-                await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
-                return;
+                await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer.iqdataId);
+                return this.getOne(sequenceInfluencerId);
             }
             if (!sequenceInfluencer.iqdataId) {
                 throw new Error('unknown reference id');
@@ -164,9 +164,9 @@ export default class SequenceInfluencerService {
             }
             sequenceInfluencer.influencerSocialProfile = socialInfluencer;
             await this.syncSequenceInfluencer(sequenceInfluencer, reportData);
-            await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer);
+            await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer.iqdataId);
 
-            return;
+            return this.getOne(sequenceInfluencerId);
         } catch (e) {
             const err = e as Error;
             logger.error('sync error', {
@@ -208,7 +208,7 @@ export default class SequenceInfluencerService {
         );
     }
     async syncInfluencerProfile(reportData: CreatorReport, platform: string) {
-        const email = reportData.user_profile.contacts.filter((value) => value.type === 'email')[0]?.value || null;
+        const email = reportData.user_profile.contacts?.filter((value) => value.type === 'email')[0]?.value || null;
         const toUpdate: DeepPartial<InfluencerSocialProfileEntity> = {
             name:
                 reportData.user_profile.fullname ||
@@ -268,5 +268,13 @@ export default class SequenceInfluencerService {
         }
 
         return socialProfile;
+    }
+    async getOne(id: string) {
+        return SequenceInfluencerRepository.getRepository().findOne({
+            where: {
+                id,
+            },
+            relations: ['influencerSocialProfile'],
+        });
     }
 }

@@ -1,11 +1,10 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
-import { type EntityManager, type EntityTarget, type FindOptionsWhere, In, Like } from 'typeorm';
+import { type EntityManager, type EntityTarget, type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
 import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
 import { type SequenceEntity } from './sequence-entity';
-import SequenceEmailRepository from './sequence-email-repository';
 import { type SequenceInfo } from 'types/v2/rate-info';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 // start schedule release date, older data will not be fetched
@@ -121,33 +120,44 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
         const total = await this.count({
             where: { sequence: whereSequence },
         });
-        const sent = await SequenceEmailRepository.getRepository().count({
+        const sent = await this.count({
             where: {
                 sequence: whereSequence,
+                sequenceEmails: {
+                    id: Not(IsNull()),
+                },
             },
         });
-        const replied = await SequenceEmailRepository.getRepository().count({
+        const replied = await this.count({
             where: {
                 sequence: whereSequence,
-                emailDeliveryStatus: 'Replied',
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Replied',
+                },
             },
         });
-        const open = await SequenceEmailRepository.getRepository().count({
+        const open = await this.count({
             where: [
                 {
                     sequence: whereSequence,
-                    emailTrackingStatus: 'Opened',
+                    sequenceEmails: {
+                        emailTrackingStatus: 'Opened',
+                    },
                 },
                 {
                     sequence: whereSequence,
-                    emailTrackingStatus: 'Link Clicked',
+                    sequenceEmails: {
+                        emailTrackingStatus: 'Link Clicked',
+                    },
                 },
             ],
         });
-        const bounced = await SequenceEmailRepository.getRepository().count({
+        const bounced = await this.count({
             where: {
                 sequence: whereSequence,
-                emailDeliveryStatus: 'Bounced',
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Bounced',
+                },
             },
         });
         const ignored = await this.count({

@@ -110,6 +110,9 @@ export default class SequenceInfluencerService {
                 iqdataId: In(request.map((r) => r.iqdataId)),
             },
         });
+        // check balance before adding influencer to sequence
+        // BalanceService.getService().checkBalance(BalanceType.PROFILE, request.length);
+
         const toInsert = request.map((r) => {
             const existed = existedInfluencers.find((e) => e.iqdataId === r.iqdataId);
             return {
@@ -133,6 +136,18 @@ export default class SequenceInfluencerService {
             } as SequenceInfluencerEntity;
         });
         const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
+        // deduct balance in adding influencer to sequence
+        // await Promise.all([
+        //     BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, request.length),
+        //     UsageRepository.getRepository().insert(request.map(r => {
+        //         const entity = new UsageEntity();
+        //         entity.company = profile?.company;
+        //         entity.type = BalanceType.PROFILE;
+        //         entity.itemId = r.iqdataId;
+        //         entity.profile = profile;
+        //         return entity
+        //     }))
+        // ])
         return entities;
     }
     @CompanyIdRequired()
@@ -165,7 +180,29 @@ export default class SequenceInfluencerService {
                     influencer.influencerSocialProfile &&
                     ({
                         ...influencer.influencerSocialProfile,
-                        data: undefined,
+                        data: {
+                            url: (influencer.influencerSocialProfile?.data as any)?.url,
+                            user_id: (influencer.influencerSocialProfile?.data as any)?.user_id,
+                            handle: (influencer.influencerSocialProfile?.data as any)?.handle,
+                            custom_name: (influencer.influencerSocialProfile?.data as any)?.custom_name,
+                            fullname: (influencer.influencerSocialProfile?.data as any)?.fullname,
+                            picture: (influencer.influencerSocialProfile?.data as any)?.picture,
+                            username: (influencer.influencerSocialProfile?.data as any)?.username,
+                            avg_views: (influencer.influencerSocialProfile?.data as any)?.avg_views,
+                            avg_reels_plays: (influencer.influencerSocialProfile?.data as any)?.avg_reels_plays,
+                            engagement_rate: (influencer.influencerSocialProfile?.data as any)?.engagement_rate,
+                            posts_count: (influencer.influencerSocialProfile?.data as any)?.posts_count,
+                            followers: (influencer.influencerSocialProfile?.data as any)?.followers,
+                            followers_growth: (influencer.influencerSocialProfile?.data as any)?.followers_growth,
+                            engagements: (influencer.influencerSocialProfile?.data as any)?.engagements,
+                            relevance: (influencer.influencerSocialProfile?.data as any)?.relevance,
+                            audience_genders_per_age: (influencer.influencerSocialProfile?.data as any)
+                                ?.audience_genders_per_age,
+                            audience_genders: (influencer.influencerSocialProfile?.data as any)?.audience_genders,
+                            influencer_niche_graph: (influencer.influencerSocialProfile?.data as any)
+                                ?.influencer_niche_graph,
+                            iqdata_id: (influencer.influencerSocialProfile?.data as any)?.iqdata_id,
+                        },
                     } as InfluencerSocialProfileEntity),
             })),
         };

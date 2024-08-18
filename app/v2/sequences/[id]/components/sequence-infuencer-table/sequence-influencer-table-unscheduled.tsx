@@ -6,6 +6,8 @@ import SequenceInfluencerTableEmail from './sequence-influencer-table-email';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 import dateFormat from 'src/utils/dateFormat';
 import { useCallback, useEffect, useState } from 'react';
+import { ReportOutline } from 'app/components/icons';
+import SequenceInfluencerTableUnlocker from './sequence-influencer-table-unlocker';
 
 export interface SequenceInfluencerTableUnscheduledProps {
     items: SequenceInfluencerEntity[];
@@ -17,6 +19,7 @@ export interface SequenceInfluencerTableUnscheduledProps {
     sequenceId: string;
     setSelectedInfluencers?: (influencers: SequenceInfluencerEntity[]) => void;
     selectedInfluencers?: SequenceInfluencerEntity[];
+    handleReportClick: (influencer: SequenceInfluencerEntity) => void;
 }
 export default function SequenceInfluencerTableUnscheduled({
     items,
@@ -28,6 +31,7 @@ export default function SequenceInfluencerTableUnscheduled({
     sequenceId,
     setSelectedInfluencers,
     selectedInfluencers = [],
+    handleReportClick,
 }: SequenceInfluencerTableUnscheduledProps) {
     const { t } = useTranslation();
     const [selectAll, setSelectAll] = useState(false);
@@ -133,16 +137,35 @@ export default function SequenceInfluencerTableUnscheduled({
                             <td className="px-6 py-4">
                                 <SequenceInfluencerTableName influencer={influencer} />
                             </td>
-                            <td className="px-6 py-4" />
+                            <td className="px-6 py-4" >
+
+                            {influencer.influencerSocialProfile && (
+                                <div className="ml-5 cursor-pointer">
+                                    <ReportOutline
+                                        className="stroke-gray-400 stroke-2"
+                                        onClick={() => handleReportClick && handleReportClick(influencer)}
+                                    />
+                                </div>
+                            )}
+                            </td>
                             <td className="px-6 py-4">
                                 {(influencer.email ||
-                                    influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING) && (
+                                    influencer.scheduleStatus !== SequenceInfluencerScheduleStatus.PENDING) && (
                                     <SequenceInfluencerTableEmail
                                         sequenceId={sequenceId}
                                         index={index}
                                         influencer={influencer}
                                     />
                                 )}
+                                {
+                                    !influencer.email && influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING && (
+                                        <SequenceInfluencerTableUnlocker
+                                            sequenceId={sequenceId}
+                                            index={index}
+                                            sequenceInfluencer={influencer}
+                                        />
+                                    )
+                                }
                             </td>
                             <td className="px-6 py-4">
                                 {influencer.tags.map((tag) => (

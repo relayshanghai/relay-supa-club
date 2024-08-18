@@ -17,7 +17,7 @@ import useSWR from 'swr';
 /** If you only want to use `refresh` or `create`, no need to pass sequenceIds. If you don't pass sequenceIds it will not call the fetch */
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
-    const { apiClient } = useApiClient();
+    const { error, apiClient } = useApiClient();
     const {
         data,
         mutate: refreshSequenceInfluencers,
@@ -108,5 +108,6 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
         deleteSequenceInfluencers,
+        error,
     };
 };
