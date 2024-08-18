@@ -42,7 +42,7 @@ const ProductsTable = ({
         setSelection(products.map((influencer) => influencer.id));
     }, [selection, products, setSelection]);
     return (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" id="product-list">
             <table className="w-full border-collapse">
                 <thead>
                     <tr className="border-b-2 border-gray-200">

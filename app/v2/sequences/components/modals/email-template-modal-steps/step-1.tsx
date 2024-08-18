@@ -37,10 +37,14 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
     return (
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
-            data-testid="step1-outreach-form"
+            data-testid="step1-template-wizard"
+            id="step1-template-wizard"
         >
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg bg-white shadow">
-                <div className="inline-flex flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
+                <div
+                    className="inline-flex flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white"
+                    id="variable-list-template-wizard"
+                >
                     <div className="inline-flex w-[318px] items-start justify-start gap-2.5 self-stretch border-b border-gray-200 px-3 pb-3 pt-4">
                         <div className="font-['Poppins'] text-base font-semibold tracking-tight text-gray-700">
                             {t('outreaches.templateVariables')}
@@ -98,6 +102,7 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
                             variant="primary"
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
+                            id="email-template-finish-button"
                             onClick={() => {
                                 onNextStep();
                                 setSaveExistingAsNew(true);

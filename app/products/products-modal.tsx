@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Cross } from '../components/icons';
 import { useTranslation } from 'react-i18next';
 import { type CreateProductPayload, useProducts } from 'src/hooks/use-products';
@@ -6,6 +6,7 @@ import { type ProductEntity } from 'src/backend/database/product/product-entity'
 import { Modal } from 'app/components/modals';
 import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
 
 export type ModalProductProps = {
     modalOpen: boolean;
@@ -38,9 +39,21 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
         });
     };
 
+    const { startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        if (modalOpen && guidesReady) {
+            startTour('productForm');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, modalOpen]);
+
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
-            <div className="relative inline-flex h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50">
+            <div
+                className="relative inline-flex h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50"
+                id="product-form-modal"
+            >
                 <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setModalOpen(false)}>
                     <Cross className="flex h-6 w-6 fill-gray-400 stroke-white" />
                 </div>

@@ -9,6 +9,7 @@ import { OutreachTabIcon } from './components/template-tab-icon';
 import { TemplateTabContent } from './components/template-tab-content';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { getOutreachStepsTranslationKeys } from '../../common/outreach-step';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
 
 type EmailTemplateModalProps = {
     modalOpen: boolean;
@@ -32,6 +33,16 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
         acc[key].push(template as GetTemplateResponse);
         return acc;
     }, {});
+
+    const { startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        if (modalOpen && guidesReady) {
+            startTour('templateLibraryModal');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, modalOpen]);
+
     return (
         <Modal visible={modalOpen} onClose={(open) => setModalOpen(open)} padding={0} maxWidth="!w-[960px]">
             <div className="relative inline-flex h-[680px] w-[960px] flex-col items-start justify-start rounded-lg bg-violet-50 shadow">
@@ -56,7 +67,7 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
                 </div>
                 {/* body start */}
                 <Tabs defaultValue="OUTREACH" className="w-full">
-                    <TabsList className="mt-5 w-full">
+                    <TabsList className="mt-5 w-full" id="list-created-email-template">
                         {OUTREACH_STATUSES.map((status) => (
                             <TabsTrigger
                                 key={`tab-${status}`}

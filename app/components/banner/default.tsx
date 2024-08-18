@@ -53,8 +53,9 @@ export const Default = ({
                         href={buttonLink ? buttonLink : ''}
                         className="flex flex-row items-center rounded-full bg-white px-3.5 py-1 text-sm font-semibold text-primary-500 shadow-sm"
                         onClick={() => onButtonClicked && onButtonClicked()}
+                        id="banner-button"
                     >
-                        {buttonIcon && buttonIcon} {buttonText}
+                        {buttonIcon ? buttonIcon : <></>} {buttonText}
                     </Link>
                 )}
             </div>

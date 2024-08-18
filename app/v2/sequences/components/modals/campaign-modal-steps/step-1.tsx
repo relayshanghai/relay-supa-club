@@ -91,6 +91,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
             data-testid="step1-outreach-form"
+            id="step1-campaign-wizard"
         >
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-hidden rounded-lg bg-white shadow">
                 <div className="inline-flex max-h-[545px] w-[297px] flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
@@ -168,6 +169,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             onClick={() => {
                                 onNextStepHandler();
                             }}
+                            id="step1-next-button"
                         >
                             <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>
                         </Button>

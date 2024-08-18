@@ -68,6 +68,7 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-8"
             data-testid="step1-outreach-form"
+            id="step2-template-wizard"
         >
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg">
                 <div className="relative h-full w-full">
@@ -122,6 +123,7 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
                             onClick={() => onSave()}
+                            id="step2-finish-button"
                         >
                             <span className="ml-1">{t('outreaches.saveAndContinue')}</span>
                         </Button>

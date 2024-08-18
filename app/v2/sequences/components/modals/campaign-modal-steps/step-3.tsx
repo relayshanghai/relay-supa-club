@@ -110,6 +110,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
             data-testid="step1-outreach-form"
+            id="step3-campaign-wizard"
         >
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg bg-white shadow">
                 <div className="inline-flex flex-col items-start justify-start self-stretch border-r border-gray-200 bg-white">
@@ -133,7 +134,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                     {!loading && (
                         <div className="w-full">
                             <Tabs defaultValue={Step.OUTREACH} className="">
-                                <TabsList className="grid w-full grid-cols-3">
+                                <TabsList className="grid w-full grid-cols-3" id="step3-steps-tab">
                                     <TabsTrigger className="flex gap-5" value={Step.OUTREACH}>
                                         <SendOutline className="h-4 w-4 -rotate-45 stroke-gray-400" strokeWidth={2} />
                                         {t('outreaches.steps.Outreach')}
@@ -189,6 +190,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                             data-testid="next-button"
                             onClick={() => onSave()}
                             disabled={sequenceLoading}
+                            id="step3-next-button"
                         >
                             <span className="ml-1">
                                 {sequenceLoading ? 'Saving...' : t('outreaches.saveAndContinue')}

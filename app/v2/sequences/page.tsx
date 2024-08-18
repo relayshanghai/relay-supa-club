@@ -11,6 +11,8 @@ import { calculateSequenceInfo } from 'app/utils/rate-info';
 import SummaryCard from './components/sequence-summary/summary-card';
 import { Banner } from 'app/components/banner';
 import { useNewCRMPage } from 'src/hooks/use-new-pages';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { campaignWizardStep1, campaignWizardStep2, campaignWizardStep3, crmGuide, templateLibraryModal, templateLibraryWizardStep1, templateLibraryWizardStep2, templateVariableModal } from 'src/guides/crm-v2.guide';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
@@ -31,6 +33,29 @@ export default function SequencePageV2() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const { setGuides, startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            crmV2: crmGuide,
+            templateVariableModal: templateVariableModal,
+            templateLibraryModal: templateLibraryModal,
+            templateLibraryWizardStep1: templateLibraryWizardStep1,
+            templateLibraryWizardStep2: templateLibraryWizardStep2,
+            campaignWizardStep1: campaignWizardStep1,
+            campaignWizardStep2: campaignWizardStep2,
+            campaignWizardStep3: campaignWizardStep3,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady) {
+            startTour('crmV2');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady]);
+
     return (
         <>
             <CampaignWizardModal
@@ -50,7 +75,10 @@ export default function SequencePageV2() {
                 message={t('outreaches.banner.description')}
                 onButtonClicked={() => setDefaultPage(`/sequences`)}
             />
-            <div className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8">
+            <div
+                className="inline-flex w-full flex-col items-start justify-start gap-8 px-8 pb-4 pt-8"
+                id="v2-crm-page"
+            >
                 <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-8 self-stretch">
                     <div className="flex flex-col items-start justify-start gap-8 self-stretch">
                         <div className="flex flex-col items-start justify-start gap-3 self-stretch">
@@ -71,6 +99,7 @@ export default function SequencePageV2() {
                                             onClick={() => setShowTemplateLibraryModal(true)}
                                             className="flex items-center"
                                             data-testid="template-library-button"
+                                            id="template-library-button"
                                         >
                                             {t('outreaches.templateLibrary')}
                                         </Button>
@@ -81,6 +110,7 @@ export default function SequencePageV2() {
                                             }}
                                             className="flex items-center"
                                             data-testid="template-variable-button"
+                                            id="template-variable-button"
                                         >
                                             {t('outreaches.addTemplateVariables')}
                                         </Button>
@@ -120,6 +150,7 @@ export default function SequencePageV2() {
                             variant="ghost"
                             className="flex items-center !bg-blue-50"
                             data-testid="create-campaign-button"
+                            id="create-campaign-button"
                         >
                             <p className="self-center text-blue-600">{t('outreaches.createNewCampaign')}</p>
                         </Button>

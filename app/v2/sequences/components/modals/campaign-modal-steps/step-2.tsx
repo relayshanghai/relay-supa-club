@@ -30,7 +30,11 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
 
     return (
         <>
-            <div className="flex h-full w-full justify-center" data-testid="step2-outreach-form">
+            <div
+                className="flex h-full w-full justify-center"
+                data-testid="step2-outreach-form"
+                id="step2-campaign-wizard"
+            >
                 <div className="mt-20 inline-flex h-[366px] w-[512px] flex-col items-start justify-start rounded-2xl bg-white p-3 shadow">
                     <div className="inline-flex items-start justify-between self-stretch pl-6 pr-2 pt-6">
                         <div className="flex h-[30px] shrink grow basis-0 items-start justify-start gap-1">
@@ -142,6 +146,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                 variant="primary"
                                 className="inline-flex items-center border-none !bg-pink-500 !p-2"
                                 onClick={() => onNextStep()}
+                                id="step2-next-button"
                             >
                                 <span className="ml-1">{t('outreaches.saveAndContinue')}</span>
                             </Button>

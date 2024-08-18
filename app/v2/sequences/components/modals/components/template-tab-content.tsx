@@ -12,7 +12,10 @@ import Skeleton from 'src/components/common/skeleton';
 
 const NewTemplateCard = () => {
     return (
-        <Card className="w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]">
+        <Card
+            className="w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]"
+            id="start-new-email-template"
+        >
             <CardHeader className="flex flex-row items-start gap-4 p-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100">

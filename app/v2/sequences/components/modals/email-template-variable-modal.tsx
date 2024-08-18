@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     DropdownMenu,
@@ -14,6 +14,7 @@ import { Modal } from 'app/components/modals';
 import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
 import { variableCategories } from '../utils';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -35,9 +36,22 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                 clientLogger(error);
             });
     };
+
+    const { startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        if (modalOpen && guidesReady) {
+            startTour('templateVariableModal');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady, modalOpen]);
+
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
-            <div className="relative inline-flex h-auto w-[523px] flex-col items-start justify-start rounded-lg bg-white">
+            <div
+                className="relative inline-flex h-auto w-[523px] flex-col items-start justify-start rounded-lg bg-white"
+                id="template-variable-modal"
+            >
                 <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setModalOpen(false)}>
                     <Cross className="flex h-6 w-6 fill-gray-400 stroke-white" />
                 </div>
@@ -60,7 +74,10 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                 {/* form section */}
                 <div className="mt-6 flex h-auto flex-col items-start justify-start gap-3 self-stretch px-6">
                     <div className="inline-flex items-start justify-center gap-6 self-stretch">
-                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                        <div
+                            className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1"
+                            id="template-variable-category-input"
+                        >
                             <div className="text-sm font-medium text-gray-700">Category</div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="mt-1 flex w-full">
@@ -87,7 +104,10 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
-                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                        <div
+                            className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1"
+                            id="template-variable-name-input"
+                        >
                             <Input
                                 label={'Variable Name'}
                                 type="text"

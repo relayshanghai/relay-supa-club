@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import type { Metadata } from 'next';
+import 'driver.js/dist/driver.css';
 import '../styles/globals.css';
 import MainLayout from './layouts/main-layout';
 import StoreProvider from 'src/store/Providers/StoreProvider';

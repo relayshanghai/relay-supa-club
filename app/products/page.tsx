@@ -11,6 +11,8 @@ import { type ProductEntity } from 'src/backend/database/product/product-entity'
 import { ProductDeleteModal } from './product-delete-modal';
 import { DeleteOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
+import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import { productForm, productGuide } from 'src/guides/product.guide';
 
 const ProductsPageComponent = () => {
     const { t } = useTranslation();
@@ -30,6 +32,23 @@ const ProductsPageComponent = () => {
 
     const handleDeleteProduct = async () => null;
 
+    const { setGuides, startTour, guidesReady } = useDriverV2();
+
+    useEffect(() => {
+        setGuides({
+            productGuide: productGuide,
+            productForm: productForm,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (guidesReady) {
+            startTour('productGuide');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guidesReady]);
+
     return (
         <>
             <ProductDeleteModal
@@ -38,7 +57,7 @@ const ProductsPageComponent = () => {
                 handleDelete={handleDeleteProduct}
             />
             <CreateProductModal modalOpen={modalOpen} setModalOpen={(v) => setModalOpen(v)} />
-            <div className=" mx-6 flex flex-col space-y-4 py-6">
+            <div className=" mx-6 flex flex-col space-y-4 py-6" id="product-page">
                 <div className="flex w-full justify-between">
                     <div className="mb-6 md:w-1/2">
                         <h1
@@ -73,6 +92,7 @@ const ProductsPageComponent = () => {
                         variant="ghost"
                         className="flex items-center !bg-blue-50"
                         data-testid="create-campaign-button"
+                        id="add-product-button"
                     >
                         <p className="self-center text-blue-600">{t('products.addNewProduct')}</p>
                     </Button>

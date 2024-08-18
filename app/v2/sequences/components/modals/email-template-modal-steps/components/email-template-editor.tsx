@@ -26,7 +26,7 @@ export const EmailTemplateEditor = ({
         <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">
             <CardDescription className="flex h-full flex-col gap-4">
                 <section className="flex w-full justify-between gap-6">
-                    <section className="flex grow flex-col gap-2">
+                    <section className="flex grow flex-col gap-2" id="email-template-step-options">
                         <p className="whitespace-nowrap text-xl font-semibold text-gray-600">Sequence Step</p>
                         <DropdownMenu>
                             <DropdownMenuTrigger>
@@ -50,7 +50,7 @@ export const EmailTemplateEditor = ({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </section>
-                    <section className="flex grow-0 flex-col gap-2">
+                    <section className="flex grow-0 flex-col gap-2" id="email-template-step-subject">
                         <p className="text-xl font-semibold text-gray-600">Subject Line</p>
                         <TiptapInput
                             onChange={(s: string) => {
@@ -69,7 +69,10 @@ export const EmailTemplateEditor = ({
                         />
                     </section>
                 </section>
-                <section className="h-full min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500">
+                <section
+                    className="h-full min-h-[200px] min-w-[400px] cursor-default rounded-lg border-2 border-gray-200 px-[10px] py-[6px] text-gray-500"
+                    id="email-template-content"
+                >
                     <Tiptap
                         description={templateDetails.template}
                         placeholder="Write your email template here"

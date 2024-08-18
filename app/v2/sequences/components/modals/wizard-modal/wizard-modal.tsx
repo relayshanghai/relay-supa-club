@@ -1,10 +1,10 @@
-import { type FC, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import { Modal } from 'src/components/modal';
 import { Cross } from 'src/components/icons';
 import { ModalHeader } from './wizard-modal-header';
 import { type WizardModalProps } from 'app/v2/sequences/types';
 
-export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsDisabled }) => {
+export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsDisabled, setActiveStep }) => {
     const getUnDisabledNextStep = (s: number): number => {
         if (stepsDisabled?.includes(s + 1)) {
             return getUnDisabledNextStep(s + 1);
@@ -35,6 +35,11 @@ export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsD
         }
         setStep(step - 1);
     };
+
+    useEffect(() => {
+        setActiveStep && setActiveStep(step);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [step]);
 
     return (
         <Modal visible={show} onClose={() => null} padding={0} maxWidth="!w-[960px]">
