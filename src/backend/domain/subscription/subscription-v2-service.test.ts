@@ -300,7 +300,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     {
                         subscriptionStatus: 'active',
                         profilesLimit: '200',
-                        searchesLimit: '900s',
+                        searchesLimit: '900',
                         subscriptionPlan: 'Outreach',
                         trialProfilesLimit: '100000000',
                         trialSearchesLimit: '100000000',
