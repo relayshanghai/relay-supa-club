@@ -27,7 +27,7 @@ export default function SequenceInfluencerTableScheduled({
     totalPages,
     size,
     onPageChange,
-    handleReportClick
+    handleReportClick,
 }: SequenceInfluencerTableScheduledProps) {
     const { t } = useTranslation();
 
@@ -67,7 +67,7 @@ export default function SequenceInfluencerTableScheduled({
                                 <td className="px-6 py-4">
                                     <SequenceInfluencerTableName influencer={influencer} />
                                 </td>
-                                <td className="px-6 py-4" >
+                                <td className="px-6 py-4">
                                     {influencer.influencerSocialProfile && (
                                         <div className="ml-5 cursor-pointer">
                                             <ReportOutline

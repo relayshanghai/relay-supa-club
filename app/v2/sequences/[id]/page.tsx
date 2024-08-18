@@ -131,7 +131,13 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
 
     return (
         <>
-            { selectedSocialProfile && <ReportModal onClose={() => setOpenReport(false)} influencerSocialProfiles={selectedSocialProfile} open={openReport}/> }
+            {selectedSocialProfile && (
+                <ReportModal
+                    onClose={() => setOpenReport(false)}
+                    influencerSocialProfiles={selectedSocialProfile}
+                    open={openReport}
+                />
+            )}
             <CampaignWizardModal
                 showCreateCampaignModal={showCreateCampaignModal}
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
