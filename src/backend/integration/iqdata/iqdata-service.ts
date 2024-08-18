@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'query-string';
 import type { CreatorReport } from 'types';
 import type { CreatorReportsMetadataResult } from 'types';
 const IQDATA_URL = process.env.IQDATA_URL || 'https://socapi.icu/v2.0/api';
@@ -31,5 +32,9 @@ export default class IQDataService {
     async getReport(id: string): Promise<CreatorReport> {
         const response = await this.client.get(`/reports/${id}`);
         return response.data;
+    }
+    async getRelevantTopics(platform: string, username: string) {
+        const response = await this.client.get(`/dict/relevant-tags?${qs.stringify({ q: username, platform })}`);
+        return response.data.data;
     }
 }

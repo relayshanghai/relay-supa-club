@@ -229,6 +229,9 @@ const sequences = {
             action: 'Action',
         },
     },
+    unlocking: 'Unlocking',
+    unlock: 'Unlock',
+    unlockDisabled: 'Another influencer is being unlocked',
 };
 
 export default sequences;

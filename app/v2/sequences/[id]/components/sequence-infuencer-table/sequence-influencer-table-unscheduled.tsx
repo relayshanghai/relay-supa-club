@@ -7,6 +7,7 @@ import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 import dateFormat from 'src/utils/dateFormat';
 import { useCallback, useEffect, useState } from 'react';
 import { ReportOutline } from 'app/components/icons';
+import SequenceInfluencerTableUnlocker from './sequence-influencer-table-unlocker';
 
 export interface SequenceInfluencerTableUnscheduledProps {
     items: SequenceInfluencerEntity[];
@@ -149,13 +150,22 @@ export default function SequenceInfluencerTableUnscheduled({
                             </td>
                             <td className="px-6 py-4">
                                 {(influencer.email ||
-                                    influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING) && (
+                                    influencer.scheduleStatus !== SequenceInfluencerScheduleStatus.PENDING) && (
                                     <SequenceInfluencerTableEmail
                                         sequenceId={sequenceId}
                                         index={index}
                                         influencer={influencer}
                                     />
                                 )}
+                                {
+                                    !influencer.email && influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING && (
+                                        <SequenceInfluencerTableUnlocker
+                                            sequenceId={sequenceId}
+                                            index={index}
+                                            sequenceInfluencer={influencer}
+                                        />
+                                    )
+                                }
                             </td>
                             <td className="px-6 py-4">
                                 {influencer.tags.map((tag) => (

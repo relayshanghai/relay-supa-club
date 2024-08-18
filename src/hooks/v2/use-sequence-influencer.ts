@@ -8,7 +8,7 @@ import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import { usePaginationParam } from './use-pagination-param';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import query from 'query-string';
 import { type Paginated } from 'types/pagination';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
@@ -54,6 +54,7 @@ export const useSequenceInfluencerAddress = () => {
 
 export const useSequenceInfluencer = (sequenceId: string) => {
     const { page, size, setPage, setSize } = usePaginationParam();
+
     const { apiClient, loading, error } = useApiClient();
     const [status, setStatus] = useState<string>();
     const [search, setSearch] = useState('');
@@ -63,11 +64,13 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         status,
         search,
     });
+    const { mutate } = useSWRConfig();
     const {
         list,
         setSequenceInfluencers,
         setSelectedInfluencers,
         selectedList: selectedInfluencers,
+        unlocking,
     } = useSequenceInfluencerStore();
     const { data: sequenceInfluencer, mutate: refreshSequenceInfluencer } = useSWR(
         `/v2/sequences/${sequenceId}/influencers?${q}`,
@@ -80,6 +83,11 @@ export const useSequenceInfluencer = (sequenceId: string) => {
         sequenceInfluencer && setSequenceInfluencers(sequenceInfluencer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sequenceInfluencer]);
+
+    useEffect(() => {
+        // when unlocking finish, refresh the list
+        if (!unlocking) mutate(`/v2/sequences/${sequenceId}/influencers?${q}`);
+    }, [unlocking]);
 
     const deleteInfluencers = async () => {
         if (selectedInfluencers.length < 1) return;
@@ -121,5 +129,21 @@ export const useSequenceInfluencerEmail = (sequenceId: string, sequenceInfluence
     return {
         updateEmail,
         loading,
+    };
+};
+
+export const useUnlockInfluencer = (id: string) => {
+    const { unlocking, setUnlock } = useSequenceInfluencerStore();
+    const { apiClient, loading } = useApiClient();
+    const unlockInfluencer = async () => {
+        setUnlock(id);
+        const [err] = await awaitToError(apiClient.get(`/v2/sequence-influencers/${id}/schedule`));
+        setUnlock(undefined);
+        return err;
+    };
+    return {
+        unlocking,
+        loading,
+        unlockInfluencer,
     };
 };

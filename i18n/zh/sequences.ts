@@ -210,5 +210,8 @@ const sequences = {
             action: '操作',
         },
     },
+    unlocking: '解锁中',
+    unlock: '解锁',
+    unlockDisabled: '另一个影响者正在被解锁',
 };
 export default sequences;
