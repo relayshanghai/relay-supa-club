@@ -1,6 +1,6 @@
-import type { GenderPerAge } from "types";
-import { extractPlatformFromURL } from "./extract-platform-from-url";
-import type { InfluencerSocialProfileEntity } from "src/backend/database/influencer/influencer-social-profile-entity";
+import type { GenderPerAge } from 'types';
+import { extractPlatformFromURL } from './extract-platform-from-url';
+import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 const WEIGHT_TO_PERCENTAGE = 10000;
 
 const engagementRateModifier = (ER: number) => {
@@ -77,21 +77,21 @@ export const calculateIndexScore = (influencer: InfluencerSocialProfileEntity) =
 const transformAndMergeData = (rawData: GenderPerAge[], searchedGender: 'male' | 'female'): GenderPerAge[] => {
     return rawData.some((audienceData) => audienceData.code === '65-')
         ? rawData.reduce((acc: GenderPerAge[], audienceCategory, index) => {
-            if (audienceCategory.code !== '65-') {
-                acc.push({
-                    code: audienceCategory.code === '45-64' ? '45+' : audienceCategory.code,
-                    [searchedGender]:
-                        audienceCategory.code === '45-64'
-                            ? audienceCategory[searchedGender] ?? 0 + (rawData[index + 1][searchedGender] ?? 0)
-                            : audienceCategory[searchedGender],
-                });
-            }
-            return acc;
-        }, [])
-    : rawData.map((data) => ({
-            ...data,
-            code: data.code === '45-64' ? '45+' : data.code,
-        }));
+              if (audienceCategory.code !== '65-') {
+                  acc.push({
+                      code: audienceCategory.code === '45-64' ? '45+' : audienceCategory.code,
+                      [searchedGender]:
+                          audienceCategory.code === '45-64'
+                              ? audienceCategory[searchedGender] ?? 0 + (rawData[index + 1][searchedGender] ?? 0)
+                              : audienceCategory[searchedGender],
+                  });
+              }
+              return acc;
+          }, [])
+        : rawData.map((data) => ({
+              ...data,
+              code: data.code === '45-64' ? '45+' : data.code,
+          }));
 };
 const processRawData = (
     rawData: GenderPerAge[],
@@ -117,9 +117,6 @@ const processRawData = (
 export const processedAudienceData = (influencer: InfluencerSocialProfileEntity) => {
     const { audience_genders_per_age: audienceData, audience_genders } = influencer.data as any;
 
-
-
-    
     const searchedGenderAudienceWeight = audience_genders && audience_genders[0].weight;
 
     if (!audienceData || !searchedGenderAudienceWeight) {

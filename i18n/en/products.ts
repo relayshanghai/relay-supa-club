@@ -14,7 +14,7 @@ const products = {
             'We link your products to searches and sequences to track performance, and help improve search results.',
         productName: 'Product Name',
         enterProductName: 'Enter Product Name',
-        price: 'Price',
+        price: 'Price (USD)',
         enterPrice: 'Enter price',
         productDescription: 'Product Description',
         shortProductDescription: 'Short, clear product description',

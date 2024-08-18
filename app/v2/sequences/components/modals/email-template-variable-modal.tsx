@@ -15,6 +15,7 @@ import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
 import { variableCategories } from '../utils';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import toast from 'react-hot-toast';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -32,8 +33,10 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
         createTemplateVariable(inputValues)
             .then(() => getTemplateVariables())
             .then(() => setInputValues({ category: 'Brand', name: '' }))
+            .then(() => toast.success('Template variable created successfully'))
             .catch((error) => {
                 clientLogger(error);
+                toast.error('Failed to create template variable');
             });
     };
 

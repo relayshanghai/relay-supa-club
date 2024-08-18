@@ -270,6 +270,7 @@ const campaigns = {
         invalidDate: '无效的日期',
         invalidNumber: '无效的数字',
     },
+    title: '标题',
     settings: '设置',
     createdAt: '创建于',
 };

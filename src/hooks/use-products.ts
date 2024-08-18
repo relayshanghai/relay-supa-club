@@ -45,6 +45,11 @@ export const useProducts = () => {
         if (err) throw err;
         return res.data;
     };
+    const deleteProduct = async (id: string) => {
+        const [err, res] = await awaitToError(apiClient.delete(`/products/${id}`));
+        if (err) throw err;
+        return res.data;
+    };
     return {
         loading,
         error,
@@ -52,6 +57,7 @@ export const useProducts = () => {
         getProducts,
         createProduct,
         updateProduct,
+        deleteProduct,
         getProduct,
         setProduct,
         product,

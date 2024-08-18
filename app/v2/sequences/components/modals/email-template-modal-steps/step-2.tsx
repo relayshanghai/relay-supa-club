@@ -7,6 +7,7 @@ import { Input } from 'shadcn/components/ui/input';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import { type OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
 import { type ModalStepProps } from 'app/v2/sequences/types';
+import toast from 'react-hot-toast';
 
 export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setModalOpen }) => {
     const { t } = useTranslation();
@@ -43,25 +44,34 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
     }, [saveExistingAsNew]);
 
     const onSave = async () => {
+        let action = null;
         if (saveExistingAsNew) {
-            createTemplate({
+            action = createTemplate({
                 name: emailTemplate?.name,
                 description: emailTemplate?.description as string,
                 template: emailTemplate?.template,
                 subject: emailTemplate?.subject,
-                variableIds: emailTemplate?.variables.map((variable) => variable.id) as string[],
+                variableIds: emailTemplate?.variables.map((variable) => variable.id),
                 step: emailTemplate?.step as OutreachStepRequest,
-            }).then(() => setModalOpen(false));
+            });
         } else if (isEdit) {
-            updateTemplate(emailTemplate.id, {
+            action = updateTemplate(emailTemplate.id, {
                 name: emailTemplate?.name,
                 description: emailTemplate?.description as string,
                 template: emailTemplate?.template,
                 subject: emailTemplate?.subject,
-                variableIds: emailTemplate?.variables.map((variable) => variable.id) as string[],
+                variableIds: emailTemplate?.variables.map((variable) => variable.id),
                 step: emailTemplate?.step as OutreachStepRequest,
-            }).then(() => setModalOpen(false));
+            });
         }
+        action
+            ?.then(() => {
+                setModalOpen(false);
+                toast.success('Template saved successfully');
+            })
+            .catch(() => {
+                toast.error('Failed to save template');
+            });
     };
 
     return (

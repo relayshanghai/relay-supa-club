@@ -7,6 +7,7 @@ import { Modal } from 'app/components/modals';
 import { Input } from 'app/components/inputs';
 import { Button } from 'app/components/buttons';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
+import toast from 'react-hot-toast';
 
 export type ModalProductProps = {
     modalOpen: boolean;
@@ -25,18 +26,23 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
     const { createProduct, updateProduct, getProducts, product, setProduct, loading } = useProducts();
 
     const handleCreateProduct = async () => {
-        const isUpdate = product.id !== undefined;
+        const isUpdate = !!product.id;
         let action = null;
         if (isUpdate) {
             action = updateProduct(product.id, product as unknown as CreateProductPayload);
         } else {
             action = createProduct(product as unknown as CreateProductPayload);
         }
-        action.then(() => {
-            getProducts();
-            setProduct(initValue as unknown as ProductEntity);
-            setModalOpen(false);
-        });
+        action
+            .then(() => {
+                getProducts();
+                setProduct(initValue as unknown as ProductEntity);
+                setModalOpen(false);
+                toast.success('Product saved successfully');
+            })
+            .catch(() => {
+                toast.error('Failed to save product');
+            });
     };
 
     const { startTour, guidesReady } = useDriverV2();
@@ -63,13 +69,12 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <div className="inline-flex items-start justify-start gap-1">
                             <div className="text-center font-['Poppins'] text-xl font-semibold tracking-tight text-gray-600">
-                                Add a product
+                                {t('products.productModal.addProduct')}
                             </div>
                             <div className="relative h-4 w-4" />
                         </div>
                         <div className="w-80 font-['Poppins'] text-xs font-normal leading-tight tracking-tight text-gray-600">
-                            We link your products to searches and sequences to track performance, and help improve
-                            search results.
+                            {t('products.productModal.productLinkDescription')}
                         </div>
                     </div>
                     <div className="inline-flex w-6 flex-col items-end justify-start gap-2.5 self-stretch">
@@ -84,18 +89,18 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <Input
                                 noBottomMargin
-                                label={'Product Name'}
+                                label={t('products.productModal.productName')}
                                 type="text"
                                 value={product.name}
                                 onChange={(e) => setProduct({ ...product, name: e.target.value })}
-                                placeholder={'Enter Product Name'}
+                                placeholder={t('products.productModal.enterProductName')}
                                 data-testid="product-name-input"
                             />
                         </div>
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <Input
                                 noBottomMargin
-                                label={'Price'}
+                                label={t('products.productModal.price')}
                                 type="text"
                                 value={product.price}
                                 onChange={(e) => {
@@ -103,7 +108,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                                     if (!/^\d*\.?\d*$/.test(e.target.value)) return;
                                     setProduct({ ...product, price: e.target.value ? +e.target.value : 0 });
                                 }}
-                                placeholder={'Enter price'}
+                                placeholder={t('products.productModal.enterPrice')}
                                 data-testid="product-name-input"
                             />
                         </div>
@@ -112,11 +117,11 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <Input
                                 noBottomMargin
-                                label={'Product Description'}
+                                label={t('products.productModal.productDescription')}
                                 type="text"
                                 value={product.description}
                                 onChange={(e) => setProduct({ ...product, description: e.target.value })}
-                                placeholder={'Short, clear product description'}
+                                placeholder={t('products.productModal.shortProductDescription')}
                                 data-testid="product-name-input"
                             />
                         </div>
@@ -125,11 +130,11 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <Input
                                 noBottomMargin
-                                label={'Shop Link'}
+                                label={t('products.productModal.shopLink')}
                                 type="text"
                                 value={product.shopUrl}
                                 onChange={(e) => setProduct({ ...product, shopUrl: e.target.value })}
-                                placeholder={'The products Amazon, Shopify, or other store link'}
+                                placeholder={t('products.productModal.shopLinkDescription')}
                                 data-testid="product-name-input"
                             />
                         </div>

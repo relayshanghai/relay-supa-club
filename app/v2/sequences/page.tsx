@@ -12,7 +12,16 @@ import SummaryCard from './components/sequence-summary/summary-card';
 import { Banner } from 'app/components/banner';
 import { useNewCRMPage } from 'src/hooks/use-new-pages';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
-import { campaignWizardStep1, campaignWizardStep2, campaignWizardStep3, crmGuide, templateLibraryModal, templateLibraryWizardStep1, templateLibraryWizardStep2, templateVariableModal } from 'src/guides/crm-v2.guide';
+import {
+    campaignWizardStep1,
+    campaignWizardStep2,
+    campaignWizardStep3,
+    crmGuide,
+    templateLibraryModal,
+    templateLibraryWizardStep1,
+    templateLibraryWizardStep2,
+    templateVariableModal,
+} from 'src/guides/crm-v2.guide';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();

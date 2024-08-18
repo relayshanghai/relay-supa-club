@@ -137,16 +137,15 @@ export default function SequenceInfluencerTableUnscheduled({
                             <td className="px-6 py-4">
                                 <SequenceInfluencerTableName influencer={influencer} />
                             </td>
-                            <td className="px-6 py-4" >
-
-                            {influencer.influencerSocialProfile && (
-                                <div className="ml-5 cursor-pointer">
-                                    <ReportOutline
-                                        className="stroke-gray-400 stroke-2"
-                                        onClick={() => handleReportClick && handleReportClick(influencer)}
-                                    />
-                                </div>
-                            )}
+                            <td className="px-6 py-4">
+                                {influencer.influencerSocialProfile && (
+                                    <div className="ml-5 cursor-pointer">
+                                        <ReportOutline
+                                            className="stroke-gray-400 stroke-2"
+                                            onClick={() => handleReportClick && handleReportClick(influencer)}
+                                        />
+                                    </div>
+                                )}
                             </td>
                             <td className="px-6 py-4">
                                 {(influencer.email ||
@@ -157,15 +156,14 @@ export default function SequenceInfluencerTableUnscheduled({
                                         influencer={influencer}
                                     />
                                 )}
-                                {
-                                    !influencer.email && influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING && (
+                                {!influencer.email &&
+                                    influencer.scheduleStatus === SequenceInfluencerScheduleStatus.PENDING && (
                                         <SequenceInfluencerTableUnlocker
                                             sequenceId={sequenceId}
                                             index={index}
                                             sequenceInfluencer={influencer}
                                         />
-                                    )
-                                }
+                                    )}
                             </td>
                             <td className="px-6 py-4">
                                 {influencer.tags.map((tag) => (
