@@ -6,6 +6,7 @@ import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { UserProviderV2 } from 'src/hooks/v2/use-user';
 import { Navbar } from 'app/components/navbar';
+import { Toaster } from 'react-hot-toast';
 
 type MainLayoutProps = PropsWithChildren & {
     language?: string;
@@ -27,6 +28,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children, language, setLanguage }) =>
                         </div>
                     </div>
                 </div>
+                <Toaster />
             </UserProviderV2>
         </SessionContextProvider>
     );

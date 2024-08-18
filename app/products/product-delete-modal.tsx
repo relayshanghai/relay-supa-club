@@ -12,11 +12,11 @@ export const ProductDeleteModal = ({
     const { t } = useTranslation();
     return (
         <ModalWithButtons
-            title={t('products.delete.title') as string}
+            title={t('products.delete.title') + ''}
             visible={show}
             onClose={() => setShow(false)}
-            closeButtonText={t('products.delete.cancel') as string}
-            okButtonText={t('products.delete.okay') as string}
+            closeButtonText={t('products.delete.cancel') + ''}
+            okButtonText={t('products.delete.okay') + ''}
             onOkay={() => {
                 setShow(false);
                 handleDelete();

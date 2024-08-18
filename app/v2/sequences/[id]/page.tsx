@@ -80,13 +80,17 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
     };
 
     const handleScheduleEmails = () => {
+        if (selectedInfluencers.length < 1) {
+            toast('Please select influencers to schedule emails');
+            return;
+        }
         scheduleEmails(selectedInfluencers)
             .then((res) => {
-                toast(`${res?.data.length} emails scheduled!`);
+                toast.success(`${res?.data.length} emails scheduled!`);
                 refreshSequenceInfluencer();
             })
             .catch(() => {
-                toast('Failed to schedule emails');
+                toast.error('Failed to schedule emails');
             });
     };
 
@@ -108,6 +112,23 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
             });
     };
     const [openReport, setOpenReport] = useState(false);
+
+    const usingOldTemplate = (sequence?: SequenceEntity) => {
+        const oldOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_OUTREACH;
+        const oldfirstFollowuUpOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_1ST_FOLLOW_UP;
+        const oldsecondFollowUpOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_2ND_FOLLOW_UP;
+        const existingTemplates = sequence?.steps.map((d) => d.templateId);
+
+        if (
+            existingTemplates?.find((d) => d === oldOutreach) ||
+            existingTemplates?.find((d) => d === oldfirstFollowuUpOutreach) ||
+            existingTemplates?.find((d) => d === oldsecondFollowUpOutreach)
+        ) {
+            return true;
+        }
+        return false;
+    };
+
     return (
         <>
             { selectedSocialProfile && <ReportModal onClose={() => setOpenReport(false)} influencerSocialProfiles={selectedSocialProfile} open={openReport}/> }
@@ -221,7 +242,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                         <button
                             className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe] disabled:cursor-not-allowed disabled:bg-[#f43d86] disabled:opacity-50"
                             onClick={() => handleScheduleEmails()}
-                            disabled={selectedInfluencers.length === 0}
+                            disabled={usingOldTemplate(sequence) || selectedInfluencers.length === 0}
                         >
                             <Send className="relative h-5 w-5" fill="white" />
                             <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">

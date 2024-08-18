@@ -13,6 +13,7 @@ import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { useSequence, useSequences } from 'src/hooks/v2/use-sequences';
 import { type VariableWithValue } from 'src/store/reducers/sequence';
 import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
+import toast from 'react-hot-toast';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPrevStep }) => {
     const { t } = useTranslation();
@@ -103,6 +104,9 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
             setSequence(null);
             setSequenceVariables([]);
             getAllSequences();
+            toast.success('Sequence saved successfully');
+        }).catch(() => {
+            toast.error('Failed to save sequence');
         });
     };
 

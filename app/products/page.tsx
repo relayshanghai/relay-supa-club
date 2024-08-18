@@ -13,6 +13,7 @@ import { DeleteOutline } from 'app/components/icons';
 import { Button } from 'app/components/buttons';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { productForm, productGuide } from 'src/guides/product.guide';
+import toast from 'react-hot-toast';
 
 const ProductsPageComponent = () => {
     const { t } = useTranslation();
@@ -20,7 +21,7 @@ const ProductsPageComponent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { products, getProducts, setProduct } = useProducts();
+    const { products, getProducts, setProduct, deleteProduct } = useProducts();
     const [productParam, setProductParam] = useState({
         page: 1,
     });
@@ -30,7 +31,14 @@ const ProductsPageComponent = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productParam.page]);
 
-    const handleDeleteProduct = async () => null;
+    const handleDeleteProduct = async () => {
+        const promises = selection.map((id) => deleteProduct(id));
+        const res = await Promise.allSettled(promises);
+        const message = `Success to delete ${res.filter((r) => r.status === 'fulfilled').length} products`;
+        toast.success(message);
+        setSelection([]);
+        getProducts({ page: productParam.page });
+    };
 
     const { setGuides, startTour, guidesReady } = useDriverV2();
 

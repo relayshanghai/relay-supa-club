@@ -281,6 +281,7 @@ const campaigns = {
         invalidDate: 'Must be a date',
         invalidNumber: 'Must be a number',
     },
+    title: 'Title',
     settings: 'Settings',
     createdAt: 'Created at',
 };
