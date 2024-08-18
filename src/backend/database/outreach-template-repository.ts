@@ -51,8 +51,8 @@ export default class OutreachTemplateRepository {
             .innerJoin(
                 outreach_email_template_variables_relation,
                 eq(
-                    outreach_template_variables.id,
                     outreach_email_template_variables_relation.outreach_template_variable_id,
+                    outreach_template_variables.id,
                 ),
             )
             .innerJoin(

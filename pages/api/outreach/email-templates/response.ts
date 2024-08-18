@@ -11,6 +11,7 @@ export interface GetTemplateResponse {
     subject: string;
     template: string;
     variables: GetTemplateVariableResponse[];
+    emailEngineTemplateId?: string;
 }
 
 export interface GetAllTemplateResponse {

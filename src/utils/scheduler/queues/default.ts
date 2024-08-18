@@ -12,7 +12,7 @@ const QUEUE_NAME = 'default';
  */
 export const Default: JobQueue<typeof QUEUE_NAME> = {
     name: QUEUE_NAME,
-    run: async (payload) => {
+    run: async (payload): Promise<any> => {
         const queueName = payload?.queue ?? QUEUE_NAME;
 
         crumb({ message: `Start queue: ${queueName}` });

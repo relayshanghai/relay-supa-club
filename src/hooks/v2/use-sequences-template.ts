@@ -1,44 +1,15 @@
 import { useEffect, useState } from 'react';
-import type {
-    OutreachEmailTemplateEntity,
-    Step,
+import {
+    type OutreachEmailTemplateEntity,
+    type Step,
 } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import useSWR from 'swr';
 import { type Nullable } from 'types/nullable';
-import { create } from 'zustand';
 
 type SequenceEmailTemplateHook = { step?: Step };
-
-interface SequenceStore {
-    sequenceEmailTemplate: Nullable<OutreachEmailTemplateEntity>;
-    setSequenceEmailTemplate: (sequenceEmailTemplate: Nullable<OutreachEmailTemplateEntity>) => void;
-    resetSequenceEmailTemplate: () => void;
-}
-
-const useSequenceEmailTemplateStore = create<SequenceStore>((set) => ({
-    sequenceEmailTemplate: null,
-    setSequenceEmailTemplate: (sequenceEmailTemplate: Nullable<OutreachEmailTemplateEntity>) =>
-        set({ sequenceEmailTemplate: sequenceEmailTemplate }),
-    resetSequenceEmailTemplate: () => set({ sequenceEmailTemplate: null }),
-}));
-
-export interface SequenceEmailWithStep extends OutreachEmailTemplateEntity {
-    step: Step;
-}
-interface StagedSequenceEmailStore {
-    stagedSequenceEmailTemplates: SequenceEmailWithStep[];
-    setStagedSequenceEmailTemplate: (sequenceEmailTemplates: SequenceEmailWithStep[]) => void;
-    resetStagedSequenceEmailTemplate: () => void;
-}
-
-export const useStagedSequenceEmailTemplateStore = create<StagedSequenceEmailStore>((set) => ({
-    stagedSequenceEmailTemplates: [],
-    setStagedSequenceEmailTemplate: (sequenceEmailTemplates: SequenceEmailWithStep[]) =>
-        set({ stagedSequenceEmailTemplates: sequenceEmailTemplates }),
-    resetStagedSequenceEmailTemplate: () => set({ stagedSequenceEmailTemplates: [] }),
-}));
 
 export const useSequenceEmailTemplates = ({ step }: SequenceEmailTemplateHook) => {
     const { loading, error, apiClient } = useApiClient();
@@ -52,6 +23,7 @@ export const useSequenceEmailTemplates = ({ step }: SequenceEmailTemplateHook) =
     const { data: sequenceEmailTemplates, mutate: refreshSequenceEmailTemplates } = useSWR(
         ['/outreach/email-templates', step],
         async () => {
+            if (!step) return [];
             const [err, res] = await awaitToError(
                 apiClient
                     .get<OutreachEmailTemplateEntity[]>(`/outreach/email-templates?step=${step}`)

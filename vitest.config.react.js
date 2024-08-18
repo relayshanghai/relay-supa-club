@@ -21,6 +21,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
+            app: resolve(__dirname, './app'),
             src: resolve(__dirname, './src'),
             shadcn: resolve(__dirname, './shadcn'),
         },

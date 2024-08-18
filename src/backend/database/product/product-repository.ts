@@ -34,7 +34,7 @@ export default class ProductRepository extends BaseRepository<ProductEntity> {
     ): Promise<Paginated<ProductEntity>> {
         options.where = {
             ...options.where,
-            name: name && Like(`%${name}%`),
+            name: name ? Like(`%${name}%`) : undefined,
         };
         const paginatedItems = await super.getPaginated({ page, size }, options);
         const items = paginatedItems.items.map((d) => ({

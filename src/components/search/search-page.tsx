@@ -227,7 +227,7 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
         refresh: refreshSequenceInfluencers,
     } = useAllSequenceInfluencersBasicInfo();
 
-    const { createSequenceInfluencer } = useSequenceInfluencers();
+    const { error, createSequenceInfluencer } = useSequenceInfluencers();
     const [isOutreachLoading, setIsOutreachLoading] = useState(false);
     const outReachDisabled = isOutreachLoading || resultsLoading;
     const [selectedCount, setSelectedCount] = useState(0);
@@ -250,7 +250,13 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [sequence, setSequence] = useState<Sequence | undefined>(() =>
         sequences?.find((sequence) => sequence.name === defaultSequenceName),
     );
-
+    useEffect(() => {
+        if (Array.isArray(error)) {
+            error.map((e) => toast.error(e));
+        } else if (error) {
+            toast.error(error);
+        }
+    }, [error]);
     const handleSelectedInfluencersToOutreach = useCallback(async () => {
         setIsOutreachLoading(true);
 

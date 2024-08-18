@@ -10,10 +10,17 @@ import {
 } from 'typeorm';
 import { ProfileEntity } from '../profile/profile-entity';
 
+export enum JobQueueType {
+    SEQUENCE_STEP_SEND = 'sequence_step_send',
+}
+
 @Entity('jobs')
 @Index('idx_createdat_runat_status_queue', ['queue', 'runAt', 'status', 'createdAt'])
 @Index('idx_status_queue_owner', ['queue', 'status', 'owner'])
 export class JobEntity<TPayload = object, TResult = object> {
+    constructor(data: Partial<JobEntity<TPayload, TResult>>) {
+        Object.assign(this, data);
+    }
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
@@ -21,7 +28,7 @@ export class JobEntity<TPayload = object, TResult = object> {
     name!: string;
 
     @Column({ type: 'text', default: 'default' })
-    queue!: string;
+    queue!: JobQueueType;
 
     @Column({ name: 'run_at', type: 'timestamp with time zone', nullable: false })
     runAt!: Date;

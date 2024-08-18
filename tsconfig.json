@@ -13,7 +13,8 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "src/*": ["src/*"]
+      "src/*": ["src/*"],
+      "app/*": ["app/*"]
     },
     "types": ["node"],
     "experimentalDecorators": true,

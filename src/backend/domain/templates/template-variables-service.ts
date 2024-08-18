@@ -1,7 +1,7 @@
 import type { TemplateVariableRequest } from 'pages/api/outreach/variables/request';
 import { CompanyIdRequired } from '../decorators/company-id';
-import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
+import OutreachEmailTemplateVariableRepository from 'src/backend/database/sequence-email-template/sequence-email-template-variable-repository';
 
 export default class TemplateVariablesService {
     static service: TemplateVariablesService = new TemplateVariablesService();
@@ -12,14 +12,23 @@ export default class TemplateVariablesService {
     @CompanyIdRequired()
     async get() {
         const companyId = RequestContext.getContext().companyId as string;
-        return await OutreachTemplateVariableRepository.getRepository().getAll(companyId);
+        return OutreachEmailTemplateVariableRepository.getRepository().find({
+            where: {
+                company: { id: companyId },
+            },
+        });
     }
 
     @CompanyIdRequired()
     async update(id: string, update: TemplateVariableRequest) {
         const companyId = RequestContext.getContext().companyId as string;
-        await OutreachTemplateVariableRepository.getRepository().getOne(companyId, id);
-        return await OutreachTemplateVariableRepository.getRepository().update(id, {
+        const outreachTemplateVariable = await OutreachEmailTemplateVariableRepository.getRepository().findOneOrFail({
+            where: {
+                company: { id: companyId },
+                id,
+            },
+        });
+        return OutreachEmailTemplateVariableRepository.getRepository().update(outreachTemplateVariable, {
             category: update.category,
             name: update.name,
         });
@@ -27,14 +36,16 @@ export default class TemplateVariablesService {
 
     @CompanyIdRequired()
     async delete(id: string) {
-        const companyId = RequestContext.getContext().companyId as string;
-        await OutreachTemplateVariableRepository.getRepository().getOne(companyId, id);
-        return await OutreachTemplateVariableRepository.getRepository().delete(id);
+        return OutreachEmailTemplateVariableRepository.getRepository().delete(id);
     }
 
     @CompanyIdRequired()
     async create(request: TemplateVariableRequest) {
         const companyId = RequestContext.getContext().companyId as string;
-        return await OutreachTemplateVariableRepository.getRepository().create(companyId, request);
+        return OutreachEmailTemplateVariableRepository.getRepository().save({
+            category: request.category,
+            name: request.name,
+            company: { id: companyId },
+        });
     }
 }

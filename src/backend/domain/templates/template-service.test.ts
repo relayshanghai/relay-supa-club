@@ -1,4 +1,3 @@
-import OutreachTemplateRepository from 'src/backend/database/outreach-template-repository';
 import EmailEngineService from 'src/backend/integration/email-engine/email-engine';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,14 +5,17 @@ import TemplateService from './template-service';
 import { OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
 import awaitToError from 'src/utils/await-to-error';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
+import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 
 describe('src/backend/domain/templates/template-service.ts', () => {
     describe('TemplateService', () => {
         const emailEngineCreateTemplateMock = vi.fn();
+        const emailEngineDeleteTemplateMock = vi.fn();
         const outreachTemplateRepositoryCreateMock = vi.fn();
         const emailEngineUpdateTemplateMock = vi.fn();
         const outreachTemplateRepositoryUpdateMock = vi.fn();
         const outreachTemplateRepositoryGetMock = vi.fn();
+        const templateVariableGetMock = vi.fn();
         const outreachTemplateRepositoryGetAllMock = vi.fn();
         const outreachTemplateRepositoryDeleteMock = vi.fn();
         const outreactTemplateVariableRepositoryGetMock = vi.fn();
@@ -29,7 +31,7 @@ describe('src/backend/domain/templates/template-service.ts', () => {
             beforeEach(() => {
                 EmailEngineService.prototype.createTemplate = emailEngineCreateTemplateMock;
                 emailEngineCreateTemplateMock.mockResolvedValue('some-email-template-id');
-                OutreachTemplateRepository.prototype.create = outreachTemplateRepositoryCreateMock;
+                OutreachEmailTemplateRepository.prototype.save = outreachTemplateRepositoryCreateMock;
                 outreachTemplateRepositoryCreateMock.mockResolvedValue({});
                 OutreachTemplateVariableRepository.prototype.getAll = outreactTemplateVariableRepositoryGetMock;
                 outreachTemplateRepositoryCreateMock.mockResolvedValue([]);
@@ -83,12 +85,14 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     subject: 'some subject',
                 });
                 expect(outreachTemplateRepositoryCreateMock).toBeCalledWith({
-                    company_id: 'some-of-company',
+                    company: {
+                        id: 'some-of-company',
+                    },
                     email_engine_template_id: 'some-email-template-id',
                     step: 'OUTREACH',
                     subject: 'some subject',
                     template: '<p>some html</p>',
-                    variableIds: [],
+                    variables: [],
                     name: 'some name',
                     description: 'some description',
                 });
@@ -98,9 +102,11 @@ describe('src/backend/domain/templates/template-service.ts', () => {
             beforeEach(() => {
                 EmailEngineService.prototype.updateTemplate = emailEngineUpdateTemplateMock;
                 emailEngineUpdateTemplateMock.mockResolvedValue('some-email-template-id');
-                OutreachTemplateRepository.prototype.update = outreachTemplateRepositoryUpdateMock;
+                OutreachEmailTemplateRepository.prototype.save = outreachTemplateRepositoryUpdateMock;
                 outreachTemplateRepositoryUpdateMock.mockResolvedValue({});
-                OutreachTemplateRepository.prototype.get = outreachTemplateRepositoryGetMock;
+                OutreachEmailTemplateRepository.prototype.findOneOrFail = outreachTemplateRepositoryGetMock;
+                TemplateService.prototype.checkVariableExists = templateVariableGetMock;
+                templateVariableGetMock.mockResolvedValue([]);
                 outreachTemplateRepositoryGetMock.mockResolvedValue({
                     step: 'OUTREACH',
                     email_engine_template_id: 'some-email-template-id',
@@ -173,23 +179,27 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     name: 'OUTREACH',
                     subject: 'some subject',
                 });
-                expect(outreachTemplateRepositoryUpdateMock).toBeCalledWith('some-id', {
-                    company_id: 'some-of-company',
+                expect(outreachTemplateRepositoryUpdateMock).toBeCalledWith({
+                    company: {
+                        id: 'some-of-company',
+                    },
                     email_engine_template_id: 'some-email-template-id',
                     step: 'OUTREACH',
                     subject: 'some subject',
                     template: '<p>some html</p>',
                     description: 'some description',
                     name: 'some name',
-                    variableIds: [],
+                    variables: [],
                 });
             });
         });
         describe('.delete()', () => {
             beforeEach(() => {
-                OutreachTemplateRepository.prototype.delete = outreachTemplateRepositoryDeleteMock;
+                EmailEngineService.prototype.deleteTemplate = emailEngineDeleteTemplateMock;
+                emailEngineDeleteTemplateMock.mockResolvedValue({});
+                OutreachEmailTemplateRepository.prototype.delete = outreachTemplateRepositoryDeleteMock;
                 outreachTemplateRepositoryUpdateMock.mockResolvedValue({});
-                OutreachTemplateRepository.prototype.get = outreachTemplateRepositoryGetMock;
+                OutreachEmailTemplateRepository.prototype.findOneOrFail = outreachTemplateRepositoryGetMock;
                 outreachTemplateRepositoryGetMock.mockResolvedValue({
                     step: 'OUTREACH',
                     email_engine_template_id: 'some-email-template-id',
@@ -216,12 +226,12 @@ describe('src/backend/domain/templates/template-service.ts', () => {
             it(`should return success and trigger delete function when request parameter is valid`, async () => {
                 const [err] = await awaitToError(TemplateService.getService().delete('some-id'));
                 expect(err).toBe(null);
-                expect(outreachTemplateRepositoryDeleteMock).toBeCalledWith('some-of-company', 'some-id');
+                expect(outreachTemplateRepositoryDeleteMock).toBeCalledWith({ id: 'some-id' });
             });
         });
         describe('.getOne()', () => {
             beforeEach(() => {
-                OutreachTemplateRepository.prototype.get = outreachTemplateRepositoryGetMock;
+                OutreachEmailTemplateRepository.prototype.findOneOrFail = outreachTemplateRepositoryGetMock;
                 outreachTemplateRepositoryGetMock.mockResolvedValue({
                     id: 'some-id',
                     step: 'OUTREACH',
@@ -260,6 +270,7 @@ describe('src/backend/domain/templates/template-service.ts', () => {
                     subject: 'some-subject',
                     template: '<p>some html</p>',
                     description: 'some description',
+                    emailEngineTemplateId: 'some-email-template-id',
                     name: 'some name',
                     variables: [],
                 });
@@ -267,7 +278,7 @@ describe('src/backend/domain/templates/template-service.ts', () => {
         });
         describe('.get()', () => {
             beforeEach(() => {
-                OutreachTemplateRepository.prototype.getAll = outreachTemplateRepositoryGetAllMock;
+                OutreachEmailTemplateRepository.prototype.find = outreachTemplateRepositoryGetAllMock;
                 outreachTemplateRepositoryGetAllMock.mockResolvedValue([
                     {
                         id: 'some-id',

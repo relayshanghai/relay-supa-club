@@ -106,4 +106,20 @@ export default class ProductService {
         );
         return items as Paginated<GetProductResponse>;
     }
+    @CompanyIdRequired()
+    async delete(id: string): Promise<void> {
+        const companyId = RequestContext.getContext().companyId as string;
+        const product = await ProductRepository.getRepository().findOneBy({
+            id,
+            company: {
+                id: companyId,
+            },
+        });
+        if (!product) {
+            throw new NotFoundError(`Product with id: ${id} does not exists`);
+        }
+        await ProductRepository.getRepository().delete({
+            id,
+        });
+    }
 }

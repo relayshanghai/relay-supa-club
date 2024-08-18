@@ -10,7 +10,6 @@ import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import { logIqdataLimits } from '../forensicTrack';
 import { serverLogger } from 'src/utils/logger-server';
-import apm from 'elastic-apm-node';
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
 export type ServerContext = {
@@ -46,7 +45,6 @@ export class IQDataApiFetch {
     // @UseDistributedQueue(10)
     async request<T = any>(path: string, options: RequestInit & { context?: ServerContext } = {}) {
         const { context, ...strippedOptions } = options;
-        const span = apm.startSpan('IQDataApiFetch.request');
         const res = await fetch(IQDATA_URL + path, {
             ...strippedOptions,
             headers: {
@@ -58,10 +56,6 @@ export class IQDataApiFetch {
         await handleResError(res);
         const json = await res.json();
 
-        if (span) {
-            span.setLabel('cost', json.cost, true);
-        }
-        span?.end();
         if (context) {
             await rudderstack.identify(context);
             const identity = rudderstack.getIdentity();

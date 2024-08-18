@@ -10,12 +10,11 @@ const excludeFunctions = ['createQueryBuilder', 'hasId', 'getId', 'create', 'mer
  * initialize method to all repository methods.
  * @param target Repository class
  */
-export function InjectInitializeDatabaseOnAllProps<T extends ObjectLiteral>(target: typeof Repository<T>) {
+export const InjectInitializeDatabaseOnAllProps = <T extends ObjectLiteral>(target: typeof Repository<T>) => {
     const parentClass = Object.getPrototypeOf(target);
     if (parentClass.name) {
         InjectInitializeDatabaseOnAllProps(parentClass);
     }
-
     const properties = Object.getOwnPropertyDescriptors(target.prototype);
     for (const name of Object.keys(properties)) {
         const descriptor = Object.getOwnPropertyDescriptor(target.prototype, name);
@@ -30,4 +29,4 @@ export function InjectInitializeDatabaseOnAllProps<T extends ObjectLiteral>(targ
         };
         Object.defineProperty(target.prototype, name, descriptor);
     }
-}
+};

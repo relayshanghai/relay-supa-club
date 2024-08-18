@@ -42,6 +42,7 @@ import {
 } from 'src/guides/boostbot.guide';
 import { isInMaintenance } from 'src/utils/maintenance';
 import MaintenanceComponent from 'src/components/maintenance/Component';
+import toast from 'react-hot-toast';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -100,8 +101,15 @@ const Boostbot = () => {
         }
     }, [sequence, sequences]);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers();
+    const { error, createSequenceInfluencer } = useSequenceInfluencers();
 
+    useEffect(() => {
+        if (Array.isArray(error)) {
+            error.map((e) => toast.error(e));
+        } else if (error) {
+            toast.error(error);
+        }
+    }, [error]);
     const {
         allSequenceInfluencersIqDataIdsAndSequenceNames: allSequenceInfluencers,
         refresh: refreshSequenceInfluencers,

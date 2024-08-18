@@ -8,6 +8,7 @@ import EmailHelperService from 'src/backend/domain/email/email-helper-service';
 import dayjs from 'dayjs';
 import { type OutboxGet } from 'types/email-engine/outbox-get';
 import { type OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
+import * as cheerio from 'cheerio';
 
 export const EMAIL_ENGINE_API_URL = `${process.env.EMAIL_ENGINE_API_URL || 'http://localhost:4000'}/v1`;
 
@@ -21,6 +22,35 @@ export type EmailTemplate = {
     name: string;
     subject: string;
     html: string;
+};
+
+export const convertTiptapVariableToHb = (content: string) => {
+    /**
+     * Convert the variable-component to {variable} for the tiptap editor
+     * this wase based on the tiptap editor implementation
+     *
+     * @see src/components/tiptap/variable-node.tsx
+     *
+     * @param content
+     */
+
+    const spanRender = (text: string) => {
+        return `{{params.${text}}}`;
+    };
+
+    const cleanedHtml = content.replace(/<variable-component text="([^"]+)"><\/variable-component>/g, (_, text) =>
+        spanRender(text),
+    );
+    return cleanedHtml;
+};
+
+export const renderHtmlInSubject = (content: string) => {
+    // Load the HTML string into Cheerio
+    const $ = cheerio.load(content);
+
+    // Extract the text content
+    const textContent = $('p').text();
+    return textContent;
 };
 
 export default class EmailEngineService {
@@ -48,9 +78,9 @@ export default class EmailEngineService {
             description: '',
             format: 'html',
             content: {
-                subject: template.subject,
+                subject: renderHtmlInSubject(convertTiptapVariableToHb(template.subject)),
                 text: '',
-                html: template.html,
+                html: convertTiptapVariableToHb(template.html),
                 previewText: '',
             },
         });
@@ -62,12 +92,16 @@ export default class EmailEngineService {
             description: '',
             format: 'html',
             content: {
-                subject: template.subject,
+                subject: renderHtmlInSubject(convertTiptapVariableToHb(template.subject)),
                 text: '',
-                html: template.html,
+                html: convertTiptapVariableToHb(template.html),
                 previewText: '',
             },
         });
+    }
+
+    async deleteTemplate(id: string): Promise<void> {
+        await this.apiClient.delete(`/templates/template/${id}`);
     }
 
     async getAccounts(page = 0) {

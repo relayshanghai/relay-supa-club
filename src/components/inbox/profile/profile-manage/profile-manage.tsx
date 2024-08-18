@@ -8,7 +8,7 @@ import { doesObjectMatchUpdate } from 'src/utils/does-object-match-update';
 import type { CheckboxDropdownItemData } from 'src/components/influencer-profile/components/checkbox-dropdown-item';
 import { OutreachCollabStatusInput } from 'src/components/influencer-profile/components/outreach-collab-status-input';
 import { CollabScheduledPostDateInput } from 'src/components/influencer-profile/components/collab-scheduled-post-date-input';
-import { useSequenceInfluencer, useSequenceInfluencerAddress } from 'src/hooks/v2/use-sequence-influencer';
+import { useSequenceInfluencerUpdate, useSequenceInfluencerAddress } from 'src/hooks/v2/use-sequence-influencer';
 import type { SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import type { AddressEntity } from 'src/backend/database/influencer/address-entity';
 import type { Nullable } from 'types/nullable';
@@ -112,7 +112,7 @@ export default function ProfileManage({ influencer: passedInfluencer, address: p
     const trackingCodeController = useRef<Nullable<AbortController>>(null);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const { updateSequenceInfluencer } = useSequenceInfluencer();
+    const { updateSequenceInfluencer } = useSequenceInfluencerUpdate();
 
     const { updateSequenceInfluencerAddress } = useSequenceInfluencerAddress();
     const updateInfluencer = useCallback(

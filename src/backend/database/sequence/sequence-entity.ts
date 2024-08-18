@@ -61,4 +61,7 @@ export class SequenceEntity {
 
     @OneToMany(() => TemplateVariableEntity, (variable) => variable.sequence, { onDelete: 'CASCADE' })
     templateVariables!: Relation<TemplateVariableEntity[]>;
+
+    @Column({ select: false, insert: false, update: false })
+    numOfInfluencers!: number;
 }

@@ -1,8 +1,11 @@
 import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { SequenceInfluencerEntity } from './sequence-influencer-entity';
-import { type EntityManager, type EntityTarget, In } from 'typeorm';
+import { type EntityManager, type EntityTarget, type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 import { type GetInfluencersRequest } from 'pages/api/v2/outreach/sequences/[sequenceId]/requests';
+import { type GetSequenceInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/get-influencer-request';
+import { type SequenceEntity } from './sequence-entity';
+import { type SequenceInfo } from 'types/v2/rate-info';
 export const SEQUENCE_INFLUENCER_SOCIAL_NUMBER = process.env.SEQUENCE_INFLUENCER_SOCIAL_NUMBER || 60;
 // start schedule release date, older data will not be fetched
 export const SCHEDULE_FETCH_START_DATE = new Date('2024-04-01T00:00:00.000Z');
@@ -72,5 +75,118 @@ export default class SequenceInfluencerRepository extends BaseRepository<Sequenc
             [SCHEDULE_FETCH_START_DATE],
         );
         return influencers.map((influencer) => influencer.id);
+    }
+
+    async getAllBySequenceId(sequenceId: string, request: GetSequenceInfluencerRequest) {
+        const { page, size } = request;
+        const where: FindOptionsWhere<SequenceInfluencerEntity> = {
+            sequence: { id: sequenceId },
+        };
+        if (request.status) {
+            if (request.status === 'To Contact' || request.status === 'Ignored' || request.status === 'In Sequence')
+                where.funnelStatus = request.status;
+            else if (request.status === 'Replied' || request.status === 'Bounced') {
+                where.sequenceEmails = {
+                    emailDeliveryStatus: request.status,
+                };
+            }
+        }
+        if (request.search) {
+            where.name = Like(`%${request.search}%`);
+        }
+        if (request.sequenceStep && request.sequenceStep.length > 0) {
+            where.sequenceStep = In(request.sequenceStep);
+        }
+        return this.getPaginated(
+            { page, size },
+            {
+                where,
+                relations: {
+                    sequenceEmails: {
+                        sequenceStep: true,
+                    },
+                    influencerSocialProfile: true,
+                },
+            },
+        );
+    }
+    async getSequenceInfo(companyId: string, sequenceId?: string): Promise<SequenceInfo> {
+        const whereSequence: FindOptionsWhere<SequenceEntity> = {
+            company: { id: companyId },
+        };
+        if (sequenceId) {
+            whereSequence.id = sequenceId;
+        }
+        const total = await this.count({
+            where: { sequence: whereSequence },
+        });
+        const sent = await this.count({
+            where: {
+                sequence: whereSequence,
+                sequenceEmails: {
+                    id: Not(IsNull()),
+                },
+            },
+        });
+        const replied = await this.count({
+            where: {
+                sequence: whereSequence,
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Replied',
+                },
+            },
+        });
+        const open = await this.count({
+            where: [
+                {
+                    sequence: whereSequence,
+                    sequenceEmails: {
+                        emailTrackingStatus: 'Opened',
+                    },
+                },
+                {
+                    sequence: whereSequence,
+                    sequenceEmails: {
+                        emailTrackingStatus: 'Link Clicked',
+                    },
+                },
+            ],
+        });
+        const bounced = await this.count({
+            where: {
+                sequence: whereSequence,
+                sequenceEmails: {
+                    emailDeliveryStatus: 'Bounced',
+                },
+            },
+        });
+        const ignored = await this.count({
+            where: {
+                sequence: whereSequence,
+                funnelStatus: 'Ignored',
+            },
+        });
+        const unscheduled = await this.count({
+            where: {
+                sequence: whereSequence,
+                funnelStatus: 'To Contact',
+            },
+        });
+        const inSequence = await this.count({
+            where: {
+                sequence: whereSequence,
+                funnelStatus: 'In Sequence',
+            },
+        });
+        return {
+            replied,
+            inSequence,
+            sent,
+            open,
+            bounced,
+            total,
+            ignored,
+            unscheduled,
+        };
     }
 }

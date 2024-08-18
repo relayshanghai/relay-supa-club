@@ -40,6 +40,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     const CompanyRepositoryUpdateMock = vi.fn();
     const CompanyRepositoryGetOneMock = vi.fn();
     const SequenceInfluencerRepositoryUpdateMock = vi.fn();
+    const PriceRepositoryFindOneMock = vi.fn();
     const BalanceRepositoryResetBalance = vi.fn().mockResolvedValueOnce({});
     BalanceRepository.prototype.resetBalance = BalanceRepositoryResetBalance;
 
@@ -66,6 +67,7 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
     CompanyRepository.getRepository().update = CompanyRepositoryUpdateMock;
     CompanyRepository.getRepository().findOne = CompanyRepositoryGetOneMock;
     SequenceInfluencerRepository.getRepository().update = SequenceInfluencerRepositoryUpdateMock;
+    PriceRepository.getRepository().findOne = PriceRepositoryFindOneMock;
     describe(`SubscriptionV2Service`, () => {
         beforeEach(() => {
             vi.resetAllMocks();
@@ -228,6 +230,19 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                 CompanyRepositoryGetOneMock.mockResolvedValue({
                     id: 'company_1',
                 });
+                PriceRepositoryFindOneMock.mockResolvedValue({
+                    id: 'price_1',
+                    subscriptionType: 'discovery',
+                    currency: 'usd',
+                    billingPeriod: 'MONTHLY',
+                    price: '100',
+                    originalPrice: null,
+                    profiles: 200,
+                    searches: 900,
+                    priceId: 'price_1',
+                    createdAt: '2024-06-05T01:07:09.207Z',
+                    updatedAt: '2024-06-05T01:07:09.207Z',
+                });
             });
 
             it(`should update subscription and company, and insert new subscription when redirectStatus is success`, async () => {
@@ -299,8 +314,8 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                     },
                     {
                         subscriptionStatus: 'active',
-                        profilesLimit: '1000',
-                        searchesLimit: '2500',
+                        profilesLimit: '200',
+                        searchesLimit: '900',
                         subscriptionPlan: 'Outreach',
                         trialProfilesLimit: '100000000',
                         trialSearchesLimit: '100000000',

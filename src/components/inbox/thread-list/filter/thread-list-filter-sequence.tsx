@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
-import { useSequences } from 'src/hooks/v2/use-sequences';
+import { useDropdownSequence } from 'src/hooks/v2/use-sequences';
 
 export default function ThreadListFilterSequence({
     selectedSequenceIds,
@@ -11,7 +11,7 @@ export default function ThreadListFilterSequence({
     onChange: (ids: string[]) => void;
 }) {
     const { t } = useTranslation();
-    const { sequences, loading } = useSequences();
+    const { sequences, loading } = useDropdownSequence();
     const handleUpdateFunnelStatus = useCallback(
         (checkSequence: string) => {
             if (!checkSequence) {
