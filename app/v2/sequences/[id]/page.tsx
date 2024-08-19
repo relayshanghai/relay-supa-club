@@ -22,7 +22,6 @@ import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/seq
 import toast from 'react-hot-toast';
 import { CampaignWizardModal } from '../components/modals/campaign-wizard-modal';
 import { type SequenceEntity } from 'src/backend/database/sequence/sequence-entity';
-import { CreateVariableModal } from '../components/modals/email-template-variable-modal';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 import { Banner } from 'app/components/banner';
 import { useNewCRMPage } from 'src/hooks/use-new-pages';
@@ -33,6 +32,7 @@ import ReportModal from './components/report-modal/report-modal';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 import { Tooltip } from 'app/components/tooltip';
 import { useUserV2 } from 'src/hooks/v2/use-user';
+import { ListVariableModal } from '../components/modals/email-template-variable-list-modal';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -174,7 +174,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                 showCreateCampaignModal={showCreateCampaignModal}
                 setShowCreateCampaignModal={setShowCreateCampaignModal}
             />
-            <CreateVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
+            <ListVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
             <ConfirmModal
                 deleteHandler={() => handleDeleteInfluencer()}
                 setShow={(show) => setOpenConfirmModal(show)}

@@ -6,11 +6,13 @@ import { type Nullable } from 'types/nullable';
 interface TemplateVariableProps {
     list: OutreachEmailTemplateVariableEntity[];
     item: Nullable<OutreachEmailTemplateVariableEntity>;
+    isEdit: boolean;
 }
 
 const initialState: TemplateVariableProps = {
     list: [],
     item: null,
+    isEdit: false,
 };
 
 const pageSlice = createSlice({
@@ -20,13 +22,16 @@ const pageSlice = createSlice({
         setTemplateVariables: (state, action: PayloadAction<OutreachEmailTemplateVariableEntity[]>) => {
             state.list = action.payload;
         },
-        setTemplateVariable: (state, action: PayloadAction<OutreachEmailTemplateVariableEntity>) => {
+        setTemplateVariable: (state, action: PayloadAction<Nullable<OutreachEmailTemplateVariableEntity>>) => {
             state.item = action.payload;
+        },
+        setIsEdit: (state, action: PayloadAction<boolean>) => {
+            state.isEdit = action.payload;
         },
     },
 });
 
-const { setTemplateVariables, setTemplateVariable } = pageSlice.actions;
+const { setTemplateVariables, setTemplateVariable, setIsEdit } = pageSlice.actions;
 
 export const useTemplateVariableStore = () => {
     const dispatch = useAppDispatch();
@@ -35,7 +40,9 @@ export const useTemplateVariableStore = () => {
         ...states,
         setTemplateVariables: (variables: OutreachEmailTemplateVariableEntity[]) =>
             dispatch(setTemplateVariables(variables)),
-        setTemplateVariable: (variable: OutreachEmailTemplateVariableEntity) => dispatch(setTemplateVariable(variable)),
+        setTemplateVariable: (variable: Nullable<OutreachEmailTemplateVariableEntity>) =>
+            dispatch(setTemplateVariable(variable)),
+        setIsEdit: (isEdit: boolean) => dispatch(setIsEdit(isEdit)),
     };
 };
 
