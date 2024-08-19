@@ -64,14 +64,14 @@ const outreaches = {
         description: '在这里创建、查看和更新您的模版',
     },
     banner: {
-        button: '切换到旧版视图',
-        title: '您正在查看一个新设计！',
-        description: '您现在将看到新的改进版CRM功能。',
+        title: '您现在看到的是我们升级后的视图界面！',
+        description: '现在您将看到我们新推出和优化过的 CRM 功能',
+        button: '切换到旧版',
     },
     oldBanner: {
-        button: '切换到新版视图',
-        title: '您正在查看一个旧设计！',
-        description: '我们有新的改进版CRM功能——点击试用吧。',
+        title: '您现在看到的是旧的视图界面！',
+        description: '我们现在有新推出和优化过的 CRM 功能 - 点击试用',
+        button: '切换到新版',
     },
 };
 export default outreaches;
