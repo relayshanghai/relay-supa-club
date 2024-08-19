@@ -180,8 +180,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     password,
                 });
 
-                // sync subscription metadata
-                await awaitToError(apiClient.get('/v2/subscriptions/sync'));
+                /**
+                 * sync subscription metadata with the backend
+                 * using [GET] /v2/subscriptions/sync
+                 */
 
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
@@ -196,7 +198,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent, identify, apiClient],
+        [supabaseClient, trackEvent, identify],
     );
 
     const updateProfile = useCallback(
