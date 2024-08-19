@@ -31,6 +31,8 @@ import SequenceInfluencerTableIgnored from './components/sequence-infuencer-tabl
 import SequenceInfluencerTableReplied from './components/sequence-infuencer-table/sequence-influencer-table-replied';
 import ReportModal from './components/report-modal/report-modal';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
+import { Tooltip } from 'app/components/tooltip';
+import { useUserV2 } from 'src/hooks/v2/use-user';
 
 export interface SequenceDetailPageProps {
     params: {
@@ -39,6 +41,7 @@ export interface SequenceDetailPageProps {
 }
 
 export default function SequenceDetailPage({ params: { id } }: Readonly<SequenceDetailPageProps>) {
+    const { profile } = useUserV2();
     const { loading, sequence, info, scheduleEmails } = useSequenceDetail(id);
     const { setEditMode, setSequence } = useSequence();
     const [activeTab, setActiveTab] = useState('unscheduled');
@@ -128,6 +131,35 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
         }
         return false;
     };
+
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+    const isMissingVariables = sequence?.templateVariables?.some((v) => !v.value);
+    const missingVariables = sequence?.templateVariables
+        ?.filter((variable) => variable.required && !variable.value)
+        .map((variable) => ` **${variable.name}** `) ?? ['Error retrieving variables'];
+    const sequenceSendTooltipTitle = selectedInfluencers.some((i) => !i.influencerSocialProfile?.id)
+        ? t('sequences.invalidSocialProfileTooltip')
+        : selectedInfluencers.some((i) => !i.email)
+        ? t('sequences.missingEmail')
+        : isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables')
+        : t('sequences.sequenceSendTooltip');
+    const sequenceSendTooltipDescription = selectedInfluencers.some((i) => !i.influencerSocialProfile?.id)
+        ? t('sequences.invalidSocialProfileTooltipDescription')
+        : selectedInfluencers.some((i) => !i.email)
+        ? t('sequences.missingEmailTooltipDescription')
+        : isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.sequenceBatchSendTooltipDescription');
+    const sequenceSendTooltipHighlight = selectedInfluencers.some((i) => !i.influencerSocialProfile?.id)
+        ? t('sequences.invalidSocialProfileTooltipHighlight')
+        : undefined;
 
     return (
         <>
@@ -245,16 +277,28 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                                 <Trashcan className="relatives h-5 w-5" fill="red" />
                             </button>
                         )}
-                        <button
-                            className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe] disabled:cursor-not-allowed disabled:bg-[#f43d86] disabled:opacity-50"
-                            onClick={() => handleScheduleEmails()}
-                            disabled={usingOldTemplate(sequence) || selectedInfluencers.length === 0}
+
+                        <Tooltip
+                            content={sequenceSendTooltipTitle}
+                            detail={sequenceSendTooltipDescription}
+                            highlight={sequenceSendTooltipHighlight}
+                            position="bottom-left"
                         >
-                            <Send className="relative h-5 w-5" fill="white" />
-                            <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">
-                                Schedule outreach emails
-                            </div>
-                        </button>
+                            <button
+                                className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe] disabled:cursor-not-allowed disabled:bg-[#f43d86] disabled:opacity-50"
+                                onClick={() => handleScheduleEmails()}
+                                disabled={
+                                    isMissingSequenceSendEmail ||
+                                    usingOldTemplate(sequence) ||
+                                    selectedInfluencers.length === 0
+                                }
+                            >
+                                <Send className="relative h-5 w-5" fill="white" />
+                                <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">
+                                    Schedule outreach emails
+                                </div>
+                            </button>
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="flex shrink grow basis-0 flex-col items-start justify-start self-stretch">
