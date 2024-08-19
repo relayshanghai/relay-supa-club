@@ -60,15 +60,19 @@ const outreaches = {
         shopLink: 'Shop Link',
         shopLinkDescription: 'The products Amazon, Shopify, or other store link',
     },
+    emailTemplateModal: {
+        title: 'Email Template Library',
+        description: 'Create, view and update your templates here',
+    },
     banner: {
-        title: '您现在看到的是我们升级后的视图界面！',
-        description: '现在您将看到我们新推出和优化过的 CRM 功能',
-        button: '切换到旧版',
+        button: 'Switch to Old View',
+        title: 'You are looking at a new design!',
+        description: 'You will now see new and improved CRM features',
     },
     oldBanner: {
-        title: '您现在看到的是旧的视图界面！',
-        description: '我们现在有新推出和优化过的 CRM 功能 - 点击试用',
-        button: '切换到新版',
+        button: 'Switch to New View',
+        title: 'You are looking at an old design!',
+        description: 'We have new and improved CRM features - click to try it out',
     },
 };
 

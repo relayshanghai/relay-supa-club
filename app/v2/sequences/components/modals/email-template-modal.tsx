@@ -57,9 +57,9 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start">
                         <div className="inline-flex w-[896px] items-start justify-between pb-3 pt-2">
                             <div className="relative flex h-[68px] shrink grow basis-0 flex-col items-start justify-between">
-                                <p className="text-xl text-white">Email Template Library</p>
+                                <p className="text-xl text-white">{t('outreaches.emailTemplateModal.title')}</p>
                                 <p className="text-sm font-normal text-white">
-                                    Create, view and update your templates here
+                                    {t('outreaches.emailTemplateModal.description')}
                                 </p>
                             </div>
                         </div>
