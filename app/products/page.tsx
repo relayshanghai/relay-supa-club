@@ -72,7 +72,7 @@ const ProductsPageComponent = () => {
                             className="mr-4 self-center text-3xl font-semibold text-gray-800"
                             data-testid="outreach-text"
                         >
-                            Products
+                            {t('products.products')}
                         </h1>
                     </div>
                 </div>

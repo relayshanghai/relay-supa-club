@@ -27,7 +27,9 @@ export const EmailTemplateEditor = ({
             <CardDescription className="flex h-full flex-col gap-4">
                 <section className="flex w-full justify-between gap-6">
                     <section className="flex grow flex-col gap-2" id="email-template-step-options">
-                        <p className="whitespace-nowrap text-xl font-semibold text-gray-600">Sequence Step</p>
+                        <p className="whitespace-nowrap text-xl font-semibold text-gray-600">
+                            {t('outreaches.emailTemplateModal.sequenceStep')}
+                        </p>
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <div className="flex h-9 w-full flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-600 shadow">
@@ -51,12 +53,14 @@ export const EmailTemplateEditor = ({
                         </DropdownMenu>
                     </section>
                     <section className="flex grow-0 flex-col gap-2" id="email-template-step-subject">
-                        <p className="text-xl font-semibold text-gray-600">Subject Line</p>
+                        <p className="text-xl font-semibold text-gray-600">
+                            {t('outreaches.emailTemplateModal.subjectLine')}
+                        </p>
                         <TiptapInput
                             onChange={(s: string) => {
                                 setTemplateDetails({ ...templateDetails, subject: s });
                             }}
-                            placeholder={`Email Subject`}
+                            placeholder={t('outreaches.emailTemplateModal.emailSubjectPlaceholder') ?? ''}
                             description={templateDetails.subject}
                             onSubmit={() => {
                                 //
@@ -75,7 +79,7 @@ export const EmailTemplateEditor = ({
                 >
                     <Tiptap
                         description={templateDetails.template}
-                        placeholder="Write your email template here"
+                        placeholder={t('outreaches.emailTemplateModal.emailContentPlaceholder') ?? ''}
                         onChange={(description) => {
                             setTemplateDetails({ ...templateDetails, template: description });
                         }}

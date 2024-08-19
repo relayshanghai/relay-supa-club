@@ -295,7 +295,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                             >
                                 <Send className="relative h-5 w-5" fill="white" />
                                 <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">
-                                    Schedule outreach emails
+                                    {t('outreaches.scheduleOutreach')}
                                 </div>
                             </button>
                         </Tooltip>

@@ -58,12 +58,11 @@ const nextConfig = {
   },
   webpack: (
     config,
-    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
   ) => {
     config.optimization.minimize = false;
     config.plugins.push(
       new CircularDependencyPlugin({
-        exclude: /node_modules|src\/backend\/infrastructure\/database/,
+        exclude: /node_modules|src\/backend\/database/,
         failOnError: false,
         allowAsyncCycles: false,
         cwd: process.cwd(),
