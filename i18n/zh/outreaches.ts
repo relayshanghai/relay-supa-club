@@ -59,6 +59,10 @@ const outreaches = {
         shopLink: '商店链接',
         shopLinkDescription: '产品的亚马逊、Shopify或其他商店链接',
     },
+    emailTemplateModal: {
+        title: '邮件模版库',
+        description: '在这里创建、查看和更新您的模版',
+    },
     banner: {
         button: '切换到旧版视图',
         title: '您正在查看一个新设计！',
