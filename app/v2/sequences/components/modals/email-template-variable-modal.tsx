@@ -24,19 +24,26 @@ export type ModalVariableProps = {
 
 export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
-    const { createTemplateVariable, loading, getTemplateVariables } = useOutreachTemplateVariable();
+    const { createTemplateVariable, updateTemplateVariable, loading, getTemplateVariables, isEdit, templateVariable } =
+        useOutreachTemplateVariable();
     const [inputValues, setInputValues] = useState({
         category: 'Brand',
         name: '',
     });
     const saveTemplateVariable = () => {
-        createTemplateVariable(inputValues)
-            .then(() => getTemplateVariables())
+        let p = null;
+        if (isEdit) {
+            p = updateTemplateVariable(templateVariable?.id + '', inputValues);
+        } else {
+            p = createTemplateVariable(inputValues);
+        }
+        p.then(() => getTemplateVariables())
             .then(() => setInputValues({ category: 'Brand', name: '' }))
-            .then(() => toast.success('Template variable created successfully'))
+            .then(() => toast.success(`Template variable ${isEdit ? 'updated' : 'created'} successfully`))
+            .then(() => setModalOpen(false))
             .catch((error) => {
                 clientLogger(error);
-                toast.error('Failed to create template variable');
+                toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable`);
             });
     };
 
@@ -48,6 +55,11 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady, modalOpen]);
+
+    useEffect(() => {
+        if (isEdit) setInputValues({ name: templateVariable?.name + '', category: templateVariable?.category + '' });
+        else setInputValues({ name: '', category: 'Brand' });
+    }, [isEdit, templateVariable, modalOpen]);
 
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
