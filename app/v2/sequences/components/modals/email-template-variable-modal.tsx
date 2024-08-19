@@ -76,7 +76,7 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <div className="inline-flex items-start justify-start gap-1">
                             <div className="text-center font-['Poppins'] text-xl font-semibold tracking-tight text-gray-600">
-                                Add a new variable
+                                {t('outreaches.variableModal.title')}
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,9 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                             className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1"
                             id="template-variable-category-input"
                         >
-                            <div className="text-sm font-medium text-gray-700">Category</div>
+                            <div className="text-sm font-medium text-gray-700">
+                                {t('outreaches.variableModal.categoryLabel')}
+                            </div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="mt-1 flex w-full">
                                     <section className="flex h-9 w-full flex-shrink-0 flex-grow-0 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
@@ -124,13 +126,13 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
                             id="template-variable-name-input"
                         >
                             <Input
-                                label={'Variable Name'}
+                                label={t('outreaches.variableModal.nameLabel') ?? ''}
                                 type="text"
                                 value={inputValues.name}
                                 onChange={(e) => {
                                     setInputValues({ ...inputValues, name: e.target.value });
                                 }}
-                                placeholder={'Enter Variable Name'}
+                                placeholder={t('outreaches.variableModal.namePlaceholder')}
                                 data-testid="variable-name-input"
                             />
                         </div>

@@ -83,23 +83,23 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
             <div className="inline-flex w-[896px] shrink grow basis-0 items-start justify-start overflow-y-auto rounded-lg">
                 <div className="relative h-full w-full">
                     <section className="">
-                        <p className="text-xl font-semibold text-primary-700">Name your new template</p>
+                        <p className="text-xl font-semibold text-primary-700">
+                            {t('outreaches.emailTemplateModal.templateNameTitle')}
+                        </p>
                         <p className="font-normal text-primary-500">
-                            Give it a brief description so you can easily remember what it{"'"}s for.
-                            <br />
-                            This is what it will look like on other pages.
+                            {t('outreaches.emailTemplateModal.templateNameDescription')}
                         </p>
                     </section>
                     <div className="mx-auto mt-16 flex min-h-[120px] w-[440px] flex-col gap-2 rounded-md border-2 border-gray-200 bg-white p-4">
                         <Input
                             className="border-2 border-gray-200"
-                            placeholder="Template Name"
+                            placeholder={t('outreaches.emailTemplateModal.templateNamePlaceholder') ?? ''}
                             value={emailTemplate?.name}
                             onChange={(e) => setEmailTemplate({ ...emailTemplate, name: e.target.value })}
                         />
                         <textarea
                             className="rounded-sm border-2 border-gray-200 placeholder:text-gray-400"
-                            placeholder="Template Description"
+                            placeholder={t('outreaches.emailTemplateModal.templateNameDescriptionPlaceholder') ?? ''}
                             value={emailTemplate?.description}
                             onChange={(e) => setEmailTemplate({ ...emailTemplate, description: e.target.value })}
                         />

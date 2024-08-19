@@ -7,12 +7,14 @@ import { type OutreachEmailTemplateVariableEntity } from 'src/backend/database/s
 import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export interface VariableTableProps {
     loading?: boolean;
     items: OutreachEmailTemplateVariableEntity[];
 }
 export function VariableTable({ items, loading }: Readonly<VariableTableProps>) {
+    const { t } = useTranslation();
     const [showVariableModal, setShowVariableModal] = useState(false);
     const [openConfirmModal, setOpenConfirmModal] = useState(false);
     const { setIsEdit, setTemplateVariable, deleteTemplateVariable, templateVariable, getTemplateVariables } =
@@ -42,20 +44,20 @@ export function VariableTable({ items, loading }: Readonly<VariableTableProps>) 
                         }}
                         className="flex"
                     >
-                        Add template Variable
+                        {t('outreaches.variableModal.title')}
                     </Button>
                 </div>
                 <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
-                                Name
+                                {t('outreaches.variableModal.column.name')}
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Category
+                                {t('outreaches.variableModal.column.category')}
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Action
+                                {t('outreaches.variableModal.column.action')}
                             </th>
                         </tr>
                     </thead>

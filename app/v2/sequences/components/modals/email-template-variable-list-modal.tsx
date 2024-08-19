@@ -3,6 +3,7 @@ import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-var
 import { Cross } from 'app/components/icons';
 import { Modal } from 'app/components/modals';
 import { VariableTable } from '../variable-table/variable-table';
+import { useTranslation } from 'react-i18next';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -10,6 +11,7 @@ export type ModalVariableProps = {
 };
 
 export const ListVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalOpen }) => {
+    const { t } = useTranslation();
     const { loading, getTemplateVariables, templateVariables } = useOutreachTemplateVariable();
 
     useEffect(() => {
@@ -32,7 +34,7 @@ export const ListVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalO
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <div className="inline-flex items-start justify-start gap-1">
                             <div className="text-center font-['Poppins'] text-xl font-semibold tracking-tight text-gray-600">
-                                Variable List
+                                {t('outreaches.variableModal.variableList')}
                             </div>
                         </div>
                     </div>
