@@ -14,7 +14,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAtomValue } from 'jotai';
-import { initSmartlook, useSmartlook } from 'src/components/analytics/analytics-provider';
+import { initSmartlook, useSmartlook } from 'app/components/analytics/analytics-provider';
 
 export type SignupData = {
     email: string;
