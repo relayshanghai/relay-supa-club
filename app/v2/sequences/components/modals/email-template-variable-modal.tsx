@@ -16,6 +16,7 @@ import { Button } from 'app/components/buttons';
 import { variableCategories } from '../utils';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import toast from 'react-hot-toast';
+import { processErrorMessage } from 'src/utils/error/process-error';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -42,8 +43,17 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
             .then(() => toast.success(`Template variable ${isEdit ? 'updated' : 'created'} successfully`))
             .then(() => setModalOpen(false))
             .catch((error) => {
+                const backendError = processErrorMessage(error);
+                const errorMessages = backendError.messages;
+                if (Array.isArray(errorMessages) && errorMessages.length) {
+                    errorMessages.forEach((message: string) => {
+                        // replace dot in the beginning of the message
+                        toast.error(message.replace(/^\./, ''));
+                    });
+                } else {
+                    toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable: ${errorMessages}`);
+                }
                 clientLogger(error);
-                toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable`);
             });
     };
 
