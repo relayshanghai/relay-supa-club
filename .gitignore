@@ -58,3 +58,6 @@ supabase/supabase.code-workspace
 supabase/supabase/
 .env
 .scannerwork
+
+# docker
+**/volumes

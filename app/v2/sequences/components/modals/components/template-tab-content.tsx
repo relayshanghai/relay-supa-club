@@ -9,8 +9,10 @@ import { EmailTemplateWizardModal } from '../email-template-wizard-modal';
 import { EmailTemplatePreview } from '../email-template-preview-modal';
 import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
 import Skeleton from 'src/components/common/skeleton';
+import { useTranslation } from 'react-i18next';
 
 const NewTemplateCard = () => {
+    const { t } = useTranslation();
     return (
         <Card
             className="w-full border-2 border-gray-200 shadow-none lg:w-1/2 xl:min-w-[400px]"
@@ -23,9 +25,11 @@ const NewTemplateCard = () => {
                     </div>
                 </div>
                 <section className="flex flex-col items-start justify-between gap-4">
-                    <CardTitle className="font-medium text-gray-700">Create a totally new template</CardTitle>
+                    <CardTitle className="font-medium text-gray-700">
+                        {t('outreaches.emailTemplateModal.newCardTitle')}
+                    </CardTitle>
                     <CardDescription className="font-normal text-gray-400">
-                        A blank canvas to call your own!
+                        {t('outreaches.emailTemplateModal.newCardDescription')}
                     </CardDescription>
                 </section>
             </CardHeader>
@@ -73,6 +77,7 @@ const CustomTemplateCard = ({ emailTemplate }: { emailTemplate: GetTemplateRespo
 };
 
 export const TemplateTabContent = ({ templates }: { templates: GetTemplateResponse[] }) => {
+    const { t } = useTranslation();
     const [showTemplateWizard, setShowTemplateWizard] = useState<boolean>(false);
     const { isEdit, setIsEdit, setEmailTemplate, emailTemplateInitialState, loading } = useOutreachTemplate();
     useEffect(() => {
@@ -104,9 +109,11 @@ export const TemplateTabContent = ({ templates }: { templates: GetTemplateRespon
                 </div>
                 <div>
                     <section className="mt-4 pb-3">
-                        <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">Start fresh</p>
+                        <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">
+                            {t('outreaches.emailTemplateModal.newSectionTitle')}
+                        </p>
                         <p className="font-normal text-gray-500 placeholder-gray-500">
-                            If you already have a template in mind
+                            {t('outreaches.emailTemplateModal.newSectionDescription')}
                         </p>
                     </section>
                     <div

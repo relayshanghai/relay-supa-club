@@ -12,8 +12,10 @@ export const useOutreachTemplateVariable = () => {
     const {
         item: templateVariable,
         list: templateVariables,
+        isEdit,
         setTemplateVariables,
         setTemplateVariable,
+        setIsEdit,
     } = useTemplateVariableStore();
     const { apiClient, loading, error } = useApiClient();
     const getTemplateVariables = async () => {
@@ -36,8 +38,8 @@ export const useOutreachTemplateVariable = () => {
         if (err) throw err;
         return res.data;
     };
-    const getTemplateVariable = async (id: string) => {
-        const [err, res] = await awaitToError(apiClient.get(`/outreach/variables/${id}`));
+    const deleteTemplateVariable = async (id: string) => {
+        const [err, res] = await awaitToError(apiClient.delete(`/outreach/variables/${id}`));
         if (err) throw err;
         return res.data;
     };
@@ -48,8 +50,10 @@ export const useOutreachTemplateVariable = () => {
         getTemplateVariables,
         createTemplateVariable,
         updateTemplateVariable,
-        getTemplateVariable,
+        deleteTemplateVariable,
         setTemplateVariable,
         templateVariable,
+        isEdit,
+        setIsEdit,
     };
 };

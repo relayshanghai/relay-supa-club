@@ -47,6 +47,7 @@ const outreaches = {
     skipForNow: 'Skip for now',
     saveAndFinish: 'Save values and finish',
     addNewProduct: 'Add new product',
+    scheduleOutreach: 'Schedule outreach emails',
     productModal: {
         addProduct: 'Add a product',
         productLinkDescription:
@@ -59,6 +60,35 @@ const outreaches = {
         shortProductDescription: 'Short, clear product description',
         shopLink: 'Shop Link',
         shopLinkDescription: 'The products Amazon, Shopify, or other store link',
+    },
+    emailTemplateModal: {
+        title: 'Email Template Library',
+        description: 'Create, view and update your templates here',
+        newSectionTitle: 'Start fresh',
+        newSectionDescription: 'If you already have a template in mind',
+        newCardTitle: 'Create a totally new template',
+        newCardDescription: 'A blank canvas to call your own!',
+        sequenceStep: 'Sequence Step',
+        subjectLine: 'Subject Line',
+        emailSubjectPlaceholder: 'Email Subject',
+        emailContentPlaceholder: 'Write your email template here',
+        templateNameTitle: 'Name your new template',
+        templateNameDescription: `Give it a brief description so you can easily remember what it's for. This is what it will look like on other pages.`,
+        templateNamePlaceholder: 'Template Name',
+        templateNameDescriptionPlaceholder: 'Template Description',
+    },
+    variableModal: {
+        title: 'Add a new variable',
+        categoryLabel: 'Category',
+        categoryPlaceholder: 'Select a category',
+        nameLabel: 'Variable Name',
+        namePlaceholder: 'Enter variable name',
+        variableList: 'Variable List',
+        column: {
+            name: 'Name',
+            category: 'Category',
+            action: 'Action',
+        },
     },
     banner: {
         button: 'Switch to Old View',

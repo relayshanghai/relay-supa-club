@@ -22,11 +22,12 @@ import {
     templateLibraryWizardStep2,
     templateVariableModal,
 } from 'src/guides/crm-v2.guide';
+import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 
 export default function SequencePageV2() {
     const { t } = useTranslation();
     const { getAllSequences, loading, info, sequences, page, size, totalPages, setPage } = useSequences();
-
+    const { setIsEdit, setTemplateVariable } = useOutreachTemplateVariable();
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
     const [showVariableModal, setShowVariableModal] = useState(false);
     const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
@@ -116,6 +117,8 @@ export default function SequencePageV2() {
                                             variant="secondary"
                                             onClick={() => {
                                                 setShowVariableModal(true);
+                                                setIsEdit(false);
+                                                setTemplateVariable(null);
                                             }}
                                             className="flex items-center"
                                             data-testid="template-variable-button"

@@ -42,6 +42,14 @@ export const findMostRecentPostWithTextOrTitle = (posts: CreatorReport['user_pro
     };
 };
 
+export const getTopPost = (posts: CreatorReport['user_profile']['top_posts']) => {
+    const post = posts?.find((p) => p.text || p.title);
+    return {
+        postTitle: trimTitle(post?.title ?? post?.text ?? ''),
+        postLink: post?.link,
+    };
+};
+
 // eslint-disable-next-line complexity
 export const mapIqdataProfileToInfluencerSocialProfile = (
     userProfile: CreatorReport['user_profile'],
@@ -57,9 +65,17 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
     | 'recent_post_title'
     | 'recent_post_url'
 > => {
+    // here
     const contacts = userProfile.contacts || [];
     const email = contacts.find((v: any) => v.type === 'email') || { value: undefined };
-    const { postTitle, postLink } = findMostRecentPostWithTextOrTitle(userProfile.recent_posts);
+    const { postTitle: topPostTitle, postLink: topPostLink } = getTopPost(userProfile.top_posts);
+    const { postTitle: recentPostTitle, postLink: recentPostLink } = findMostRecentPostWithTextOrTitle(
+        userProfile.recent_posts,
+    );
+    const { postLink, postTitle } = {
+        postTitle: recentPostTitle ?? topPostTitle,
+        postLink: recentPostLink ?? topPostLink,
+    };
     return {
         url: userProfile.url,
         username: userProfile.username || userProfile.handle || userProfile.custom_name || '',
