@@ -2,7 +2,7 @@
 import { type FC, useEffect, useState } from 'react';
 import { ChevronDown, LanguageToggleIcon } from '../../../src/components/icons';
 import { useTranslation } from 'react-i18next';
-import { enUS } from '../../../src/constants';
+import { enUS, zhCN, LOCAL_STORAGE_LANGUAGE_KEY } from '../../../src/constants';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,6 +10,10 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { Languages } from 'src/hooks/use-localization';
+import { setBirdEatsBugLanguage } from '../analytics/bird-eats-bugs';
+import i18n from 'i18n'; // importing this initializes i18n using i19n.init()
+import { useCookies } from 'react-cookie';
+import { mapLangCode } from '../chatwoot/chatwoot-provider';
 
 export interface Language {
     lang: string;
@@ -19,6 +23,32 @@ export interface Language {
 type LanguageToggleV2Props = {
     language: string;
     setLanguage?: (language: string) => void;
+};
+
+export const useLocalization = () => {
+    const [l, setCookie] = useCookies(['language']);
+
+    useEffect(() => {
+        i18n.on('languageChanged', (l) => {
+            localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
+            setBirdEatsBugLanguage(l);
+            window.$chatwoot?.setLocale(mapLangCode(l));
+            setCookie('language', l);
+        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const setLang = urlParams.get('set_lang');
+        // if language is specified in the URL, use that, otherwise use the localStorage stored language
+        if (typeof setLang === 'string') {
+            if (setLang.includes('en')) {
+                i18n.changeLanguage(enUS);
+            } else if (setLang.includes('zh')) {
+                i18n.changeLanguage(zhCN);
+            }
+        } else {
+            i18n.changeLanguage(l.language || enUS);
+        }
+        return () => i18n.on('languageChanged', () => null);
+    }, []);
 };
 
 export const Default: FC<LanguageToggleV2Props> = ({ language, setLanguage }) => {
