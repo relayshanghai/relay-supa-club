@@ -6,7 +6,6 @@ import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useIdentifySession, useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import * as Sentry from '@sentry/nextjs';
@@ -14,6 +13,7 @@ import { useBirdEatsBug } from './bird-eats-bugs';
 import { nanoid } from 'nanoid';
 import Smartlook from 'smartlook-client';
 import { SupabasePlugin } from 'src/utils/analytics/plugins/analytics-plugin-supabase';
+import { useIdentifySessionV2, useSessionV2 } from 'src/hooks/v2/use-session';
 
 export const AnalyticsContext = createContext<
     | {
@@ -62,8 +62,8 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProviderV2 = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
     useBirdEatsBug();
-    const { session, profile } = useSession();
-    const { identifySession } = useIdentifySession();
+    const { session, profile } = useSessionV2();
+    const { identifySession } = useIdentifySessionV2();
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
     const [track] = useState(() => createTrack(analytics));
 
