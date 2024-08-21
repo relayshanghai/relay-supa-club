@@ -61,7 +61,7 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
 
     useEffect(() => {
         if (modalOpen && guidesReady) {
-            startTour('templateVariableModal');
+            startTour('templateVariableModal', false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady, modalOpen]);

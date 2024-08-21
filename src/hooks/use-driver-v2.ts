@@ -33,6 +33,7 @@ export const useDriverV2 = () => {
     const { setGuides, guides } = useIntroStepsStore();
     const { setActiveGuide, activeGuide } = useActiveGuide();
     const [guidesReady, setGuidesReady] = useState(false);
+    const [shouldSaveState, setShouldSaveState] = useState(true);
     const [val, setVal] = useLocalStorage<GuideFlagType>('boostbot-guide-flag', {});
 
     const driver = driverJS({
@@ -44,7 +45,7 @@ export const useDriverV2 = () => {
         smoothScroll: true, // Whether to animate the scroll to the next element
         steps: guides?.[activeGuide as string] ?? [],
         onDestroyStarted: () => {
-            if (activeGuide) {
+            if (activeGuide && shouldSaveState) {
                 setVal({ ...val, [activeGuide]: true });
                 setActiveGuide(null);
                 driver.destroy();
@@ -58,10 +59,11 @@ export const useDriverV2 = () => {
         }
     }, [guides]);
 
-    const startTour = (section: string) => {
+    const startTour = (section: string, saveState?: boolean) => {
         if (guides?.[section]?.length && !val[section]) {
             if (driver.isActive()) driver.destroy();
             setActiveGuide(section);
+            if (saveState) setShouldSaveState(saveState);
 
             const intervalId = setInterval(() => {
                 if (driver.getActiveElement() !== undefined && driver.getActiveIndex() !== undefined) {
@@ -78,7 +80,7 @@ export const useDriverV2 = () => {
 
     const _setGuides = (guides: DriverIntros) => {
         const newObj = Object.keys(guides).reduce((acc: Record<string, boolean>, key) => {
-            acc[key] = val[key] ? true : false;
+            acc[key] = !!val[key];
             return acc;
         }, {});
         setVal({ ...val, ...newObj });

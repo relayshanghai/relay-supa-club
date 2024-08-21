@@ -14,6 +14,7 @@ import { useSequence, useSequences } from 'src/hooks/v2/use-sequences';
 import { type VariableWithValue } from 'src/store/reducers/sequence';
 import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
 import toast from 'react-hot-toast';
+import { GlobalTemplateVariables } from 'src/backend/domain/templates/constants';
 
 export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPrevStep }) => {
     const { t } = useTranslation();
@@ -61,7 +62,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                     }
                 });
             }
-            if (seqVariables.length) setSequenceVariables(seqVariables);
+            if (seqVariables.length) setSequenceVariables([...seqVariables, ...GlobalTemplateVariables]);
         })();
     }, [isEdit]);
 

@@ -34,12 +34,10 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
                 name: emailTemplateInitialState.item.name,
                 description: emailTemplateInitialState.item.description,
             });
-        } else {
-            if (emailTemplate.name === '' && emailTemplate.description === '') {
-                getTemplate(emailTemplate.id).then((data) =>
-                    setEmailTemplate({ ...emailTemplate, name: data.name, description: data.description }),
-                );
-            }
+        } else if (emailTemplate.name === '' && emailTemplate.description === '') {
+            getTemplate(emailTemplate.id).then((data) =>
+                setEmailTemplate({ ...emailTemplate, name: data.name, description: data.description }),
+            );
         }
     }, [saveExistingAsNew]);
 

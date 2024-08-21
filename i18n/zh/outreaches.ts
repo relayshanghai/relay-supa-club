@@ -42,6 +42,7 @@ const outreaches = {
     product: '产品',
     addTemplateVariables: '添加模板变量',
     templateVariables: '模板变量',
+    nonEditableTemplateVariables: '此变量不可编辑，将自动替换',
     modifyExistingTemplate: '修改现有模板',
     continueAsNewTemplate: '继续作为新模板',
     skipForNow: '暂时跳过',

@@ -39,11 +39,11 @@ export const CampaignWizardModal = ({
     useEffect(() => {
         if (showCreateCampaignModal && guidesReady) {
             if (activeModalStep === 1) {
-                startTour('campaignWizardStep1');
+                startTour('campaignWizardStep1', false);
             } else if (activeModalStep === 2) {
-                startTour('campaignWizardStep2');
+                startTour('campaignWizardStep2', false);
             } else if (activeModalStep === 3) {
-                startTour('campaignWizardStep3');
+                startTour('campaignWizardStep3', false);
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
