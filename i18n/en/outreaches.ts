@@ -42,6 +42,7 @@ const outreaches = {
     product: 'Product',
     addTemplateVariables: 'Add Template Variables',
     templateVariables: 'Template Variables',
+    nonEditableTemplateVariables: 'This variable is not editable, will be substituted automatically',
     modifyExistingTemplate: 'Modify existing template',
     continueAsNewTemplate: 'Continue as new template',
     skipForNow: 'Skip for now',

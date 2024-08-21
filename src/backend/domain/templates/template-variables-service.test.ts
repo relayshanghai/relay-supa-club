@@ -4,6 +4,7 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
 import OutreachEmailTemplateVariableRepository from 'src/backend/database/sequence-email-template/sequence-email-template-variable-repository';
 import { type OutreachEmailTemplateVariableEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-variable-entity';
+import { GlobalTemplateVariables } from './constants';
 
 describe('src/backend/domain/templates/template-variables-service.test.ts', () => {
     describe('TemplateVariablesService', () => {
@@ -43,14 +44,15 @@ describe('src/backend/domain/templates/template-variables-service.test.ts', () =
             });
             test('should get all template variables', async () => {
                 const result = await TemplateVariablesService.getService().get();
-                expect(result).toEqual(
-                    [1, 2, 3].map((d) => ({
+                expect(result).toEqual([
+                    ...[1, 2, 3].map((d) => ({
                         id: `some-id-${d}`,
                         category: 'some-category',
                         name: `some-name-${d}`,
                         company: { id: companyId },
                     })),
-                );
+                    ...GlobalTemplateVariables,
+                ]);
                 expect(OutreachTemplateVariableRepositoryGetAllMock).toHaveBeenCalledWith(whereCompany);
             });
         });

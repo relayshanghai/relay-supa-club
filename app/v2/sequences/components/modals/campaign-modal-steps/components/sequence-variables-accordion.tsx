@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AccordionContent, AccordionItem, AccordionTrigger } from 'shadcn/components/ui/accordion';
+import { GlobalTemplateVariables } from 'src/backend/domain/templates/constants';
 import { SendOutline } from 'src/components/icons';
 import Bell from 'src/components/icons/Bell';
 import { useSequence } from 'src/hooks/v2/use-sequences';
@@ -12,6 +14,7 @@ type SequenceVariableAccordionProps = {
 };
 
 export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ title, items }) => {
+    const { t } = useTranslation();
     const { sequenceVariables, setSequenceVariables } = useSequence();
 
     const onVariableChange = (id: string, value: string) => {
@@ -22,6 +25,10 @@ export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ 
             return v;
         });
         setSequenceVariables(variables);
+    };
+
+    const isEditable = (val: VariableWithValue) => {
+        return !GlobalTemplateVariables.map((d) => d.name).includes(val.name);
     };
 
     return (
@@ -58,13 +65,17 @@ export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ 
                                 </div>
                                 <div className="relative h-3 w-3" />
                             </div>
-                            <input
-                                type="text"
-                                className="flex w-full shrink grow basis-0 items-center justify-start gap-2 rounded-md border border-gray-200 bg-white font-['Poppins'] text-sm font-medium tracking-tight text-gray-400 shadow"
-                                placeholder={`Variable value for ${d.name}`}
-                                value={d.value}
-                                onChange={(e) => onVariableChange(d.id, e.target.value)}
-                            />
+                            {isEditable(d) ? (
+                                <input
+                                    type="text"
+                                    className="flex w-full shrink grow basis-0 items-center justify-start gap-2 rounded-md border border-gray-200 bg-white font-['Poppins'] text-sm font-medium tracking-tight text-gray-400 shadow"
+                                    placeholder={`Variable value for ${d.name}`}
+                                    value={d.value}
+                                    onChange={(e) => onVariableChange(d.id, e.target.value)}
+                                />
+                            ) : (
+                                t('outreaches.nonEditableTemplateVariables')
+                            )}
                         </div>
                     </div>
                 </AccordionContent>

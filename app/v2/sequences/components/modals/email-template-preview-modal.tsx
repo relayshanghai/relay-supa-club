@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 import { convertTiptapVariableToComponent } from '../utils';
+import toast from 'react-hot-toast';
 
 export const EmailTemplatePreview = ({
     modalOpen,
@@ -36,9 +37,13 @@ export const EmailTemplatePreview = ({
     }, [emailTemplate?.id, modalOpen]);
 
     const deleteHandler = () => {
-        deleteTemplate(emailTemplate?.id as string).then(() => {
-            setModalOpen(false);
-        });
+        deleteTemplate(emailTemplate?.id as string)
+            .then(() => {
+                setModalOpen(false);
+            })
+            .catch((err) => {
+                toast.error(err.response.data.message);
+            });
     };
 
     return (
