@@ -16,7 +16,7 @@ import type { SequenceEmailInsert } from 'src/backend/database/sequence-emails';
 // const MAX_DAILY_SEND = 75; // now split into 17 per (4) steps
 const TARGET_TIMEZONE = 'America/Chicago';
 
-const MAX_DAILY_PER_STEP = 30;
+const MAX_DAILY_PER_STEP = 50;
 
 export type EmailCountPerDayPerStep = {
     /** formatted like 2023-12-25 YYYY-MM-DD */
