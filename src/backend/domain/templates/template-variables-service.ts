@@ -2,6 +2,7 @@ import type { TemplateVariableRequest } from 'pages/api/outreach/variables/reque
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import OutreachEmailTemplateVariableRepository from 'src/backend/database/sequence-email-template/sequence-email-template-variable-repository';
+import { GlobalTemplateVariables } from './constants';
 
 export default class TemplateVariablesService {
     static service: TemplateVariablesService = new TemplateVariablesService();
@@ -12,11 +13,13 @@ export default class TemplateVariablesService {
     @CompanyIdRequired()
     async get() {
         const companyId = RequestContext.getContext().companyId as string;
-        return OutreachEmailTemplateVariableRepository.getRepository().find({
+        const templates = await OutreachEmailTemplateVariableRepository.getRepository().find({
             where: {
                 company: { id: companyId },
             },
         });
+
+        return [...templates, ...GlobalTemplateVariables];
     }
 
     @CompanyIdRequired()

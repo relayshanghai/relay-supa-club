@@ -1,3 +1,5 @@
+import { type SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
+
 export interface GetTemplateVariableResponse {
     id: string;
     name: string;
@@ -12,6 +14,7 @@ export interface GetTemplateResponse {
     template: string;
     variables: GetTemplateVariableResponse[];
     emailEngineTemplateId?: string;
+    sequenceStep?: SequenceStepEntity;
 }
 
 export interface GetAllTemplateResponse {

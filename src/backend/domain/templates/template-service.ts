@@ -8,6 +8,7 @@ import { NotFoundError } from 'src/utils/error/http-error';
 import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 import type { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import awaitToError from 'src/utils/await-to-error';
+import { GlobalTemplateVariables } from './constants';
 
 export default class TemplateService {
     static readonly service: TemplateService = new TemplateService();
@@ -29,6 +30,9 @@ export default class TemplateService {
     @CompanyIdRequired()
     async create(template: TemplateRequest) {
         const companyId = RequestContext.getContext().companyId as string;
+        template.variableIds = template.variableIds.filter(
+            (id) => !GlobalTemplateVariables.some((variable) => variable.id === id),
+        );
         await this.checkVariableExists(template.variableIds);
         const emailEngineId = await EmailEngineService.getService().createTemplate({
             html: template.template,
@@ -109,7 +113,7 @@ export default class TemplateService {
                     company: { id: companyId },
                     id,
                 },
-                relations: { variables: true },
+                relations: { variables: true, sequenceStep: true },
             }),
         );
         if (err) throw new NotFoundError('not found');
@@ -128,11 +132,15 @@ export default class TemplateService {
                       category: variable.category,
                   }))
                 : [],
+            sequenceStep: data.sequenceStep,
         };
     }
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
         const template = await this.getOne(id);
+        if (template.sequenceStep) {
+            throw new Error('Cannot delete template that is used in sequence');
+        }
         await OutreachEmailTemplateRepository.getRepository().delete({ id });
         await EmailEngineService.getService().deleteTemplate(template.emailEngineTemplateId as string);
     }
