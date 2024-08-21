@@ -61,7 +61,7 @@ export default function SequencePageV2() {
 
     useEffect(() => {
         if (guidesReady) {
-            startTour('crmV2');
+            startTour('crmV2', false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady]);

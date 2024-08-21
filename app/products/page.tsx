@@ -52,7 +52,7 @@ const ProductsPageComponent = () => {
 
     useEffect(() => {
         if (guidesReady) {
-            startTour('productGuide');
+            startTour('productGuide', false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady]);

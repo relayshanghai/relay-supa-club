@@ -38,7 +38,7 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
 
     useEffect(() => {
         if (modalOpen && guidesReady) {
-            startTour('templateLibraryModal');
+            startTour('templateLibraryModal', false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady, modalOpen]);
