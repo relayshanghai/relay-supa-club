@@ -21,7 +21,7 @@ const ProductsPageComponent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { products, getProducts, setProduct, deleteProduct } = useProducts();
+    const { products, getProducts, setProduct, deleteProduct, loading } = useProducts();
     const [productParam, setProductParam] = useState({
         page: 1,
     });
@@ -107,6 +107,7 @@ const ProductsPageComponent = () => {
                 </div>
 
                 <ProductsTable
+                    loading={loading}
                     products={products?.items}
                     selection={selection}
                     setSelection={setSelection}

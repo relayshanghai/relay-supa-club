@@ -1,6 +1,6 @@
 'use client';
 import { Button } from 'app/components/buttons';
-import { Edit } from 'app/components/icons';
+import { Edit, Spinner } from 'app/components/icons';
 import TablePagination from 'app/components/table-pagination/table-pagination';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -94,6 +94,11 @@ export default function SequenceTable({
                         ))}
                     </tbody>
                 </table>
+                {loading && (
+                    <div className="flex w-full justify-center">
+                        <Spinner className="my-4 flex h-8 w-8 fill-primary-600 text-white" />
+                    </div>
+                )}
                 <TablePagination page={page} size={size} totalPages={totalPages} onPageChange={onPageChange} />
             </div>
         </>
