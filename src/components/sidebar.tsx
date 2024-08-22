@@ -11,6 +11,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
+import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <OldSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -78,6 +79,8 @@ const NavBarInner = ({
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
+    const { defaultPage } = useNewCRMPage();
+
     return (
         <>
             <div className="flex items-center justify-center py-3.5">
@@ -94,7 +97,7 @@ const NavBarInner = ({
                         <p className={`whitespace-nowrap text-xs`}>{t('navbar.discover')}</p>
                     </ActiveLink>
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href={'/sequences'} expandedName={t('navbar.sequences')}>
+                        <ActiveLink href={defaultPage} expandedName={t('navbar.sequences')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}

@@ -46,7 +46,7 @@ export const useDriverV2 = () => {
         steps: guides?.[activeGuide as string] ?? [],
         onDestroyStarted: () => {
             if (activeGuide) {
-                if (guidesList[activeGuide] === 'saveState') setVal({ ...val, [activeGuide]: true });
+                setVal({ ...val, [activeGuide]: guidesList[activeGuide] === 'saveState' });
                 setActiveGuide(null);
                 driver.destroy();
             }
