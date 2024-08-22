@@ -1,3 +1,4 @@
+import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type SequenceStepEntity } from 'src/backend/database/sequence/sequence-step-entity';
 
 export interface GetTemplateVariableResponse {
@@ -15,6 +16,7 @@ export interface GetTemplateResponse {
     variables: GetTemplateVariableResponse[];
     emailEngineTemplateId?: string;
     sequenceStep?: SequenceStepEntity;
+    company?: CompanyEntity;
 }
 
 export interface GetAllTemplateResponse {

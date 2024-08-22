@@ -304,16 +304,18 @@ export default class SequenceService {
                     recent_post_url: influencer.influencerSocialProfile?.recentPostUrl ?? '',
                     manager_first_name: influencer.sequence.managerFirstName,
                 },
-                templateVariables: templateVariables.map((d) => ({
-                    id: d.id,
-                    name: d.name,
-                    value: d.value,
-                    sequence_id: d.sequence?.id,
-                    created_at: new Date(d.createdAt).toISOString(),
-                    updated_at: new Date(d.updatedAt).toISOString(),
-                    required: d.required,
-                    key: d.key,
-                })),
+                templateVariables: [
+                    ...templateVariables.map((d) => ({
+                        id: d.id,
+                        name: d.name,
+                        value: d.value,
+                        sequence_id: d.sequence?.id,
+                        created_at: new Date(d.createdAt).toISOString(),
+                        updated_at: new Date(d.updatedAt).toISOString(),
+                        required: d.required,
+                        key: d.key,
+                    })),
+                ],
                 jobId: v4(),
             };
             jobPayloads.push(payload);
