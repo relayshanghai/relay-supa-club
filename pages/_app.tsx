@@ -18,6 +18,7 @@ import chatwootConfig from 'chatwoot.config';
 import { AnalyticsProvider, useDeviceId } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 import { useLocalization } from 'src/components/common/language-toggle';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 // Use your Rewardful API Key
 const API_KEY = process.env.NEXT_PUBLIC_REWARDFUL_API_KEY;
 
@@ -93,11 +94,13 @@ function MyApp({
                     <JotaiProvider>
                         <CacheProvider>
                             <UserProvider>
-                                <ChatwootProvider {...chatwootConfig}>
-                                    <CompanyProvider>
-                                        <Component {...pageProps} />
-                                    </CompanyProvider>
-                                </ChatwootProvider>
+                                <StoreProvider>
+                                    <ChatwootProvider {...chatwootConfig}>
+                                        <CompanyProvider>
+                                            <Component {...pageProps} />
+                                        </CompanyProvider>
+                                    </ChatwootProvider>
+                                </StoreProvider>
                             </UserProvider>
                         </CacheProvider>
                     </JotaiProvider>
