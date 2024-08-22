@@ -33,7 +33,9 @@ export const useLocalization = () => {
             localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, l);
             setBirdEatsBugLanguage(l);
             window.$chatwoot?.setLocale(mapLangCode(l));
-            setCookie('language', l);
+            setCookie('language', l, {
+                path: '/',
+            });
         });
         const urlParams = new URLSearchParams(window.location.search);
         const setLang = urlParams.get('set_lang');

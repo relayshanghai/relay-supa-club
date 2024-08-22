@@ -16,12 +16,12 @@ import { productForm, productGuide } from 'src/guides/product.guide';
 import toast from 'react-hot-toast';
 
 const ProductsPageComponent = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { products, getProducts, setProduct, deleteProduct } = useProducts();
+    const { products, getProducts, setProduct, deleteProduct, loading } = useProducts();
     const [productParam, setProductParam] = useState({
         page: 1,
     });
@@ -44,15 +44,15 @@ const ProductsPageComponent = () => {
 
     useEffect(() => {
         setGuides({
-            productGuide: productGuide,
-            productForm: productForm,
+            productGuide: productGuide(i18n),
+            productForm: productForm(i18n),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         if (guidesReady) {
-            startTour('productGuide', false);
+            startTour('productGuide');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady]);
@@ -107,6 +107,7 @@ const ProductsPageComponent = () => {
                 </div>
 
                 <ProductsTable
+                    loading={loading}
                     products={products?.items}
                     selection={selection}
                     setSelection={setSelection}

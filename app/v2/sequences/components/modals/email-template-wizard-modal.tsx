@@ -39,9 +39,9 @@ export const EmailTemplateWizardModal = ({
     useEffect(() => {
         if (modalOpen && guidesReady) {
             if (activeModalStep === 2) {
-                startTour('templateLibraryWizardStep1', false);
+                startTour('templateLibraryWizardStep1');
             } else if (activeModalStep === 3) {
-                startTour('templateLibraryWizardStep2', false);
+                startTour('templateLibraryWizardStep2');
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

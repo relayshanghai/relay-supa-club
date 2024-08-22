@@ -7,9 +7,10 @@ import awaitToError from 'src/utils/await-to-error';
 import { type SequenceInfo } from 'types/v2/rate-info';
 import { usePaginationParam } from './use-pagination-param';
 import { useSequencesStore } from 'src/store/reducers/sequence';
-import type { GetSequenceRequest, SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
+import type { SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 import type { GetSequenceDetailResponse } from 'pages/api/v2/sequences/[id]/response';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import useSWR from 'swr';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
@@ -26,16 +27,19 @@ export const useSequences = () => {
         inSequence: 0,
     });
     const { loading, error, apiClient } = useApiClient();
-    const getAllSequences = async () => {
-        const [, response] = await awaitToError(
+
+    const { mutate: getAllSequences } = useSWR(['/v2/sequences'], async () => {
+        const [err, response] = await awaitToError(
             apiClient.get<GetAllSequenceResponse>(`/v2/sequences?page=${page}&size=${size}`),
         );
-        if (response) {
-            setSequences(response.data.items);
-            setSequenceInfo(response.data.info);
-            setTotalPages(response.data.totalPages);
+        if (err) {
+            throw err;
         }
-    };
+        setSequences(response.data.items);
+        setSequenceInfo(response.data.info);
+        setTotalPages(response.data.totalPages);
+        return response.data;
+    });
 
     useEffect(() => {
         if (sequences.length === 0) {
@@ -72,17 +76,6 @@ export const useSequence = () => {
         editMode: isEdit,
     } = useSequencesStore();
     const { apiClient, loading, error } = useApiClient();
-    const getSequences = async (params?: Partial<GetSequenceRequest>) => {
-        params = {
-            page: 1,
-            size: 10,
-            ...params,
-        };
-        const query = new URLSearchParams(params as any).toString();
-        const [err, res] = await awaitToError(apiClient.get(`/v2/outreach/sequences?${query}`).then((res) => res.data));
-        if (err) return;
-        return res;
-    };
     const createSequences = async (payload: SequenceRequest) => {
         const [err, res] = await awaitToError(apiClient.post<SequenceEntity>('/v2/outreach/sequences', payload));
         if (err) throw err;
@@ -106,7 +99,6 @@ export const useSequence = () => {
         setSelectedTemplate,
         sequenceVariables,
         setSequenceVariables,
-        getSequences,
         createSequences,
         updateSequences,
         getSequence,

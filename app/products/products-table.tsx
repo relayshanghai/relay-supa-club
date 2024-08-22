@@ -4,6 +4,7 @@ import { ProductsTableRow } from './products-table-row';
 import { useCallback } from 'react';
 import { type ProductEntity } from 'src/backend/database/product/product-entity';
 import TablePagination from 'app/components/table-pagination/table-pagination';
+import { Spinner } from 'app/components/icons';
 
 const ProductsTable = ({
     products,
@@ -13,6 +14,7 @@ const ProductsTable = ({
     selection,
     setSelection,
     onRowClick,
+    loading,
 }: {
     products: ProductEntity[] | undefined;
     currentPage: number;
@@ -21,6 +23,7 @@ const ProductsTable = ({
     selection: string[];
     setSelection: (selection: string[]) => void;
     onRowClick: (product: ProductEntity) => void;
+    loading?: boolean;
 }) => {
     const { t } = useTranslation();
     const handleCheckboxChange = useCallback(
@@ -79,6 +82,11 @@ const ProductsTable = ({
                     ))}
                 </tbody>
             </table>
+            {loading && (
+                <div className="flex w-full justify-center">
+                    <Spinner className="my-4 flex h-8 w-8 fill-primary-600 text-white" />
+                </div>
+            )}
             <TablePagination
                 page={currentPage}
                 size={products?.length ?? 10}

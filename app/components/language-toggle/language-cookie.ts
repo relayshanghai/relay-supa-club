@@ -8,5 +8,5 @@ export const languageCookie = async () => {
 };
 
 export const setLanguageCookie = async (language: string) => {
-    cookies().set('language', language);
+    cookies().set('language', language, { path: '/' });
 };

@@ -6,7 +6,7 @@ import SequenceInfluencerTableEmail from './sequence-influencer-table-email';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
 import dateFormat from 'src/utils/dateFormat';
 import { useCallback, useEffect, useState } from 'react';
-import { ReportOutline } from 'app/components/icons';
+import { ReportOutline, Spinner } from 'app/components/icons';
 import SequenceInfluencerTableUnlocker from './sequence-influencer-table-unlocker';
 
 export interface SequenceInfluencerTableUnscheduledProps {
@@ -189,6 +189,11 @@ export default function SequenceInfluencerTableUnscheduled({
                     ))}
                 </tbody>
             </table>
+            {loading && (
+                <div className="flex w-full justify-center">
+                    <Spinner className="my-4 flex h-8 w-8 fill-primary-600 text-white" />
+                </div>
+            )}
             <TablePagination page={page} size={size} totalPages={totalPages} onPageChange={onPageChange} />
         </div>
     );

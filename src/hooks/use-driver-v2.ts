@@ -4,6 +4,7 @@ import { useLocalStorage } from './use-localstorage';
 import { create } from 'src/utils/zustand';
 import { type DriverIntros } from 'types/driver';
 import { type Nullable } from 'types/nullable';
+import { guidesList } from 'src/guides/src';
 
 type GuideFlagType = {
     [key: string]: boolean;
@@ -33,7 +34,6 @@ export const useDriverV2 = () => {
     const { setGuides, guides } = useIntroStepsStore();
     const { setActiveGuide, activeGuide } = useActiveGuide();
     const [guidesReady, setGuidesReady] = useState(false);
-    const [shouldSaveState, setShouldSaveState] = useState(true);
     const [val, setVal] = useLocalStorage<GuideFlagType>('boostbot-guide-flag', {});
 
     const driver = driverJS({
@@ -45,8 +45,8 @@ export const useDriverV2 = () => {
         smoothScroll: true, // Whether to animate the scroll to the next element
         steps: guides?.[activeGuide as string] ?? [],
         onDestroyStarted: () => {
-            if (activeGuide && shouldSaveState) {
-                setVal({ ...val, [activeGuide]: true });
+            if (activeGuide) {
+                setVal({ ...val, [activeGuide]: guidesList[activeGuide] === 'saveState' });
                 setActiveGuide(null);
                 driver.destroy();
             }
@@ -59,12 +59,10 @@ export const useDriverV2 = () => {
         }
     }, [guides]);
 
-    const startTour = (section: string, saveState?: boolean) => {
-        if (guides?.[section]?.length && !val[section]) {
+    const startTour = (section: string) => {
+        if (guides?.[section]?.length && !val[section] && guidesList[section]) {
             if (driver.isActive()) driver.destroy();
             setActiveGuide(section);
-            if (saveState) setShouldSaveState(saveState);
-
             const intervalId = setInterval(() => {
                 if (driver.getActiveElement() !== undefined && driver.getActiveIndex() !== undefined) {
                     clearInterval(intervalId);
