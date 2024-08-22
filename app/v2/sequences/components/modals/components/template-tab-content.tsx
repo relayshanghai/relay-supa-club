@@ -97,33 +97,35 @@ export const TemplateTabContent = ({ templates }: { templates: GetTemplateRespon
             />
 
             <section className="max-h-[510px] divide-y-2 overflow-y-auto p-8">
-                <div className="mb-6 grid max-h-[350px] grid-cols-1 gap-6 lg:grid-cols-2">
-                    {loading ? (
-                        <>
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
-                        </>
-                    ) : (
-                        templates.map((template) => <CustomTemplateCard key={template.id} emailTemplate={template} />)
-                    )}
-                </div>
                 <div>
-                    <section className="mt-4 pb-3">
-                        <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">
-                            {t('outreaches.emailTemplateModal.newSectionTitle')}
-                        </p>
-                        <p className="font-normal text-gray-500 placeholder-gray-500">
-                            {t('outreaches.emailTemplateModal.newSectionDescription')}
-                        </p>
-                    </section>
-                    <div
-                        className="hover:cursor-pointer"
-                        onClick={() => {
-                            setEmailTemplate(emailTemplateInitialState.item);
-                            setShowTemplateWizard(true);
-                        }}
-                    >
-                        <NewTemplateCard />
+                    <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        {loading ? (
+                            <>
+                                <Skeleton className="h-24 w-full" />
+                                <Skeleton className="h-24 w-full" />
+                            </>
+                        ) : (
+                            templates.map((template) => <CustomTemplateCard key={template.id} emailTemplate={template} />)
+                        )}
+                    </div>
+                    <div>
+                        <section className="mt-4 pb-3">
+                            <p className="text-xl font-semibold text-gray-600 placeholder-gray-600">
+                                {t('outreaches.emailTemplateModal.newSectionTitle')}
+                            </p>
+                            <p className="font-normal text-gray-500 placeholder-gray-500">
+                                {t('outreaches.emailTemplateModal.newSectionDescription')}
+                            </p>
+                        </section>
+                        <div
+                            className="hover:cursor-pointer"
+                            onClick={() => {
+                                setEmailTemplate(emailTemplateInitialState.item);
+                                setShowTemplateWizard(true);
+                            }}
+                        >
+                            <NewTemplateCard />
+                        </div>
                     </div>
                 </div>
             </section>

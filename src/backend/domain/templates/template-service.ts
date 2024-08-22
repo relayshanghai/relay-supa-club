@@ -9,6 +9,7 @@ import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email
 import type { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import awaitToError from 'src/utils/await-to-error';
 import { GlobalTemplateVariables } from './constants';
+import { IsNull } from 'typeorm';
 
 export default class TemplateService {
     static readonly service: TemplateService = new TemplateService();
@@ -92,7 +93,7 @@ export default class TemplateService {
         const companyId = RequestContext.getContext().companyId as string;
         const data = await OutreachEmailTemplateRepository.getRepository().find({
             where: {
-                company: { id: companyId },
+                company: [{ id: companyId }, { id: IsNull() }],
                 step: param.step as unknown as Step,
             },
         });
@@ -110,10 +111,10 @@ export default class TemplateService {
         const [err, data] = await awaitToError(
             OutreachEmailTemplateRepository.getRepository().findOneOrFail({
                 where: {
-                    company: { id: companyId },
+                    company: [{ id: companyId }, { id: IsNull() }],
                     id,
                 },
-                relations: { variables: true, sequenceStep: true },
+                relations: { variables: true, sequenceStep: true, company: true },
             }),
         );
         if (err) throw new NotFoundError('not found');
@@ -133,6 +134,7 @@ export default class TemplateService {
                   }))
                 : [],
             sequenceStep: data.sequenceStep,
+            company: data.company,
         };
     }
     @CompanyIdRequired()
