@@ -16,7 +16,7 @@ import { productForm, productGuide } from 'src/guides/product.guide';
 import toast from 'react-hot-toast';
 
 const ProductsPageComponent = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,8 +44,8 @@ const ProductsPageComponent = () => {
 
     useEffect(() => {
         setGuides({
-            productGuide: productGuide,
-            productForm: productForm,
+            productGuide: productGuide(i18n),
+            productForm: productForm(i18n),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

@@ -25,7 +25,7 @@ import {
 import { useOutreachTemplateVariable } from 'src/hooks/use-outreach-template-variable';
 
 export default function SequencePageV2() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { getAllSequences, loading, info, sequences, page, size, totalPages, setPage } = useSequences();
     const { setIsEdit, setTemplateVariable } = useOutreachTemplateVariable();
     const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
@@ -47,14 +47,14 @@ export default function SequencePageV2() {
 
     useEffect(() => {
         setGuides({
-            crmV2: crmGuide,
-            templateVariableModal: templateVariableModal,
-            templateLibraryModal: templateLibraryModal,
-            templateLibraryWizardStep1: templateLibraryWizardStep1,
-            templateLibraryWizardStep2: templateLibraryWizardStep2,
-            campaignWizardStep1: campaignWizardStep1,
-            campaignWizardStep2: campaignWizardStep2,
-            campaignWizardStep3: campaignWizardStep3,
+            crmV2: crmGuide(i18n),
+            templateVariableModal: templateVariableModal(i18n),
+            templateLibraryModal: templateLibraryModal(i18n),
+            templateLibraryWizardStep1: templateLibraryWizardStep1(i18n),
+            templateLibraryWizardStep2: templateLibraryWizardStep2(i18n),
+            campaignWizardStep1: campaignWizardStep1(i18n),
+            campaignWizardStep2: campaignWizardStep2(i18n),
+            campaignWizardStep3: campaignWizardStep3(i18n),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
