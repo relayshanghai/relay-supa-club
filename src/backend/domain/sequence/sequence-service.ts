@@ -159,12 +159,16 @@ export default class SequenceService {
         }
 
         const sequence = await SequenceRepository.getRepository().save(newData);
-        await SequenceStepRepository.getRepository().insertIntoSequenceStep(sequence.id, emailTemplates);
-        await TemplateVariableRepository.getRepository().delete({ sequence: { id: sequence.id } });
-        await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(
-            sequence.id,
-            templateVariables as Variable[],
-        );
+        if (sequenceTemplates?.length && sequenceTemplates?.length > 0) {
+            await SequenceStepRepository.getRepository().insertIntoSequenceStep(sequence.id, emailTemplates);
+        }
+        if (templateVariables?.length && templateVariables?.length > 0) {
+            await TemplateVariableRepository.getRepository().delete({ sequence: { id: sequence.id } });
+            await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(
+                sequence.id,
+                templateVariables as Variable[],
+            );
+        }
         return sequence;
     }
 
