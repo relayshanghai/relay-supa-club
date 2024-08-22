@@ -49,7 +49,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
 
     useEffect(() => {
         if (modalOpen && guidesReady) {
-            startTour('productForm', false);
+            startTour('productForm');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guidesReady, modalOpen]);

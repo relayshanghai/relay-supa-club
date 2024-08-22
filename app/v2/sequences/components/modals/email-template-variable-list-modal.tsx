@@ -4,6 +4,7 @@ import { Cross } from 'app/components/icons';
 import { Modal } from 'app/components/modals';
 import { VariableTable } from '../variable-table/variable-table';
 import { useTranslation } from 'react-i18next';
+import { GlobalTemplateVariables } from 'src/backend/domain/templates/constants';
 
 export type ModalVariableProps = {
     modalOpen: boolean;
@@ -46,7 +47,13 @@ export const ListVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModalO
 
                 {/* form section */}
                 <div className="mt-6 flex h-auto flex-col items-start justify-start gap-3 self-stretch overflow-y-scroll px-6 pb-8">
-                    <VariableTable items={templateVariables} loading={loading} />
+                    <VariableTable
+                        items={templateVariables.filter((f) => {
+                            // ignore global variables
+                            return !GlobalTemplateVariables.some((d) => d.id === f.id);
+                        })}
+                        loading={loading}
+                    />
                 </div>
                 {/* form section */}
             </div>
