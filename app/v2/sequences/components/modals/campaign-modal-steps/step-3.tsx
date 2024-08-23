@@ -62,7 +62,7 @@ export const CampaignModalStepThree: FC<ModalStepProps> = ({ setModalOpen, onPre
                     }
                 });
             }
-            setSequenceVariables([...seqVariables, ...GlobalTemplateVariables]);
+            setSequenceVariables([...(seqVariables ?? []), ...GlobalTemplateVariables]);
         })();
     }, [isEdit]);
 
