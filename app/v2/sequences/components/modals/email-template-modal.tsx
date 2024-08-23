@@ -18,7 +18,7 @@ type EmailTemplateModalProps = {
 
 export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
-    const { emailTemplates, getTemplates,setSelectionStep } = useOutreachTemplate();
+    const { emailTemplates, getTemplates, setSelectionStep } = useOutreachTemplate();
     useEffect(() => {
         if (modalOpen) {
             getTemplates();

@@ -130,7 +130,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                     <div className="inline-flex items-start justify-center gap-6 self-stretch">
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <textarea
-                                className="w-full shadow rounded-sm border-2 border-gray-200 placeholder:text-gray-400"
+                                className="w-full rounded-sm border-2 border-gray-200 shadow placeholder:text-gray-400"
                                 value={product.description}
                                 onChange={(e) => setProduct({ ...product, description: e.target.value })}
                                 placeholder={t('products.productModal.shortProductDescription') ?? ''}

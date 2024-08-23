@@ -105,7 +105,9 @@ export const TemplateTabContent = ({ templates }: { templates: GetTemplateRespon
                                 <Skeleton className="h-24 w-full" />
                             </>
                         ) : (
-                            templates.map((template) => <CustomTemplateCard key={template.id} emailTemplate={template} />)
+                            templates.map((template) => (
+                                <CustomTemplateCard key={template.id} emailTemplate={template} />
+                            ))
                         )}
                     </div>
                     <div>

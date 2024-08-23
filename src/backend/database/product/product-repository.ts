@@ -56,7 +56,7 @@ export default class ProductRepository extends BaseRepository<ProductEntity> {
             size: paginatedItems.size,
             totalPages: paginatedItems.totalPages,
             totalSize: paginatedItems.totalSize,
-        }
+        };
         return response;
     }
 }
