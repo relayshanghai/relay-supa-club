@@ -29,7 +29,7 @@ export const EmailTemplateEditor = ({
     useEffect(() => {
         setTemplateDetails({ ...templateDetails, step: selectionStep as Step });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectionStep, templateDetails]);
+    }, [selectionStep]);
 
     return (
         <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">
