@@ -12,7 +12,7 @@ export default function ThreadListFilterSequence({
     onChange: (ids: string[]) => void;
 }) {
     const { t } = useTranslation();
-    const { sequenceFilterLoading } = useInboxFilter();
+    const { filterLoading } = useInboxFilter();
     const { sequences, loading } = useDropdownSequence();
     const handleUpdateFunnelStatus = useCallback(
         (checkSequence: string) => {
@@ -36,7 +36,7 @@ export default function ThreadListFilterSequence({
     return (
         <div className="flex flex-col gap-2">
             <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
-            {loading || sequenceFilterLoading ? (
+            {loading || filterLoading ? (
                 <div>Loading...</div>
             ) : (
                 sequences.map((sequence, index) => (

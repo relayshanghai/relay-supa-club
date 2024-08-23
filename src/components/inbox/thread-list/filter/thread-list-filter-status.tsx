@@ -2,6 +2,7 @@ import { ThreadStatusRequest } from 'pages/api/v2/threads/request';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
+import { useInboxFilter } from 'src/store/reducers/inbox-filter';
 
 const CounterStyles: {
     [key in ThreadStatusRequest]: string;
@@ -47,6 +48,7 @@ export default function ThreadListFilterStatus({
     };
 }) {
     const { t } = useTranslation();
+    const { filterLoading } = useInboxFilter();
 
     const handleUpdateStatus = useCallback(
         (buttonStatus: ThreadStatusRequest) => {
@@ -58,25 +60,27 @@ export default function ThreadListFilterStatus({
     return (
         <div className="flex flex-col">
             <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byMessageStatus.title')}</p>
-            {buttons.map((button, index) => (
-                <Button
-                    key={index}
-                    onClick={() => handleUpdateStatus(button.status)}
-                    className={`w-full cursor-pointer justify-between hover:bg-primary-50 ${
-                        button.enabledCondition(status)
-                            ? 'bg-primary-100 text-primary-600 hover:bg-primary-100'
-                            : index % 2 === 0 && 'bg-gray-50'
-                    }`}
-                    variant="destructive"
-                >
-                    <span>{t(`inbox.filters.byMessageStatus.${button.label}`)}</span>
-                    {button.status && (
-                        <div className={`aspect-square h-5 w-5 rounded-full ${CounterStyles[button.status]}`}>
-                            {messageCount[button.status]}
-                        </div>
-                    )}
-                </Button>
-            ))}
+            {filterLoading && <div>Loading...</div>}
+            {!filterLoading &&
+                buttons.map((button, index) => (
+                    <Button
+                        key={index}
+                        onClick={() => handleUpdateStatus(button.status)}
+                        className={`w-full cursor-pointer justify-between hover:bg-primary-50 ${
+                            button.enabledCondition(status)
+                                ? 'bg-primary-100 text-primary-600 hover:bg-primary-100'
+                                : index % 2 === 0 && 'bg-gray-50'
+                        }`}
+                        variant="destructive"
+                    >
+                        <span>{t(`inbox.filters.byMessageStatus.${button.label}`)}</span>
+                        {button.status && (
+                            <div className={`aspect-square h-5 w-5 rounded-full ${CounterStyles[button.status]}`}>
+                                {messageCount[button.status]}
+                            </div>
+                        )}
+                    </Button>
+                ))}
         </div>
     );
 }
