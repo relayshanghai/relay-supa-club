@@ -67,6 +67,9 @@ export default class TemplateService {
             }),
         );
         if (err) throw new NotFoundError('not found');
+        template.variableIds = template.variableIds.filter(
+            (id) => !GlobalTemplateVariables.some((variable) => variable.id === id),
+        );
         await this.checkVariableExists(template.variableIds);
         await EmailEngineService.getService().updateTemplate(existed.email_engine_template_id, {
             html: template.template,

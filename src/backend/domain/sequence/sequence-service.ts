@@ -82,6 +82,7 @@ export default class SequenceService {
         if (err) {
             throw new NotFoundError('Product not found');
         }
+        const globalVariableValues: Variable[] = this.setGlobalVariables(product as ProductEntity);
         const sequence = await SequenceRepository.getRepository().save({
             ...request,
             company: { id: companyId },
@@ -90,10 +91,10 @@ export default class SequenceService {
             managerFirstName: profile?.firstName,
         });
         await SequenceStepRepository.getRepository().insertIntoSequenceStep(sequence.id, emailTemplates);
-        await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(
-            sequence.id,
-            templateVariables as Variable[],
-        );
+        await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(sequence.id, [
+            ...(templateVariables ?? []),
+            ...globalVariableValues,
+        ]);
         return sequence;
     }
 
@@ -157,17 +158,17 @@ export default class SequenceService {
         if (product) {
             newData.product = { id: product?.id } as ProductEntity;
         }
-
+        const globalVariableValues: Variable[] = this.setGlobalVariables(product as ProductEntity);
         const sequence = await SequenceRepository.getRepository().save(newData);
         if (sequenceTemplates?.length && sequenceTemplates?.length > 0) {
             await SequenceStepRepository.getRepository().insertIntoSequenceStep(sequence.id, emailTemplates);
         }
         if (templateVariables?.length && templateVariables?.length > 0) {
             await TemplateVariableRepository.getRepository().delete({ sequence: { id: sequence.id } });
-            await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(
-                sequence.id,
-                templateVariables as Variable[],
-            );
+            await TemplateVariableRepository.getRepository().insertIntoTemplateVariables(sequence.id, [
+                ...templateVariables,
+                ...globalVariableValues,
+            ] as Variable[]);
         }
         return sequence;
     }
@@ -337,5 +338,19 @@ export default class SequenceService {
         );
 
         return { ...result };
+    }
+
+    private setGlobalVariables(product: ProductEntity) {
+        const profile = RequestContext.getContext().profile;
+        const globalVariableValues: Variable[] = [
+            { name: 'marketingManagerName', value: profile?.firstName ?? '' },
+            { name: 'productDescription', value: product?.description ?? '' },
+            { name: 'productLink', value: product?.shopUrl ?? '' },
+            { name: 'productName', value: product?.name ?? '' },
+            { name: 'productPrice', value: product?.price ?? 0 },
+            { name: 'productPriceCurrency', value: product?.priceCurrency ?? '' },
+            { name: 'brandName', value: product?.brandName ?? '' },
+        ];
+        return globalVariableValues;
     }
 }

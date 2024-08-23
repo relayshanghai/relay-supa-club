@@ -12,6 +12,9 @@ import { ChevronDown } from 'src/components/icons';
 import { useTranslation } from 'react-i18next';
 import type { GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import { getOutreachStepsTranslationKeys } from 'app/v2/sequences/common/outreach-step';
+import { useOutreachTemplate } from 'src/hooks/use-outreach-template';
+import { useEffect } from 'react';
+import { type Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 
 export const EmailTemplateEditor = ({
     templateDetails,
@@ -21,6 +24,12 @@ export const EmailTemplateEditor = ({
     setTemplateDetails: (template: GetTemplateResponse) => void;
 }) => {
     const { t } = useTranslation();
+    const { selectionStep } = useOutreachTemplate();
+
+    useEffect(() => {
+        setTemplateDetails({ ...templateDetails, step: selectionStep as Step });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectionStep, templateDetails]);
 
     return (
         <Card className="flex h-full w-full flex-col justify-between gap-2 border-none shadow-none">

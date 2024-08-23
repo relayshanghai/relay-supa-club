@@ -4,6 +4,7 @@ import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initia
 import { ProductEntity } from './product-entity';
 import { Like, type FindManyOptions, type EntityTarget, type EntityManager } from 'typeorm';
 import type { Paginated, PaginationParam } from 'types/pagination';
+import type { GetProductResponse } from 'pages/api/products/response';
 
 @InjectInitializeDatabaseOnAllProps
 export default class ProductRepository extends BaseRepository<ProductEntity> {
@@ -31,7 +32,7 @@ export default class ProductRepository extends BaseRepository<ProductEntity> {
         { page, size }: PaginationParam,
         options: FindManyOptions<ProductEntity> = {},
         { name }: Partial<ProductEntity> = {},
-    ): Promise<Paginated<ProductEntity>> {
+    ): Promise<Paginated<GetProductResponse>> {
         options.where = {
             ...options.where,
             name: name ? Like(`%${name}%`) : undefined,
@@ -44,10 +45,18 @@ export default class ProductRepository extends BaseRepository<ProductEntity> {
             price: d.price ?? 0,
             shopUrl: d.shopUrl ?? '',
             currency: d.priceCurrency ?? '',
+            brandName: d.brandName ?? '',
             createdAt: new Date(d.createdAt),
             updatedAt: new Date(d.updatedAt),
         }));
         paginatedItems.items = items;
-        return paginatedItems;
+        const response: Paginated<GetProductResponse> = {
+            items,
+            page: paginatedItems.page,
+            size: paginatedItems.size,
+            totalPages: paginatedItems.totalPages,
+            totalSize: paginatedItems.totalSize,
+        }
+        return response;
     }
 }

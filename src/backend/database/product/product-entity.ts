@@ -38,6 +38,9 @@ export class ProductEntity {
     @Column({ name: 'name', type: 'character varying', default: '' })
     name!: string;
 
+    @Column({ name: 'brand_name', type: 'character varying', default: '' })
+    brandName!: string;
+
     @JoinColumn({ name: 'company_id' })
     @ManyToOne(() => CompanyEntity, (company) => company.products)
     company?: Relation<CompanyEntity>;

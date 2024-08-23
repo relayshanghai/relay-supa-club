@@ -10,6 +10,8 @@ const products = {
     addNewProduct: '添加新产品',
     productModal: {
         addProduct: '添加产品',
+        brandName: '品牌名称',
+        brandNamePlaceholder: '请输入品牌名称',
         productLinkDescription: '我们将您的产品与搜索和序列链接，以跟踪性能并帮助改进搜索结果。',
         productName: '产品名称',
         enterProductName: '输入产品名称',

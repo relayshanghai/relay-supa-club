@@ -18,7 +18,7 @@ type EmailTemplateModalProps = {
 
 export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
-    const { emailTemplates, getTemplates } = useOutreachTemplate();
+    const { emailTemplates, getTemplates,setSelectionStep } = useOutreachTemplate();
     useEffect(() => {
         if (modalOpen) {
             getTemplates();
@@ -73,6 +73,7 @@ export const EmailTemplateModal: FC<EmailTemplateModalProps> = ({ modalOpen, set
                                 key={`tab-${status}`}
                                 className="flex grow items-center gap-2 border-b-2 border-b-primary-200 py-2 font-normal"
                                 value={status}
+                                onClick={() => setSelectionStep(status)}
                             >
                                 <OutreachTabIcon status={status} />
                                 {t(`sequences.steps.${getOutreachStepsTranslationKeys(status)}`)}

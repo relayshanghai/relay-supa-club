@@ -10,6 +10,8 @@ const products = {
     addNewProduct: 'Add new product',
     productModal: {
         addProduct: 'Add a product',
+        brandName: 'Brand Name',
+        brandNamePlaceholder: 'Enter Brand Name',
         productLinkDescription:
             'We link your products to searches and sequences to track performance, and help improve search results.',
         productName: 'Product Name',
