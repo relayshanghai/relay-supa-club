@@ -26,8 +26,6 @@ import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { crmGuide } from 'src/guides/crm.guide';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
-import { Banner as BannerV2 } from 'app/components/banner';
-import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -41,7 +39,6 @@ export const SequencesPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
     const { profile } = useUser();
-    const { setDefaultPage } = useNewCRMPage();
 
     const { push } = useRouter();
 
@@ -96,14 +93,6 @@ export const SequencesPage = () => {
                     message={t('banner.outreach.descriptionSequences')}
                 />
             )}
-            <BannerV2
-                show={true}
-                buttonText={t('outreaches.oldBanner.button') ?? ''}
-                buttonLink="/v2/sequences"
-                title={t('outreaches.oldBanner.title')}
-                message={t('outreaches.oldBanner.description')}
-                onButtonClicked={() => setDefaultPage(`/v2/sequences`)}
-            />
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}
