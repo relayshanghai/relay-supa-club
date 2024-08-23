@@ -5,6 +5,7 @@ import { ThreadListFilter } from './filter/thread-list-filter';
 import { useThread } from 'src/hooks/v2/use-thread';
 import ThreadListContainer from './thread-list-container';
 import { debounce } from 'lodash';
+import { useInboxFilter } from 'src/store/reducers/inbox-filter';
 export default function ThreadList() {
     const {
         threads,
@@ -19,6 +20,7 @@ export default function ThreadList() {
         page,
         setPage,
     } = useThread();
+    const { setSequenceFilterLoading } = useInboxFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const triggerGetThread = useCallback(
         debounce((searchTerm, filter, page) => {
@@ -28,7 +30,7 @@ export default function ThreadList() {
                 ...filter,
                 page: page,
                 size: 30,
-            });
+            }).finally(() => setSequenceFilterLoading(false));
         }, 1),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
@@ -65,6 +67,7 @@ export default function ThreadList() {
                     onChangeFilter={(value) => {
                         setPage(1);
                         setFilters(value);
+                        setSequenceFilterLoading(true);
                     }}
                 />
             </section>

@@ -5,6 +5,7 @@ import emailTemplate from './email-template';
 import sequence from './sequence';
 import sequenceTemplate from './sequence-template';
 import sequenceInfluencer from './sequence-influencer';
+import inboxFilter from './inbox-filter';
 
 const rootReducer = combineReducers({
     product,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     sequence,
     sequenceTemplate,
     sequenceInfluencer,
+    inboxFilter,
 });
 
 export default rootReducer;
