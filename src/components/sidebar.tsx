@@ -11,7 +11,6 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
 import { NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
-import { useNewCRMPage } from 'src/hooks/use-new-pages';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <OldSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -21,7 +20,6 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/v2/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -79,7 +77,7 @@ const NavBarInner = ({
     const { t } = useTranslation();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
-    const { defaultPage } = useNewCRMPage();
+    const { defaultPage } = { defaultPage: '/sequences' };
 
     return (
         <>
