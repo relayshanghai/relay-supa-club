@@ -33,7 +33,7 @@ export const EmailTemplateModalStepOne: FC<ModalStepProps> = ({ setModalOpen, on
             getTemplateVariables();
         }
     }, [templateVariables.length]);
-    
+
     return (
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"

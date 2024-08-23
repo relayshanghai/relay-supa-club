@@ -16,6 +16,7 @@ describe('src/backend/database/product/product-repository.ts', () => {
                 mockedProducts = new Array(20).fill(null).map((d, i) => ({
                     id: `product_${i}`,
                     name: `product_name_${i}`,
+                    brandName: `brand_name_${i}`,
                     description: `product_description_${i}`,
                     price: 100,
                     shopUrl: `https://example${i}.com`,
@@ -49,6 +50,7 @@ describe('src/backend/database/product/product-repository.ts', () => {
                     items: mockedProducts.slice(0, 10).map((d) => ({
                         id: d.id,
                         name: d.name,
+                        brandName: d.brandName,
                         description: d.description,
                         price: d.price,
                         shopUrl: d.shopUrl,
@@ -96,6 +98,7 @@ describe('src/backend/database/product/product-repository.ts', () => {
                     items: [mockedProducts[0]].slice(0, 10).map((d) => ({
                         id: d.id,
                         name: d.name,
+                        brandName: d.brandName,
                         description: d.description,
                         price: d.price,
                         shopUrl: d.shopUrl,

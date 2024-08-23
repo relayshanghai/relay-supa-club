@@ -1,5 +1,6 @@
 export interface GetProductResponse {
     id: string;
+    brandName: string;
     name: string;
     price: number;
     currency: string;

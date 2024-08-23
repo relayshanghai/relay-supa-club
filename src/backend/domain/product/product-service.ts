@@ -21,7 +21,8 @@ export default class ProductService {
         product.description = request.description;
         product.price = request.price;
         product.shopUrl = request.shopUrl;
-        product.priceCurrency = request.currency;
+        product.priceCurrency = request.currency ? request.currency : 'USD';
+        product.brandName = request.brandName;
         product.company = {
             id: companyId,
         } as CompanyEntity;
@@ -42,9 +43,10 @@ export default class ProductService {
         if (!product) {
             throw new NotFoundError(`Product with id: ${id} does not exists`);
         }
-        const c = request.currency;
+        const c = request.currency ? request.currency : 'USD';
         const newProduct = {
             ...product,
+            brandName: request.brandName,
             name: request.name,
             description: request.description,
             price: request.price,
@@ -76,6 +78,7 @@ export default class ProductService {
         }
         return {
             id: product.id,
+            brandName: product.brandName || '',
             name: product.name || '',
             description: product.description || '',
             price: product.price || 0,

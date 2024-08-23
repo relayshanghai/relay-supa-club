@@ -21,6 +21,8 @@ export const useOutreachTemplate = () => {
         initialState: emailTemplateInitialState,
         setSaveExistingAsNew,
         saveExistingAsNew,
+        selectionStep,
+        setSelectionStep,
     } = useEmailTemplateStore();
     const { apiClient, loading, error } = useApiClient();
     const getTemplates = async () => {
@@ -75,5 +77,7 @@ export const useOutreachTemplate = () => {
         emailTemplateInitialState,
         setSaveExistingAsNew,
         saveExistingAsNew,
+        selectionStep,
+        setSelectionStep,
     };
 };

@@ -6,6 +6,7 @@ import { type GetProductRequest } from 'pages/api/products/request';
 import { useProductStore } from 'src/store/reducers/product';
 
 export type CreateProductPayload = {
+    brandName: string;
     name: string;
     description: string;
     price: number;

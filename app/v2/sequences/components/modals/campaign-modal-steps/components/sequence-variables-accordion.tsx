@@ -28,7 +28,9 @@ export const SequenceVariableAccordion: FC<SequenceVariableAccordionProps> = ({ 
     };
 
     const isEditable = (val: VariableWithValue) => {
-        return !GlobalTemplateVariables.map((d) => d.name).includes(val.name);
+        const currentVal = GlobalTemplateVariables.find((d) => d.name === val.name);
+        if (currentVal) return currentVal.editable;
+        else return true;
     };
 
     return (
