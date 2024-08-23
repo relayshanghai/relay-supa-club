@@ -2,31 +2,31 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 interface TemplateVariableProps {
-    sequenceFilterLoading: boolean;
+    filterLoading: boolean;
 }
 
 const initialState: TemplateVariableProps = {
-    sequenceFilterLoading: false,
+    filterLoading: false,
 };
 
 const pageSlice = createSlice({
     name: 'inbox-filter',
     initialState,
     reducers: {
-        setSequenceFilterLoading: (state, action: PayloadAction<boolean>) => {
-            state.sequenceFilterLoading = action.payload;
+        setFilterLoading: (state, action: PayloadAction<boolean>) => {
+            state.filterLoading = action.payload;
         },
     },
 });
 
-const { setSequenceFilterLoading } = pageSlice.actions;
+const { setFilterLoading } = pageSlice.actions;
 
 export const useInboxFilter = () => {
     const dispatch = useAppDispatch();
     const states = useAppSelector((state) => state.inboxFilter);
     return {
         ...states,
-        setSequenceFilterLoading: (loading: boolean) => dispatch(setSequenceFilterLoading(loading)),
+        setFilterLoading: (loading: boolean) => dispatch(setFilterLoading(loading)),
     };
 };
 

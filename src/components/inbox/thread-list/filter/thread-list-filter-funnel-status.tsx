@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { COLLAB_OPTIONS } from 'src/components/influencer/constants';
+import { useInboxFilter } from 'src/store/reducers/inbox-filter';
 
 export default function ThreadListFilterFunnelStatus({
     status,
@@ -12,6 +13,7 @@ export default function ThreadListFilterFunnelStatus({
     onChange: (status: FunnelStatusRequest[]) => void;
 }) {
     const { t } = useTranslation();
+    const { filterLoading } = useInboxFilter();
 
     const handleUpdateFunnelStatus = useCallback(
         (checkStatus: FunnelStatusRequest) => {
@@ -35,37 +37,41 @@ export default function ThreadListFilterFunnelStatus({
     return (
         <div className="flex flex-col gap-3 overflow-y-auto">
             <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.byCollabStatus')}</p>
-            {Object.keys(COLLAB_OPTIONS).map((option, index) => (
-                <div
-                    key={option}
-                    onClick={(e) => {
-                        if ((e.target as HTMLInputElement).type !== 'checkbox') {
-                            const checkbox = e.currentTarget.querySelector(
-                                'input[type="checkbox"]',
-                            ) as HTMLInputElement;
-                            checkbox && checkbox.click();
-                        }
-                    }}
-                >
-                    <label
-                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+            {filterLoading && <div>Loading...</div>}
+            {!filterLoading &&
+                Object.keys(COLLAB_OPTIONS).map((option, index) => (
+                    <div
+                        key={option}
+                        onClick={(e) => {
+                            if ((e.target as HTMLInputElement).type !== 'checkbox') {
+                                const checkbox = e.currentTarget.querySelector(
+                                    'input[type="checkbox"]',
+                                ) as HTMLInputElement;
+                                checkbox && checkbox.click();
+                            }
+                        }}
                     >
-                        <Checkbox
-                            className="border-gray-300"
-                            checked={status.includes(option as FunnelStatusRequest)}
-                            onCheckedChange={() => {
-                                handleUpdateFunnelStatus(option as FunnelStatusRequest);
-                            }}
-                        />
-                        <span
-                            className={`${COLLAB_OPTIONS[option].style} flex items-center gap-2 rounded px-2 py-1 text-sm`}
+                        <label
+                            className={`flex items-center gap-2 py-2 ${
+                                index % 2 === 0 ? 'bg-gray-50' : ''
+                            } cursor-pointer`}
                         >
-                            {COLLAB_OPTIONS[option].icon}
-                            {t(`manager.${option}`)}
-                        </span>
-                    </label>
-                </div>
-            ))}
+                            <Checkbox
+                                className="border-gray-300"
+                                checked={status.includes(option as FunnelStatusRequest)}
+                                onCheckedChange={() => {
+                                    handleUpdateFunnelStatus(option as FunnelStatusRequest);
+                                }}
+                            />
+                            <span
+                                className={`${COLLAB_OPTIONS[option].style} flex items-center gap-2 rounded px-2 py-1 text-sm`}
+                            >
+                                {COLLAB_OPTIONS[option].icon}
+                                {t(`manager.${option}`)}
+                            </span>
+                        </label>
+                    </div>
+                ))}
         </div>
     );
 }

@@ -20,7 +20,7 @@ export default function ThreadList() {
         page,
         setPage,
     } = useThread();
-    const { setSequenceFilterLoading } = useInboxFilter();
+    const { setFilterLoading } = useInboxFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const triggerGetThread = useCallback(
         debounce((searchTerm, filter, page) => {
@@ -30,7 +30,7 @@ export default function ThreadList() {
                 ...filter,
                 page: page,
                 size: 30,
-            }).finally(() => setSequenceFilterLoading(false));
+            }).finally(() => setFilterLoading(false));
         }, 1),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
@@ -67,7 +67,7 @@ export default function ThreadList() {
                     onChangeFilter={(value) => {
                         setPage(1);
                         setFilters(value);
-                        setSequenceFilterLoading(true);
+                        setFilterLoading(true);
                     }}
                 />
             </section>
