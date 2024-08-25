@@ -4,7 +4,7 @@ import OutreachEmailTemplateRepository from './sequence-email-template-repositor
 import { type OutreachEmailTemplateEntity, Step } from './sequence-email-template-entity';
 import awaitToError from 'src/utils/await-to-error';
 import { PreconditionError } from 'src/utils/error/http-error';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import { type Variable } from 'pages/api/v2/outreach/sequences/request';
 
 describe('src/backend/database/sequence-email-template/sequence-email-template-repository.ts', () => {
@@ -45,7 +45,7 @@ describe('src/backend/database/sequence-email-template/sequence-email-template-r
                 );
                 expect(findMock).toHaveBeenCalledWith({
                     where: {
-                        company: { id: 'company_1' },
+                        company: [{ id: 'company_1' }, { id: IsNull() }],
                         id: In(['template_1', 'template_2']),
                     },
                 });
@@ -74,7 +74,7 @@ describe('src/backend/database/sequence-email-template/sequence-email-template-r
                 );
                 expect(findMock).toHaveBeenCalledWith({
                     where: {
-                        company: { id: 'company_1' },
+                        company: [{ id: 'company_1' }, { id: IsNull() }],
                         id: In(['template_1', 'template_2']),
                     },
                 });
@@ -124,7 +124,7 @@ describe('src/backend/database/sequence-email-template/sequence-email-template-r
 
                 expect(findMock).toHaveBeenCalledWith({
                     where: {
-                        company: { id: 'company_1' },
+                        company: [{ id: 'company_1' }, { id: IsNull() }],
                         id: In(['template_1', 'template_2']),
                     },
                     relations: {
@@ -180,7 +180,7 @@ describe('src/backend/database/sequence-email-template/sequence-email-template-r
 
                 expect(findMock).toHaveBeenCalledWith({
                     where: {
-                        company: { id: 'company_1' },
+                        company: [{ id: 'company_1' }, { id: IsNull() }],
                         id: In(['template_1', 'template_2']),
                     },
                     relations: {
