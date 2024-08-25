@@ -2,7 +2,7 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import BaseRepository from '../provider/base-repository';
 import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initialize';
 import { OutreachEmailTemplateEntity } from './sequence-email-template-entity';
-import { In, type EntityManager, type EntityTarget } from 'typeorm';
+import { In, IsNull, type EntityManager, type EntityTarget } from 'typeorm';
 import type { SequenceTemplate, Variable } from 'pages/api/v2/outreach/sequences/request';
 import type { OutreachEmailTemplateVariableEntity } from './sequence-email-template-variable-entity';
 import { PreconditionError } from 'src/utils/error/http-error';
@@ -40,7 +40,7 @@ export default class OutreachEmailTemplateRepository extends BaseRepository<Outr
     ): Promise<OutreachEmailTemplateEntity[]> {
         const templates = await this.find({
             where: {
-                company: { id: companyId },
+                company: [{ id: companyId }, { id: IsNull() }],
                 id: In(sequenceTemplates.map((item) => item.id)),
             },
         });
@@ -49,14 +49,14 @@ export default class OutreachEmailTemplateRepository extends BaseRepository<Outr
         if (!isUnique) {
             throw new PreconditionError('sequence template step is not unique');
         }
-        return templates as OutreachEmailTemplateEntity[];
+        return templates;
     }
 
     async checkTemplateVariables(companyId: string, sequenceTemplates: SequenceTemplate[], variables: Variable[]) {
         // iterate sequenceTemplates and get the data from OutreachTemplateRepository.getRepository().get(companyId, id)
         const templates = await this.find({
             where: {
-                company: { id: companyId },
+                company: [{ id: companyId }, { id: IsNull() }],
                 id: In(sequenceTemplates.map((item) => item.id)),
             },
             relations: {

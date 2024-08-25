@@ -242,7 +242,7 @@ export default class SequenceService {
             .filter((d) => d.status === 'fulfilled')
             .map(
                 (d: PromiseFulfilledResult<SequenceInfluencerEntity> | PromiseRejectedResult) =>
-                    (d as PromiseFulfilledResult<SequenceInfluencerEntity>).value as SequenceInfluencerEntity,
+                    (d as PromiseFulfilledResult<SequenceInfluencerEntity>).value,
             );
 
         const jobPayloads: SequenceStepSendArgs[] = [];
