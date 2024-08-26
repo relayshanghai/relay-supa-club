@@ -15,7 +15,6 @@ import { zhCN } from 'src/constants';
 import i18n from 'i18n/index';
 import { getAuthMetadata } from './decorators/api-auth-decorator';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
-import BalanceService from 'src/backend/domain/balance/balance-service';
 
 export const createHandler = (target: new () => any) => {
     const instance = new target();
@@ -62,9 +61,6 @@ export const createHandler = (target: new () => any) => {
                         serverLogger('Cannot get profile from session', (scope) => {
                             return scope.setContext('User', context);
                         });
-                    }
-                    if (row?.company) {
-                        await BalanceService.getService().initBalance(row.company.id);
                     }
                 }
                 const data = await instance[handlerStr].apply(this, [req, res]);
