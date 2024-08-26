@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from 'shadcn/components/ui/checkbox';
 import { useDropdownSequence } from 'src/hooks/v2/use-sequences';
+import { useInboxFilter } from 'src/store/reducers/inbox-filter';
 
 export default function ThreadListFilterSequence({
     selectedSequenceIds,
@@ -11,6 +12,7 @@ export default function ThreadListFilterSequence({
     onChange: (ids: string[]) => void;
 }) {
     const { t } = useTranslation();
+    const { filterLoading } = useInboxFilter();
     const { sequences, loading } = useDropdownSequence();
     const handleUpdateFunnelStatus = useCallback(
         (checkSequence: string) => {
@@ -34,35 +36,40 @@ export default function ThreadListFilterSequence({
     return (
         <div className="flex flex-col gap-2">
             <p className="pb-2 text-xs font-medium text-gray-400">{t('inbox.filters.bySequence')}</p>
-            {loading && <div>Loading...</div>}
-            {sequences.map((sequence, index) => (
-                <div
-                    key={sequence.id}
-                    onClick={(e) => {
-                        if ((e.target as HTMLInputElement).type !== 'checkbox') {
-                            const checkbox = e.currentTarget.querySelector(
-                                'input[type="checkbox"]',
-                            ) as HTMLInputElement;
-                            checkbox && checkbox.click();
-                        }
-                    }}
-                >
-                    <label
-                        className={`flex items-center gap-2 py-2 ${index % 2 === 0 ? 'bg-gray-50' : ''} cursor-pointer`}
+            {loading || filterLoading ? (
+                <div>Loading...</div>
+            ) : (
+                sequences.map((sequence, index) => (
+                    <div
+                        key={sequence.id}
+                        onClick={(e) => {
+                            if ((e.target as HTMLInputElement).type !== 'checkbox') {
+                                const checkbox = e.currentTarget.querySelector(
+                                    'input[type="checkbox"]',
+                                ) as HTMLInputElement;
+                                checkbox && checkbox.click();
+                            }
+                        }}
                     >
-                        <Checkbox
-                            className="border-gray-300"
-                            checked={selectedSequenceIds.some(
-                                (selectedSequenceId) => selectedSequenceId === sequence.id,
-                            )}
-                            onCheckedChange={() => {
-                                handleUpdateFunnelStatus(sequence.id);
-                            }}
-                        />
-                        <span className="flex items-center gap-2 rounded px-2 py-1 text-sm">{sequence.name}</span>
-                    </label>
-                </div>
-            ))}
+                        <label
+                            className={`flex items-center gap-2 py-2 ${
+                                index % 2 === 0 ? 'bg-gray-50' : ''
+                            } cursor-pointer`}
+                        >
+                            <Checkbox
+                                className="border-gray-300"
+                                checked={selectedSequenceIds.some(
+                                    (selectedSequenceId) => selectedSequenceId === sequence.id,
+                                )}
+                                onCheckedChange={() => {
+                                    handleUpdateFunnelStatus(sequence.id);
+                                }}
+                            />
+                            <span className="flex items-center gap-2 rounded px-2 py-1 text-sm">{sequence.name}</span>
+                        </label>
+                    </div>
+                ))
+            )}
         </div>
     );
 }

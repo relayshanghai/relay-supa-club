@@ -83,7 +83,10 @@ export default class ThreadRepository extends BaseRepository<ThreadEntity> {
         where.sequenceInfluencer = whereSequenceInfluencer;
         const data = await this.getPaginated(param, {
             where,
-            relations,
+            relations: {
+                sequenceInfluencer: true,
+                ...relations,
+            },
             order: {
                 lastReplyDate: { direction: 'DESC', nulls: 'LAST' },
             },
