@@ -32,15 +32,18 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
     @UseLogger()
     async deduct(companyId: string, type: BalanceType, amount: number) {
         await this.manager.transaction(async (manager) => {
-            const balance = await manager.query(
-                `select amount from balances where company_id = $1 and balance_type = $2`,
-                [companyId, type],
-            );
-            if (!balance || balance?.length === 0) {
-                throw new NotFoundError('Balance not found');
-            }
-            if (balance[0]?.amount < amount) {
-                throw new UnprocessableEntityError('insuficentbalance');
+            // dont check balance if the deduction bellow zero
+            if (amount > 0) {
+                const balance = await manager.query(
+                    `select amount from balances where company_id = $1 and balance_type = $2`,
+                    [companyId, type],
+                );
+                if (!balance || balance?.length === 0) {
+                    throw new NotFoundError('Balance not found');
+                }
+                if (balance[0]?.amount < amount) {
+                    throw new UnprocessableEntityError('insuficentbalance');
+                }
             }
             await manager.query(
                 `
