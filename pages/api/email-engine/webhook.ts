@@ -58,6 +58,7 @@ import { isString } from 'src/utils/types';
 import type { SequenceEmailUpdate } from 'src/backend/database/sequence-emails';
 import { updateSequenceEmailCall } from 'src/backend/database/sequence-emails';
 import { insertAddressCall } from 'src/backend/database/addresses';
+import awaitToError from 'src/utils/await-to-error';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -210,6 +211,18 @@ const scheduleOutreachEmailRetry = async ({
     return job;
 };
 
+const catchBouncedReplies = async (event: WebhookMessageNew) => {
+    /**
+     * If the subject of the email contains "Delivery Status Notification", it is a bounce email.
+     */
+    const subject = event.data.subject?.toLowerCase();
+    if (subject.includes('Delivery Status Notification'.toLowerCase())) {
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        const update: SequenceEmailUpdate = [sequenceEmail.id, { email_delivery_status: 'Bounced' }];
+        await updateSequenceEmailCall(...update);
+    }
+};
+
 export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     const { id, influencer_social_profile_id, real_full_name, name, username, address_id } = sequenceInfluencer;
 
@@ -250,6 +263,8 @@ export const handleReply = async (sequenceInfluencer: SequenceInfluencer, event:
                 );
             }
         }
+
+        await awaitToError(catchBouncedReplies(event));
 
         const influencerUpdate: SequenceInfluencerUpdate = { id, funnel_status: 'Negotiating' };
 
