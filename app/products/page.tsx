@@ -32,10 +32,15 @@ const ProductsPageComponent = () => {
     }, [productParam.page]);
 
     const handleDeleteProduct = async () => {
-        const promises = selection.map((id) => deleteProduct(id));
+        const promises = selection.map((id) =>
+            deleteProduct(id).catch((err) => {
+                throw err.response.data.message;
+            }),
+        );
         const res = await Promise.allSettled(promises);
-        const message = `Success to delete ${res.filter((r) => r.status === 'fulfilled').length} products`;
-        toast.success(message);
+        const totalCreatedProduct = res.filter((r) => r.status === 'fulfilled').length;
+        toast.success(`Success to delete ${totalCreatedProduct} products`);
+        res.filter((r) => r.status === 'rejected').map((r) => toast.error(r.reason));
         setSelection([]);
         getProducts({ page: productParam.page });
     };

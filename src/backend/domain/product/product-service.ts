@@ -6,7 +6,7 @@ import ProductRepository from 'src/backend/database/product/product-repository';
 import { ProductEntity } from 'src/backend/database/product/product-entity';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type Paginated } from 'types/pagination';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 
 export default class ProductService {
     public static readonly service: ProductService = new ProductService();
@@ -112,12 +112,22 @@ export default class ProductService {
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
         const companyId = RequestContext.getContext().companyId as string;
-        const product = await ProductRepository.getRepository().findOneBy({
-            id,
-            company: {
-                id: companyId,
+        const product = await ProductRepository.getRepository().findOne({
+            where: {
+                id,
+                company: {
+                    id: companyId,
+                },
+            },
+            relations: {
+                sequence: true,
             },
         });
+        if (product?.sequence) {
+            throw new BadRequestError(
+                `Cannot delete a product that is associated with "${product.sequence.name}" sequence`,
+            );
+        }
         if (!product) {
             throw new NotFoundError(`Product with id: ${id} does not exists`);
         }
