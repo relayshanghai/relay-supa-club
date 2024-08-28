@@ -16,7 +16,7 @@ export const decimalToPercent = (num?: number | string, decimals = 2) => {
         style: 'percent',
         maximumFractionDigits: decimals,
     }).format(number);
-    if (number < 0.01) {
+    if (number < 0.01 && number > 0) {
         // if less than 1% return < 1%
         return `< 1%`;
     }
