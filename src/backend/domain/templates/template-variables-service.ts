@@ -56,7 +56,7 @@ export default class TemplateVariablesService {
         });
     }
 
-    private async checkVariableExist(name: string) {
+    async checkVariableExist(name: string) {
         const companyId = RequestContext.getContext().companyId as string;
         const isGlobalVariable = !!GlobalTemplateVariables.find((variable) => variable.name === name);
         const [err] = await awaitToError(
@@ -68,7 +68,7 @@ export default class TemplateVariablesService {
             }),
         );
         if (!err || isGlobalVariable) {
-            throw new ConflictError('Variable already exists');
+            throw new ConflictError('Variable already exists, please use another name');
         }
     }
 }
