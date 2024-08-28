@@ -83,7 +83,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                         <ChevronDown className="h-4 w-4 text-black" />
                                                     </section>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent className="w-[210px]">
+                                                <DropdownMenuContent className="flex !w-full">
                                                     {products?.items.map((d) => (
                                                         <DropdownMenuItem
                                                             key={d.id}
@@ -93,7 +93,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                                     product: d,
                                                                 } as SequenceEntity);
                                                             }}
-                                                            className="flex w-full"
+                                                            className="flex !w-full"
                                                         >
                                                             {d.name}
                                                         </DropdownMenuItem>
@@ -102,7 +102,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                         onSelect={() => {
                                                             setModalOpen(true);
                                                         }}
-                                                        className="flex w-full cursor-pointer focus:bg-white"
+                                                        className="flex !w-full cursor-pointer focus:bg-white"
                                                     >
                                                         <div className="inline-flex space-x-2 text-gray-400">
                                                             <Plus className="h-4 w-4" strokeWidth={2} />
@@ -111,14 +111,6 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
-                                        </div>
-                                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-end gap-1">
-                                            <div className="inline-flex items-start justify-start gap-1">
-                                                <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-500">
-                                                    {t('outreaches.autoStart')}
-                                                </div>
-                                                <div className="relative h-3 w-3" />
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

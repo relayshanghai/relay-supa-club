@@ -4,7 +4,7 @@ import EmailEngineService from 'src/backend/integration/email-engine/email-engin
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 import type { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import awaitToError from 'src/utils/await-to-error';
@@ -144,7 +144,7 @@ export default class TemplateService {
     async delete(id: string): Promise<void> {
         const template = await this.getOne(id);
         if (template.sequenceStep) {
-            throw new Error('Cannot delete template that is used in sequence');
+            throw new BadRequestError('Cannot delete template that is used in sequence');
         }
         await OutreachEmailTemplateRepository.getRepository().delete({ id });
         await EmailEngineService.getService().deleteTemplate(template.emailEngineTemplateId as string);
