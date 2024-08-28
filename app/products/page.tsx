@@ -40,7 +40,7 @@ const ProductsPageComponent = () => {
         const res = await Promise.allSettled(promises);
         const totalCreatedProduct = res.filter((r) => r.status === 'fulfilled').length;
         toast.success(`Success to delete ${totalCreatedProduct} products`);
-        res.filter((r) => r.status === 'rejected').map((r) => toast.error(r.reason));
+        res.filter((r) => r.status === 'rejected').map((r) => toast.error((r as PromiseRejectedResult).reason));
         setSelection([]);
         getProducts({ page: productParam.page });
     };
