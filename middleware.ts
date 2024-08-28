@@ -14,7 +14,14 @@ const pricingAllowList = ['en-relay-club.vercel.app', 'relay.club', 'boostbot.ai
 
 const BANNED_USERS: string[] = [];
 
-type SubscriptionStatus = 'active' | 'trial' | 'trialing' | 'canceled' | 'paused' | 'awaiting_payment_method';
+type SubscriptionStatus =
+    | 'active'
+    | 'trial'
+    | 'trialing'
+    | 'canceled'
+    | 'paused'
+    | 'awaiting_payment_method'
+    | 'past_due';
 
 /**
  *
@@ -77,7 +84,8 @@ const checkOnboardingStatus = async (
         subscriptionStatus === 'trial' ||
         subscriptionStatus === 'trialing' ||
         subscriptionStatus === 'canceled' ||
-        subscriptionStatus === 'paused'
+        subscriptionStatus === 'paused' ||
+        subscriptionStatus === 'past_due'
     ) {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
