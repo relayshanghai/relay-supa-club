@@ -11,6 +11,7 @@ import OtpInput from '../otp-input';
 import Link from 'next/link';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import awaitToError from 'src/utils/await-to-error';
+import { clientLogger } from 'src/utils/logger-client';
 
 const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY as string;
 
@@ -57,10 +58,19 @@ export const StepOne = ({
             }) as Promise<ExecuteResponse>,
         );
         if (err) return;
-        await sendOtp(phoneNumber, data?.response);
+        const [errSendOtp] = await awaitToError(sendOtp(phoneNumber, data?.response));
+        if (errSendOtp) {
+            clientLogger(errSendOtp, 'error');
+            captchaRef.current?.resetCaptcha();
+            return;
+        }
     };
     const triggerVerify = async () => {
-        const verified = await verify(code);
+        const [err, verified] = await awaitToError(verify(code));
+        if (err) {
+            captchaRef.current?.resetCaptcha();
+            return;
+        }
         if (verified) {
             onNext();
         }
