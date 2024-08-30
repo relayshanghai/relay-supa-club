@@ -680,6 +680,11 @@ export default class SubscriptionV2Service {
                 }
                 return acc;
             }, {});
+            // check if grouped prices are empty
+            if (Object.keys(grouped).length === 0) {
+                delete prices[key as keyof typeof prices];
+                continue;
+            }
             prices[key as keyof typeof prices] = grouped;
         }
 

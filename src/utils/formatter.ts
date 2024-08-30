@@ -12,10 +12,15 @@ export const decimalToPercent = (num?: number | string, decimals = 2) => {
     if (!number || typeof number !== 'number') {
         return null;
     }
-    return Intl.NumberFormat(enUS, {
+    const percentageString = Intl.NumberFormat(enUS, {
         style: 'percent',
         maximumFractionDigits: decimals,
     }).format(number);
+    if (number < 0.01 && number > 0) {
+        // if less than 1% return < 1%
+        return `< 1%`;
+    }
+    return percentageString;
 };
 
 /**
