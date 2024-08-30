@@ -47,9 +47,10 @@ const disableButton = (
         return true;
     }
 
-    // cannot downgrade from outreach to discovery
+    // cannot downgrade from outreach to discovery (before aug 30)
+    // now it can downgrade
     if (tier.toUpperCase() === 'DISCOVERY' && product.name === 'Outreach' && subscription.status === 'ACTIVE') {
-        return true;
+        return false;
     }
 
     if (isCurrentPlan(tier, period, subscription, product)) {
@@ -227,8 +228,8 @@ export const PriceCard = ({
         return (
             <>
                 <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">
-                    {price.originalPrices[period]
-                        ? currencyFormatWithComma(parseInt(price.originalPrices[period] ?? '0')) + ' ' + periodText()
+                    {price.originalPrices?.[period]
+                        ? currencyFormatWithComma(parseInt(price.originalPrices?.[period] ?? '0')) + ' ' + periodText()
                         : ''}
                 </h3>
                 <h1 className="mb-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
