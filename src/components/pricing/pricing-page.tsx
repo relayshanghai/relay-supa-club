@@ -43,7 +43,9 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { subscription } = useSubscription();
     const [paymentPeriod, setPaymentPeriod] = useLocalStoragePaymentPeriod();
 
-    const options: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
+    const options: ActiveSubscriptionTier[] = Object.keys(prices ?? {}).filter(
+        (d) => d !== 'addPayment',
+    ) as ActiveSubscriptionTier[];
 
     const handleStartFreeTrialClicked = () => {
         trackEvent(LANDING_PAGE('clicked on start free trial'));

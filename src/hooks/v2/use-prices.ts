@@ -34,10 +34,7 @@ export type Prices = {
     [key in ActiveSubscriptionTier]: RelayPlanWithAnnual;
 };
 export type AnnualPricesGetResponse = {
-    discovery: {
-        [key: string]: RelayPlanWithAnnual;
-    };
-    outreach: {
+    [key in ActiveSubscriptionTier]: {
         [key: string]: RelayPlanWithAnnual;
     };
 };
@@ -90,9 +87,13 @@ export const usePricesV2 = (currency: string) => {
             const data = await nextFetch<AnnualPricesGetResponse>('/v2/subscriptions/prices');
             // alipay only accepts cny subscription in our region, so return only cny prices for now. Stripe auto covert other payment with exchange rate.
             // If the charge currency differs from the customer's credit card currency, the customer may be charged a foreign exchange fee by their credit card company.
+            const plans = Object.keys(data);
+            const pricesPlans = plans.reduce((acc, plan) => {
+                acc[plan as keyof typeof prices] = data[plan as keyof typeof prices]?.[currency];
+                return acc;
+            }, {} as Prices);
             const prices = {
-                discovery: data.discovery[currency],
-                outreach: data.outreach[currency],
+                ...pricesPlans,
                 addPayment: {
                     currency: currency,
                     prices: { monthly: '0' },
