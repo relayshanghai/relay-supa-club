@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
-import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
+import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -20,7 +20,6 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/outreach': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
