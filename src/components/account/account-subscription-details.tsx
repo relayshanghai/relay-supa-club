@@ -241,10 +241,23 @@ export const SubscriptionDetails = () => {
         trackEvent(ACCOUNT_SUBSCRIPTION('open cancel subscription modal'));
     };
 
+    const getPeriods = () => {
+        if (subscription?.status === SubscriptionStatus.TRIAL) {
+            return {
+                periodStart: company?.subscription_current_period_start,
+                periodEnd: company?.subscription_current_period_end,
+            };
+        }
+        return {
+            periodStart: subscription?.activeAt,
+            periodEnd: subscription?.pausedAt,
+        };
+    };
+
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
-    const periodStart = subscription?.activeAt;
-    const periodEnd = subscription?.pausedAt;
+    const periodStart = getPeriods().periodStart;
+    const periodEnd = getPeriods().periodEnd;
 
     const { usages, refreshUsages } = useUsages(
         true,
