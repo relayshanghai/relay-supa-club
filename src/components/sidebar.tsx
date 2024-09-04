@@ -8,8 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
-import { NavigateToPage } from 'src/utils/analytics/events';
+import { OpenAccountModal, ToggleNavbarSize, NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
@@ -96,11 +95,6 @@ const NavBarInner = ({
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={defaultPage} expandedName={t('navbar.sequences')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
-                        </ActiveLink>
-                    )}
-                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
-                        <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
-                            <p className={`whitespace-nowrap text-xs`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (

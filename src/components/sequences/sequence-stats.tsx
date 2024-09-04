@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { StatCardProps } from './stat-card';
 import { StatCard } from './stat-card';
-import { EmailOpenOutline, MessageDotsCircleOutline, MessageXCircleOutline, TeamOutline } from '../icons';
-import { decimalToPercent } from 'src/utils/formatter';
-import AlertOrCheckIcon from './alerticons';
+import { TeamOutline } from '../icons';
 export interface SequenceStatsProps {
     totalInfluencers: number;
     /** percentage in decimal from 0 to 1 (.10 = 10%) */
@@ -26,7 +24,7 @@ export const markAlertForLowStatRate = (rate: number, rateType: string) => {
     return alertType;
 };
 
-export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRate }: SequenceStatsProps) => {
+export const SequenceStats = ({ totalInfluencers }: SequenceStatsProps) => {
     const { t } = useTranslation();
     const stats: StatCardProps[] = [
         {
@@ -37,37 +35,6 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             },
             value: totalInfluencers.toString(),
             largeIcon: <TeamOutline />,
-        },
-        {
-            name: t('sequences.openRate'),
-            tooltip: {
-                title: t('sequences.openRateTooltip'),
-                content: t('sequences.openRateTooltipDescription'),
-            },
-            value: decimalToPercent(openRate, 0) ?? '0%',
-            largeIcon: <EmailOpenOutline />,
-            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(openRate, 'openRate')} />,
-        },
-        {
-            name: t('sequences.replyRate'),
-            tooltip: {
-                title: t('sequences.replyRateTooltip'),
-                content: t('sequences.replyRateTooltipDescription'),
-            },
-            value: decimalToPercent(replyRate, 0) ?? '0%',
-            largeIcon: <MessageDotsCircleOutline />,
-            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(replyRate, 'replyRate')} />,
-        },
-        {
-            name: t('sequences.bounceRate'),
-            tooltip: {
-                title: t('sequences.bounceRateTooltip'),
-                content: t('sequences.bounceRateTooltipDescription'),
-                position: 'bottom-left',
-            },
-            value: decimalToPercent(bounceRate, 0) ?? '0%',
-            largeIcon: <MessageXCircleOutline />,
-            smallIcon: <AlertOrCheckIcon status={markAlertForLowStatRate(bounceRate, 'bounceRate')} />,
         },
     ];
     return (
