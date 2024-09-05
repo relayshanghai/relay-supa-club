@@ -42,7 +42,7 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
             if (balance[0]?.amount < amount) {
                 throw new UnprocessableEntityError('insuficentbalance');
             }
-            await this.query(
+            await manager.query(
                 `
                 UPDATE balances SET amount = amount - $1
                 WHERE company_id = $2 AND balance_type = $3`,

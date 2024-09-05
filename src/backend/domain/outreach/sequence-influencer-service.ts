@@ -15,6 +15,10 @@ import type { InfluencerSocialProfileEntity } from 'src/backend/database/influen
 import { type DeleteInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/delete/request';
 import SequenceEmailRepository from 'src/backend/database/sequence/sequence-email-repository';
 import JobRepository from 'src/backend/database/job/job-repository';
+import BalanceService from '../balance/balance-service';
+import { UsageRepository } from 'src/backend/database/usages/repository';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import { UsageEntity } from 'src/backend/database/usages/entity';
 
 export default class SequenceInfluencerService {
     static service = new SequenceInfluencerService();
@@ -111,7 +115,7 @@ export default class SequenceInfluencerService {
             },
         });
         // check balance before adding influencer to sequence
-        // BalanceService.getService().checkBalance(BalanceType.PROFILE, request.length);
+        await BalanceService.getService().checkBalance(BalanceType.PROFILE, request.length);
 
         const toInsert = request.map((r) => {
             const existed = existedInfluencers.find((e) => e.iqdataId === r.iqdataId);
@@ -137,17 +141,19 @@ export default class SequenceInfluencerService {
         });
         const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
         // deduct balance in adding influencer to sequence
-        // await Promise.all([
-        //     BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, request.length),
-        //     UsageRepository.getRepository().insert(request.map(r => {
-        //         const entity = new UsageEntity();
-        //         entity.company = profile?.company;
-        //         entity.type = BalanceType.PROFILE;
-        //         entity.itemId = r.iqdataId;
-        //         entity.profile = profile;
-        //         return entity
-        //     }))
-        // ])
+        await Promise.all([
+            BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, request.length),
+            UsageRepository.getRepository().insert(
+                request.map((r) => {
+                    const entity = new UsageEntity();
+                    entity.company = profile?.company;
+                    entity.type = BalanceType.PROFILE;
+                    entity.itemId = r.iqdataId;
+                    entity.profile = profile;
+                    return entity;
+                }),
+            ),
+        ]);
         return entities;
     }
     @CompanyIdRequired()
