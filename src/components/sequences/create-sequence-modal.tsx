@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
@@ -15,10 +15,12 @@ export const CreateSequenceModal = ({
     title,
     showCreateSequenceModal,
     setShowCreateSequenceModal,
+    selectedSequenceName,
 }: {
     title: string;
     showCreateSequenceModal: boolean;
     setShowCreateSequenceModal: (showCreateSequenceModal: boolean) => void;
+    selectedSequenceName?: string;
 }) => {
     const { t } = useTranslation();
     const { createSequence } = useSequence();
@@ -28,6 +30,10 @@ export const CreateSequenceModal = ({
 
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
+
+    useEffect(() => {
+        setSequenceName(selectedSequenceName || '');
+    }, [showCreateSequenceModal, selectedSequenceName]);
 
     const handleCreateSequence = async () => {
         setLoading(true);
@@ -86,6 +92,7 @@ export const CreateSequenceModal = ({
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         placeholder={t('sequences.sequenceNamePlaceholder') as string}
                         onChange={(e) => setSequenceName(e.target.value.trim())}
+                        value={sequenceName}
                     />
                 </div>
                 <div className="flex justify-end space-x-3 pt-6">

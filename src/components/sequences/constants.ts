@@ -22,7 +22,7 @@ export const sequenceColumns = (currentTab: SequenceInfluencer['funnel_status'])
         : [];
 
 export type SequenceIndexColumn = keyof (typeof sequences)['indexColumns'];
-export const sequencesIndexColumns: SequenceIndexColumn[] = ['sequence', 'influencers', 'manager'];
+export const sequencesIndexColumns: SequenceIndexColumn[] = ['sequence', 'influencers', 'manager', 'sequenceActions'];
 
 export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Ignored';
 
