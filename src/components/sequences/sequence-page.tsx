@@ -423,13 +423,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     return (
         <Layout>
-            {!profile?.email_engine_account_id && !showSlowBanner && (
-                <Banner
-                    buttonText={t('banner.button') ?? ''}
-                    title={t('banner.outreach.title')}
-                    message={t('banner.outreach.descriptionSequences')}
-                />
-            )}
             <Banner
                 title={t('banner.sequencePageSlow.title')}
                 show={showSlowBanner}
