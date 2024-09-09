@@ -26,7 +26,6 @@ export const SequencesTableRow = ({
         onCheckboxChange(sequence.id);
     };
     const [showSequenceModal, setShowSequenceModal] = useState<boolean>(false);
-    const [sequenceName, setSequenceName] = useState('');
 
     const influencer = useMemo(
         () =>
@@ -45,7 +44,7 @@ export const SequencesTableRow = ({
                 title={t('sequences.sequenceModalEdit') as string}
                 showCreateSequenceModal={showSequenceModal}
                 setShowCreateSequenceModal={setShowSequenceModal}
-                selectedSequenceName={sequenceName}
+                selectedSequence={sequence}
             />
             <tr className="border-b-2 border-gray-200 bg-white">
                 <td className="display-none items-center whitespace-nowrap text-center align-middle">
@@ -76,7 +75,6 @@ export const SequencesTableRow = ({
                         className="flex flex-row gap-2"
                         variant="ghost"
                         onClick={() => {
-                            setSequenceName(sequence.name);
                             setShowSequenceModal(true);
                         }}
                     >

@@ -10,20 +10,21 @@ import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { Modal } from '../modal';
+import { type Sequence } from 'src/utils/api/db';
 
 export const CreateSequenceModal = ({
     title,
     showCreateSequenceModal,
     setShowCreateSequenceModal,
-    selectedSequenceName,
+    selectedSequence,
 }: {
     title: string;
     showCreateSequenceModal: boolean;
     setShowCreateSequenceModal: (showCreateSequenceModal: boolean) => void;
-    selectedSequenceName?: string;
+    selectedSequence?: Partial<Sequence>;
 }) => {
     const { t } = useTranslation();
-    const { createSequence } = useSequence();
+    const { createSequence, updateSequence } = useSequence();
     const { createDefaultSequenceSteps } = useSequenceSteps();
     const { createDefaultTemplateVariables } = useTemplateVariables();
     const { track } = useRudderstackTrack();
@@ -32,8 +33,8 @@ export const CreateSequenceModal = ({
     const [sequenceName, setSequenceName] = useState<string>('');
 
     useEffect(() => {
-        setSequenceName(selectedSequenceName || '');
-    }, [showCreateSequenceModal, selectedSequenceName]);
+        setSequenceName(selectedSequence?.name || '');
+    }, [showCreateSequenceModal, selectedSequence?.name]);
 
     const handleCreateSequence = async () => {
         setLoading(true);
@@ -76,6 +77,55 @@ export const CreateSequenceModal = ({
             setShowCreateSequenceModal(false);
         }
     };
+    const handleUpdateSequence = async () => {
+        setLoading(true);
+        try {
+            if (sequenceName === '') return;
+
+            const data = await updateSequence({ id: selectedSequence?.id as string, name: sequenceName });
+
+            if (!data) {
+                track(CreateSequence, {
+                    sequence_id: null,
+                    sequence_name: sequenceName,
+                    is_success: false,
+                    extra_info: { error: 'Failed to get sequence' },
+                });
+                throw new Error('Failed to get sequence id');
+            }
+
+            track(CreateSequence, {
+                sequence_id: data.id,
+                sequence_name: sequenceName,
+                is_success: true,
+            });
+
+            await createDefaultSequenceSteps(data.id);
+            await createDefaultTemplateVariables(data.id);
+            toast.success(t('sequences.createSequenceSuccess'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.createSequenceError'));
+
+            track(CreateSequence, {
+                sequence_id: null,
+                sequence_name: sequenceName,
+                is_success: false,
+                extra_info: { error: String(error) },
+            });
+        } finally {
+            setLoading(false);
+            setShowCreateSequenceModal(false);
+        }
+    };
+
+    const submitHandler = async () => {
+        if (!selectedSequence?.id) {
+            await handleCreateSequence();
+        } else {
+            await handleUpdateSequence();
+        }
+    };
 
     return (
         <Modal title={title} visible={showCreateSequenceModal} onClose={() => setShowCreateSequenceModal(false)}>
@@ -91,7 +141,7 @@ export const CreateSequenceModal = ({
                         required
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         placeholder={t('sequences.sequenceNamePlaceholder') as string}
-                        onChange={(e) => setSequenceName(e.target.value.trim())}
+                        onChange={(e) => setSequenceName(e.target.value)}
                         value={sequenceName}
                     />
                 </div>
@@ -104,7 +154,7 @@ export const CreateSequenceModal = ({
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                         </Button>
                     ) : (
-                        <Button onClick={handleCreateSequence} type="submit">
+                        <Button onClick={submitHandler} type="submit">
                             {t('sequences.createNewSequence')}
                         </Button>
                     )}
