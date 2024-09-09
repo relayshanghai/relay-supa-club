@@ -69,6 +69,7 @@ const sequences = {
         sequenceActions: '项目操作',
     },
     sequenceModal: '创建新序列',
+    sequenceModalEdit: '编辑现有序列',
     sequenceInfo: '序列信息',
     sequenceName: '序列名称',
     product: '产品详情',

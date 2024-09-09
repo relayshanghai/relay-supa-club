@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { Sequence, SequenceStep } from 'src/utils/api/db';
-import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import type { Sequence } from 'src/utils/api/db';
 import { useMemo, useState } from 'react';
-import { EmailPreviewModal } from './email-preview-modal';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
+import { Button } from '../button';
+import { Edit } from '../icons';
+import { CreateSequenceModal } from './create-sequence-modal';
+import { useTranslation } from 'react-i18next';
 
 export const SequencesTableRow = ({
     sequence,
@@ -16,14 +18,14 @@ export const SequencesTableRow = ({
     onCheckboxChange: (id: string) => void;
     checked: boolean;
 }) => {
-    const { templateVariables } = useTemplateVariables(sequence.id);
+    const { t } = useTranslation();
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const { track } = useRudderstackTrack();
 
     const handleChange = () => {
         onCheckboxChange(sequence.id);
     };
-    const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
+    const [showSequenceModal, setShowSequenceModal] = useState<boolean>(false);
 
     const influencer = useMemo(
         () =>
@@ -38,11 +40,11 @@ export const SequencesTableRow = ({
 
     return (
         <>
-            <EmailPreviewModal
-                visible={!!showEmailPreview}
-                onClose={() => setShowEmailPreview(null)}
-                sequenceSteps={showEmailPreview || []}
-                templateVariables={templateVariables ?? []}
+            <CreateSequenceModal
+                title={t('sequences.sequenceModalEdit') as string}
+                showCreateSequenceModal={showSequenceModal}
+                setShowCreateSequenceModal={setShowSequenceModal}
+                selectedSequence={sequence}
             />
             <tr className="border-b-2 border-gray-200 bg-white">
                 <td className="display-none items-center whitespace-nowrap text-center align-middle">
@@ -68,6 +70,17 @@ export const SequencesTableRow = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{influencer?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_first_name}</td>
+                <td className="flex items-center gap-2 whitespace-nowrap px-6 py-3 text-gray-700">
+                    <Button
+                        className="flex flex-row gap-2"
+                        variant="ghost"
+                        onClick={() => {
+                            setShowSequenceModal(true);
+                        }}
+                    >
+                        <Edit className="h-4 w-4 stroke-white" />
+                    </Button>
+                </td>
             </tr>
         </>
     );
