@@ -36,7 +36,7 @@ export default class TemplateVariableRepository extends BaseRepository<TemplateV
                     sequence: { id: sequenceId },
                     name: item.name,
                     key: item.name,
-                    value: item.value,
+                    value: item.value + '',
                 });
             }),
         );

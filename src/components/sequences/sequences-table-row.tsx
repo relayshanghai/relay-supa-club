@@ -1,17 +1,11 @@
 import Link from 'next/link';
-import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceStep } from 'src/utils/api/db';
-import { decimalToPercent } from 'src/utils/formatter';
-import { Brackets } from '../icons';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
-import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
-import { Button } from '../button';
 import { EmailPreviewModal } from './email-preview-modal';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenSequence } from 'src/utils/analytics/events/outreach/sequence-open';
-import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
 export const SequencesTableRow = ({
     sequence,
@@ -22,17 +16,8 @@ export const SequencesTableRow = ({
     onCheckboxChange: (id: string) => void;
     checked: boolean;
 }) => {
-    const { t } = useTranslation();
-    const { sequenceSteps } = useSequenceSteps(sequence.id);
     const { templateVariables } = useTemplateVariables(sequence.id);
-    const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
-    const openRate = decimalToPercent(
-        (sequenceEmails?.filter(
-            (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
-        ).length || 0) / (sequenceEmails?.length || 1),
-        0,
-    );
     const { track } = useRudderstackTrack();
 
     const handleChange = () => {
@@ -82,21 +67,7 @@ export const SequencesTableRow = ({
                     <Link href={`/sequences/${encodeURIComponent(sequence.id)}`}>{sequence.name}</Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{influencer?.length || 0}</td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_first_name}</td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">
-                    {templateVariables?.find((variable) => variable.key === 'productName')?.value ?? '--'}
-                </td>
-                <td className="flex items-center gap-2 whitespace-nowrap px-6 py-3 text-gray-700">
-                    <Button
-                        className="flex flex-row gap-2"
-                        variant="ghost"
-                        onClick={() => setShowEmailPreview(sequenceSteps ?? [])}
-                    >
-                        <Brackets className="h-5 w-5" />
-                        {t('sequences.updateTemplateVariables')}
-                    </Button>
-                </td>
             </tr>
         </>
     );

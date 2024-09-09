@@ -20,6 +20,13 @@ export enum Step {
     THIRD_FOLLOW_UP = 'THIRD_FOLLOW_UP',
 }
 
+export enum StepNumber {
+    OUTREACH = 0,
+    FIRST_FOLLOW_UP = 1,
+    SECOND_FOLLOW_UP = 2,
+    THIRD_FOLLOW_UP = 3,
+}
+
 @Entity('outreach_email_templates')
 export class OutreachEmailTemplateEntity {
     @PrimaryGeneratedColumn('uuid')

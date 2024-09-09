@@ -24,6 +24,7 @@ import { UsageRepository } from 'src/backend/database/usages/repository';
 import HcaptchaService from 'src/backend/integration/hcaptcha/hcaptcha-service';
 import PriceRepository from 'src/backend/database/price/price-repository';
 import { SubscriptionType } from 'src/backend/database/price/price-entity';
+import BalanceService from '../balance/balance-service';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -251,6 +252,7 @@ export default class RegistrationService {
         const createdCompany = await this.createCompany(request);
         const createdProfile = await this.createProfile(request, createdCompany);
         await this.createBrevoContact(createdProfile, createdCompany);
+        await BalanceService.getService().initBalance(createdCompany.id);
         return createdCompany;
     }
 

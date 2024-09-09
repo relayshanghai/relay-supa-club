@@ -8,7 +8,6 @@ import {
     ThunderSearch,
     FourSquare,
     ThunderMail,
-    Inbox,
 } from '../../../src/components/icons';
 import { Title } from '../../../src/components/title';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +22,6 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/v2/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/products': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,

@@ -2,14 +2,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
-import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail, Inbox } from './icons';
+import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { OpenAccountModal, ToggleNavbarSize } from 'src/utils/analytics/events';
-import { NavigateToPage } from 'src/utils/analytics/events';
+import { OpenAccountModal, ToggleNavbarSize, NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
@@ -20,7 +19,6 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/sequences': (_pathRoot: string) => <ThunderMail height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/inbox': (_pathRoot: string) => <Inbox height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/boostbot': (_pathRoot: string) => <ThunderSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/outreach': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -97,11 +95,6 @@ const NavBarInner = ({
                     {profile?.created_at && featEmail(new Date(profile.created_at)) && (
                         <ActiveLink href={defaultPage} expandedName={t('navbar.sequences')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
-                        </ActiveLink>
-                    )}
-                    {profile?.email_engine_account_id && profile.sequence_send_email && (
-                        <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
-                            <p className={`whitespace-nowrap text-xs`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {!(profile?.created_at && featEmail(new Date(profile.created_at))) && (

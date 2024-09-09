@@ -87,6 +87,14 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
         onNextStep();
     };
 
+    const disableNextButton = () => {
+        return (
+            !stagedSequenceEmailTemplates['OUTREACH'] ||
+            !stagedSequenceEmailTemplates['FIRST_FOLLOW_UP'] ||
+            !stagedSequenceEmailTemplates['SECOND_FOLLOW_UP']
+        );
+    };
+
     return (
         <div
             className="flex shrink grow basis-0 flex-col items-start justify-start gap-6 self-stretch rounded-b-lg px-8 py-4"
@@ -169,6 +177,7 @@ export const CampaignModalStepOne: FC<ModalStepProps> = ({ setModalOpen, onNextS
                             onClick={() => {
                                 onNextStepHandler();
                             }}
+                            disabled={disableNextButton()}
                             id="step1-next-button"
                         >
                             <span className="ml-1">{t('outreaches.saveSequenceTemplates')}</span>

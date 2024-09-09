@@ -165,7 +165,6 @@ export default class SequenceInfluencerService {
             sequenceInfluencer.influencerSocialProfile = socialInfluencer;
             await this.syncSequenceInfluencer(sequenceInfluencer, reportData);
             await this.storeUsage(sequenceInfluencer.company, sequenceInfluencer.iqdataId);
-
             return this.getOne(sequenceInfluencerId);
         } catch (e) {
             const err = e as Error;

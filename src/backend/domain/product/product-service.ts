@@ -6,7 +6,7 @@ import ProductRepository from 'src/backend/database/product/product-repository';
 import { ProductEntity } from 'src/backend/database/product/product-entity';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import { type Paginated } from 'types/pagination';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 
 export default class ProductService {
     public static readonly service: ProductService = new ProductService();
@@ -21,7 +21,8 @@ export default class ProductService {
         product.description = request.description;
         product.price = request.price;
         product.shopUrl = request.shopUrl;
-        product.priceCurrency = request.currency;
+        product.priceCurrency = request.currency ? request.currency : 'USD';
+        product.brandName = request.brandName;
         product.company = {
             id: companyId,
         } as CompanyEntity;
@@ -42,9 +43,10 @@ export default class ProductService {
         if (!product) {
             throw new NotFoundError(`Product with id: ${id} does not exists`);
         }
-        const c = request.currency;
+        const c = request.currency ? request.currency : 'USD';
         const newProduct = {
             ...product,
+            brandName: request.brandName,
             name: request.name,
             description: request.description,
             price: request.price,
@@ -76,6 +78,7 @@ export default class ProductService {
         }
         return {
             id: product.id,
+            brandName: product.brandName || '',
             name: product.name || '',
             description: product.description || '',
             price: product.price || 0,
@@ -109,12 +112,22 @@ export default class ProductService {
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
         const companyId = RequestContext.getContext().companyId as string;
-        const product = await ProductRepository.getRepository().findOneBy({
-            id,
-            company: {
-                id: companyId,
+        const product = await ProductRepository.getRepository().findOne({
+            where: {
+                id,
+                company: {
+                    id: companyId,
+                },
+            },
+            relations: {
+                sequence: true,
             },
         });
+        if (product?.sequence) {
+            throw new BadRequestError(
+                `Cannot delete a product that is associated with "${product.sequence.name}" sequence`,
+            );
+        }
         if (!product) {
             throw new NotFoundError(`Product with id: ${id} does not exists`);
         }

@@ -41,6 +41,10 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
         }
     }, [saveExistingAsNew]);
 
+    const disableSaveButton = () => {
+        return !emailTemplate?.name || !emailTemplate?.description;
+    };
+
     const onSave = async () => {
         let action = null;
         if (saveExistingAsNew) {
@@ -131,6 +135,7 @@ export const EmailTemplateModalStepTwo: FC<ModalStepProps> = ({ onPrevStep, setM
                             className="inline-flex items-center border-none !bg-pink-500 !p-2"
                             data-testid="next-button"
                             onClick={() => onSave()}
+                            disabled={disableSaveButton()}
                             id="step2-finish-button"
                         >
                             <span className="ml-1">{t('outreaches.saveAndContinue')}</span>

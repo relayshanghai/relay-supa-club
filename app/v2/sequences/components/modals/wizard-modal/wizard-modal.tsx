@@ -11,7 +11,6 @@ export const WizardModal: FC<WizardModalProps> = ({ show, setShow, steps, stepsD
         }
         return s + 1;
     };
-
     const getUndisabledPrevStep = (s: number): number => {
         if (stepsDisabled?.includes(s - 1)) {
             return getUndisabledPrevStep(s - 1);

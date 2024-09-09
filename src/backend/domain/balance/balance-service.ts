@@ -11,7 +11,10 @@ export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
     @UseLogger()
-    async initBalance(companyId: string) {
+    async initBalance(companyId?: string) {
+        if (!companyId) {
+            companyId = RequestContext.getContext().companyId as string;
+        }
         const balance = await BalanceRepository.getRepository().find({
             where: {
                 company: {

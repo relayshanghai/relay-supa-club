@@ -138,9 +138,10 @@ describe('src/backend/domain/templates/template-variables-service.test.ts', () =
                 expect(err.message).toBe('No company id found in request context');
             });
             test('should update all template variables', async () => {
+                vitest.spyOn(TemplateVariablesService.getService(), 'checkVariableExist').mockResolvedValue(undefined);
                 await TemplateVariablesService.getService().update('some-id', {
                     category: 'some-category',
-                    name: 'some-name',
+                    name: 'new-name',
                 });
 
                 expect(OutreachTemplateVariableRepositoryUpdateMock).toHaveBeenCalledWith(
@@ -152,7 +153,7 @@ describe('src/backend/domain/templates/template-variables-service.test.ts', () =
                     },
                     {
                         category: 'some-category',
-                        name: 'some-name',
+                        name: 'new-name',
                     },
                 );
             });
