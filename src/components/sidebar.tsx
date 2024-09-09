@@ -99,7 +99,7 @@ const NavBarInner = ({
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
-                    {profile?.created_at && featEmail(new Date(profile.created_at)) && (
+                    {profile?.email_engine_account_id && profile.sequence_send_email && (
                         <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
